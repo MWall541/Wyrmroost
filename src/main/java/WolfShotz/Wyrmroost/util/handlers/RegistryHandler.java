@@ -11,7 +11,8 @@ public class RegistryHandler
 {
     @SubscribeEvent
     public static void setup(final RegistryEvent.Register<Block> event) {
-        Wyrmroost.LOGGER.info("called RegistryHandler");
+        Wyrmroost.L.info("called RegistryHandler");
+
     }
 
 }
