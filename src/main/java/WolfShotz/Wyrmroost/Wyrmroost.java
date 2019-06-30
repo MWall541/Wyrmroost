@@ -14,13 +14,11 @@ import org.apache.logging.log4j.Logger;
 public class Wyrmroost
 {
     public static final Logger L = LogManager.getLogger();
-    private static final IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
+    public static final IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
 
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 //        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-
-//       MinecraftForge.EVENT_BUS.register(this); was this even needed?
     }
 
     private void setup(final FMLCommonSetupEvent event) {
