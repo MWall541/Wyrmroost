@@ -17,47 +17,32 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 
 group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'wyrmroost'
-version = '${mod_version}'
+archivesBaseName = "${project.archivesBaseName}"
+version = "${project.mod_version}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    // mappings format: snapshot_YYYYMMDD
-    mappings channel: 'snapshot', version: '20190630-1.14.3'
+    mappings channel: project.mcp_channel, version: "${project.mcp_mappings}-${project.mc_version}"
 
     // Default run configurations.
     runs {
         client {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP' // Recommended logging data for a userdev environment
+            property 'forge.logging.console.level', 'debug' // Recommended logging level for the console
             mods { examplemod { source sourceSets.main } }
         }
-
         server {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP' // Recommended logging data for a userdev environment
+            property 'forge.logging.console.level', 'debug' // Recommended logging level for the console
             mods { examplemod { source sourceSets.main } }
         }
-
         data {
             workingDirectory project.file('run')
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP' // Recommended logging data for a userdev environment
+            property 'forge.logging.console.level', 'debug' // Recommended logging level for the console
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
             mods { examplemod { source sourceSets.main } }
         }
@@ -66,7 +51,7 @@ minecraft {
 
 dependencies {
 
-    minecraft 'net.minecraftforge:forge:1.14.3-27.0.16'
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
