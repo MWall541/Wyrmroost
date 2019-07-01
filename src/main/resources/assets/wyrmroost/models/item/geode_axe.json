@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "wyrmroost:item/tools/geode_axe"
+    "layer0": "wyrmroost:item/tools/geode/geode_axe"
   }
 }
