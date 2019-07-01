@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.objects.blocks;
 
-import WolfShotz.Wyrmroost.objects.items.ItemBase;
 import WolfShotz.Wyrmroost.objects.items.ItemList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
