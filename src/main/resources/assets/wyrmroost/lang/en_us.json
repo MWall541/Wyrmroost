@@ -1,6 +1,10 @@
 {
   "block.wyrmroost.geode_ore": "Geode Ore",
   "block.wyrmroost.geode_block": "Geode Block",
+  "item.wyrmroost.geode_pick": "Geode Pickaxe",
+  "item.wyrmroost.geode_axe": "Geode Axe",
+  "item.wyrmroost.geode_shovel": "Geode Shovel",
+  "item.wyrmroost.geode_sword": "Geode Sword",
 
   "block.wyrmroost.platinum_ore": "Platinum Ore",
   "block.wyrmroost.platinum_block": "Platinum Block"
