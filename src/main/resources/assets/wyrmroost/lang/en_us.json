@@ -1,11 +1,29 @@
 {
+  "item.wyrmroost.jewelled_apple": "Jewelled Apple",
+
+  "_comment": "Geode Items",
+  "item.wyrmroost.geode": "Geode",
   "block.wyrmroost.geode_ore": "Geode Ore",
   "block.wyrmroost.geode_block": "Geode Block",
   "item.wyrmroost.geode_pick": "Geode Pickaxe",
   "item.wyrmroost.geode_axe": "Geode Axe",
   "item.wyrmroost.geode_shovel": "Geode Shovel",
   "item.wyrmroost.geode_sword": "Geode Sword",
+  "item.wyrmroost.geode_helmet": "Geode Helmet",
+  "item.wyrmroost.geode_chestplate": "Geode Chestplate",
+  "item.wyrmroost.geode_legs": "Geode Leggings",
+  "item.wyrmroost.geode_boots": "Geode Boots",
 
+  "_comment": "Platinum Items",
+  "item.wyrmroost.platinum_ingot": "Platinum Ingot",
   "block.wyrmroost.platinum_ore": "Platinum Ore",
-  "block.wyrmroost.platinum_block": "Platinum Block"
+  "block.wyrmroost.platinum_block": "Platinum Block",
+  "item.wyrmroost.platinum_pick": "Platinum Pickaxe",
+  "item.wyrmroost.platinum_axe": "Platinum Axe",
+  "item.wyrmroost.platinum_shovel": "Platinum Shovel",
+  "item.wyrmroost.platinum_sword": "Platinum Sword",
+  "item.wyrmroost.platinum_helmet": "Platinum Helmet",
+  "item.wyrmroost.platinum_chestplate": "Platinum Chestplate",
+  "item.wyrmroost.platinum_leggings": "Platinum Leggings",
+  "item.wyrmroost.platinum_boots": "Platinum Boots"
 }

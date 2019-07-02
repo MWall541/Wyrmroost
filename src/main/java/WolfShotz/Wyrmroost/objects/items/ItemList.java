@@ -43,7 +43,7 @@ public class ItemList
 
     public static final Item itemplatinumhelm = new ItemArmorBase("platinum_helmet", ArmorMaterialList.armor_platinum, EquipmentSlotType.HEAD);
     public static final Item itemplatinumchest = new ItemArmorBase("platinum_chestplate", ArmorMaterialList.armor_platinum, EquipmentSlotType.CHEST);
-    public static final Item itemplatinumlegs = new ItemArmorBase("platinum_leggins", ArmorMaterialList.armor_platinum, EquipmentSlotType.LEGS);
+    public static final Item itemplatinumlegs = new ItemArmorBase("platinum_leggings", ArmorMaterialList.armor_platinum, EquipmentSlotType.LEGS);
     public static final Item itemplatinumboots = new ItemArmorBase("platinum_boots", ArmorMaterialList.armor_platinum, EquipmentSlotType.FEET);
     // Platinum end
 
