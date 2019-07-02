@@ -4,6 +4,8 @@ import WolfShotz.Wyrmroost.objects.items.base.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,7 +19,7 @@ public class ItemList
     /** Register all items in this list and initialize every value in RegistryEvents */
     public static final List<Item> ITEMS = new ArrayList<>();
 
-    // Geode
+    // Geode start
     public static final Item itemgeode = new ItemBase("geode", ItemGroup.MATERIALS);
 
     public static final Item itemswordgeode = new ItemSwordBase("geode_sword", 4, ToolMaterialList.tool_geode);
@@ -29,8 +31,9 @@ public class ItemList
     public static final Item itemgeodechest = new ItemArmorBase("geode_chestplate", ArmorMaterialList.armor_geode, EquipmentSlotType.CHEST);
     public static final Item itemgeodelegs = new ItemArmorBase("geode_legs", ArmorMaterialList.armor_geode, EquipmentSlotType.LEGS);
     public static final Item itemgeodeboots = new ItemArmorBase("geode_boots", ArmorMaterialList.armor_geode, EquipmentSlotType.FEET);
+    // Geode end
 
-    // Platinum
+    // Platinum start
     public static final Item itemplatinumingot = new ItemBase("platinum_ingot", ItemGroup.MATERIALS);
 
     public static final Item itemplatinumsword = new ItemSwordBase("platinum_sword", 3, ToolMaterialList.tool_platinum);
@@ -42,14 +45,16 @@ public class ItemList
     public static final Item itemplatinumchest = new ItemArmorBase("platinum_chestplate", ArmorMaterialList.armor_platinum, EquipmentSlotType.CHEST);
     public static final Item itemplatinumlegs = new ItemArmorBase("platinum_leggins", ArmorMaterialList.armor_platinum, EquipmentSlotType.LEGS);
     public static final Item itemplatinumboots = new ItemArmorBase("platinum_boots", ArmorMaterialList.armor_platinum, EquipmentSlotType.FEET);
+    // Platinum end
 
+    public static final Item itemjewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
 
 
 
 //  ======== Material Lists ========
 
     /** Enum Handling the tool materials - Manages the mining speed, attck dmg, repair item etc. */
-    public enum ToolMaterialList implements IItemTier
+    protected enum ToolMaterialList implements IItemTier
     {
         tool_geode(9.3f, 4.0f, 2164, 4, 25, itemgeode),
         tool_platinum(5.5f, 2.5f, 645, 3, 20, itemplatinumingot);
@@ -87,7 +92,7 @@ public class ItemList
     }
 
     /** Enum Handling the armor materials - Manages dmg reduction, enchantability, durability etc. */
-    public enum ArmorMaterialList implements IArmorMaterial
+    protected enum ArmorMaterialList implements IArmorMaterial
     {
         armor_geode("geode", new int[] {4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, itemgeode),
         armor_platinum("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, itemplatinumingot);
@@ -132,4 +137,21 @@ public class ItemList
         public float getToughness() { return toughness; }
     }
 
+//  ================================
+
+    /** Static class used to store the food items */
+    private static class FoodList
+    {
+        // Jewelled Apple
+        private static Food jewelledapple = new Food.Builder()
+                                                    .hunger(6)
+                                                    .saturation(0.8f)
+                                                    .setAlwaysEdible()
+                                                    .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
+                                                    .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
+                                                    .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
+                                                    .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
+                                                    .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
+                                                    .build();
+    }
 }
