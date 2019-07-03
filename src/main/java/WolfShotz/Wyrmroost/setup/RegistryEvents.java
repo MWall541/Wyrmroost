@@ -2,8 +2,10 @@ package WolfShotz.Wyrmroost.setup;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.objects.blocks.BlockList;
+import WolfShotz.Wyrmroost.objects.entities.EntitySetup;
 import WolfShotz.Wyrmroost.objects.items.ItemList;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,10 +15,12 @@ import net.minecraftforge.fml.common.Mod;
 public class RegistryEvents
 {
     @SubscribeEvent
-    public static void blockSetup(final RegistryEvent.Register<Block> event) {
-        BlockList.BLOCKS.forEach(block -> event.getRegistry().register(block));
+    public static void entitySetup(final RegistryEvent.Register<EntityType<?>> event) {
+        EntitySetup.collectEntities();
+        EntitySetup.ENTITIES.forEach(entity -> event.getRegistry().register(entity));
+        EntitySetup.registerEntityWorldSpawns();
 
-        Wyrmroost.L.info("Block Setup Complete");
+        Wyrmroost.L.info("Entity Setup Complete");
     }
 
     @SubscribeEvent
@@ -25,5 +29,13 @@ public class RegistryEvents
 
         Wyrmroost.L.info("Item Setup Complete");
     }
+
+    @SubscribeEvent
+    public static void blockSetup(final RegistryEvent.Register<Block> event) {
+        BlockList.BLOCKS.forEach(block -> event.getRegistry().register(block));
+
+        Wyrmroost.L.info("Block Setup Complete");
+    }
+
 
 }
