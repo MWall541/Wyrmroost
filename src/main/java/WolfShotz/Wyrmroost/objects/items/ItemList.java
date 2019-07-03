@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.objects.items;
 
+import WolfShotz.Wyrmroost.objects.entities.EntitySetup;
 import WolfShotz.Wyrmroost.objects.items.base.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
@@ -48,6 +49,10 @@ public class ItemList
     // Platinum end
 
     public static final Item itemjewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
+
+    // Spawn Eggs start
+    public static final Item drake_egg = new ItemSpawnEggBase("drake_egg", EntitySetup.overworld_drake, 0x15ff00, 0x085e00);
+    // Spawn Eggs end
 
 
 
