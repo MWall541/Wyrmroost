@@ -16,13 +16,12 @@ public class Wyrmroost
     public static final Logger L = LogManager.getLogger();
     public static final IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
     public static final String modID = "wyrmroost";
-//    public static Wyrmroost instance;
 
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        // Could be handled on the proxy...?
 //        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
-//        instance = this;
     }
 
     private void setup(final FMLCommonSetupEvent event) {
