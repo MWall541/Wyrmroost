@@ -1,7 +1,7 @@
-package WolfShotz.Wyrmroost.objects.entities;
+package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.objects.entities.overworlddrake.OverworldDrake;
+import WolfShotz.Wyrmroost.content.entities.overworlddrake.OverworldDrake;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;

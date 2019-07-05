@@ -1,7 +1,7 @@
-package WolfShotz.Wyrmroost.objects.items;
+package WolfShotz.Wyrmroost.content.items;
 
-import WolfShotz.Wyrmroost.objects.entities.EntitySetup;
-import WolfShotz.Wyrmroost.objects.items.base.*;
+import WolfShotz.Wyrmroost.content.entities.EntitySetup;
+import WolfShotz.Wyrmroost.content.items.base.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
@@ -21,7 +21,7 @@ public class ItemList
     public static final List<Item> ITEMS = new ArrayList<>();
 
     // Geode start
-    public static final Item itemgeode = new ItemBase("geode", ItemGroup.MATERIALS);
+    public static final Item itemgeode = new ItemBase("geode");
 
     public static final Item itemswordgeode = new ItemSwordBase("geode_sword", 4, ToolMaterialList.tool_geode);
     public static final Item itempickgeode = new ItemPickBase("geode_pick", ToolMaterialList.tool_geode);
@@ -35,7 +35,7 @@ public class ItemList
     // Geode end
 
     // Platinum start
-    public static final Item itemplatinumingot = new ItemBase("platinum_ingot", ItemGroup.MATERIALS);
+    public static final Item itemplatinumingot = new ItemBase("platinum_ingot");
 
     public static final Item itemplatinumsword = new ItemSwordBase("platinum_sword", 3, ToolMaterialList.tool_platinum);
     public static final Item itemplatinumpick = new ItemPickBase("platinum_pick", ToolMaterialList.tool_platinum);
@@ -102,6 +102,7 @@ public class ItemList
         armor_geode("geode", new int[] {4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, itemgeode),
         armor_platinum("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, itemplatinumingot);
 
+        private int[] durabilityArray = new int[]{13, 15, 16, 11};
         private int durability, enchantability;
         private int[] dmgReduction;
         private float toughness;
@@ -120,7 +121,7 @@ public class ItemList
         }
 
         @Override
-        public int getDurability(EquipmentSlotType slotIn) { return durability; }
+        public int getDurability(EquipmentSlotType slotIn) { return durabilityArray[slotIn.getIndex()] * this.durability; }
 
         @Override
         public int getDamageReductionAmount(EquipmentSlotType slotIn) { return dmgReduction[slotIn.getIndex()]; }
@@ -149,7 +150,7 @@ public class ItemList
     {
         // Jewelled Apple
         private static Food jewelledapple = new Food.Builder()
-                                                    .hunger(6)
+                                                    .hunger(8)
                                                     .saturation(0.8f)
                                                     .setAlwaysEdible()
                                                     .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)

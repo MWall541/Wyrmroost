@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.setup;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.objects.blocks.BlockList;
-import WolfShotz.Wyrmroost.objects.entities.EntitySetup;
-import WolfShotz.Wyrmroost.objects.items.ItemList;
+import WolfShotz.Wyrmroost.content.blocks.BlockList;
+import WolfShotz.Wyrmroost.content.entities.EntitySetup;
+import WolfShotz.Wyrmroost.content.items.ItemList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;

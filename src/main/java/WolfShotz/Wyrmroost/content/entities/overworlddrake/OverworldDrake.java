@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.objects.entities.overworlddrake;
+package WolfShotz.Wyrmroost.content.entities.overworlddrake;
 
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;

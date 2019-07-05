@@ -1,6 +1,7 @@
-package WolfShotz.Wyrmroost.objects.items.base;
+package WolfShotz.Wyrmroost.content.items.base;
 
-import WolfShotz.Wyrmroost.objects.items.ItemList;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.items.ItemList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 
@@ -10,8 +11,8 @@ import net.minecraft.item.ItemGroup;
  */
 public class ItemBase extends Item
 {
-    public ItemBase(String name, ItemGroup group) {
-        super(new Item.Properties().group(group));
+    public ItemBase(String name) {
+        super(new Item.Properties().group(Wyrmroost.creativeTab));
         setRegistryName(name);
 
         ItemList.ITEMS.add(this);
