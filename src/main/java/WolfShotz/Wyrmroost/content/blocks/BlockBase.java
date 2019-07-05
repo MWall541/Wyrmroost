@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.items.ItemList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -7,7 +8,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.ToolType;
@@ -30,14 +30,14 @@ class BlockBase extends Block
      * @param toughness How hard and how resistant the block is
      * @param sound the sound the block makes
      */
-    BlockBase(String name, ItemGroup group, Material material, ToolType tool, int harvestLevel, float toughness, SoundType sound) {
+    BlockBase(String name, Material material, ToolType tool, int harvestLevel, float toughness, SoundType sound) {
         super(Block.Properties.create(material).hardnessAndResistance(toughness).sound(sound));
         setRegistryName(name);
         this.tool = tool;
         this.harvestLevel = harvestLevel;
 
         BlockList.BLOCKS.add(this);
-        ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(group)).setRegistryName(name));
+        ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(Wyrmroost.creativeTab)).setRegistryName(name));
     }
 
     /**
@@ -50,7 +50,7 @@ class BlockBase extends Block
      * @param sound The sound the block makes
      * @param isBeaconBase Does this block work with beacons?
      */
-    BlockBase(String name, ItemGroup group, Material material, ToolType tool, int harvestLevel, float hardness, float resistance, int light, SoundType sound, boolean isBeaconBase) {
+    BlockBase(String name, Material material, ToolType tool, int harvestLevel, float hardness, float resistance, int light, SoundType sound, boolean isBeaconBase) {
         super(Block.Properties.create(material).hardnessAndResistance(hardness, resistance).lightValue(light).sound(sound));
         setRegistryName(name);
         this.tool = tool;
@@ -58,7 +58,7 @@ class BlockBase extends Block
         this.isBeaconBase = isBeaconBase;
 
         BlockList.BLOCKS.add(this);
-        ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(group)).setRegistryName(name));
+        ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(Wyrmroost.creativeTab)).setRegistryName(name));
     }
 
     @Nullable
