@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.items.ItemList;
+import WolfShotz.Wyrmroost.setup.SetupOreGen;
 import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
 import WolfShotz.Wyrmroost.util.proxy.IProxy;
 import WolfShotz.Wyrmroost.util.proxy.ServerProxy;
@@ -29,6 +30,7 @@ public class Wyrmroost
     }
 
     private void setup(final FMLCommonSetupEvent event) {
+        SetupOreGen.setupOreGen();
 
         L.debug("setup started");
     }
