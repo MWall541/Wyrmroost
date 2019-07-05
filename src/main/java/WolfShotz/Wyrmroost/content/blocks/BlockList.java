@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BlockList
 {
-    /** Add all block registries to this list and initilize each value in RegistryEvents */
+    /** Add all block registries to this list and initilize each value in SetupRegistryEvents */
     public static final List<Block> BLOCKS = new ArrayList();
 
     public static final Block blockplatinumore = new BlockBase("platinum_ore", Material.ROCK, ToolType.PICKAXE, 1, 3, SoundType.STONE);

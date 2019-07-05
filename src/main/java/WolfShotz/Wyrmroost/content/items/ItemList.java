@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ItemList
 {
-    /** Register all items in this list and initialize every value in RegistryEvents */
+    /** Register all items in this list and initialize every value in SetupRegistryEvents */
     public static final List<Item> ITEMS = new ArrayList<>();
 
     // Geode start

@@ -12,7 +12,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
-public class RegistryEvents
+public class SetupRegistryEvents
 {
     @SubscribeEvent
     public static void entitySetup(final RegistryEvent.Register<EntityType<?>> event) {

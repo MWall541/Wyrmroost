@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.overworlddrake.OverworldDrake;
+import WolfShotz.Wyrmroost.setup.SetupRegistryEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -15,18 +16,18 @@ import java.util.List;
  * Created by WolfShotz - 7/3/19 19:03 <p>
  *
  * Class responsible for the setup and registration of entities, and their spawning.
- * @see WolfShotz.Wyrmroost.setup.RegistryEvents RegistryEvents
+ * @see SetupRegistryEvents SetupRegistryEvents
  */
 public class EntitySetup
 {
-    /** List used to "group" entities for easier registration in {@link WolfShotz.Wyrmroost.setup.RegistryEvents RegistryEvents} */
+    /** List used to "group" entities for easier registration in {@link SetupRegistryEvents SetupRegistryEvents} */
     public static List<EntityType<?>> ENTITIES = new ArrayList();
 
     // Entity List Start
     public static final EntityType<?> overworld_drake = registerEntity("overworld_drake", OverworldDrake::new, EntityClassification.CREATURE);
     // Entity List End
 
-    /** Handles spawning for Entities. Called in {@link WolfShotz.Wyrmroost.setup.RegistryEvents RegistryEvents}. */
+    /** Handles spawning for Entities. Called in {@link SetupRegistryEvents SetupRegistryEvents}. */
     public static void registerEntityWorldSpawns() {
         registerSpawning(overworld_drake, 10, 1, 5, Biomes.PLAINS, Biomes.FOREST);
     }
@@ -37,7 +38,7 @@ public class EntitySetup
         return EntityType.Builder.create(entity, classify).build(Wyrmroost.modID + ":" + name).setRegistryName(name);
     }
 
-    /** Helper Method that adds all entity elements into our List Collection. Called in {@link WolfShotz.Wyrmroost.setup.RegistryEvents RegistryEvents}. */
+    /** Helper Method that adds all entity elements into our List Collection. Called in {@link SetupRegistryEvents SetupRegistryEvents}. */
     public static void collectEntities() {
         ENTITIES.add(overworld_drake);
     }
