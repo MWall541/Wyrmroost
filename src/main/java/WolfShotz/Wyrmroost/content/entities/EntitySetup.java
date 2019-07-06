@@ -38,15 +38,14 @@ public class EntitySetup
         return EntityType.Builder.create(entity, classify).build(Wyrmroost.modID + ":" + name).setRegistryName(name);
     }
 
-    /** Helper Method that adds all entity elements into our List Collection. Called in {@link SetupRegistryEvents SetupRegistryEvents}. */
+    /** Helper Method that adds all entity elements into a List Collection. Called in {@link SetupRegistryEvents SetupRegistryEvents}. */
     public static void collectEntities() {
         ENTITIES.add(overworld_drake);
     }
 
     /** Helper method allowing for easier entity world spawning setting */
     private static void registerSpawning(EntityType<?> entity, int frequency, int minAmount, int maxAmount, Biome... biomes) {
-        for (Biome biome : biomes) if (biome != null) {
+        for (Biome biome : biomes) if (biome != null)
             biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount));
-        }
     }
 }

@@ -2,9 +2,9 @@ package WolfShotz.Wyrmroost.setup;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.BlockList;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.placement.CountRangeConfig;
@@ -13,13 +13,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SetupOreGen
 {
-    private static CountRangeConfig platinumPlacement = new CountRangeConfig(2, 0, 0, 25);
-    private static CountRangeConfig geodePlacement = new CountRangeConfig(1, 0, 0, 16);
+    private static CountRangeConfig platinumConfig = new CountRangeConfig(2, 0, 0, 25);
+    private static CountRangeConfig geodeConfig = new CountRangeConfig(1, 0, 0, 16);
 
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, createOreFeature(8, geodePlacement));
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, createOreFeature(9, platinumPlacement));
+            registerOreEntry(biome, BlockList.blockgeodeore.getDefaultState(), 8, geodeConfig);
+            registerOreEntry(biome, BlockList.blockplatinumore.getDefaultState(), 9, platinumConfig);
         }
 
         Wyrmroost.L.debug("Oregen Registry Complete");
@@ -27,9 +27,9 @@ public class SetupOreGen
 
     /**
      * Helper method that turns this rediculously long line into something more convenient and readable...
-     * Takes in the ore size and the chance configuration as params.
+     * Takes in the biome, ore blockstate, ore size and the chance configuration as params.
      */
-    private static ConfiguredFeature<?> createOreFeature(int size, CountRangeConfig config) {
-        return Biome.createDecoratedFeature(Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, BlockList.blockgeodeore.getDefaultState(), size), Placement.COUNT_RANGE, config);
+    private static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config) {
+        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size), Placement.COUNT_RANGE, config));
     }
 }
