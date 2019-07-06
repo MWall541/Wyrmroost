@@ -23,6 +23,7 @@ public class SetupRegistryEvents
         Wyrmroost.L.info("Entity Setup Complete");
     }
 
+    // Start Items AFTER entities to register spawn egg items.
     @SubscribeEvent
     public static void itemSetup(final RegistryEvent.Register<Item> event) {
         ItemList.ITEMS.forEach(item -> event.getRegistry().register(item));
