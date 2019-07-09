@@ -37,7 +37,7 @@ public class Wyrmroost
 
     private static class CreativeTab extends ItemGroup
     {
-        public CreativeTab() { super("wyrmroost"); }
+        private CreativeTab() { super("wyrmroost"); }
 
         @Override
         public ItemStack createIcon() { return new ItemStack(ItemList.itemgeode); }
