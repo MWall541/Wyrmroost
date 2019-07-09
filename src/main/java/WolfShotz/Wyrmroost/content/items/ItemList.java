@@ -48,11 +48,12 @@ public class ItemList
     public static final Item itemplatinumboots = new ItemArmorBase("platinum_boots", ArmorMaterialList.armor_platinum, EquipmentSlotType.FEET);
     // Platinum end
 
-    public static final Item itemjewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
-
     // Spawn Eggs start
     public static final Item drake_egg = new ItemSpawnEggBase("drake_egg", EntitySetup.overworld_drake, 0x15ff00, 0x085e00);
     // Spawn Eggs end
+
+    public static final Item itemjewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
+    public static final Item modbook = new ItemModBook("wyrmpedia");
 
 
 
