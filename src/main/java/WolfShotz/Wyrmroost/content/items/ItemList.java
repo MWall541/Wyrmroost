@@ -49,11 +49,15 @@ public class ItemList
     // Platinum end
 
     // Spawn Eggs start
-    public static final Item drake_egg = new ItemSpawnEggBase("drake_egg", EntitySetup.overworld_drake, 0x15ff00, 0x085e00);
+    public static final Item itemegg_drake = new ItemSpawnEggBase("drake_egg", EntitySetup.overworld_drake, 0x15ff00, 0x085e00);
     // Spawn Eggs end
 
-    public static final Item itemjewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
-    public static final Item modbook = new ItemModBook("wyrmpedia");
+    // Food start
+    public static final Item itemfood_jewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
+    public static final Item itemfood_dragonfruit = new ItemFoodBase("dragon_fruit", FoodList.dragonfruit);
+    // Food end
+
+    public static final Item itemmodbook = new ItemModBook("wyrmpedia");
 
 
 
@@ -160,5 +164,10 @@ public class ItemList
                                                     .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
                                                     .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
                                                     .build();
+        // Dragon Fruit
+        private static Food dragonfruit = new Food.Builder()
+                                                  .hunger(6)
+                                                  .saturation(0.55f)
+                                                  .build();
     }
 }
