@@ -1,24 +1,23 @@
 package WolfShotz.Wyrmroost.util;
 
-import net.minecraft.client.resources.I18n;
+import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
- * Utility Class to help with internationalization and text component translations
+ * Utility Class to help with Internationalization, ResourceLocations, etc.
  */
-public class UtilI18n
+public class ModUtils
 {
     /**
-     * Translate passed string for internationalization.
-     * @param text
-     * @return
+     * Register a new Resource Location.
+     * @param path
      */
-    public static String translate(String text) { return I18n.format(text); }
-
+    public static ResourceLocation location(String path) { return new ResourceLocation(Wyrmroost.modID, path); }
 
     /**
      * Translate the passed string into an ITextComponent.
