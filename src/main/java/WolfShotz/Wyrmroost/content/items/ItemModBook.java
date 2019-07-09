@@ -1,7 +1,8 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.UtilI18n;
+import WolfShotz.Wyrmroost.content.io.ScreenModBook;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -30,13 +31,13 @@ public class ItemModBook extends Item
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (world.isRemote) {/*TODO: OPEN THE BOOK GUI*/ }
+        if (world.isRemote) { Wyrmroost.proxy.openScreen(new ScreenModBook()); }
         return new ActionResult(ActionResultType.SUCCESS, stack);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(UtilI18n.tooltip(this, TextFormatting.GRAY));
+        tooltip.add(ModUtils.tooltip(this, TextFormatting.GRAY));
     }
 }
