@@ -7,6 +7,9 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.goal.EatGrassGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -23,18 +26,25 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected void registerAttributes() {
-        super.registerAttributes();
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
-        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
+    protected void registerGoals() {
+        super.registerGoals();
+        goalSelector.addGoal(3, new EatGrassGoal(this));
+        goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 1.0d));
+        goalSelector.addGoal(5, new LookRandomlyGoal(this));
     }
 
     @Override
-    public void livingTick() {
-        super.livingTick();
-        if (!isSleeping() && !world.isDaytime() && !isAngry() && !hasPath()) setSleeping(true);
-        else if (isSleeping() && world.isDaytime()) setSleeping(false);
+    public void eatGrassBonus() {
+        if (isChild()) addGrowth(60);
+        if (getHealth() < getMaxHealth()) heal(4f);
+    }
+
+    @Override
+    protected void registerAttributes() {
+        super.registerAttributes();
+        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
+        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.20989D);
+        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
     }
 
     @Nullable
