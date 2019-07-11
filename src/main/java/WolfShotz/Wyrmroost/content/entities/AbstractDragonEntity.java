@@ -31,17 +31,17 @@ public abstract class AbstractDragonEntity extends TameableEntity
     protected void registerGoals() {
         sitGoal = new SitGoal(this);
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1.0d));
-        goalSelector.addGoal(10, new LookRandomlyGoal(this));
+        goalSelector.addGoal(2, sitGoal);
     }
 
 
-    /* ========== Entity NBT ========== */
-
+    // ================================
+    //           Entity NBT
+    // ================================
     @Override
     protected void registerData() {
         super.registerData();
-        this.dataManager.register(GENDER, true);
+        this.dataManager.register(GENDER, getRNG().nextBoolean());
         this.dataManager.register(ASLEEP, false);
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
     public boolean isAsleep() { return dataManager.get(ASLEEP); }
     public void setSleeping(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
 
-    /** Gets the Gender of the dragonEntity. true = male | false = female. Anything else is an abomination. */
+    /** Gets the Gender of the dragonEntity.<P> true = Male | false = Female. Anything else is an abomination. */
     public boolean getGender() { return dataManager.get(GENDER); }
     public void setGender(boolean sex) { dataManager.set(GENDER, sex); }
 
@@ -78,7 +78,14 @@ public abstract class AbstractDragonEntity extends TameableEntity
         else this.dataManager.set(TAMED, (byte) (b0 & -3));
     }
 
-    /* ================================ */
+    // ================================
+
+    @Override
+    public void livingTick() {
+        super.livingTick();
+        if (!isSleeping() && !world.isDaytime() && !isAngry() && !hasPath()) setSleeping(true);
+        else if (isSleeping() && world.isDaytime()) setSleeping(false);
+    }
 
     /** @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation. */
     @Override
