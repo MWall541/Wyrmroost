@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.content.entities.EntitySetup;
 import WolfShotz.Wyrmroost.content.items.ItemList;
 import WolfShotz.Wyrmroost.setup.SetupOreGen;
 import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
@@ -9,6 +10,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -25,14 +27,20 @@ public class Wyrmroost
 
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-//        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
 
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         SetupOreGen.setupOreGen();
 
-        L.debug("setup started");
+        L.debug("setup complete");
+    }
+
+    private void clientSetup(final FMLClientSetupEvent event) {
+        EntitySetup.registerEntityRenders();
+
+        L.debug("clientSetup complete");
     }
 
     private static class CreativeTab extends ItemGroup
