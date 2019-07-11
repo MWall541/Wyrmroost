@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.setup;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.BlockList;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
@@ -22,7 +22,7 @@ public class SetupOreGen
             registerOreEntry(biome, BlockList.blockplatinumore.getDefaultState(), 9, platinumConfig);
         }
 
-        Wyrmroost.L.debug("Oregen Registry Complete");
+        ModUtils.L.debug("Oregen Registry Complete");
     }
 
     /**

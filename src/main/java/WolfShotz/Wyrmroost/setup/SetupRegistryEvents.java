@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.setup;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.BlockList;
 import WolfShotz.Wyrmroost.content.entities.EntitySetup;
 import WolfShotz.Wyrmroost.content.items.ItemList;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -20,7 +20,7 @@ public class SetupRegistryEvents
         EntitySetup.ENTITIES.forEach(entity -> event.getRegistry().register(entity));
         EntitySetup.registerEntityWorldSpawns();
 
-        Wyrmroost.L.info("Entity Setup Complete");
+        ModUtils.L.info("Entity Setup Complete");
     }
 
     // Start Items AFTER entities to register spawn egg items.
@@ -28,14 +28,14 @@ public class SetupRegistryEvents
     public static void itemSetup(final RegistryEvent.Register<Item> event) {
         ItemList.ITEMS.forEach(item -> event.getRegistry().register(item));
 
-        Wyrmroost.L.info("Item Setup Complete");
+        ModUtils.L.info("Item Setup Complete");
     }
 
     @SubscribeEvent
     public static void blockSetup(final RegistryEvent.Register<Block> event) {
         BlockList.BLOCKS.forEach(block -> event.getRegistry().register(block));
 
-        Wyrmroost.L.info("Block Setup Complete");
+        ModUtils.L.info("Block Setup Complete");
     }
 
 

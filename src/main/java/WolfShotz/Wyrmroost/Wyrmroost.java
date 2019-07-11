@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.EntitySetup;
 import WolfShotz.Wyrmroost.content.items.ItemList;
 import WolfShotz.Wyrmroost.setup.SetupOreGen;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
 import WolfShotz.Wyrmroost.util.proxy.IProxy;
 import WolfShotz.Wyrmroost.util.proxy.ServerProxy;
@@ -19,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 @Mod("wyrmroost")
 public class Wyrmroost
 {
-    public static final Logger L = LogManager.getLogger();
     public static final String modID = "wyrmroost";
 
     public static final IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
@@ -34,13 +34,13 @@ public class Wyrmroost
     private void setup(final FMLCommonSetupEvent event) {
         SetupOreGen.setupOreGen();
 
-        L.debug("setup complete");
+        ModUtils.L.debug("setup complete");
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
         EntitySetup.registerEntityRenders();
 
-        L.debug("clientSetup complete");
+        ModUtils.L.debug("clientSetup complete");
     }
 
     private static class CreativeTab extends ItemGroup

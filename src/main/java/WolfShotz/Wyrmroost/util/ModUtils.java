@@ -7,6 +7,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -14,6 +16,9 @@ import net.minecraft.util.text.TranslationTextComponent;
  */
 public class ModUtils
 {
+    /** Debug Logger */
+    public static final Logger L = LogManager.getLogger();
+
     /**
      * Register a new Resource Location.
      * @param path
