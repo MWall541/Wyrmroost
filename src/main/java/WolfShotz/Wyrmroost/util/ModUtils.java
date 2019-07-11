@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -31,6 +32,13 @@ public class ModUtils
         for (TextFormatting format : formats) translator.applyTextStyle(format);
         return translator;
     }
+
+    /**
+     * Minecrafts version of internationalization. Can be used as an alternative to:
+     * <p> <code>ModUtils.translation()</code>
+     * @param text
+     */
+    public static String format(String text) { return I18n.format(text); }
 
     /**
      * Add a tooltip to an Item. (The Mouse-over description)

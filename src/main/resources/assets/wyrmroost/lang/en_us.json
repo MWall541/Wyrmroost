@@ -1,4 +1,6 @@
 {
+  "itemGroup.wyrmroost": "Wyrmroost",
+
   "_comment": "Geode Items",
   "item.wyrmroost.geode": "Geode",
   "block.wyrmroost.geode_ore": "Geode Ore",
@@ -25,8 +27,8 @@
   "item.wyrmroost.platinum_leggings": "Platinum Leggings",
   "item.wyrmroost.platinum_boots": "Platinum Boots",
 
-  "item.wyrmroost.wyrmpedia": "Wyrmpedia",
-  "item.wyrmroost.wyrmpedia.tooltip": "Credits: King's Rediculous Ideas",
+  "item.wyrmroost.wyrmpedia": "Tarragon Tome",
+  "item.wyrmroost.wyrmpedia.tooltip": "Written By ",
 
   "item.wyrmroost.jewelled_apple": "Jewelled Apple"
 }
