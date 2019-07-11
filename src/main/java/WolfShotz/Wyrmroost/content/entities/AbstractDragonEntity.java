@@ -12,17 +12,21 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.world.World;
 
+/**
+ * Created by WolfShotz 7/10/19 - 21:36
+ * This is where the magic happens. Here be our Dragons!
+ */
 public abstract class AbstractDragonEntity extends TameableEntity
 {
-    private DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    private DataParameter<Boolean> SLEEPING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
         setTamed(false);
     }
 
-    /** AI > Goals. smh*/
+    /** AI > Goals. smh */
     @Override
     protected void registerGoals() {
         sitGoal = new SitGoal(this);
@@ -31,11 +35,14 @@ public abstract class AbstractDragonEntity extends TameableEntity
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
     }
 
+
+    /* ========== Entity NBT ========== */
+
     @Override
     protected void registerData() {
         super.registerData();
-        dataManager.register(GENDER, getRNG().nextBoolean());
-        dataManager.register(SLEEPING, false);
+        this.dataManager.register(GENDER, true);
+        this.dataManager.register(ASLEEP, false);
     }
 
     /** Save Game */
@@ -43,7 +50,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
         compound.putBoolean("Gender", getGender());
-        compound.putBoolean("Sleeping", isSleeping());
+        compound.putBoolean("Asleep", isAsleep());
     }
 
     /** Load Game */
@@ -51,12 +58,12 @@ public abstract class AbstractDragonEntity extends TameableEntity
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
         setGender(compound.getBoolean("Gender"));
-        setSleeping(compound.getBoolean("Sleeping"));
+        setSleeping(compound.getBoolean("Asleep"));
     }
 
     /** Whether or not the dragonEntity is asleep */
-    public boolean isSleeping() { return dataManager.get(SLEEPING); }
-    public void setSleeping(boolean sleeping) { dataManager.set(SLEEPING, sleeping); }
+    public boolean isAsleep() { return dataManager.get(ASLEEP); }
+    public void setSleeping(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
 
     /** Gets the Gender of the dragonEntity. true = male | false = female. Anything else is an abomination. */
     public boolean getGender() { return dataManager.get(GENDER); }
@@ -70,6 +77,8 @@ public abstract class AbstractDragonEntity extends TameableEntity
         if (angry) this.dataManager.set(TAMED, (byte) (b0 | 2));
         else this.dataManager.set(TAMED, (byte) (b0 & -3));
     }
+
+    /* ================================ */
 
     /** @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation. */
     @Override
