@@ -14,15 +14,10 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-/**
- * Blockbase - Helper Class allowing for easier block registration
- */
-//TODO: USE MANUAL TOOLTYPE AND HARVESTLEVEL UNTIL FORGE RE-EVALUATES
+/** Blockbase - Helper Class allowing for easier block registration */
 class BlockBase extends Block
 {
     private boolean isBeaconBase = false;
-    private ToolType tool;
-    private int harvestLevel;
 
     /**
      * @param name The Resource Location
@@ -31,10 +26,14 @@ class BlockBase extends Block
      * @param sound the sound the block makes
      */
     BlockBase(String name, Material material, ToolType tool, int harvestLevel, float toughness, SoundType sound) {
-        super(Block.Properties.create(material).hardnessAndResistance(toughness).sound(sound));
+        super(Block.Properties
+                      .create(material)
+                      .harvestTool(tool)
+                      .harvestLevel(harvestLevel)
+                      .hardnessAndResistance(toughness)
+                      .sound(sound)
+        );
         setRegistryName(name);
-        this.tool = tool;
-        this.harvestLevel = harvestLevel;
 
         BlockList.BLOCKS.add(this);
         ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(Wyrmroost.creativeTab)).setRegistryName(name));
@@ -51,22 +50,20 @@ class BlockBase extends Block
      * @param isBeaconBase Does this block work with beacons?
      */
     BlockBase(String name, Material material, ToolType tool, int harvestLevel, float hardness, float resistance, int light, SoundType sound, boolean isBeaconBase) {
-        super(Block.Properties.create(material).hardnessAndResistance(hardness, resistance).lightValue(light).sound(sound));
+        super(Block.Properties
+                      .create(material)
+                      .harvestTool(tool)
+                      .harvestLevel(harvestLevel)
+                      .hardnessAndResistance(hardness, resistance)
+                      .lightValue(light)
+                      .sound(sound)
+        );
         setRegistryName(name);
-        this.tool = tool;
-        this.harvestLevel = harvestLevel;
         this.isBeaconBase = isBeaconBase;
 
         BlockList.BLOCKS.add(this);
         ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(Wyrmroost.creativeTab)).setRegistryName(name));
     }
-
-    @Nullable
-    @Override
-    public ToolType getHarvestTool(BlockState state) { return this.tool; }
-
-    @Override
-    public int getHarvestLevel(BlockState state) { return this.harvestLevel; }
 
     @Override
     public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) { return isBeaconBase; }
