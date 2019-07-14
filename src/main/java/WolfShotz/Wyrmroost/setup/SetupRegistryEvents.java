@@ -16,7 +16,6 @@ public class SetupRegistryEvents
 {
     @SubscribeEvent
     public static void entitySetup(final RegistryEvent.Register<EntityType<?>> event) {
-        EntitySetup.collectEntities();
         EntitySetup.ENTITIES.forEach(entity -> event.getRegistry().register(entity));
         EntitySetup.registerEntityWorldSpawns();
 

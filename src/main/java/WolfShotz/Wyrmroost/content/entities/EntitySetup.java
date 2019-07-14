@@ -4,9 +4,7 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeRenderer;
 import WolfShotz.Wyrmroost.setup.SetupRegistryEvents;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.MobRenderer;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -17,8 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
@@ -28,8 +25,6 @@ import java.util.List;
  */
 public class EntitySetup
 {
-    public static List<EntityType<?>> ENTITIES = new ArrayList();
-
     // Entity List Start
     public static final EntityType<?> overworld_drake = registerEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
     // Entity List End
@@ -51,6 +46,11 @@ public class EntitySetup
     //      EntitySetup Helper Functions
     // =========================================
 
+    /** Immutable Set containing all entity elements. Iterated in registryevents for cleaner registration */
+    public static Set<EntityType<?>> ENTITIES = ImmutableSet.of(
+            overworld_drake
+    );
+
     /** Helper method for easier entity rendering registration */
     @OnlyIn(Dist.CLIENT)
     protected static <B extends Entity> void registerrender(Class<B> entity, IRenderFactory factory)
@@ -65,13 +65,5 @@ public class EntitySetup
     /** Helper Function that turns this stupidly long line into something more nicer to look at */
     private static <T extends Entity> EntityType<?> registerEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float x, float y)
         { return EntityType.Builder.create(entity, classify).size(x, y).build(Wyrmroost.modID + ":" + name).setRegistryName(name); }
-
-    /**
-     * Helper Method that adds all entity elements into a List Collection.
-     * Called in {@link SetupRegistryEvents SetupRegistryEvents}.
-     */
-    public static void collectEntities() {
-        ENTITIES.add(overworld_drake);
-    }
 
 }

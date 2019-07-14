@@ -20,6 +20,8 @@ public class ItemList
     /** Register all items in this list and initialize every value in SetupRegistryEvents */
     public static final List<Item> ITEMS = new ArrayList<>();
 
+    public static final Item itemmodbook = new ItemModBook("wyrmpedia");
+
     // Geode start
     public static final Item itemgeode = new ItemBase("geode");
 
@@ -56,8 +58,6 @@ public class ItemList
     public static final Item itemfood_jewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
     public static final Item itemfood_dragonfruit = new ItemFoodBase("dragon_fruit", FoodList.dragonfruit);
     // Food end
-
-    public static final Item itemmodbook = new ItemModBook("wyrmpedia");
 
 
 
