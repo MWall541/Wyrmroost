@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
+import WolfShotz.Wyrmroost.content.entities.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -10,16 +10,25 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-public class OWDrakeRenderer extends MobRenderer<OWDrakeEntity, OWDrakeModel<OWDrakeEntity>>
+public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDrakeModel<OWDrakeEntity>>
 {
-    private ResourceLocation ComMale = ModUtils.location("textures/entity/dragon/owdrake/owdrake_cm.png");
-    private ResourceLocation ComFemale = ModUtils.location("textures/entity/dragon/owdrake/owdrake_cf.png");
-    private ResourceLocation SavMale = ModUtils.location("textures/entity/dragon/owdrake/owdrake_sm.png");
-    private ResourceLocation SavFemale = ModUtils.location("textures/entity/dragon/owdrake/owdrake_sf.png");
+    private String loc = DEF_LOC + "owdrake/";
+    private ResourceLocation maleCom = ModUtils.location(loc + "male_com.png");
+    private ResourceLocation femaleCom = ModUtils.location(loc + "female_com.png");
+    private ResourceLocation maleSav = ModUtils.location(loc + "male_sav.png");
+    private ResourceLocation femaleSav = ModUtils.location(loc + "female_sav.png");
+    private ResourceLocation maleAlb = ModUtils.location(loc + "male_alb.png");
+    private ResourceLocation femaleAlb = ModUtils.location(loc + "female_alb.png");
 
-    public OWDrakeRenderer(EntityRendererManager manager) { super(manager, new OWDrakeModel<>(), 1.6f); }
+    public OWDrakeRenderer(EntityRendererManager manager) { super(manager, new OWDrakeModel(), 1.6f); }
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(OWDrakeEntity drake) { return drake.getGender() ? ComMale : ComFemale; }
+    protected ResourceLocation getEntityTexture(OWDrakeEntity drake) { return getDrakeTexture(drake.getGender(), drake.getVariant(), drake.isAlbino()); }
+
+    private ResourceLocation getDrakeTexture(boolean gender, boolean isSavannah, boolean isAlbino) {
+        if (isAlbino) return gender ? maleAlb : femaleAlb;
+        if (isSavannah) return gender ? maleSav : femaleSav;
+        return gender ? maleCom : femaleCom;
+    }
 }
