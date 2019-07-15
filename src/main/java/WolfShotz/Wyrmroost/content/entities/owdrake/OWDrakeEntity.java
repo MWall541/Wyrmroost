@@ -1,28 +1,23 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.items.ItemList;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.EatGrassGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by WolfShotz 7/10/19 - 22:18
@@ -88,7 +83,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         Biome biome = worldIn.getBiome(new BlockPos(this));
-        List<Biome> biomes = ImmutableList.of(Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU, Biomes.SHATTERED_SAVANNA, Biomes.SHATTERED_SAVANNA_PLATEAU);
+        Set<Biome> biomes = BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA);
         if (biomes.contains(biome)) setVariant(true);
 
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
