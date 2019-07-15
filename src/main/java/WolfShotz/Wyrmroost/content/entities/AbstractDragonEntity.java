@@ -20,6 +20,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
 {
     private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> ALBINO = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
@@ -41,8 +42,9 @@ public abstract class AbstractDragonEntity extends TameableEntity
     @Override
     protected void registerData() {
         super.registerData();
-        this.dataManager.register(GENDER, getRNG().nextBoolean());
-        this.dataManager.register(ASLEEP, false);
+        dataManager.register(GENDER, getRNG().nextBoolean());
+        dataManager.register(ASLEEP, false);
+        dataManager.register(ALBINO, getAlbinoChances() != 0 && getRNG().nextInt(getAlbinoChances()) == 0);
     }
 
     /** Save Game */
@@ -51,6 +53,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
         super.writeAdditional(compound);
         compound.putBoolean("Gender", getGender());
         compound.putBoolean("Asleep", isAsleep());
+        compound.putBoolean("Albino", isAlbino());
     }
 
     /** Load Game */
@@ -59,6 +62,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
         super.readAdditional(compound);
         setGender(compound.getBoolean("Gender"));
         setSleeping(compound.getBoolean("Asleep"));
+        setAlbino(compound.getBoolean("Albino"));
     }
 
     /** Whether or not the dragonEntity is asleep */
@@ -68,6 +72,10 @@ public abstract class AbstractDragonEntity extends TameableEntity
     /** Gets the Gender of the dragonEntity.<P> true = Male | false = Female. Anything else is an abomination. */
     public boolean getGender() { return dataManager.get(GENDER); }
     public void setGender(boolean sex) { dataManager.set(GENDER, sex); }
+
+    /** Whether or not this dragonEntity is albino. true == isAlbino, false == is not */
+    public boolean isAlbino() { return dataManager.get(ALBINO); }
+    public void setAlbino(boolean albino) { dataManager.set(ALBINO, albino); }
 
     /** Whether or not the dragonEntity is pissed or not. */
     public boolean isAngry() { return (this.dataManager.get(TAMED) & 2) != 0; }
@@ -90,4 +98,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
     /** @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation. */
     @Override
     public boolean shouldRiderSit() { return true; }
+
+    /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
+    public abstract int getAlbinoChances();
 }
