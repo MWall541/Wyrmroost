@@ -31,10 +31,9 @@ public class ItemModBook extends Item
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) { Wyrmroost.proxy.openScreen(new ScreenModBook()); }
 
-        return new ActionResult(ActionResultType.SUCCESS, stack);
+        return new ActionResult(ActionResultType.SUCCESS, player.getHeldItem(hand));
     }
 
     @Override

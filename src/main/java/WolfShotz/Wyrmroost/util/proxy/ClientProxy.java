@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.util.proxy;
 
-import WolfShotz.Wyrmroost.content.io.ScreenModBook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;

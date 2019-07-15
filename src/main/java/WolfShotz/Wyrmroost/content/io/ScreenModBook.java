@@ -9,38 +9,34 @@ import net.minecraft.util.ResourceLocation;
 
 public class ScreenModBook extends Screen
 {
-    private ResourceLocation ioLoc = ModUtils.location("textures/io/modbook/background.png");
-    private int pageNumber = 1;
+    private ResourceLocation ioLoc = ModUtils.location("textures/io/modbook/tome.png");
+    private int pageNumber = 0;
     private ChangePageButton next;
     private ChangePageButton back;
-
-    //TODO: PLACEHOLDER FOR updatePages() (We dont know the amount of pages yet...)
-    private int NUM_OF_PAGES = 10;
 
     public ScreenModBook() {
         super(ModUtils.translation("Tarragon Tome"));
     }
 
     @Override
-    protected void init() { addButtons(); }
+    protected void init() {
+        addButtons();
+        back.visible = false;
+    }
 
     private void addButtons() {
         addButton(new Button(width / 2 - 100, 196, 200, 20, ModUtils.format("io.modbook.close"), func -> minecraft.displayGuiScreen(null)));
         // Notes bcus its still obfuscated: ChangePageButton((int) x locale, (int) y locale, (boolean) true = right | false = left, (lambda) what does this button do?, (boolean) plays sound?)
-        next = addButton(new ChangePageButton(width / 2 + 80, 159, true, func -> updatePages(true), true));
-        back = addButton(new ChangePageButton(width / 2 - 93, 159, false, func -> updatePages(false), true));
+        next = addButton(new ChangePageButton(width / 2 + 100, 147, true, func -> updatePages(true), true));
+        back = addButton(new ChangePageButton(width / 2 - 124, 147, false, func -> updatePages(false), true));
     }
 
     private void updatePages(boolean increment) {
-        if (increment && pageNumber < NUM_OF_PAGES) ++pageNumber;
-        else if (pageNumber > 1) --pageNumber;
-        next.visible = pageNumber < NUM_OF_PAGES;
-        back.visible = pageNumber > 1;
-    }
-
-    @Override
-    public void onClose() {
-        super.onClose();
+        int numOfPages = 10; //TODO: PLACEHOLDER FOR updatePages() (We dont know the amount of pages yet...)
+        if (increment && pageNumber < numOfPages) ++pageNumber;
+        else if (pageNumber > 0) --pageNumber;
+        next.visible = pageNumber < numOfPages;
+        back.visible = pageNumber > 0;
     }
 
     @Override
@@ -48,7 +44,7 @@ public class ScreenModBook extends Screen
         renderBackground();
         GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);
         minecraft.getTextureManager().bindTexture(this.ioLoc);
-        minecraft.fontRenderer.drawString(Integer.toString(pageNumber), width / 2 + 90, 25, 0x000000);
+        blit((width - 256) / 2, 5, 0, 0, 256, 192);
         super.render(param1, param2, param3);
     }
 

@@ -20,7 +20,7 @@ public class ItemList
     /** Register all items in this list and initialize every value in SetupRegistryEvents */
     public static final List<Item> ITEMS = new ArrayList<>();
 
-    public static final Item itemmodbook = new ItemModBook("wyrmpedia");
+    public static final Item itemmodbook = new ItemModBook("tarragon_tome");
 
     // Geode start
     public static final Item itemgeode = new ItemBase("geode");
@@ -61,7 +61,9 @@ public class ItemList
 
 
 
-//  ======== Material Lists ========
+//  ===============================
+//          Material Lists
+//  ===============================
 
     /** Enum Handling the tool materials - Manages the mining speed, attck dmg, repair item etc. */
     protected enum ToolMaterialList implements IItemTier
@@ -154,7 +156,7 @@ public class ItemList
     private static class FoodList
     {
         // Jewelled Apple
-        private static Food jewelledapple = new Food.Builder()
+        private static final Food jewelledapple = new Food.Builder()
                                                     .hunger(8)
                                                     .saturation(0.8f)
                                                     .setAlwaysEdible()
@@ -165,7 +167,7 @@ public class ItemList
                                                     .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
                                                     .build();
         // Dragon Fruit
-        private static Food dragonfruit = new Food.Builder()
+        private static final Food dragonfruit = new Food.Builder()
                                                   .hunger(6)
                                                   .saturation(0.55f)
                                                   .build();
