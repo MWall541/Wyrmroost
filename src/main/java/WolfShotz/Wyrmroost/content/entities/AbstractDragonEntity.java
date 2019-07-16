@@ -1,16 +1,18 @@
 package WolfShotz.Wyrmroost.content.entities;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -18,6 +20,9 @@ import net.minecraft.world.World;
  */
 public abstract class AbstractDragonEntity extends TameableEntity
 {
+    private List<String> immunes = new ArrayList<>();
+
+    // Dragon Entity Data
     private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> ALBINO = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
@@ -27,7 +32,6 @@ public abstract class AbstractDragonEntity extends TameableEntity
         setTamed(false);
     }
 
-    /** AI > Goals. smh */
     @Override
     protected void registerGoals() {
         sitGoal = new SitGoal(this);
@@ -76,6 +80,8 @@ public abstract class AbstractDragonEntity extends TameableEntity
     /** Whether or not this dragonEntity is albino. true == isAlbino, false == is not */
     public boolean isAlbino() { return dataManager.get(ALBINO); }
     public void setAlbino(boolean albino) { dataManager.set(ALBINO, albino); }
+    /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
+    public abstract int getAlbinoChances();
 
     /** Whether or not the dragonEntity is pissed or not. */
     public boolean isAngry() { return (this.dataManager.get(TAMED) & 2) != 0; }
@@ -88,6 +94,16 @@ public abstract class AbstractDragonEntity extends TameableEntity
 
     // ================================
 
+    protected void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
+
+    public boolean isImmune(DamageSource source) {
+        if (immunes.isEmpty()) return false;
+        return immunes.contains(source.getDamageType());
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || isImmune(source); }
+
     @Override
     public void livingTick() {
         super.livingTick();
@@ -98,7 +114,4 @@ public abstract class AbstractDragonEntity extends TameableEntity
     /** @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation. */
     @Override
     public boolean shouldRiderSit() { return true; }
-
-    /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
-    public abstract int getAlbinoChances();
 }
