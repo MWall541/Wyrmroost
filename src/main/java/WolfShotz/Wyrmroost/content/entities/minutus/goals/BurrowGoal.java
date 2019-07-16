@@ -36,7 +36,7 @@ public class BurrowGoal extends Goal
         BlockPos pos = minutus.getPosition();
         for (int x = 0; x < 4; ++x) world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, world.getBlockState(pos.down(1))), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
         if (delay <= 0) {
-            minutus.setPosition(pos.getX() + 0.5, pos.getY() - 0.8, pos.getZ() + 0.5); //TODO: Perform animation with "illusion of movement"?
+//            minutus.setPosition(pos.getX() + 0.5, pos.getY() - 0.1, pos.getZ() + 0.5); //TODO: Perform animation with "illusion of movement"?
             minutus.setBurrowed(true);
         }
     }

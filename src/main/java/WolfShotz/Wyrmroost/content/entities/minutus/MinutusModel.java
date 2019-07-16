@@ -2,13 +2,15 @@ package WolfShotz.Wyrmroost.content.entities.minutus;
 
 import WolfShotz.Wyrmroost.util.animtools.BaseModel;
 import WolfShotz.Wyrmroost.util.animtools.BaseRenderer;
-import net.minecraft.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * WR Lesser Desertwyrm - Ukan
  * Created using Tabula 7.0.1
  */
-public class MinutusModel<T extends Entity> extends BaseModel<T> {
+@OnlyIn(Dist.CLIENT)
+public class MinutusModel<T extends MinutusEntity> extends BaseModel<T> {
     public BaseRenderer body1;
     public BaseRenderer body2;
     public BaseRenderer neck;
@@ -26,8 +28,8 @@ public class MinutusModel<T extends Entity> extends BaseModel<T> {
     public BaseRenderer head;
 
     public MinutusModel() {
-        this.textureWidth = 100;
-        this.textureHeight = 100;
+        this.textureWidth = 30;
+        this.textureHeight = 30;
         this.wingL = new BaseRenderer(this, 0, 22);
         this.wingL.setRotationPoint(0.5F, -0.7F, 2.0F);
         this.wingL.addBox(0.0F, -2.0F, 0.0F, 0, 2, 3, 0.0F);
@@ -94,6 +96,15 @@ public class MinutusModel<T extends Entity> extends BaseModel<T> {
         this.body1.addChild(this.body2);
         this.tail1.addChild(this.tail2);
         this.neck.addChild(this.jaw);
+
+        setDefaultPoses();
+    }
+
+    /** This is a helper function from Tabula to set the rotation of model parts */
+    public void setRotateAngle(BaseRenderer modelRenderer, float x, float y, float z) {
+        modelRenderer.rotateAngleX = x;
+        modelRenderer.rotateAngleY = y;
+        modelRenderer.rotateAngleZ = z;
     }
 
     @Override
@@ -101,12 +112,21 @@ public class MinutusModel<T extends Entity> extends BaseModel<T> {
         this.body1.render(f5);
     }
 
-    /**
-     * This is a helper function from Tabula to set the rotation of model parts
-     */
-    public void setRotateAngle(BaseRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+    @Override
+    public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
+        restorePoses();
+        float frame = entity.ticksExisted;
+
+        if(entity.isBurrowed()) {
+            body1.rotateAngleX = -0.8f;
+            body1.offsetY = 0.11f;
+            body2.rotateAngleX = 0.8f;
+            neck.rotateAngleX = -0.8f;
+
+            rotX(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
+            rotX(head, 0.45f - globalSpeed, 0.1f, true, 0, 0, frame, f);
+            moveY(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
+
+        }
     }
 }

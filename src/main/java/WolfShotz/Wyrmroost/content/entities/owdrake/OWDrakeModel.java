@@ -384,9 +384,7 @@ public class OWDrakeModel<T extends Entity> extends BaseModel<T>
     @Override
     public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         restorePoses();
-        float f = 0.5f;
         float frame = entityIn.ticksExisted;
-        float globalSpeed = 0.5f;
 
         //IDLE
         chainRotX(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);

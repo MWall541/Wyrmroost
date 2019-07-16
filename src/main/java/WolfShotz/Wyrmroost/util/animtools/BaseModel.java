@@ -6,6 +6,9 @@ import net.minecraft.util.math.MathHelper;
 
 public class BaseModel<T extends Entity> extends EntityModel<T>
 {
+    public float globalSpeed = 0.5f;
+    public float f = 0.5f;
+
     public void setDefaultPoses() {
         boxList.stream()
                 .filter(modelRenderer -> modelRenderer instanceof BaseRenderer)

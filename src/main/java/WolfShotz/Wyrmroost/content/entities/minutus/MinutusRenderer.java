@@ -16,7 +16,7 @@ public class MinutusRenderer extends AbstractDragonRenderer<MinutusEntity, Minut
     private ResourceLocation minutus = ModUtils.location(loc + "body.png");
     private ResourceLocation minutusAlb = ModUtils.location(loc + "body_alb.png");
 
-    public MinutusRenderer(EntityRendererManager manager) { super(manager, new MinutusModel(), 0.75f); }
+    public MinutusRenderer(EntityRendererManager manager) { super(manager, new MinutusModel(), 0); }
 
     @Nullable
     @Override
