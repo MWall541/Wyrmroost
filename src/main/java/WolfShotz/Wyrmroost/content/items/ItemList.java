@@ -3,7 +3,10 @@ package WolfShotz.Wyrmroost.content.items;
 import WolfShotz.Wyrmroost.content.entities.EntitySetup;
 import WolfShotz.Wyrmroost.content.items.base.*;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.item.Food;
+import net.minecraft.item.IArmorMaterial;
+import net.minecraft.item.IItemTier;
+import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -52,14 +55,13 @@ public class ItemList
 
     // Spawn Eggs start
     public static final Item itemegg_drake = new ItemSpawnEggBase("drake_egg", EntitySetup.overworld_drake, 0x15ff00, 0x085e00);
+    public static final Item itemegg_minutus = new ItemSpawnEggBase("desertwyrm_egg", EntitySetup.minutus, 0xfcc0ea, 0xfcd4f0);
     // Spawn Eggs end
 
     // Food start
     public static final Item itemfood_jewelledapple = new ItemFoodBase("jewelled_apple", FoodList.jewelledapple);
     public static final Item itemfood_dragonfruit = new ItemFoodBase("dragon_fruit", FoodList.dragonfruit);
     // Food end
-
-
 
 //  ===============================
 //          Material Lists

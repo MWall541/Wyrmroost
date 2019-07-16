@@ -1,9 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.entities.minutus.MinutusEntity;
+import WolfShotz.Wyrmroost.content.entities.minutus.MinutusRenderer;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeRenderer;
-import WolfShotz.Wyrmroost.setup.SetupRegistryEvents;
+import WolfShotz.Wyrmroost.event.SetupRegistryEvents;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
@@ -15,35 +17,33 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
  *
- * Class responsible for the setup and registration of entities, and their spawning.
+ * Class responsible for the event and registration of entities, and their spawning.
  * @see SetupRegistryEvents SetupRegistryEvents
  */
 public class EntitySetup
 {
     // Entity List Start
     public static final EntityType<?> overworld_drake = registerEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
+    public static final EntityType<?> minutus = registerEntity("lesser_desertwyrm", MinutusEntity::new, EntityClassification.CREATURE, 1f, 0.2f);
     // Entity List End
 
     /** Registers World Spawning for entities */
     public static void registerEntityWorldSpawns() {
         registerSpawning(overworld_drake, 10, 1, 3, EntityLocations.getDrake());
+        registerSpawning(minutus, 15, 1, 1, EntityLocations.getMinutus());
     }
-
 
     /** Registers Model Rendering and animation for entities */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
-        registerrender(OWDrakeEntity.class, OWDrakeRenderer::new);
+        registerRender(OWDrakeEntity.class, OWDrakeRenderer::new);
+        registerRender(MinutusEntity.class, MinutusRenderer::new);
     }
-
 
     // =========================================
     //      EntitySetup Helper Functions
@@ -51,7 +51,7 @@ public class EntitySetup
 
     /** Helper method for easier entity rendering registration */
     @OnlyIn(Dist.CLIENT)
-    private static <B extends Entity> void registerrender(Class<B> entity, IRenderFactory factory)
+    private static <B extends Entity> void registerRender(Class<B> entity, IRenderFactory factory)
         { RenderingRegistry.registerEntityRenderingHandler(entity, factory); }
 
     /** Helper method allowing for easier entity world spawning setting */
@@ -62,12 +62,13 @@ public class EntitySetup
     }
 
     /** Helper Function that turns this stupidly long line into something more nicer to look at */
-    private static <T extends Entity> EntityType<?> registerEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float x, float y)
-        { return EntityType.Builder.create(entity, classify).size(x, y).build(Wyrmroost.modID + ":" + name).setRegistryName(name); }
+    private static <T extends Entity> EntityType<?> registerEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float width, float height)
+        { return EntityType.Builder.create(entity, classify).size(width, height).build(Wyrmroost.modID + ":" + name).setRegistryName(name); }
 
     /** Immutable List containing all entity elements. Iterated in registryevents for cleaner registration */
     public static List<EntityType<?>> ENTITIES = ImmutableList.of(
-            overworld_drake
+            overworld_drake,
+            minutus
     );
 
     /**
@@ -83,6 +84,8 @@ public class EntitySetup
             drakeSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS));
             return drakeSpawns;
         }
+
+        private static Set<Biome> getMinutus() { return BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY); }
     }
 
 }
