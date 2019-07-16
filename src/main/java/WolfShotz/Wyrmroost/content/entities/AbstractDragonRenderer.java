@@ -12,4 +12,5 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         super(manager, model, shadowSize);
     }
 
+
 }

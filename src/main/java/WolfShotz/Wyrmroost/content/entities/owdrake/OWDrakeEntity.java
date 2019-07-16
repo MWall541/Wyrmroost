@@ -73,11 +73,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean getVariant() { return dataManager.get(VARIANT); }
     public void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
 
-    // ================================
-
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
     public int getAlbinoChances() { return 50; }
+
+    // ================================
 
     @Nullable
     @Override

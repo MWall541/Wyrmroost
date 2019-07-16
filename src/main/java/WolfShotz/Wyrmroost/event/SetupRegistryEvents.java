@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.setup;
+package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.content.blocks.BlockList;
 import WolfShotz.Wyrmroost.content.entities.EntitySetup;

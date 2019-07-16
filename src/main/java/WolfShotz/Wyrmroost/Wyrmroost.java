@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.entities.EntitySetup;
 import WolfShotz.Wyrmroost.content.items.ItemList;
-import WolfShotz.Wyrmroost.setup.SetupOreGen;
+import WolfShotz.Wyrmroost.event.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
 import WolfShotz.Wyrmroost.util.proxy.IProxy;
@@ -32,7 +32,7 @@ public class Wyrmroost
     private void setup(final FMLCommonSetupEvent event) {
         SetupOreGen.setupOreGen();
 
-        ModUtils.L.debug("setup complete");
+        ModUtils.L.debug("event complete");
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
