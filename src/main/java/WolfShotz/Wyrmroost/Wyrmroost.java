@@ -15,7 +15,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@Mod("wyrmroost")
+@Mod(Wyrmroost.modID)
 public class Wyrmroost
 {
     public static final String modID = "wyrmroost";
@@ -32,7 +32,7 @@ public class Wyrmroost
     private void setup(final FMLCommonSetupEvent event) {
         SetupOreGen.setupOreGen();
 
-        ModUtils.L.debug("event complete");
+        ModUtils.L.debug("setup complete");
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
