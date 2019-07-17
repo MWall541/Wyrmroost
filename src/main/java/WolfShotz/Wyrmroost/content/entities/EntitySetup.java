@@ -29,7 +29,7 @@ public class EntitySetup
 {
     // Entity List Start
     public static final EntityType<?> overworld_drake = registerEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
-    public static final EntityType<?> minutus = registerEntity("lesser_desertwyrm", MinutusEntity::new, EntityClassification.CREATURE, 1f, 0.2f);
+    public static final EntityType<?> minutus = registerEntity("lesser_desertwyrm", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
     // Entity List End
 
     /** Registers World Spawning for entities */
