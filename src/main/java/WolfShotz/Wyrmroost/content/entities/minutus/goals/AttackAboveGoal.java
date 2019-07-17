@@ -16,7 +16,7 @@ public class AttackAboveGoal extends Goal
 {
     private final Predicate<Entity> predicateFilter =
             filter -> filter instanceof FishingBobberEntity ||
-                              (filter instanceof LivingEntity && filter.getSize(filter.getPose()).width < 0.6f && filter.getSize(filter.getPose()).height < 0.85f);
+                              (filter instanceof LivingEntity && filter.getSize(filter.getPose()).width < 0.9f && filter.getSize(filter.getPose()).height < 0.9f);
     private MinutusEntity minutus;
     private Entity entity;
 
@@ -35,7 +35,14 @@ public class AttackAboveGoal extends Goal
     public boolean shouldContinueExecuting() { return false; }
 
     @Override
-    public void startExecuting() { minutus.attackEntityAsMob(entity); }
+    public void startExecuting() {
+        if (entity instanceof FishingBobberEntity) {
+            entity.remove();
+            minutus.setBurrowed(false);
+            minutus.setMotion(0, 0.8, 0);
+        }
+        else minutus.attackEntityAsMob(entity);
+    }
 
     private boolean hasValidEntityAbove() {
         AxisAlignedBB aabb = minutus.getBoundingBox().expand(0, 2, 0).grow(0.5, 0, 0.5);
