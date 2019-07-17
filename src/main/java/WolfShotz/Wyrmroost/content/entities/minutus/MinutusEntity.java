@@ -3,9 +3,9 @@ package WolfShotz.Wyrmroost.content.entities.minutus;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.AttackAboveGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.BurrowGoal;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import WolfShotz.Wyrmroost.content.entities.minutus.goals.RunAwayGoal;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -29,8 +29,9 @@ public class MinutusEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, new BurrowGoal(this));
-        goalSelector.addGoal(3, new AttackAboveGoal(this));
+        goalSelector.addGoal(2, new RunAwayGoal<>(this, LivingEntity.class));
+        goalSelector.addGoal(3, new BurrowGoal(this));
+        goalSelector.addGoal(4, new AttackAboveGoal(this));
 
     }
 
@@ -72,7 +73,24 @@ public class MinutusEntity extends AbstractDragonEntity
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
     public int getAlbinoChances() { return 25; }
+
     // ================================
+
+
+    @Override
+    public void livingTick() {
+        super.livingTick();
+        if (isBurrowed() && world.getBlockState(getPosition().down(1)).getMaterial() == Material.AIR) setBurrowed(false);
+    }
+
+    @Override
+    public boolean canBePushed() { return !isBurrowed(); }
+
+    @Override
+    public boolean canBeCollidedWith() { return !isBurrowed(); }
+
+    @Override
+    protected void collideWithEntity(Entity entityIn) { if (!isBurrowed()) super.collideWithEntity(entityIn); }
 
     @Nullable
     @Override
