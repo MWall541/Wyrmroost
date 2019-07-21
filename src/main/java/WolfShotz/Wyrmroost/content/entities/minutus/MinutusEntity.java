@@ -4,14 +4,20 @@ import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.AttackAboveGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.BurrowGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.RunAwayGoal;
+import WolfShotz.Wyrmroost.content.entities.minutus.goals.WalkRandom;
+import WolfShotz.Wyrmroost.event.ItemSetup;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -32,6 +38,7 @@ public class MinutusEntity extends AbstractDragonEntity
         goalSelector.addGoal(2, new RunAwayGoal<>(this, LivingEntity.class));
         goalSelector.addGoal(3, new BurrowGoal(this));
         goalSelector.addGoal(4, new AttackAboveGoal(this));
+        goalSelector.addGoal(5, new WalkRandom(this));
 
     }
 
@@ -81,6 +88,23 @@ public class MinutusEntity extends AbstractDragonEntity
     public void livingTick() {
         super.livingTick();
         if (isBurrowed() && world.getBlockState(getPosition().down(1)).getMaterial() == Material.AIR) setBurrowed(false);
+    }
+
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.isEmpty()) {
+            ItemEntity drop = new ItemEntity(world, posX, posY + 0.5d, posZ, new ItemStack(ItemSetup.itemgeode)); //TODO: Placeholder
+            double d0 = player.posX - this.posX;
+            double d1 = player.posY - this.posY;
+            double d2 = player.posZ - this.posZ;
+            drop.setMotion(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
+            world.addEntity(drop);
+            remove();
+            return true;
+        }
+
+        return super.processInteract(player, hand);
     }
 
     @Override
