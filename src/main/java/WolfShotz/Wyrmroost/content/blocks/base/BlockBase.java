@@ -1,40 +1,31 @@
-package WolfShotz.Wyrmroost.content.blocks;
+package WolfShotz.Wyrmroost.content.blocks.base;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.items.ItemList;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /** Blockbase - Helper Class allowing for easier block registration */
-class BlockBase extends Block
+public class BlockBase extends Block
 {
-    private boolean isBeaconBase = false;
+    private boolean isBeaconBase;
 
     /**
-     * @param name The Resource Location
+     * @param name The internal name
      * @param material Material the block is
-     * @param toughness How hard and how resistant the block is
-     * @param sound the sound the block makes
+     * @param tool ToolType it takes to break this block
+     * @param harvestLevel Tool level it takes to break this block
+     * @param toughness The Resistance and hardness of the block
+     * @param sound The sound the block makes
      */
-    BlockBase(String name, Material material, ToolType tool, int harvestLevel, float toughness, SoundType sound) {
-        super(Block.Properties
-                      .create(material)
-                      .harvestTool(tool)
-                      .harvestLevel(harvestLevel)
-                      .hardnessAndResistance(toughness)
-                      .sound(sound)
-        );
-        setRegistryName(name);
-
-        BlockList.BLOCKS.add(this);
-        ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(Wyrmroost.creativeTab)).setRegistryName(name));
+    public BlockBase(String name, Material material, ToolType tool, int harvestLevel, float toughness, SoundType sound) {
+        this(name, material, tool, harvestLevel, toughness, toughness, 0, sound, false);
     }
 
     /**
@@ -47,7 +38,7 @@ class BlockBase extends Block
      * @param sound The sound the block makes
      * @param isBeaconBase Does this block work with beacons?
      */
-    BlockBase(String name, Material material, ToolType tool, int harvestLevel, float hardness, float resistance, int light, SoundType sound, boolean isBeaconBase) {
+    public BlockBase(String name, Material material, ToolType tool, int harvestLevel, float hardness, float resistance, int light, SoundType sound, boolean isBeaconBase) {
         super(Block.Properties
                       .create(material)
                       .harvestTool(tool)
@@ -59,8 +50,7 @@ class BlockBase extends Block
         setRegistryName(name);
         this.isBeaconBase = isBeaconBase;
 
-        BlockList.BLOCKS.add(this);
-        ItemList.ITEMS.add(new BlockItem(this, new Item.Properties().group(Wyrmroost.creativeTab)).setRegistryName(name));
+        ForgeRegistries.ITEMS.register(new BlockItem(this, ModUtils.itemBuilder()).setRegistryName(name));
     }
 
     @Override

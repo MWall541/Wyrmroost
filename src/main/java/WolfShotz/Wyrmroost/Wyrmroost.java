@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.content.entities.EntitySetup;
-import WolfShotz.Wyrmroost.content.items.ItemList;
+import WolfShotz.Wyrmroost.event.EntitySetup;
+import WolfShotz.Wyrmroost.event.ItemSetup;
 import WolfShotz.Wyrmroost.event.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
@@ -19,9 +19,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class Wyrmroost
 {
     public static final String modID = "wyrmroost";
+    public static final ItemGroup creativeTab = new CreativeTab();
 
     public static final IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
-    public static final ItemGroup creativeTab = new CreativeTab();
 
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -46,7 +46,7 @@ public class Wyrmroost
         private CreativeTab() { super("wyrmroost"); }
 
         @Override
-        public ItemStack createIcon() { return new ItemStack(ItemList.itemgeode); }
+        public ItemStack createIcon() { return new ItemStack(ItemSetup.itemgeode); }
     }
 
 }

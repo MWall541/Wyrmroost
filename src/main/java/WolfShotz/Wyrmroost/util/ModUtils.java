@@ -2,16 +2,26 @@ package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -64,4 +74,27 @@ public class ModUtils
      * @param text
      */
     public static String clean(String text) { return text.replace(" ", ""); }
+
+
+    public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
+
+    // ================================
+    //   EntitySetup Helper Functions
+    // ================================
+
+    /** Helper Function that turns this stupidly long line into something more nicer to look at */
+    public static <T extends Entity> EntityType<?> buildEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float width, float height)
+    { return EntityType.Builder.create(entity, classify).size(width, height).build(Wyrmroost.modID + ":" + name).setRegistryName(name); }
+
+    /** Helper method for easier entity rendering registration */
+    @OnlyIn(Dist.CLIENT)
+    public static <B extends Entity> void registerRender(Class<B> entity, IRenderFactory factory)
+    { RenderingRegistry.registerEntityRenderingHandler(entity, factory); }
+
+    /** Helper method allowing for easier entity world spawning setting */
+    public static void registerSpawning(EntityType<?> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes) {
+        biomes.stream()
+                .filter(Objects::nonNull)
+                .forEach(biome -> biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
+    }
 }

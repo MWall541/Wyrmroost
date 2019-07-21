@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.event;
 
-import WolfShotz.Wyrmroost.content.blocks.BlockList;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.biome.Biome;
@@ -18,8 +17,8 @@ public class SetupOreGen
 
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            registerOreEntry(biome, BlockList.blockgeodeore.getDefaultState(), 8, geodeConfig);
-            registerOreEntry(biome, BlockList.blockplatinumore.getDefaultState(), 9, platinumConfig);
+            registerOreEntry(biome, BlockSetup.blockgeodeore.getDefaultState(), 8, geodeConfig);
+            registerOreEntry(biome, BlockSetup.blockplatinumore.getDefaultState(), 9, platinumConfig);
         }
 
         ModUtils.L.debug("Oregen Registry Complete");

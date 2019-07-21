@@ -25,15 +25,13 @@ public class ItemModBook extends Item
     public ItemModBook(String name) {
         super(new Item.Properties().maxStackSize(1).group(Wyrmroost.creativeTab));
         setRegistryName(name);
-
-        ItemList.ITEMS.add(this);
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         if (world.isRemote) { Wyrmroost.proxy.openScreen(new ScreenModBook()); }
 
-        return new ActionResult(ActionResultType.SUCCESS, player.getHeldItem(hand));
+        return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
     }
 
     @Override

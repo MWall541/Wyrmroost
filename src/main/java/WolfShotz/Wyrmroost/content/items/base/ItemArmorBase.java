@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.items.base;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.items.ItemList;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
@@ -16,8 +15,6 @@ public class ItemArmorBase extends ArmorItem
     public ItemArmorBase(String name, IArmorMaterial material, EquipmentSlotType equipType) {
         super(material, equipType, new Item.Properties().group(Wyrmroost.creativeTab));
         setRegistryName(name);
-
-        ItemList.ITEMS.add(this);
     }
 
     @Nullable

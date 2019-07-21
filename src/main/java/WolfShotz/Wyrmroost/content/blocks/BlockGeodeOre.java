@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
+import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -10,9 +11,9 @@ import net.minecraftforge.common.ToolType;
 
 import java.util.Random;
 
-class BlockGeodeOre extends BlockBase
+public class BlockGeodeOre extends BlockBase
 {
-    BlockGeodeOre(String name) { super(name, Material.ROCK, ToolType.PICKAXE, 2, 3, SoundType.STONE); }
+    public BlockGeodeOre(String name) { super(name, Material.ROCK, ToolType.PICKAXE, 2, 3, SoundType.STONE); }
 
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) { return silktouch == 0 ? MathHelper.nextInt(new Random(), 3, 7) : 0; }
