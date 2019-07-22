@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.io.ScreenModBook;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -29,7 +30,7 @@ public class ItemModBook extends Item
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        if (world.isRemote) { Wyrmroost.proxy.openScreen(new ScreenModBook()); }
+        if (world.isRemote) Minecraft.getInstance().displayGuiScreen(new ScreenModBook());
 
         return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
     }
