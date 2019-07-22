@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities;
 
+import WolfShotz.Wyrmroost.content.entities.ai.SleepGoal;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -36,7 +37,8 @@ public abstract class AbstractDragonEntity extends TameableEntity
     protected void registerGoals() {
         sitGoal = new SitGoal(this);
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, sitGoal);
+        goalSelector.addGoal(2, new SleepGoal(this));
+        goalSelector.addGoal(3, sitGoal);
     }
 
 
@@ -65,13 +67,13 @@ public abstract class AbstractDragonEntity extends TameableEntity
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
         setGender(compound.getBoolean("Gender"));
-        setSleeping(compound.getBoolean("Asleep"));
+        setAsleep(compound.getBoolean("Asleep"));
         setAlbino(compound.getBoolean("Albino"));
     }
 
     /** Whether or not the dragonEntity is asleep */
     public boolean isAsleep() { return dataManager.get(ASLEEP); }
-    public void setSleeping(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
+    public void setAsleep(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
 
     /** Gets the Gender of the dragonEntity.<P> true = Male | false = Female. Anything else is an abomination. */
     public boolean getGender() { return dataManager.get(GENDER); }
@@ -107,8 +109,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
     @Override
     public void livingTick() {
         super.livingTick();
-        if (!isSleeping() && !world.isDaytime() && !isAngry() && !hasPath()) setSleeping(true);
-        else if (isSleeping() && world.isDaytime()) setSleeping(false);
+        if (isAsleep() && world.isDaytime()) setAsleep(false);
     }
 
     /** @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation. */

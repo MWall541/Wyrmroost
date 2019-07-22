@@ -33,9 +33,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(3, new EatGrassGoal(this));
-        goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 1.0d));
-        goalSelector.addGoal(5, new LookRandomlyGoal(this));
+        goalSelector.addGoal(4, new EatGrassGoal(this));
+        goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0d));
+        goalSelector.addGoal(6, new LookRandomlyGoal(this));
     }
 
     @Override

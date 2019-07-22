@@ -4,14 +4,9 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.animtools.BaseModel;
 import WolfShotz.Wyrmroost.util.animtools.BaseRenderer;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * WR Overworld Drake - Ukan
@@ -76,8 +71,7 @@ public class OWDrakeModel<T extends Entity> extends BaseModel<T>
     public BaseRenderer claw22R;
     public BaseRenderer claw12R;
 
-    private BaseRenderer[] headArray;
-    private BaseRenderer[] tailArray;
+    private BaseRenderer[] headArray, tailArray;
 
     public OWDrakeModel() {
         this.textureWidth = 200;
@@ -367,7 +361,7 @@ public class OWDrakeModel<T extends Entity> extends BaseModel<T>
     }
 
     /** This is a helper function from Tabula to set the rotation of model parts */
-    public void setRotateAngle(BaseRenderer modelRenderer, float x, float y, float z) {
+    private void setRotateAngle(BaseRenderer modelRenderer, float x, float y, float z) {
         modelRenderer.rotateAngleX = x;
         modelRenderer.rotateAngleY = y;
         modelRenderer.rotateAngleZ = z;
@@ -385,8 +379,15 @@ public class OWDrakeModel<T extends Entity> extends BaseModel<T>
     public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         restorePoses();
         float frame = entityIn.ticksExisted;
+        OWDrakeEntity drake = (OWDrakeEntity) entityIn;
 
-        //IDLE
+        // SCHLEEPING:
+        if (drake.isAsleep()) {
+
+            return;
+        }
+
+        // IDLE:
         chainRotX(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         rotX(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
 
@@ -394,6 +395,8 @@ public class OWDrakeModel<T extends Entity> extends BaseModel<T>
 
         chainRotX(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainRotY(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
+
+
     }
 
 }
