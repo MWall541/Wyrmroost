@@ -11,12 +11,9 @@ public class ScreenModBook extends Screen
 {
     private ResourceLocation ioLoc = ModUtils.location("textures/io/modbook/tome.png");
     private int pageNumber = 0;
-    private ChangePageButton next;
-    private ChangePageButton back;
+    private ChangePageButton next, back;
 
-    public ScreenModBook() {
-        super(ModUtils.translation("Tarragon Tome"));
-    }
+    public ScreenModBook() { super(ModUtils.translation("Tarragon Tome")); }
 
     @Override
     protected void init() {

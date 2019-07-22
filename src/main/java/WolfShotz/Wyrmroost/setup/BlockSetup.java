@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.setup;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
@@ -12,9 +12,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BlockSetup

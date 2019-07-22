@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.setup;
 
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;

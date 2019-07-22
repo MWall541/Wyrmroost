@@ -24,9 +24,8 @@ public class BlockBase extends Block
      * @param toughness The Resistance and hardness of the block
      * @param sound The sound the block makes
      */
-    public BlockBase(String name, Material material, ToolType tool, int harvestLevel, float toughness, SoundType sound) {
-        this(name, material, tool, harvestLevel, toughness, toughness, 0, sound, false);
-    }
+    public BlockBase(String name, Material material, ToolType tool, int harvestLevel, float toughness, SoundType sound)
+        { this(name, material, tool, harvestLevel, toughness, toughness, 0, sound, false); }
 
     /**
      * Constructor used for more advanced block properties

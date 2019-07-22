@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.event.EntitySetup;
-import WolfShotz.Wyrmroost.event.ItemSetup;
-import WolfShotz.Wyrmroost.event.SetupOreGen;
+import WolfShotz.Wyrmroost.setup.EntitySetup;
+import WolfShotz.Wyrmroost.setup.ItemSetup;
+import WolfShotz.Wyrmroost.setup.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
 import WolfShotz.Wyrmroost.util.proxy.IProxy;

@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.minutus.goals.AttackAboveGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.BurrowGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.RunAwayGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.WalkRandom;
-import WolfShotz.Wyrmroost.event.ItemSetup;
+import WolfShotz.Wyrmroost.setup.ItemSetup;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SwimGoal;

@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.setup;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.items.ItemModBook;
