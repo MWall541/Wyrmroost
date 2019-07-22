@@ -21,11 +21,13 @@ public class Wyrmroost
     public static final String modID = "wyrmroost";
     public static final ItemGroup creativeTab = new CreativeTab();
 
-    public static final IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static IProxy proxy;
 
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+
+        proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     }
 

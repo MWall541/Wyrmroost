@@ -94,13 +94,20 @@ public class MinutusEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
-            ItemEntity drop = new ItemEntity(world, posX, posY + 0.5d, posZ, new ItemStack(ItemSetup.itemgeode)); //TODO: Placeholder
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.putBoolean("isalive", true);
+            ItemStack newDrop = new ItemStack(ItemSetup.itemdesertwyrm);
+            newDrop.setTag(nbt);
+
+            ItemEntity drop = new ItemEntity(world, posX, posY + 0.5d, posZ, newDrop);
             double d0 = player.posX - this.posX;
             double d1 = player.posY - this.posY;
             double d2 = player.posZ - this.posZ;
             drop.setMotion(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
             world.addEntity(drop);
+
             remove();
+
             return true;
         }
 

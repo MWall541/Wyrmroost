@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.items.ItemModBook;
+import WolfShotz.Wyrmroost.content.items.ItemWorm;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -31,6 +32,9 @@ public class ItemSetup
 
     @ObjectHolder(Wyrmroost.modID + ":dragon_fruit")
     public static Item itemfood_dragonfruit;
+
+    @ObjectHolder(Wyrmroost.modID + ":desertwyrm")
+    public static Item itemdesertwyrm;
 
     // Geode start
     @ObjectHolder(Wyrmroost.modID + ":geode")
@@ -104,8 +108,9 @@ public class ItemSetup
 
     @SubscribeEvent
     public static void itemSetup(RegistryEvent.Register<Item> event) {
-        event.getRegistry().registerAll(
+        event.getRegistry().registerAll (
                 itemmodbook = new ItemModBook("tarragon_tome"),
+                itemdesertwyrm = new ItemWorm(),
 
                 itemfood_jewelledapple = new Item(ModUtils.itemBuilder().food(FoodList.jewelledapple)).setRegistryName("jewelled_apple"),
                 itemfood_dragonfruit = new Item(ModUtils.itemBuilder().food(FoodList.dragonfruit)).setRegistryName("dragon_fruit"),

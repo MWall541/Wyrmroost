@@ -1,0 +1,12 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "wyrmroost:item/worm"
+    },
+    "overrides": [
+        {
+            "predicate": { "isalive": 1 },
+            "model": "wyrmroost:item/worm_alive"
+        }
+    ]
+}
