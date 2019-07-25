@@ -8,6 +8,7 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 
 /**
@@ -49,9 +50,19 @@ minecraft {
     }
 }
 
+repositories {
+    
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
+}
+
 dependencies {
 
     minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
+
+    compile "citadel:citadel:${project.citadel_version}:deobf"
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

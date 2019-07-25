@@ -10,7 +10,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-public class MinutusRenderer extends AbstractDragonRenderer<MinutusEntity, MinutusModel<MinutusEntity>>
+public class MinutusRenderer extends AbstractDragonRenderer<MinutusEntity>
 {
     private String loc = DEF_LOC + "minutus/";
     private ResourceLocation minutus = ModUtils.location(loc + "body.png");

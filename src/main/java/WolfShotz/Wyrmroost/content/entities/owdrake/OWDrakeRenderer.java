@@ -1,8 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
+import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -11,7 +13,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDrakeModel<OWDrakeEntity>>
+public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 {
     private String loc = DEF_LOC + "owdrake/";
     private ResourceLocation maleCom = ModUtils.location(loc + "male_com.png");
@@ -23,7 +25,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
     // Easter Egg
     private ResourceLocation daisy = ModUtils.location(loc + "dasy.png");
 
-    public OWDrakeRenderer(EntityRendererManager manager) { super(manager, new OWDrakeModel<>(), 1.6f); }
+    public OWDrakeRenderer(EntityRendererManager manager) { super(manager, new OWDrakeModel(), 1.6f); }
 
     @Nullable
     @Override

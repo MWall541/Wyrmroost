@@ -1,7 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.minutus;
 
-import WolfShotz.Wyrmroost.util.animtools.BaseModel;
-import WolfShotz.Wyrmroost.util.animtools.BaseRenderer;
+import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
+import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -10,75 +11,75 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * Created using Tabula 7.0.1
  */
 @OnlyIn(Dist.CLIENT)
-public class MinutusModel<T extends MinutusEntity> extends BaseModel<T> {
-    public BaseRenderer body1;
-    public BaseRenderer body2;
-    public BaseRenderer neck;
-    public BaseRenderer leg1;
-    public BaseRenderer leg1_1;
-    public BaseRenderer wingL;
-    public BaseRenderer wingR;
-    public BaseRenderer body3;
-    public BaseRenderer body4;
-    public BaseRenderer body5;
-    public BaseRenderer tail1;
-    public BaseRenderer tail2;
-    public BaseRenderer tail3;
-    public BaseRenderer jaw;
-    public BaseRenderer head;
+public class MinutusModel extends AdvancedEntityModel {
+    public AdvancedRendererModel body1;
+    public AdvancedRendererModel body2;
+    public AdvancedRendererModel neck;
+    public AdvancedRendererModel leg1;
+    public AdvancedRendererModel leg1_1;
+    public AdvancedRendererModel wingL;
+    public AdvancedRendererModel wingR;
+    public AdvancedRendererModel body3;
+    public AdvancedRendererModel body4;
+    public AdvancedRendererModel body5;
+    public AdvancedRendererModel tail1;
+    public AdvancedRendererModel tail2;
+    public AdvancedRendererModel tail3;
+    public AdvancedRendererModel jaw;
+    public AdvancedRendererModel head;
 
     public MinutusModel() {
         this.textureWidth = 30;
         this.textureHeight = 30;
-        this.wingL = new BaseRenderer(this, 0, 22);
+        this.wingL = new AdvancedRendererModel(this, 0, 22);
         this.wingL.setRotationPoint(0.5F, -0.7F, 2.0F);
         this.wingL.addBox(0.0F, -2.0F, 0.0F, 0, 2, 3, 0.0F);
         this.setRotateAngle(wingL, 0.6829473363053812F, 0.0F, 0.5462880558742251F);
-        this.body5 = new BaseRenderer(this, 0, 0);
+        this.body5 = new AdvancedRendererModel(this, 0, 0);
         this.body5.setRotationPoint(-0.02F, -0.02F, 3.0F);
         this.body5.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 4, 0.0F);
-        this.tail3 = new BaseRenderer(this, 0, 17);
+        this.tail3 = new AdvancedRendererModel(this, 0, 17);
         this.tail3.setRotationPoint(0.0F, 0.0F, 3.0F);
         this.tail3.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 4, 0.0F);
-        this.leg1_1 = new BaseRenderer(this, 18, 22);
+        this.leg1_1 = new AdvancedRendererModel(this, 18, 22);
         this.leg1_1.setRotationPoint(-0.7F, 0.0F, 0.5F);
         this.leg1_1.addBox(-2.0F, -0.5F, -0.5F, 2, 1, 1, 0.0F);
         this.setRotateAngle(leg1_1, 0.0F, 0.0F, -0.40980330836826856F);
-        this.body1 = new BaseRenderer(this, 0, 9);
+        this.body1 = new AdvancedRendererModel(this, 0, 9);
         this.body1.setRotationPoint(0.02F, 23.0F, -5.5F);
         this.body1.addBox(-1.0F, -1.0F, -2.0F, 2, 2, 4, 0.0F);
-        this.body4 = new BaseRenderer(this, 0, 0);
+        this.body4 = new AdvancedRendererModel(this, 0, 0);
         this.body4.setRotationPoint(0.02F, 0.02F, 3.0F);
         this.body4.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 4, 0.0F);
-        this.neck = new BaseRenderer(this, 16, 0);
+        this.neck = new AdvancedRendererModel(this, 16, 0);
         this.neck.setRotationPoint(-0.02F, 0.02F, -1.0F);
         this.neck.addBox(-1.0F, -1.0F, -3.0F, 2, 2, 3, 0.0F);
         this.setRotateAngle(neck, -0.5918411493512771F, 0.0F, 0.0F);
-        this.body3 = new BaseRenderer(this, 0, 0);
+        this.body3 = new AdvancedRendererModel(this, 0, 0);
         this.body3.setRotationPoint(-0.02F, -0.02F, 3.0F);
         this.body3.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 4, 0.0F);
-        this.wingR = new BaseRenderer(this, 0, 22);
+        this.wingR = new AdvancedRendererModel(this, 0, 22);
         this.wingR.setRotationPoint(-0.5F, -0.7F, 2.0F);
         this.wingR.addBox(0.0F, -2.0F, 0.0F, 0, 2, 3, 0.0F);
         this.setRotateAngle(wingR, 0.6829473363053812F, 0.0F, -0.5462880558742251F);
-        this.head = new BaseRenderer(this, 18, 14);
+        this.head = new AdvancedRendererModel(this, 18, 14);
         this.head.setRotationPoint(0.02F, -0.6F, -2.5F);
         this.head.addBox(-1.0F, -0.5F, -3.0F, 2, 1, 3, 0.0F);
         this.setRotateAngle(head, -0.27314402793711257F, 0.0F, 0.0F);
-        this.tail1 = new BaseRenderer(this, 0, 9);
+        this.tail1 = new AdvancedRendererModel(this, 0, 9);
         this.tail1.setRotationPoint(0.0F, 0.02F, 3.0F);
         this.tail1.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 4, 0.0F);
-        this.leg1 = new BaseRenderer(this, 18, 22);
+        this.leg1 = new AdvancedRendererModel(this, 18, 22);
         this.leg1.setRotationPoint(0.7F, 0.0F, 0.5F);
         this.leg1.addBox(0.0F, -0.5F, -0.5F, 2, 1, 1, 0.0F);
         this.setRotateAngle(leg1, 0.0F, 0.0F, 0.40980330836826856F);
-        this.body2 = new BaseRenderer(this, 0, 0);
+        this.body2 = new AdvancedRendererModel(this, 0, 0);
         this.body2.setRotationPoint(0.02F, 0.02F, 1.0F);
         this.body2.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 4, 0.0F);
-        this.tail2 = new BaseRenderer(this, 0, 9);
+        this.tail2 = new AdvancedRendererModel(this, 0, 9);
         this.tail2.setRotationPoint(0.02F, 0.02F, 3.0F);
         this.tail2.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 4, 0.0F);
-        this.jaw = new BaseRenderer(this, 18, 7);
+        this.jaw = new AdvancedRendererModel(this, 18, 7);
         this.jaw.setRotationPoint(0.02F, 0.6F, -2.2F);
         this.jaw.addBox(-1.0F, -0.5F, -3.0F, 2, 1, 3, 0.0F);
         this.setRotateAngle(jaw, 0.5009094953223726F, 0.0F, 0.0F);
@@ -97,36 +98,30 @@ public class MinutusModel<T extends MinutusEntity> extends BaseModel<T> {
         this.tail1.addChild(this.tail2);
         this.neck.addChild(this.jaw);
 
-        setDefaultPoses();
+        updateDefaultPose();
     }
 
-    /** This is a helper function from Tabula to set the rotation of model parts */
-    public void setRotateAngle(BaseRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
-    }
+    private float globalSpeed = 0.5f;
+    private float f = 0.5f;
 
     @Override
-    public void render(T entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        this.body1.render(f5);
-    }
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) { this.body1.render(scale); }
 
     @Override
-    public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
-        restorePoses();
+    public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
+        resetToDefaultPose();
         float frame = entity.ticksExisted;
+        MinutusEntity minutus = (MinutusEntity) entity;
 
-        if(entity.isBurrowed()) {
+        if(minutus.isBurrowed()) {
             body1.rotateAngleX = -0.8f;
             body1.offsetY = 0.11f;
             body2.rotateAngleX = 0.8f;
             neck.rotateAngleX = -0.8f;
 
-            rotX(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
-            rotX(head, 0.45f - globalSpeed, 0.1f, true, 0, 0, frame, f);
-            moveY(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
-
+            walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
+            walk(head, 0.45f - globalSpeed, 0.1f, true, 0, 0, frame, f);
+            bob(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
         }
     }
 }
