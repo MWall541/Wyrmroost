@@ -34,7 +34,7 @@ public class BlockSetup
                 blockplatinumore = new BlockBase("platinum_ore", Material.ROCK, ToolType.PICKAXE, 1, 3, SoundType.STONE),
                 blockplatinum = new BlockBase("platinum_block", Material.IRON, ToolType.PICKAXE, 1, 5, 5, 1, SoundType.METAL, true),
 
-                blockgeodeore = new BlockGeodeOre("geode_ore"),
+                blockgeodeore = new BlockGeodeOre(),
                 blockgeode = new BlockBase("geode_block", Material.IRON, ToolType.PICKAXE, 2, 5, 5, 1, SoundType.METAL, true)
         );
 

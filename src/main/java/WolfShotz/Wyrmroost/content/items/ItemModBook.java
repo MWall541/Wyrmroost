@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.io.ScreenModBook;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +24,7 @@ import java.util.List;
 public class ItemModBook extends Item
 {
     public ItemModBook(String name) {
-        super(new Item.Properties().maxStackSize(1).group(Wyrmroost.creativeTab));
+        super(ModUtils.itemBuilder().maxStackSize(1));
         setRegistryName(name);
     }
 

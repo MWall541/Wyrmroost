@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.setup;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.items.ItemMinutus;
 import WolfShotz.Wyrmroost.content.items.ItemModBook;
-import WolfShotz.Wyrmroost.content.items.ItemWorm;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -33,8 +33,11 @@ public class ItemSetup
     @ObjectHolder(Wyrmroost.modID + ":dragon_fruit")
     public static Item itemfood_dragonfruit;
 
-    @ObjectHolder(Wyrmroost.modID + ":desertwyrm")
-    public static Item itemdesertwyrm;
+    @ObjectHolder(Wyrmroost.modID + ":minutus")
+    public static Item itemminutus;
+
+    @ObjectHolder(Wyrmroost.modID + ":cooked_minutus")
+    public static Item itemfood_cookedminutus;
 
     // Geode start
     @ObjectHolder(Wyrmroost.modID + ":geode")
@@ -110,14 +113,15 @@ public class ItemSetup
     public static void itemSetup(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll (
                 itemmodbook = new ItemModBook("tarragon_tome"),
-                itemdesertwyrm = new ItemWorm(),
+                itemminutus = new ItemMinutus(),
 
                 itemfood_jewelledapple = new Item(ModUtils.itemBuilder().food(FoodList.jewelledapple)).setRegistryName("jewelled_apple"),
                 itemfood_dragonfruit = new Item(ModUtils.itemBuilder().food(FoodList.dragonfruit)).setRegistryName("dragon_fruit"),
+                itemfood_cookedminutus = new Item(ModUtils.itemBuilder().food(FoodList.cookedminutus)).setRegistryName("cooked_minutus"),
 
                 // SpawnEggs start
                 itemegg_drake = new SpawnEggItem(EntitySetup.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
-                itemegg_minutus = new SpawnEggItem(EntitySetup.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("desertwyrm_egg"),
+                itemegg_minutus = new SpawnEggItem(EntitySetup.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
                 // SpawnEggs end
 
                 // Geode start
@@ -245,7 +249,7 @@ public class ItemSetup
         // Jewelled Apple
         private static Food jewelledapple = new Food.Builder()
                                                     .hunger(8)
-                                                    .saturation(0.8f)
+                                                    .saturation(0.9f)
                                                     .setAlwaysEdible()
                                                     .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
                                                     .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
@@ -258,5 +262,11 @@ public class ItemSetup
                                                   .hunger(6)
                                                   .saturation(0.55f)
                                                   .build();
+        // Cooked Desertwyrm
+        private static Food cookedminutus = new Food.Builder()
+                                                  .hunger(6)
+                                                  .saturation(0.7f)
+                                                  .build();
+
     }
 }

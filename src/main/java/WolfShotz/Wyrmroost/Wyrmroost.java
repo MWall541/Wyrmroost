@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.setup.ItemSetup;
 import WolfShotz.Wyrmroost.setup.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
-import WolfShotz.Wyrmroost.util.proxy.IProxy;
 import WolfShotz.Wyrmroost.util.proxy.ServerProxy;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -21,7 +20,7 @@ public class Wyrmroost
     public static final String modID = "wyrmroost";
     public static final ItemGroup creativeTab = new CreativeTab();
 
-    public static IProxy proxy;
+    public static ServerProxy proxy;
 
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);

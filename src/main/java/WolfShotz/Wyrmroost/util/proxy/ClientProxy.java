@@ -11,9 +11,8 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.ModelLoader;
 
-public class ClientProxy implements IProxy
+public class ClientProxy extends ServerProxy
 {
-
     @Override
     public void init() { }
 

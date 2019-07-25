@@ -96,7 +96,7 @@ public class MinutusEntity extends AbstractDragonEntity
         if (stack.isEmpty()) {
             CompoundNBT nbt = new CompoundNBT();
             nbt.putBoolean("isalive", true);
-            ItemStack newDrop = new ItemStack(ItemSetup.itemdesertwyrm);
+            ItemStack newDrop = new ItemStack(ItemSetup.itemminutus);
             newDrop.setTag(nbt);
 
             ItemEntity drop = new ItemEntity(world, posX, posY + 0.5d, posZ, newDrop);

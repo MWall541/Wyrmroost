@@ -10,11 +10,11 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class ItemWorm extends Item
+public class ItemMinutus extends Item
 {
-    public ItemWorm() {
+    public ItemMinutus() {
         super(ModUtils.itemBuilder());
-        setRegistryName("desertwyrm");
+        setRegistryName("minutus");
 
         addPropertyOverride(ModUtils.location("isalive"), (item, world, player) -> {
             if (item.hasTag()) if (item.getTag().getBoolean("isalive")) return 1f;
@@ -24,8 +24,7 @@ public class ItemWorm extends Item
 
     @Override
     public void inventoryTick(ItemStack stack, World worldIn, Entity player, int itemSlot, boolean isSelected) {
-        if (stack.hasTag())
-            if (stack.getTag().getBoolean("isalive") && isSelected && new Random().nextInt(60) == 0)
-                worldIn.playSound(player.posX, player.posY, player.posZ, SoundEvents.ENTITY_COW_HURT, SoundCategory.NEUTRAL, 1.0f, 5f, false);
+        if (stack.hasTag() && stack.getTag().getBoolean("isalive") && new Random().nextInt(60) == 0 && (isSelected))
+            worldIn.playSound(player.posX, player.posY, player.posZ, SoundEvents.ENTITY_COW_HURT, SoundCategory.NEUTRAL, 1.0f, 5f, false);
     }
 }

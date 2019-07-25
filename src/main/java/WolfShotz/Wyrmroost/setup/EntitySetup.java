@@ -31,8 +31,8 @@ public class EntitySetup
     // Entity List Start
     @ObjectHolder(Wyrmroost.modID + ":overworld_drake")
     public static EntityType<?> overworld_drake = ModUtils.buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
-    @ObjectHolder(Wyrmroost.modID + ":lesser_desertwyrm")
-    public static EntityType<?> minutus = ModUtils.buildEntity("lesser_desertwyrm", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
+    @ObjectHolder(Wyrmroost.modID + ":minutus")
+    public static EntityType<?> minutus = ModUtils.buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
     // Entity List End
 
     /** Registers World Spawning for entities */
@@ -50,7 +50,7 @@ public class EntitySetup
 
     @SubscribeEvent
     public static void entitySetup(RegistryEvent.Register<EntityType<?>> event) {
-        event.getRegistry().registerAll(
+        event.getRegistry().registerAll (
                 overworld_drake,
                 minutus
         );

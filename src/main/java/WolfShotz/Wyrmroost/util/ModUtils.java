@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
@@ -11,6 +12,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.placement.CountRangeConfig;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -37,6 +43,13 @@ public class ModUtils
      * @param path
      */
     public static ResourceLocation location(String path) { return new ResourceLocation(Wyrmroost.modID, path); }
+
+    /** Item Properties builder */
+    public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
+
+    // ===============
+    //   I18n / Text
+    // ===============
 
     /**
      * Translate the passed string into an ITextComponent.
@@ -75,9 +88,6 @@ public class ModUtils
      */
     public static String clean(String text) { return text.replace(" ", ""); }
 
-
-    public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
-
     // ================================
     //   EntitySetup Helper Functions
     // ================================
@@ -96,5 +106,17 @@ public class ModUtils
         biomes.stream()
                 .filter(Objects::nonNull)
                 .forEach(biome -> biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
+    }
+
+    // ==========================
+    //   World Helper Functions
+    // ==========================
+
+    /**
+     * Helper method that turns this rediculously long line into something more convenient and readable...
+     * Takes in the biome, ore blockstate, ore size and the chance configuration as params.
+     */
+    public static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config) {
+        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size), Placement.COUNT_RANGE, config));
     }
 }

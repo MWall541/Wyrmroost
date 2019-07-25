@@ -17,18 +17,8 @@ public class SetupOreGen
 
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            registerOreEntry(biome, BlockSetup.blockgeodeore.getDefaultState(), 8, geodeConfig);
-            registerOreEntry(biome, BlockSetup.blockplatinumore.getDefaultState(), 9, platinumConfig);
+            ModUtils.registerOreEntry(biome, BlockSetup.blockgeodeore.getDefaultState(), 8, geodeConfig);
+            ModUtils.registerOreEntry(biome, BlockSetup.blockplatinumore.getDefaultState(), 9, platinumConfig);
         }
-
-        ModUtils.L.debug("Oregen Registry Complete");
-    }
-
-    /**
-     * Helper method that turns this rediculously long line into something more convenient and readable...
-     * Takes in the biome, ore blockstate, ore size and the chance configuration as params.
-     */
-    private static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config) {
-        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size), Placement.COUNT_RANGE, config));
     }
 }
