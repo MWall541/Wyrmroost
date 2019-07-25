@@ -9,12 +9,14 @@ buildscript {
     }
 }
 
+repositories {
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven"
+    }
+}
+
 apply plugin: 'net.minecraftforge.gradle'
-
-/**
- * Only edit below this line, the above code adds and enables the necessary things for Forge to be setup
- */
-
 apply plugin: 'maven-publish'
 
 group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -50,22 +52,13 @@ minecraft {
     }
 }
 
-repositories {
-    
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-}
-
 dependencies {
 
     minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
 
-    compile "citadel:citadel:${project.citadel_version}:deobf"
+    compile 'citadel:citadel:1.0.0:deobf'
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
 jar {
 
     manifest {
