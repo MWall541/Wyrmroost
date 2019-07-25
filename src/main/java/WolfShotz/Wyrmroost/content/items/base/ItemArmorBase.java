@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.items.base;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
@@ -13,7 +14,7 @@ import javax.annotation.Nullable;
 public class ItemArmorBase extends ArmorItem
 {
     public ItemArmorBase(String name, IArmorMaterial material, EquipmentSlotType equipType) {
-        super(material, equipType, new Item.Properties().group(Wyrmroost.creativeTab));
+        super(material, equipType, ModUtils.itemBuilder());
         setRegistryName(name);
     }
 

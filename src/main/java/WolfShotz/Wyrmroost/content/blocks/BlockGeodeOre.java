@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class BlockGeodeOre extends BlockBase
 {
-    public BlockGeodeOre(String name) { super(name, Material.ROCK, ToolType.PICKAXE, 2, 3, SoundType.STONE); }
+    public BlockGeodeOre() { super("geode_ore", Material.ROCK, ToolType.PICKAXE, 2, 3, SoundType.STONE); }
 
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) { return silktouch == 0 ? MathHelper.nextInt(new Random(), 3, 7) : 0; }

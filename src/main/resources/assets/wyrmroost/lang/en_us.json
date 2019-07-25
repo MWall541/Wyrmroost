@@ -1,6 +1,13 @@
 {
   "itemGroup.wyrmroost": "Wyrmroost",
 
+  "item.wyrmroost.tarragon_tome": "Tarragon Tome",
+  "item.wyrmroost.tarragon_tome.tooltip": "Written By ",
+
+  "_comment": "Spawn Eggs",
+  "item.wyrmroost.drake_egg": "Overworld Drake Spawn Egg",
+  "item.wyrmroost.minutus_egg": "Lesser Desertwyrm Spawn Egg",
+
   "_comment": "Geode Items",
   "item.wyrmroost.geode": "Geode",
   "block.wyrmroost.geode_ore": "Geode Ore",
@@ -27,8 +34,8 @@
   "item.wyrmroost.platinum_leggings": "Platinum Leggings",
   "item.wyrmroost.platinum_boots": "Platinum Boots",
 
-  "item.wyrmroost.tarragon_tome": "Tarragon Tome",
-  "item.wyrmroost.tarragon_tome.tooltip": "Written By ",
-
-  "item.wyrmroost.jewelled_apple": "Jewelled Apple"
+  "item.wyrmroost.jewelled_apple": "Jewelled Apple",
+  "item.wyrmroost.dragon_fruit": "Dragon Fruit",
+  "item.wyrmroost.minutus": "Lesser Desertwyrm",
+  "item.wyrmroost.cooked_minutus": "Cooked Desertwyrm"
 }
