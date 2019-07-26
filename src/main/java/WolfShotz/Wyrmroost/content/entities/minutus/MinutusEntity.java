@@ -11,6 +11,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -83,6 +84,10 @@ public class MinutusEntity extends AbstractDragonEntity
 
     // ================================
 
+
+    /** Array Containing all of the dragons food items */
+    @Override
+    public Item[] getFoodItems() { return null; } // Doesnt eat :P
 
     @Override
     public void livingTick() {

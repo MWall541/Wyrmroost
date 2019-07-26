@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.content.entities.ai;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.world.World;
 
 import java.util.EnumSet;
 import java.util.Random;

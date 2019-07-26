@@ -22,7 +22,6 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ItemSetup
 {
-
     @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
     public static ItemModBook itemmodbook;
 
