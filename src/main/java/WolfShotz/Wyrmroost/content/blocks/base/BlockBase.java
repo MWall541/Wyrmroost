@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.blocks.base;
 
+import WolfShotz.Wyrmroost.setup.BlockSetup;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -49,7 +50,7 @@ public class BlockBase extends Block
         setRegistryName(name);
         this.isBeaconBase = isBeaconBase;
 
-        ForgeRegistries.ITEMS.register(new BlockItem(this, ModUtils.itemBuilder()).setRegistryName(name));
+        BlockSetup.BLOCKS.add(this);
     }
 
     @Override
