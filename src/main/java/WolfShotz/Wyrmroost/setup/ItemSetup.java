@@ -22,7 +22,6 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ItemSetup
 {
-
     @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
     public static ItemModBook itemmodbook;
 
@@ -148,6 +147,8 @@ public class ItemSetup
                 itemplatinumboots = new ItemArmorBase("platinum_boots", ArmorMaterialList.armor_platinum, EquipmentSlotType.FEET)
                 // Platinum End
         );
+        // BlockItem's
+        BlockSetup.BLOCKS.forEach(block -> event.getRegistry().register(new BlockItem(block,ModUtils.itemBuilder()).setRegistryName(block.getRegistryName())));
 
         ModUtils.L.info("Item Setup Complete");
     }

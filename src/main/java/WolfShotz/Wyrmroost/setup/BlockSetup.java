@@ -13,9 +13,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BlockSetup
 {
+    // List Collection of all Blocks in preparation for BlockItem Registration
+    public static List<Block> BLOCKS = new ArrayList<>();
+
     @ObjectHolder(Wyrmroost.modID + ":platinum_ore")
     public static BlockBase blockplatinumore;
 

@@ -5,6 +5,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -13,6 +15,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,7 +100,6 @@ public abstract class AbstractDragonEntity extends TameableEntity
     // ================================
 
     protected void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
-
     public boolean isImmune(DamageSource source) {
         if (immunes.isEmpty()) return false;
         return immunes.contains(source.getDamageType());
@@ -105,6 +107,10 @@ public abstract class AbstractDragonEntity extends TameableEntity
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || isImmune(source); }
+
+    /** Array Containing all of the dragons food items */
+    public abstract Item[] getFoodItems();
+    public boolean isBreedItem(ItemStack stack) { return Arrays.stream(getFoodItems()).anyMatch(item -> item == stack.getItem()); }
 
     @Override
     public void livingTick() {
