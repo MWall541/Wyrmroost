@@ -1,16 +1,17 @@
 package WolfShotz.Wyrmroost.content.entities.minutus;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.minutus.goals.AttackAboveGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.BurrowGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.RunAwayGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.WalkRandom;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
+import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,13 +20,19 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class MinutusEntity extends AbstractDragonEntity
 {
     private static final DataParameter<Boolean> BURROWED = EntityDataManager.createKey(MinutusEntity.class, DataSerializers.BOOLEAN);
+
+    public static final Animation BITE_ANIMATION = Animation.create(10);
 
     public MinutusEntity(EntityType<? extends MinutusEntity> minutus, World world) {
         super(minutus, world);
@@ -38,8 +45,7 @@ public class MinutusEntity extends AbstractDragonEntity
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(2, new RunAwayGoal<>(this, LivingEntity.class));
         goalSelector.addGoal(3, new BurrowGoal(this));
-        goalSelector.addGoal(4, new AttackAboveGoal(this));
-        goalSelector.addGoal(5, new WalkRandom(this));
+        goalSelector.addGoal(4, new WalkRandom(this));
 
     }
 
@@ -84,7 +90,6 @@ public class MinutusEntity extends AbstractDragonEntity
 
     // ================================
 
-
     /** Array Containing all of the dragons food items */
     @Override
     public Item[] getFoodItems() { return null; } // Doesnt eat :P
@@ -92,7 +97,27 @@ public class MinutusEntity extends AbstractDragonEntity
     @Override
     public void livingTick() {
         super.livingTick();
-        if (isBurrowed() && world.getBlockState(getPosition().down(1)).getMaterial() == Material.AIR) setBurrowed(false);
+        if (isBurrowed()) {
+            if (world.getBlockState(getPosition().down(1)).getMaterial() == Material.AIR) setBurrowed(false);
+            attackAbove();
+        }
+    }
+
+    private void attackAbove() {
+        Predicate<Entity> predicateFilter = filter -> filter instanceof FishingBobberEntity || (filter instanceof LivingEntity && filter.getSize(filter.getPose()).width < 0.9f && filter.getSize(filter.getPose()).height < 0.9f);
+        AxisAlignedBB aabb = getBoundingBox().expand(0, 2, 0).grow(0.5, 0, 0.5);
+        List<Entity> entities = world.getEntitiesInAABBexcluding(this, aabb, predicateFilter);
+        if (entities.isEmpty()) return;
+
+        Optional<Entity> closest = entities.stream().min((entity1, entity2) -> Float.compare(entity1.getDistance(this), entity2.getDistance(this)));
+        Entity entity = closest.get();
+        setAnimation(MinutusEntity.BITE_ANIMATION);
+        if (entity instanceof FishingBobberEntity) {
+            entity.remove();
+            setBurrowed(false);
+            setMotion(0, 0.8, 0);
+        }
+        else attackEntityAsMob(entity);
     }
 
     @Override
@@ -131,4 +156,14 @@ public class MinutusEntity extends AbstractDragonEntity
     @Nullable
     @Override
     public AgeableEntity createChild(AgeableEntity ageableEntity) { return null; }
+
+    // ================================
+    //        Entity Animation
+    // ================================
+    @Override
+    public Animation[] getAnimations() {
+        return new Animation[] {BITE_ANIMATION};
+    }
+
+    // ================================
 }
