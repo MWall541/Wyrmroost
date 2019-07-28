@@ -1,7 +1,9 @@
 package WolfShotz.Wyrmroost.content.entities.minutus;
 
+import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,6 +29,10 @@ public class MinutusModel extends AdvancedEntityModel {
     public AdvancedRendererModel tail3;
     public AdvancedRendererModel jaw;
     public AdvancedRendererModel head;
+
+    private AdvancedRendererModel[] body;
+
+    private ModelAnimator animator;
 
     public MinutusModel() {
         this.textureWidth = 30;
@@ -54,7 +60,7 @@ public class MinutusModel extends AdvancedEntityModel {
         this.neck = new AdvancedRendererModel(this, 16, 0);
         this.neck.setRotationPoint(-0.02F, 0.02F, -1.0F);
         this.neck.addBox(-1.0F, -1.0F, -3.0F, 2, 2, 3, 0.0F);
-        this.setRotateAngle(neck, -0.5918411493512771F, 0.0F, 0.0F);
+        this.setRotateAngle(neck, 0.0F, 0.0F, 0.0F);
         this.body3 = new AdvancedRendererModel(this, 0, 0);
         this.body3.setRotationPoint(-0.02F, -0.02F, 3.0F);
         this.body3.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 4, 0.0F);
@@ -65,7 +71,7 @@ public class MinutusModel extends AdvancedEntityModel {
         this.head = new AdvancedRendererModel(this, 18, 14);
         this.head.setRotationPoint(0.02F, -0.6F, -2.5F);
         this.head.addBox(-1.0F, -0.5F, -3.0F, 2, 1, 3, 0.0F);
-        this.setRotateAngle(head, -0.27314402793711257F, 0.0F, 0.0F);
+        this.setRotateAngle(head, 0.0F, 0.0F, 0.0F);
         this.tail1 = new AdvancedRendererModel(this, 0, 9);
         this.tail1.setRotationPoint(0.0F, 0.02F, 3.0F);
         this.tail1.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 4, 0.0F);
@@ -82,7 +88,7 @@ public class MinutusModel extends AdvancedEntityModel {
         this.jaw = new AdvancedRendererModel(this, 18, 7);
         this.jaw.setRotationPoint(0.02F, 0.6F, -2.2F);
         this.jaw.addBox(-1.0F, -0.5F, -3.0F, 2, 1, 3, 0.0F);
-        this.setRotateAngle(jaw, 0.5009094953223726F, 0.0F, 0.0F);
+        this.setRotateAngle(jaw, 0.0F, 0.0F, 0.0F);
         this.body1.addChild(this.wingL);
         this.body4.addChild(this.body5);
         this.tail2.addChild(this.tail3);
@@ -99,13 +105,25 @@ public class MinutusModel extends AdvancedEntityModel {
         this.neck.addChild(this.jaw);
 
         updateDefaultPose();
+
+        body = new AdvancedRendererModel[] {body1, body2, body3, body4, body5, tail1, tail2, tail3};
+
+        animator = ModelAnimator.create();
     }
 
     private float globalSpeed = 0.5f;
     private float f = 0.5f;
 
     @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) { this.body1.render(scale); }
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        animate((MinutusEntity) entityIn);
+        this.body1.render(scale);
+    }
+
+    @Override
+    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
+    }
 
     @Override
     public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
@@ -113,15 +131,36 @@ public class MinutusModel extends AdvancedEntityModel {
         float frame = entity.ticksExisted;
         MinutusEntity minutus = (MinutusEntity) entity;
 
-        if(minutus.isBurrowed()) {
+        if (minutus.isBurrowed()) {
             body1.rotateAngleX = -0.8f;
             body1.offsetY = 0.11f;
             body2.rotateAngleX = 0.8f;
             neck.rotateAngleX = -0.8f;
+            jaw.rotateAngleX = 0.25f;
+            head.rotateAngleX = -0.25f;
 
-            walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
-            walk(head, 0.45f - globalSpeed, 0.1f, true, 0, 0, frame, f);
+
             bob(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
         }
+
+        if (minutus.getAnimation() != MinutusEntity.BITE_ANIMATION) {
+            walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
+            walk(head, 0.45f - globalSpeed, 0.1f, true, 0, (minutus.isBurrowed() ? 0f : 0.5f), frame, f);
+        }
+        flap(wingL, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
+        flap(wingR, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
+        flap(leg1, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
+        flap(leg1_1, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
+    }
+
+    private void animate(MinutusEntity entity) {
+        animator.update(entity);
+
+        animator.setAnimation(MinutusEntity.BITE_ANIMATION);
+        animator.startKeyframe(5);
+        animator.rotate(head, -2, 0, 0);
+        animator.rotate(jaw, 2, 0, 0);
+        animator.endKeyframe();
+        animator.resetKeyframe(5);
     }
 }

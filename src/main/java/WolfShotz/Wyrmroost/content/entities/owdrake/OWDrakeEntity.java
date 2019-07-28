@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
+import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.EatGrassGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -150,6 +151,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public AgeableEntity createChild(AgeableEntity ageable) { return null; }
 
-
-
+    @Override
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
 }

@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities;
 
-import WolfShotz.Wyrmroost.content.entities.ai.SleepGoal;
+import com.github.alexthe666.citadel.animation.Animation;
+import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -22,13 +23,16 @@ import java.util.List;
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class AbstractDragonEntity extends TameableEntity
+public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
+    private int animationTick;
+    private Animation animation = NO_ANIMATION;
+
     private List<String> immunes = new ArrayList<>();
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+//    private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> ALBINO = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
@@ -40,7 +44,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
     protected void registerGoals() {
         sitGoal = new SitGoal(this);
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, new SleepGoal(this));
+//        goalSelector.addGoal(2, new SleepGoal(this));
         goalSelector.addGoal(3, sitGoal);
     }
 
@@ -52,7 +56,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
     protected void registerData() {
         super.registerData();
         dataManager.register(GENDER, getRNG().nextBoolean());
-        dataManager.register(ASLEEP, false);
+//        dataManager.register(ASLEEP, false);
         dataManager.register(ALBINO, getAlbinoChances() != 0 && getRNG().nextInt(getAlbinoChances()) == 0);
     }
 
@@ -61,7 +65,7 @@ public abstract class AbstractDragonEntity extends TameableEntity
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
         compound.putBoolean("Gender", getGender());
-        compound.putBoolean("Asleep", isAsleep());
+//        compound.putBoolean("Asleep", isAsleep());
         compound.putBoolean("Albino", isAlbino());
     }
 
@@ -70,13 +74,13 @@ public abstract class AbstractDragonEntity extends TameableEntity
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
         setGender(compound.getBoolean("Gender"));
-        setAsleep(compound.getBoolean("Asleep"));
+//        setAsleep(compound.getBoolean("Asleep"));
         setAlbino(compound.getBoolean("Albino"));
     }
 
     /** Whether or not the dragonEntity is asleep */
-    public boolean isAsleep() { return dataManager.get(ASLEEP); }
-    public void setAsleep(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
+//    public boolean isAsleep() { return dataManager.get(ASLEEP); }
+//    public void setAsleep(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
 
     /** Gets the Gender of the dragonEntity.<P> true = Male | false = Female. Anything else is an abomination. */
     public boolean getGender() { return dataManager.get(GENDER); }
@@ -115,10 +119,30 @@ public abstract class AbstractDragonEntity extends TameableEntity
     @Override
     public void livingTick() {
         super.livingTick();
-        if (isAsleep() && world.isDaytime()) setAsleep(false);
+//        if (isAsleep() && world.isDaytime()) setAsleep(false);
     }
 
     /** @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation. */
     @Override
     public boolean shouldRiderSit() { return true; }
+
+    // ================================
+    //        Entity Animation
+    // ================================
+    @Override
+    public int getAnimationTick() { return animationTick; }
+
+    @Override
+    public void setAnimationTick(int tick) { animationTick = tick; }
+
+    @Override
+    public Animation getAnimation() { return animation; }
+
+    @Override
+    public void setAnimation(Animation animation) {
+        this.animation = animation;
+//        setAnimationTick(0);
+    }
+
+    // ================================
 }

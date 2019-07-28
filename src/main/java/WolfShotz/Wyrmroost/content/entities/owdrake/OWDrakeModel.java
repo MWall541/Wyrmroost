@@ -372,6 +372,23 @@ public class OWDrakeModel extends AdvancedEntityModel
     }
 
     @Override
+    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        // Left Leg
+        leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+        footL.walk(globalSpeed, f, false, 5, 0, limbSwing, limbSwingAmount);
+
+        // Right Leg
+        leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+        footR.walk(globalSpeed, f, true, 5, 0, limbSwing, limbSwingAmount);
+
+        // Left Arm
+        arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+
+        // Right Arm
+        arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+    }
+
+    @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         resetToDefaultPose();
         float frame = entityIn.ticksExisted;
@@ -384,7 +401,6 @@ public class OWDrakeModel extends AdvancedEntityModel
 
         chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
-
 
     }
 
