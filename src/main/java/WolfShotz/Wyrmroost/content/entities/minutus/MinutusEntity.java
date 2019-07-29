@@ -87,7 +87,7 @@ public class MinutusEntity extends AbstractDragonEntity
 
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
-    public int getAlbinoChances() { return 25; }
+    public int getAlbinoChances() { return 0; }
 
     // ================================
 
@@ -105,14 +105,17 @@ public class MinutusEntity extends AbstractDragonEntity
     }
 
     private void attackAbove() {
-        Predicate<Entity> predicateFilter = filter -> !(filter instanceof MinutusEntity) && (filter instanceof FishingBobberEntity || (filter instanceof LivingEntity && filter.getSize(filter.getPose()).width < 0.9f && filter.getSize(filter.getPose()).height < 0.9f));
+        Predicate<Entity> predicateFilter = filter -> {
+            if (filter instanceof MinutusEntity) return false;
+            return filter instanceof FishingBobberEntity || (filter instanceof LivingEntity && filter.getSize(filter.getPose()).width < 0.9f && filter.getSize(filter.getPose()).height < 0.9f);
+        };
         AxisAlignedBB aabb = getBoundingBox().expand(0, 2, 0).grow(0.5, 0, 0.5);
         List<Entity> entities = world.getEntitiesInAABBexcluding(this, aabb, predicateFilter);
         if (entities.isEmpty()) return;
 
         Optional<Entity> closest = entities.stream().min((entity1, entity2) -> Float.compare(entity1.getDistance(this), entity2.getDistance(this)));
         Entity entity = closest.get();
-        setAnimation(MinutusEntity.BITE_ANIMATION);
+        if (getAnimation()!= MinutusEntity.BITE_ANIMATION) setAnimation(MinutusEntity.BITE_ANIMATION);
         if (entity instanceof FishingBobberEntity) {
             entity.remove();
             setBurrowed(false);

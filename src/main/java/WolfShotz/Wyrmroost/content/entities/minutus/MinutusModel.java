@@ -133,7 +133,7 @@ public class MinutusModel extends AdvancedEntityModel {
 
         if (minutus.isBurrowed()) {
             body1.rotateAngleX = -0.8f;
-            body1.offsetY = 0.11f;
+            body1.offsetY = 0.2f;
             body2.rotateAngleX = 0.8f;
             neck.rotateAngleX = -0.8f;
             jaw.rotateAngleX = 0.25f;
@@ -157,10 +157,11 @@ public class MinutusModel extends AdvancedEntityModel {
         animator.update(entity);
 
         animator.setAnimation(MinutusEntity.BITE_ANIMATION);
-        animator.startKeyframe(5);
-        animator.rotate(head, 2, 0, 0);
-        animator.rotate(jaw, -2, 0, 0);
+        animator.startKeyframe(4);
+        animator.rotate(head, 0.35f, 0, 0);
+        animator.rotate(jaw, -0.35f, 0, 0);
+        animator.move(body1, 0, -1f, 0);
         animator.endKeyframe();
-        animator.resetKeyframe(5);
+        animator.resetKeyframe(7);
     }
 }

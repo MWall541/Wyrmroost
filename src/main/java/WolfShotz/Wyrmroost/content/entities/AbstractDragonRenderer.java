@@ -24,7 +24,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     /**
      * Class Responsible for Rendering the saddle layer
      */
-    protected class SaddleLayer<T extends AbstractDragonEntity> extends AbstractLayerRenderer<T>
+    protected class SaddleLayer extends AbstractLayerRenderer<T>
     {
         private ResourceLocation saddleloc;
 

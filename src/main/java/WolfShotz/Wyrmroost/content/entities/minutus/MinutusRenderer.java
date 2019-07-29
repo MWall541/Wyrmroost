@@ -14,11 +14,10 @@ public class MinutusRenderer extends AbstractDragonRenderer<MinutusEntity>
 {
     private String loc = DEF_LOC + "minutus/";
     private ResourceLocation minutus = ModUtils.location(loc + "body.png");
-    private ResourceLocation minutusAlb = ModUtils.location(loc + "body_alb.png");
 
     public MinutusRenderer(EntityRendererManager manager) { super(manager, new MinutusModel(), 0); }
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(MinutusEntity entity) { return entity.isAlbino() ? minutusAlb : minutus; }
+    protected ResourceLocation getEntityTexture(MinutusEntity entity) { return minutus; }
 }
