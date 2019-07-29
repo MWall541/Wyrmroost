@@ -30,9 +30,10 @@ import java.util.function.Predicate;
 
 public class MinutusEntity extends AbstractDragonEntity
 {
+    public static final Animation BITE_ANIMATION = Animation.create(10);
+
     private static final DataParameter<Boolean> BURROWED = EntityDataManager.createKey(MinutusEntity.class, DataSerializers.BOOLEAN);
 
-    public static final Animation BITE_ANIMATION = Animation.create(10);
 
     public MinutusEntity(EntityType<? extends MinutusEntity> minutus, World world) {
         super(minutus, world);
@@ -104,7 +105,7 @@ public class MinutusEntity extends AbstractDragonEntity
     }
 
     private void attackAbove() {
-        Predicate<Entity> predicateFilter = filter -> filter instanceof FishingBobberEntity || (filter instanceof LivingEntity && filter.getSize(filter.getPose()).width < 0.9f && filter.getSize(filter.getPose()).height < 0.9f);
+        Predicate<Entity> predicateFilter = filter -> !(filter instanceof MinutusEntity) && (filter instanceof FishingBobberEntity || (filter instanceof LivingEntity && filter.getSize(filter.getPose()).width < 0.9f && filter.getSize(filter.getPose()).height < 0.9f));
         AxisAlignedBB aabb = getBoundingBox().expand(0, 2, 0).grow(0.5, 0, 0.5);
         List<Entity> entities = world.getEntitiesInAABBexcluding(this, aabb, predicateFilter);
         if (entities.isEmpty()) return;

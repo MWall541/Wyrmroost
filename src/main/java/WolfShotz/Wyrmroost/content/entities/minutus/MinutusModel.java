@@ -158,8 +158,8 @@ public class MinutusModel extends AdvancedEntityModel {
 
         animator.setAnimation(MinutusEntity.BITE_ANIMATION);
         animator.startKeyframe(5);
-        animator.rotate(head, -2, 0, 0);
-        animator.rotate(jaw, 2, 0, 0);
+        animator.rotate(head, 2, 0, 0);
+        animator.rotate(jaw, -2, 0, 0);
         animator.endKeyframe();
         animator.resetKeyframe(5);
     }
