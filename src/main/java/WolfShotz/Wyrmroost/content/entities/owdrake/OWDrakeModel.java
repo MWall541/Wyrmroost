@@ -411,12 +411,22 @@ public class OWDrakeModel extends AdvancedEntityModel
     }
 
     private void animate(OWDrakeEntity entity) {
+        float frame = entity.ticksExisted;
         animator.update(entity);
 
-        animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
-        animator.startKeyframe(5);
-        animator.rotate(neck1, -2, 0, 0);
-        animator.endKeyframe();
+        if (entity.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION) {
+            animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
+
+            animator.startKeyframe(12);
+            animator.rotate(neck1, 1, 0, 0);
+            animator.endKeyframe();
+            animator.setStaticKeyframe(15);
+            animator.resetKeyframe(8);
+
+            if (entity.getAnimationTick() >= 8 && entity.getAnimationTick() <= 27) {
+                jaw.rotateAngleX -= (6 + Math.sin(frame / 2) * 0.25);
+            }
+        }
     }
 
 }

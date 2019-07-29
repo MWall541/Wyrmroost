@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.ai;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -13,8 +12,6 @@ import net.minecraft.world.World;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
-import static com.github.alexthe666.citadel.animation.IAnimatedEntity.NO_ANIMATION;
-
 /**
  * Class Responsible for eating grass at a positional offset rather than directly below the entity. (Useful for larger mobs)
  * Due to many fields being private, alot of this was taken from {@link net.minecraft.entity.ai.goal.EatGrassGoal EatGrassGoal}
@@ -25,17 +22,13 @@ public class GrazeGoal extends Goal
     private final AbstractDragonEntity grassEaterEntity;
     private final World entityWorld;
     private int eatingGrassTimer, blockPosOffset;
-    private Animation animation;
 
-    public GrazeGoal(AbstractDragonEntity grassEaterEntityIn, Animation animation, int blockPosOffset) {
+    public GrazeGoal(AbstractDragonEntity grassEaterEntityIn, int blockPosOffset) {
         this.grassEaterEntity = grassEaterEntityIn;
         this.entityWorld = grassEaterEntityIn.world;
         this.blockPosOffset = blockPosOffset;
-        this.animation = animation;
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
-
-    public GrazeGoal(AbstractDragonEntity grassEaterEntityIn, int blockPosOffset) { this(grassEaterEntityIn, NO_ANIMATION, blockPosOffset); }
 
     public GrazeGoal(AbstractDragonEntity grassEaterEntityIn) { this(grassEaterEntityIn, 0); }
 
@@ -63,7 +56,9 @@ public class GrazeGoal extends Goal
     /**
      * Reset the task's internal state. Called when this task is interrupted by another one
      */
-    public void resetTask() { eatingGrassTimer = 0; }
+    public void resetTask() {
+        eatingGrassTimer = 0;
+    }
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
@@ -82,7 +77,6 @@ public class GrazeGoal extends Goal
                     entityWorld.destroyBlock(blockpos, false);
 
                 grassEaterEntity.eatGrassBonus();
-                playAnimation();
 
             } else {
                 BlockPos blockpos1 = blockpos.down();
@@ -93,12 +87,8 @@ public class GrazeGoal extends Goal
                     }
 
                     grassEaterEntity.eatGrassBonus();
-                    playAnimation();
                 }
             }
         }
     }
-
-    private void playAnimation() { if (animation != NO_ANIMATION && grassEaterEntity.getAnimation() != animation) grassEaterEntity.setAnimation(animation); }
-
 }

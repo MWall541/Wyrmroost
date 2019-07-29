@@ -26,6 +26,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -33,13 +34,13 @@ import java.util.Set;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
-    public static Animation GRAZE_ANIMATION;
+    public static Animation GRAZE_ANIMATION = Animation.create(35);
 
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
+
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
-        GRAZE_ANIMATION = Animation.create(25);
     }
 
     @Override
@@ -146,6 +147,29 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
 
         return super.processInteract(player, hand);
+    }
+
+    @Override
+    public void updatePassenger(Entity passenger) {
+        if (!isTamed() && passenger instanceof LivingEntity && !world.isRemote) {
+            int rand = new Random().nextInt(100);
+
+            if (passenger instanceof PlayerEntity && rand == 0) {
+                setTamedBy((PlayerEntity) passenger);
+                navigator.clearPath();
+                setAttackTarget(null);
+                setHealth(getMaxHealth());
+                playTameEffect(true);
+                world.setEntityState(this, (byte) 7);
+            } else
+            if (rand % 15 == 0) {
+                removePassengers();
+                passenger.addVelocity(getRNG().nextDouble(), 2d, getRNG().nextDouble());
+                playTameEffect(false);
+                world.setEntityState(this, (byte) 6);
+            }
+        }
+        super.updatePassenger(passenger);
     }
 
     // == Entity Animation ==

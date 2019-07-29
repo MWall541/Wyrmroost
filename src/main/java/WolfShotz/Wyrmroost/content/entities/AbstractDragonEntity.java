@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities;
 
+import WolfShotz.Wyrmroost.content.entities.ai.SleepGoal;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.Entity;
@@ -37,7 +38,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-//    private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> ALBINO = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
 
@@ -51,7 +52,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerGoals() {
         sitGoal = new SitGoal(this);
         goalSelector.addGoal(1, new SwimGoal(this));
-//        goalSelector.addGoal(2, new SleepGoal(this));
+        goalSelector.addGoal(2, new SleepGoal(this));
         goalSelector.addGoal(3, sitGoal);
     }
 
@@ -62,7 +63,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerData() {
         super.registerData();
         dataManager.register(GENDER, getRNG().nextBoolean());
-//        dataManager.register(ASLEEP, false);
+        dataManager.register(ASLEEP, false);
         dataManager.register(ALBINO, getAlbinoChances() != 0 && getRNG().nextInt(getAlbinoChances()) == 0);
         dataManager.register(SADDLED, false);
 
@@ -73,7 +74,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
         compound.putBoolean("Gender", getGender());
-//        compound.putBoolean("Asleep", isAsleep());
+        compound.putBoolean("Asleep", isAsleep());
         compound.putBoolean("Albino", isAlbino());
         compound.putBoolean("Saddled", isSaddled());
     }
@@ -83,14 +84,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
         setGender(compound.getBoolean("Gender"));
-//        setAsleep(compound.getBoolean("Asleep"));
+        setAsleep(compound.getBoolean("Asleep"));
         setAlbino(compound.getBoolean("Albino"));
-        setSaddled(compound.getBoolean("saddled"));
+        setSaddled(compound.getBoolean("Saddled"));
     }
 
     /** Whether or not the dragonEntity is asleep */
-//    public boolean isAsleep() { return dataManager.get(ASLEEP); }
-//    public void setAsleep(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
+    public boolean isAsleep() { return dataManager.get(ASLEEP); }
+    public void setAsleep(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
 
     /** Gets the Gender of the dragonEntity.<P> true = Male | false = Female. Anything else is an abomination. */
     public boolean getGender() { return dataManager.get(GENDER); }
@@ -119,6 +120,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
 
     @Override
+    public void livingTick() {
+        super.livingTick();
+        if (isAsleep() && world.isDaytime() && getRNG().nextInt(5) == 0) setAsleep(false);
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (getAnimation() != NO_ANIMATION) {
@@ -129,7 +136,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Override
     public void travel(Vec3d vec3d) {
-        if (isBeingRidden() && canBeSteered() && isSaddled()) {
+        if (isBeingRidden() && canBeSteered() && isTamed()) {
             LivingEntity rider = (LivingEntity) getControllingPassenger();
             if (canPassengerSteer()) {
                 float f = rider.moveForward, s = rider.moveStrafing;
@@ -154,12 +161,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     /** Array Containing all of the dragons food items */
     protected abstract Item[] getFoodItems();
-    protected boolean isFoodItem(ItemStack stack) { return Arrays.stream(getFoodItems()).anyMatch(item -> item == stack.getItem()); }
+    protected boolean isFoodItem(ItemStack stack) {
+        if (getFoodItems().length == 0) return false;
+        return Arrays.stream(getFoodItems()).anyMatch(item -> item == stack.getItem());
+    }
 
     @Override
     public boolean canPassengerSteer() { return getControllingPassenger() != null && canBeSteered(); }
     @Override
-    public boolean canBeSteered() { return getControllingPassenger() instanceof LivingEntity; }
+    public boolean canBeSteered() { return getControllingPassenger() instanceof LivingEntity && isSaddled(); }
     @Nullable
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
 
