@@ -393,6 +393,8 @@ public class OWDrakeModel extends AdvancedEntityModel
         resetToDefaultPose();
         float frame = entityIn.ticksExisted;
 
+        if (((OWDrakeEntity) entityIn).isAsleep()) return;
+
         // IDLE:
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);

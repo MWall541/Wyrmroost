@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.EatGrassGoal;
@@ -17,12 +18,15 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -33,7 +37,6 @@ import java.util.Set;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
@@ -50,9 +53,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     protected void registerAttributes() {
         super.registerAttributes();
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.20989D);
-        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);
+        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0d);
+        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.20989d);
+        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0d);
     }
 
     // ================================
@@ -62,7 +65,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerData() {
         super.registerData();
         dataManager.register(VARIANT, false);
-        dataManager.register(SADDLED, false);
     }
 
     /** Save Game */
@@ -70,7 +72,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
         compound.putBoolean("variant", getVariant());
-        compound.putBoolean("saddled", isSaddled());
     }
 
     /** Load Game */
@@ -78,16 +79,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
         setVariant(compound.getBoolean("variant"));
-        setSaddled(compound.getBoolean("saddled"));
     }
 
     /** The Variant of the drake. false == Common, true == Savanna. Boolean since we only have 2 different variants */
     public boolean getVariant() { return dataManager.get(VARIANT); }
     public void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
-
-    /** Whether or not the drake is saddled */
-    public boolean isSaddled() { return dataManager.get(SADDLED); }
-    public void setSaddled(boolean saddled) { dataManager.set(SADDLED, saddled); }
 
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
@@ -98,38 +94,17 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     /** Array Containing all of the dragons food items */
     @Override
-    public Item[] getFoodItems() { return new Item[] { Items.WHEAT, ItemSetup.itemfood_dragonfruit}; } //TODO
+    public Item[] getFoodItems() { return new Item[] {Items.WHEAT, ItemSetup.itemfood_dragonfruit}; } //TODO
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-
-        if (stack.getItem() instanceof SaddleItem) { // instaceof: for custom saddles (if any)
-            consumeItemFromStack(player, stack);
-            setSaddled(true);
-            return true;
-        }
-
-        if (isSaddled() && !isBreedItem(stack)) {
-            player.startRiding(this);
-            return true;
-        }
-
-        if (isTamed()) {
-            if (getHealth() < getMaxHealth() && isBreedItem(stack)) {
-                consumeItemFromStack(player, stack);
-                heal(2f);
-                return true;
-            }
-
-            if (!isBreedItem(stack)) {
-                setSitting(!isSitting());
-                return true;
-            }
-        }
-
-        return super.processInteract(player, hand);
+    public void eatGrassBonus() {
+        if (isChild()) addGrowth(60);
+        if (getHealth() < getMaxHealth()) heal(4f);
     }
+
+    @Nullable
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable) { return null; }
 
     @Nullable
     @Override
@@ -142,15 +117,40 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void eatGrassBonus() {
-        if (isChild()) addGrowth(60);
-        if (getHealth() < getMaxHealth()) heal(4f);
+    public boolean processInteract(PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+
+        if (stack.getItem() instanceof SaddleItem && !isSaddled()) { // instaceof: for custom saddles (if any)
+            consumeItemFromStack(player, stack);
+            setSaddled(true);
+            playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
+            return true;
+        }
+
+        if (isSaddled() && !isFoodItem(stack) && !player.isSneaking()) {
+            if (!world.isRemote) player.startRiding(this);
+            return true;
+        }
+
+        if (isTamed()) {
+            if (getHealth() < getMaxHealth() && isFoodItem(stack)) {
+                consumeItemFromStack(player, stack);
+                heal(2f);
+                return true;
+            }
+
+            if (!isFoodItem(stack)) {
+                setSitting(!isSitting());
+                return true;
+            }
+        }
+
+        return super.processInteract(player, hand);
     }
 
-    @Nullable
-    @Override
-    public AgeableEntity createChild(AgeableEntity ageable) { return null; }
-
+    // == Entity Animation ==
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
+    // ==
+
 }
