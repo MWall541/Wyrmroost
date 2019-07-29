@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.minutus.goals.BurrowGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.RunAwayGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.WalkRandom;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
+import WolfShotz.Wyrmroost.setup.SoundSetup;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
@@ -20,6 +21,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
@@ -91,15 +93,11 @@ public class MinutusEntity extends AbstractDragonEntity
 
     // ================================
 
-    /** Array Containing all of the dragons food items */
-    @Override
-    public Item[] getFoodItems() { return null; } // Doesnt eat :P
-
     @Override
     public void livingTick() {
         super.livingTick();
         if (isBurrowed()) {
-            if (world.getBlockState(getPosition().down(1)).getMaterial() == Material.AIR) setBurrowed(false);
+            if (world.getBlockState(getPosition().down(1)).getMaterial() != Material.SAND) setBurrowed(false);
             attackAbove();
         }
     }
@@ -115,13 +113,15 @@ public class MinutusEntity extends AbstractDragonEntity
 
         Optional<Entity> closest = entities.stream().min((entity1, entity2) -> Float.compare(entity1.getDistance(this), entity2.getDistance(this)));
         Entity entity = closest.get();
-        if (getAnimation()!= MinutusEntity.BITE_ANIMATION) setAnimation(MinutusEntity.BITE_ANIMATION);
         if (entity instanceof FishingBobberEntity) {
             entity.remove();
-            setBurrowed(false);
             setMotion(0, 0.8, 0);
+            setBurrowed(false);
         }
-        else attackEntityAsMob(entity);
+        else {
+            if (getAnimation()!= MinutusEntity.BITE_ANIMATION) setAnimation(MinutusEntity.BITE_ANIMATION);
+            attackEntityAsMob(entity);
+        }
     }
 
     @Override
@@ -129,17 +129,21 @@ public class MinutusEntity extends AbstractDragonEntity
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
             CompoundNBT nbt = new CompoundNBT();
-            nbt.putBoolean("isalive", true);
             ItemStack newDrop = new ItemStack(ItemSetup.itemminutus);
+
+            nbt.putBoolean("isalive", true);
+            nbt.putString("entitytype", EntityType.getKey(getType()).toString());
+
+            setBurrowed(false);
+            writeAdditional(nbt);
             newDrop.setTag(nbt);
-
             ItemEntity drop = new ItemEntity(world, posX, posY + 0.5d, posZ, newDrop);
-            double d0 = player.posX - this.posX;
-            double d1 = player.posY - this.posY;
-            double d2 = player.posZ - this.posZ;
+            double d0 = player.posX - posX;
+            double d1 = player.posY - posY;
+            double d2 = player.posZ - posZ;
             drop.setMotion(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
-            world.addEntity(drop);
 
+            world.addEntity(drop);
             remove();
 
             return true;
@@ -147,6 +151,18 @@ public class MinutusEntity extends AbstractDragonEntity
 
         return super.processInteract(player, hand);
     }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return SoundSetup.MINUTUS_IDLE; }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundSetup.MINUTUS_SCREECH; }
+
+    /** Array Containing all of the dragons food items */
+    @Override
+    public Item[] getFoodItems() { return new Item[0]; } // Doesnt eat :P
 
     @Override
     public boolean canBePushed() { return !isBurrowed(); }

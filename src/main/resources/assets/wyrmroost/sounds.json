@@ -1,0 +1,19 @@
+{
+  "entity.minutus.idle": {
+    "category": "entity",
+    "subtitle": "Minutus Idle",
+    "sounds": [
+      {"name": "wyrmroost:entity/minutus/idle1"},
+      {"name": "wyrmroost:entity/minutus/idle2"}
+    ]
+  },
+
+  "entity.minutus.screech": {
+    "category": "entity",
+    "subtitle": "Minutus Screech",
+    "sounds" : [
+      {"name": "wyrmroost:entity/minutus/screech1"},
+      {"name": "wyrmroost:entity/minutus/screech2"}
+    ]
+  }
+}

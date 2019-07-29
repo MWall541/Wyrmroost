@@ -136,9 +136,8 @@ public class MinutusModel extends AdvancedEntityModel {
             body1.offsetY = 0.2f;
             body2.rotateAngleX = 0.8f;
             neck.rotateAngleX = -0.8f;
-            jaw.rotateAngleX = 0.25f;
-            head.rotateAngleX = -0.25f;
-
+            jaw.rotateAngleX = 1f;
+            head.rotateAngleX = -1f;
 
             bob(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
         }
@@ -158,8 +157,8 @@ public class MinutusModel extends AdvancedEntityModel {
 
         animator.setAnimation(MinutusEntity.BITE_ANIMATION);
         animator.startKeyframe(4);
-        animator.rotate(head, 0.35f, 0, 0);
-        animator.rotate(jaw, -0.35f, 0, 0);
+        animator.rotate(head, 1f, 0, 0);
+        animator.rotate(jaw, -1f, 0, 0);
         animator.move(body1, 0, -1f, 0);
         animator.endKeyframe();
         animator.resetKeyframe(7);
