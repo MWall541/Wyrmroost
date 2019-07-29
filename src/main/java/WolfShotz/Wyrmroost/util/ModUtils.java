@@ -8,6 +8,8 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -118,5 +120,32 @@ public class ModUtils
      */
     public static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config) {
         biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size), Placement.COUNT_RANGE, config));
+    }
+
+    // ===============
+    //   Math Helper
+    // ===============
+
+    /**
+     * Calculate the angle of an origin point to a target point
+     */
+    public static float calcAngle(Vec3d target) { return (float) -Math.toDegrees(Math.atan2(target.x, target.z)); }
+
+    /**
+     * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max
+     * be third parameter
+     */
+    public static float limitAngle(float sourceAngle, float targetAngle, float maximumChange) {
+        float f = MathHelper.wrapDegrees(targetAngle - sourceAngle);
+
+        if (f > maximumChange) f = maximumChange;
+        if (f < -maximumChange) f = -maximumChange;
+
+        float f1 = sourceAngle + f;
+
+        if (f1 < 0.0F) f1 += 360.0F;
+        else if (f1 > 360.0F) f1 -= 360.0F;
+
+        return f1;
     }
 }
