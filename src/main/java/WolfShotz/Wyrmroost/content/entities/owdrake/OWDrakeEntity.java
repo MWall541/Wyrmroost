@@ -1,11 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.ai.GrazeGoal;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.EatGrassGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,13 +19,11 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -36,16 +33,19 @@ import java.util.Set;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
+    public static Animation GRAZE_ANIMATION;
+
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
+        GRAZE_ANIMATION = Animation.create(25);
     }
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(4, new EatGrassGoal(this));
+        goalSelector.addGoal(4, new GrazeGoal(this, 2));
         goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0d));
         goalSelector.addGoal(6, new LookRandomlyGoal(this));
     }

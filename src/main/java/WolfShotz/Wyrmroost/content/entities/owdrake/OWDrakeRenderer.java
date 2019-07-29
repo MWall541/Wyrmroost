@@ -28,7 +28,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new SaddleLayer<>(this, saddle));
+        addLayer(new SaddleLayer(this, saddle));
     }
 
     @Nullable
