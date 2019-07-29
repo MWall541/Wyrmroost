@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
+import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
@@ -71,6 +72,8 @@ public class OWDrakeModel extends AdvancedEntityModel
     public AdvancedRendererModel claw12R;
 
     private AdvancedRendererModel[] headArray, tailArray;
+
+    private ModelAnimator animator;
 
     public OWDrakeModel() {
         this.textureWidth = 200;
@@ -358,6 +361,8 @@ public class OWDrakeModel extends AdvancedEntityModel
 
         headArray = new AdvancedRendererModel[] {neck1, neck2, head};
         tailArray = new AdvancedRendererModel[] {tail1, tail2, tail3, tail4, tail5};
+
+        animator = ModelAnimator.create();
     }
 
     private float globalSpeed = 0.5f;
@@ -365,6 +370,7 @@ public class OWDrakeModel extends AdvancedEntityModel
 
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        animate((OWDrakeEntity) entityIn);
         GlStateManager.pushMatrix();
         GlStateManager.scaled(1d / 0.5, 1d / 0.5d, 1d / 0.5d);
         this.body1.render(scale);
@@ -393,8 +399,6 @@ public class OWDrakeModel extends AdvancedEntityModel
         resetToDefaultPose();
         float frame = entityIn.ticksExisted;
 
-        if (((OWDrakeEntity) entityIn).isAsleep()) return;
-
         // IDLE:
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
@@ -404,6 +408,15 @@ public class OWDrakeModel extends AdvancedEntityModel
         chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
 
+    }
+
+    private void animate(OWDrakeEntity entity) {
+        animator.update(entity);
+
+        animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
+        animator.startKeyframe(5);
+        animator.rotate(neck1, -2, 0, 0);
+        animator.endKeyframe();
     }
 
 }
