@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
@@ -13,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
@@ -48,6 +50,12 @@ public class ModUtils
 
     /** Item Properties builder */
     public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
+
+    /** Get the Client World */
+    @OnlyIn(Dist.CLIENT)
+    public static World getClientWorld() { return Minecraft.getInstance().world; }
+    /** I dont really feel a need to try and look for a solution to this, so just throw an excpetion for now */
+    public static World getServerWorld() { throw new IllegalStateException("lol no"); }
 
     // ===============
     //   I18n / Text

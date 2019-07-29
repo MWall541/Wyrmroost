@@ -4,11 +4,8 @@ import WolfShotz.Wyrmroost.setup.EntitySetup;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
 import WolfShotz.Wyrmroost.setup.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.proxy.ClientProxy;
-import WolfShotz.Wyrmroost.util.proxy.ServerProxy;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -20,14 +17,9 @@ public class Wyrmroost
     public static final String modID = "wyrmroost";
     public static final ItemGroup creativeTab = new CreativeTab();
 
-    public static ServerProxy proxy;
-
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
-
-        proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
-
     }
 
     private void setup(final FMLCommonSetupEvent event) {
