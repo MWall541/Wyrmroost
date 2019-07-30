@@ -106,6 +106,9 @@ public class ItemSetup
 
     @ObjectHolder(Wyrmroost.modID + ":desertwyrm_egg")
     public static Item itemegg_minutus;
+
+    @ObjectHolder(Wyrmroost.modID + ":canari_egg")
+    public static Item itemegg_canari;
     // Spawn Eggs end
 
     @SubscribeEvent
@@ -121,6 +124,7 @@ public class ItemSetup
                 // SpawnEggs start
                 itemegg_drake = new SpawnEggItem(EntitySetup.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
                 itemegg_minutus = new SpawnEggItem(EntitySetup.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
+                itemegg_canari = new SpawnEggItem(EntitySetup.minutus, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("canari_egg"),
                 // SpawnEggs end
 
                 // Geode start
