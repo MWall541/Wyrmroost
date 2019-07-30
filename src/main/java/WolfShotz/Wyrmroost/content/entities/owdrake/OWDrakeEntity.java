@@ -38,7 +38,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
-
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
     }

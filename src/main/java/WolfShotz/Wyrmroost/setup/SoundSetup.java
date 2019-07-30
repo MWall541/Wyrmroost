@@ -22,7 +22,5 @@ public class SoundSetup
 
     }
 
-    private static SoundEvent registerSound(String name) {
-        return new SoundEvent(ModUtils.location(name)).setRegistryName(name);
-    }
+    private static SoundEvent registerSound(String name) { return new SoundEvent(ModUtils.location(name)).setRegistryName(name); }
 }
