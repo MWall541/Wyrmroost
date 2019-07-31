@@ -1,5 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
+import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
@@ -370,7 +372,6 @@ public class OWDrakeModel extends AdvancedEntityModel
 
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        animate((OWDrakeEntity) entityIn);
         GlStateManager.pushMatrix();
         GlStateManager.scaled(1d / 0.5, 1d / 0.5d, 1d / 0.5d);
         this.body1.render(scale);
@@ -379,39 +380,30 @@ public class OWDrakeModel extends AdvancedEntityModel
 
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        // Left Leg
-        leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
-        footL.walk(globalSpeed, f, false, 5, 0, limbSwing, limbSwingAmount);
+        OWDrakeEntity entity = (OWDrakeEntity) entityIn;
+        if (!entity.isSitting() || entity.getAnimation() != AbstractDragonEntity.NO_ANIMATION) {
+            // Left Leg
+            leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+            footL.walk(globalSpeed, f, false, 5, 0, limbSwing, limbSwingAmount);
 
-        // Right Leg
-        leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
-        footR.walk(globalSpeed, f, true, 5, 0, limbSwing, limbSwingAmount);
+            // Right Leg
+            leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+            footR.walk(globalSpeed, f, true, 5, 0, limbSwing, limbSwingAmount);
 
-        // Left Arm
-        arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+            // Left Arm
+            arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
 
-        // Right Arm
-        arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+            // Right Arm
+            arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+        }
     }
 
     @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-        resetToDefaultPose();
+        OWDrakeEntity entity = (OWDrakeEntity) entityIn;
         float frame = entityIn.ticksExisted;
 
-        // IDLE:
-        chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
-        walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
-
-        walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
-
-        chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
-        chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
-
-    }
-
-    private void animate(OWDrakeEntity entity) {
-        float frame = entity.ticksExisted;
+        resetToDefaultPose();
         animator.update(entity);
 
         if (entity.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION) {
@@ -427,6 +419,81 @@ public class OWDrakeModel extends AdvancedEntityModel
                 jaw.rotateAngleX -= (6 + Math.sin(frame / 2) * 0.25);
             }
         }
-    }
 
+        if (entity.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
+            animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION);
+
+            animator.startKeyframe(7);
+            animator.move(body1, 0, 0.5f, 0.2f);
+            animator.rotate(neck1, -0.4f, 0, 0);
+            animator.rotate(head, 0.8f, 0, 0);
+            animator.rotate(arm1L, 0.2f, 0, 0);
+            animator.rotate(arm2L, -0.2f, 0, 0);
+            animator.rotate(arm1R, 0.2f, 0, 0);
+            animator.rotate(arm2R, -0.2f, 0, 0);
+            animator.rotate(leg1L, 0.2f, 0, 0);
+            animator.rotate(leg1R, 0.2f, 0, 0);
+            animator.rotate(leg2L, -0.2f, 0, 0);
+            animator.rotate(leg2R, -0.2f, 0, 0);
+            animator.rotate(footL, -0.09f, 0, 0);
+            animator.rotate(footR, -0.09f, 0, 0);
+            animator.endKeyframe();
+
+            animator.startKeyframe(3);
+            animator.rotate(neck1, 0.6f, 0, 0);
+            animator.endKeyframe();
+
+            animator.startKeyframe(5);
+            animator.rotate(head, -0.8f, 0, 0);
+            animator.endKeyframe();
+
+            animator.resetKeyframe(7);
+        }
+
+        if (entity.isSitting()) {
+            body1.offsetY = 0.35f;
+
+            // Front Right
+            arm2R.rotateAngleX = -1.5f;
+            palmR.rotateAngleX = 1.4f;
+
+            // Front Left
+            arm2L.rotateAngleX = -1.5f;
+            palmL.rotateAngleX = 1.4f;
+
+            // Back Right
+            leg2R.rotateAngleX = 1f;
+            leg2R.rotateAngleY = 0.4f;
+            leg3R.setRotationPoint(-0.05F, 4.0F, -1.8F);
+            leg3R.rotateAngleX = -2.6f;
+            footR.rotateAngleX = 1.6f;
+
+            // Back Left
+            leg2L.rotateAngleX = 1f;
+            leg2L.rotateAngleY = -0.4f;
+            leg3L.setRotationPoint(-0.05F, 4.0F, -1.8F);
+            leg3L.rotateAngleX = -2.6f;
+            footL.rotateAngleX = 1.6f;
+
+            //Tail
+            for (AdvancedRendererModel segment : tailArray) segment.rotateAngleY = -0.6f;
+            tail1.rotateAngleX = -0.2f;
+            tail3.rotateAngleZ = -0.2f;
+            tail4.rotateAngleZ = -0.4f;
+            tail5.rotateAngleZ = -0.3f;
+            tail5.rotateAngleY += 0.1f;
+
+        }
+
+        // IDLE
+        if (entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION) {
+            chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
+            walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
+
+            walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
+            chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
+            chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
+        }
+
+    }
 }

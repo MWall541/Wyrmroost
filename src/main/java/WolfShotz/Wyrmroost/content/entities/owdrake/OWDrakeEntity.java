@@ -4,9 +4,11 @@ import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.GrazeGoal;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
 import com.github.alexthe666.citadel.animation.Animation;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,6 +30,9 @@ import net.minecraftforge.common.BiomeDictionary;
 import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
+
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 /**
  * Created by WolfShotz 7/10/19 - 22:18
@@ -35,6 +40,7 @@ import java.util.Set;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     public static Animation GRAZE_ANIMATION = Animation.create(35);
+    public static Animation HORN_ATTACK_ANIMATION = Animation.create(22);
 
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
@@ -45,17 +51,23 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(4, new GrazeGoal(this, 2));
-        goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0d));
-        goalSelector.addGoal(6, new LookRandomlyGoal(this));
+        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
+        goalSelector.addGoal(10, new GrazeGoal(this, 2));
+        goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
+        goalSelector.addGoal(12, new LookRandomlyGoal(this));
+        goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
+
+        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, player -> !player.isInvisible() || !((PlayerEntity) player).abilities.isCreativeMode));
     }
 
     @Override
     protected void registerAttributes() {
         super.registerAttributes();
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0d);
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.20989d);
-        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0d);
+        getAttribute(MAX_HEALTH).setBaseValue(50.0d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(6.0d);
     }
 
     // ================================
@@ -82,29 +94,17 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     /** The Variant of the drake. false == Common, true == Savanna. Boolean since we only have 2 different variants */
-    public boolean getVariant() { return dataManager.get(VARIANT); }
-    public void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
+    protected boolean getVariant() { return dataManager.get(VARIANT); }
+    protected void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
+
+    @Override
+    public boolean canFly() { return false; }
 
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
     public int getAlbinoChances() { return 50; }
 
     // ================================
-
-
-    /** Array Containing all of the dragons food items */
-    @Override
-    public Item[] getFoodItems() { return new Item[] {Items.WHEAT, ItemSetup.itemfood_dragonfruit}; } //TODO
-
-    @Override
-    public void eatGrassBonus() {
-        if (isChild()) addGrowth(60);
-        if (getHealth() < getMaxHealth()) heal(4f);
-    }
-
-    @Nullable
-    @Override
-    public AgeableEntity createChild(AgeableEntity ageable) { return null; }
 
     @Nullable
     @Override
@@ -117,7 +117,15 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
+    public void livingTick() {
+        setSprinting(isAngry());
+
+        super.livingTick();
+    }
+
+    @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
+
         ItemStack stack = player.getHeldItem(hand);
 
         if (stack.getItem() instanceof SaddleItem && !isSaddled()) { // instaceof: for custom saddles (if any)
@@ -127,20 +135,24 @@ public class OWDrakeEntity extends AbstractDragonEntity
             return true;
         }
 
-        if (isSaddled() && !isFoodItem(stack) && !player.isSneaking()) {
-            if (!world.isRemote) player.startRiding(this);
+        if (isSaddled() && !isFoodItem(stack) && !player.isSneaking() && !world.isRemote) {
+            player.startRiding(this);
+            setSitting(false);
             return true;
         }
 
         if (isTamed()) {
-            if (getHealth() < getMaxHealth() && isFoodItem(stack)) {
+            if (getHealth() < getMaxHealth() && isFoodItem(stack) && !player.isSneaking()) {
                 consumeItemFromStack(player, stack);
                 heal(2f);
                 return true;
             }
 
-            if (!isFoodItem(stack)) {
-                setSitting(!isSitting());
+            if (!isFoodItem(stack) && player.isSneaking() && isOwner(player) && !world.isRemote && sitGoal != null) {
+                sitGoal.setSitting(!isSitting());
+                isJumping = false;
+                navigator.clearPath();
+                setAttackTarget(null);
                 return true;
             }
         }
@@ -163,7 +175,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
             } else
             if (rand % 15 == 0) {
                 removePassengers();
-                passenger.addVelocity(getRNG().nextDouble(), 2d, getRNG().nextDouble());
                 playTameEffect(false);
                 world.setEntityState(this, (byte) 6);
             }
@@ -171,9 +182,45 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.updatePassenger(passenger);
     }
 
+    @Override
+    public boolean attackEntityAsMob(Entity entityIn) {
+        if (getAnimation() != HORN_ATTACK_ANIMATION) setAnimation(HORN_ATTACK_ANIMATION);
+
+        return super.attackEntityAsMob(entityIn);
+    }
+
+    @Override
+    public void eatGrassBonus() {
+        if (isChild()) addGrowth(60);
+        if (getHealth() < getMaxHealth()) heal(4f);
+    }
+
+    @Override
+    public void setAttackTarget(@Nullable LivingEntity entityIn) {
+        if (entityIn != null || !isTamed()) setAngry(true);
+        else setAngry(false);
+
+        super.setAttackTarget(entityIn);
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState blockIn) {
+        playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
+
+        super.playStepSound(pos, blockIn);
+    }
+
+    /** Array Containing all of the dragons food items */
+    @Override
+    public Item[] getFoodItems() { return new Item[] {Items.WHEAT, ItemSetup.itemfood_dragonfruit}; } //TODO
+
+    @Nullable
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable) { return null; }
+
     // == Entity Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION}; }
     // ==
 
 }

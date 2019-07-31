@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.ai;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -22,11 +23,13 @@ public class GrazeGoal extends Goal
     private final AbstractDragonEntity grassEaterEntity;
     private final World entityWorld;
     private int eatingGrassTimer, blockPosOffset;
+    private boolean eaten;
 
     public GrazeGoal(AbstractDragonEntity grassEaterEntityIn, int blockPosOffset) {
         this.grassEaterEntity = grassEaterEntityIn;
         this.entityWorld = grassEaterEntityIn.world;
         this.blockPosOffset = blockPosOffset;
+        this.eaten = false;
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
@@ -76,6 +79,7 @@ public class GrazeGoal extends Goal
                 if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(entityWorld, grassEaterEntity))
                     entityWorld.destroyBlock(blockpos, false);
 
+                eaten = true;
                 grassEaterEntity.eatGrassBonus();
 
             } else {
@@ -86,9 +90,14 @@ public class GrazeGoal extends Goal
                         entityWorld.setBlockState(blockpos1, Blocks.DIRT.getDefaultState(), 2);
                     }
 
+                    eaten = true;
                     grassEaterEntity.eatGrassBonus();
                 }
             }
         }
     }
+
+    public boolean hasEaten() { return eaten; }
+
+    public void setEaten(boolean eaten) { this.eaten = eaten; }
 }
