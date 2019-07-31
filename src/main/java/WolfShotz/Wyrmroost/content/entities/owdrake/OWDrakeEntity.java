@@ -39,6 +39,9 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
+    private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+
     public static Animation GRAZE_ANIMATION = Animation.create(35);
     public static Animation HORN_ATTACK_ANIMATION = Animation.create(22);
 
@@ -100,6 +103,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean canFly() { return false; }
 
+    /**
+     * Set sprinting switch for Entity.
+     */
+    public void setSprinting(boolean sprinting) {
+        IAttributeInstance attribute = getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+
+        super.setSprinting(sprinting);
+
+        if (attribute.getModifier(SPRINTING_ID) != null) attribute.removeModifier(SPRINTING_SPEED_BOOST);
+        if (sprinting) attribute.applyModifier(SPRINTING_SPEED_BOOST);
+
+    }
+
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
     public int getAlbinoChances() { return 50; }
@@ -119,14 +135,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void livingTick() {
         setSprinting(isAngry());
+        if (!world.isRemote && getAttackTarget() == null && isAngry()) setAngry(false);
 
         super.livingTick();
     }
 
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
-
         ItemStack stack = player.getHeldItem(hand);
+
+        if (stack.getItem() == Items.NAME_TAG) {
+            stack.interactWithEntity(player, this, hand);
+            return true;
+        }
 
         if (stack.getItem() instanceof SaddleItem && !isSaddled()) { // instaceof: for custom saddles (if any)
             consumeItemFromStack(player, stack);
@@ -137,7 +158,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (isSaddled() && !isFoodItem(stack) && !player.isSneaking() && !world.isRemote) {
             player.startRiding(this);
-            setSitting(false);
+            sitGoal.setSitting(false);
             return true;
         }
 
@@ -174,6 +195,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 world.setEntityState(this, (byte) 7);
             } else
             if (rand % 15 == 0) {
+                setAttackTarget((LivingEntity) passenger);
                 removePassengers();
                 playTameEffect(false);
                 world.setEntityState(this, (byte) 6);
@@ -197,8 +219,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     public void setAttackTarget(@Nullable LivingEntity entityIn) {
-        if (entityIn != null || !isTamed()) setAngry(true);
-        else setAngry(false);
+        setAngry(entityIn != null || !isTamed());
 
         super.setAttackTarget(entityIn);
     }
