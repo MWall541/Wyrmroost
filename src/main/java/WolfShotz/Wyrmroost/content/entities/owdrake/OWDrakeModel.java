@@ -1,9 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
+import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -371,7 +370,7 @@ public class OWDrakeModel extends AdvancedEntityModel
     private float f = 0.5f;
 
     @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.pushMatrix();
         GlStateManager.scaled(1d / 0.5, 1d / 0.5d, 1d / 0.5d);
         this.body1.render(scale);
@@ -381,6 +380,7 @@ public class OWDrakeModel extends AdvancedEntityModel
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         OWDrakeEntity entity = (OWDrakeEntity) entityIn;
+
         if (!entity.isSitting() || entity.getAnimation() != AbstractDragonEntity.NO_ANIMATION) {
             // Left Leg
             leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
@@ -400,8 +400,8 @@ public class OWDrakeModel extends AdvancedEntityModel
 
     @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-        OWDrakeEntity entity = (OWDrakeEntity) entityIn;
         float frame = entityIn.ticksExisted;
+        OWDrakeEntity entity = (OWDrakeEntity) entityIn;
 
         resetToDefaultPose();
         animator.update(entity);

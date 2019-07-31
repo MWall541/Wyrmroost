@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> extends MobRenderer<T, EntityModel<T>>
 {
-    protected String DEF_LOC = "textures/entity/dragon/";
+    protected static final String DEF_LOC = "textures/entity/dragon/";
 
     public AbstractDragonRenderer(EntityRendererManager manager, EntityModel<T> model, float shadowSize) {
         super(manager, model, shadowSize);

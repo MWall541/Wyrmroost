@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "wyrmroost:item/worm/worm_alive"
+        "layer0": "wyrmroost:item/minutus/minutus_alive"
     }
 }

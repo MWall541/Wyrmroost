@@ -23,7 +23,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class ItemSetup
 {
     @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
-    public static ItemModBook itemmodbook;
+    public static Item itemmodbook;
 
 
     @ObjectHolder(Wyrmroost.modID + ":jewelled_apple")
@@ -57,16 +57,16 @@ public class ItemSetup
 
 
     @ObjectHolder(Wyrmroost.modID + ":geode_helmet")
-    public static ItemArmorBase itemgeodehelm;
+    public static Item itemgeodehelm;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_chestplate")
-    public static ItemArmorBase itemgeodechest;
+    public static Item itemgeodechest;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_leggings")
-    public static ItemArmorBase itemgeodelegs;
+    public static Item itemgeodelegs;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_boots")
-    public static ItemArmorBase itemgeodeboots;
+    public static Item itemgeodeboots;
     // Geode end
 
     // Platinum start
@@ -88,16 +88,16 @@ public class ItemSetup
 
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_helmet")
-    public static ItemArmorBase itemplatinumhelm;
+    public static Item itemplatinumhelm;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_chestplate")
-    public static ItemArmorBase itemplatinumchest;
+    public static Item itemplatinumchest;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_leggings")
-    public static ItemArmorBase itemplatinumlegs;
+    public static Item itemplatinumlegs;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_boots")
-    public static ItemArmorBase itemplatinumboots;
+    public static Item itemplatinumboots;
     // Platinum end
 
     // Spawn Eggs start
@@ -107,48 +107,48 @@ public class ItemSetup
     @ObjectHolder(Wyrmroost.modID + ":desertwyrm_egg")
     public static Item itemegg_minutus;
 
-    @ObjectHolder(Wyrmroost.modID + ":canari_egg")
-    public static Item itemegg_canari;
+    @ObjectHolder(Wyrmroost.modID + ":silverglider_egg")
+    public static Item itemegg_silverglider;
     // Spawn Eggs end
 
     @SubscribeEvent
     public static void itemSetup(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll (
-                itemmodbook = new ItemModBook("tarragon_tome"),
-                itemminutus = new ItemMinutus(),
+                new ItemModBook("tarragon_tome"),
+                new ItemMinutus(),
 
-                itemfood_jewelledapple = new Item(ModUtils.itemBuilder().food(FoodList.jewelledapple)).setRegistryName("jewelled_apple"),
-                itemfood_dragonfruit = new Item(ModUtils.itemBuilder().food(FoodList.dragonfruit)).setRegistryName("dragon_fruit"),
-                itemfood_cookedminutus = new Item(ModUtils.itemBuilder().food(FoodList.cookedminutus)).setRegistryName("cooked_minutus"),
+                new Item(ModUtils.itemBuilder().food(FoodList.jewelledapple)).setRegistryName("jewelled_apple"),
+                new Item(ModUtils.itemBuilder().food(FoodList.dragonfruit)).setRegistryName("dragon_fruit"),
+                new Item(ModUtils.itemBuilder().food(FoodList.cookedminutus)).setRegistryName("cooked_minutus"),
 
                 // SpawnEggs start
-                itemegg_drake = new SpawnEggItem(EntitySetup.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
-                itemegg_minutus = new SpawnEggItem(EntitySetup.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
-                itemegg_canari = new SpawnEggItem(EntitySetup.minutus, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("canari_egg"),
+                new SpawnEggItem(EntitySetup.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
+                new SpawnEggItem(EntitySetup.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
+                new SpawnEggItem(EntitySetup.silver_glider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
                 // SpawnEggs end
 
                 // Geode start
-                itemgeode = new Item(ModUtils.itemBuilder()).setRegistryName("geode"),
-                itemswordgeode = new SwordItem(ToolMaterialList.tool_geode, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("geode_sword"),
-                itempickgeode = new PickaxeItem(ToolMaterialList.tool_geode, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
-                itemaxegeode = new AxeItem(ToolMaterialList.tool_geode, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
-                itemshovelgeode = new ShovelItem(ToolMaterialList.tool_geode, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
-                itemgeodehelm = new ItemArmorBase("geode_helmet", ArmorMaterialList.armor_geode, EquipmentSlotType.HEAD),
-                itemgeodechest = new ItemArmorBase("geode_chestplate", ArmorMaterialList.armor_geode, EquipmentSlotType.CHEST),
-                itemgeodelegs = new ItemArmorBase("geode_legs", ArmorMaterialList.armor_geode, EquipmentSlotType.LEGS),
-                itemgeodeboots = new ItemArmorBase("geode_boots", ArmorMaterialList.armor_geode, EquipmentSlotType.FEET),
+                new Item(ModUtils.itemBuilder()).setRegistryName("geode"),
+                new SwordItem(ToolMaterialList.tool_geode, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("geode_sword"),
+                new PickaxeItem(ToolMaterialList.tool_geode, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
+                new AxeItem(ToolMaterialList.tool_geode, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
+                new ShovelItem(ToolMaterialList.tool_geode, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
+                new ItemArmorBase("geode_helmet", ArmorMaterialList.armor_geode, EquipmentSlotType.HEAD),
+                new ItemArmorBase("geode_chestplate", ArmorMaterialList.armor_geode, EquipmentSlotType.CHEST),
+                new ItemArmorBase("geode_legs", ArmorMaterialList.armor_geode, EquipmentSlotType.LEGS),
+                new ItemArmorBase("geode_boots", ArmorMaterialList.armor_geode, EquipmentSlotType.FEET),
                 // Geode End
 
                 // Platinum Start
-                itemplatinumingot = new Item(ModUtils.itemBuilder()).setRegistryName("platinum_ingot"),
-                itemplatinumsword = new SwordItem(ToolMaterialList.tool_platinum, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("platinum_sword"),
-                itemplatinumpick = new PickaxeItem(ToolMaterialList.tool_platinum, 2, -2.8f,ModUtils.itemBuilder()).setRegistryName("platinum_pick"),
-                itemplatinumaxe = new AxeItem(ToolMaterialList.tool_platinum, 2, -2.8f,ModUtils.itemBuilder()).setRegistryName("platinum_axe"),
-                itemplatinumshovel = new ShovelItem(ToolMaterialList.tool_platinum, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("platinum_shovel"),
-                itemplatinumhelm = new ItemArmorBase("platinum_helmet", ArmorMaterialList.armor_platinum, EquipmentSlotType.HEAD),
-                itemplatinumchest = new ItemArmorBase("platinum_chestplate", ArmorMaterialList.armor_platinum, EquipmentSlotType.CHEST),
-                itemplatinumlegs = new ItemArmorBase("platinum_leggings", ArmorMaterialList.armor_platinum, EquipmentSlotType.LEGS),
-                itemplatinumboots = new ItemArmorBase("platinum_boots", ArmorMaterialList.armor_platinum, EquipmentSlotType.FEET)
+                new Item(ModUtils.itemBuilder()).setRegistryName("platinum_ingot"),
+                new SwordItem(ToolMaterialList.tool_platinum, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("platinum_sword"),
+                new PickaxeItem(ToolMaterialList.tool_platinum, 2, -2.8f,ModUtils.itemBuilder()).setRegistryName("platinum_pick"),
+                new AxeItem(ToolMaterialList.tool_platinum, 2, -2.8f,ModUtils.itemBuilder()).setRegistryName("platinum_axe"),
+                new ShovelItem(ToolMaterialList.tool_platinum, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("platinum_shovel"),
+                new ItemArmorBase("platinum_helmet", ArmorMaterialList.armor_platinum, EquipmentSlotType.HEAD),
+                new ItemArmorBase("platinum_chestplate", ArmorMaterialList.armor_platinum, EquipmentSlotType.CHEST),
+                new ItemArmorBase("platinum_leggings", ArmorMaterialList.armor_platinum, EquipmentSlotType.LEGS),
+                new ItemArmorBase("platinum_boots", ArmorMaterialList.armor_platinum, EquipmentSlotType.FEET)
                 // Platinum End
         );
         // BlockItem's

@@ -155,12 +155,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      *  Whether or not the dragonEntity is pissed or not.
      */
-    public boolean isAngry() { return (this.dataManager.get(TAMED) & 2) != 0; }
+    public boolean isAngry() { return (dataManager.get(TAMED) & 2) != 0; }
     public void setAngry(boolean angry) {
-        byte b0 = this.dataManager.get(TAMED);
+        byte b0 = dataManager.get(TAMED);
 
-        if (angry) this.dataManager.set(TAMED, (byte) (b0 | 2));
-        else this.dataManager.set(TAMED, (byte) (b0 & -3));
+        if (angry) dataManager.set(TAMED, (byte) (b0 | 2));
+        else dataManager.set(TAMED, (byte) (b0 & -3));
     }
 
     // ================================
@@ -170,8 +170,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        boolean canFly = canFly() && getAltitude() > 2;
-        if (canFly != isFlying()) setFlying(true);
+        boolean shouldFly = canFly() && getAltitude() > 2;
+        if (shouldFly != isFlying()) setFlying(true);
 
         super.livingTick();
     }
