@@ -48,13 +48,17 @@ public class ModUtils
      */
     public static ResourceLocation location(String path) { return new ResourceLocation(Wyrmroost.modID, path); }
 
-    /** Item Properties builder */
+    /**
+     * Item Properties builder
+     */
     public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
 
-    /** Get the Client World */
+    /**
+     * Get the Client World
+     */
     @OnlyIn(Dist.CLIENT)
     public static World getClientWorld() { return Minecraft.getInstance().world; }
-    /** I dont really feel a need to try and look for a solution to this, so just throw an excpetion for now */
+
     public static World getServerWorld() { throw new IllegalStateException("lol no"); }
 
     // ===============
@@ -97,38 +101,6 @@ public class ModUtils
      * @param text
      */
     public static String clean(String text) { return text.replace(" ", ""); }
-
-    // ================================
-    //   EntitySetup Helper Functions
-    // ================================
-
-    /** Helper Function that turns this stupidly long line into something more nicer to look at */
-    public static <T extends Entity> EntityType<?> buildEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float width, float height)
-    { return EntityType.Builder.create(entity, classify).size(width, height).build(Wyrmroost.modID + ":" + name).setRegistryName(name); }
-
-    /** Helper method for easier entity rendering registration */
-    @OnlyIn(Dist.CLIENT)
-    public static <B extends Entity> void registerRender(Class<B> entity, IRenderFactory factory)
-    { RenderingRegistry.registerEntityRenderingHandler(entity, factory); }
-
-    /** Helper method allowing for easier entity world spawning setting */
-    public static void registerSpawning(EntityType<?> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes) {
-        biomes.stream()
-                .filter(Objects::nonNull)
-                .forEach(biome -> biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
-    }
-
-    // ==========================
-    //   World Helper Functions
-    // ==========================
-
-    /**
-     * Helper method that turns this rediculously long line into something more convenient and readable...
-     * Takes in the biome, ore blockstate, ore size and the chance configuration as params.
-     */
-    public static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config) {
-        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size), Placement.COUNT_RANGE, config));
-    }
 
     // ===============
     //   Math Helper
