@@ -8,7 +8,10 @@ import WolfShotz.Wyrmroost.setup.ItemSetup;
 import WolfShotz.Wyrmroost.setup.SoundSetup;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.*;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,6 +32,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class MinutusEntity extends AbstractDragonEntity
 {
@@ -55,9 +60,9 @@ public class MinutusEntity extends AbstractDragonEntity
     @Override
     protected void registerAttributes() {
         super.registerAttributes();
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(4d);
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4d);
-        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4d);
+        getAttribute(MAX_HEALTH).setBaseValue(4d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.4d);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4d);
 
     }
 
@@ -84,10 +89,19 @@ public class MinutusEntity extends AbstractDragonEntity
         setBurrowed(compound.getBoolean("Burrowed"));
     }
 
+    /**
+     * Whether or not the Minutus is burrowed
+     */
     public boolean isBurrowed() { return dataManager.get(BURROWED); }
     public void setBurrowed(boolean burrow) { dataManager.set(BURROWED, burrow); }
 
-    /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
+    @Override
+    public boolean canFly() { return false; }
+
+    /**
+     * Set The chances this dragon can be an albino.
+     * Set it to 0 to have no chance
+     */
     @Override
     public int getAlbinoChances() { return 0; }
 

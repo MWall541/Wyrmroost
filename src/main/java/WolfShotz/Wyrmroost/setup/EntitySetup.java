@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.content.entities.minutus.MinutusEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.MinutusRenderer;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeRenderer;
+import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -34,8 +35,12 @@ public class EntitySetup
     public static EntityType<?> overworld_drake = ModUtils.buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
     @ObjectHolder(Wyrmroost.modID + ":minutus")
     public static EntityType<?> minutus = ModUtils.buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
+    @ObjectHolder(Wyrmroost.modID + ":silver_glider")
+    public static EntityType<?> silver_glider = ModUtils.buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 3f, 0.8f);
+/*
     @ObjectHolder(Wyrmroost.modID + ":canari")
     public static EntityType<?> canari = ModUtils.buildEntity("canari", CanariEntity::new, EntityClassification.CREATURE, 1.5f, 1.5f);
+*/
     // Entity List End
 
     /** Registers World Spawning for entities */
@@ -56,7 +61,8 @@ public class EntitySetup
         event.getRegistry().registerAll (
                 overworld_drake,
                 minutus,
-                canari
+                silver_glider
+//                canari
         );
         registerEntityWorldSpawns();
 
