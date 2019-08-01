@@ -7,6 +7,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -25,6 +26,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -102,20 +104,28 @@ public class ModUtils
      */
     public static String clean(String text) { return text.replace(" ", ""); }
 
-    // ===============
-    //   Math Helper
-    // ===============
+    // ==============
+    //   Reflection
+    // ==============
 
     /**
-     * Calculate the angle of an origin point to a target point
+     *
+     * @return the protected boolean value of
      */
-    public static float calcAngle(Vec3d target) { return (float) -Math.toDegrees(Math.atan2(target.x, target.z)); }
+    public static boolean isEntityJumping(LivingEntity entity) {
+        boolean reflect = ObfuscationReflectionHelper.getPrivateValue(LivingEntity.class, entity, "field_70703_bu");
+        return reflect;
+    }
+
+    // ==============
+    //   Math Utils
+    // ==============
 
     /**
-     * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max
-     * be third parameter
+     * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max be
+     * third parameter
      */
-    public static float limitAngle(float sourceAngle, float targetAngle, float maximumChange) {
+    public float limitAngle(float sourceAngle, float targetAngle, float maximumChange) {
         float f = MathHelper.wrapDegrees(targetAngle - sourceAngle);
 
         if (f > maximumChange) f = maximumChange;

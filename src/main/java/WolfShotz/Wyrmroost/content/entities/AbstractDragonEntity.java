@@ -1,10 +1,12 @@
 package WolfShotz.Wyrmroost.content.entities;
 
+import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -16,7 +18,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 
@@ -25,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
-
 /**
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
@@ -34,9 +33,10 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
     private int animationTick;
-    private Animation animation = NO_ANIMATION;
-
     private List<String> immunes = new ArrayList<>();
+
+    // Dragon Entity Animations
+    private Animation animation = NO_ANIMATION;
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
@@ -50,7 +50,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super(dragon, world);
         setTamed(false);
 
+        moveController = new FlightMovementController(this);
+
         stepHeight = 1;
+
+        if (canFly()) {
+            setImmune(DamageSource.FALL);
+        }
     }
 
     @Override
@@ -170,8 +176,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        boolean shouldFly = canFly() && getAltitude() > 2;
-        if (shouldFly != isFlying()) setFlying(true);
+//        boolean shouldFly = canFly() && getAltitude() > 2;
+//        if (shouldFly != isFlying()) setFlying(true);
 
         super.livingTick();
     }
@@ -187,31 +193,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         super.tick();
-    }
-
-    /**
-     * Called to handle the movement of the entity
-     */
-    @Override
-    public void travel(Vec3d vec3d) {
-        if (isBeingRidden() && canBeSteered() && isTamed()) {
-            LivingEntity rider = (LivingEntity) getControllingPassenger();
-            if (canPassengerSteer()) {
-                float f = rider.moveForward, s = rider.moveStrafing;
-                float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting() ? 2 : 1);
-                Vec3d target = new Vec3d(s, vec3d.y, f);
-
-                setSprinting(rider.isSprinting());
-                setAIMoveSpeed(speed);
-                super.travel(target);
-                setRotation(rotationYaw = rider.rotationYaw, rotationPitch);
-//              setRotation(ModUtils.limitAngle(rotationYaw, ModUtils.calcAngle(target), 15), rotationPitch); TODO: Smooth Rotations
-
-                return;
-            }
-        }
-
-        super.travel(vec3d);
     }
 
     protected double getAltitude() { return posY - world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) posX, (int) posZ); }

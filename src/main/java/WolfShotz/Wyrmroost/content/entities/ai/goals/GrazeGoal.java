@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.ai;
+package WolfShotz.Wyrmroost.content.entities.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
