@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.ai.GrazeGoal;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.GrazeGoal;
 import WolfShotz.Wyrmroost.setup.ItemSetup;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
@@ -21,6 +21,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -39,12 +40,16 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
-    private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
-
+    // Dragon Entity Animations
     public static Animation GRAZE_ANIMATION = Animation.create(35);
     public static Animation HORN_ATTACK_ANIMATION = Animation.create(22);
 
+    // Dragon Entity Attributes
+    private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+    private static final AttributeModifier SPRINTING_SPEED_BOOST =
+            (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+
+    // Dragon Entity Data
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
@@ -127,6 +132,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
         Biome biome = worldIn.getBiome(new BlockPos(this));
         Set<Biome> biomes = BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA);
+
         if (biomes.contains(biome)) setVariant(true);
 
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -179,6 +185,31 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
 
         return super.processInteract(player, hand);
+    }
+
+    /**
+     * Called to handle the movement of the entity
+     */
+    @Override
+    public void travel(Vec3d vec3d) {
+        if (isBeingRidden() && canBeSteered() && isTamed()) {
+            LivingEntity rider = (LivingEntity) getControllingPassenger();
+            if (canPassengerSteer()) {
+                float f = rider.moveForward, s = rider.moveStrafing;
+                float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting() ? 2 : 1);
+                Vec3d target = new Vec3d(s, vec3d.y, f);
+
+                setSprinting(rider.isSprinting());
+                setAIMoveSpeed(speed);
+                super.travel(target);
+                setRotation(rotationYaw = rider.rotationYaw, rotationPitch);
+//              setRotation(ModUtils.limitAngle(rotationYaw, ModUtils.calcAngle(target), 15), rotationPitch); TODO: Smooth Rotations
+
+                return;
+            }
+        }
+
+        super.travel(vec3d);
     }
 
     @Override
