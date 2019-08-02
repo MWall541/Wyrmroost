@@ -1,12 +1,12 @@
 package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -19,7 +19,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -145,7 +144,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setFlying(boolean fly) {
         if (canFly()) {
             dataManager.set(FLYING, fly);
-            jump();
+            if (fly) jump();
         }
     }
 
@@ -178,6 +177,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void livingTick() {
 //        boolean shouldFly = canFly() && getAltitude() > 2;
 //        if (shouldFly != isFlying()) setFlying(true);
+        if ((onGround || ModUtils.getAltitude(this) <= 2) && isFlying()) setFlying(false);
 
         super.livingTick();
     }
@@ -187,18 +187,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void tick() {
+        super.tick();
+
         if (getAnimation() != NO_ANIMATION) {
             ++animationTick;
             if (world.isRemote && animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
-
-        super.tick();
     }
 
-    protected double getAltitude() { return posY - world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) posX, (int) posZ); }
-
     @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? 1 : super.getJumpUpwardsMotion(); }
+    protected float getJumpUpwardsMotion() { return canFly() ? 1.5f : super.getJumpUpwardsMotion(); }
 
     /**
      * Set a damage source immunity

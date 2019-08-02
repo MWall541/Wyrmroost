@@ -1,12 +1,9 @@
 package WolfShotz.Wyrmroost.content.entities.ai;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import net.minecraft.entity.MoverType;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
-import net.minecraft.util.math.Vec3d;
-
-import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
-import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * Created by WolfShotz 7/31/19 - 19:20
@@ -25,47 +22,43 @@ public class FlightMovementController extends MovementController
 
     @Override
     public void tick() {
-        // Just Use the vanilla Controller if not flying
+        // Handle Vanilla movement if not flying
         if (!dragon.isFlying()) {
             super.tick();
             return;
         }
 
-        Vec3d dragonPos = dragon.getPositionVector();
-        Vec3d movePos = new Vec3d(posX, posY, posZ);
+        if (this.action == MovementController.Action.MOVE_TO) {
+            this.action = MovementController.Action.WAIT;
+            this.mob.setNoGravity(true);
+            double d0 = posX - mob.posX;
+            double d1 = posY - mob.posY;
+            double d2 = posZ - mob.posZ;
+            double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+            if (d3 < (double)2.5000003E-7F) {
+                mob.setMoveVertical(0.0F);
+                mob.setMoveForward(0.0F);
+                return;
+            }
 
-        // get direction vector by subtracting the current position from the
-        // target position and normalizing the result
-        Vec3d dir = movePos.subtract(dragonPos).normalize();
+            float f = (float)(MathHelper.atan2(d2, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
+            mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10.0F);
+            float f1;
+            if (mob.onGround) {
+                f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
+            } else {
+                f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
+            }
 
-        // get euclidean distance to target
-        double dist = dragonPos.distanceTo(movePos);
-
-        // move towards target if it's far enough away
-        if (dist > dragon.getWidth()) {
-            double flySpeed = dragon.getAttribute(FLYING_SPEED).getValue();
-
-            // update velocity to approach target
-            dragon.setMotion(new Vec3d(dir.x * flySpeed, dir.y * flySpeed, dir.z * flySpeed));
-
+            mob.setAIMoveSpeed(f1);
+            double d4 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
+            float f2 = (float)(-(MathHelper.atan2(d1, d4) * (double)(180F / (float)Math.PI)));
+            mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 10.0F);
+            mob.setMoveVertical(d1 > 0.0D ? f1 : -f1);
         } else {
-            // just slow down and hover at current location
-            Vec3d mot = dragon.getMotion();
-
-            dragon.setMotion(mot.x * 0.8, mot.y * 0.8, mot.z * 0.8);
-            dragon.getMotion().add(0, Math.sin(dragon.ticksExisted / 5) * 0.03, 0);
+            mob.setNoGravity(false);
+            mob.setMoveVertical(0.0F);
+            mob.setMoveForward(0.0F);
         }
-
-        // face entity towards target
-        if (dist > 2.5E-7) {
-            float newYaw = (float) Math.toDegrees(Math.PI * 2 - Math.atan2(dir.x, dir.z));
-            dragon.rotationYaw = limitAngle(dragon.rotationYaw, newYaw, 5);
-            mob.setAIMoveSpeed((float)(speed * mob.getAttribute(MOVEMENT_SPEED).getValue()));
-        }
-
-        System.out.println("where are we calling..");
-
-        // apply movement
-        dragon.move(MoverType.SELF, dragon.getMotion());
     }
 }
