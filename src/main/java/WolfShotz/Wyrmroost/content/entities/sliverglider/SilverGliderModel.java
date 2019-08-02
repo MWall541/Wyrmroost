@@ -1,8 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.sliverglider;
 
+import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import net.minecraft.entity.Entity;
+
+import java.util.Random;
 
 /**
  * WRSilverGlider - Kingdomall
@@ -18,7 +21,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
     public AdvancedRendererModel WingSegment1R;
     public AdvancedRendererModel Tail1;
     public AdvancedRendererModel LegL1;
-    public AdvancedRendererModel LegL1_1;
+    public AdvancedRendererModel LegR1;
     public AdvancedRendererModel Tail2;
     public AdvancedRendererModel Tail3;
     public AdvancedRendererModel Tail4;
@@ -34,9 +37,9 @@ public class SilverGliderModel extends AdvancedEntityModel {
     public AdvancedRendererModel toe2L;
     public AdvancedRendererModel toe1L;
     public AdvancedRendererModel toe3L;
-    public AdvancedRendererModel LegL2_1;
-    public AdvancedRendererModel LegL3_1;
-    public AdvancedRendererModel toe2L_1;
+    public AdvancedRendererModel LegR2;
+    public AdvancedRendererModel LegR3;
+    public AdvancedRendererModel toe2R;
     public AdvancedRendererModel toe1L_1;
     public AdvancedRendererModel toe1L_2;
     public AdvancedRendererModel Neck2;
@@ -48,22 +51,30 @@ public class SilverGliderModel extends AdvancedEntityModel {
     public AdvancedRendererModel EyeR;
     public AdvancedRendererModel EyeL;
     public AdvancedRendererModel WingSegment2L;
-    public AdvancedRendererModel Membrane1R;
+    public AdvancedRendererModel Membrane1L;
     public AdvancedRendererModel Membrane2L;
     public AdvancedRendererModel WingSegment3L;
     public AdvancedRendererModel Membrane3L;
     public AdvancedRendererModel WingSegment2R;
-    public AdvancedRendererModel Membrane1R_1;
+    public AdvancedRendererModel Membrane1R;
     public AdvancedRendererModel Membrane2R;
     public AdvancedRendererModel WingSegment3R;
     public AdvancedRendererModel Membrane3R;
 
+    public AdvancedRendererModel[] tailArray;
+    public AdvancedRendererModel[] neckArray;
+    public AdvancedRendererModel[] neck2Array;
+    public AdvancedRendererModel[] toes;
+
+    private float netHeadYaw = 0;
+    private float headPitch = 0;
+
     public SilverGliderModel() {
         this.textureWidth = 160;
         this.textureHeight = 125;
-        this.Membrane1R = new AdvancedRendererModel(this, -20, 80);
-        this.Membrane1R.setRotationPoint(0.0F, 0.7F, 0.1F);
-        this.Membrane1R.addBox(0.0F, -0.9F, -0.5F, 20, 0, 20, 0.0F);
+        this.Membrane1L = new AdvancedRendererModel(this, -20, 80);
+        this.Membrane1L.setRotationPoint(0.0F, 0.7F, 0.1F);
+        this.Membrane1L.addBox(0.0F, -0.9F, -0.5F, 20, 0, 20, 0.0F);
         this.MouthBottom = new AdvancedRendererModel(this, 84, 10);
         this.MouthBottom.setRotationPoint(0.0F, 1.0F, -4.5F);
         this.MouthBottom.addBox(-1.5F, -0.5F, -4.0F, 3, 1, 4, 0.0F);
@@ -78,17 +89,17 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.LegL2.setRotationPoint(0.38F, 3.1F, -0.1F);
         this.LegL2.addBox(-1.1F, -0.2F, -1.0F, 2, 3, 2, 0.0F);
         this.setRotateAngle(LegL2, 1.360135086079181F, 0.0F, 0.0F);
-        this.LegL2_1 = new AdvancedRendererModel(this, 56, 8);
-        this.LegL2_1.setRotationPoint(0.42F, 3.1F, -0.1F);
-        this.LegL2_1.addBox(-1.1F, -0.2F, -1.0F, 2, 3, 2, 0.0F);
-        this.setRotateAngle(LegL2_1, 1.360135086079181F, 0.0F, 0.0F);
+        this.LegR2 = new AdvancedRendererModel(this, 56, 8);
+        this.LegR2.setRotationPoint(0.42F, 3.1F, -0.1F);
+        this.LegR2.addBox(-1.1F, -0.2F, -1.0F, 2, 3, 2, 0.0F);
+        this.setRotateAngle(LegR2, 1.360135086079181F, 0.0F, 0.0F);
         this.Neck2 = new AdvancedRendererModel(this, 88, 17);
         this.Neck2.setRotationPoint(0.02F, 0.02F, -2.0F);
         this.Neck2.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
-        this.Membrane1R_1 = new AdvancedRendererModel(this, -20, 101);
-        this.Membrane1R_1.mirror = true;
-        this.Membrane1R_1.setRotationPoint(0.0F, 0.7F, 0.1F);
-        this.Membrane1R_1.addBox(-20.0F, -0.9F, -0.5F, 20, 0, 20, 0.0F);
+        this.Membrane1R = new AdvancedRendererModel(this, -20, 101);
+        this.Membrane1R.mirror = true;
+        this.Membrane1R.setRotationPoint(0.0F, 0.7F, 0.1F);
+        this.Membrane1R.addBox(-20.0F, -0.9F, -0.5F, 20, 0, 20, 0.0F);
         this.WingSegment2L = new AdvancedRendererModel(this, 0, 55);
         this.WingSegment2L.setRotationPoint(17.3F, -0.2F, 0.1F);
         this.WingSegment2L.addBox(0.0F, -0.9F, -0.9F, 30, 2, 2, 0.0F);
@@ -171,10 +182,10 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.MouthTop.setRotationPoint(0.0F, -0.7F, -4.5F);
         this.MouthTop.addBox(-2.0F, -1.0F, -5.0F, 4, 2, 5, 0.0F);
         this.setRotateAngle(MouthTop, 0.31869712141416456F, 0.0F, 0.0F);
-        this.LegL3_1 = new AdvancedRendererModel(this, 58, 14);
-        this.LegL3_1.setRotationPoint(-0.02F, 2.5F, 0.1F);
-        this.LegL3_1.addBox(-1.1F, -0.7F, -0.2F, 2, 4, 1, 0.0F);
-        this.setRotateAngle(LegL3_1, -1.3632766787327708F, 0.0F, 0.0F);
+        this.LegR3 = new AdvancedRendererModel(this, 58, 14);
+        this.LegR3.setRotationPoint(-0.02F, 2.5F, 0.1F);
+        this.LegR3.addBox(-1.1F, -0.7F, -0.2F, 2, 4, 1, 0.0F);
+        this.setRotateAngle(LegR3, -1.3632766787327708F, 0.0F, 0.0F);
         this.WingSegment3L = new AdvancedRendererModel(this, 0, 51);
         this.WingSegment3L.setRotationPoint(29.5F, 0.1F, 0.1F);
         this.WingSegment3L.addBox(0.0F, -0.6F, -0.9F, 31, 1, 2, 0.0F);
@@ -213,26 +224,26 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.Tail9 = new AdvancedRendererModel(this, 90, 60);
         this.Tail9.setRotationPoint(-0.02F, -0.02F, 2.0F);
         this.Tail9.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
-        this.LegL1_1 = new AdvancedRendererModel(this, 56, 0);
-        this.LegL1_1.setRotationPoint(-2.3F, 0.9F, 5.9F);
-        this.LegL1_1.addBox(-0.7F, -0.9F, -0.8F, 2, 5, 2, 0.0F);
-        this.setRotateAngle(LegL1_1, -0.5918411493512771F, 0.0F, 0.0F);
-        this.toe2L_1 = new AdvancedRendererModel(this, 60, 20);
-        this.toe2L_1.setRotationPoint(0.0F, 3.0F, 0.2F);
-        this.toe2L_1.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
-        this.setRotateAngle(toe2L_1, -0.9560913642424937F, 0.0F, 0.0F);
+        this.LegR1 = new AdvancedRendererModel(this, 56, 0);
+        this.LegR1.setRotationPoint(-2.3F, 0.9F, 5.9F);
+        this.LegR1.addBox(-0.7F, -0.9F, -0.8F, 2, 5, 2, 0.0F);
+        this.setRotateAngle(LegR1, -0.5918411493512771F, 0.0F, 0.0F);
+        this.toe2R = new AdvancedRendererModel(this, 60, 20);
+        this.toe2R.setRotationPoint(0.0F, 3.0F, 0.2F);
+        this.toe2R.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
+        this.setRotateAngle(toe2R, -0.9560913642424937F, 0.0F, 0.0F);
         this.EyeL = new AdvancedRendererModel(this, 79, 2);
         this.EyeL.setRotationPoint(-1.8F, -0.5F, -3.9F);
         this.EyeL.addBox(-0.7F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         this.setRotateAngle(EyeL, 0.0F, -0.17453292519943295F, 0.0F);
-        this.WingSegment1L.addChild(this.Membrane1R);
+        this.WingSegment1L.addChild(this.Membrane1L);
         this.Head.addChild(this.MouthBottom);
         this.Tail1.addChild(this.Tail2);
         this.LegL3.addChild(this.toe1L);
         this.LegL1.addChild(this.LegL2);
-        this.LegL1_1.addChild(this.LegL2_1);
+        this.LegR1.addChild(this.LegR2);
         this.Neck1.addChild(this.Neck2);
-        this.WingSegment1R.addChild(this.Membrane1R_1);
+        this.WingSegment1R.addChild(this.Membrane1R);
         this.WingSegment1L.addChild(this.WingSegment2L);
         this.Tail10.addChild(this.TailFin);
         this.LegL3.addChild(this.toe3L);
@@ -243,7 +254,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.Tail5.addChild(this.Tail6);
         this.Tail7.addChild(this.Tail8);
         this.WingSegment2L.addChild(this.Membrane2L);
-        this.LegL3_1.addChild(this.toe1L_2);
+        this.LegR3.addChild(this.toe1L_2);
         this.MainBody.addChild(this.WingSegment1R);
         this.SecondaryBody.addChild(this.LegL1);
         this.SecondaryBody.addChild(this.Tail1);
@@ -257,7 +268,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.MainBody.addChild(this.BottomFin);
         this.Tail4.addChild(this.Tail5);
         this.Head.addChild(this.MouthTop);
-        this.LegL2_1.addChild(this.LegL3_1);
+        this.LegR2.addChild(this.LegR3);
         this.WingSegment2L.addChild(this.WingSegment3L);
         this.WingSegment2R.addChild(this.WingSegment3R);
         this.MainBody.addChild(this.BackFin);
@@ -266,16 +277,111 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.Neck2.addChild(this.Neck3);
         this.WingSegment1R.addChild(this.WingSegment2R);
         this.LegL3.addChild(this.toe2L);
-        this.LegL3_1.addChild(this.toe1L_1);
+        this.LegR3.addChild(this.toe1L_1);
         this.Tail6.addChild(this.Tail7);
         this.Tail8.addChild(this.Tail9);
-        this.SecondaryBody.addChild(this.LegL1_1);
-        this.LegL3_1.addChild(this.toe2L_1);
+        this.SecondaryBody.addChild(this.LegR1);
+        this.LegR3.addChild(this.toe2R);
         this.Head.addChild(this.EyeL);
+
+        tailArray = new AdvancedRendererModel[] {Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7, Tail8, Tail9, Tail10};
+        neckArray = new AdvancedRendererModel[] {Neck1, Neck2, Neck3, Neck4};
+        neck2Array = new AdvancedRendererModel[] {Neck1, Neck2};
+        toes = new AdvancedRendererModel[] {toe1L, toe1L_1, toe1L_2, toe2L, toe2R, toe3L};
+
+        updateDefaultPose();
+    }
+
+
+    @Override
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        this.MainBody.render(scale);
+        this.netHeadYaw = netHeadYaw;
+        this.headPitch = headPitch;
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        this.MainBody.render(f5);
+    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+        SilverGliderEntity entity = (SilverGliderEntity) entityIn;
+        float frame = entity.ticksExisted;
+        float globalSpeed = 0.5f;
+        float f = 0.5f;
+
+        resetToDefaultPose();
+        faceTarget(netHeadYaw, headPitch, 1f, Head);
+
+        if (entity.isFlying() && !entity.isGliding && entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION) {
+            LegL1.rotateAngleX = 0.5f;
+            LegL3.rotateAngleX = -0.7f;
+
+//            LegR1.rotateAngleX = 0.5f;
+
+            walk(WingSegment1L, globalSpeed, -0.25f, false, 0, -0.25f, frame, f);
+            flap(WingSegment1L, globalSpeed, 1.3f, false, 0, 0, frame, f);
+            flap(WingSegment2L, globalSpeed, 1.1f, false, -0.5f, 0.2f, frame, f);
+            flap(WingSegment3L, globalSpeed, 0.6f, false, -0.8f, 0, frame, f);
+
+            walk(WingSegment1R, globalSpeed, -0.25f, false, 0, -0.25f, frame, f);
+            flap(WingSegment1R, globalSpeed, 1.3f, true, 0, 0, frame, f);
+            flap(WingSegment2R, globalSpeed, 1.1f, true, -0.5f, 0.2f, frame, f);
+            flap(WingSegment3R, globalSpeed, 0.6f, true, -0.8f, 0, frame, f);
+
+            chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, f);
+
+            chainWave(neck2Array, globalSpeed - 0.2f, 0.02f, 0, frame, f);
+            walk(Head, globalSpeed - 0.2f, 0.05f, false, 0.9f, 0, frame, f);
+            walk(MouthBottom, globalSpeed - 0.2f, 0.3f, false, 0, 0.5f, frame, f);
+
+            return;
+        }
+        if (entity.isGliding) {
+            Random rand = new Random();
+
+            if (entity.isDiving) {
+                WingSegment1L.rotateAngleX = -0.2f;
+                WingSegment1L.rotateAngleY = -0.4f;
+                WingSegment1L.rotateAngleZ = -0.1f;
+                WingSegment2L.rotateAngleY = -0.4f;
+                WingSegment3L.rotateAngleY = -0.4f;
+
+                WingSegment1R.rotateAngleX = -0.2f;
+                WingSegment1R.rotateAngleY = 0.4f;
+                WingSegment1R.rotateAngleZ = 0.1f;
+                WingSegment2R.rotateAngleY = 0.4f;
+                WingSegment3R.rotateAngleY = 0.4f;
+            }
+
+            walk(Membrane1L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+            walk(Membrane2L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+            walk(Membrane3L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+
+            walk(Membrane1R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+            walk(Membrane2R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+            walk(Membrane3R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+
+            chainWave(neck2Array, globalSpeed - 0.2f, 0.02f, 0, frame, f);
+            walk(Head, globalSpeed - 0.2f, 0.05f, false, 0.9f, 0, frame, f);
+            walk(MouthBottom, globalSpeed - 0.2f, 0.3f, false, 0, 0.5f, frame, f);
+
+            chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, f);
+
+
+            return;
+        }
+
+        // IDLE:
+/*
+        WingSegment1L.rotateAngleZ = 0.4f;
+        WingSegment1L.rotateAngleY = 0.3f;
+        WingSegment2L.rotateAngleY = -0.7f;
+        WingSegment2L.rotateAngleX = 0.5f;
+        WingSegment2L.rotateAngleZ = -1.4f;
+*/
+
+        chainWave(neck2Array, globalSpeed - 0.4f, 0.02f, 0, frame, f);
+        walk(Head, globalSpeed - 0.4f, 0.05f, false, 0.9f, 0, frame, f);
+        walk(MouthBottom, globalSpeed - 0.4f, 0.3f, false, 0, 0.5f, frame, f);
+        chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, f);
+        chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, f);
     }
 }
