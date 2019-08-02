@@ -365,19 +365,10 @@ public class SilverGliderModel extends AdvancedEntityModel {
 
             chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, f);
 
-
             return;
         }
 
         // IDLE:
-/*
-        WingSegment1L.rotateAngleZ = 0.4f;
-        WingSegment1L.rotateAngleY = 0.3f;
-        WingSegment2L.rotateAngleY = -0.7f;
-        WingSegment2L.rotateAngleX = 0.5f;
-        WingSegment2L.rotateAngleZ = -1.4f;
-*/
-
         chainWave(neck2Array, globalSpeed - 0.4f, 0.02f, 0, frame, f);
         walk(Head, globalSpeed - 0.4f, 0.05f, false, 0.9f, 0, frame, f);
         walk(MouthBottom, globalSpeed - 0.4f, 0.3f, false, 0, 0.5f, frame, f);

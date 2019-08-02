@@ -18,6 +18,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.placement.CountRangeConfig;
@@ -109,12 +110,10 @@ public class ModUtils
     // ==============
 
     /**
-     *
-     * @return the protected boolean value of
+     * @return the protected boolean value of "isJumping" of LivingEntity Class
      */
     public static boolean isEntityJumping(LivingEntity entity) {
-        boolean reflect = ObfuscationReflectionHelper.getPrivateValue(LivingEntity.class, entity, "field_70703_bu");
-        return reflect;
+        return ObfuscationReflectionHelper.getPrivateValue(LivingEntity.class, entity, "field_70703_bu");
     }
 
     // ==============
@@ -138,4 +137,6 @@ public class ModUtils
 
         return f1;
     }
+
+    public static double getAltitude(Entity entity) { return entity.posY - entity.world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) entity.posX, (int) entity.posZ); }
 }
