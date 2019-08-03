@@ -72,9 +72,11 @@ public class OWDrakeModel extends AdvancedEntityModel
     public AdvancedRendererModel claw22R;
     public AdvancedRendererModel claw12R;
 
-    private AdvancedRendererModel[] headArray, tailArray;
+    private AdvancedRendererModel[] headArray, tailArray, toeArray;
 
     private ModelAnimator animator;
+
+    private float netHeadYaw, headPitch;
 
     public OWDrakeModel() {
         this.textureWidth = 200;
@@ -362,6 +364,7 @@ public class OWDrakeModel extends AdvancedEntityModel
 
         headArray = new AdvancedRendererModel[] {neck1, neck2, head};
         tailArray = new AdvancedRendererModel[] {tail1, tail2, tail3, tail4, tail5};
+        toeArray = new AdvancedRendererModel[] {toe1L, toe1L_1, toe1R, toe1R_1, toe2L, toe2R};
 
         animator = ModelAnimator.create();
     }
@@ -371,6 +374,9 @@ public class OWDrakeModel extends AdvancedEntityModel
 
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        this.netHeadYaw = netHeadYaw;
+        this.headPitch = headPitch;
+
         GlStateManager.pushMatrix();
         GlStateManager.scaled(1d / 0.5, 1d / 0.5d, 1d / 0.5d);
         this.body1.render(scale);
@@ -384,11 +390,9 @@ public class OWDrakeModel extends AdvancedEntityModel
         if (!entity.isSitting() || entity.getAnimation() != AbstractDragonEntity.NO_ANIMATION) {
             // Left Leg
             leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
-            footL.walk(globalSpeed, f, false, 5, 0, limbSwing, limbSwingAmount);
 
             // Right Leg
             leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
-            footR.walk(globalSpeed, f, true, 5, 0, limbSwing, limbSwingAmount);
 
             // Left Arm
             arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
@@ -406,94 +410,204 @@ public class OWDrakeModel extends AdvancedEntityModel
         resetToDefaultPose();
         animator.update(entity);
 
-        if (entity.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION) {
-            animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
+        if (entity.isSitting() && entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION)
+            staySitting();
 
-            animator.startKeyframe(12);
-            animator.rotate(neck1, 1, 0, 0);
-            animator.endKeyframe();
-            animator.setStaticKeyframe(15);
-            animator.resetKeyframe(8);
+        if (entity.getAnimation() == OWDrakeEntity.SIT_ANIMATION)
+            sitAnim();
 
-            if (entity.getAnimationTick() >= 8 && entity.getAnimationTick() <= 27) {
-                jaw.rotateAngleX -= (6 + Math.sin(frame / 2) * 0.25);
-            }
+        if (entity.getAnimation() == OWDrakeEntity.STAND_ANIMATION)
+            standAnim();
+
+        if (entity.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION)
+            grazeAnim(entity, frame);
+
+        if(entity.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
+            hornAttackAnim();
+            return; // Do not perform idle anims || look at target!
         }
 
-        if (entity.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
-            animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION);
-
-            animator.startKeyframe(7);
-            animator.move(body1, 0, 0.5f, 0.2f);
-            animator.rotate(neck1, -0.4f, 0, 0);
-            animator.rotate(head, 0.8f, 0, 0);
-            animator.rotate(arm1L, 0.2f, 0, 0);
-            animator.rotate(arm2L, -0.2f, 0, 0);
-            animator.rotate(arm1R, 0.2f, 0, 0);
-            animator.rotate(arm2R, -0.2f, 0, 0);
-            animator.rotate(leg1L, 0.2f, 0, 0);
-            animator.rotate(leg1R, 0.2f, 0, 0);
-            animator.rotate(leg2L, -0.2f, 0, 0);
-            animator.rotate(leg2R, -0.2f, 0, 0);
-            animator.rotate(footL, -0.09f, 0, 0);
-            animator.rotate(footR, -0.09f, 0, 0);
-            animator.endKeyframe();
-
-            animator.startKeyframe(3);
-            animator.rotate(neck1, 0.6f, 0, 0);
-            animator.endKeyframe();
-
-            animator.startKeyframe(5);
-            animator.rotate(head, -0.8f, 0, 0);
-            animator.endKeyframe();
-
-            animator.resetKeyframe(7);
-        }
-
-        if (entity.isSitting()) {
-            body1.offsetY = 0.35f;
-
-            // Front Right
-            arm2R.rotateAngleX = -1.5f;
-            palmR.rotateAngleX = 1.4f;
-
-            // Front Left
-            arm2L.rotateAngleX = -1.5f;
-            palmL.rotateAngleX = 1.4f;
-
-            // Back Right
-            leg2R.rotateAngleX = 1f;
-            leg2R.rotateAngleY = 0.4f;
-            leg3R.setRotationPoint(-0.05F, 4.0F, -1.8F);
-            leg3R.rotateAngleX = -2.6f;
-            footR.rotateAngleX = 1.6f;
-
-            // Back Left
-            leg2L.rotateAngleX = 1f;
-            leg2L.rotateAngleY = -0.4f;
-            leg3L.setRotationPoint(-0.05F, 4.0F, -1.8F);
-            leg3L.rotateAngleX = -2.6f;
-            footL.rotateAngleX = 1.6f;
-
-            //Tail
-            for (AdvancedRendererModel segment : tailArray) segment.rotateAngleY = -0.6f;
-            tail1.rotateAngleX = -0.2f;
-            tail3.rotateAngleZ = -0.2f;
-            tail4.rotateAngleZ = -0.4f;
-            tail5.rotateAngleZ = -0.3f;
-            tail5.rotateAngleY += 0.1f;
-
-        }
 
         // IDLE
-        if (entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION) {
-            chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
-            walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
+        chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
+        walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
 
-            walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
-            chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
-            chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
-        }
+        walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
+        chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
+        chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
 
+        faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
+
+
+    /**
+     * Sitting <i><b>Position</b></i>
+     * <p>
+     * Called every tick when drake is sitting and no other animation is playing.
+     * Called in {@link #standAnim()} for the initial position
+     */
+    private void staySitting() {
+        body1.offsetY = 0.35f;
+
+        // Front Right
+        arm2R.rotateAngleX = -1.5f;
+        palmR.rotateAngleX = 1.4f;
+
+        // Front Left
+        arm2L.rotateAngleX = -1.5f;
+        palmL.rotateAngleX = 1.4f;
+
+        // Back Right
+        leg2R.rotateAngleX = 1f;
+        leg2R.rotateAngleY = 0.4f;
+        leg3R.setRotationPoint(-0.05F, 4.0F, -1.8F);
+        leg3R.rotateAngleX = -2.6f;
+        footR.rotateAngleX = 1.6f;
+
+        // Back Left
+        leg2L.rotateAngleX = 1f;
+        leg2L.rotateAngleY = -0.4f;
+        leg3L.setRotationPoint(-0.05F, 4.0F, -1.8F);
+        leg3L.rotateAngleX = -2.6f;
+        footL.rotateAngleX = 1.6f;
+
+        //Toes
+        for (AdvancedRendererModel toeSegment : toeArray) toeSegment.rotateAngleX = -0.1f;
+
+        //Tail
+        for (AdvancedRendererModel tailSegment : tailArray) tailSegment.rotateAngleY = -0.6f;
+        tail1.rotateAngleX = -0.2f;
+        tail3.rotateAngleZ = -0.2f;
+        tail4.rotateAngleZ = -0.4f;
+        tail5.rotateAngleZ = -0.3f;
+        tail5.rotateAngleY += 0.1f;
+    }
+
+    /**
+     * Sitting Animation
+     */
+    private void sitAnim() {
+        animator.setAnimation(OWDrakeEntity.SIT_ANIMATION);
+
+        animator.startKeyframe(15);
+        animator.move(body1, 0, 5.5f, 0);
+        //Front Right
+        animator.rotate(arm2R, -1.1f, 0, 0);
+        animator.rotate(palmR, 1f, 0, 0);
+        //Front Left
+        animator.rotate(arm2L, -1.1f, 0, 0);
+        animator.rotate(palmL, 1f, 0, 0);
+        //Back Right
+        animator.rotate(leg2R, 0.35f, 0.4f, 0);
+        leg3R.setRotationPoint(-0.05F, 4.0F, -1.8F);
+        animator.rotate(leg3R, -1.9f, 0, 0);
+        animator.rotate(footR, 0.7f, 0, 0);
+        //Back Left
+        animator.rotate(leg2L, 0.35f, -0.4f, 0);
+        leg3L.setRotationPoint(-0.05F, 4.0F, -1.8F);
+        animator.rotate(leg3L, -1.9f, 0, 0);
+        animator.rotate(footL, 0.7f, 0, 0);
+        //Toes
+        for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, 0.8f, 0, 0);
+        //Tail
+        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, -0.6f, 0);
+        tail1.rotateAngleX = -0.2f;
+        tail3.rotateAngleZ = -0.2f;
+        tail4.rotateAngleZ = -0.4f;
+        tail5.rotateAngleZ = -0.3f;
+        tail5.rotateAngleY += 0.1f;
+        animator.endKeyframe();
+    }
+
+    /**
+     * Standing up anim for "un-sitting".
+     * Call {@link #staySitting()} for initial position
+     */
+    private void standAnim() {
+        staySitting();
+
+        animator.setAnimation(OWDrakeEntity.STAND_ANIMATION);
+
+        animator.startKeyframe(15);
+        animator.move(body1, 0, -5.5f, 0);
+        //Front Right
+        animator.rotate(arm2R, 1.1f, 0, 0);
+        animator.rotate(palmR, -1f, 0, 0);
+        //Front Left
+        animator.rotate(arm2L, 1.1f, 0, 0);
+        animator.rotate(palmL, -1f, 0, 0);
+        //Back Right
+        animator.rotate(leg2R, -0.35f, -0.4f, 0);
+        leg3R.setRotationPoint(-0.05F, 4.0F, 1.8F);
+        animator.rotate(leg3R, 1.9f, 0, 0);
+        animator.rotate(footR, -0.7f, 0, 0);
+        //Back Left
+        animator.rotate(leg2L, -0.35f, 0.4f, 0);
+        leg3L.setRotationPoint(-0.05F, 4.0F, 1.8F);
+        animator.rotate(leg3L, 1.9f, 0, 0);
+        animator.rotate(footL, -0.7f, 0, 0);
+        //Toes
+        for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, -0.8f, 0, 0);
+        //Tail
+        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
+        animator.endKeyframe();
+
+        tail1.rotateAngleX = tail1.defaultRotationX;
+        tail3.rotateAngleZ = tail3.defaultRotationZ;
+        tail4.rotateAngleZ = tail4.defaultRotationZ;
+        tail5.rotateAngleZ = tail5.defaultRotationZ;
+        tail5.rotateAngleY = tail5.defaultRotationY;
+    }
+
+    /**
+     * Horn Attack Anim
+     */
+    private void hornAttackAnim() {
+        animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION);
+
+        animator.startKeyframe(7);
+        animator.move(body1, 0, 0.5f, 0.2f);
+        animator.rotate(neck1, -0.4f, 0, 0);
+        animator.rotate(head, 0.8f, 0, 0);
+        animator.rotate(arm1L, 0.2f, 0, 0);
+        animator.rotate(arm2L, -0.2f, 0, 0);
+        animator.rotate(arm1R, 0.2f, 0, 0);
+        animator.rotate(arm2R, -0.2f, 0, 0);
+        animator.rotate(leg1L, 0.2f, 0, 0);
+        animator.rotate(leg1R, 0.2f, 0, 0);
+        animator.rotate(leg2L, -0.2f, 0, 0);
+        animator.rotate(leg2R, -0.2f, 0, 0);
+        animator.rotate(footL, -0.09f, 0, 0);
+        animator.rotate(footR, -0.09f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        animator.rotate(neck1, 0.6f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(5);
+        animator.rotate(head, -0.8f, 0, 0);
+        animator.endKeyframe();
+
+        animator.resetKeyframe(7);
+    }
+
+    /**
+     * Grass Eating Animation
+     * Rotate neck down and then rotate the mouth "eat"
+     */
+    private void grazeAnim(OWDrakeEntity entity, float frame) {
+        animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
+
+        animator.startKeyframe(12);
+        animator.rotate(neck1, 1, 0, 0);
+        animator.endKeyframe();
+        animator.setStaticKeyframe(15);
+        animator.resetKeyframe(8);
+
+        if (entity.getAnimationTick() >= 8 && entity.getAnimationTick() <= 27) {
+            jaw.rotateAngleX -= (6 + Math.sin(frame / 2) * 0.25);
+        }
+    }
+
 }

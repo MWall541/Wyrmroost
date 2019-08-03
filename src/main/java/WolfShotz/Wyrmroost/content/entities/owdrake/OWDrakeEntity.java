@@ -2,12 +2,13 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.GrazeGoal;
-import WolfShotz.Wyrmroost.setup.ItemSetup;
+import WolfShotz.Wyrmroost.event.SetupItem;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -41,19 +43,22 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     // Dragon Entity Animations
+    public static Animation SIT_ANIMATION = Animation.create(15);
+    public static Animation STAND_ANIMATION = Animation.create(15);
     public static Animation GRAZE_ANIMATION = Animation.create(35);
     public static Animation HORN_ATTACK_ANIMATION = Animation.create(22);
 
     // Dragon Entity Attributes
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST =
-            (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
+
+        moveController = new MovementController(this);
     }
 
     @Override
@@ -62,12 +67,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
         goalSelector.addGoal(10, new GrazeGoal(this, 2));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
-        goalSelector.addGoal(12, new LookRandomlyGoal(this));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
+        goalSelector.addGoal(13, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, player -> !player.isInvisible() || !((PlayerEntity) player).abilities.isCreativeMode));
+        targetSelector.addGoal(3, new NonTamedTargetGoal(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET));
     }
 
     @Override
@@ -150,8 +155,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
+        if (stack.getItem() == Items.STICK && !player.isSneaking()) { //DEBUG
+            setAnimation(STAND_ANIMATION);
+            return true;
+        }
+
+        if (stack.getItem() == Items.STICK && player.isSneaking()) { //DEBUG
+            setSitting(!isSitting());
+            return true;
+        }
+
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
+
             return true;
         }
 
@@ -159,12 +175,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
             consumeItemFromStack(player, stack);
             setSaddled(true);
             playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
+
             return true;
         }
 
         if (isSaddled() && !isFoodItem(stack) && !player.isSneaking() && !world.isRemote) {
             player.startRiding(this);
             sitGoal.setSitting(false);
+
             return true;
         }
 
@@ -172,14 +190,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (getHealth() < getMaxHealth() && isFoodItem(stack) && !player.isSneaking()) {
                 consumeItemFromStack(player, stack);
                 heal(2f);
+
                 return true;
             }
 
-            if (!isFoodItem(stack) && player.isSneaking() && isOwner(player) && !world.isRemote && sitGoal != null) {
-                sitGoal.setSitting(!isSitting());
-                isJumping = false;
-                navigator.clearPath();
-                setAttackTarget(null);
+            if (!isFoodItem(stack) && player.isSneaking() && isOwner(player)) {
+                setSitting(!isSitting());
+                setAnimation(isSitting()? SIT_ANIMATION : STAND_ANIMATION);
+
                 return true;
             }
         }
@@ -197,12 +215,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (canPassengerSteer()) {
                 float f = rider.moveForward, s = rider.moveStrafing;
                 float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting() ? 2 : 1);
+                boolean moving = (f != 0 || s != 0);
                 Vec3d target = new Vec3d(s, vec3d.y, f);
 
                 setSprinting(rider.isSprinting());
                 setAIMoveSpeed(speed);
                 super.travel(target);
-                setRotation(rotationYaw = rider.rotationYaw, rotationPitch);
+                if (moving) {
+                    prevRotationYaw = rotationYaw = rider.rotationYaw;
+                    rotationPitch = rider.rotationPitch * 0.5f;
+                    setRotation(rotationYaw, rotationPitch);
+                    renderYawOffset = rotationYaw;
+                    rotationYawHead = renderYawOffset;
+                }
 //              setRotation(ModUtils.limitAngle(rotationYaw, ModUtils.calcAngle(target), 15), rotationPitch); TODO: Smooth Rotations
 
                 return;
@@ -228,6 +253,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (rand % 15 == 0) {
                 setAttackTarget((LivingEntity) passenger);
                 removePassengers();
+                passenger.addVelocity(0, 1, 0);
                 playTameEffect(false);
                 world.setEntityState(this, (byte) 6);
             }
@@ -264,7 +290,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     /** Array Containing all of the dragons food items */
     @Override
-    public Item[] getFoodItems() { return new Item[] {Items.WHEAT, ItemSetup.itemfood_dragonfruit}; } //TODO
+    public Item[] getFoodItems() { return new Item[] {Items.WHEAT, SetupItem.itemfood_dragonfruit}; } //TODO
+
+    @Override
+    protected float getStandingEyeHeight(Pose pose, EntitySize size) {
+        return isSitting()? 1.5f : 2.35f;
+    }
 
     @Nullable
     @Override
@@ -272,7 +303,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     // == Entity Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SIT_ANIMATION, STAND_ANIMATION}; }
     // ==
 
 }

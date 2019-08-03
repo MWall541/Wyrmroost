@@ -1,11 +1,13 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.setup.EntitySetup;
-import WolfShotz.Wyrmroost.setup.ItemSetup;
-import WolfShotz.Wyrmroost.setup.SetupOreGen;
+import WolfShotz.Wyrmroost.event.ForgeEvents;
+import WolfShotz.Wyrmroost.event.SetupEntity;
+import WolfShotz.Wyrmroost.event.SetupItem;
+import WolfShotz.Wyrmroost.event.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -18,20 +20,22 @@ public class Wyrmroost
     public static final ItemGroup creativeTab = new CreativeTab();
 
     public Wyrmroost() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }
 
-    private void setup(final FMLCommonSetupEvent event) {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         SetupOreGen.setupOreGen();
 
-        ModUtils.L.debug("setup complete");
+        ModUtils.L.debug("commonSetup complete");
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        EntitySetup.registerEntityRenders();
+        MinecraftForge.EVENT_BUS.register(new ForgeEvents());
 
-        ModUtils.L.debug("clientSetup complete");
+        SetupEntity.registerEntityRenders();
+
+        ModUtils.L.info("clientSetup complete");
     }
 
     private static class CreativeTab extends ItemGroup
@@ -39,7 +43,7 @@ public class Wyrmroost
         private CreativeTab() { super("wyrmroost"); }
 
         @Override
-        public ItemStack createIcon() { return new ItemStack(ItemSetup.itemgeode); }
+        public ItemStack createIcon() { return new ItemStack(SetupItem.itemgeode); }
     }
 
 }
