@@ -30,11 +30,13 @@ public class FlightMovementController extends MovementController
 
         if (this.action == MovementController.Action.MOVE_TO) {
             this.action = MovementController.Action.WAIT;
-            this.mob.setNoGravity(true);
             double d0 = posX - mob.posX;
             double d1 = posY - mob.posY;
             double d2 = posZ - mob.posZ;
             double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+
+            this.mob.setNoGravity(true);
+
             if (d3 < (double)2.5000003E-7F) {
                 mob.setMoveVertical(0.0F);
                 mob.setMoveForward(0.0F);
@@ -42,17 +44,18 @@ public class FlightMovementController extends MovementController
             }
 
             float f = (float)(MathHelper.atan2(d2, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
-            mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10.0F);
             float f1;
-            if (mob.onGround) {
-                f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
-            } else {
-                f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
-            }
+
+            mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10.0F);
+
+            if (mob.onGround) f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
+            else f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
 
             mob.setAIMoveSpeed(f1);
+
             double d4 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
             float f2 = (float)(-(MathHelper.atan2(d1, d4) * (double)(180F / (float)Math.PI)));
+
             mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 10.0F);
             mob.setMoveVertical(d1 > 0.0D ? f1 : -f1);
         } else {

@@ -285,7 +285,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.Head.addChild(this.EyeL);
 
         tailArray = new AdvancedRendererModel[] {Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7, Tail8, Tail9, Tail10};
-        neckArray = new AdvancedRendererModel[] {Neck1, Neck2, Neck3, Neck4};
+        neckArray = new AdvancedRendererModel[] {Neck1, Neck2, Neck3, Neck4, Head};
         neck2Array = new AdvancedRendererModel[] {Neck1, Neck2};
         toes = new AdvancedRendererModel[] {toe1L, toe1L_1, toe1L_2, toe2L, toe2R, toe3L};
 
@@ -308,7 +308,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         float f = 0.5f;
 
         resetToDefaultPose();
-        faceTarget(netHeadYaw, headPitch, 1f, Head);
+        faceTarget(netHeadYaw, headPitch, 1f, neckArray);
 
         if (entity.isFlying() && !entity.isGliding && entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION) {
             LegL1.rotateAngleX = 0.5f;
@@ -337,12 +337,18 @@ public class SilverGliderModel extends AdvancedEntityModel {
         if (entity.isGliding) {
             Random rand = new Random();
 
+            MainBody.rotateAngleX = (float) -entity.getLookVec().y;
+
             if (entity.isDiving) {
-                WingSegment1L.rotateAngleX = -0.2f;
+/*                WingSegment1L.rotateAngleX = -0.2f;
                 WingSegment1L.rotateAngleY = -0.4f;
                 WingSegment1L.rotateAngleZ = -0.1f;
                 WingSegment2L.rotateAngleY = -0.4f;
-                WingSegment3L.rotateAngleY = -0.4f;
+                WingSegment3L.rotateAngleY = -0.4f;*/
+
+/*                progressRotation(WingSegment1L, 0.5f, -0.2f, -0.4f, -0.1f, 2f);
+                progressRotation(WingSegment2L, 0.5f, 0, -0.4f, 0, 1);
+                progressRotation(WingSegment3L, 0.5f, 0, -0.4f, 0, 1);*/
 
                 WingSegment1R.rotateAngleX = -0.2f;
                 WingSegment1R.rotateAngleY = 0.4f;
