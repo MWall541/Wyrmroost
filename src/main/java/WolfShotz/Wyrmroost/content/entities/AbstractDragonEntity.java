@@ -72,6 +72,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected void registerData() {
         super.registerData();
+
         dataManager.register(GENDER, getRNG().nextBoolean());
 //        dataManager.register(ASLEEP, false);
         dataManager.register(ALBINO, getAlbinoChances() != 0 && getRNG().nextInt(getAlbinoChances()) == 0);
@@ -84,20 +85,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
-        compound.putBoolean("Gender", getGender());
-//        compound.putBoolean("Asleep", isAsleep());
-        compound.putBoolean("Albino", isAlbino());
-        compound.putBoolean("Saddled", isSaddled());
+        compound.putBoolean("gender", getGender());
+//        compound.putBoolea("asleep", isAsleep());
+        compound.putBoolean("albino", isAlbino());
+        compound.putBoolean("saddled", isSaddled());
     }
 
     /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
-        setGender(compound.getBoolean("Gender"));
+        setGender(compound.getBoolean("gender"));
 //        setAsleep(compound.getBoolean("Asleep"));
-        setAlbino(compound.getBoolean("Albino"));
-        setSaddled(compound.getBoolean("Saddled"));
+        setAlbino(compound.getBoolean("albino"));
+        setSaddled(compound.getBoolean("saddled"));
     }
 
     /**
@@ -148,11 +149,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
-    @Override
     public void setSitting(boolean sitting) {
-        isJumping = false;
-        navigator.clearPath();
-        setAttackTarget(null);
+        if (!world.isRemote) {
+            sitGoal.setSitting(sitting);
+            isJumping = false;
+            navigator.clearPath();
+            setAttackTarget(null);
+        }
 
         super.setSitting(sitting);
     }

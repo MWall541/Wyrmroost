@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.setup;
+package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.minutus.MinutusEntity;
@@ -29,10 +29,10 @@ import java.util.Set;
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
  *
- * Class responsible for the setup and registration of entities, and their spawning.
+ * Class responsible for the event and registration of entities, and their spawning.
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class EntitySetup
+public class SetupEntity
 {
     // Entity List Start
     @ObjectHolder(Wyrmroost.modID + ":overworld_drake")
@@ -88,7 +88,7 @@ public class EntitySetup
     }
 
     // ================================
-    //   EntitySetup Helper Functions
+    //   SetupEntity Helper Functions
     // ================================
 
     /**

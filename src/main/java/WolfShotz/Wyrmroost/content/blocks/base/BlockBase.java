@@ -1,16 +1,13 @@
 package WolfShotz.Wyrmroost.content.blocks.base;
 
-import WolfShotz.Wyrmroost.setup.BlockSetup;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.event.SetupBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.registries.ForgeRegistries;
 
 /** Blockbase - Helper Class allowing for easier block registration */
 public class BlockBase extends Block
@@ -50,7 +47,7 @@ public class BlockBase extends Block
         setRegistryName(name);
         this.isBeaconBase = isBeaconBase;
 
-        BlockSetup.BLOCKS.add(this);
+        SetupBlock.BLOCKS.add(this);
     }
 
     @Override

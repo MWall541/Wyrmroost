@@ -4,14 +4,15 @@ import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.BurrowGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.RunAwayGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.WalkRandom;
-import WolfShotz.Wyrmroost.setup.ItemSetup;
-import WolfShotz.Wyrmroost.setup.SoundSetup;
+import WolfShotz.Wyrmroost.event.SetupItem;
+import WolfShotz.Wyrmroost.event.SetupSound;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,6 +45,8 @@ public class MinutusEntity extends AbstractDragonEntity
 
     public MinutusEntity(EntityType<? extends MinutusEntity> minutus, World world) {
         super(minutus, world);
+
+        moveController = new MovementController(this);
 
         setImmune(DamageSource.IN_WALL);
     }
@@ -143,7 +146,7 @@ public class MinutusEntity extends AbstractDragonEntity
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
             CompoundNBT nbt = new CompoundNBT();
-            ItemStack newDrop = new ItemStack(ItemSetup.itemminutus);
+            ItemStack newDrop = new ItemStack(SetupItem.itemminutus);
 
             nbt.putBoolean("isalive", true);
             nbt.putString("entitytype", EntityType.getKey(getType()).toString());
@@ -168,11 +171,11 @@ public class MinutusEntity extends AbstractDragonEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SoundSetup.MINUTUS_IDLE; }
+    protected SoundEvent getAmbientSound() { return SetupSound.MINUTUS_IDLE; }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundSetup.MINUTUS_SCREECH; }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSound.MINUTUS_SCREECH; }
 
     /** Array Containing all of the dragons food items */
     @Override

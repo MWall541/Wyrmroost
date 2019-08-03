@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.setup;
+package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.items.ItemMinutus;
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ItemSetup
+public class SetupItem
 {
     @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
     public static Item itemmodbook;
@@ -122,9 +122,9 @@ public class ItemSetup
                 new Item(ModUtils.itemBuilder().food(FoodList.cookedminutus)).setRegistryName("cooked_minutus"),
 
                 // SpawnEggs start
-                new SpawnEggItem(EntitySetup.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
-                new SpawnEggItem(EntitySetup.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
-                new SpawnEggItem(EntitySetup.silver_glider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
+                new SpawnEggItem(SetupEntity.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
+                new SpawnEggItem(SetupEntity.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
+                new SpawnEggItem(SetupEntity.silver_glider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
                 // SpawnEggs end
 
                 // Geode start
@@ -152,7 +152,7 @@ public class ItemSetup
                 // Platinum End
         );
         // BlockItem's
-        BlockSetup.BLOCKS.forEach(block -> event.getRegistry().register(new BlockItem(block,ModUtils.itemBuilder()).setRegistryName(block.getRegistryName())));
+        SetupBlock.BLOCKS.forEach(block -> event.getRegistry().register(new BlockItem(block, ModUtils.itemBuilder()).setRegistryName(block.getRegistryName())));
 
         ModUtils.L.info("Item Setup Complete");
     }

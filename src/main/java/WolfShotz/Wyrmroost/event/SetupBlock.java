@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.setup;
+package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class BlockSetup
+public class SetupBlock
 {
     // List Collection of all Blocks in preparation for BlockItem Registration
     public static List<Block> BLOCKS = new ArrayList<>();

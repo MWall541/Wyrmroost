@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.setup;
+package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.util.SoundEvent;
@@ -7,7 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class SoundSetup
+public class SetupSound
 {
     public static SoundEvent MINUTUS_IDLE;
     public static SoundEvent MINUTUS_SCREECH;
