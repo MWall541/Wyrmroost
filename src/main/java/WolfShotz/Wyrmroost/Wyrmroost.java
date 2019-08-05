@@ -31,7 +31,7 @@ public class Wyrmroost
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        MinecraftForge.EVENT_BUS.register(new ForgeEvents());
+        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::fix3rdPersonCamera);
 
         SetupEntity.registerEntityRenders();
 
