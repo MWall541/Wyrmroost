@@ -104,7 +104,7 @@ public class SetupItem
     @ObjectHolder(Wyrmroost.modID + ":drake_egg")
     public static Item itemegg_drake;
 
-    @ObjectHolder(Wyrmroost.modID + ":desertwyrm_egg")
+    @ObjectHolder(Wyrmroost.modID + ":minutus_egg")
     public static Item itemegg_minutus;
 
     @ObjectHolder(Wyrmroost.modID + ":silverglider_egg")
@@ -135,7 +135,7 @@ public class SetupItem
                 new ShovelItem(ToolMaterialList.tool_geode, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
                 new ItemArmorBase("geode_helmet", ArmorMaterialList.armor_geode, EquipmentSlotType.HEAD),
                 new ItemArmorBase("geode_chestplate", ArmorMaterialList.armor_geode, EquipmentSlotType.CHEST),
-                new ItemArmorBase("geode_legs", ArmorMaterialList.armor_geode, EquipmentSlotType.LEGS),
+                new ItemArmorBase("geode_leggings", ArmorMaterialList.armor_geode, EquipmentSlotType.LEGS),
                 new ItemArmorBase("geode_boots", ArmorMaterialList.armor_geode, EquipmentSlotType.FEET),
                 // Geode End
 
