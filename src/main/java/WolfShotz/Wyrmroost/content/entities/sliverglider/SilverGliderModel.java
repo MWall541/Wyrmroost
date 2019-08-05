@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.Random;
 
@@ -336,25 +337,23 @@ public class SilverGliderModel extends AdvancedEntityModel {
         }
         if (entity.isGliding) {
             Random rand = new Random();
+            Vec3d look = entity.getLookVec();
 
-            MainBody.rotateAngleX = (float) -entity.getLookVec().y;
+//            MainBody.rotateAngleX = (float) -look.y;
 
-            if (entity.isDiving) {
-/*                WingSegment1L.rotateAngleX = -0.2f;
-                WingSegment1L.rotateAngleY = -0.4f;
-                WingSegment1L.rotateAngleZ = -0.1f;
-                WingSegment2L.rotateAngleY = -0.4f;
-                WingSegment3L.rotateAngleY = -0.4f;*/
+            if (look.y < -0.000001) {
+                WingSegment1L.rotateAngleY = (float) Math.max(look.y / 4, -0.5f);
+                WingSegment2L.rotateAngleY = (float) Math.max(look.y / 4, -0.5f);
+                WingSegment3L.rotateAngleY = (float) Math.max(look.y / 4, -0.4f);
 
-/*                progressRotation(WingSegment1L, 0.5f, -0.2f, -0.4f, -0.1f, 2f);
-                progressRotation(WingSegment2L, 0.5f, 0, -0.4f, 0, 1);
-                progressRotation(WingSegment3L, 0.5f, 0, -0.4f, 0, 1);*/
+                WingSegment1R.rotateAngleY = (float) Math.min(-look.y / 4, 0.5f);
+                WingSegment2R.rotateAngleY = (float) Math.min(-look.y / 4, 0.5f);
+                WingSegment3R.rotateAngleY = (float) Math.min(-look.y / 4, 0.4f);
+            }
+            if (look.y > 0.000001) {
+                WingSegment1L.rotateAngleX = (float) Math.max(-look.y, -0.3f);
 
-                WingSegment1R.rotateAngleX = -0.2f;
-                WingSegment1R.rotateAngleY = 0.4f;
-                WingSegment1R.rotateAngleZ = 0.1f;
-                WingSegment2R.rotateAngleY = 0.4f;
-                WingSegment3R.rotateAngleY = 0.4f;
+                WingSegment1R.rotateAngleX = (float) Math.max(-look.y, -0.3f);
             }
 
             walk(Membrane1L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);

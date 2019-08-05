@@ -52,7 +52,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     protected void registerData() {
         super.registerData();
 
-        dataManager.register(VARIANT, getRNG().nextInt(2)); // For females, this value is redundant.
+        dataManager.register(VARIANT, getRNG().nextInt(3)); // For females, this value is redundant.
     }
 
     /** Save Game */
@@ -91,8 +91,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         Entity entity = getRidingEntity();
 
-        isGliding = false;
-        isDiving = false;
+//        isGliding = false;
 
         if (entity != null) {
             if (!entity.isAlive()) {
@@ -104,12 +103,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
             if (entity instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) entity;
-                if (player.isSneaking()) {
+                if (player.isSneaking() && !player.abilities.isFlying) {
                     stopRiding();
                     return;
                 }
 
-                if (ModUtils.isEntityJumping(player) && ModUtils.getAltitude(player) > 1 && !player.abilities.isFlying) {
+                if (ModUtils.isEntityJumping(player) && ModUtils.getAltitude(player) > 1.3 && !player.abilities.isFlying) {
                     double xMotion = 1.1d;
                     double yMotion = 0.6d;
                     double zMotion = 1.1d;
@@ -117,10 +116,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
                     if (prevMotion.x >= 1f || prevMotion.x <= -1f) xMotion = 0.8d;
                     if (prevMotion.z >= 1f || prevMotion.z <= -1f) zMotion = 0.8d;
-                    if (player.getLookVec().y < -0.7) {
-                        isDiving = true;
-                        yMotion = 1;
-                    }
+                    if (player.getLookVec().y < -0.7) yMotion = 1;
 
                     Vec3d motion = new Vec3d(xMotion, yMotion, zMotion);
 
