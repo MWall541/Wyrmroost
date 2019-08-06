@@ -5,6 +5,9 @@ import WolfShotz.Wyrmroost.event.SetupEntity;
 import WolfShotz.Wyrmroost.event.SetupItem;
 import WolfShotz.Wyrmroost.event.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.play.NetworkPlayerInfo;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,13 +30,15 @@ public class Wyrmroost
     private void commonSetup(final FMLCommonSetupEvent event) {
         SetupOreGen.setupOreGen();
 
+        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::cancelFall);
+
         ModUtils.L.debug("commonSetup complete");
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::fix3rdPersonCamera);
-
         SetupEntity.registerEntityRenders();
+
+        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::ridingPerspective);
 
         ModUtils.L.info("clientSetup complete");
     }

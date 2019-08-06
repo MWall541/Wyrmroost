@@ -23,10 +23,13 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -82,14 +85,14 @@ public class MinutusEntity extends AbstractDragonEntity
     @Override
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
-        compound.putBoolean("Burrowed", isBurrowed());
+        compound.putBoolean("burrowed", isBurrowed());
     }
 
     /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
-        setBurrowed(compound.getBoolean("Burrowed"));
+        setBurrowed(compound.getBoolean("burrowed"));
     }
 
     /**
@@ -113,6 +116,7 @@ public class MinutusEntity extends AbstractDragonEntity
     @Override
     public void livingTick() {
         super.livingTick();
+
         if (isBurrowed()) {
             if (world.getBlockState(getPosition().down(1)).getMaterial() != Material.SAND) setBurrowed(false);
             attackAbove();
@@ -177,7 +181,12 @@ public class MinutusEntity extends AbstractDragonEntity
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSound.MINUTUS_SCREECH; }
 
-    /** Array Containing all of the dragons food items */
+    @Override
+    protected float getSoundVolume() { return 0.5f; }
+
+    /**
+     * Array Containing all of the dragons food items
+     */
     @Override
     public Item[] getFoodItems() { return new Item[0]; } // Doesnt eat :P
 

@@ -17,6 +17,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -30,7 +32,7 @@ public class ItemModBook extends Item
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        if (world.isRemote) Minecraft.getInstance().displayGuiScreen(new ScreenModBook());
+        if (world.isRemote) DistExecutor.runWhenOn(Dist.CLIENT, () -> this::openGUI);
 
         return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
     }
@@ -43,4 +45,11 @@ public class ItemModBook extends Item
                             .appendSibling(new StringTextComponent("sgdshdf")
                                 .applyTextStyle(TextFormatting.OBFUSCATED)));
     }
+
+    /**
+     * Opens the GUI on the Client Side
+     * This is needed otherwise a sided exception is thrown
+     */
+    @OnlyIn(Dist.CLIENT)
+    private void openGUI() { Minecraft.getInstance().displayGuiScreen(new ScreenModBook()); }
 }
