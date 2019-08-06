@@ -106,9 +106,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
         setVariant(compound.getBoolean("variant"));
     }
 
-    /** The Variant of the drake. false == Common, true == Savanna. Boolean since we only have 2 different variants */
-    protected boolean getVariant() { return dataManager.get(VARIANT); }
-    protected void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
+    /**
+     * The Variant of the drake.
+     * false == Common, true == Savanna. Boolean since we only have 2 different variants
+     */
+    public boolean getVariant() { return dataManager.get(VARIANT); }
+    public void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
 
     @Override
     public boolean canFly() { return false; }
@@ -123,7 +126,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (attribute.getModifier(SPRINTING_ID) != null) attribute.removeModifier(SPRINTING_SPEED_BOOST);
         if (sprinting) attribute.applyModifier(SPRINTING_SPEED_BOOST);
-
     }
 
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
@@ -155,16 +157,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
-        if (stack.getItem() == Items.STICK && !player.isSneaking()) { //DEBUG
-            setAnimation(STAND_ANIMATION);
-            return true;
-        }
-
-        if (stack.getItem() == Items.STICK && player.isSneaking()) { //DEBUG
-            setSitting(!isSitting());
-            return true;
-        }
-
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
 
@@ -179,7 +171,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             return true;
         }
 
-        if (isSaddled() && !isFoodItem(stack) && !player.isSneaking() && !world.isRemote) {
+        if (isSaddled() && !isBreedingItem(stack) && !player.isSneaking() && !world.isRemote) {
             player.startRiding(this);
             sitGoal.setSitting(false);
 
@@ -187,14 +179,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
 
         if (isTamed()) {
-            if (getHealth() < getMaxHealth() && isFoodItem(stack) && !player.isSneaking()) {
+            if (getHealth() < getMaxHealth() && isBreedingItem(stack) && !player.isSneaking()) {
                 consumeItemFromStack(player, stack);
                 heal(2f);
 
                 return true;
             }
 
-            if (!isFoodItem(stack) && player.isSneaking() && isOwner(player)) {
+            if (!isBreedingItem(stack) && player.isSneaking() && isOwner(player)) {
                 setSitting(!isSitting());
                 setAnimation(isSitting()? SIT_ANIMATION : STAND_ANIMATION);
 
@@ -239,6 +231,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     public void updatePassenger(Entity passenger) {
+        super.updatePassenger(passenger);
+
         if (!isTamed() && passenger instanceof LivingEntity && !world.isRemote) {
             int rand = new Random().nextInt(100);
 
@@ -253,19 +247,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (rand % 15 == 0) {
                 setAttackTarget((LivingEntity) passenger);
                 removePassengers();
-                passenger.addVelocity(0, 1, 0);
                 playTameEffect(false);
                 world.setEntityState(this, (byte) 6);
+                passenger.addVelocity(0, 1, 0);
             }
         }
-        super.updatePassenger(passenger);
-    }
-
-    @Override
-    public boolean attackEntityAsMob(Entity entityIn) {
-        if (getAnimation() != HORN_ATTACK_ANIMATION) setAnimation(HORN_ATTACK_ANIMATION);
-
-        return super.attackEntityAsMob(entityIn);
     }
 
     @Override
@@ -275,27 +261,24 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void setAttackTarget(@Nullable LivingEntity entityIn) {
-        setAngry(entityIn != null || !isTamed());
-
-        super.setAttackTarget(entityIn);
-    }
-
-    @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn) {
         playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
 
         super.playStepSound(pos, blockIn);
     }
 
-    /** Array Containing all of the dragons food items */
     @Override
-    public Item[] getFoodItems() { return new Item[] {Items.WHEAT, SetupItem.itemfood_dragonfruit}; } //TODO
+    public boolean attackEntityAsMob(Entity entityIn) {
+        //TODO ALTERNATIVE ATTACKS!
 
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntitySize size) {
-        return isSitting()? 1.5f : 2.35f;
+        return super.attackEntityAsMob(entityIn);
     }
+
+    /**
+     * Array Containing all of the dragons food items
+     */
+    @Override
+    protected Item[] getFoodItems() { return new Item[] {Items.WHEAT, SetupItem.itemfood_dragonfruit}; }
 
     @Nullable
     @Override
