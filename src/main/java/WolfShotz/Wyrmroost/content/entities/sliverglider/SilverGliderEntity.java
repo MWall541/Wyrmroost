@@ -14,11 +14,8 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 
@@ -27,7 +24,9 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class SilverGliderEntity extends AbstractDragonEntity
 {
     boolean isGliding = false;
-    boolean isDiving = false;
+
+    // Entity Animations
+    public static final Animation RANDOM_FLAP_ANIMATION = Animation.create(30);
 
     // Dragon Entity Data
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(SilverGliderEntity.class, DataSerializers.VARINT);
@@ -103,20 +102,25 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
             if (entity instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) entity;
+
                 if (player.isSneaking() && !player.abilities.isFlying) {
                     stopRiding();
                     return;
                 }
 
-                if (ModUtils.isEntityJumping(player) && ModUtils.getAltitude(player) > 1.3 && !player.abilities.isFlying) {
-                    double xMotion = 1.1d;
-                    double yMotion = 0.6d;
-                    double zMotion = 1.1d;
+                if (ModUtils.isEntityJumping(player) && ModUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying) {
                     Vec3d prevMotion = player.getMotion();
+                    double yVec = player.getLookVec().y;
+                    double xMotion = (Math.abs(prevMotion.x) >= 1f? 0.8d : 1.1d);
+                    double zMotion = (Math.abs(prevMotion.z) >= 1f? 0.8d : 1.1d);
+                    double yMotion = 0.75d; // Fallback: WHERE TF ARE WE LOOKING?!
 
-                    if (prevMotion.x >= 1f || prevMotion.x <= -1f) xMotion = 0.8d;
-                    if (prevMotion.z >= 1f || prevMotion.z <= -1f) zMotion = 0.8d;
-                    if (player.getLookVec().y < -0.7) yMotion = 1;
+                    if (yVec < 0) yMotion = Math.max(Math.abs(yVec), 0.6);
+                    else if (yVec >= 0) {
+                        yMotion = Math.min(yVec, 0.75);
+                        if (getRNG().nextInt(75) == 0 && getAnimation() != RANDOM_FLAP_ANIMATION)
+                            setAnimation(RANDOM_FLAP_ANIMATION);
+                    }
 
                     Vec3d motion = new Vec3d(xMotion, yMotion, zMotion);
 
@@ -124,12 +128,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     player.setMotion(prevMotion.mul(motion));
                 }
 
-                prevRotationPitch = rotationPitch = player.rotationPitch;
+                prevRotationPitch = rotationPitch = player.rotationPitch / 2;
                 rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
                 setRotation(player.rotationYawHead, rotationPitch);
-
-                Vec3d offset = new Vec3d(player.posX, player.posY + 1.85, player.posZ + 0.8 * -0.4);
-                offset.rotateYaw((float) Math.toRadians(-rotationYaw));
 
                 setPosition(player.posX, player.posY + 1.85d, player.posZ);
             }
@@ -203,6 +204,13 @@ public class SilverGliderEntity extends AbstractDragonEntity
             }
         }
         super.travel(vec3d);
+    }
+
+    @Override
+    public void dismountEntity(Entity entityIn) {
+        super.dismountEntity(entityIn);
+
+        isGliding = false;
     }
 
     @Override

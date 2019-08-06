@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.sliverglider;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
@@ -62,6 +63,9 @@ public class SilverGliderModel extends AdvancedEntityModel {
     public AdvancedRendererModel WingSegment3R;
     public AdvancedRendererModel Membrane3R;
 
+    private ModelAnimator animator;
+    private Random rand = new Random();
+
     public AdvancedRendererModel[] tailArray;
     public AdvancedRendererModel[] neckArray;
     public AdvancedRendererModel[] neck2Array;
@@ -69,6 +73,8 @@ public class SilverGliderModel extends AdvancedEntityModel {
 
     private float netHeadYaw = 0;
     private float headPitch = 0;
+    private float globalSpeed = 0.5f;
+    private float f = 0.5f;
 
     public SilverGliderModel() {
         this.textureWidth = 160;
@@ -290,6 +296,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         neck2Array = new AdvancedRendererModel[] {Neck1, Neck2};
         toes = new AdvancedRendererModel[] {toe1L, toe1L_1, toe1L_2, toe2L, toe2R, toe3L};
 
+        animator = ModelAnimator.create();
         updateDefaultPose();
     }
 
@@ -305,17 +312,14 @@ public class SilverGliderModel extends AdvancedEntityModel {
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         SilverGliderEntity entity = (SilverGliderEntity) entityIn;
         float frame = entity.ticksExisted;
-        float globalSpeed = 0.5f;
-        float f = 0.5f;
 
         resetToDefaultPose();
+        animator.update(entity);
         faceTarget(netHeadYaw, headPitch, 1f, neckArray);
 
         if (entity.isFlying() && !entity.isGliding && entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION) {
             LegL1.rotateAngleX = 0.5f;
             LegL3.rotateAngleX = -0.7f;
-
-//            LegR1.rotateAngleX = 0.5f;
 
             walk(WingSegment1L, globalSpeed, -0.25f, false, 0, -0.25f, frame, f);
             flap(WingSegment1L, globalSpeed, 1.3f, false, 0, 0, frame, f);
@@ -333,51 +337,93 @@ public class SilverGliderModel extends AdvancedEntityModel {
             walk(Head, globalSpeed - 0.2f, 0.05f, false, 0.9f, 0, frame, f);
             walk(MouthBottom, globalSpeed - 0.2f, 0.3f, false, 0, 0.5f, frame, f);
 
-            return;
+            return; // No other anim should play during this!
         }
         if (entity.isGliding) {
-            Random rand = new Random();
-            Vec3d look = entity.getLookVec();
+            continueGliding(entity, frame);
+            randomFlap();
 
-//            MainBody.rotateAngleX = (float) -look.y;
-
-            if (look.y < -0.000001) {
-                WingSegment1L.rotateAngleY = (float) Math.max(look.y / 4, -0.5f);
-                WingSegment2L.rotateAngleY = (float) Math.max(look.y / 4, -0.5f);
-                WingSegment3L.rotateAngleY = (float) Math.max(look.y / 4, -0.4f);
-
-                WingSegment1R.rotateAngleY = (float) Math.min(-look.y / 4, 0.5f);
-                WingSegment2R.rotateAngleY = (float) Math.min(-look.y / 4, 0.5f);
-                WingSegment3R.rotateAngleY = (float) Math.min(-look.y / 4, 0.4f);
-            }
-            if (look.y > 0.000001) {
-                WingSegment1L.rotateAngleX = (float) Math.max(-look.y, -0.3f);
-
-                WingSegment1R.rotateAngleX = (float) Math.max(-look.y, -0.3f);
-            }
-
-            walk(Membrane1L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
-            walk(Membrane2L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
-            walk(Membrane3L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
-
-            walk(Membrane1R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
-            walk(Membrane2R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
-            walk(Membrane3R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
-
-            chainWave(neck2Array, globalSpeed - 0.2f, 0.02f, 0, frame, f);
-            walk(Head, globalSpeed - 0.2f, 0.05f, false, 0.9f, 0, frame, f);
-            walk(MouthBottom, globalSpeed - 0.2f, 0.3f, false, 0, 0.5f, frame, f);
-
-            chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, f);
-
-            return;
+            return; // No other anim should play during this!
         }
 
-        // IDLE:
+        continueIdle(frame);
+    }
+
+    /**
+     * The "Idle" anim. Slowly moves some parts of the body
+     */
+    private void continueIdle(float frame) {
         chainWave(neck2Array, globalSpeed - 0.4f, 0.02f, 0, frame, f);
         walk(Head, globalSpeed - 0.4f, 0.05f, false, 0.9f, 0, frame, f);
         walk(MouthBottom, globalSpeed - 0.4f, 0.3f, false, 0, 0.5f, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, f);
         chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, f);
+    }
+
+    /**
+     * Gliding Pose for the Silver Glider
+     * Handles the "buffering" of wings and dynamic wing movements according to look vector
+     */
+    private void continueGliding(SilverGliderEntity entity, float frame) {
+        Vec3d look = entity.getLookVec();
+
+        MainBody.rotateAngleX = (float) -look.y;
+        LegL1.rotateAngleX = (float) look.y;
+        LegR1.rotateAngleX = (float) look.y;
+
+        if (look.y < -0.000001) {
+            WingSegment1L.rotateAngleY = (float) Math.max(look.y / 2, -0.5f);
+            WingSegment2L.rotateAngleY = (float) Math.max(look.y, -0.5f);
+            WingSegment3L.rotateAngleY = (float) Math.max(look.y, -0.7f);
+
+            WingSegment1R.rotateAngleY = (float) Math.min(-look.y / 2, 0.5f);
+            WingSegment2R.rotateAngleY = (float) Math.min(-look.y, 0.5f);
+            WingSegment3R.rotateAngleY = (float) Math.min(-look.y, 0.7f);
+        }
+        if (look.y > 0.000001) {
+            WingSegment1L.rotateAngleX = (float) Math.max(-look.y, -0.3f);
+            WingSegment1R.rotateAngleX = (float) Math.max(-look.y, -0.3f);
+        }
+
+        swing(WingSegment1L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.008f);
+        swing(WingSegment2L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+        walk(Membrane1L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+        walk(Membrane2L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+        walk(Membrane3L, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+
+        swing(WingSegment1R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.008f);
+        swing(WingSegment2R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+        walk(Membrane1R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+        walk(Membrane2R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+        walk(Membrane3R, globalSpeed + rand.nextFloat(), rand.nextFloat(), false, 0, 0, frame, 0.013f);
+
+        chainWave(neck2Array, globalSpeed - 0.2f, 0.02f, 0, frame, f);
+        walk(Head, globalSpeed - 0.2f, 0.05f, false, 0.9f, 0, frame, f);
+        walk(MouthBottom, globalSpeed - 0.2f, 0.3f, false, 0, 0.5f, frame, f);
+
+        chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, f);
+    }
+
+    /**
+     * Flap the wings occasionally
+     */
+    private void randomFlap() {
+        animator.setAnimation(SilverGliderEntity.RANDOM_FLAP_ANIMATION);
+
+        animator.startKeyframe(4);
+        animator.rotate(WingSegment1L, 0, 0, -0.25f);
+        animator.rotate(WingSegment1R, 0, 0, 0.25f);
+        animator.endKeyframe();
+
+        animator.startKeyframe(8);
+        animator.rotate(WingSegment1L, 0, 0, 0.75f);
+        animator.rotate(WingSegment2L, 0, 0, 0.75f);
+        animator.rotate(WingSegment3L, 0, 0, 0.5f);
+        animator.rotate(WingSegment1R, 0, 0, -0.75f);
+        animator.rotate(WingSegment2R, 0, 0, -0.75f);
+        animator.rotate(WingSegment3R, 0, 0, -0.5f);
+        animator.endKeyframe();
+
+        animator.resetKeyframe(4);
     }
 }
