@@ -1,0 +1,4 @@
+{
+    "parent": "item/generated",
+    "textures": {"layer0": "wyrmroost:item/tools/geode/geode_leggings"}
+}

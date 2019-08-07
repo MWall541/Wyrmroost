@@ -48,7 +48,7 @@ public class GrazeGoal extends Goal
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a base shot task or start executing a continuous task
      */
     public void startExecuting() {
         eatingGrassTimer = 40;
@@ -57,7 +57,7 @@ public class GrazeGoal extends Goal
     }
 
     /**
-     * Reset the task's internal state. Called when this task is interrupted by another one
+     * Reset the task's internal state. Called when this task is interrupted by another base
      */
     public void resetTask() {
         eatingGrassTimer = 0;

@@ -3,12 +3,15 @@ package WolfShotz.Wyrmroost.event;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Optional;
 
 /**
  * Class Used to hook into forge events to perform particular tasks when the event is called
@@ -23,10 +26,20 @@ public class ForgeEvents
     public static void cancelFall(LivingFallEvent event) {
         PlayerEntity player;
 
-        if (event.getEntity() instanceof PlayerEntity) player = (PlayerEntity) event.getEntity();
-        else return;
-        if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
-            event.setDamageMultiplier(0); // If gliding with a silver glider, cancel fall damage
+        if (!(event.getEntity() instanceof PlayerEntity)) return;
+        else player = (PlayerEntity) event.getEntity();
+        if (player.getPassengers().isEmpty()) return;
+
+        Optional<Entity> entity = player.getPassengers()
+                                          .stream()
+                                          .filter(SilverGliderEntity.class::isInstance)
+                                          .findFirst();
+
+        if (!entity.isPresent()) return;
+
+        SilverGliderEntity glider = (SilverGliderEntity) entity.get();
+
+        if (glider.isGliding) event.setDamageMultiplier(0); // If gliding with a silver glider, cancel fall damage
     }
 
      /**

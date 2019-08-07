@@ -189,7 +189,7 @@ public class MinutusEntity extends AbstractDragonEntity
      */
     @Override
     public Item[] getFoodItems() { return new Item[0]; } // Doesnt eat :P
-
+    
     @Override
     public boolean canBePushed() { return !isBurrowed(); }
 

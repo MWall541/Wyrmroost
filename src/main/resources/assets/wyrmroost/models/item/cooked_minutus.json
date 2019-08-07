@@ -1,6 +1,4 @@
 {
     "parent": "item/generated",
-    "textures": {
-        "layer0": "wyrmroost:item/minutus/cooked_minutus"
-    }
+    "textures": {"layer0": "wyrmroost:item/minutus/cooked_minutus"}
 }

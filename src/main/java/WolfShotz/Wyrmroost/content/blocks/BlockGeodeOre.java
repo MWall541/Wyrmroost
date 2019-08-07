@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -13,7 +14,9 @@ import java.util.Random;
 
 public class BlockGeodeOre extends BlockBase
 {
-    public BlockGeodeOre() { super("geode_ore", Material.ROCK, ToolType.PICKAXE, 2, 3, SoundType.STONE); }
+    public BlockGeodeOre() {
+        super("geode_ore", false, Block.Properties.create(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE));
+    }
 
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) { return silktouch == 0 ? MathHelper.nextInt(new Random(), 3, 7) : 0; }

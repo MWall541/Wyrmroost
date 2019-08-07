@@ -42,7 +42,7 @@ public class SetupEntity
     @ObjectHolder(Wyrmroost.modID + ":silver_glider")
     public static EntityType<?> silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 3f, 0.8f);
     // Entity List End
-
+    
     /**
      *  Registers World Spawning for entities
      */
