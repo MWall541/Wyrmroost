@@ -1,12 +1,16 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
+import WolfShotz.Wyrmroost.content.blocks.BlockEgg;
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
+import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
+import WolfShotz.Wyrmroost.content.tileentities.teegg.EggTileEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import afu.org.checkerframework.checker.oigj.qual.O;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,17 +37,38 @@ public class SetupBlock
 
     @ObjectHolder(Wyrmroost.modID + ":geode_block")
     public static Block blockgeode;
+    
+    @ObjectHolder(Wyrmroost.modID + ":egg")
+    public static Block egg;
 
     @SubscribeEvent
     public static void blockSetup(RegistryEvent.Register<Block> event) {
         event.getRegistry().registerAll (
-                new BlockBase("platinum_ore", Material.ROCK, ToolType.PICKAXE, 1, 3, SoundType.STONE),
-                new BlockBase("platinum_block", Material.IRON, ToolType.PICKAXE, 1, 5, 5, 1, SoundType.METAL, true),
+                new BlockBase("platinum_ore", Block.Properties.create(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(3).sound(SoundType.STONE)),
+                new BlockBase("platinum_block", true, Block.Properties.create(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)),
 
                 new BlockGeodeOre(),
-                new BlockBase("geode_block", Material.IRON, ToolType.PICKAXE, 2, 5, 5, 1, SoundType.METAL, true)
+                new BlockBase("geode_block", true, Block.Properties.create(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)),
+
+                new BlockEgg()
         );
 
         ModUtils.L.info("Block Setup Complete");
+    }
+    
+    // =================
+    //   Tile Entities
+    // =================
+    
+    @ObjectHolder(Wyrmroost.modID + ":teegg")
+    public static TileEntityType<EggTileEntity> teegg;
+    
+    @SubscribeEvent
+    public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
+        event.getRegistry().register(
+                TileEntityType.Builder.create(EggTileEntity::new, SetupBlock.egg).build(null).setRegistryName("teegg")
+        );
+        
+        ModUtils.L.debug("te setup complete");
     }
 }

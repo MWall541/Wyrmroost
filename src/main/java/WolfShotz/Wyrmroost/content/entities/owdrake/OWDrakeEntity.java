@@ -1,7 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
+import WolfShotz.Wyrmroost.content.blocks.BlockEgg;
+import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.GrazeGoal;
+import WolfShotz.Wyrmroost.event.SetupBlock;
+import WolfShotz.Wyrmroost.event.SetupEntity;
 import WolfShotz.Wyrmroost.event.SetupItem;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
@@ -10,6 +14,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -156,10 +161,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-
-        if (stack.getItem() == Items.NAME_TAG) {
-            stack.interactWithEntity(player, this, hand);
-
+        
+        if (stack.getItem() == Items.STICK) {
+            CompoundNBT tag = new CompoundNBT();
+            ItemStack eggStack = new ItemStack(SetupBlock.egg.asItem());
+            
+            tag.putString("dragonType", getType().toString());
+            tag.putInt("hatchTimer", 1200);
+            eggStack.setTag(tag);
+            
+            ItemEntity eggItem = new ItemEntity(world, posX, posY + 1, posZ, eggStack);
+            world.addEntity(eggItem);
+            
             return true;
         }
 
@@ -187,7 +200,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             }
 
             if (!isBreedingItem(stack) && player.isSneaking() && isOwner(player)) {
-                setSitting(!isSitting());
+                setSit(!isSitting());
                 setAnimation(isSitting()? SIT_ANIMATION : STAND_ANIMATION);
 
                 return true;
@@ -247,8 +260,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (rand % 15 == 0) {
                 setAttackTarget((LivingEntity) passenger);
                 removePassengers();
-                playTameEffect(false);
-                world.setEntityState(this, (byte) 6);
+                tame(false, null);
                 passenger.addVelocity(0, 1, 0);
             }
         }

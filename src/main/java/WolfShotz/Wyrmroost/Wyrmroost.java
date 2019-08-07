@@ -1,16 +1,16 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.content.tileentities.teegg.EggRenderer;
+import WolfShotz.Wyrmroost.content.tileentities.teegg.EggTileEntity;
 import WolfShotz.Wyrmroost.event.ForgeEvents;
 import WolfShotz.Wyrmroost.event.SetupEntity;
 import WolfShotz.Wyrmroost.event.SetupItem;
 import WolfShotz.Wyrmroost.event.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.play.NetworkPlayerInfo;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -28,17 +28,18 @@ public class Wyrmroost
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        SetupOreGen.setupOreGen();
-
         MinecraftForge.EVENT_BUS.addListener(ForgeEvents::cancelFall);
+        
+        SetupOreGen.setupOreGen();
 
         ModUtils.L.debug("commonSetup complete");
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
+//        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::ridingPerspective);
+        
         SetupEntity.registerEntityRenders();
-
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::ridingPerspective);
+        ClientRegistry.bindTileEntitySpecialRenderer(EggTileEntity.class, new EggRenderer());
 
         ModUtils.L.info("clientSetup complete");
     }
