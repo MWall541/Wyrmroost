@@ -1,13 +1,19 @@
 package WolfShotz.Wyrmroost.content.entities.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.sliverglider.goals.NonTamedTemptGoal;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.TemptGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -19,11 +25,14 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class SilverGliderEntity extends AbstractDragonEntity
 {
-    boolean isGliding = false;
+    public boolean isGliding = false;
 
     // Entity Animations
     public static final Animation RANDOM_FLAP_ANIMATION = Animation.create(30);
@@ -39,9 +48,19 @@ public class SilverGliderEntity extends AbstractDragonEntity
     protected void registerAttributes() {
         super.registerAttributes();
         getAttribute(MAX_HEALTH).setBaseValue(30d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.32d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4.0d);
         getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(1.2d);
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+
+        goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
+        goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
+        goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 10f));
+        goalSelector.addGoal(12, new LookRandomlyGoal(this));
     }
 
     // ================================
@@ -84,13 +103,21 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     // ================================
 
+
+    @Override
+    public void livingTick() {
+        super.livingTick();
+
+        if (isGliding && getRidingEntity() == null && onGround) isGliding = false;
+    }
+
     @Override
     public void updateRidden() {
         super.updateRidden();
 
         Entity entity = getRidingEntity();
 
-//        isGliding = false;
+        isGliding = false;
 
         if (entity != null) {
             if (!entity.isAlive()) {
@@ -141,69 +168,17 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
-        if (stack.isEmpty()) {
+        if (!isTamed() && isBreedingItem(stack)) {
+            tame(getRNG().nextInt(10) == 0, player);
+            return true;
+        }
+
+        if (stack.isEmpty() && isTamed()) {
             startRiding(player, true);
             return true;
         }
 
         return super.processInteract(player, hand);
-    }
-
-    @Override
-    public void travel(Vec3d vec3d) {
-        if (isBeingRidden() && getControllingPassenger() instanceof LivingEntity) {
-            LivingEntity rider = (LivingEntity) getControllingPassenger();
-            float f = rider.moveForward, s = rider.moveStrafing;
-            boolean moving = (f != 0 || s != 0);
-            Vec3d target = new Vec3d(s, vec3d.y, f);
-
-            if (moving) {
-                rotationYaw = rider.rotationYaw;
-                prevRotationYaw = rotationYaw;
-                setRotation(rotationYaw, rotationPitch);
-                renderYawOffset = rotationYaw;
-                rotationYawHead = renderYawOffset;
-            }
-
-            if (isFlying()) {
-                Vec3d riderLook = rider.getLookVec();
-                double yEuclid = (moving? riderLook.y : Math.sin(ticksExisted / 2) * 0.06);
-                double flySpeed = getAttribute(FLYING_SPEED).getValue();
-                Vec3d flyTarget = new Vec3d(riderLook.x * flySpeed, yEuclid, riderLook.z * flySpeed);
-
-
-                if (!moving) { // Slow down!
-                    double x = getMotion().x * 0.8d;
-                    double y = yEuclid + getMotion().y * 0.8d;
-                    double z = getMotion().z * 0.8d;
-
-                    flyTarget = new Vec3d(x, y, z);
-                }
-
-
-
-                setNoGravity(true);
-                setMotion(flyTarget);
-                move(MoverType.SELF, getMotion());
-
-                return;
-            } else {
-                if (ModUtils.isEntityJumping(rider)) { // Start Flying
-                    setFlying(true);
-                    return;
-                }
-
-                float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting() ? 2 : 1);
-
-                setNoGravity(false);
-                setSprinting(rider.isSprinting());
-                setAIMoveSpeed(speed);
-                super.travel(target);
-
-                return;
-            }
-        }
-        super.travel(vec3d);
     }
 
     @Override

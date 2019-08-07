@@ -11,13 +11,16 @@ import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -149,7 +152,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
-    public void setSitting(boolean sitting) {
+    public void setSit(boolean sitting) {
         if (!world.isRemote) {
             sitGoal.setSitting(sitting);
             isJumping = false;
@@ -158,6 +161,26 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         super.setSitting(sitting);
+    }
+
+    /**
+     * Tame the dragon to the tamer if true
+     * else, play the failed tame effects
+     */
+    public void tame(boolean tame, PlayerEntity tamer) {
+        if (!world.isRemote) {
+            if (tame) {
+                setTamedBy(tamer);
+                navigator.clearPath();
+                setAttackTarget(null);
+                setHealth(getMaxHealth());
+                playTameEffect(true);
+                world.setEntityState(this, (byte) 7);
+            } else {
+                playTameEffect(false);
+                world.setEntityState(this, (byte) 6);
+            }
+        }
     }
 
     /**
@@ -196,6 +219,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             ++animationTick;
             if (world.isRemote && animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
+    }
+
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+
+        if (stack.getItem() == Items.NAME_TAG) {
+            stack.interactWithEntity(player, this, hand);
+
+            return true;
+        }
+
+        return super.processInteract(player, hand);
     }
 
     @Override
