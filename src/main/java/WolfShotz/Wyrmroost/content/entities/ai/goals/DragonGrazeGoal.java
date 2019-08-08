@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -17,7 +16,7 @@ import java.util.function.Predicate;
  * Class Responsible for eating grass at a positional offset rather than directly below the entity. (Useful for larger mobs)
  * Due to many fields being private, alot of this was taken from {@link net.minecraft.entity.ai.goal.EatGrassGoal EatGrassGoal}
  */
-public class GrazeGoal extends Goal
+public class DragonGrazeGoal extends Goal
 {
     private static final Predicate<BlockState> IS_GRASS = BlockStateMatcher.forBlock(Blocks.GRASS);
     private final AbstractDragonEntity grassEaterEntity;
@@ -25,7 +24,7 @@ public class GrazeGoal extends Goal
     private int eatingGrassTimer, blockPosOffset;
     private boolean eaten;
 
-    public GrazeGoal(AbstractDragonEntity grassEaterEntityIn, int blockPosOffset) {
+    public DragonGrazeGoal(AbstractDragonEntity grassEaterEntityIn, int blockPosOffset) {
         this.grassEaterEntity = grassEaterEntityIn;
         this.entityWorld = grassEaterEntityIn.world;
         this.blockPosOffset = blockPosOffset;
@@ -33,7 +32,7 @@ public class GrazeGoal extends Goal
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
-    public GrazeGoal(AbstractDragonEntity grassEaterEntityIn) { this(grassEaterEntityIn, 0); }
+    public DragonGrazeGoal(AbstractDragonEntity grassEaterEntityIn) { this(grassEaterEntityIn, 0); }
 
     /**
      * Returns whether the EntityAIBase should begin execution.

@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.blocks.base;
 
-import WolfShotz.Wyrmroost.event.SetupBlock;
+import WolfShotz.Wyrmroost.event.SetupBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +29,7 @@ public class BlockBase extends Block
 
         setRegistryName(name);
         this.isBeaconBase = isBeaconBase;
-        SetupBlock.BLOCKS.add(this);
+        SetupBlocks.BLOCKS.add(this);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.io;
 
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.TranslationUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -13,7 +14,7 @@ public class ScreenModBook extends Screen
     private int pageNumber = 0;
     private ChangePageButton next, back;
 
-    public ScreenModBook() { super(ModUtils.translation("Tarragon Tome")); }
+    public ScreenModBook() { super(TranslationUtils.translation("Tarragon Tome")); }
 
     @Override
     protected void init() {
@@ -22,7 +23,7 @@ public class ScreenModBook extends Screen
     }
 
     private void addButtons() {
-        addButton(new Button(width / 2 - 100, 196, 200, 20, ModUtils.format("io.modbook.close"), func -> minecraft.displayGuiScreen(null)));
+        addButton(new Button(width / 2 - 100, 196, 200, 20, TranslationUtils.format("io.modbook.close"), func -> minecraft.displayGuiScreen(null)));
         // Notes bcus its still obfuscated: ChangePageButton((int) x locale, (int) y locale, (boolean) true = right | false = left, (lambda) what does this button do?, (boolean) plays sound?)
         next = addButton(new ChangePageButton(width / 2 + 100, 147, true, func -> updatePages(true), true));
         back = addButton(new ChangePageButton(width / 2 - 124, 147, false, func -> updatePages(false), true));

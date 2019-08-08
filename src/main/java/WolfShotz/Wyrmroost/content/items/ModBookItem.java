@@ -23,11 +23,11 @@ import net.minecraftforge.fml.DistExecutor;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemModBook extends Item
+public class ModBookItem extends Item
 {
-    public ItemModBook(String name) {
+    public ModBookItem() {
         super(ModUtils.itemBuilder().maxStackSize(1));
-        setRegistryName(name);
+        setRegistryName("tarragon_tome");
     }
 
     @Override
@@ -41,9 +41,9 @@ public class ItemModBook extends Item
     @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip")
-                            .applyTextStyle(TextFormatting.GRAY)
                             .appendSibling(new StringTextComponent("sgdshdf")
-                                .applyTextStyle(TextFormatting.OBFUSCATED)));
+                                .applyTextStyle(TextFormatting.OBFUSCATED))
+                            .applyTextStyle(TextFormatting.GRAY));
     }
 
     /**

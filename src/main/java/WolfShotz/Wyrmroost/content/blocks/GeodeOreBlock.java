@@ -12,9 +12,9 @@ import net.minecraftforge.common.ToolType;
 
 import java.util.Random;
 
-public class BlockGeodeOre extends BlockBase
+public class GeodeOreBlock extends BlockBase
 {
-    public BlockGeodeOre() {
+    public GeodeOreBlock() {
         super("geode_ore", false, Block.Properties.create(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE));
     }
 

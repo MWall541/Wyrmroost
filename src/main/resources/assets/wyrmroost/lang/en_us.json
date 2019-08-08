@@ -6,6 +6,7 @@
   
   "_comment": "Entities",
   "entity.wyrmroost.overworld_drake": "Overworld Drake",
+  "entity.wyrmroost.silver_glider": "Silver Glider",
   
   "_comment": "Spawn Eggs",
   "item.wyrmroost.drake_egg": "Overworld Drake Spawn Egg",

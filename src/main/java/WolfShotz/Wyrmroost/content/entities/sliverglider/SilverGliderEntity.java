@@ -2,13 +2,13 @@ package WolfShotz.Wyrmroost.content.entities.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.content.entities.sliverglider.goals.NonTamedTemptGoal;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedTemptGoal;
+import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -25,9 +25,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -137,7 +134,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     return;
                 }
 
-                if (ModUtils.isEntityJumping(player) && ModUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying) {
+                if (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying) {
                     Vec3d prevMotion = player.getMotion();
                     double yVec = player.getLookVec().y;
                     double xMotion = (Math.abs(prevMotion.x) >= 1f? 0.8d : 1.1d);
@@ -198,10 +195,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     /** Array Containing all of the dragons food items */
     @Override
     protected Item[] getFoodItems() { return new Item[] {Items.TROPICAL_FISH, Items.COD, Items.SALMON, Items.COOKED_COD, Items.COOKED_SALMON}; }
-
-    @Nullable
-    @Override
-    public AgeableEntity createChild(AgeableEntity ageableEntity) { return null; }
 
     // == Entity Animation ==
     @Override

@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
+import WolfShotz.Wyrmroost.content.blocks.GeodeOreBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlock;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class SetupBlock
+public class SetupBlocks
 {
     // List Collection of all Blocks in preparation for BlockItem Registration
     public static List<Block> BLOCKS = new ArrayList<>();
@@ -43,16 +43,14 @@ public class SetupBlock
     @SubscribeEvent
     public static void blockSetup(RegistryEvent.Register<Block> event) {
         event.getRegistry().registerAll (
-                new BlockBase("platinum_ore", Block.Properties.create(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(3).sound(SoundType.STONE)),
-                new BlockBase("platinum_block", true, Block.Properties.create(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)),
+                new EggBlock(),
+                
+                new BlockBase("platinum_ore", ModUtils.blockBuilder(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(3).sound(SoundType.STONE)),
+                new BlockBase("platinum_block", true, ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)),
 
-                new BlockGeodeOre(),
-                new BlockBase("geode_block", true, Block.Properties.create(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)),
-
-                new EggBlock()
+                new GeodeOreBlock(),
+                new BlockBase("geode_block", true, ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL))
         );
-
-        ModUtils.L.info("Block Setup Complete");
     }
     
     // =================
@@ -65,9 +63,7 @@ public class SetupBlock
     @SubscribeEvent
     public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
         event.getRegistry().register(
-                TileEntityType.Builder.create(EggTileEntity::new, SetupBlock.egg).build(null).setRegistryName("teegg")
+                TileEntityType.Builder.create(EggTileEntity::new, SetupBlocks.egg).build(null).setRegistryName("teegg")
         );
-        
-        ModUtils.L.debug("te setup complete");
     }
 }

@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.sliverglider.goals;
+package WolfShotz.Wyrmroost.content.entities.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import net.minecraft.entity.ai.goal.TemptGoal;

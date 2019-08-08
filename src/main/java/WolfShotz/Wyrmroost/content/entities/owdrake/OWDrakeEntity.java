@@ -2,10 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.content.entities.ai.goals.GrazeGoal;
-import WolfShotz.Wyrmroost.event.SetupBlock;
-import WolfShotz.Wyrmroost.event.SetupItem;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonGrazeGoal;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -13,7 +10,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -46,15 +42,14 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
+    private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    
     // Dragon Entity Animations
     public static Animation SIT_ANIMATION = Animation.create(15);
     public static Animation STAND_ANIMATION = Animation.create(15);
     public static Animation GRAZE_ANIMATION = Animation.create(35);
     public static Animation HORN_ATTACK_ANIMATION = Animation.create(22);
-
-    // Dragon Entity Attributes
-    private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
@@ -70,7 +65,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, 12000));
-        goalSelector.addGoal(10, new GrazeGoal(this, 2));
+        goalSelector.addGoal(10, new DragonGrazeGoal(this, 2));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(13, new LookRandomlyGoal(this));
@@ -117,9 +112,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
      */
     public boolean getVariant() { return dataManager.get(VARIANT); }
     public void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
-
-    @Override
-    public boolean canFly() { return false; }
 
     /**
      * Set sprinting switch for Entity.
@@ -280,17 +272,22 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         return super.attackEntityAsMob(entityIn);
     }
-
+    
+    @Override
+    public EntitySize getSize(Pose poseIn) {
+        System.out.println("test");
+        return super.getSize(poseIn);
+    }
+    
     /**
      * Array Containing all of the dragons food items
      */
     @Override
     protected Item[] getFoodItems() { return new Item[] {Items.WHEAT, Items.HAY_BLOCK.asItem()}; }
-
-    @Nullable
+    
     @Override
-    public AgeableEntity createChild(AgeableEntity ageable) { return null; }
-
+    public boolean canFly() { return false; }
+    
     // == Entity Animation ==
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SIT_ANIMATION, STAND_ANIMATION}; }

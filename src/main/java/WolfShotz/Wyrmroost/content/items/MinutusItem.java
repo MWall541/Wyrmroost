@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.minutus.MinutusEntity;
-import WolfShotz.Wyrmroost.event.SetupSound;
+import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -17,9 +17,9 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class ItemMinutus extends Item
+public class MinutusItem extends Item
 {
-    public ItemMinutus() {
+    public MinutusItem() {
         super(ModUtils.itemBuilder());
         setRegistryName("minutus");
 
@@ -32,7 +32,7 @@ public class ItemMinutus extends Item
     @Override
     public void inventoryTick(ItemStack stack, World worldIn, Entity player, int itemSlot, boolean isSelected) {
         if (stack.hasTag() && stack.getTag().getBoolean("isalive") && new Random().nextInt(60) == 0 && (isSelected))
-            worldIn.playSound(player.posX, player.posY, player.posZ, SetupSound.MINUTUS_SCREECH, SoundCategory.NEUTRAL, 1f, 1f, false);
+            worldIn.playSound(player.posX, player.posY, player.posZ, SetupSounds.MINUTUS_SCREECH, SoundCategory.NEUTRAL, 1f, 1f, false);
     }
 
     @Override

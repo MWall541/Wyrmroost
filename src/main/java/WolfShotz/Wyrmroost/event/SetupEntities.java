@@ -7,7 +7,7 @@ import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeRenderer;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderRenderer;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -25,20 +25,23 @@ import net.minecraftforge.registries.ObjectHolder;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
  *
- * Class responsible for the event and registration of entities, and their spawning.
+ * Class responsible for the setup and registration of entities, and their spawning.
  */
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class SetupEntity
+public class SetupEntities
 {
     // Entity List Start
     @ObjectHolder(Wyrmroost.modID + ":overworld_drake")
     public static EntityType<?> overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
+    
     @ObjectHolder(Wyrmroost.modID + ":minutus")
     public static EntityType<?> minutus = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
+    
     @ObjectHolder(Wyrmroost.modID + ":silver_glider")
     public static EntityType<?> silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
     // Entity List End
@@ -46,9 +49,10 @@ public class SetupEntity
     /**
      *  Registers World Spawning for entities
      */
-    public static void registerEntityWorldSpawns() {
+    private static void registerEntityWorldSpawns() {
         registerSpawning(overworld_drake, 10, 1, 3, getDrakeBiomes());
-        registerSpawning(minutus, 15, 1, 1, BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY));
+        registerSpawning(minutus, 35, 1, 1, BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY));
+        registerSpawning(silver_glider, 5, 2, 5, getSilverGliderBiomes());
     }
 
     /**
@@ -56,9 +60,9 @@ public class SetupEntity
      */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
-        registerRender(OWDrakeEntity.class, OWDrakeRenderer::new);
-        registerRender(MinutusEntity.class, MinutusRenderer::new);
-        registerRender(SilverGliderEntity.class, SilverGliderRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
     }
 
     @SubscribeEvent
@@ -69,8 +73,6 @@ public class SetupEntity
                 silver_glider
         );
         registerEntityWorldSpawns();
-
-        ModUtils.L.info("Entity Setup Complete");
     }
 
     // ================================
@@ -79,12 +81,23 @@ public class SetupEntity
     // Use Biome Dictionary for overworld
     // dragons for compabitility with
     // custom biomes.
+    //
+    // Dimension dragons will have spawns
+    // in our custom biomes, so they wont be
+    // needing this.
 
     private static Set<Biome> getDrakeBiomes() {
         Set<Biome> drakeSpawns = new HashSet<>();
         drakeSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA));
         drakeSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS));
         return drakeSpawns;
+    }
+    
+    private static Set<Biome> getSilverGliderBiomes() {
+        Set<Biome> gliderSpawns = new HashSet<>();
+        gliderSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.BEACH));
+        gliderSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN));
+        return gliderSpawns;
     }
 
     // ================================
@@ -101,13 +114,6 @@ public class SetupEntity
                        .build(Wyrmroost.modID + ":" + name)
                        .setRegistryName(name);
     }
-
-    /**
-     * Helper method for easier entity rendering registration
-     */
-    @OnlyIn(Dist.CLIENT)
-    private static <B extends Entity> void registerRender(Class<B> entity, IRenderFactory factory)
-    { RenderingRegistry.registerEntityRenderingHandler(entity, factory); }
 
     /**
      * Helper method allowing for easier entity world spawning setting

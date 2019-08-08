@@ -1,8 +1,9 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.items.ItemMinutus;
-import WolfShotz.Wyrmroost.content.items.ItemModBook;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlockItem;
+import WolfShotz.Wyrmroost.content.items.MinutusItem;
+import WolfShotz.Wyrmroost.content.items.ModBookItem;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -20,7 +21,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-public class SetupItem
+public class SetupItems
 {
     @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
     public static Item itemmodbook;
@@ -37,6 +38,9 @@ public class SetupItem
 
     @ObjectHolder(Wyrmroost.modID + ":cooked_minutus")
     public static Item itemfood_cookedminutus;
+    
+    @ObjectHolder(Wyrmroost.modID + ":egg")
+    public static Item egg;
 
     // Geode start
     @ObjectHolder(Wyrmroost.modID + ":geode")
@@ -114,17 +118,18 @@ public class SetupItem
     @SubscribeEvent
     public static void itemSetup(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll (
-                new ItemModBook("tarragon_tome"),
-                new ItemMinutus(),
+                new ModBookItem(),
+                new MinutusItem(),
+                new EggBlockItem(),
 
                 new Item(ModUtils.itemBuilder().food(FoodList.jewelledapple)).setRegistryName("jewelled_apple"),
                 new Item(ModUtils.itemBuilder().food(FoodList.dragonfruit)).setRegistryName("dragon_fruit"),
                 new Item(ModUtils.itemBuilder().food(FoodList.cookedminutus)).setRegistryName("cooked_minutus"),
 
                 // SpawnEggs start
-                new SpawnEggItem(SetupEntity.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
-                new SpawnEggItem(SetupEntity.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
-                new SpawnEggItem(SetupEntity.silver_glider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
+                new SpawnEggItem(SetupEntities.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
+                new SpawnEggItem(SetupEntities.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
+                new SpawnEggItem(SetupEntities.silver_glider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
                 // SpawnEggs end
 
                 // Geode start
@@ -152,9 +157,7 @@ public class SetupItem
                 // Platinum End
         );
         // BlockItem's
-        SetupBlock.BLOCKS.forEach(block -> event.getRegistry().register(new BlockItem(block, ModUtils.itemBuilder()).setRegistryName(block.getRegistryName())));
-
-        ModUtils.L.info("Item Setup Complete");
+        SetupBlocks.BLOCKS.forEach(block -> event.getRegistry().register(new BlockItem(block, ModUtils.itemBuilder()).setRegistryName(block.getRegistryName())));
     }
 
 //  ===============================

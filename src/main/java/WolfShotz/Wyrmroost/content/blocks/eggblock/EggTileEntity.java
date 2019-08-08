@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.blocks.eggblock;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupBlock;
+import WolfShotz.Wyrmroost.event.SetupBlocks;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -17,7 +17,7 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     public int hatchTimer = 12000; // Default to 10 mins
     public boolean activated = false;
     
-    public EggTileEntity() { super(SetupBlock.teegg); }
+    public EggTileEntity() { super(SetupBlocks.teegg); }
     
     @Override
     public void tick() {
