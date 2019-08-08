@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupBlock;
+import WolfShotz.Wyrmroost.event.SetupBlocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.BreedGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
@@ -29,7 +29,8 @@ public class DragonBreedGoal extends BreedGoal
     
     @Override
     public boolean shouldExecute() {
-        if (super.shouldExecute()) return ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
+        if (super.shouldExecute())
+            return ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
         return false;
     }
     
@@ -41,27 +42,25 @@ public class DragonBreedGoal extends BreedGoal
     @Override
     protected void spawnBaby() {
         CompoundNBT tag = new CompoundNBT();
-        ItemStack eggStack = new ItemStack(SetupBlock.egg);
+        ItemStack eggStack = new ItemStack(SetupBlocks.egg);
     
         tag.putString("dragonType", EntityType.getKey(dragon.getType()).toString());
         tag.putInt("hatchTimer", hatchTimer);
         eggStack.setTag(tag);
     
         ItemEntity eggItem = new ItemEntity(world, dragon.posX, dragon.posY, dragon.posZ, eggStack);
-    
-        if (eggItem != null) {
-            ServerPlayerEntity serverplayerentity = animal.getLoveCause();
-            if (serverplayerentity == null && field_75391_e.getLoveCause() != null) serverplayerentity = field_75391_e.getLoveCause();
+        ServerPlayerEntity serverplayerentity = animal.getLoveCause();
         
-            if (serverplayerentity != null) serverplayerentity.addStat(Stats.ANIMALS_BRED);
+        if (serverplayerentity == null && field_75391_e.getLoveCause() != null) serverplayerentity = field_75391_e.getLoveCause();
     
-            animal.setGrowingAge(6000);
-            field_75391_e.setGrowingAge(6000);
-            animal.resetInLove();
-            field_75391_e.resetInLove();
-            world.addEntity(eggItem);
-            if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
-                world.addEntity(new ExperienceOrbEntity(world, dragon.posX, dragon.posY, dragon.posZ, dragon.getRNG().nextInt(7) + 1));
-        }
+        if (serverplayerentity != null) serverplayerentity.addStat(Stats.ANIMALS_BRED);
+    
+        animal.setGrowingAge(6000);
+        field_75391_e.setGrowingAge(6000);
+        animal.resetInLove();
+        field_75391_e.resetInLove();
+        world.addEntity(eggItem);
+        if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
+            world.addEntity(new ExperienceOrbEntity(world, dragon.posX, dragon.posY, dragon.posZ, dragon.getRNG().nextInt(7) + 1));
     }
 }

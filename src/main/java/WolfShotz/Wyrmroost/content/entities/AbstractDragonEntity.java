@@ -1,12 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -204,7 +202,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void livingTick() {
 //        boolean shouldFly = canFly() && getAltitude() > 2;
 //        if (shouldFly != isFlying()) setFlying(true);
-        if ((onGround || ModUtils.getAltitude(this) <= 2) && isFlying()) setFlying(false);
+        if ((onGround || MathUtils.getAltitude(this) <= 2) && isFlying()) setFlying(false);
 
         super.livingTick();
     }
@@ -231,8 +229,22 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
             return true;
         }
-
-        return super.processInteract(player, hand);
+    
+        if (isBreedingItem(stack)) {
+            if (getGrowingAge() == 0 && canBreed()) {
+                consumeItemFromStack(player, stack);
+                setInLove(player);
+                return true;
+            }
+        
+            if (isChild()) {
+                consumeItemFromStack(player, stack);
+                ageUp((int)((float)(-getGrowingAge() / 20) * 0.1F), true);
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     @Override
@@ -242,10 +254,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Set a damage source immunity
      */
     protected void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
+    
     /**
      * Whether or not the dragon is immune to the source or not
      */
     private boolean isImmune(DamageSource source) { return !immunes.isEmpty() && immunes.contains(source.getDamageType()); }
+    
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || isImmune(source); }
 
@@ -261,11 +275,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Override
     public boolean canPassengerSteer() { return getControllingPassenger() != null && canBeSteered(); }
+    
     @Override
     public boolean canBeSteered() { return getControllingPassenger() instanceof LivingEntity && isSaddled(); }
+    
     @Nullable
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
-
+    
+    @Nullable
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable) { return null; }
+    
     // ================================
     //        Entity Animation
     // ================================
@@ -283,7 +303,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.animation = animation;
         setAnimationTick(0);
     }
-
+    
     // ================================
 
 }
