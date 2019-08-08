@@ -1,7 +1,9 @@
 package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -42,6 +44,8 @@ import java.util.Set;
  */
 public class ModUtils
 {
+    private ModUtils() {} // NU CONSTRUCTOR
+    
     /** Debug Logger */
     public static final Logger L = LogManager.getLogger(Wyrmroost.modID);
 
@@ -55,88 +59,12 @@ public class ModUtils
      * Item Properties builder
      */
     public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
+    
+    public static Block.Properties blockBuilder(Material material) { return Block.Properties.create(material); }
 
     /**
      * Get the Client World
      */
     @OnlyIn(Dist.CLIENT)
     public static World getClientWorld() { return Minecraft.getInstance().world; }
-
-    public static World getServerWorld() { throw new IllegalStateException("lol no"); }
-
-    // ===============
-    //   I18n / Text
-    // ===============
-
-    /**
-     * Translate the passed string into an ITextComponent.
-     * Basically just jam whatevers passed into the lang file.
-     * @param text
-     * @param formats OPTIONAL
-     * @return Translated Text Component
-     */
-    public static ITextComponent translation(String text, TextFormatting... formats) {
-        TranslationTextComponent translator = new TranslationTextComponent(text);
-        for (TextFormatting format : formats) translator.applyTextStyle(format);
-        return translator;
-    }
-
-    /**
-     * Minecrafts version of internationalization. Can be used as an alternative to:
-     * <p> <code>ModUtils.translation()</code>
-     * @param text
-     */
-    public static String format(String text) { return I18n.format(text); }
-
-    /**
-     * Add a tooltip to an Item. (The Mouse-over description)
-     * <p> Output: "item.<code>MODID</code>.<code>ITEM</code>.tooltip"
-     * @param item (<code>this</code>)
-     * @param formats OPTIONAL
-     * @return Item's Translation key + <code>".tooltip"</code>
-     */
-    public static ITextComponent tooltip(Item item, TextFormatting... formats) {
-        return translation(item.getTranslationKey() + ".tooltip", formats);
-    }
-
-    /**
-     * Remove any white space.
-     * @param text
-     */
-    public static String clean(String text) { return text.replace(" ", ""); }
-
-    // ==============
-    //   Reflection
-    // ==============
-
-    /**
-     * @return the protected boolean value of "isJumping" of LivingEntity Class
-     */
-    public static boolean isEntityJumping(LivingEntity entity) {
-        return ObfuscationReflectionHelper.getPrivateValue(LivingEntity.class, entity, "field_70703_bu");
-    }
-
-    // ==============
-    //   Math Utils
-    // ==============
-
-    /**
-     * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max be
-     * third parameter
-     */
-    public float limitAngle(float sourceAngle, float targetAngle, float maximumChange) {
-        float f = MathHelper.wrapDegrees(targetAngle - sourceAngle);
-
-        if (f > maximumChange) f = maximumChange;
-        if (f < -maximumChange) f = -maximumChange;
-
-        float f1 = sourceAngle + f;
-
-        if (f1 < 0.0F) f1 += 360.0F;
-        else if (f1 > 360.0F) f1 -= 360.0F;
-
-        return f1;
-    }
-
-    public static double getAltitude(Entity entity) { return entity.posY - entity.world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) entity.posX, (int) entity.posZ); }
 }

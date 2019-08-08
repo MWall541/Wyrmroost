@@ -3,8 +3,8 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggRenderer;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.event.ForgeEvents;
-import WolfShotz.Wyrmroost.event.SetupEntity;
-import WolfShotz.Wyrmroost.event.SetupItem;
+import WolfShotz.Wyrmroost.event.SetupEntities;
+import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupOreGen;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.item.ItemGroup;
@@ -38,7 +38,7 @@ public class Wyrmroost
     private void clientSetup(final FMLClientSetupEvent event) {
 //        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::ridingPerspective);
         
-        SetupEntity.registerEntityRenders();
+        SetupEntities.registerEntityRenders();
         ClientRegistry.bindTileEntitySpecialRenderer(EggTileEntity.class, new EggRenderer());
 
         ModUtils.L.info("clientSetup complete");
@@ -49,7 +49,7 @@ public class Wyrmroost
         private CreativeTab() { super("wyrmroost"); }
 
         @Override
-        public ItemStack createIcon() { return new ItemStack(SetupItem.itemgeode); }
+        public ItemStack createIcon() { return new ItemStack(SetupItems.itemgeode); }
     }
 
 }

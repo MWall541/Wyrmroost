@@ -1,13 +1,10 @@
 package WolfShotz.Wyrmroost.content.blocks.eggblock;
 
-import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
-import WolfShotz.Wyrmroost.event.SetupBlock;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -19,23 +16,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Random;
 
-public class EggBlock extends BlockBase
+public class EggBlock extends Block
 {
     private static final VoxelShape SHAPE = Block.makeCuboidShape(5, 0, 5, 11, 8.2d, 11);
     
-    public EggBlock() { super("egg", Block.Properties.create(Material.DRAGON_EGG).hardnessAndResistance(1)); }
+    public EggBlock() {
+        super(ModUtils.blockBuilder(Material.DRAGON_EGG).hardnessAndResistance(0, 3).sound(SoundType.METAL));
+        setRegistryName("egg");
+    }
     
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
@@ -81,16 +77,4 @@ public class EggBlock extends BlockBase
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) { return new EggTileEntity(); }
-    
-    @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        CompoundNBT tag = stack.getTag();
-        if (tag != null) {
-            String dragonTranslation = EntityType.byKey(tag.getString("dragonType")).get().getName().getUnformattedComponentText();
-            String eggTranslation = SetupBlock.egg.getNameTextComponent().getUnformattedComponentText();
-            
-            stack.setDisplayName(ModUtils.translation(dragonTranslation +" "+ eggTranslation));
-            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.tooltip", tag.getInt("hatchTimer") / 1200).applyTextStyle(TextFormatting.AQUA));
-        }
-    }
 }
