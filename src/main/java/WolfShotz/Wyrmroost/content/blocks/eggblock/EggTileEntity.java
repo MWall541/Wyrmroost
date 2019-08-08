@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.tileentities.teegg;
+package WolfShotz.Wyrmroost.content.blocks.eggblock;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupBlock;
@@ -14,7 +14,7 @@ import net.minecraft.util.SoundEvents;
 public class EggTileEntity extends TileEntity implements ITickableTileEntity
 {
     EntityType<? extends AbstractDragonEntity> dragonType;
-    public int hatchTimer = 0;
+    public int hatchTimer = 12000; // Default to 10 mins
     public boolean activated = false;
     
     public EggTileEntity() { super(SetupBlock.teegg); }
@@ -22,8 +22,8 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     @Override
     public void tick() {
         if (!world.isRemote) {
-            if (!activated) return;
-            
+            if (!activated) return; // Dont Start hatching until we confirm! (Right click)
+    
             System.out.println(hatchTimer);
     
             if (dragonType == null) { // This Shouldnt happen...
@@ -32,14 +32,15 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
                 return;
             }
     
-            if (hatchTimer > 0) {
+            if (hatchTimer > 0) { // cant hatch yet!
                 System.out.println(hatchTimer);
                 --hatchTimer;
                 return; // cant hatch yet!
             }
+    
             AbstractDragonEntity dragonChild = dragonType.create(world);
 
-//            dragonChild.setGrowingAge(-(origTime * 2));
+//            dragonChild.setGrowingAge(-(origTime * 2)); TODO
             dragonChild.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), 0, 0);
             world.addEntity(dragonChild);
             remove();
@@ -53,6 +54,7 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     public CompoundNBT write(CompoundNBT compound) {
         compound.putString("dragonType", EntityType.getKey(dragonType).toString());
         compound.putInt("hatchTimer", hatchTimer);
+        compound.putBoolean("activated", activated);
         
         return super.write(compound);
     }
@@ -62,6 +64,7 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     public void read(CompoundNBT compound) {
         dragonType = (EntityType<AbstractDragonEntity>) EntityType.byKey(compound.getString("dragonType")).orElse(null);
         hatchTimer = compound.getInt("hatchTimer");
+        activated = compound.getBoolean("activated");
         
         super.read(compound);
     }

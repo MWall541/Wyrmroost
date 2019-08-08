@@ -1,13 +1,16 @@
 {
   "itemGroup.wyrmroost": "Wyrmroost",
-
+  
   "item.wyrmroost.tarragon_tome": "Tarragon Tome",
   "item.wyrmroost.tarragon_tome.tooltip": "Written By ",
-
+  
+  "_comment": "Entities",
+  "entity.wyrmroost.overworld_drake": "Overworld Drake",
+  
   "_comment": "Spawn Eggs",
   "item.wyrmroost.drake_egg": "Overworld Drake Spawn Egg",
   "item.wyrmroost.minutus_egg": "Lesser Desertwyrm Spawn Egg",
-
+  
   "_comment": "Geode Items",
   "item.wyrmroost.geode": "Geode",
   "block.wyrmroost.geode_ore": "Geode Ore",
@@ -20,7 +23,7 @@
   "item.wyrmroost.geode_chestplate": "Geode Chestplate",
   "item.wyrmroost.geode_legs": "Geode Leggings",
   "item.wyrmroost.geode_boots": "Geode Boots",
-
+  
   "_comment": "Platinum Items",
   "item.wyrmroost.platinum_ingot": "Platinum Ingot",
   "block.wyrmroost.platinum_ore": "Platinum Ore",
@@ -33,9 +36,12 @@
   "item.wyrmroost.platinum_chestplate": "Platinum Chestplate",
   "item.wyrmroost.platinum_leggings": "Platinum Leggings",
   "item.wyrmroost.platinum_boots": "Platinum Boots",
-
+  
+  "_comment": "Misc Items",
   "item.wyrmroost.jewelled_apple": "Jewelled Apple",
   "item.wyrmroost.dragon_fruit": "Dragon Fruit",
   "item.wyrmroost.minutus": "Lesser Desertwyrm",
-  "item.wyrmroost.cooked_minutus": "Cooked Desertwyrm"
+  "item.wyrmroost.cooked_minutus": "Cooked Desertwyrm",
+  "item.wyrmroost.egg.tooltip": "Hatching in: %smin",
+  "block.wyrmroost.egg": "Egg"
 }

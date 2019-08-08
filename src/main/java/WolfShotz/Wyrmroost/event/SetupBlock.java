@@ -1,12 +1,11 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.BlockEgg;
-import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
 import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
-import WolfShotz.Wyrmroost.content.tileentities.teegg.EggTileEntity;
+import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlock;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import afu.org.checkerframework.checker.oigj.qual.O;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -50,7 +49,7 @@ public class SetupBlock
                 new BlockGeodeOre(),
                 new BlockBase("geode_block", true, Block.Properties.create(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)),
 
-                new BlockEgg()
+                new EggBlock()
         );
 
         ModUtils.L.info("Block Setup Complete");

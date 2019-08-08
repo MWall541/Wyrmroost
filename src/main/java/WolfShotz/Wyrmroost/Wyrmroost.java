@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.content.tileentities.teegg.EggRenderer;
-import WolfShotz.Wyrmroost.content.tileentities.teegg.EggTileEntity;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggRenderer;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.event.ForgeEvents;
 import WolfShotz.Wyrmroost.event.SetupEntity;
 import WolfShotz.Wyrmroost.event.SetupItem;
