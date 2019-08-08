@@ -22,6 +22,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -169,7 +170,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void tame(boolean tame, PlayerEntity tamer) {
         if (!world.isRemote) {
-            if (tame) {
+            if (tame && !ForgeEventFactory.onAnimalTame(this, tamer)) {
                 setTamedBy(tamer);
                 navigator.clearPath();
                 setAttackTarget(null);

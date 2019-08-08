@@ -69,7 +69,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
-        goalSelector.addGoal(6, new DragonBreedGoal(this));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, 12000));
         goalSelector.addGoal(10, new GrazeGoal(this, 2));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
@@ -161,49 +161,48 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        
-        if (stack.getItem() == Items.STICK) {
-            CompoundNBT tag = new CompoundNBT();
-            ItemStack eggStack = new ItemStack(SetupBlock.egg.asItem());
-            
-            tag.putString("dragonType", EntityType.getKey(getType()).toString());
-            tag.putInt("hatchTimer", 12000);
-            eggStack.setTag(tag);
-            eggStack.setDisplayName(ModUtils.translation(getName().getUnformattedComponentText() +" "+ SetupBlock.egg.getNameTextComponent().getUnformattedComponentText()));
-            
-            ItemEntity eggItem = new ItemEntity(world, posX, posY + 1, posZ, eggStack);
-            world.addEntity(eggItem);
-            
-            return true;
-        }
 
-        if (stack.getItem() instanceof SaddleItem && !isSaddled()) { // instaceof: for custom saddles (if any)
+        // If holding a saddle and this is not a child, Saddle up!
+        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
             consumeItemFromStack(player, stack);
             setSaddled(true);
             playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
 
             return true;
         }
-
+        
+        // If Saddled and not sneaking, start riding
         if (isSaddled() && !isBreedingItem(stack) && !player.isSneaking() && !world.isRemote) {
             player.startRiding(this);
             sitGoal.setSitting(false);
 
             return true;
         }
-
-        if (isTamed()) {
-            if (getHealth() < getMaxHealth() && isBreedingItem(stack) && !player.isSneaking()) {
+    
+        // If Sneaking, Sit
+        if (isTamed() && !isBreedingItem(stack) && player.isSneaking() && isOwner(player)) {
+            setSit(!isSitting());
+            setAnimation(isSitting()? SIT_ANIMATION : STAND_ANIMATION);
+        
+            return true;
+        }
+        
+        // If holding this dragons favorite food...
+        if (isBreedingItem(stack)) {
+            
+            // If a child, tame it the old fashioned way. (otherwise RODEO!)
+            if (isChild() && !isTamed()) {
+                tame(getRNG().nextInt(10) == 0, player);
                 consumeItemFromStack(player, stack);
-                heal(2f);
-
+                
                 return true;
             }
-
-            if (!isBreedingItem(stack) && player.isSneaking() && isOwner(player)) {
-                setSit(!isSitting());
-                setAnimation(isSitting()? SIT_ANIMATION : STAND_ANIMATION);
-
+            
+            // If health is low, then heal up (Heal has priority over setting love mode!)
+            if (isTamed() && getHealth() < getMaxHealth() && !player.isSneaking()) {
+                consumeItemFromStack(player, stack);
+                heal(stack.getItem() == Items.HAY_BLOCK? 6f : 2f);
+        
                 return true;
             }
         }
@@ -251,18 +250,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
             int rand = new Random().nextInt(100);
 
             if (passenger instanceof PlayerEntity && rand == 0) {
-                setTamedBy((PlayerEntity) passenger);
-                navigator.clearPath();
-                setAttackTarget(null);
-                setHealth(getMaxHealth());
-                playTameEffect(true);
-                world.setEntityState(this, (byte) 7);
+                tame(true, (PlayerEntity) passenger);
             } else
             if (rand % 15 == 0) {
                 setAttackTarget((LivingEntity) passenger);
                 removePassengers();
                 tame(false, null);
-                passenger.addVelocity(0, 1, 0);
+                passenger.addVelocity(0, 5, 0);
             }
         }
     }
@@ -291,7 +285,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.WHEAT, SetupItem.itemfood_dragonfruit}; }
+    protected Item[] getFoodItems() { return new Item[] {Items.WHEAT, Items.HAY_BLOCK.asItem()}; }
 
     @Nullable
     @Override

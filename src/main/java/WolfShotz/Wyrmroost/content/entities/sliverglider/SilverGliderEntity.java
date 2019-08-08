@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.goals.NonTamedTemptGoal;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -58,6 +59,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
 
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, 18000));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
@@ -168,12 +170,14 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
+        // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
             tame(getRNG().nextInt(10) == 0, player);
             return true;
         }
 
-        if (stack.isEmpty() && isTamed()) {
+        // if tamed, then start riding the player
+        if (isTamed() && stack.isEmpty() && hand == Hand.MAIN_HAND) {
             startRiding(player, true);
             return true;
         }

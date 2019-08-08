@@ -40,7 +40,7 @@ public class SetupEntity
     @ObjectHolder(Wyrmroost.modID + ":minutus")
     public static EntityType<?> minutus = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
     @ObjectHolder(Wyrmroost.modID + ":silver_glider")
-    public static EntityType<?> silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 3f, 0.8f);
+    public static EntityType<?> silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
     // Entity List End
     
     /**
