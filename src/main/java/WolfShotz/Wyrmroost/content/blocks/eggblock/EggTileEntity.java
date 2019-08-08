@@ -23,9 +23,7 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     public void tick() {
         if (!world.isRemote) {
             if (!activated) return; // Dont Start hatching until we confirm! (Right click)
-    
-            System.out.println(hatchTimer);
-    
+            
             if (dragonType == null) { // This Shouldnt happen...
                 world.setBlockState(getPos(), Blocks.AIR.getDefaultState());
                 ModUtils.L.error("Dragon type on Egg TE was null!");
@@ -33,7 +31,6 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
             }
     
             if (hatchTimer > 0) { // cant hatch yet!
-                System.out.println(hatchTimer);
                 --hatchTimer;
                 return; // cant hatch yet!
             }

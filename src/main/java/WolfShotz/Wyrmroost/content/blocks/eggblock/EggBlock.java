@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +20,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -35,11 +33,9 @@ import java.util.Random;
 
 public class EggBlock extends BlockBase
 {
-    private static final VoxelShape SHAPE = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+    private static final VoxelShape SHAPE = Block.makeCuboidShape(5, 0, 5, 11, 8.2d, 11);
     
-    public EggBlock() {
-        super("egg", Block.Properties.create(Material.DRAGON_EGG).hardnessAndResistance(1));
-    }
+    public EggBlock() { super("egg", Block.Properties.create(Material.DRAGON_EGG).hardnessAndResistance(1)); }
     
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
@@ -54,6 +50,7 @@ public class EggBlock extends BlockBase
     }
     
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         TileEntity te = worldIn.getTileEntity(pos);
         if (!(te instanceof EggTileEntity)) return false;
@@ -75,6 +72,7 @@ public class EggBlock extends BlockBase
     }
     
     @Override
+    @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) { return SHAPE; }
     
     @Override
