@@ -1,12 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
-import WolfShotz.Wyrmroost.content.blocks.BlockEgg;
-import WolfShotz.Wyrmroost.content.blocks.BlockGeodeOre;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.GrazeGoal;
 import WolfShotz.Wyrmroost.event.SetupBlock;
-import WolfShotz.Wyrmroost.event.SetupEntity;
 import WolfShotz.Wyrmroost.event.SetupItem;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -70,6 +69,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
+        goalSelector.addGoal(6, new DragonBreedGoal(this));
         goalSelector.addGoal(10, new GrazeGoal(this, 2));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
@@ -166,9 +166,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
             CompoundNBT tag = new CompoundNBT();
             ItemStack eggStack = new ItemStack(SetupBlock.egg.asItem());
             
-            tag.putString("dragonType", getType().toString());
-            tag.putInt("hatchTimer", 1200);
+            tag.putString("dragonType", EntityType.getKey(getType()).toString());
+            tag.putInt("hatchTimer", 12000);
             eggStack.setTag(tag);
+            eggStack.setDisplayName(ModUtils.translation(getName().getUnformattedComponentText() +" "+ SetupBlock.egg.getNameTextComponent().getUnformattedComponentText()));
             
             ItemEntity eggItem = new ItemEntity(world, posX, posY + 1, posZ, eggStack);
             world.addEntity(eggItem);
@@ -209,7 +210,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         return super.processInteract(player, hand);
     }
-
+    
     /**
      * Called to handle the movement of the entity
      */
