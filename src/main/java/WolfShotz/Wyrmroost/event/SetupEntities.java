@@ -1,13 +1,14 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggRenderer;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.MinutusEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.MinutusRenderer;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeRenderer;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderRenderer;
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -17,7 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
@@ -25,14 +26,13 @@ import net.minecraftforge.registries.ObjectHolder;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
  *
  * Class responsible for the setup and registration of entities, and their spawning.
  */
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Wyrmroost.modID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupEntities
 {
     // Entity List Start

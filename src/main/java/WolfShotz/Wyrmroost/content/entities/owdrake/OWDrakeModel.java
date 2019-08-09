@@ -410,7 +410,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         resetToDefaultPose();
         animator.update(entity);
 
-        if (entity.isSitting() && entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION)
+        if (entity.isSitting() && !entity.hasActiveAnimation())
             staySitting();
 
         if (entity.getAnimation() == OWDrakeEntity.SIT_ANIMATION)
@@ -424,22 +424,20 @@ public class OWDrakeModel extends AdvancedEntityModel
 
         if(entity.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
             hornAttackAnim();
-            return; // Do not perform idle anims || look at target!
+            return;
         }
-
-
+    
         // IDLE
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
-
+    
         walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
         chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
-
-        faceTarget(netHeadYaw, headPitch, 1, neck1, head);
+        
+        if (!entity.hasActiveAnimation()) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
-
-
+    
     /**
      * Sitting <i><b>Position</b></i>
      * <p>

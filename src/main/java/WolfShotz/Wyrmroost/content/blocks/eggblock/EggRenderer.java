@@ -4,7 +4,10 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class EggRenderer extends TileEntityRenderer<EggTileEntity>
 {
     private final ResourceLocation TEXTURE = ModUtils.location("textures/block/egg.png");

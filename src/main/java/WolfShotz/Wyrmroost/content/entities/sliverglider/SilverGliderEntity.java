@@ -195,7 +195,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     /** Array Containing all of the dragons food items */
     @Override
     protected Item[] getFoodItems() { return new Item[] {Items.TROPICAL_FISH, Items.COD, Items.SALMON, Items.COOKED_COD, Items.COOKED_SALMON}; }
-
+    
     // == Entity Animation ==
     @Override
     public Animation[] getAnimations() { return new Animation[0]; }

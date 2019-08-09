@@ -137,7 +137,7 @@ public class MinutusEntity extends AbstractDragonEntity
             setBurrowed(false);
         }
         else {
-            if (getAnimation()!= MinutusEntity.BITE_ANIMATION) setAnimation(MinutusEntity.BITE_ANIMATION);
+            performGenericAttack();
             attackEntityAsMob(entity);
         }
     }
@@ -195,7 +195,13 @@ public class MinutusEntity extends AbstractDragonEntity
 
     @Override
     protected void collideWithEntity(Entity entityIn) { if (!isBurrowed()) super.collideWithEntity(entityIn); }
-
+    
+    @Override
+    public void performGenericAttack() {
+        if (getAnimation()!= MinutusEntity.BITE_ANIMATION) setAnimation(MinutusEntity.BITE_ANIMATION);
+    }
+    
+    
     @Nullable
     @Override
     public AgeableEntity createChild(AgeableEntity ageableEntity) { return null; }
