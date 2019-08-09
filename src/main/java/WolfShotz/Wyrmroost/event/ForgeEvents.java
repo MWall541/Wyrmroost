@@ -1,6 +1,9 @@
 package WolfShotz.Wyrmroost.event;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.network.SendKeyPressMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -8,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -20,6 +24,30 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 public class ForgeEvents
 {
+    @OnlyIn(Dist.CLIENT)
+    public static void onKeyPress(InputEvent.KeyInputEvent event) {
+        if (Minecraft.getInstance().world == null) return; // Dont do anything on the main menu screen
+        
+        PlayerEntity player = Minecraft.getInstance().player;
+        
+        if (player.getRidingEntity() instanceof AbstractDragonEntity) {
+            AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
+            
+            if (SetupKeyBinds.genericAttack.isPressed() && !dragon.hasActiveAnimation()) {
+                dragon.performGenericAttack();
+                Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 0));
+                return;
+            }
+            if (SetupKeyBinds.specialAttack.isKeyDown()) {
+                System.out.println("hooold...");
+//                Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 1)); // Hold
+            }
+            else if (dragon.isSpecialAttacking) {
+//                Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 2));
+            }
+        }
+    }
+    
     /**
      * Responsible for handling fall damage
      */

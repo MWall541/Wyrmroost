@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonGrazeGoal;
+import WolfShotz.Wyrmroost.util.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -65,7 +66,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, 12000));
-        goalSelector.addGoal(10, new DragonGrazeGoal(this, 2));
+        goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(13, new LookRandomlyGoal(this));
@@ -146,6 +147,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void livingTick() {
         setSprinting(isAngry());
         if (!world.isRemote && getAttackTarget() == null && isAngry()) setAngry(false);
+        
+        if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8)
+            attackInFront(-1, false);
 
         super.livingTick();
     }
@@ -154,6 +158,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
+        if (stack.getItem() == Items.STICK && !world.isRemote) NetworkUtils.sendAnimationPacket(this, GRAZE_ANIMATION);
+        
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
             consumeItemFromStack(player, stack);
@@ -207,7 +213,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
      */
     @Override
     public void travel(Vec3d vec3d) {
-        if (isBeingRidden() && canBeSteered() && isTamed()) {
+        if (isBeingRidden() && canBeSteered() && isTamed() && !hasActiveAnimation()) {
             LivingEntity rider = (LivingEntity) getControllingPassenger();
             if (canPassengerSteer()) {
                 float f = rider.moveForward, s = rider.moveStrafing;
@@ -265,12 +271,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         super.playStepSound(pos, blockIn);
     }
-
+    
     @Override
-    public boolean attackEntityAsMob(Entity entityIn) {
-        //TODO ALTERNATIVE ATTACKS!
-
-        return super.attackEntityAsMob(entityIn);
+    public void performGenericAttack() {
+        setAnimation(HORN_ATTACK_ANIMATION);
     }
     
     @Override

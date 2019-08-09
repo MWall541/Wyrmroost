@@ -4,7 +4,10 @@ import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.entity.*;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -19,6 +22,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -33,8 +37,9 @@ import java.util.List;
  */
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
-    private int animationTick;
-    private List<String> immunes = new ArrayList<>();
+    protected int animationTick;
+    public boolean isSpecialAttacking = false;
+    protected List<String> immunes = new ArrayList<>();
 
     // Dragon Entity Animations
     private Animation animation = NO_ANIMATION;
@@ -273,6 +278,24 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
     }
 
+    public void attackInFront(int range, boolean single) {
+        attackInFront((int) (getSize(getPose()).width / 2) + 1, (int) (getSize(getPose()).height / 2), range, single);
+    }
+    
+    public void attackInFront(int offsetX, int offsetY, int range, boolean single) {
+        AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), offsetX).up(offsetY)).grow(range);
+        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, filter -> filter != this);
+        
+        if (entities.isEmpty()) return;
+        if (entities.size() == 1) attackEntityAsMob(entities.get(0));
+        
+        if (single) {
+            LivingEntity singleEntity = entities.stream().min((entity1, entity2) -> Float.compare(entity1.getDistance(this), entity2.getDistance(this))).get();
+            attackEntityAsMob(singleEntity);
+        }
+        else entities.forEach(this::attackEntityAsMob);
+    }
+    
     @Override
     public boolean canPassengerSteer() { return getControllingPassenger() != null && canBeSteered(); }
     
@@ -281,6 +304,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Nullable
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
+    
+    public void performGenericAttack() {}
+    
+    public void performSpecialAttack(boolean isKeyDown) {}
     
     @Nullable
     @Override
@@ -303,6 +330,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.animation = animation;
         setAnimationTick(0);
     }
+    
+    public boolean hasActiveAnimation() { return getAnimation() != NO_ANIMATION; }
     
     // ================================
 
