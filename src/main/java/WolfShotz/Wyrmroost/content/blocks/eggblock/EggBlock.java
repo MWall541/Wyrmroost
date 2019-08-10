@@ -1,17 +1,28 @@
 package WolfShotz.Wyrmroost.content.blocks.eggblock;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -22,13 +33,24 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Random;
 
 public class EggBlock extends Block
 {
+    private static final VoxelShape[] hitBox = new VoxelShape[] {
+            Block.makeCuboidShape(3, 0, 3, 13, 16, 13), // 0: Drake Egg
+            Block.makeCuboidShape(4.3d, 0, 4.3d, 11.3d, 10, 11.3d) // 1: Glider Egg
+    };
+    
+    public static final IntegerProperty DRAGONTYPE = IntegerProperty.create("eggtype", 0, hitBox.length - 1);
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    
     public EggBlock() {
         super(ModUtils.blockBuilder(Material.DRAGON_EGG).hardnessAndResistance(0, 3).sound(SoundType.METAL));
         setRegistryName("egg");
+        
+        setDefaultState(getStateContainer().getBaseState().with(DRAGONTYPE, 0).with(WATERLOGGED, false));
     }
     
     @Override
@@ -46,6 +68,8 @@ public class EggBlock extends Block
     @Override
     @SuppressWarnings("deprecation")
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (player.getHeldItem(handIn).getItem() == Items.BUCKET) return false;
+        
         TileEntity te = worldIn.getTileEntity(pos);
         if (!(te instanceof EggTileEntity)) return false;
         ((EggTileEntity) te).activated = true;
@@ -65,12 +89,42 @@ public class EggBlock extends Block
         world.addParticle(new RedstoneParticleData(1, 1, 0, 0.5f), x, y, z, 0, 0, 0);
     }
     
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        World world = context.getWorld();
+        BlockPos pos = context.getPos();
+        IFluidState ifluidstate = world.getFluidState(pos);
+        CompoundNBT tag = context.getItem().getTag();
+        
+        if (tag.contains("dragonType")) {
+            int index = EnumDragonTypes.byEntityType(tag.getString("dragonType"));
+            
+            return getDefaultState().with(DRAGONTYPE, index).with(WATERLOGGED, ifluidstate.getFluid() != Fluids.EMPTY);
+        }
+        
+        return getDefaultState();
+    }
+    
     @Override
     @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+        int index = state.get(DRAGONTYPE);
         
+        if (index < 0 || index > hitBox.length) {
+            ModUtils.L.warn("Could not get shape for egg!");
+            return hitBox[0];
+        }
         
-        return Block.makeCuboidShape(3, 0, 3, 13, 16, 13);
+        return hitBox[index];
+    }
+    
+    @SuppressWarnings("deprecation")
+    public IFluidState getFluidState(BlockState state) { return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state); }
+    
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(DRAGONTYPE, WATERLOGGED);
     }
     
     @Override
@@ -79,4 +133,32 @@ public class EggBlock extends Block
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) { return new EggTileEntity(); }
+    
+    public enum EnumDragonTypes
+    {
+        DRAKE(0, "overworld_drake"),
+        GLIDER(1, "silver_glider"),
+        STALKER(2, "roost_stalker");
+        
+        public int getIndex() { return index; }
+        
+        public String getTranslatedName() { return Wyrmroost.modID + ":" + name; }
+        
+        public static int byEntityType(String key) {
+            EntityType type = EntityType.byKey(key).orElse(null);
+            if (type == null) return 0;
+            String registryName = type.getRegistryName().toString();
+    
+            return Arrays.stream(EnumDragonTypes.values()).filter(entry -> entry.getTranslatedName().equals(registryName)).findFirst().get().getIndex();
+        }
+        
+        int index;
+        String name;
+    
+        EnumDragonTypes(int index, String name) {
+            this.index = index;
+            this.name = name;
+        }
+    }
+    
 }

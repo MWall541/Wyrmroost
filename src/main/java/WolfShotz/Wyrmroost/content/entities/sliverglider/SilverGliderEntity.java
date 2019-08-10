@@ -49,7 +49,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     protected void registerAttributes() {
         super.registerAttributes();
         getAttribute(MAX_HEALTH).setBaseValue(30d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.32d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.257657d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4.0d);
         getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(1.2d);
     }
@@ -169,6 +169,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
+    
+        if (stack.getItem() == Items.STICK) {
+            setGrowingAge(-24000);
+            return true;
+        }
 
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {

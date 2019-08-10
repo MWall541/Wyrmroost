@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.blocks.eggblock;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupBlocks;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;

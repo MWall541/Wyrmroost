@@ -14,19 +14,30 @@ public class EggRenderer extends TileEntityRenderer<EggTileEntity>
     private final EggModel eggModel = new EggModel();
     
     @Override
-    public void render(EggTileEntity tileEntityIn, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(EggTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
         GlStateManager.enableDepthTest();
         GlStateManager.depthFunc(515);
         GlStateManager.depthMask(true);
         GlStateManager.disableCull();
         
-        this.bindTexture(TEXTURE);
+        bindTexture(TEXTURE);
     
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
-    
-        GlStateManager.translatef((float) x + 0.5F, (float) y + 3f, (float) z + 0.5F);
-        GlStateManager.scalef(2.0F, -2.0F, -2.0F);
+        
+        int index = te.getBlockState().get(EggBlock.DRAGONTYPE);
+        switch (index) {
+            case 0: {
+                GlStateManager.translatef((float) x + 0.5F, (float) y + 3f, (float) z + 0.5F);
+                GlStateManager.scalef(2.0F, -2.0F, -2.0F);
+                break;
+            }
+            case 1: {
+                GlStateManager.translatef((float) x + 0.5f, (float) y + 1.8f, (float) z + 0.5f);
+                GlStateManager.scalef(1.2f, -1.2f, -1.2f);
+                break;
+            }
+        }
     
         eggModel.renderAll();
     

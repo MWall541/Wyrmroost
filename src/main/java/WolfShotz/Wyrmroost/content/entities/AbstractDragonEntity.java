@@ -25,6 +25,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -260,6 +261,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     
+    public Vec3d getApproximateThroatPos() {
+        Vec3d vec3d = getPositionVec();
+        Vec3d vec3d1 = getLookVec();
+        Vec3d vec3d2 = vec3d.add(vec3d1.x, vec3d1.y, vec3d1.z);
+        Vec3d vec3d3 = vec3d2.rotateYaw((float) (Math.toRadians(-renderYawOffset) + Math.PI));
+        
+        return vec3d2;
+    }
+    
     public void attackInFront(int range, boolean single) {
         attackInFront((int) (getSize(getPose()).width / 2) + 1, (int) (getSize(getPose()).height / 2), range, single);
     }
@@ -279,6 +289,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
+     * Should the dragon attack
+     * @param targetted
+     * @param owner
+     */
+    @Override
+    public boolean shouldAttackEntity(LivingEntity targetted, LivingEntity owner) {
+        if (!isTamed()) return true;
+        if (targetted instanceof TameableEntity) {
+            TameableEntity target = (TameableEntity) targetted;
+    
+            return target.getOwner() != owner;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Array Containing all of the dragons food items
      */
     protected abstract Item[] getFoodItems();
@@ -287,6 +314,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isBreedingItem(ItemStack stack) {
         if (getFoodItems().length == 0 || getFoodItems() == null) return false;
         return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
+    }
+    
+    public void eat(@Nullable ItemStack stack) { eat(stack, Math.max((int) getMaxHealth() / 5, 6)); }
+    
+    public void eat(@Nullable ItemStack stack, int healAmount) {
+        heal(healAmount);
+        
+        if (world.isRemote && stack != null) {
+            for (int i=0; i < 9; ++i) {
+            }
+        }
     }
     
     /**

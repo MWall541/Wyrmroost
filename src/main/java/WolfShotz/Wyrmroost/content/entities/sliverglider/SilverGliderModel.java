@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
@@ -299,15 +300,39 @@ public class SilverGliderModel extends AdvancedEntityModel {
         animator = ModelAnimator.create();
         updateDefaultPose();
     }
-
-
+    
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        SilverGliderEntity dragon = (SilverGliderEntity) entity;
+    
+        GlStateManager.pushMatrix();
+        
+        if(dragon.isChild()) {
+            GlStateManager.scaled(0.3d, 0.3d, 0.3d);
+            GlStateManager.translatef(0, 3.5f, 0);
+            
+        }
         this.MainBody.render(scale);
+        
+        GlStateManager.popMatrix();
+        
         this.netHeadYaw = netHeadYaw;
         this.headPitch = headPitch;
     }
-
+    
+    @Override
+    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        float frame = entityIn.ticksExisted;
+        limbSwing = frame;
+        limbSwingAmount = 0.6f;
+        swing(WingSegment1L, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+        flap(WingSegment1L, globalSpeed - 0.2f, 0.3f, true, 0.8f, 0.2f, limbSwing, limbSwingAmount);
+//        walk()
+    
+        swing(WingSegment1R, globalSpeed - 0.2f, -0.5f, true, 0, 0, limbSwing, limbSwingAmount);
+        flap(WingSegment1R, globalSpeed - 0.2f, -0.3f, false, 0.8f, 0.2f, limbSwing, limbSwingAmount);
+    }
+    
     @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         SilverGliderEntity entity = (SilverGliderEntity) entityIn;
@@ -317,6 +342,26 @@ public class SilverGliderModel extends AdvancedEntityModel {
         animator.update(entity);
         faceTarget(netHeadYaw, headPitch, 1f, neckArray);
 
+        if (!entity.isFlying() || entity.onGround) {
+            WingSegment1L.rotateAngleZ = 0.5f;
+            WingSegment1L.rotateAngleY = 0.15f;
+            WingSegment2L.rotateAngleX = 0.35f;
+            WingSegment2L.rotateAngleY = -0.23f;
+            WingSegment2L.rotateAngleZ = -1.5f;
+            WingSegment3L.rotateAngleY = -0.3f;
+    
+            WingSegment1R.rotateAngleZ = 0.5f;
+            WingSegment1R.rotateAngleY = -0.15f;
+            WingSegment2R.rotateAngleX = 0.35f;
+            WingSegment2R.rotateAngleY = 0.23f;
+            WingSegment2R.rotateAngleZ = 1.5f;
+            WingSegment3R.rotateAngleY = 0.3f;
+            
+    
+            WingSegment1R.rotateAngleZ = -0.5f;
+    
+        }
+        
         if (entity.isFlying() && !entity.isGliding && entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION) {
             LegL1.rotateAngleX = 0.5f;
             LegL3.rotateAngleX = -0.7f;
@@ -354,8 +399,18 @@ public class SilverGliderModel extends AdvancedEntityModel {
      */
     private void continueIdle(float frame) {
         chainWave(neck2Array, globalSpeed - 0.4f, 0.02f, 0, frame, f);
+        
         walk(Head, globalSpeed - 0.4f, 0.05f, false, 0.9f, 0, frame, f);
         walk(MouthBottom, globalSpeed - 0.4f, 0.3f, false, 0, 0.5f, frame, f);
+        
+        flap(WingSegment2L, globalSpeed - 0.45f, 0.2f, false, 0, 0, frame, 0.2f);
+        swing(WingSegment2L, globalSpeed - 0.45f, 0.1f, false, 0.5f, 0, frame, 0.2f);
+        swing(WingSegment3L, globalSpeed - 0.45f, 0.1f, false, 0, 0, frame, f);
+    
+        flap(WingSegment2R, globalSpeed - 0.45f, 0.2f, true, 0, 0, frame, 0.2f);
+        swing(WingSegment2R, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, frame, 0.2f);
+        swing(WingSegment3R, globalSpeed - 0.45f, 0.1f, true, 0, 0, frame, f);
+        
         chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, f);
         chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, f);
     }

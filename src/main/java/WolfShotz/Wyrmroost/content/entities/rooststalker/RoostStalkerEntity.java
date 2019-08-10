@@ -16,6 +16,7 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -29,6 +30,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
+    private int eatTicks;
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
     
     public static final Animation SIT_ANIMATION = Animation.create(15);
@@ -64,6 +66,30 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         getAttribute(MAX_HEALTH).setBaseValue(20d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.3d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d);
+    }
+    
+    @Override
+    public void livingTick() {
+        super.livingTick();
+        
+        if (eatTicks > 0) {
+            --eatTicks;
+            
+            
+            return;
+        }
+        
+        if (getRNG().nextInt(350) != 0 && eatTicks == 0) return;
+        
+        ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        
+        if (stack.isEmpty()) return;
+        if (stack.getItem().isFood()) {
+            Food food = stack.getItem().getFood();
+            
+            if (food.isMeat()) eatTicks = 50;
+            
+        }
     }
     
     @Override
@@ -175,6 +201,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
         
         rotationYaw = player.rotationYawHead;
+        rotationPitch = player.rotationPitch;
+        setRotation(rotationYaw, rotationPitch);
         rotationYawHead = player.rotationYawHead;
         prevRotationYaw = player.rotationYawHead;
         setPosition(player.posX, player.posY + 1.8, player.posZ);

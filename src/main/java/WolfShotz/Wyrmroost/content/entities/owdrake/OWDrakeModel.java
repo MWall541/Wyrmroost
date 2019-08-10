@@ -380,12 +380,15 @@ public class OWDrakeModel extends AdvancedEntityModel
         this.headPitch = headPitch;
 
         GlStateManager.pushMatrix();
+        
         if (dragon.isChild()) {
             GlStateManager.scaled(1, 1, 1);
             GlStateManager.translated(0, 0.7, 0);
         }
         else GlStateManager.scaled(2, 2, 2);
+        
         body1.render(scale);
+        
         GlStateManager.popMatrix();
     }
 

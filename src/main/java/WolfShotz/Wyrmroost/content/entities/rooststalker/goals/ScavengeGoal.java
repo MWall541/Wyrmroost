@@ -64,11 +64,9 @@ public class ScavengeGoal extends MoveToBlockGoal
             if (dragon.getItemStackFromSlot(EquipmentSlotType.MAINHAND) != ItemStack.EMPTY) return;
             
             if (markScavenged) return;
-            
-            if (ChestTileEntity.getPlayersUsing(world, destinationBlock) == 0) {
-                if (animation != NO_ANIMATION) NetworkUtils.sendAnimationPacket(dragon, animation);
+    
+            if (animation != NO_ANIMATION) NetworkUtils.sendAnimationPacket(dragon, animation);
 //                chest.openInventory(roostStalker);
-            }
             
             if (!chest.isEmpty()) {
                 int index = new Random().nextInt(chest.getSizeInventory());
