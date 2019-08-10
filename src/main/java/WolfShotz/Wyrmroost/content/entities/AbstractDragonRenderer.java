@@ -16,9 +16,9 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         super(manager, model, shadowSize);
     }
 
-    protected abstract class AbstractLayerRenderer<T extends AbstractDragonEntity> extends LayerRenderer<T, EntityModel<T>>
+    protected abstract class AbstractLayerRenderer<V extends AbstractDragonEntity> extends LayerRenderer<V, EntityModel<V>>
     {
-        protected AbstractLayerRenderer(IEntityRenderer<T, EntityModel<T>> entityIn) { super(entityIn); }
+        protected AbstractLayerRenderer(IEntityRenderer<V, EntityModel<V>> entityIn) { super(entityIn); }
     }
 
     /**
@@ -44,4 +44,22 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         @Override
         public boolean shouldCombineTextures() { return false; }
     }
+    
+    /**
+     * Class Responsible for Rendering the sleep layer
+     */
+/*    protected class SleepLayer extends AbstractLayerRenderer<T>
+    {
+        private ResourceLocation sleeploc;
+        
+        public SleepLayer(IEntityRenderer entityIn, ResourceLocation location) {
+            super(entityIn);
+            this.sleeploc = location;
+        }
+    
+        @Override
+        public void render(T entityIn, float limbSwing, float limbSwingAmount, float p_212842_4_, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+            if (entityIn.isAsleep())
+        }
+    }*/
 }

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.ArrayUtils;
 public class NetworkUtils
 {
     public static void sendAnimationPacket(AbstractDragonEntity dragon, Animation animation) {
-        if (dragon.world.isRemote) return;
+        if (dragon.world.isRemote) return; // Why are we even sending this then...?
         
         AnimationMessage message = new AnimationMessage(dragon, ArrayUtils.indexOf(dragon.getAnimations(), animation));
     

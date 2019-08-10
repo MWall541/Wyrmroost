@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.network;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -41,9 +42,10 @@ public class SendKeyPressMessage
         AbstractDragonEntity dragon = (AbstractDragonEntity) world.getEntityByID(dragonID);
         
         switch (key) {
-            case 0: dragon.performGenericAttack();
-            case 1: dragon.performSpecialAttack(true);
-            case 2: dragon.performSpecialAttack(false);
+            case 0: dragon.performGenericAttack(); break;
+            case 1: dragon.performSpecialAttack(true); break;
+            case 2: dragon.performSpecialAttack(false); break;
+            default: ModUtils.L.error("Unknown KeyPress packet key... wat?");
             
         }
     }

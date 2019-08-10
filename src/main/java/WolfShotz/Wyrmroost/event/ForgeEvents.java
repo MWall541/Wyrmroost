@@ -40,10 +40,11 @@ public class ForgeEvents
             }
             if (SetupKeyBinds.specialAttack.isKeyDown()) {
                 System.out.println("hooold...");
-//                Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 1)); // Hold
+                Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 1)); // Hold
             }
-            else if (dragon.isSpecialAttacking) {
-//                Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 2));
+            if (!SetupKeyBinds.specialAttack.isKeyDown() && dragon.isSpecialAttacking) {
+                System.out.println("sending stop message");
+                Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 2)); // Release
             }
         }
     }

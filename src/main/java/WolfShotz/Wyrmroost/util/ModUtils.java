@@ -7,16 +7,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -48,9 +44,25 @@ public class ModUtils
     @OnlyIn(Dist.CLIENT)
     public static World getClientWorld() { return Minecraft.getInstance().world; }
     
+    /**
+     * Merge all elements from passed sets into one set.
+     * @param sets The sets to merge
+     * @return One set collection with merged elements
+     */
     public static <T> Set<T> collectAll(Set<T>... sets) {
         Set<T> set = new HashSet<>();
         for (Set<T> setParam : sets) set.addAll(setParam);
+        return set;
+    }
+    
+    /**
+     * List version of {@link #collectAll(Set[])}
+     * @param lists The lists to merge
+     * @return One list collection with passed merged elemtents
+     */
+    public static <T> List<T> collectAll(List<T>... lists) {
+        List<T> set = new ArrayList<>();
+        for (List<T> listParam : lists) set.addAll(listParam);
         return set;
     }
 }
