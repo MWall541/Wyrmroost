@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonGrazeGoal;
-import WolfShotz.Wyrmroost.util.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -44,13 +43,13 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double)0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
     
     // Dragon Entity Animations
-    public static Animation SIT_ANIMATION = Animation.create(15);
-    public static Animation STAND_ANIMATION = Animation.create(15);
-    public static Animation GRAZE_ANIMATION = Animation.create(35);
-    public static Animation HORN_ATTACK_ANIMATION = Animation.create(22);
+    public static final Animation SIT_ANIMATION = Animation.create(15);
+    public static final Animation STAND_ANIMATION = Animation.create(15);
+    public static final Animation GRAZE_ANIMATION = Animation.create(35);
+    public static final Animation HORN_ATTACK_ANIMATION = Animation.create(22);
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
@@ -59,13 +58,15 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super(drake, world);
 
         moveController = new MovementController(this);
+        
+        hatchTimer = 12000;
     }
 
     @Override
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, 12000));
+        goalSelector.addGoal(6, new DragonBreedGoal(this));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
@@ -96,15 +97,17 @@ public class OWDrakeEntity extends AbstractDragonEntity
     /** Save Game */
     @Override
     public void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
         compound.putBoolean("variant", getVariant());
+    
+        super.writeAdditional(compound);
     }
 
     /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {
-        super.readAdditional(compound);
         setVariant(compound.getBoolean("variant"));
+    
+        super.readAdditional(compound);
     }
 
     /**
@@ -157,8 +160,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-
-        if (stack.getItem() == Items.STICK && !world.isRemote) NetworkUtils.sendAnimationPacket(this, GRAZE_ANIMATION);
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
@@ -170,7 +171,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
         
         // If Saddled and not sneaking, start riding
-        if (isSaddled() && !isBreedingItem(stack) && !player.isSneaking() && !world.isRemote) {
+        if (isSaddled() && !isChild() && !isBreedingItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking() && !world.isRemote) {
             player.startRiding(this);
             sitGoal.setSitting(false);
 
@@ -279,8 +280,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Override
     public EntitySize getSize(Pose poseIn) {
-        System.out.println("test");
-        return super.getSize(poseIn);
+        return isSitting()? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
     }
     
     /**

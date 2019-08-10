@@ -113,6 +113,9 @@ public class SetupItems
 
     @ObjectHolder(Wyrmroost.modID + ":silverglider_egg")
     public static Item itemegg_silverglider;
+    
+    @ObjectHolder(Wyrmroost.modID + ":rooststalker_egg")
+    public static Item itemegg_rooststalker;
     // Spawn Eggs end
 
     @SubscribeEvent
@@ -130,6 +133,7 @@ public class SetupItems
                 new SpawnEggItem(SetupEntities.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
                 new SpawnEggItem(SetupEntities.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
                 new SpawnEggItem(SetupEntities.silver_glider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
+                new SpawnEggItem(SetupEntities.roost_stalker, 0x000000,  0x7d0000, ModUtils.itemBuilder()).setRegistryName("rooststalker_egg"),
                 // SpawnEggs end
 
                 // Geode start

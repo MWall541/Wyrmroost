@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.AgeableEntity;
@@ -23,6 +24,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -38,11 +40,12 @@ import java.util.List;
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
     protected int animationTick;
-    public boolean isSpecialAttacking = false;
+    public int hatchTimer; // Used in subclasses for hatching time
     protected List<String> immunes = new ArrayList<>();
+    public boolean isSpecialAttacking = false;
 
     // Dragon Entity Animations
-    private Animation animation = NO_ANIMATION;
+    public Animation animation = NO_ANIMATION;
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
@@ -91,21 +94,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /** Save Game */
     @Override
     public void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
         compound.putBoolean("gender", getGender());
 //        compound.putBoolea("asleep", isAsleep());
         compound.putBoolean("albino", isAlbino());
         compound.putBoolean("saddled", isSaddled());
+    
+        super.writeAdditional(compound);
     }
 
     /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {
-        super.readAdditional(compound);
         setGender(compound.getBoolean("gender"));
 //        setAsleep(compound.getBoolean("Asleep"));
         setAlbino(compound.getBoolean("albino"));
         setSaddled(compound.getBoolean("saddled"));
+    
+        super.readAdditional(compound);
     }
 
     /**
@@ -131,6 +136,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Set The chances this dragon can be an albino.
      * Set it to 0 to have no chance.
+     * Lower values have greater chances
      */
     public abstract int getAlbinoChances();
 
@@ -163,8 +169,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             navigator.clearPath();
             setAttackTarget(null);
         }
-
+        
         super.setSitting(sitting);
+    
+        recalculateSize(); // Change the hitbox for sitting
     }
 
     /**
@@ -172,7 +180,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * else, play the failed tame effects
      */
     public void tame(boolean tame, PlayerEntity tamer) {
-        if (!world.isRemote) {
+        if (!world.isRemote && !isTamed()) {
             if (tame && !ForgeEventFactory.onAnimalTame(this, tamer)) {
                 setTamedBy(tamer);
                 navigator.clearPath();
@@ -228,14 +236,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-
+        
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
 
             return true;
         }
     
-        if (isBreedingItem(stack)) {
+        if (isBreedingItem(stack) && isTamed()) {
             if (getGrowingAge() == 0 && canBreed()) {
                 consumeItemFromStack(player, stack);
                 setInLove(player);
@@ -251,33 +259,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         return false;
     }
-
-    @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? 1.5f : super.getJumpUpwardsMotion(); }
-
-    /**
-     * Set a damage source immunity
-     */
-    protected void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
     
-    /**
-     * Whether or not the dragon is immune to the source or not
-     */
-    private boolean isImmune(DamageSource source) { return !immunes.isEmpty() && immunes.contains(source.getDamageType()); }
-    
-    @Override
-    public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || isImmune(source); }
-
-    /**
-     * Array Containing all of the dragons food items
-     */
-    protected abstract Item[] getFoodItems();
-    @Override
-    public boolean isBreedingItem(ItemStack stack) {
-        if (getFoodItems().length == 0 || getFoodItems() == null) return false;
-        return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
-    }
-
     public void attackInFront(int range, boolean single) {
         attackInFront((int) (getSize(getPose()).width / 2) + 1, (int) (getSize(getPose()).height / 2), range, single);
     }
@@ -296,6 +278,30 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         else entities.forEach(this::attackEntityAsMob);
     }
     
+    /**
+     * Array Containing all of the dragons food items
+     */
+    protected abstract Item[] getFoodItems();
+    
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
+        if (getFoodItems().length == 0 || getFoodItems() == null) return false;
+        return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
+    }
+    
+    /**
+     * Set a damage source immunity
+     */
+    protected void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
+    
+    /**
+     * Whether or not the dragon is immune to the source or not
+     */
+    private boolean isImmune(DamageSource source) { return !immunes.isEmpty() && immunes.contains(source.getDamageType()); }
+    
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || isImmune(source); }
+    
     @Override
     public boolean canPassengerSteer() { return getControllingPassenger() != null && canBeSteered(); }
     
@@ -305,9 +311,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Nullable
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
     
+    /**
+     * Perform a one-shot attack
+     */
     public void performGenericAttack() {}
     
-    public void performSpecialAttack(boolean isKeyDown) {}
+    /**
+     * Perform a continuous special attack, e.g. Fire breathing
+     *
+     * @param shouldContinue True = continue attacking | False = interrupt / stop attack
+     */
+    public void performSpecialAttack(boolean shouldContinue) {}
+    
+    @Override
+    protected float getJumpUpwardsMotion() { return canFly() ? 1.5f : super.getJumpUpwardsMotion(); }
     
     @Nullable
     @Override

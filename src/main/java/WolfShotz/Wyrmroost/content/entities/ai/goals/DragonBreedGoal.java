@@ -15,16 +15,13 @@ import net.minecraft.world.GameRules;
 public class DragonBreedGoal extends BreedGoal
 {
     private final AbstractDragonEntity dragon;
-    private final int hatchTimer;
     
     /**
      * @param dragon dragon type were breeding
-     * @param hatchTimer the time, in ticks, it takes to hatch
      */
-    public DragonBreedGoal(AbstractDragonEntity dragon, int hatchTimer) {
+    public DragonBreedGoal(AbstractDragonEntity dragon) {
         super(dragon, 1.0d);
         this.dragon = dragon;
-        this.hatchTimer = hatchTimer;
     }
     
     @Override
@@ -45,7 +42,7 @@ public class DragonBreedGoal extends BreedGoal
         ItemStack eggStack = new ItemStack(SetupBlocks.egg);
     
         tag.putString("dragonType", EntityType.getKey(dragon.getType()).toString());
-        tag.putInt("hatchTimer", hatchTimer);
+        tag.putInt("hatchTimer", dragon.hatchTimer);
         eggStack.setTag(tag);
     
         ItemEntity eggItem = new ItemEntity(world, dragon.posX, dragon.posY, dragon.posZ, eggStack);

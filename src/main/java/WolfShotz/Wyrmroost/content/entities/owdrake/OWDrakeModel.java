@@ -374,12 +374,18 @@ public class OWDrakeModel extends AdvancedEntityModel
 
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        OWDrakeEntity dragon = (OWDrakeEntity) entity;
+        
         this.netHeadYaw = netHeadYaw;
         this.headPitch = headPitch;
 
         GlStateManager.pushMatrix();
-        GlStateManager.scaled(1d / 0.5, 1d / 0.5d, 1d / 0.5d);
-        this.body1.render(scale);
+        if (dragon.isChild()) {
+            GlStateManager.scaled(1, 1, 1);
+            GlStateManager.translated(0, 0.7, 0);
+        }
+        else GlStateManager.scaled(2, 2, 2);
+        body1.render(scale);
         GlStateManager.popMatrix();
     }
 
@@ -435,7 +441,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
         
-        if (!entity.hasActiveAnimation()) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
+        if (!entity.hasActiveAnimation()) faceTarget(netHeadYaw, headPitch, 4, neck1, head);
     }
     
     /**

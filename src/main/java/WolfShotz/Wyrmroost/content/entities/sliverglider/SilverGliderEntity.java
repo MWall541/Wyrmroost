@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedTemptGoal;
 import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.*;
@@ -40,6 +41,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
+        
+        hatchTimer = 18000;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
 
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, 18000));
+        goalSelector.addGoal(6, new DragonBreedGoal(this));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));

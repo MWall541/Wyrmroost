@@ -1,14 +1,15 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.eggblock.EggRenderer;
-import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.MinutusEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.MinutusRenderer;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeRenderer;
+import WolfShotz.Wyrmroost.content.entities.rooststalker.RoostStalkerEntity;
+import WolfShotz.Wyrmroost.content.entities.rooststalker.RoostStalkerRenderer;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderRenderer;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -18,7 +19,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
@@ -37,13 +37,16 @@ public class SetupEntities
 {
     // Entity List Start
     @ObjectHolder(Wyrmroost.modID + ":overworld_drake")
-    public static EntityType<?> overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
+    public static EntityType overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
     
     @ObjectHolder(Wyrmroost.modID + ":minutus")
-    public static EntityType<?> minutus = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
+    public static EntityType minutus = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
     
     @ObjectHolder(Wyrmroost.modID + ":silver_glider")
-    public static EntityType<?> silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
+    public static EntityType silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
+    
+    @ObjectHolder(Wyrmroost.modID + ":roost_stalker")
+    public static EntityType roost_stalker = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
     // Entity List End
     
     /**
@@ -63,6 +66,7 @@ public class SetupEntities
         RenderingRegistry.registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(RoostStalkerEntity.class, RoostStalkerRenderer::new);
     }
 
     @SubscribeEvent
@@ -70,7 +74,8 @@ public class SetupEntities
         event.getRegistry().registerAll (
                 overworld_drake,
                 minutus,
-                silver_glider
+                silver_glider,
+                roost_stalker
         );
         registerEntityWorldSpawns();
     }
@@ -87,17 +92,17 @@ public class SetupEntities
     // needing this.
 
     private static Set<Biome> getDrakeBiomes() {
-        Set<Biome> drakeSpawns = new HashSet<>();
-        drakeSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA));
-        drakeSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS));
-        return drakeSpawns;
+        return ModUtils.collectAll(
+                BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA),
+                BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS)
+        );
     }
     
     private static Set<Biome> getSilverGliderBiomes() {
-        Set<Biome> gliderSpawns = new HashSet<>();
-        gliderSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.BEACH));
-        gliderSpawns.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN));
-        return gliderSpawns;
+        return ModUtils.collectAll(
+                BiomeDictionary.getBiomes(BiomeDictionary.Type.BEACH),
+                BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
+        );
     }
 
     // ================================
@@ -121,7 +126,9 @@ public class SetupEntities
     private static void registerSpawning(EntityType<?> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes) {
         biomes.stream()
                 .filter(Objects::nonNull)
-                .forEach(biome -> biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
+                .forEach(biome -> biome
+                         .getSpawns(entity.getClassification())
+                         .add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
     }
 
 }

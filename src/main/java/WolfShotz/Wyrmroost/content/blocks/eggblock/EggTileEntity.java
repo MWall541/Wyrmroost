@@ -23,7 +23,7 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     public void tick() {
         if (!world.isRemote) {
             if (!activated) return; // Dont Start hatching until we confirm! (Right click)
-            
+    
             if (dragonType == null) { // This Shouldnt happen...
                 world.setBlockState(getPos(), Blocks.AIR.getDefaultState());
                 ModUtils.L.error("Dragon type on Egg TE was null!");
@@ -32,12 +32,12 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     
             if (hatchTimer > 0) { // cant hatch yet!
                 --hatchTimer;
-                return; // cant hatch yet!
+                return;
             }
     
             AbstractDragonEntity dragonChild = dragonType.create(world);
-
-//            dragonChild.setGrowingAge(-(origTime * 2)); TODO
+    
+            dragonChild.setGrowingAge(-(dragonChild.hatchTimer * 2));
             dragonChild.setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), 0, 0);
             world.addEntity(dragonChild);
             remove();

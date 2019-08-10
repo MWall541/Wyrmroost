@@ -25,8 +25,8 @@ public class EggRenderer extends TileEntityRenderer<EggTileEntity>
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
     
-        GlStateManager.translatef((float) x + 0.5F, (float) y + 1.5f, (float) z + 0.5F);
-        GlStateManager.scalef(1.0F, -1.0F, -1.0F);
+        GlStateManager.translatef((float) x + 0.5F, (float) y + 3f, (float) z + 0.5F);
+        GlStateManager.scalef(2.0F, -2.0F, -2.0F);
     
         eggModel.renderAll();
     

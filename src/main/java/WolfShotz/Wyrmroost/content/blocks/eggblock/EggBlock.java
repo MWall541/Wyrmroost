@@ -26,8 +26,6 @@ import java.util.Random;
 
 public class EggBlock extends Block
 {
-    private static final VoxelShape SHAPE = Block.makeCuboidShape(5, 0, 5, 11, 8.2d, 11);
-    
     public EggBlock() {
         super(ModUtils.blockBuilder(Material.DRAGON_EGG).hardnessAndResistance(0, 3).sound(SoundType.METAL));
         setRegistryName("egg");
@@ -58,18 +56,22 @@ public class EggBlock extends Block
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState state, World world, BlockPos pos, Random rand) {
         TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof EggTileEntity))  return;
+        if (!(te instanceof EggTileEntity)) return;
         if (!((EggTileEntity) te).activated) return;
         
         double x = pos.getX() + rand.nextDouble();
         double z = pos.getZ() + rand.nextDouble();
-        double y = pos.getY() + rand.nextDouble();
+        double y = pos.getY() + rand.nextDouble() + 0.5;
         world.addParticle(new RedstoneParticleData(1, 1, 0, 0.5f), x, y, z, 0, 0, 0);
     }
     
     @Override
     @SuppressWarnings("deprecation")
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) { return SHAPE; }
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+        
+        
+        return Block.makeCuboidShape(3, 0, 3, 13, 16, 13);
+    }
     
     @Override
     public boolean hasTileEntity(BlockState state) { return true; }
