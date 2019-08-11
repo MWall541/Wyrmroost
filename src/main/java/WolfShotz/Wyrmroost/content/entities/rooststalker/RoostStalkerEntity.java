@@ -30,10 +30,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
-    private int eatTicks;
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
-    
-    public static final Animation SIT_ANIMATION = Animation.create(15);
     
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world) {
         super(stalker, world);
@@ -49,7 +46,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 1));
         goalSelector.addGoal(8, new MeleeAttackGoal(this, 1d, true));
-        goalSelector.addGoal(9, new DragonBreedGoal(this));
+        goalSelector.addGoal(9, new DragonBreedGoal(this, false));
         goalSelector.addGoal(10, new ScavengeGoal(this, 0.8d));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 5f));
@@ -73,14 +70,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public void livingTick() {
         super.livingTick();
         
-        if (eatTicks > 0) {
-            --eatTicks;
-            
-            
-            return;
-        }
-        
-        if (getRNG().nextInt(350) != 0 && eatTicks == 0) return;
+        if (getRNG().nextInt(350) != 0) return;
         
         ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
         
@@ -88,7 +78,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         if (stack.getItem().isFood()) {
             Food food = stack.getItem().getFood();
             
-            if (food.isMeat()) eatTicks = 50;
+            if (food.isMeat()) {
+                stack.shrink(1);
+                eat(stack);
+            }
             
         }
     }
@@ -120,6 +113,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             // if player is sneaking, sit/stand
             if (player.isSneaking()) {
                 setSit(!isSitting());
+//                setAnimation(SIT_ANIMATION);
             
                 return true;
             }
@@ -157,12 +151,14 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                     return true;
                 }
             
-                // Swap mouth holding items
-                if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
-                else player.setHeldItem(hand, ItemStack.EMPTY);
-                setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
-            
-                return true;
+                if (stack.getItem() != Items.GOLD_NUGGET) {
+                    // Swap mouth holding items
+                    if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
+                    else player.setHeldItem(hand, ItemStack.EMPTY);
+                    setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
+    
+                    return true;
+                }
             }
             
             // Retrieve the item in the mouth

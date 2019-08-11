@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.rooststalker;
 
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
 
@@ -31,6 +32,10 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     public AdvancedRendererModel jaw;
     public AdvancedRendererModel hornl;
     public AdvancedRendererModel hornl_1;
+    
+    public AdvancedRendererModel[] tailSegments;
+    
+    public ModelAnimator animator;
 
     public RoostStalkerModel() {
         this.textureWidth = 80;
@@ -85,7 +90,6 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         this.jaw = new AdvancedRendererModel(this, 35, 60);
         this.jaw.setRotationPoint(0.0F, 1.0F, 0.0F);
         this.jaw.addBox(-2.51F, 0.0F, -10.0F, 5, 2, 10, 0.0F);
-        this.setRotateAngle(jaw, 0.31869712141416456F, 0.0F, 0.0F);
         this.footl1 = new AdvancedRendererModel(this, 20, 80);
         this.footl1.setRotationPoint(-4.0F, 0.0F, 0.0F);
         this.footl1.addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2, 0.0F);
@@ -145,13 +149,74 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         this.legr2.addChild(this.footl2_1);
         this.torso.addChild(this.legr3);
         this.torso.addChild(this.legr1);
+        
+        tailSegments = new AdvancedRendererModel[] {tail1, tail2, tail3};
+        
+        animator = ModelAnimator.create();
+        
+        updateDefaultPose();
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) { 
+    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
+        RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
+        
         GlStateManager.pushMatrix();
-        GlStateManager.scaled(0.625d, 0.625d, 0.625d);
+        
+        if (stalker.isChild()) {
+            GlStateManager.translatef(0, 0.78f, 0);
+            GlStateManager.scaled(0.3d, 0.3d, 0.3d);
+        }
+        else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
+        
         this.torso.render(f5);
         GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        faceTarget(netHeadYaw, headPitch, 2, head);
+        
+        float globalSpeed = 0.5f;
+        
+        swing(legl1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+        swing(legl2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
+        swing(legl3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+        
+        swing(legr1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+        swing(legr2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
+        swing(legr3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+    }
+    
+    @Override
+    public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
+        RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
+        
+        float frame = entity.ticksExisted;
+        float f = 0.5f;
+        float globalSpeed = 0.5f;
+        
+        resetToDefaultPose();
+        
+        if (stalker.isSitting()) {
+            torso.offsetY = 0.21f;
+            
+            tail1.rotateAngleX = 0.01f;
+            
+            float legAngle = 1.4f;
+            footl1.rotateAngleZ = legAngle;
+            footl2.rotateAngleZ = legAngle;
+            footl3.rotateAngleZ = legAngle;
+            
+            footl1_1.rotateAngleZ = -legAngle;
+            footl2_1.rotateAngleZ = -legAngle;
+            footl3_1.rotateAngleZ = -legAngle;
+        }
+        
+        chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, f);
+        chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, f);
+        
+        chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
+        walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, f);
     }
 }
