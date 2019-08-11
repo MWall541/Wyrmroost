@@ -287,6 +287,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         else entities.forEach(this::attackEntityAsMob);
     }
     
+    @Override
+    public boolean attackEntityAsMob(Entity entityIn) {
+        if (entityIn instanceof TameableEntity) {
+            TameableEntity entity = (TameableEntity) entityIn;
+            
+            if (entity.getOwner() == getOwner()) return false;
+        }
+        
+        return super.attackEntityAsMob(entityIn);
+    }
+    
     /**
      * Should the dragon attack
      * @param targetted
@@ -319,11 +330,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     public void eat(@Nullable ItemStack stack, int healAmount) {
         heal(healAmount);
-        
-        if (world.isRemote && stack != null) {
-            for (int i=0; i < 9; ++i) {
-            }
-        }
     }
     
     /**
