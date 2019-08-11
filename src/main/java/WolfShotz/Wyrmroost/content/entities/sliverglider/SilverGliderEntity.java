@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
@@ -59,6 +60,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
 
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
+        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 10, 4));
         goalSelector.addGoal(6, new DragonBreedGoal(this));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 10f));
@@ -146,7 +148,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
                     if (yVec < 0) yMotion = Math.max(Math.abs(yVec), 0.6);
                     else if (yVec >= 0) {
-                        yMotion = Math.min(yVec, 0.75);
+                        yMotion = Math.min(yVec, 0.75d);
                         if (getRNG().nextInt(75) == 0 && getAnimation() != RANDOM_FLAP_ANIMATION)
                             setAnimation(RANDOM_FLAP_ANIMATION);
                     }

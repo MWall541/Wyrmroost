@@ -66,6 +66,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
+        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 12, 3));
         goalSelector.addGoal(6, new DragonBreedGoal(this));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));

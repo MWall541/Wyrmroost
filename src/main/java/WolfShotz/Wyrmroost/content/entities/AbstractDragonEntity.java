@@ -74,7 +74,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         goalSelector.addGoal(1, new SwimGoal(this));
 //        goalSelector.addGoal(2, new SleepGoal(this));
         goalSelector.addGoal(3, sitGoal = new SitGoal(this));
-        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 14, 4));
     }
 
     // ================================

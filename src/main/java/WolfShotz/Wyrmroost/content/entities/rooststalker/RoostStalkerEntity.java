@@ -47,6 +47,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
+        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 1));
         goalSelector.addGoal(8, new MeleeAttackGoal(this, 1d, true));
         goalSelector.addGoal(9, new DragonBreedGoal(this));
         goalSelector.addGoal(10, new ScavengeGoal(this, 0.8d));

@@ -323,14 +323,17 @@ public class SilverGliderModel extends AdvancedEntityModel {
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         float frame = entityIn.ticksExisted;
-        limbSwing = frame;
-        limbSwingAmount = 0.6f;
-        swing(WingSegment1L, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
-        flap(WingSegment1L, globalSpeed - 0.2f, 0.3f, true, 0.8f, 0.2f, limbSwing, limbSwingAmount);
-//        walk()
+        float walkSpeed = globalSpeed - 0.1f;
+        
+        walk(LegL1, walkSpeed, 0.8f, false, 0, 0.6f, limbSwing, limbSwingAmount);
+        swing(WingSegment1L, walkSpeed, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+        flap(WingSegment1L, walkSpeed, 0.2f, true, 1.7f, 0.2f, limbSwing, limbSwingAmount);
+        flap(WingSegment2L, walkSpeed, -0.4f, false, 0, 0, limbSwing, limbSwingAmount);
     
-        swing(WingSegment1R, globalSpeed - 0.2f, -0.5f, true, 0, 0, limbSwing, limbSwingAmount);
-        flap(WingSegment1R, globalSpeed - 0.2f, -0.3f, false, 0.8f, 0.2f, limbSwing, limbSwingAmount);
+        walk(LegR1, walkSpeed, 0.8f, true, 0, -0.6f, limbSwing, limbSwingAmount);
+        swing(WingSegment1R, walkSpeed, -0.5f, true, 0, 0, limbSwing, limbSwingAmount);
+        flap(WingSegment1R, walkSpeed, -0.2f, false, 1.7f, 0.2f, limbSwing, limbSwingAmount);
+        flap(WingSegment2R, walkSpeed, 0.4f, true, 0, 0, limbSwing, limbSwingAmount);
     }
     
     @Override
@@ -342,17 +345,17 @@ public class SilverGliderModel extends AdvancedEntityModel {
         animator.update(entity);
         faceTarget(netHeadYaw, headPitch, 1f, neckArray);
 
-        if (!entity.isFlying() || entity.onGround) {
+        if (!entity.isGliding && entity.getRidingEntity() == null && (!entity.isFlying() || entity.onGround)) {
             WingSegment1L.rotateAngleZ = 0.5f;
             WingSegment1L.rotateAngleY = 0.15f;
-            WingSegment2L.rotateAngleX = 0.35f;
+//            WingSegment2L.rotateAngleX = 0.35f;
             WingSegment2L.rotateAngleY = -0.23f;
             WingSegment2L.rotateAngleZ = -1.5f;
             WingSegment3L.rotateAngleY = -0.3f;
     
             WingSegment1R.rotateAngleZ = 0.5f;
             WingSegment1R.rotateAngleY = -0.15f;
-            WingSegment2R.rotateAngleX = 0.35f;
+//            WingSegment2R.rotateAngleX = 0.35f;
             WingSegment2R.rotateAngleY = 0.23f;
             WingSegment2R.rotateAngleZ = 1.5f;
             WingSegment3R.rotateAngleY = 0.3f;
@@ -384,11 +387,27 @@ public class SilverGliderModel extends AdvancedEntityModel {
 
             return; // No other anim should play during this!
         }
-        if (entity.isGliding) {
+        if (entity.isGliding && entity.getAnimation() == AbstractDragonEntity.NO_ANIMATION) {
             continueGliding(entity, frame);
             randomFlap();
 
-            return; // No other anim should play during this!
+        }
+        if (entity.getRidingEntity() != null) {
+            MainBody.offsetZ = -0.5f;
+            
+            if (!entity.isGliding) {
+                WingSegment1L.rotateAngleZ = 0.5f;
+                WingSegment1L.rotateAngleY = -0.28f;
+                WingSegment2L.rotateAngleZ = 0.5f;
+                WingSegment2L.rotateAngleY = -0.1f;
+                WingSegment3L.rotateAngleY = -1.1f;
+    
+                WingSegment1R.rotateAngleZ = -0.5f;
+                WingSegment1R.rotateAngleY = 0.28f;
+                WingSegment2R.rotateAngleZ = -0.5f;
+                WingSegment2R.rotateAngleY = 0.1f;
+                WingSegment3R.rotateAngleY = 1.1f;
+            }
         }
 
         continueIdle(frame);
@@ -426,7 +445,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         LegL1.rotateAngleX = (float) look.y;
         LegR1.rotateAngleX = (float) look.y;
 
-        if (look.y < -0.000001) {
+        if (look.y < 0) {
             WingSegment1L.rotateAngleY = (float) Math.max(look.y / 2, -0.5f);
             WingSegment2L.rotateAngleY = (float) Math.max(look.y, -0.5f);
             WingSegment3L.rotateAngleY = (float) Math.max(look.y, -0.7f);
@@ -435,7 +454,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
             WingSegment2R.rotateAngleY = (float) Math.min(-look.y, 0.5f);
             WingSegment3R.rotateAngleY = (float) Math.min(-look.y, 0.7f);
         }
-        if (look.y > 0.000001) {
+        if (look.y >= 0) {
             WingSegment1L.rotateAngleX = (float) Math.max(-look.y, -0.3f);
             WingSegment1R.rotateAngleX = (float) Math.max(-look.y, -0.3f);
         }
