@@ -67,7 +67,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
         goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 12, 3));
-        goalSelector.addGoal(6, new DragonBreedGoal(this));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
@@ -102,7 +102,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
         super.writeAdditional(compound);
     }
-
+    
     /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {

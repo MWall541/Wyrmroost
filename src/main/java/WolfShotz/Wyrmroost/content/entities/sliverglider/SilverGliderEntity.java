@@ -23,6 +23,9 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -61,7 +64,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 10, 4));
-        goalSelector.addGoal(6, new DragonBreedGoal(this));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
@@ -140,34 +143,44 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 }
 
                 if (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying) {
-                    Vec3d prevMotion = player.getMotion();
-                    double yVec = player.getLookVec().y;
-                    double xMotion = (Math.abs(prevMotion.x) >= 1f? 0.8d : 1.1d);
-                    double zMotion = (Math.abs(prevMotion.z) >= 1f? 0.8d : 1.1d);
-                    double yMotion = 0.75d; // Fallback: WHERE TF ARE WE LOOKING?!
-
-                    if (yVec < 0) yMotion = Math.max(Math.abs(yVec), 0.6);
-                    else if (yVec >= 0) {
-                        yMotion = Math.min(yVec, 0.75d);
-                        if (getRNG().nextInt(75) == 0 && getAnimation() != RANDOM_FLAP_ANIMATION)
-                            setAnimation(RANDOM_FLAP_ANIMATION);
+                    Vec3d vec3d3 = player.getMotion();
+                    
+                    if (vec3d3.y > -0.5D) player.fallDistance = 1.0F;
+    
+                    Vec3d vec3d = player.getLookVec();
+                    float f6 = player.rotationPitch * ((float) Math.PI / 180F);
+                    double d9 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
+                    double d11 = Math.sqrt(func_213296_b(vec3d3));
+                    double d12 = vec3d.length();
+                    float f3 = MathHelper.cos(f6);
+                    
+                    f3 = (float) ((double) f3 * (double) f3 * Math.min(1.0D, d12 / 0.4D));
+                    vec3d3 = player.getMotion().add(0.0D, 0.08d * (-1.0D + (double) f3 * 0.75D), 0.0D);
+                    if (vec3d3.y < 0.0D && d9 > 0.0D) {
+                        double d3 = vec3d3.y * -0.1D * (double) f3;
+                        vec3d3 = vec3d3.add(vec3d.x * d3 / d9, d3, vec3d.z * d3 / d9);
                     }
-
-                    Vec3d motion = new Vec3d(xMotion, yMotion, zMotion);
-
-                    isGliding = true;
-                    player.setMotion(prevMotion.mul(motion));
+    
+                    if (f6 < 0.0F && d9 > 0.0D) {
+                        double d13 = d11 * (double) (-MathHelper.sin(f6)) * 0.04D;
+                        vec3d3 = vec3d3.add(-vec3d.x * d13 / d9, d13 * 3.2D, -vec3d.z * d13 / d9);
+                    }
+    
+                    if (d9 > 0.0D) vec3d3 = vec3d3.add((vec3d.x / d9 * d11 - vec3d3.x) * 0.1D, 0.0D, (vec3d.z / d9 * d11 - vec3d3.z) * 0.1D);
+    
+                    player.setMotion(vec3d3.mul((double) 0.99F, (double) 0.98F, (double) 0.99F));
+                    player.move(MoverType.SELF, player.getMotion());
                 }
-
+                
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
                 rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
                 setRotation(player.rotationYawHead, rotationPitch);
-
+    
                 setPosition(player.posX, player.posY + 1.85d, player.posZ);
             }
         }
     }
-
+    
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);

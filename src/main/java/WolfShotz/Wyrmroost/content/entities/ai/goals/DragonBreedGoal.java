@@ -15,20 +15,22 @@ import net.minecraft.world.GameRules;
 public class DragonBreedGoal extends BreedGoal
 {
     private final AbstractDragonEntity dragon;
+    private boolean straight;
     
     /**
      * @param dragon dragon type were breeding
      */
-    public DragonBreedGoal(AbstractDragonEntity dragon) {
+    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight) {
         super(dragon, 1.0d);
         this.dragon = dragon;
+        this.straight = straight;
     }
     
     @Override
     public boolean shouldExecute() {
-        if (super.shouldExecute())
-            return ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
-        return false;
+        if (straight)
+            return super.shouldExecute() && ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
+        else return super.shouldExecute();
     }
     
     /**
