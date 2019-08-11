@@ -37,6 +37,15 @@ public class EggRenderer extends TileEntityRenderer<EggTileEntity>
                 GlStateManager.scalef(1.2f, -1.2f, -1.2f);
                 break;
             }
+            case 2: {
+                GlStateManager.translatef((float) x + 0.5f, (float) y + 1.05f, (float) z + 0.5f);
+                GlStateManager.scalef(0.7f, -0.7f, -0.7f);
+                break;
+            }
+            default: {
+                GlStateManager.translatef((float) x + 0.5F, (float) y + 3f, (float) z + 0.5F);
+                GlStateManager.scalef(2.0F, -2.0F, -2.0F);
+            }
         }
     
         eggModel.renderAll();
