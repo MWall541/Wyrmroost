@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
+import WolfShotz.Wyrmroost.content.entities.ai.FlightPathNavigator;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
@@ -8,6 +9,7 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
@@ -20,11 +22,11 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -63,10 +65,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         moveController = new FlightMovementController(this);
 
         stepHeight = 1;
-
-        if (canFly()) {
-            setImmune(DamageSource.FALL);
-        }
     }
 
     @Override
@@ -156,9 +154,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean canFly() { return !isChild(); }
     public void setFlying(boolean fly) {
-        if (canFly()) {
-            dataManager.set(FLYING, fly);
-            if (fly) jump();
+        if (canFly() && fly) {
+            dataManager.set(FLYING, true);
+            switchPathController(true);
+            liftOff();
+        } else {
+            dataManager.set(FLYING, false);
+            switchPathController(false);
         }
     }
 
@@ -173,26 +175,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super.setSitting(sitting);
     
         recalculateSize(); // Change the hitbox for sitting
-    }
-
-    /**
-     * Tame the dragon to the tamer if true
-     * else, play the failed tame effects
-     */
-    public void tame(boolean tame, @Nullable PlayerEntity tamer) {
-        if (!world.isRemote && !isTamed()) {
-            if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer)) {
-                setTamedBy(tamer);
-                navigator.clearPath();
-                setAttackTarget(null);
-                setHealth(getMaxHealth());
-                playTameEffect(true);
-                world.setEntityState(this, (byte) 7);
-            } else {
-                playTameEffect(false);
-                world.setEntityState(this, (byte) 6);
-            }
-        }
     }
 
     /**
@@ -233,6 +215,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
+    public void switchPathController(boolean flying) {
+        if (flying) {
+            moveController = new FlightMovementController(this);
+            navigator = new FlightPathNavigator(this, world);
+        } else {
+            moveController = new MovementController(this);
+            navigator = new GroundPathNavigator(this, world);
+        }
+    }
+    
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
@@ -315,17 +307,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.rotationPitch = pitch % 360.0F;
     }
     
-    /**
-     * Array Containing all of the dragons food items
-     */
-    protected abstract Item[] getFoodItems();
-    
-    @Override
-    public boolean isBreedingItem(ItemStack stack) {
-        if (getFoodItems().length == 0 || getFoodItems() == null) return false;
-        return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
-    }
-    
     public void eat(@Nullable ItemStack stack) {
         if (stack != null && !stack.isEmpty()) {
             heal(Math.max((int) getMaxHealth() / 5, 6));
@@ -340,6 +321,36 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
     
+    /**
+     * Tame the dragon to the tamer if true
+     * else, play the failed tame effects
+     */
+    public void tame(boolean tame, @Nullable PlayerEntity tamer) {
+        if (!world.isRemote && !isTamed()) {
+            if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer)) {
+                setTamedBy(tamer);
+                navigator.clearPath();
+                setAttackTarget(null);
+                setHealth(getMaxHealth());
+                playTameEffect(true);
+                world.setEntityState(this, (byte) 7);
+            } else {
+                playTameEffect(false);
+                world.setEntityState(this, (byte) 6);
+            }
+        }
+    }
+    
+    /**
+     * Array Containing all of the dragons food items
+     */
+    protected abstract Item[] getFoodItems();
+    
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
+        if (getFoodItems().length == 0 || getFoodItems() == null) return false;
+        return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
+    }
     
     /**
      * Set a damage source immunity
@@ -363,8 +374,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Nullable
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
     
+    public void liftOff() { if (canFly()) jump(); }
+    
     @Override
-    protected void jump() { super.jump(); }
+    public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }
     
     /**
      * Perform a one-shot attack
