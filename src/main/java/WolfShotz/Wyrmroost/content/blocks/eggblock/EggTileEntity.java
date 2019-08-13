@@ -7,6 +7,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
@@ -56,6 +58,17 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
         
         return super.write(compound);
     }
+    
+    /* Load */
+    @Override
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = new CompoundNBT();
+        write(tag);
+        return tag;
+    }
+    
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) { read(pkt.getNbtCompound()); }
     
     /* Load */
     @Override
