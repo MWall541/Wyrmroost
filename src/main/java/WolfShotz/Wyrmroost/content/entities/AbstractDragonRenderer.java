@@ -15,10 +15,16 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     public AbstractDragonRenderer(EntityRendererManager manager, EntityModel<T> model, float shadowSize) {
         super(manager, model, shadowSize);
     }
-
+    
+    /**
+     * Abstract layer renderer to handle the generalizing
+     */
     protected abstract class AbstractLayerRenderer<V extends AbstractDragonEntity> extends LayerRenderer<V, EntityModel<V>>
     {
         protected AbstractLayerRenderer(IEntityRenderer<V, EntityModel<V>> entityIn) { super(entityIn); }
+    
+        @Override // Override to deobfuscate params
+        public abstract void render(V entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale);
     }
 
     /**
@@ -34,7 +40,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         }
 
         @Override
-        public void render(T entity, float limbSwing, float limbSwingAmount, float p_212842_4_, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
             if (entity.isSaddled()) {
                 bindTexture(saddleloc);
                 getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
@@ -44,22 +50,4 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         @Override
         public boolean shouldCombineTextures() { return false; }
     }
-    
-    /**
-     * Class Responsible for Rendering the sleep layer
-     */
-/*    protected class SleepLayer extends AbstractLayerRenderer<T>
-    {
-        private ResourceLocation sleeploc;
-        
-        public SleepLayer(IEntityRenderer entityIn, ResourceLocation location) {
-            super(entityIn);
-            this.sleeploc = location;
-        }
-    
-        @Override
-        public void render(T entityIn, float limbSwing, float limbSwingAmount, float p_212842_4_, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            if (entityIn.isAsleep())
-        }
-    }*/
 }

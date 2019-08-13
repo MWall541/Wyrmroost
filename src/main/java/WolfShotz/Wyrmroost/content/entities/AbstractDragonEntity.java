@@ -19,8 +19,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -324,11 +326,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
     }
     
-    public void eat(@Nullable ItemStack stack) { eat(stack, Math.max((int) getMaxHealth() / 5, 6)); }
-    
-    public void eat(@Nullable ItemStack stack, int healAmount) {
-        heal(healAmount);
+    public void eat(@Nullable ItemStack stack) {
+        if (stack != null && !stack.isEmpty()) {
+            heal(Math.max((int) getMaxHealth() / 5, 6));
+            stack.shrink(1);
+            playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
+            for (int i = 0; i < 6; ++i) {
+                double x = posX + getRNG().nextInt(2) - 1;
+                double y = posY + getRNG().nextDouble();
+                double z = posZ + getRNG().nextInt(2) - 1;
+                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
+            }
+        }
     }
+    
     
     /**
      * Set a damage source immunity

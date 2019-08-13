@@ -20,6 +20,8 @@ public class NonTamedAvoidGoal extends AvoidEntityGoal
         super(dragon, avoidingClass, distance, speedNear, speedFar, EntityPredicates.CAN_AI_TARGET);
         this.dragon = dragon;
         this.flysAway = flysAway;
+        this.speedFar = speedFar;
+        this.speedNear = speedNear;
     }
     
     /**
