@@ -322,7 +322,6 @@ public class SilverGliderModel extends AdvancedEntityModel {
     
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        float frame = entityIn.ticksExisted;
         float walkSpeed = globalSpeed - 0.1f;
         
         walk(LegL1, walkSpeed, 0.8f, false, 0, 0.6f, limbSwing, limbSwingAmount);
@@ -344,8 +343,11 @@ public class SilverGliderModel extends AdvancedEntityModel {
         resetToDefaultPose();
         animator.update(entity);
         faceTarget(netHeadYaw, headPitch, 1f, neckArray);
-
-        if (!entity.isGliding && entity.getRidingEntity() == null && (!entity.isFlying() || entity.onGround)) {
+    
+        if (entity.isSitting() && !entity.hasActiveAnimation())
+            staySitting();
+        
+        if (!entity.isGliding && entity.getRidingEntity() == null && (!entity.isFlying() || entity.onGround) && !entity.isSitting()) {
             WingSegment1L.rotateAngleZ = 0.5f;
             WingSegment1L.rotateAngleY = 0.15f;
 //            WingSegment2L.rotateAngleX = 0.35f;
@@ -434,6 +436,32 @@ public class SilverGliderModel extends AdvancedEntityModel {
         chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, f);
     }
 
+    public void staySitting() {
+        MainBody.offsetY = 0.25f;
+        
+        LegR1.rotateAngleX = -1.2f;
+        LegR2.rotateAngleX = 2.1f;
+        LegR3.rotateAngleX = -2.5f;
+    
+        LegL1.rotateAngleX = -1.2f;
+        LegL2.rotateAngleX = 2.1f;
+        LegL3.rotateAngleX = -2.5f;
+        
+        WingSegment1R.rotateAngleY = 0.5f;
+        WingSegment1R.rotateAngleZ = -0.25f;
+        WingSegment2R.rotateAngleY = 0.7f;
+        WingSegment2R.rotateAngleZ = 0.1f;
+        WingSegment3R.rotateAngleY = 0.5f;
+    
+        WingSegment1L.rotateAngleY = -0.5f;
+        WingSegment1L.rotateAngleZ = 0.25f;
+        WingSegment2L.rotateAngleY = -0.7f;
+        WingSegment2L.rotateAngleZ = -0.1f;
+        WingSegment3L.rotateAngleY = -0.5f;
+        
+        for (AdvancedRendererModel toe : toes) toe.rotateAngleX = 0;
+    }
+    
     /**
      * Gliding Pose for the Silver Glider
      * Handles the "buffering" of wings and dynamic wing movements according to look vector

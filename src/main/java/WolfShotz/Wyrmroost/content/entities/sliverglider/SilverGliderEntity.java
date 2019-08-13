@@ -2,11 +2,14 @@ package WolfShotz.Wyrmroost.content.entities.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedAvoidGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedTemptGoal;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -25,11 +28,15 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+
+import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -63,8 +70,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
 
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
-        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 10, 4));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
+        goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 10, 4));
+        goalSelector.addGoal(7, new DragonBreedGoal(this, true));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
@@ -169,7 +177,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     if (d9 > 0.0D) vec3d3 = vec3d3.add((vec3d.x / d9 * d11 - vec3d3.x) * 0.1D, 0.0D, (vec3d.z / d9 * d11 - vec3d3.z) * 0.1D);
     
                     player.setMotion(vec3d3.mul((double) 0.99F, (double) 0.98F, (double) 0.99F));
-                    player.move(MoverType.SELF, player.getMotion());
+//                    player.move(MoverType.SELF, player.getMotion());
                 }
                 
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
@@ -184,6 +192,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        
+        if (hand != Hand.MAIN_HAND) return false; // only fire on the main hand
     
         if (stack.getItem() == Items.STICK) {
             setGrowingAge(-24000);
@@ -193,12 +203,21 @@ public class SilverGliderEntity extends AbstractDragonEntity
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
             tame(getRNG().nextInt(10) == 0, player);
+            
             return true;
         }
 
         // if tamed, then start riding the player
-        if (isTamed() && stack.isEmpty() && hand == Hand.MAIN_HAND) {
+        if (isTamed() && stack.isEmpty() && !player.isSneaking()) {
             startRiding(player, true);
+            setSit(false);
+            
+            return true;
+        }
+        
+        if (isTamed() && stack.isEmpty() && player.isSneaking()) {
+            setSit(!isSitting());
+            
             return true;
         }
 
@@ -212,6 +231,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
         isGliding = false;
     }
 
+    public static boolean canSpawnHere(EntityType<SilverGliderEntity> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand) {
+        Block block = world.getBlockState(blockPos.down(1)).getBlock();
+        return block == Blocks.AIR;
+    }
+    
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }
 

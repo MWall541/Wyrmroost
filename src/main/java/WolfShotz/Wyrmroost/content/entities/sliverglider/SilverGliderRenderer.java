@@ -15,7 +15,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     // Male Variants: "male_{the variant int}.png"
 
     public SilverGliderRenderer(EntityRendererManager manager) {
-        super(manager, new SilverGliderModel(), 2f);
+        super(manager, new SilverGliderModel(), 1f);
     }
 
     @Nullable
