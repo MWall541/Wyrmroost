@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.rooststalker.goals;
 
-import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.util.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
@@ -24,21 +24,21 @@ import static com.github.alexthe666.citadel.animation.IAnimatedEntity.NO_ANIMATI
 
 public class ScavengeGoal extends MoveToBlockGoal
 {
-    private AbstractDragonEntity dragon;
+    private RoostStalkerEntity dragon;
     private ServerWorld world;
     private Animation animation;
     private IInventory chest;
     private boolean markScavenged;
     
     
-    public ScavengeGoal(AbstractDragonEntity dragon, double speed, Animation animation) {
+    public ScavengeGoal(RoostStalkerEntity dragon, double speed, Animation animation) {
         super(dragon, speed, 8);
         this.dragon = dragon;
         this.world = (ServerWorld) dragon.world;
         this.animation = animation;
     }
     
-    public ScavengeGoal(AbstractDragonEntity dragon, double speed) { this(dragon, speed, NO_ANIMATION); }
+    public ScavengeGoal(RoostStalkerEntity dragon, double speed) { this(dragon, speed, NO_ANIMATION); }
     
     @Override
     public boolean shouldExecute() {
@@ -65,14 +65,13 @@ public class ScavengeGoal extends MoveToBlockGoal
             
             if (markScavenged) return;
     
-            if (animation != NO_ANIMATION) NetworkUtils.sendAnimationPacket(dragon, animation);
-//                chest.openInventory(roostStalker);
+            if (dragon.getAnimation() != RoostStalkerEntity.SCAVENGE_ANIMATION) NetworkUtils.sendAnimationPacket(dragon, animation);
             
             if (!chest.isEmpty()) {
                 int index = new Random().nextInt(chest.getSizeInventory());
                 ItemStack stack = chest.getStackInSlot(index);
     
-                if (!stack.isEmpty()) {
+                if (!stack.isEmpty() && dragon.canPickUpStack(stack)) {
                     chest.removeStackFromSlot(index);
                     dragon.setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
                     markScavenged = true;

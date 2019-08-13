@@ -5,6 +5,7 @@ import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.EquipmentSlotType;
 
 /**
  * Roost stalker - nova
@@ -156,20 +157,20 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         
         updateDefaultPose();
     }
-
+    
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
-        
+    
         GlStateManager.pushMatrix();
-        
+    
         if (stalker.isChild()) {
             GlStateManager.translatef(0, 0.78f, 0);
             GlStateManager.scaled(0.3d, 0.3d, 0.3d);
         }
         else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
-        
-        this.torso.render(f5);
+    
+        torso.render(scale);
         GlStateManager.popMatrix();
     }
     
@@ -191,32 +192,44 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     @Override
     public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
-        
         float frame = entity.ticksExisted;
         float f = 0.5f;
         float globalSpeed = 0.5f;
         
         resetToDefaultPose();
         
-        if (stalker.isSitting()) {
-            torso.offsetY = 0.21f;
-            
-            tail1.rotateAngleX = 0.01f;
-            
-            float legAngle = 1.4f;
-            footl1.rotateAngleZ = legAngle;
-            footl2.rotateAngleZ = legAngle;
-            footl3.rotateAngleZ = legAngle;
-            
-            footl1_1.rotateAngleZ = -legAngle;
-            footl2_1.rotateAngleZ = -legAngle;
-            footl3_1.rotateAngleZ = -legAngle;
-        }
+        if (stalker.isSitting())
+            staySit();
+        
+        if (stalker.getAnimation() == RoostStalkerEntity.SCAVENGE_ANIMATION)
+            scavengeAnim(frame);
         
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, f);
         chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, f);
         
-        chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
-        walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, f);
+        if (stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty()) {
+            walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, f);
+            chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
+        }
+        else jaw.rotateAngleX = 0.15f;
+    }
+    
+    private void staySit() {
+        torso.offsetY = 0.21f;
+    
+        tail1.rotateAngleX = 0.01f;
+    
+        float legAngle = 1.4f;
+        footl1.rotateAngleZ = legAngle;
+        footl2.rotateAngleZ = legAngle;
+        footl3.rotateAngleZ = legAngle;
+    
+        footl1_1.rotateAngleZ = -legAngle;
+        footl2_1.rotateAngleZ = -legAngle;
+        footl3_1.rotateAngleZ = -legAngle;
+    }
+    
+    private void scavengeAnim(float frame) {
+        walk(neck, 0.5f, 0.5f, false, 0, 0, frame, 0.5f);
     }
 }

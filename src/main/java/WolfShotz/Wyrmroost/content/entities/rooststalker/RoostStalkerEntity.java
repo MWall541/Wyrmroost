@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.rooststalker;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.rooststalker.goals.ScavengeGoal;
+import WolfShotz.Wyrmroost.content.entities.rooststalker.goals.StoleItemFlee;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.Entity;
@@ -16,11 +17,11 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Food;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
@@ -31,6 +32,8 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
+    
+    public static final Animation SCAVENGE_ANIMATION = Animation.create(35);
     
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world) {
         super(stalker, world);
@@ -43,6 +46,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals() {
         super.registerGoals();
+        goalSelector.addGoal(4, new StoleItemFlee(this));
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 1));
         goalSelector.addGoal(8, new MeleeAttackGoal(this, 1d, true));
@@ -54,8 +58,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this).setCallsForHelp(RoostStalkerEntity.class));
-        targetSelector.addGoal(1, new NonTamedTargetGoal<>(this, AnimalEntity.class, false, TARGETS));
+        targetSelector.addGoal(3, new HurtByTargetGoal(this).setCallsForHelp());
+        targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, AnimalEntity.class, false, TARGETS));
     }
     
     @Override
@@ -70,19 +74,14 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public void livingTick() {
         super.livingTick();
         
-        if (getRNG().nextInt(350) != 0) return;
+        if (getHealth() < getMaxHealth() && getRNG().nextInt(400) != 0) return;
         
         ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
         
         if (stack.isEmpty()) return;
-        if (stack.getItem().isFood()) {
-            Food food = stack.getItem().getFood();
-            
-            if (food.isMeat()) {
-                stack.shrink(1);
-                eat(stack);
-            }
-            
+        if (isBreedingItem(stack)) {
+            stack.shrink(1);
+            eat(stack);
         }
     }
     
@@ -113,28 +112,11 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             // if player is sneaking, sit/stand
             if (player.isSneaking()) {
                 setSit(!isSitting());
-//                setAnimation(SIT_ANIMATION);
             
                 return true;
             }
         
             if (!stack.isEmpty()) {
-            
-                // if were low on health, then heal
-                if (getHealth() < getMaxHealth() && isBreedingItem(stack)) {
-                    heal(2);
-                    if (world.isRemote) {
-                        for (int i=0; i < 6; ++i) {
-                            double x = posX + getRNG().nextInt(2) - 1;
-                            double y = posY + getRNG().nextDouble();
-                            double z = posZ + getRNG().nextInt(2) - 1;
-                            world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
-                        }
-                    }
-                    consumeItemFromStack(player, stack);
-                
-                    return true;
-                }
             
                 // Breed with gold nuggets (Yeah idk, always blame Nova)
                 if (getGrowingAge() == 0 && canBreed() && stack.getItem() == Items.GOLD_NUGGET) {
@@ -151,7 +133,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                     return true;
                 }
             
-                if (stack.getItem() != Items.GOLD_NUGGET) {
+                if (stack.getItem() != Items.GOLD_NUGGET && canPickUpStack(stack)) {
                     // Swap mouth holding items
                     if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
                     else player.setHeldItem(hand, ItemStack.EMPTY);
@@ -205,6 +187,16 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         setPosition(player.posX, player.posY + 1.8, player.posZ);
     }
     
+    protected void spawnDrops(DamageSource src) {
+    ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+    if (!stack.isEmpty()) {
+        entityDropItem(stack);
+        setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+    }
+    
+    super.spawnDrops(src);
+}
+    
     /**
      * Set The chances this dragon can be an albino.
      * Set it to 0 to have no chance.
@@ -219,6 +211,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      */
     @Override
     protected Item[] getFoodItems() { return new Item[] {Items.EGG, SetupItems.egg, Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON}; }
+    
+    public boolean canPickUpStack(ItemStack stack) {
+        return !(stack.getItem() instanceof BlockItem);
+    }
     
     // == Animation ==
     @Override

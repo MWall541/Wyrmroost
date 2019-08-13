@@ -7,12 +7,16 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
+import net.minecraft.client.renderer.entity.model.RendererModel;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.IForgeBakedModel;
 
 import javax.annotation.Nullable;
 
@@ -20,43 +24,38 @@ import javax.annotation.Nullable;
 public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity>
 {
     private static final String LOC = DEF_LOC + "rooststalker/";
-    private ResourceLocation male = ModUtils.location(LOC + "male.png");
-    private ResourceLocation female = ModUtils.location(LOC + "female.png");
-    private ResourceLocation maleAlb = ModUtils.location(LOC + "male_alb.png");
-    private ResourceLocation femaleAlb = ModUtils.location(LOC + "female_alb.png");
+    private ResourceLocation body = ModUtils.location(LOC + "body.png");
+    private ResourceLocation bodyAlb = ModUtils.location(LOC + "body_alb.png");
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
-//        addLayer(new ItemStackRenderer(this)); TODO
+        addLayer(new ItemStackRenderer(this));
     }
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(RoostStalkerEntity stalker) {
-        return male;
-/*        if (stalker.isAlbino()) return stalker.getGender()? maleAlb : femaleAlb;
-        return stalker.getGender()? male : female;*/
-    }
+    protected ResourceLocation getEntityTexture(RoostStalkerEntity stalker) { return stalker.isAlbino()? bodyAlb : body; }
     
     class ItemStackRenderer extends AbstractLayerRenderer<RoostStalkerEntity>
     {
         public ItemStackRenderer(IEntityRenderer entity) { super(entity); }
     
         @Override
-        public void render(RoostStalkerEntity stalker, float p_212842_2_, float p_212842_3_, float p_212842_4_, float p_212842_5_, float p_212842_6_, float p_212842_7_, float p_212842_8_) {
+        public void render(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
             ItemStack stack = stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-            AdvancedRendererModel head = (AdvancedRendererModel) getEntityModel().boxList.get(13);
             
             if (!stack.isEmpty()) {
                 GlStateManager.pushMatrix();
-                
-                GlStateManager.rotatef(p_212842_6_, 0.0F, 1.0F, 0.0F);
-                GlStateManager.rotatef(p_212842_7_, 1.0F, 0.0F, 0.0F);
-//                GlStateManager.rotatef(90.0F, 1.0F, 0.0F, 0.0F);
-//                GlStateManager.translatef(0, 1.15f, -0.8f);
     
+                GlStateManager.rotatef(netHeadYaw / 3f, 0, 1f, 0);
+                GlStateManager.rotatef(90, 1, 0, 0);
+                GlStateManager.translatef(0, -0.5f, stalker.isSitting()? -1.3f : -1.2f);
+                GlStateManager.rotatef(headPitch / 1.7f, 1f, 0, 0);
+                GlStateManager.translatef(0, -0.3f, 0f);
+
+        
                 Minecraft.getInstance().getItemRenderer().renderItem(stack, stalker, ItemCameraTransforms.TransformType.GROUND, false);
-    
+        
                 GlStateManager.popMatrix();
             }
         }
