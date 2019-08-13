@@ -12,8 +12,10 @@ import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
@@ -56,10 +58,11 @@ public class SetupEntities
         registerSpawning(overworld_drake, 10, 1, 3, getDrakeBiomes());
         registerSpawning(minutus, 35, 1, 1, BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY));
         registerSpawning(silver_glider, 5, 2, 5, getSilverGliderBiomes());
+        EntitySpawnPlacementRegistry.register(silver_glider, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
     }
 
     /**
-     *  Registers Model Rendering and animation for entities
+     * Registers Model Rendering and animation for entities
      */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
