@@ -2,14 +2,12 @@ package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
@@ -24,7 +22,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -33,6 +30,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -179,9 +177,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Tame the dragon to the tamer if true
      * else, play the failed tame effects
      */
-    public void tame(boolean tame, PlayerEntity tamer) {
+    public void tame(boolean tame, @Nullable PlayerEntity tamer) {
         if (!world.isRemote && !isTamed()) {
-            if (tame && !ForgeEventFactory.onAnimalTame(this, tamer)) {
+            if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer)) {
                 setTamedBy(tamer);
                 navigator.clearPath();
                 setAttackTarget(null);
@@ -213,8 +211,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-//        boolean shouldFly = canFly() && getAltitude() > 2;
-//        if (shouldFly != isFlying()) setFlying(true);
+        boolean shouldFly = canFly() && MathUtils.getAltitude(this) > 4;
+        if (shouldFly != isFlying()) setFlying(true);
         if ((onGround || MathUtils.getAltitude(this) <= 2) && isFlying()) setFlying(false);
 
         super.livingTick();
@@ -226,10 +224,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void tick() {
         super.tick();
-
+    
         if (getAnimation() != NO_ANIMATION) {
             ++animationTick;
-            if (world.isRemote && animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
+            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
     }
 
@@ -260,22 +258,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     
-    public Vec3d getApproximateThroatPos() {
-        Vec3d vec3d = getPositionVec();
-        Vec3d vec3d1 = getLookVec();
-        Vec3d vec3d2 = vec3d.add(vec3d1.x, vec3d1.y, vec3d1.z);
-        Vec3d vec3d3 = vec3d2.rotateYaw((float) (Math.toRadians(-renderYawOffset) + Math.PI));
-        
-        return vec3d2;
-    }
-    
     public void attackInFront(int range, boolean single) {
         attackInFront((int) (getSize(getPose()).width / 2) + 1, (int) (getSize(getPose()).height / 2), range, single);
     }
     
     public void attackInFront(int offsetX, int offsetY, int range, boolean single) {
         AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), offsetX).up(offsetY)).grow(range);
-        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, filter -> filter != this);
+        Predicate<LivingEntity> filter = mob -> getPassengers().stream().noneMatch(passenger -> passenger == mob);
+        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, filter);
         
         if (entities.isEmpty()) return;
         if (entities.size() == 1) attackEntityAsMob(entities.get(0));
@@ -313,6 +303,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         
         return false;
+    }
+    
+    /**
+     * Public access version of {@link Entity#setRotation(float, float)}
+     */
+    public void setRotation(float yaw, float pitch) {
+        this.rotationYaw = yaw % 360.0F;
+        this.rotationPitch = pitch % 360.0F;
     }
     
     /**
@@ -354,6 +352,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Nullable
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
     
+    @Override
+    protected void jump() { super.jump(); }
+    
     /**
      * Perform a one-shot attack
      */
@@ -367,7 +368,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void performSpecialAttack(boolean shouldContinue) {}
     
     @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? 1.5f : super.getJumpUpwardsMotion(); }
+    protected float getJumpUpwardsMotion() { return canFly() ? 1f : super.getJumpUpwardsMotion(); }
     
     @Nullable
     @Override
@@ -391,7 +392,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setAnimationTick(0);
     }
     
-    public boolean hasActiveAnimation() { return getAnimation() != NO_ANIMATION; }
+    public boolean hasActiveAnimation() { return getAnimation() != NO_ANIMATION && getAnimationTick() != 0; }
     
     // ================================
 

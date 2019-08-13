@@ -397,20 +397,28 @@ public class OWDrakeModel extends AdvancedEntityModel
         OWDrakeEntity entity = (OWDrakeEntity) entityIn;
 
         if (!entity.isSitting() || entity.getAnimation() != AbstractDragonEntity.NO_ANIMATION) {
-            // Left Leg
-            leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
-
-            // Right Leg
-            leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
-
+            
             // Left Arm
             arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
-
+            palmL.walk(globalSpeed, f, true, 2.5f, 0, limbSwing, limbSwingAmount);
+            
+    
             // Right Arm
             arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+            palmR.walk(globalSpeed, f, false, 2.5f, 0, limbSwing, limbSwingAmount);
+            
+            
+            // Left Leg
+            leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+            footL.walk(globalSpeed, 0.2f, false, 2f, 0, limbSwing, limbSwingAmount);
+    
+            
+            // Right Leg
+            leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+            footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
         }
     }
-
+    
     @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         float frame = entityIn.ticksExisted;
@@ -431,8 +439,13 @@ public class OWDrakeModel extends AdvancedEntityModel
         if (entity.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION)
             grazeAnim(entity, frame);
 
-        if(entity.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
+        if (entity.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
             hornAttackAnim();
+            return;
+        }
+        
+        if (entity.getAnimation() == OWDrakeEntity.ROAR_ANIMATION) {
+            roarAnim(entity, frame);
             return;
         }
     
@@ -615,6 +628,38 @@ public class OWDrakeModel extends AdvancedEntityModel
         if (entity.getAnimationTick() >= 8 && entity.getAnimationTick() <= 27) {
             jaw.rotateAngleX -= (6 + Math.sin(frame / 2) * 0.25);
         }
+    }
+    
+    /**
+     * Roar Animation
+     * played before dashing at the player to attack
+     */
+    private void roarAnim(OWDrakeEntity entity, float frame) {
+        animator.setAnimation(OWDrakeEntity.ROAR_ANIMATION);
+        
+        animator.startKeyframe(5);
+        animator.rotate(neck1, -0.4f, 0, 0);
+        animator.rotate(neck2, 0.5f, 0, 0);
+        animator.endKeyframe();
+        
+        animator.startKeyframe(8);
+        animator.rotate(neck1, 0.4f, 0, 0);
+        animator.rotate(neck2, -0.4f, 0, 0);
+        animator.rotate(jaw, 0.9f, 0, 0);
+        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0.1f, 0, 0);
+        animator.endKeyframe();
+        
+        animator.setStaticKeyframe(18);
+        
+        animator.resetKeyframe(4);
+        
+        if (entity.getAnimationTick() > 10) {
+            walk(jaw, globalSpeed + 1.5f, 0.02f, false, 0, 0, frame, f);
+            swing(head, globalSpeed + 1.5f, 0.02f, false, 0, 0, frame, f);
+            
+            chainWave(tailArray, globalSpeed + 1.5f, 0.007f, 0, frame, f);
+        }
+        
     }
 
 }
