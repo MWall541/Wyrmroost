@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEntity>
 {
     private static final String LOC = DEF_LOC + "silverglider/";
-    private final ResourceLocation FEMALE = ModUtils.location(LOC + "female.png");
+    private final ResourceLocation female = ModUtils.location(LOC + "female.png");
     // Male Variants: "male_{the variant int}.png"
 
     public SilverGliderRenderer(EntityRendererManager manager) {
@@ -20,7 +20,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     @Nullable
     @Override
     protected ResourceLocation getEntityTexture(SilverGliderEntity entity) {
-        if (!entity.getGender()) return FEMALE;
+        if (!entity.getGender()) return female;
         return ModUtils.location(LOC + "male_" + entity.getVariant() + ".png");
     }
 }

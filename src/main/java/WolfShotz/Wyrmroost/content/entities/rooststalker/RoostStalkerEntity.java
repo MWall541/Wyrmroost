@@ -205,6 +205,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public int getAlbinoChances() { return 50; }
     
+    @Override
+    public boolean canFly() { return false; }
     
     /**
      * Array Containing all of the dragons food items

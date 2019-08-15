@@ -68,7 +68,7 @@ public class ForgeEvents
 
         SilverGliderEntity glider = (SilverGliderEntity) entity.get();
 
-        if (glider.isGliding) event.setDamageMultiplier(0); // If gliding with a silver glider, cancel fall damage
+        if (glider.isFlying()) event.setDamageMultiplier(0); // If gliding with a silver glider, cancel fall damage
     }
 
      /**

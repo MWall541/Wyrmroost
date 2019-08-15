@@ -195,9 +195,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        boolean shouldFly = canFly() && MathUtils.getAltitude(this) > 4;
+        boolean shouldFly = canFly() && !onGround;
         if (shouldFly != isFlying()) setFlying(true);
-        if ((onGround || MathUtils.getAltitude(this) <= 2) && isFlying()) setFlying(false);
+        if ((onGround) && isFlying()) setFlying(false);
 
         super.livingTick();
     }
@@ -273,12 +273,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     public boolean attackEntityAsMob(Entity entityIn) {
-        if (entityIn instanceof TameableEntity) {
+/*        if (entityIn instanceof TameableEntity) {
             TameableEntity entity = (TameableEntity) entityIn;
-            
+    
             if (entity.getOwner() == getOwner()) return false;
         }
-        
+        */
         return super.attackEntityAsMob(entityIn);
     }
     
