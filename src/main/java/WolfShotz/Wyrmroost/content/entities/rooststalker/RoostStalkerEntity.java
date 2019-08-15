@@ -46,15 +46,15 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(4, new StoleItemFlee(this));
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 1));
         goalSelector.addGoal(8, new MeleeAttackGoal(this, 1d, true));
-        goalSelector.addGoal(9, new DragonBreedGoal(this, false));
-        goalSelector.addGoal(10, new ScavengeGoal(this, 0.8d));
-        goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
-        goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 5f));
-        goalSelector.addGoal(13, new LookRandomlyGoal(this));
+        goalSelector.addGoal(9, new StoleItemFlee(this));
+        goalSelector.addGoal(10, new DragonBreedGoal(this, false));
+        goalSelector.addGoal(11, new ScavengeGoal(this, 0.8d));
+        goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1d));
+        goalSelector.addGoal(13, new LookAtGoal(this, LivingEntity.class, 5f));
+        goalSelector.addGoal(14, new LookRandomlyGoal(this));
     
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));

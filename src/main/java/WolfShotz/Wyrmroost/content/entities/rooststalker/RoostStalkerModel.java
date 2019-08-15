@@ -37,7 +37,7 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     public AdvancedRendererModel[] tailSegments;
     
     public ModelAnimator animator;
-
+    
     public RoostStalkerModel() {
         this.textureWidth = 80;
         this.textureHeight = 90;
@@ -161,15 +161,15 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
-    
+        
         GlStateManager.pushMatrix();
-    
+        
         if (stalker.isChild()) {
             GlStateManager.translatef(0, 0.78f, 0);
             GlStateManager.scaled(0.3d, 0.3d, 0.3d);
         }
         else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
-    
+        
         torso.render(scale);
         GlStateManager.popMatrix();
     }
@@ -216,14 +216,14 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     
     private void staySit() {
         torso.offsetY = 0.21f;
-    
+        
         tail1.rotateAngleX = 0.01f;
-    
+        
         float legAngle = 1.4f;
         footl1.rotateAngleZ = legAngle;
         footl2.rotateAngleZ = legAngle;
         footl3.rotateAngleZ = legAngle;
-    
+        
         footl1_1.rotateAngleZ = -legAngle;
         footl2_1.rotateAngleZ = -legAngle;
         footl3_1.rotateAngleZ = -legAngle;
