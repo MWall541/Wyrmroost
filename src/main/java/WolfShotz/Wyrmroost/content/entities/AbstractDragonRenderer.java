@@ -8,12 +8,19 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Calendar;
+
 public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> extends MobRenderer<T, EntityModel<T>>
 {
     protected static final String DEF_LOC = "textures/entity/dragon/";
+    protected boolean isChristmas = false;
 
     public AbstractDragonRenderer(EntityRendererManager manager, EntityModel<T> model, float shadowSize) {
         super(manager, model, shadowSize);
+    
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
     }
     
     /**

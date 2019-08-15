@@ -18,9 +18,10 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity>
 {
-    private static final String LOC = DEF_LOC + "rooststalker/";
-    private ResourceLocation body = ModUtils.location(LOC + "body.png");
-    private ResourceLocation bodyAlb = ModUtils.location(LOC + "body_alb.png");
+    private final String loc = DEF_LOC + "rooststalker/";
+    private final ResourceLocation body = ModUtils.location(loc + "body.png");
+    private final ResourceLocation bodyAlb = ModUtils.location(loc + "body_alb.png");
+    private final ResourceLocation bodyChristmas = ModUtils.location(loc + "body_christmas.png");
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
@@ -30,6 +31,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     @Nullable
     @Override
     protected ResourceLocation getEntityTexture(RoostStalkerEntity stalker) {
+        if (isChristmas) return bodyChristmas;
         return stalker.isAlbino()? bodyAlb : body;
     }
     
