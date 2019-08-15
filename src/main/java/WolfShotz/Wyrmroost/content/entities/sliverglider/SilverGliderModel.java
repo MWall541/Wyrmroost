@@ -2,7 +2,11 @@ package WolfShotz.Wyrmroost.content.entities.sliverglider;
 
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
+
+import java.util.Random;
 
 /**
  * WRSilverGlider - Kingdomall
@@ -64,7 +68,13 @@ public class SilverGliderModel extends AdvancedEntityModel {
     public AdvancedRendererModel phalangeR22;
     public AdvancedRendererModel membrane2R;
     
+    private ModelAnimator animator;
+    
     private final AdvancedRendererModel[] neckArray;
+    private final AdvancedRendererModel[] tailArray;
+    
+    private int glideFlapTicks = 0;
+    private Random rand = new Random();
 
     public SilverGliderModel() {
         this.textureWidth = 160;
@@ -315,10 +325,62 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.head.addChild(this.mouthTop);
         
         neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3, neck4, head};
+        tailArray = new AdvancedRendererModel[] {tail1, tail2, tail3, tail4, tail6, tail7, tail8, tail9, tail10};
+        
+        animator = ModelAnimator.create();
     }
-
+    
+    private float globalSpeed;
+    
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) { 
-        mainbody.render(f5);
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        mainbody.render(scale);
+    
+        globalSpeed = 0.5f;
+    }
+    
+    @Override
+    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+        SilverGliderEntity glider = (SilverGliderEntity) entityIn;
+        Vec3d look = glider.getLookVec();
+        boolean shouldFlap = glider.isFlying() && look.y > -0.13f && look.y < 0.13f;
+        float frame = entityIn.ticksExisted;
+        
+        if (glideFlapTicks > 0) --glideFlapTicks;
+        if (shouldFlap && glideFlapTicks <= 0 && rand.nextInt(100) == 0) glideFlapTicks = 50;
+        
+        if (glider.isSitting() && !glider.hasActiveAnimation()) {
+            staySitting();
+            idleAnim(glider, frame);
+            return;
+        }
+        
+        // Rotate the body
+        if (glider.isFlying()) mainbody.rotateAngleX = (float) -look.y;
+        
+        if (glider.isFlying() && glideFlapTicks <= 0 && !glider.hasActiveAnimation() && look.y > 0.13f && glider.posY > glider.prevPosY) {
+            ascendAnim();
+            return;
+        }
+        
+        idleAnim(glider, frame);
+    }
+    
+    // animate the head and tail according to glider's state (flying or on ground)
+    private void idleAnim(SilverGliderEntity glider, float frame) {
+        if (glider.isFlying()) {
+        
+        } else {
+        
+        }
+    }
+    
+    // Keep the sit position
+    private void staySitting() {
+        
+    }
+    
+    private void ascendAnim() {
+    
     }
 }

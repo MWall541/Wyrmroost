@@ -33,6 +33,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -42,14 +44,12 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class SilverGliderEntity extends AbstractDragonEntity
 {
-    public boolean isGliding = false;
-
-    // Entity Animations
-    public static final Animation RANDOM_FLAP_ANIMATION = Animation.create(30);
-
     // Dragon Entity Data
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(SilverGliderEntity.class, DataSerializers.VARINT);
 
+    // Dragon Animation
+    private static final Animation SIT_ANIMATION = Animation.create(10);
+    
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
         
@@ -118,21 +118,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     // ================================
 
-
-    @Override
-    public void livingTick() {
-        super.livingTick();
-
-        if (isGliding && getRidingEntity() == null && onGround) isGliding = false;
-    }
-
     @Override
     public void updateRidden() {
         super.updateRidden();
 
         Entity entity = getRidingEntity();
-
-        isGliding = false;
 
         if (entity != null) {
             if (!entity.isAlive()) {
@@ -177,7 +167,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     if (d9 > 0.0D) vec3d3 = vec3d3.add((vec3d.x / d9 * d11 - vec3d3.x) * 0.1D, 0.0D, (vec3d.z / d9 * d11 - vec3d3.z) * 0.1D);
     
                     player.setMotion(vec3d3.mul((double) 0.99F, (double) 0.98F, (double) 0.99F));
-//                    player.move(MoverType.SELF, player.getMotion());
                 }
                 
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
@@ -224,13 +213,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         return super.processInteract(player, hand);
     }
 
-    @Override
-    public void dismountEntity(Entity entityIn) {
-        super.dismountEntity(entityIn);
-
-        isGliding = false;
-    }
-
     public static boolean canSpawnHere(EntityType<SilverGliderEntity> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand) {
         Block block = world.getBlockState(blockPos.down(1)).getBlock();
         return block == Blocks.AIR;
@@ -241,7 +223,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     /** Array Containing all of the dragons food items */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.TROPICAL_FISH, Items.COD, Items.SALMON, Items.COOKED_COD, Items.COOKED_SALMON}; }
+    protected Item[] getFoodItems() { return new Item[] {Items.TROPICAL_FISH, Items.COD, Items.SALMON, Items.COOKED_COD, Items.COOKED_SALMON, Items.BAKED_POTATO}; }
     
     // == Entity Animation ==
     @Override
