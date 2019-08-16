@@ -159,8 +159,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (getAttackTarget() == null && isAngry()) setAngry(false);
         }
         
-        if (getAnimation() == ROAR_ANIMATION && getAnimationTick() == 5)
-            playSound(SetupSounds.OWDRAKE_ROAR, 2, 0);
+        if (getAnimation() == ROAR_ANIMATION) {
+            setRotation(rotationYawHead, rotationPitch);
+            if (getAnimationTick() == 1) playSound(SetupSounds.OWDRAKE_ROAR, 1, 1);
+        }
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 10 && getAttackTarget() != null)
             attackEntityAsMob(getAttackTarget());

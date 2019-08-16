@@ -21,10 +21,4 @@ public class DrakeTargetGoal extends NonTamedTargetGoal
     
         super.startExecuting();
     }
-    
-    @Override
-    public void tick() {
-        drake.getLookController().setLookPositionWithEntity(nearestTarget, 30, 30);
-        drake.setRotation(drake.rotationYawHead, drake.rotationPitch);
-    }
 }
