@@ -354,6 +354,14 @@ public class SilverGliderModel extends AdvancedEntityModel {
         
         resetToDefaultPose();
         animator.update(glider);
+    
+        if (glider.isRiding()) { // legs need to stay on the player head...
+            mainbody.offsetZ = -0.6f;
+            if (glider.isFlying()) {
+                legL1.rotateAngleX = (float) look.y;
+                legR1.rotateAngleX = (float) look.y;
+            }
+        }
         
         if (glider.isFlying()) {
             // do idle first, so we can override anything we need
@@ -361,11 +369,6 @@ public class SilverGliderModel extends AdvancedEntityModel {
             
             // Rotate the body according to look vector
             mainbody.rotateAngleX = (float) -look.y;
-            if (glider.isRiding()) { // legs need to stay on the player head...
-                mainbody.offsetZ = -0.6f;
-                legL1.rotateAngleX = (float) look.y;
-                legR1.rotateAngleX = (float) look.y;
-            }
             if (look.y < 0) {
                 wing1L.rotateAngleY = (float) Math.max(look.y / 2, -0.5f);
                 
@@ -408,21 +411,20 @@ public class SilverGliderModel extends AdvancedEntityModel {
                 legR3.rotateAngleX = -0.6f;
                 // Toes
                 for (AdvancedRendererModel toe : toeArray) toe.rotateAngleX = 0.5f;
+                // Slightly move legs in flight if not riding
+                walk(legL1, globalSpeed + 0.2f, 0.03f, false, 0, 0, frame, 0.5f);
+                walk(legR1, globalSpeed + 0.2f, 0.03f, true, 0, 0, frame, 0.5f);
             }
-            
+    
             // Neck + head
             chainWave(neckArray, globalSpeed - 0.2f, 0.05f, 3f, frame, 0.5f);
-            
-            // Legs
-            walk(legL1, globalSpeed + 0.2f, 0.03f, false, 0, 0, frame, 0.5f);
-            walk(legR1, globalSpeed + 0.2f, 0.03f, true, 0, 0, frame, 0.5f);
-            
+    
             // Tail
             chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, 0.5f);
         } else {
             // Neck
             chainWave(neckArray2, globalSpeed - 0.4f, 0.02f, 0, frame, 0.5f);
-            
+    
             // Tail
             chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, 0.5f);
             chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, 0.5f);

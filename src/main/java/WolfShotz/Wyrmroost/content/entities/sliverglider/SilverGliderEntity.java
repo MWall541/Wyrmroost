@@ -10,7 +10,10 @@ import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -28,13 +31,11 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-
 import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -144,35 +145,17 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     return;
                 }
 
-                if (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying) {
-                    //TODO this is not functional.. AT ALL...
+                if (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater()) {
+                    Vec3d lookVec = player.getLookVec();
+                    Vec3d playerMot = player.getMotion();
+                    double xMot = playerMot.x + (lookVec.x / 12);
+                    double zMot = playerMot.z + (lookVec.z / 12);
+                    double yMot = lookVec.y;
                     
-                    Vec3d vec3d3 = player.getMotion();
+                    if (yMot >= 0) yMot = -0.1f;
                     
-                    if (vec3d3.y > -0.5D) player.fallDistance = 1.0F;
-    
-                    Vec3d vec3d = player.getLookVec();
-                    float f6 = player.rotationPitch * ((float) Math.PI / 180F);
-                    double d9 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
-                    double d11 = Math.sqrt(func_213296_b(vec3d3));
-                    double d12 = vec3d.length();
-                    float f3 = MathHelper.cos(f6);
-                    
-                    f3 = (float) ((double) f3 * (double) f3 * Math.min(1.0D, d12 / 0.4D));
-                    vec3d3 = player.getMotion().add(0.0D, 0.08d * (-1.0D + (double) f3 * 0.75D), 0.0D);
-                    if (vec3d3.y < 0.0D && d9 > 0.0D) {
-                        double d3 = vec3d3.y * -0.1D * (double) f3;
-                        vec3d3 = vec3d3.add(vec3d.x * d3 / d9, d3, vec3d.z * d3 / d9);
-                    }
-    
-                    if (f6 < 0.0F && d9 > 0.0D) {
-                        double d13 = d11 * (double) (-MathHelper.sin(f6)) * 0.04D;
-                        vec3d3 = vec3d3.add(-vec3d.x * d13 / d9, d13 * 3.2D, -vec3d.z * d13 / d9);
-                    }
-    
-                    if (d9 > 0.0D) vec3d3 = vec3d3.add((vec3d.x / d9 * d11 - vec3d3.x) * 0.1D, 0.0D, (vec3d.z / d9 * d11 - vec3d3.z) * 0.1D);
-    
-                    player.setMotion(vec3d3.mul((double) 0.99F, (double) 0.98F, (double) 0.99F));
+                    player.setMotion(xMot, yMot, zMot);
+                    player.fallDistance = 0;
                 }
                 
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
