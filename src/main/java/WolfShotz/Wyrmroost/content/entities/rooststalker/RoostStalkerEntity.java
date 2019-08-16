@@ -65,9 +65,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     protected void registerAttributes() {
         super.registerAttributes();
-        getAttribute(MAX_HEALTH).setBaseValue(20d);
+        getAttribute(MAX_HEALTH).setBaseValue(10d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.3d);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4d);
     }
     
     @Override
@@ -102,6 +102,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         // Change to tame if holding a dragon egg
         if (!isTamed() && stack.getItem() == SetupItems.egg) {
             tame(getRNG().nextBoolean(), player);
+            getAttribute(MAX_HEALTH).setBaseValue(20d);
             consumeItemFromStack(player, stack);
             
             return true;
@@ -150,9 +151,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 
                 return true;
             } else
-                if (player.getPassengers().isEmpty()) {
+            if (player.getPassengers().isEmpty()) {
+                setSit(false);
                 startRiding(player, true);
-                
+    
                 return true;
             }
         }
