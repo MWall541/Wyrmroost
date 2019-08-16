@@ -183,9 +183,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
         
         // If Saddled and not sneaking, start riding
-        if (isSaddled() && !isChild() && !isBreedingItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking() && !world.isRemote) {
+        if (isSaddled() && !isChild() && !isBreedingItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking()) {
+            setSit(false);
             player.startRiding(this);
-            sitGoal.setSitting(false);
 
             return true;
         }
@@ -193,7 +193,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         // If Sneaking, Sit
         if (isTamed() && !isBreedingItem(stack) && player.isSneaking() && isOwner(player)) {
             setSit(!isSitting());
-            setAnimation(isSitting()? SIT_ANIMATION : STAND_ANIMATION);
         
             return true;
         }
@@ -289,6 +288,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
         playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
 
         super.playStepSound(pos, blockIn);
+    }
+    
+    @Override
+    public void setSit(boolean sitting) {
+        if (sitting != isSitting()) setAnimation(sitting? SIT_ANIMATION : STAND_ANIMATION);
+    
+        super.setSit(sitting);
     }
     
     @Override
