@@ -4,8 +4,8 @@ import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedAvoidGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedTemptGoal;
+import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
@@ -27,14 +27,11 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -117,13 +114,20 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public int getAlbinoChances() { return 0; }
 
     // ================================
-
+    
+    @Override
+    public void livingTick() {
+        super.livingTick();
+        
+        flyingThreshold = 3 + (isRiding()? 2 : 0);
+    }
+    
     @Override
     public void updateRidden() {
         super.updateRidden();
 
         Entity entity = getRidingEntity();
-
+        
         if (entity != null) {
             if (!entity.isAlive()) {
                 stopRiding();
@@ -141,6 +145,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 }
 
                 if (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying) {
+                    //TODO this is not functional.. AT ALL...
+                    
                     Vec3d vec3d3 = player.getMotion();
                     
                     if (vec3d3.y > -0.5D) player.fallDistance = 1.0F;
@@ -183,11 +189,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         ItemStack stack = player.getHeldItem(hand);
         
         if (hand != Hand.MAIN_HAND) return false; // only fire on the main hand
-    
-        if (stack.getItem() == Items.STICK) {
-            setGrowingAge(-24000);
-            return true;
-        }
 
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
@@ -215,8 +216,23 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     public static boolean canSpawnHere(EntityType<SilverGliderEntity> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand) {
         Block block = world.getBlockState(blockPos.down(1)).getBlock();
+        
         return block == Blocks.AIR;
     }
+    
+    public boolean isRiding() { return getRidingEntity() != null; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return SetupSounds.SILVERGLIDER_IDLE; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) { return SetupSounds.SILVERGLIDER_HURT; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return SetupSounds.SILVERGLIDER_DEATH; }
     
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }

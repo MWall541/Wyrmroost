@@ -71,7 +71,9 @@ public class SilverGliderModel extends AdvancedEntityModel {
     private ModelAnimator animator;
     
     private final AdvancedRendererModel[] neckArray;
+    private final AdvancedRendererModel[] neckArray2;
     private final AdvancedRendererModel[] tailArray;
+    private final AdvancedRendererModel[] toeArray;
     
     private int glideFlapTicks = 0;
     private Random rand = new Random();
@@ -325,9 +327,13 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.head.addChild(this.mouthTop);
         
         neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3, neck4, head};
+        neckArray2 = new AdvancedRendererModel[] {neck1, neck2};
         tailArray = new AdvancedRendererModel[] {tail1, tail2, tail3, tail4, tail6, tail7, tail8, tail9, tail10};
+        toeArray = new AdvancedRendererModel[] {toe1L, toe1R, toe2L, toe2R, toe1R_1, toe3L};
         
         animator = ModelAnimator.create();
+        
+        updateDefaultPose();
     }
     
     private float globalSpeed;
@@ -346,20 +352,42 @@ public class SilverGliderModel extends AdvancedEntityModel {
         boolean shouldFlap = glider.isFlying() && look.y > -0.13f && look.y < 0.13f;
         float frame = entityIn.ticksExisted;
         
-        if (glideFlapTicks > 0) --glideFlapTicks;
-        if (shouldFlap && glideFlapTicks <= 0 && rand.nextInt(100) == 0) glideFlapTicks = 50;
+        resetToDefaultPose();
+        animator.update(glider);
+        
+        if (glider.isFlying()) {
+            // do idle first, so we can override anything we need
+            idleAnim(glider, frame);
+            
+            // Rotate the body according to look vector
+            mainbody.rotateAngleX = (float) -look.y;
+            if (glider.isRiding()) { // legs need to stay on the player head...
+                mainbody.offsetZ = -0.6f;
+                legL1.rotateAngleX = (float) look.y;
+                legR1.rotateAngleX = (float) look.y;
+            }
+            if (look.y < 0) {
+                wing1L.rotateAngleY = (float) Math.max(look.y / 2, -0.5f);
+            
+            }
+            
+            if (glideFlapTicks <= 0) {
+                if (glider.posY > glider.prevPosY && !glider.hasActiveAnimation()) {
+                    ascendAnim();
+                    return;
+                }
+                if (shouldFlap && rand.nextInt(100) == 0) glideFlapTicks = 50;
+                
+            } else --glideFlapTicks;
+            
+            return;
+        }
+        
         
         if (glider.isSitting() && !glider.hasActiveAnimation()) {
             staySitting();
             idleAnim(glider, frame);
-            return;
-        }
-        
-        // Rotate the body
-        if (glider.isFlying()) mainbody.rotateAngleX = (float) -look.y;
-        
-        if (glider.isFlying() && glideFlapTicks <= 0 && !glider.hasActiveAnimation() && look.y > 0.13f && glider.posY > glider.prevPosY) {
-            ascendAnim();
+            
             return;
         }
         
@@ -369,9 +397,35 @@ public class SilverGliderModel extends AdvancedEntityModel {
     // animate the head and tail according to glider's state (flying or on ground)
     private void idleAnim(SilverGliderEntity glider, float frame) {
         if (glider.isFlying()) {
-        
+            if (!glider.isRiding()) {
+                // Left Leg
+                legL1.rotateAngleX = 0.8f;
+                legL2.rotateAngleX = 0.8f;
+                legL3.rotateAngleX = -0.6f;
+                // Right leg
+                legR1.rotateAngleX = 0.8f;
+                legR2.rotateAngleX = 0.8f;
+                legR3.rotateAngleX = -0.6f;
+                // Toes
+                for (AdvancedRendererModel toe : toeArray) toe.rotateAngleX = 0.5f;
+            }
+            
+            // Neck + head
+            chainWave(neckArray, globalSpeed - 0.2f, 0.05f, 3f, frame, 0.5f);
+    
+            // Legs
+            walk(legL1, globalSpeed + 0.2f, 0.03f, false, 0, 0, frame, 0.5f);
+            walk(legR1, globalSpeed + 0.2f, 0.03f, true, 0, 0, frame, 0.5f);
+            
+            // Tail
+            chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, 0.5f);
         } else {
-        
+            // Neck
+            chainWave(neckArray2, globalSpeed - 0.4f, 0.02f, 0, frame, 0.5f);
+    
+            // Tail
+            chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, 0.5f);
+            chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, 0.5f);
         }
     }
     

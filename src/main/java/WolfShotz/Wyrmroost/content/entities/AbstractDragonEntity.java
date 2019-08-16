@@ -43,6 +43,7 @@ import java.util.function.Predicate;
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
     protected int animationTick;
+    public int flyingThreshold = 3;
     public int hatchTimer; // Used in subclasses for hatching time
     protected List<String> immunes = new ArrayList<>();
     public boolean isSpecialAttacking = false;
@@ -195,9 +196,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        boolean shouldFly = canFly() && !onGround;
-        if (shouldFly != isFlying()) setFlying(true);
-        if ((onGround) && isFlying()) setFlying(false);
+        if (MathUtils.getAltitude(this) > flyingThreshold && canFly() && !isFlying()) setFlying(true);
+        if (MathUtils.getAltitude(this) <= flyingThreshold - 1 && isFlying()) setFlying(false);
 
         super.livingTick();
     }
@@ -229,9 +229,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         
+        if (stack.getItem() == Items.STICK) setFlying(!isFlying());
+        
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
-
+    
             return true;
         }
     
@@ -374,11 +376,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Nullable
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
     
-    public void liftOff() { if (canFly()) jump(); }
-    
-    @Override
-    public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }
-    
     /**
      * Perform a one-shot attack
      */
@@ -393,6 +390,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     protected float getJumpUpwardsMotion() { return canFly() ? 1f : super.getJumpUpwardsMotion(); }
+    
+    public void liftOff() { if (canFly()) jump(); }
+    
+    @Override
+    public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }
     
     @Nullable
     @Override
