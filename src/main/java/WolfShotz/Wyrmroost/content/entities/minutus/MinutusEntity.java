@@ -201,7 +201,6 @@ public class MinutusEntity extends AbstractDragonEntity
         if (getAnimation()!= MinutusEntity.BITE_ANIMATION) setAnimation(MinutusEntity.BITE_ANIMATION);
     }
     
-    
     @Nullable
     @Override
     public AgeableEntity createChild(AgeableEntity ageableEntity) { return null; }

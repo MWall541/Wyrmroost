@@ -15,5 +15,29 @@
       {"name": "wyrmroost:entity/minutus/screech1"},
       {"name": "wyrmroost:entity/minutus/screech2"}
     ]
+  },
+  
+  
+  "entity.silverglider.idle": {
+    "category": "entity",
+    "subtitle": "SilverGlider Idle",
+    "sounds": [
+      {"name": "wyrmroost:entity/silverglider/idle1"},
+      {"name": "wyrmroost:entity/silverglider/idle2"},
+      {"name": "wyrmroost:entity/silverglider/idle3"},
+      {"name": "wyrmroost:entity/silverglider/idle4"}
+    ]
+  },
+  
+  "entity.silverglider.hurt": {
+    "category": "entity",
+    "subtitle": "SilverGlider Hurt",
+    "sounds": [{"name": "wyrmroost:entity/silverglider/hurt"}]
+  },
+  
+  "entity.silverglider.death": {
+    "category": "entity",
+    "subtitle": "SilverGlider Hurt",
+    "sounds": [{"name": "wyrmroost:entity/silverglider/death"}]
   }
 }
