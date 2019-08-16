@@ -298,7 +298,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return target.getOwner() != owner;
         }
         
-        return false;
+        return true;
     }
     
     /**
