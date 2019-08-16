@@ -39,5 +39,38 @@
     "category": "entity",
     "subtitle": "SilverGlider Hurt",
     "sounds": [{"name": "wyrmroost:entity/silverglider/death"}]
+  },
+  
+  
+  "entity.owdrake.idle": {
+    "category": "entity",
+    "subtitle": "Drake Idle",
+    "sounds": [
+      {"name": "wyrmroost:entity/owdrake/idle1"},
+      {"name": "wyrmroost:entity/owdrake/idle2"},
+      {"name": "wyrmroost:entity/owdrake/idle3"}
+    ]
+  },
+  
+  "entity.owdrake.roar": {
+    "category": "entity",
+    "subtitle": "Drake Idle",
+    "sounds": [{"name": "wyrmroost:entity/owdrake/roar"}]
+  },
+  
+  "entity.owdrake.hurt": {
+    "category": "entity",
+    "subtitle": "Drake Hurt",
+    "sounds": [
+      {"name": "wyrmroost:entity/owdrake/hurt1"},
+      {"name": "wyrmroost:entity/owdrake/hurt2"}
+    ]
+  },
+  
+  "entity.owdrake.death": {
+    "category": "entity",
+    "subtitle": "Drake Death",
+    "sounds": [{"name": "wyrmroost:entity/owdrake/death"}]
   }
+  
 }

@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.content.entities.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.owdrake.goals.DrakeTargetGoal;
+import WolfShotz.Wyrmroost.event.SetupSounds;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -21,9 +22,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
@@ -161,7 +160,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
         
         if (getAnimation() == ROAR_ANIMATION && getAnimationTick() == 5)
-            playSound(SoundEvents.ENTITY_RAVAGER_ROAR, 2, 0);
+            playSound(SetupSounds.OWDRAKE_ROAR, 2, 0);
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 10 && getAttackTarget() != null)
             attackEntityAsMob(getAttackTarget());
@@ -172,6 +171,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
+        
+        if (stack.getItem() == Items.STICK) setGrowingAge(-24000);
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
@@ -289,6 +290,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         super.playStepSound(pos, blockIn);
     }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return SetupSounds.OWDRAKE_IDLE; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.OWDRAKE_HURT; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return SetupSounds.OWDRAKE_DEATH; }
     
     @Override
     public void setSit(boolean sitting) {

@@ -18,6 +18,7 @@ public class SetupSounds
     @ObjectHolder(Wyrmroost.modID + ":entity.minutus.screech")
     public static SoundEvent MINUTUS_SCREECH;
     
+    
     @ObjectHolder(Wyrmroost.modID + ":entity.silverglider.idle")
     public static SoundEvent SILVERGLIDER_IDLE;
     
@@ -27,6 +28,19 @@ public class SetupSounds
     @ObjectHolder(Wyrmroost.modID + ":entity.silverglider.death")
     public static SoundEvent SILVERGLIDER_DEATH;
     
+    
+    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.idle")
+    public static SoundEvent OWDRAKE_IDLE;
+    
+    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.roar")
+    public static SoundEvent OWDRAKE_ROAR;
+    
+    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.hurt")
+    public static SoundEvent OWDRAKE_HURT;
+    
+    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.death")
+    public static SoundEvent OWDRAKE_DEATH;
+    
     @SubscribeEvent
     public static void soundSetup(RegistryEvent.Register<SoundEvent> event) {
         event.getRegistry().registerAll(
@@ -35,7 +49,12 @@ public class SetupSounds
                 
                 registerSound("entity.silverglider.idle"),
                 registerSound("entity.silverglider.hurt"),
-                registerSound("entity.silverglider.deahth")
+                registerSound("entity.silverglider.death"),
+                
+                registerSound("entity.owdrake.idle"),
+                registerSound("entity.owdrake.roar"),
+                registerSound("entity.owdrake.hurt"),
+                registerSound("entity.owdrake.death")
         );
     }
 
