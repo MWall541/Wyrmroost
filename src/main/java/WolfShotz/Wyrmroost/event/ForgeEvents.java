@@ -48,28 +48,6 @@ public class ForgeEvents
             }
         }
     }
-    
-    /**
-     * Responsible for handling fall damage
-     */
-    public static void cancelFall(LivingFallEvent event) {
-        PlayerEntity player;
-
-        if (!(event.getEntity() instanceof PlayerEntity)) return;
-        else player = (PlayerEntity) event.getEntity();
-        if (player.getPassengers().isEmpty()) return;
-
-        Optional<Entity> entity = player.getPassengers()
-                                          .stream()
-                                          .filter(SilverGliderEntity.class::isInstance)
-                                          .findFirst();
-
-        if (!entity.isPresent()) return;
-
-        SilverGliderEntity glider = (SilverGliderEntity) entity.get();
-
-        if (glider.isFlying()) event.setDamageMultiplier(0); // If gliding with a silver glider, cancel fall damage
-    }
 
      /**
       * Handles the camera setup for what the player is looking at
