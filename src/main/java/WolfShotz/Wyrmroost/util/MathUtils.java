@@ -27,11 +27,13 @@ public class MathUtils
     
     /**
      * Get the Altitude of an entity from the world surface
+     * Subtract 1 from posZ as a workaround for a vanilla bug using the wrong pos when posZ is negative...
      */
-    public static double getAltitude(Entity entity) { return entity.posY - entity.world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) entity.posX, (int) entity.posZ); }
+    public static double getAltitude(Entity entity) { return entity.posY - entity.world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) entity.posX, (int) entity.posZ - (entity.posZ < 0? 1 : 0)); }
     
     /**
      * Get the altitude of a world position from the world surface
+     * Subtract 1 from posZ as a workaround for a vanilla bug using the wrong pos when posZ is negative...
      */
-    public static double getAltitude(World world, int x, double y, int z) { return y - world.getHeight(Heightmap.Type.WORLD_SURFACE, x, z); }
+    public static double getAltitude(World world, int x, double y, int z) { return y - world.getHeight(Heightmap.Type.WORLD_SURFACE, x, z - (z < 0? 1 : 0)); }
 }
