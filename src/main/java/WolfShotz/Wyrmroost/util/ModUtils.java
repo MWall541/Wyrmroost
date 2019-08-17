@@ -49,6 +49,7 @@ public class ModUtils
      * @param sets The sets to merge
      * @return One set collection with merged elements
      */
+    @SafeVarargs
     public static <T> Set<T> collectAll(Set<T>... sets) {
         Set<T> set = new HashSet<>();
         for (Set<T> setParam : sets) set.addAll(setParam);
@@ -60,6 +61,7 @@ public class ModUtils
      * @param lists The lists to merge
      * @return One list collection with passed merged elemtents
      */
+    @SafeVarargs
     public static <T> List<T> collectAll(List<T>... lists) {
         List<T> set = new ArrayList<>();
         for (List<T> listParam : lists) set.addAll(listParam);

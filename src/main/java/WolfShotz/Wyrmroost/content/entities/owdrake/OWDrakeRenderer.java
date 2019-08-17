@@ -16,11 +16,17 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 {
     private final String loc = DEF_LOC + "owdrake/";
     private final ResourceLocation maleCom = ModUtils.location(loc + "male_com.png");
-    private final ResourceLocation femaleCom = ModUtils.location(loc + "female_com.png");
+    private final ResourceLocation femaleCom = ModUtils.location(loc + "female_com");
+    private final ResourceLocation maleComCld = ModUtils.location(loc + "male_com_cld");
+    private final ResourceLocation femaleComCld = ModUtils.location(loc + "female_com_cld");
     private final ResourceLocation maleSav = ModUtils.location(loc + "male_sav.png");
     private final ResourceLocation femaleSav = ModUtils.location(loc + "female_sav.png");
+    private final ResourceLocation maleSavCld = ModUtils.location(loc + "male_sav_cld");
+    private final ResourceLocation femaleSavCld = ModUtils.location(loc + "female_sav_cld");
     private final ResourceLocation maleAlb = ModUtils.location(loc + "male_alb.png");
-    private final ResourceLocation femaleAlb = ModUtils.location(loc + "female_alb.png");
+    private final ResourceLocation femaleAlb = ModUtils.location(loc + "female_alb");
+    private final ResourceLocation maleAlbCld = ModUtils.location(loc + "male_alb_cld");
+    private final ResourceLocation femaleAlbCld = ModUtils.location(loc + "female_alb_cld");
     // Saddle
     private final ResourceLocation saddle = ModUtils.location(loc + "saddle.png");
     // Easter Egg
@@ -35,13 +41,19 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     @Override
     protected ResourceLocation getEntityTexture(OWDrakeEntity drake) {
         if (drake.hasCustomName() && drake.getCustomName().getUnformattedComponentText().equals("Daisy")) return daisy;
-        return getDrakeTexture(drake.getGender(), drake.getVariant(), drake.isAlbino());
+        return getDrakeTexture(drake.getGender(), drake.getVariant(), drake.isAlbino(), drake.isChild());
     }
 
-    private ResourceLocation getDrakeTexture(boolean gender, boolean isSavannah, boolean isAlbino) {
-        if (isAlbino) return gender ? maleAlb : femaleAlb;
-        if (isSavannah) return gender ? maleSav : femaleSav;
-        return gender ? maleCom : femaleCom;
+    private ResourceLocation getDrakeTexture(boolean gender, boolean isSavannah, boolean isAlbino, boolean isChild) {
+        if (gender) {
+            if (isAlbino) return isChild? maleAlbCld : maleAlb;
+            if (isSavannah) return isChild? maleSavCld : maleSav;
+        } else {
+            if (isAlbino) return isChild? femaleAlbCld : femaleAlb;
+            if (isSavannah) return isChild? femaleSavCld : femaleSav;
+        }
+        
+        return maleCom; // FALLBACK
     }
 
 }
