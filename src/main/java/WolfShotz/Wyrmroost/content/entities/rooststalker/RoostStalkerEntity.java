@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.rooststalker.goals.StoleItemFlee;
 import WolfShotz.Wyrmroost.event.SetupItems;
+import WolfShotz.Wyrmroost.event.SetupSounds;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -23,8 +24,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -209,6 +212,18 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     @Override
     public boolean canFly() { return false; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return SetupSounds.STALKER_IDLE; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.STALKER_HURT; }
+    
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return SetupSounds.STALKER_HURT; }
     
     /**
      * Array Containing all of the dragons food items

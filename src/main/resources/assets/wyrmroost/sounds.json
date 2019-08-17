@@ -84,12 +84,6 @@
     ]
   },
   
-  "entity.rooststalker.roar": {
-    "category": "entity",
-    "subtitle": "Drake Idle",
-    "sounds": [{"name": "wyrmroost:entity/rooststalker/roar"}]
-  },
-  
   "entity.rooststalker.hurt": {
     "category": "entity",
     "subtitle": "Drake Hurt",
