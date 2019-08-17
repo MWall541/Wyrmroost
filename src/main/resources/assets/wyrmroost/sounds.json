@@ -71,6 +71,35 @@
     "category": "entity",
     "subtitle": "Drake Death",
     "sounds": [{"name": "wyrmroost:entity/owdrake/death"}]
+  },
+  
+  
+  "entity.rooststalker.idle": {
+    "category": "entity",
+    "subtitle": "Drake Idle",
+    "sounds": [
+      {"name": "wyrmroost:entity/rooststalker/idle1"},
+      {"name": "wyrmroost:entity/rooststalker/idle2"},
+      {"name": "wyrmroost:entity/rooststalker/idle3"}
+    ]
+  },
+  
+  "entity.rooststalker.roar": {
+    "category": "entity",
+    "subtitle": "Drake Idle",
+    "sounds": [{"name": "wyrmroost:entity/rooststalker/roar"}]
+  },
+  
+  "entity.rooststalker.hurt": {
+    "category": "entity",
+    "subtitle": "Drake Hurt",
+    "sounds": [{"name": "wyrmroost:entity/rooststalker/hurt1"}]
+  },
+  
+  "entity.rooststalker.death": {
+    "category": "entity",
+    "subtitle": "Drake Death",
+    "sounds": [{"name": "wyrmroost:entity/rooststalker/death"}]
   }
   
 }

@@ -41,6 +41,16 @@ public class SetupSounds
     @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.death")
     public static SoundEvent OWDRAKE_DEATH;
     
+    
+    @ObjectHolder(Wyrmroost.modID + ":entity.rooststalker.idle")
+    public static SoundEvent STALKER_IDLE;
+    
+    @ObjectHolder(Wyrmroost.modID + ":entity.rooststalker.hurt")
+    public static SoundEvent STALKER_HURT;
+    
+    @ObjectHolder(Wyrmroost.modID + ":entity.rooststalker.death")
+    public static SoundEvent STALKER_DEATH;
+    
     @SubscribeEvent
     public static void soundSetup(RegistryEvent.Register<SoundEvent> event) {
         event.getRegistry().registerAll(
