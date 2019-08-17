@@ -150,7 +150,7 @@ public class EggBlock extends Block implements IWaterLoggable
     private static int byEntityType(String key) {
         EntityType type = EntityType.byKey(key).orElse(null);
         if (type == null) return 0;
-        String registryName = type.getRegistryName().toString().replace("wyrmroost:", "");
+        String registryName = type.getRegistryName().getPath();
         
         return DRAGONTYPES.get(registryName);
     }
