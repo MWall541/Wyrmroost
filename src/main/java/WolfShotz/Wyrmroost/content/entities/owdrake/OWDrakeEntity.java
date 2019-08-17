@@ -52,6 +52,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public static final Animation GRAZE_ANIMATION = Animation.create(35);
     public static final Animation HORN_ATTACK_ANIMATION = Animation.create(22);
     public static final Animation ROAR_ANIMATION = Animation.create(35);
+    public static final Animation TALK_ANIMATION = Animation.create(20);
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
@@ -297,9 +298,23 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     protected SoundEvent getAmbientSound() { return SetupSounds.OWDRAKE_IDLE; }
     
+    @Override
+    public void playAmbientSound() {
+        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+    
+        super.playAmbientSound();
+    }
+    
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.OWDRAKE_HURT; }
+    
+    @Override
+    protected void playHurtSound(DamageSource source) {
+        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+        
+        super.playHurtSound(source);
+    }
     
     @Nullable
     @Override

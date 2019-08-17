@@ -426,7 +426,10 @@ public class OWDrakeModel extends AdvancedEntityModel
 
         resetToDefaultPose();
         animator.update(entity);
-
+        
+        if (entity.getAnimation() == OWDrakeEntity.TALK_ANIMATION)
+            talkAnim();
+        
         if (entity.isSitting() && !entity.hasActiveAnimation())
             staySitting();
 
@@ -659,7 +662,18 @@ public class OWDrakeModel extends AdvancedEntityModel
             
             chainWave(tailArray, globalSpeed + 1.5f, 0.007f, 0, frame, f);
         }
+    }
+    
+    private void talkAnim() {
+        animator.setAnimation(OWDrakeEntity.TALK_ANIMATION);
         
+        animator.startKeyframe(4);
+        animator.rotate(jaw, 0.5f, 0, 0);
+        animator.endKeyframe();
+        
+        animator.setStaticKeyframe(11);
+        
+        animator.resetKeyframe(4);
     }
 
 }

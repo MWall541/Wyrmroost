@@ -394,6 +394,9 @@ public class SilverGliderModel extends AdvancedEntityModel {
             return;
         }
         
+        if (glider.getAnimation() == SilverGliderEntity.TALK_ANIMATION)
+            talkAnim();
+        
         idleAnim(glider, frame);
     }
     
@@ -429,6 +432,18 @@ public class SilverGliderModel extends AdvancedEntityModel {
             chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, 0.5f);
             chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, 0.5f);
         }
+    }
+    
+    private void talkAnim() {
+        animator.setAnimation(SilverGliderEntity.TALK_ANIMATION);
+        
+        animator.startKeyframe(4);
+        animator.rotate(mouthBottom, 0.5f, 0, 0);
+        animator.endKeyframe();
+        
+        animator.setStaticKeyframe(11);
+        
+        animator.resetKeyframe(4);
     }
     
     // Keep the sit position

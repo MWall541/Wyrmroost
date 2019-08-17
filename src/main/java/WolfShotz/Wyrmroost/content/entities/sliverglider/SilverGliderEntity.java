@@ -47,6 +47,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     // Dragon Animation
     private static final Animation SIT_ANIMATION = Animation.create(10);
+    public static final Animation TALK_ANIMATION = Animation.create(20);
     
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
@@ -209,9 +210,23 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     protected SoundEvent getAmbientSound() { return SetupSounds.SILVERGLIDER_IDLE; }
     
+    @Override
+    public void playAmbientSound() {
+        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+        
+        super.playAmbientSound();
+    }
+    
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) { return SetupSounds.SILVERGLIDER_HURT; }
+    
+    @Override
+    protected void playHurtSound(DamageSource source) {
+        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+        
+        super.playHurtSound(source);
+    }
     
     @Nullable
     @Override
