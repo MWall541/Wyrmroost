@@ -428,13 +428,14 @@ public class OWDrakeModel extends AdvancedEntityModel
         animator.update(drake);
         
         if (drake.getAnimation() == OWDrakeEntity.TALK_ANIMATION) {
-            continueIdle(frame);
+            if (drake.isSitting()) staySitting();
             talkAnim();
+            continueIdle(frame);
             
             return;
         }
         
-        if (drake.isSitting() && !drake.isSleeping() && drake.getAnimation() != OWDrakeEntity.SIT_ANIMATION) {
+        if (drake.isSitting() && !drake.isSleeping() && !drake.hasActiveAnimation()) {
             staySitting();
             continueIdle(frame);
             
@@ -502,8 +503,6 @@ public class OWDrakeModel extends AdvancedEntityModel
     
     
     private void continueIdle(float frame) {
-        float f = 0.5f;
-        
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
     
@@ -643,7 +642,6 @@ public class OWDrakeModel extends AdvancedEntityModel
         head.rotateAngleZ = -0.4f;
         eyeL.rotateAngleY = 1f;
         eyeR.rotateAngleY = -1f;
-        
     }
     
     private void sleepAnim(OWDrakeEntity drake) {
@@ -678,11 +676,11 @@ public class OWDrakeModel extends AdvancedEntityModel
             tail4.rotateAngleZ = -0.4f;
             tail5.rotateAngleZ = -0.3f;
             tail5.rotateAngleY += 0.1f;
-        }
+        } else staySitting();
         
         animator.rotate(neck1, 1.2f, 0.4f, 0);
-        animator.rotate(neck2, -0.2f, 0.6f, 0);
-//        animator.rotate(head, -0.2f, 0.4f, -0.4f);
+        animator.rotate(neck2, -0.5f, 0.6f, 0);
+        animator.rotate(head, -0.52f, 0.4f, -0.4f);
         animator.endKeyframe();
         
         
@@ -690,11 +688,10 @@ public class OWDrakeModel extends AdvancedEntityModel
     
     private void wakeAnim(OWDrakeEntity drake) {
         animator.setAnimation(OWDrakeEntity.WAKE_ANIMATION);
+    
+        animator.startKeyframe(15);
         
-        if (drake.isSitting()) {
-            // ...
-        } else {
-            animator.startKeyframe(15);
+        if (!drake.isSitting()) {
             animator.move(body1, 0, -5.5f, 0);
             //Front Right
             animator.rotate(arm2R, 1.1f, 0, 0);
@@ -717,13 +714,21 @@ public class OWDrakeModel extends AdvancedEntityModel
             //Tail
             for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
             animator.endKeyframe();
-    
+
             tail1.rotateAngleX = tail1.defaultRotationX;
             tail3.rotateAngleZ = tail3.defaultRotationZ;
             tail4.rotateAngleZ = tail4.defaultRotationZ;
             tail5.rotateAngleZ = tail5.defaultRotationZ;
             tail5.rotateAngleY = tail5.defaultRotationY;
         }
+        staySleeping();
+        eyeL.rotateAngleY = eyeL.defaultRotationY;
+        eyeR.rotateAngleY = eyeR.defaultRotationY;
+        
+        animator.rotate(neck1, -1.2f, -0.4f, 0);
+        animator.rotate(neck2, 0.5f, -0.6f, 0);
+        animator.rotate(head, 0.52f, -0.4f, 0.4f);
+        animator.endKeyframe();
         
     }
     

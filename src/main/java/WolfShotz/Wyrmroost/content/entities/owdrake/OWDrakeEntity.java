@@ -26,6 +26,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -176,6 +177,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
+    
+        if (stack.getItem() == Items.BEDROCK) {
+            player.sendStatusMessage(new StringTextComponent("Sitting: " + isSitting() + " Sleeping: " + isSleeping()), true);
+            
+            return true;
+        }
+        
+        if (stack.getItem() == Items.STICK) {
+            setSleeping(!isSleeping());
+        
+            return true;
+        }
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
@@ -188,7 +201,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         // If Saddled and not sneaking, start riding
         if (isSaddled() && !isChild() && !isBreedingItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking()) {
-            setSleeping(false);
+            if (isSleeping()) setSleeping(false);
             setSit(false);
             player.startRiding(this);
 
@@ -338,7 +351,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Override
     public EntitySize getSize(Pose poseIn) {
-        return isSitting() || isSleeping()? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
+        return (isSitting() || isSleeping())? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
     }
     
     /**

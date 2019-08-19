@@ -19,7 +19,7 @@ public class SleepGoal extends Goal
     
     public SleepGoal(AbstractDragonEntity dragon) {
         this.dragon = dragon;
-        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.LOOK, Flag.TARGET));
+        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP, Flag.TARGET));
     }
     
     /**

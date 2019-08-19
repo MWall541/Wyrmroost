@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities;
 
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.content.entities.ai.FlightPathNavigator;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -46,6 +47,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected int animationTick;
     public int flyingThreshold = 3;
     public int hatchTimer; // Used in subclasses for hatching time
+    public int sleepTimeout;
     protected List<String> immunes = new ArrayList<>();
     public boolean isSpecialAttacking = false;
 
@@ -60,8 +62,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> FLYING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SLEEPING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-
-
+    
+    
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
         setTamed(false);
@@ -74,7 +76,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(3, sitGoal = new SitGoal(this));
+        goalSelector.addGoal(2, new SleepGoal(this));
+        goalSelector.addGoal(2, sitGoal = new SitGoal(this));
     }
 
     // ================================
@@ -170,8 +173,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setSleeping(boolean sleep) {
         dataManager.set(SLEEPING, sleep);
         
-        if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null)
+        if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null && !hasActiveAnimation())
             NetworkUtils.sendAnimationPacket(this, sleep? SLEEP_ANIMATION : WAKE_ANIMATION);
+        if (!sleep) sleepTimeout = 350;
     
         recalculateSize(); // Change the hitbox for sitting / sleeping
     }
@@ -183,6 +187,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             navigator.clearPath();
             setAttackTarget(null);
         }
+        if (isSleeping()) setSleeping(false);
         
         super.setSitting(sitting);
     
@@ -211,9 +216,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (MathUtils.getAltitude(this) <= flyingThreshold - 1 && isFlying()) setFlying(false);
         
         if (!world.isRemote) {
-    
             // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
-            if (!world.isDaytime() && !isSleeping() && getAttackTarget() == null && getNavigator().noPath() && !isFlying() && !isBeingRidden() && getRNG().nextInt(500) == 0)
+            if (sleepTimeout > 0) --sleepTimeout;
+            if (!world.isDaytime() && !isSleeping() && sleepTimeout <= 0 && getAttackTarget() == null && getNavigator().noPath() && !isFlying() && !isBeingRidden() && getRNG().nextInt(500) == 0)
                 setSleeping(true);
             if (world.isDaytime() && isSleeping() && getRNG().nextInt(150) == 0)
                 setSleeping(false);
@@ -248,8 +253,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        
-        if (stack.getItem() == Items.STICK) setSleeping(!isSleeping());
         
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
@@ -448,7 +451,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setAnimationTick(0);
     }
     
-    public boolean hasActiveAnimation() { return getAnimation() != NO_ANIMATION && getAnimationTick() != 0; }
+    public boolean hasActiveAnimation() { return getAnimation() != NO_ANIMATION || getAnimationTick() != 0; }
     
     // ================================
 
