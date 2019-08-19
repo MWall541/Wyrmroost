@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities;
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.content.entities.ai.FlightPathNavigator;
 import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.AgeableEntity;
@@ -50,13 +51,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     // Dragon Entity Animations
     public Animation animation = NO_ANIMATION;
+    public static Animation SLEEP_ANIMATION;
+    public static Animation WAKE_ANIMATION;
 
     // Dragon Entity Data
-    private static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-//    private static final DataParameter<Boolean> ASLEEP = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> ALBINO = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> FLYING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> ALBINO = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> FLYING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> SLEEPING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
 
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
@@ -71,7 +74,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
-//        goalSelector.addGoal(2, new SleepGoal(this));
         goalSelector.addGoal(3, sitGoal = new SitGoal(this));
     }
 
@@ -83,20 +85,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super.registerData();
 
         dataManager.register(GENDER, getRNG().nextBoolean());
-//        dataManager.register(ASLEEP, false);
         dataManager.register(ALBINO, getAlbinoChances() != 0 && getRNG().nextInt(getAlbinoChances()) == 0);
         dataManager.register(SADDLED, false);
         dataManager.register(FLYING, false);
-
+        dataManager.register(SLEEPING, false);
     }
 
     /** Save Game */
     @Override
     public void writeAdditional(CompoundNBT compound) {
         compound.putBoolean("gender", getGender());
-//        compound.putBoolea("asleep", isAsleep());
         compound.putBoolean("albino", isAlbino());
         compound.putBoolean("saddled", isSaddled());
+        compound.putBoolean("sleeping", isSleeping());
     
         super.writeAdditional(compound);
     }
@@ -105,23 +106,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void readAdditional(CompoundNBT compound) {
         setGender(compound.getBoolean("gender"));
-//        setAsleep(compound.getBoolean("Asleep"));
         setAlbino(compound.getBoolean("albino"));
         setSaddled(compound.getBoolean("saddled"));
+        dataManager.set(SLEEPING, compound.getBoolean("sleeping")); // Use data manager: Setter method controls animation
     
         super.readAdditional(compound);
     }
 
     /**
-     * Whether or not the dragonEntity is asleep
-     * TODO
-     */
-//    public boolean isAsleep() { return dataManager.get(ASLEEP); }
-//    public void setAsleep(boolean sleeping) { dataManager.set(ASLEEP, sleeping); }
-
-    /**
-     * Gets the Gender of the dragonEntity.
-     * <P>
+     * Gets the Gender of the dragonEntity. <P>
      * true = Male | false = Female. Anything else is an abomination.
      */
     public boolean getGender() { return dataManager.get(GENDER); }
@@ -164,7 +157,25 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             switchPathController(false);
         }
     }
-
+    
+    /**
+     * Whether or not the dragon is sleeping.
+     */
+    @Override
+    public boolean isSleeping() { return dataManager.get(SLEEPING); }
+    /**
+     * Sleep setter for dragon.
+     * If we have a sleep animation, then play it.
+     */
+    public void setSleeping(boolean sleep) {
+        dataManager.set(SLEEPING, sleep);
+        
+        if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null)
+            NetworkUtils.sendAnimationPacket(this, sleep? SLEEP_ANIMATION : WAKE_ANIMATION);
+    
+        recalculateSize(); // Change the hitbox for sitting / sleeping
+    }
+    
     public void setSit(boolean sitting) {
         if (!world.isRemote) {
             sitGoal.setSitting(sitting);
@@ -175,7 +186,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         super.setSitting(sitting);
     
-        recalculateSize(); // Change the hitbox for sitting
+        recalculateSize(); // Change the hitbox for sitting / sleeping
     }
 
     /**
@@ -198,6 +209,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void livingTick() {
         if (MathUtils.getAltitude(this) > flyingThreshold && canFly() && !isFlying()) setFlying(true);
         if (MathUtils.getAltitude(this) <= flyingThreshold - 1 && isFlying()) setFlying(false);
+        
+        if (!world.isRemote) {
+    
+            // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
+            if (!world.isDaytime() && !isSleeping() && getAttackTarget() == null && getNavigator().noPath() && !isFlying() && !isBeingRidden() && getRNG().nextInt(500) == 0)
+                setSleeping(true);
+            if (world.isDaytime() && isSleeping() && getRNG().nextInt(150) == 0)
+                setSleeping(false);
+        }
 
         super.livingTick();
     }
@@ -229,7 +249,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         
-        if (stack.getItem() == Items.STICK) setFlying(!isFlying());
+        if (stack.getItem() == Items.STICK) setSleeping(!isSleeping());
         
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
@@ -301,8 +321,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return true;
     }
     
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (isSleeping()) setSleeping(false);
+        
+        return super.attackEntityFrom(source, amount);
+    }
+    
     /**
-     * Public access version of {@link Entity#setRotation(float, float)}
+     * Public access version of {@link Entity#setRotation}
      */
     public void setRotation(float yaw, float pitch) {
         this.rotationYaw = yaw % 360.0F;
@@ -351,7 +378,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isBreedingItem(ItemStack stack) {
         if (getFoodItems().length == 0 || getFoodItems() == null) return false;
-        return Arrays.stream(getFoodItems()).anyMatch(element -> element == stack.getItem());
+        return Arrays.asList(getFoodItems()).contains(stack.getItem());
     }
     
     /**
@@ -396,6 +423,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }
     
+    /**
+     * Children are handled through eggs, so this is a no-go
+     */
     @Nullable
     @Override
     public AgeableEntity createChild(AgeableEntity ageable) { return null; }
