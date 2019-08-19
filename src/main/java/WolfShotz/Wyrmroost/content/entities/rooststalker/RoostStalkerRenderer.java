@@ -23,10 +23,14 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     private final ResourceLocation body = ModUtils.location(loc + "body.png");
     private final ResourceLocation bodyAlb = ModUtils.location(loc + "body_alb.png");
     private final ResourceLocation bodyChristmas = ModUtils.location(loc + "body_christmas.png");
+    private final ResourceLocation bodyGlow = ModUtils.location(loc + "body_glow.png");
+    private final ResourceLocation sleep = ModUtils.location(loc + "sleep.png");
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
         addLayer(new ItemStackRenderer(this));
+        addLayer(new GlowLayer(this, bodyGlow));
+        addLayer(new SleepLayer(this, sleep));
     }
     
     @Nullable
@@ -36,9 +40,9 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
         return stalker.isAlbino()? bodyAlb : body;
     }
     
-    class ItemStackRenderer extends AbstractLayerRenderer<RoostStalkerEntity>
+    class ItemStackRenderer extends AbstractLayerRenderer
     {
-        public ItemStackRenderer(IEntityRenderer entity) { super(entity); }
+        ItemStackRenderer(IEntityRenderer entity) { super(entity); }
         
         @Override
         public void render(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
@@ -52,7 +56,6 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
                 GlStateManager.translatef(0, -0.5f, stalker.isSitting()? -1.3f : -1.2f);
                 GlStateManager.rotatef(headPitch / 1.7f, 1f, 0, 0);
                 GlStateManager.translatef(0, -0.3f, 0f);
-                
                 
                 Minecraft.getInstance().getItemRenderer().renderItem(stack, stalker, ItemCameraTransforms.TransformType.GROUND, false);
                 

@@ -177,18 +177,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-    
-        if (stack.getItem() == Items.BEDROCK) {
-            player.sendStatusMessage(new StringTextComponent("Sitting: " + isSitting() + " Sleeping: " + isSleeping()), true);
-            
-            return true;
-        }
-        
-        if (stack.getItem() == Items.STICK) {
-            setSleeping(!isSleeping());
-        
-            return true;
-        }
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)

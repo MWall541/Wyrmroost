@@ -25,6 +25,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -94,7 +95,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         ItemStack stack = player.getHeldItem(hand);
         ItemStack heldItem = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-    
+        
         // Apply Name if holding nametag
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
