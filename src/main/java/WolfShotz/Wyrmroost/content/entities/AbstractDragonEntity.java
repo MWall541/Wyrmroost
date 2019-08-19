@@ -172,6 +172,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void setSleeping(boolean sleep) {
         dataManager.set(SLEEPING, sleep);
+    
+        isJumping = false;
+        navigator.clearPath();
+        setAttackTarget(null);
         
         if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null && !hasActiveAnimation())
             NetworkUtils.sendAnimationPacket(this, sleep? SLEEP_ANIMATION : WAKE_ANIMATION);
@@ -218,8 +222,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (!world.isRemote) {
             // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
             if (sleepTimeout > 0) --sleepTimeout;
-            if (!world.isDaytime() && !isSleeping() && sleepTimeout <= 0 && getAttackTarget() == null && getNavigator().noPath() && !isFlying() && !isBeingRidden() && getRNG().nextInt(500) == 0)
-                setSleeping(true);
+            if (!world.isDaytime() && !isSleeping() && sleepTimeout <= 0 && getAttackTarget() == null && getNavigator().noPath() && !isFlying() && !isBeingRidden() && getRNG().nextInt(300) == 0) {
+                if (isTamed()) {
+                    if (isSitting()) setSleeping(true);
+                } else setSleeping(true);
+            }
             if (world.isDaytime() && isSleeping() && getRNG().nextInt(150) == 0)
                 setSleeping(false);
         }

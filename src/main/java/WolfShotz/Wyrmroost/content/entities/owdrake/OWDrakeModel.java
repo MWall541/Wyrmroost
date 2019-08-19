@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
+import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
@@ -423,74 +424,36 @@ public class OWDrakeModel extends AdvancedEntityModel
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         float frame = entityIn.ticksExisted;
         OWDrakeEntity drake = (OWDrakeEntity) entityIn;
+        Animation currentAnim = drake.getAnimation();
 
         resetToDefaultPose();
         animator.update(drake);
-        
-        if (drake.getAnimation() == OWDrakeEntity.TALK_ANIMATION) {
-            if (drake.isSitting()) staySitting();
-            talkAnim();
-            continueIdle(frame);
-            
-            return;
-        }
-        
-        if (drake.isSitting() && !drake.isSleeping() && !drake.hasActiveAnimation()) {
+    
+        if (drake.isSitting() && currentAnim != OWDrakeEntity.SIT_ANIMATION)
             staySitting();
-            continueIdle(frame);
-            
-            return;
-        }
-        
-        if (drake.getAnimation() == OWDrakeEntity.SIT_ANIMATION) {
-            sitAnim();
-            continueIdle(frame);
-            
-            return;
-        }
-
-        if (drake.getAnimation() == OWDrakeEntity.STAND_ANIMATION) {
-            standAnim();
-            continueIdle(frame);
-            
-            return;
-        }
-
-        if (drake.isSleeping() && drake.getAnimation() != OWDrakeEntity.SLEEP_ANIMATION) {
+    
+        if (drake.isSleeping() && currentAnim != OWDrakeEntity.SLEEP_ANIMATION)
             staySleeping();
-            continueIdle(frame);
-            
-            return;
-        }
-        
-        if (drake.getAnimation() == OWDrakeEntity.SLEEP_ANIMATION) {
-            sleepAnim(drake);
-            continueIdle(frame);
-            
-            return;
-        }
-        
-        if (drake.getAnimation() == OWDrakeEntity.WAKE_ANIMATION) {
-            wakeAnim(drake);
-            continueIdle(frame);
-            
-            return;
-        }
-        
-        if (drake.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION) {
-            continueIdle(frame);
-            grazeAnim(drake, frame);
-            
-            return;
-        }
+    
+        if (currentAnim == OWDrakeEntity.TALK_ANIMATION) talkAnim();
+    
+        if (currentAnim == OWDrakeEntity.SIT_ANIMATION) sitAnim();
+    
+        if (currentAnim == OWDrakeEntity.STAND_ANIMATION) standAnim();
+    
+        if (currentAnim == OWDrakeEntity.SLEEP_ANIMATION) sleepAnim(drake);
+    
+        if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim(drake);
+    
+        if (currentAnim == OWDrakeEntity.GRAZE_ANIMATION) grazeAnim(drake, frame);
 
-        if (drake.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
+        if (currentAnim == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
             hornAttackAnim();
             
             return;
         }
         
-        if (drake.getAnimation() == OWDrakeEntity.ROAR_ANIMATION) {
+        if (currentAnim == OWDrakeEntity.ROAR_ANIMATION) {
             roarAnim(drake, frame);
             
             return;
@@ -631,7 +594,7 @@ public class OWDrakeModel extends AdvancedEntityModel
     }
     
     private void staySleeping() {
-        staySitting(); // Sleep pose is relatively the same as sitting
+        staySitting();
         
         neck1.rotateAngleX = 0.4f;
         neck1.rotateAngleY = 0.4f;
@@ -689,39 +652,37 @@ public class OWDrakeModel extends AdvancedEntityModel
     private void wakeAnim(OWDrakeEntity drake) {
         animator.setAnimation(OWDrakeEntity.WAKE_ANIMATION);
     
-        animator.startKeyframe(15);
-        
-        if (!drake.isSitting()) {
-            animator.move(body1, 0, -5.5f, 0);
-            //Front Right
-            animator.rotate(arm2R, 1.1f, 0, 0);
-            animator.rotate(palmR, -1f, 0, 0);
-            //Front Left
-            animator.rotate(arm2L, 1.1f, 0, 0);
-            animator.rotate(palmL, -1f, 0, 0);
-            //Back Right
-            animator.rotate(leg2R, -0.35f, -0.4f, 0);
-            leg3R.setRotationPoint(-0.05F, 4.0F, 1.8F);
-            animator.rotate(leg3R, 1.9f, 0, 0);
-            animator.rotate(footR, -0.7f, 0, 0);
-            //Back Left
-            animator.rotate(leg2L, -0.35f, 0.4f, 0);
-            leg3L.setRotationPoint(-0.05F, 4.0F, 1.8F);
-            animator.rotate(leg3L, 1.9f, 0, 0);
-            animator.rotate(footL, -0.7f, 0, 0);
-            //Toes
-            for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, -0.8f, 0, 0);
-            //Tail
-            for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
-            animator.endKeyframe();
-
-            tail1.rotateAngleX = tail1.defaultRotationX;
-            tail3.rotateAngleZ = tail3.defaultRotationZ;
-            tail4.rotateAngleZ = tail4.defaultRotationZ;
-            tail5.rotateAngleZ = tail5.defaultRotationZ;
-            tail5.rotateAngleY = tail5.defaultRotationY;
-        }
         staySleeping();
+        
+        animator.startKeyframe(15);
+    
+        animator.move(body1, 0, -5.5f, 0);
+        //Front Right
+        animator.rotate(arm2R, 1.1f, 0, 0);
+        animator.rotate(palmR, -1f, 0, 0);
+        //Front Left
+        animator.rotate(arm2L, 1.1f, 0, 0);
+        animator.rotate(palmL, -1f, 0, 0);
+        //Back Right
+        animator.rotate(leg2R, -0.35f, -0.4f, 0);
+        leg3R.setRotationPoint(-0.05F, 4.0F, 1.8F);
+        animator.rotate(leg3R, 1.9f, 0, 0);
+        animator.rotate(footR, -0.7f, 0, 0);
+        //Back Left
+        animator.rotate(leg2L, -0.35f, 0.4f, 0);
+        leg3L.setRotationPoint(-0.05F, 4.0F, 1.8F);
+        animator.rotate(leg3L, 1.9f, 0, 0);
+        animator.rotate(footL, -0.7f, 0, 0);
+        //Toes
+        for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, -0.8f, 0, 0);
+        //Tail
+        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
+    
+        tail1.rotateAngleX = tail1.defaultRotationX;
+        tail3.rotateAngleZ = tail3.defaultRotationZ;
+        tail4.rotateAngleZ = tail4.defaultRotationZ;
+        tail5.rotateAngleZ = tail5.defaultRotationZ;
+        tail5.rotateAngleY = tail5.defaultRotationY;
         eyeL.rotateAngleY = eyeL.defaultRotationY;
         eyeR.rotateAngleY = eyeR.defaultRotationY;
         

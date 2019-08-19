@@ -315,10 +315,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void playAmbientSound() {
         if (!isSleeping()) {
-    
-            super.playAmbientSound();
-    
             if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+            super.playAmbientSound();
         }
     }
     
