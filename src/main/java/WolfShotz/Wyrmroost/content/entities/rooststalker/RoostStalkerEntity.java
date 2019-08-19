@@ -194,6 +194,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     protected void spawnDrops(DamageSource src) {
     ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+    
     if (!stack.isEmpty()) {
         entityDropItem(stack);
         setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);

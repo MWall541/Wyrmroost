@@ -51,7 +51,8 @@ public class ForgeEvents
 
      /**
       * Handles the camera setup for what the player is looking at
-      * @deprecated Currently not functional. See Issue #5911
+      * @deprecated Currently not functional. See:
+      * <a href="https://github.com/MinecraftForge/MinecraftForge/issues/5911">Issue #5911</a>
       */
      @OnlyIn(Dist.CLIENT)
      public static void ridingPerspective(EntityViewRenderEvent.CameraSetup event) {

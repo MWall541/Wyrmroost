@@ -24,10 +24,10 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     private final ResourceLocation childCom = ModUtils.location(loc + "child_com.png");
     private final ResourceLocation childSav = ModUtils.location(loc + "child_sav.png");
     private final ResourceLocation childAlb = ModUtils.location(loc + "child_alb.png");
-    // Saddle
-    private final ResourceLocation saddle = ModUtils.location(loc + "saddle.png");
     // Easter Egg
     private final ResourceLocation daisy = ModUtils.location(loc + "dasy.png");
+    // Saddle
+    private final ResourceLocation saddle = ModUtils.location(loc + "saddle.png");
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);

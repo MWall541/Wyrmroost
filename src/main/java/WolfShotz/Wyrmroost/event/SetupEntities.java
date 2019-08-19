@@ -52,7 +52,7 @@ public class SetupEntities
     // Entity List End
     
     /**
-     *  Registers World Spawning for entities
+     * Registers World Spawning for entities
      */
     private static void registerEntityWorldSpawns() {
         registerSpawning(overworld_drake, 10, 1, 3, getDrakeBiomes());

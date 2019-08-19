@@ -1,12 +1,12 @@
 package WolfShotz.Wyrmroost.content.entities.minutus;
 
-import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.BurrowGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.RunAwayGoal;
 import WolfShotz.Wyrmroost.content.entities.minutus.goals.WalkRandom;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import com.github.alexthe666.citadel.animation.Animation;
+import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
@@ -15,6 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.Item;
@@ -36,8 +37,15 @@ import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class MinutusEntity extends AbstractDragonEntity
+/**
+ * Desertwyrm Dragon Entity
+ * Seperated from AbstractDragonEntity:
+ * This does not need/require much from that class and would instead create redundancies. do this instead.
+ */
+public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
 {
+    public Animation animation = NO_ANIMATION;
+    public int animationTick;
     public static final Animation BITE_ANIMATION = Animation.create(10);
 
     private static final DataParameter<Boolean> BURROWED = EntityDataManager.createKey(MinutusEntity.class, DataSerializers.BOOLEAN);
@@ -47,8 +55,6 @@ public class MinutusEntity extends AbstractDragonEntity
         super(minutus, world);
 
         moveController = new MovementController(this);
-
-        setImmune(DamageSource.IN_WALL);
     }
 
     @Override
@@ -98,16 +104,6 @@ public class MinutusEntity extends AbstractDragonEntity
     public boolean isBurrowed() { return dataManager.get(BURROWED); }
     public void setBurrowed(boolean burrow) { dataManager.set(BURROWED, burrow); }
 
-    @Override
-    public boolean canFly() { return false; }
-
-    /**
-     * Set The chances this dragon can be an albino.
-     * Set it to 0 to have no chance
-     */
-    @Override
-    public int getAlbinoChances() { return 0; }
-
     // ================================
 
     @Override
@@ -137,7 +133,7 @@ public class MinutusEntity extends AbstractDragonEntity
             setBurrowed(false);
         }
         else {
-            performGenericAttack();
+            if (getAnimation() != BITE_ANIMATION) setAnimation(BITE_ANIMATION);
             attackEntityAsMob(entity);
         }
     }
@@ -169,7 +165,10 @@ public class MinutusEntity extends AbstractDragonEntity
 
         return super.processInteract(player, hand);
     }
-
+    
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || source == DamageSource.IN_WALL; }
+    
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() { return SetupSounds.MINUTUS_IDLE; }
@@ -180,12 +179,6 @@ public class MinutusEntity extends AbstractDragonEntity
 
     @Override
     protected float getSoundVolume() { return 0.5f; }
-
-    /**
-     * Array Containing all of the dragons food items
-     */
-    @Override
-    public Item[] getFoodItems() { return new Item[0]; } // Doesnt eat :P
     
     @Override
     public boolean canBePushed() { return !isBurrowed(); }
@@ -196,22 +189,30 @@ public class MinutusEntity extends AbstractDragonEntity
     @Override
     protected void collideWithEntity(Entity entityIn) { if (!isBurrowed()) super.collideWithEntity(entityIn); }
     
-    @Override
-    public void performGenericAttack() {
-        if (getAnimation()!= MinutusEntity.BITE_ANIMATION) setAnimation(MinutusEntity.BITE_ANIMATION);
-    }
-    
     @Nullable
     @Override
     public AgeableEntity createChild(AgeableEntity ageableEntity) { return null; }
-
+    
     // ================================
     //        Entity Animation
     // ================================
     @Override
-    public Animation[] getAnimations() {
-        return new Animation[] {BITE_ANIMATION};
+    public int getAnimationTick() { return animationTick; }
+    
+    @Override
+    public void setAnimationTick(int tick) { animationTick = tick; }
+    
+    @Override
+    public Animation getAnimation() { return animation; }
+    
+    @Override
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, BITE_ANIMATION}; }
+    
+    @Override
+    public void setAnimation(Animation animation) {
+        this.animation = animation;
+        setAnimationTick(0);
     }
-
+    
     // ================================
 }

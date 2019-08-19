@@ -23,6 +23,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
     }
     
+    
     /**
      * Abstract layer renderer to handle the generalizing
      */
@@ -34,6 +35,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         public abstract void render(V entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale);
     }
 
+    
     /**
      * Class Responsible for Rendering the saddle layer
      */
