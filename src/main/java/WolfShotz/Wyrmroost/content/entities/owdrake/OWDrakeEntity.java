@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.owdrake;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.DragonGrazeGoal;
+import WolfShotz.Wyrmroost.content.entities.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.content.entities.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.owdrake.goals.DrakeTargetGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
@@ -63,6 +64,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
         moveController = new MovementController(this);
         
         hatchTimer = 12000;
+        
+        SLEEP_ANIMATION = Animation.create(20);
+        WAKE_ANIMATION = Animation.create(15);
     }
 
     @Override
@@ -159,11 +163,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
             setSprinting(isAngry());
             if (getAttackTarget() == null && isAngry()) setAngry(false);
         }
-        
-        if (getAnimation() == ROAR_ANIMATION) {
-            setRotation(rotationYawHead, rotationPitch);
-            if (getAnimationTick() == 1) playSound(SetupSounds.OWDRAKE_ROAR, 1, 1);
-        }
+    
+        if (getAnimation() == ROAR_ANIMATION && getAnimationTick() == 1)
+            playSound(SetupSounds.OWDRAKE_ROAR, 1, 1);
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 10 && getAttackTarget() != null)
             attackEntityAsMob(getAttackTarget());
@@ -174,8 +176,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        
-        if (stack.getItem() == Items.STICK) setGrowingAge(-24000);
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
@@ -188,6 +188,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         // If Saddled and not sneaking, start riding
         if (isSaddled() && !isChild() && !isBreedingItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking()) {
+            setSleeping(false);
             setSit(false);
             player.startRiding(this);
 
@@ -300,9 +301,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Override
     public void playAmbientSound() {
-        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+        if (!isSleeping()) {
     
-        super.playAmbientSound();
+            super.playAmbientSound();
+    
+            if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+        }
     }
     
     @Nullable
@@ -334,7 +338,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Override
     public EntitySize getSize(Pose poseIn) {
-        return isSitting()? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
+        return isSitting() || isSleeping()? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
     }
     
     /**
@@ -348,7 +352,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     // == Entity Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, ROAR_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, ROAR_ANIMATION}; }
     // ==
 
 }

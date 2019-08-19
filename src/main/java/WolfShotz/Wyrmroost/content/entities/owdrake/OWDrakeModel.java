@@ -422,45 +422,94 @@ public class OWDrakeModel extends AdvancedEntityModel
     @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         float frame = entityIn.ticksExisted;
-        OWDrakeEntity entity = (OWDrakeEntity) entityIn;
+        OWDrakeEntity drake = (OWDrakeEntity) entityIn;
 
         resetToDefaultPose();
-        animator.update(entity);
+        animator.update(drake);
         
-        if (entity.getAnimation() == OWDrakeEntity.TALK_ANIMATION)
+        if (drake.getAnimation() == OWDrakeEntity.TALK_ANIMATION) {
+            continueIdle(frame);
             talkAnim();
+            
+            return;
+        }
         
-        if (entity.isSitting() && !entity.hasActiveAnimation())
+        if (drake.isSitting() && !drake.isSleeping() && drake.getAnimation() != OWDrakeEntity.SIT_ANIMATION) {
             staySitting();
-
-        if (entity.getAnimation() == OWDrakeEntity.SIT_ANIMATION)
-            sitAnim();
-
-        if (entity.getAnimation() == OWDrakeEntity.STAND_ANIMATION)
-            standAnim();
-
-        if (entity.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION)
-            grazeAnim(entity, frame);
-
-        if (entity.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
-            hornAttackAnim();
+            continueIdle(frame);
+            
             return;
         }
         
-        if (entity.getAnimation() == OWDrakeEntity.ROAR_ANIMATION) {
-            roarAnim(entity, frame);
+        if (drake.getAnimation() == OWDrakeEntity.SIT_ANIMATION) {
+            sitAnim();
+            continueIdle(frame);
+            
             return;
         }
+
+        if (drake.getAnimation() == OWDrakeEntity.STAND_ANIMATION) {
+            standAnim();
+            continueIdle(frame);
+            
+            return;
+        }
+
+        if (drake.isSleeping() && drake.getAnimation() != OWDrakeEntity.SLEEP_ANIMATION) {
+            staySleeping();
+            continueIdle(frame);
+            
+            return;
+        }
+        
+        if (drake.getAnimation() == OWDrakeEntity.SLEEP_ANIMATION) {
+            sleepAnim(drake);
+            continueIdle(frame);
+            
+            return;
+        }
+        
+        if (drake.getAnimation() == OWDrakeEntity.WAKE_ANIMATION) {
+            wakeAnim(drake);
+            continueIdle(frame);
+            
+            return;
+        }
+        
+        if (drake.getAnimation() == OWDrakeEntity.GRAZE_ANIMATION) {
+            continueIdle(frame);
+            grazeAnim(drake, frame);
+            
+            return;
+        }
+
+        if (drake.getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
+            hornAttackAnim();
+            
+            return;
+        }
+        
+        if (drake.getAnimation() == OWDrakeEntity.ROAR_ANIMATION) {
+            roarAnim(drake, frame);
+            
+            return;
+        }
+        
+        continueIdle(frame);
+        
+        if (!drake.hasActiveAnimation()) faceTarget(netHeadYaw, headPitch, 4, neck1, head);
+    }
     
-        // IDLE
+    
+    private void continueIdle(float frame) {
+        float f = 0.5f;
+        
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
     
         walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
         chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
-        
-        if (!entity.hasActiveAnimation()) faceTarget(netHeadYaw, headPitch, 4, neck1, head);
     }
     
     /**
@@ -581,7 +630,103 @@ public class OWDrakeModel extends AdvancedEntityModel
         tail5.rotateAngleZ = tail5.defaultRotationZ;
         tail5.rotateAngleY = tail5.defaultRotationY;
     }
-
+    
+    private void staySleeping() {
+        staySitting(); // Sleep pose is relatively the same as sitting
+        
+        neck1.rotateAngleX = 0.4f;
+        neck1.rotateAngleY = 0.4f;
+        neck2.rotateAngleX = -0.2f;
+        neck2.rotateAngleY = 0.6f;
+        head.rotateAngleX = -0.2f;
+        head.rotateAngleY = 0.4f;
+        head.rotateAngleZ = -0.4f;
+        eyeL.rotateAngleY = 1f;
+        eyeR.rotateAngleY = -1f;
+        
+    }
+    
+    private void sleepAnim(OWDrakeEntity drake) {
+        animator.setAnimation(OWDrakeEntity.SLEEP_ANIMATION);
+        
+        animator.startKeyframe(20);
+        
+        if (!drake.isSitting()) {
+            animator.move(body1, 0, 5.5f, 0);
+            //Front Right
+            animator.rotate(arm2R, -1.1f, 0, 0);
+            animator.rotate(palmR, 1f, 0, 0);
+            //Front Left
+            animator.rotate(arm2L, -1.1f, 0, 0);
+            animator.rotate(palmL, 1f, 0, 0);
+            //Back Right
+            animator.rotate(leg2R, 0.35f, 0.4f, 0);
+            leg3R.setRotationPoint(-0.05F, 4.0F, -1.8F);
+            animator.rotate(leg3R, -1.9f, 0, 0);
+            animator.rotate(footR, 0.7f, 0, 0);
+            //Back Left
+            animator.rotate(leg2L, 0.35f, -0.4f, 0);
+            leg3L.setRotationPoint(-0.05F, 4.0F, -1.8F);
+            animator.rotate(leg3L, -1.9f, 0, 0);
+            animator.rotate(footL, 0.7f, 0, 0);
+            //Toes
+            for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, 0.8f, 0, 0);
+            //Tail
+            for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, -0.6f, 0);
+            tail1.rotateAngleX = -0.2f;
+            tail3.rotateAngleZ = -0.2f;
+            tail4.rotateAngleZ = -0.4f;
+            tail5.rotateAngleZ = -0.3f;
+            tail5.rotateAngleY += 0.1f;
+        }
+        
+        animator.rotate(neck1, 1.2f, 0.4f, 0);
+        animator.rotate(neck2, -0.2f, 0.6f, 0);
+//        animator.rotate(head, -0.2f, 0.4f, -0.4f);
+        animator.endKeyframe();
+        
+        
+    }
+    
+    private void wakeAnim(OWDrakeEntity drake) {
+        animator.setAnimation(OWDrakeEntity.WAKE_ANIMATION);
+        
+        if (drake.isSitting()) {
+            // ...
+        } else {
+            animator.startKeyframe(15);
+            animator.move(body1, 0, -5.5f, 0);
+            //Front Right
+            animator.rotate(arm2R, 1.1f, 0, 0);
+            animator.rotate(palmR, -1f, 0, 0);
+            //Front Left
+            animator.rotate(arm2L, 1.1f, 0, 0);
+            animator.rotate(palmL, -1f, 0, 0);
+            //Back Right
+            animator.rotate(leg2R, -0.35f, -0.4f, 0);
+            leg3R.setRotationPoint(-0.05F, 4.0F, 1.8F);
+            animator.rotate(leg3R, 1.9f, 0, 0);
+            animator.rotate(footR, -0.7f, 0, 0);
+            //Back Left
+            animator.rotate(leg2L, -0.35f, 0.4f, 0);
+            leg3L.setRotationPoint(-0.05F, 4.0F, 1.8F);
+            animator.rotate(leg3L, 1.9f, 0, 0);
+            animator.rotate(footL, -0.7f, 0, 0);
+            //Toes
+            for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, -0.8f, 0, 0);
+            //Tail
+            for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
+            animator.endKeyframe();
+    
+            tail1.rotateAngleX = tail1.defaultRotationX;
+            tail3.rotateAngleZ = tail3.defaultRotationZ;
+            tail4.rotateAngleZ = tail4.defaultRotationZ;
+            tail5.rotateAngleZ = tail5.defaultRotationZ;
+            tail5.rotateAngleY = tail5.defaultRotationY;
+        }
+        
+    }
+    
     /**
      * Horn Attack Anim
      */
