@@ -43,6 +43,9 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     
         @Override // Override to deobfuscate params
         public abstract void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale);
+    
+        @Override
+        public boolean shouldCombineTextures() { return false; }
     }
     
     /**
@@ -58,20 +61,15 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
             this.glowLoc = glowLocation;
         }
     
-        /**
-         * Use this constructor for multiple / dynamic texture changes regarding glow layer
-         * MUST BE DEFINED IN {@link #getGlowLoc()}
-         */
-        public GlowLayer(IEntityRenderer entityIn) { super(entityIn); }
-    
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
             GameRenderer gamerenderer = Minecraft.getInstance().gameRenderer;
+            
             int i = entity.getBrightnessForRender();
             int j = i % 65536;
             int k = i / 65536;
             
-            bindTexture(getGlowLoc());
+            bindTexture(glowLoc);
     
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL_ONE, GL_ONE);
@@ -89,11 +87,6 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
             GlStateManager.depthMask(true);
             GlStateManager.disableBlend();
         }
-    
-        @Override
-        public boolean shouldCombineTextures() { return false; }
-        
-        public ResourceLocation getGlowLoc() { return glowLoc; }
     }
     
     
@@ -141,8 +134,5 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
                 getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
             }
         }
-
-        @Override
-        public boolean shouldCombineTextures() { return false; }
     }
 }
