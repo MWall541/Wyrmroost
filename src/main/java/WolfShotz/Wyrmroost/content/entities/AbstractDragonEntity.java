@@ -391,6 +391,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return Arrays.asList(getFoodItems()).contains(stack.getItem());
     }
     
+    @Override
+    public void playAmbientSound() { if (!isSleeping()) super.playAmbientSound(); }
+    
     /**
      * Set a damage source immunity
      */
