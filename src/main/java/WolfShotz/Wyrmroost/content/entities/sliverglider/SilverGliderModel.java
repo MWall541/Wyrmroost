@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.sliverglider;
 
+import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
@@ -67,6 +68,7 @@ public class SilverGliderModel extends AdvancedEntityModel
     public AdvancedRendererModel membrane2R;
     
     private final AdvancedRendererModel[] toeArray;
+    private final AdvancedRendererModel[] headArray;
     private final AdvancedRendererModel[] neckArray;
     private final AdvancedRendererModel[] neckArray2;
     private final AdvancedRendererModel[] tailArray;
@@ -327,7 +329,8 @@ public class SilverGliderModel extends AdvancedEntityModel
         animator = ModelAnimator.create();
         
         toeArray = new AdvancedRendererModel[] {toe1L, toe2L, toe3L, toe1R_1, toe1R, toe2R};
-        neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3, neck4, head};
+        headArray = new AdvancedRendererModel[] {neck1, neck2, neck3, neck4, head};
+        neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3, neck4};
         neckArray2 = new AdvancedRendererModel[] {neck1, neck2};
         tailArray = new AdvancedRendererModel[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8, tail9, tail10};
         
@@ -337,55 +340,181 @@ public class SilverGliderModel extends AdvancedEntityModel
     private float globalSpeed;
     
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        mainbody.render(f5);
-        
-        globalSpeed = 0.5f;
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        mainbody.render(scale);
     }
-    
     
     @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         SilverGliderEntity glider = (SilverGliderEntity) entityIn;
         float frame = entityIn.ticksExisted;
+        globalSpeed = 0.5f;
+        Animation currentAnim = glider.getAnimation();
         
         resetToDefaultPose();
+        animator.update(glider);
         
-        idleAnim(glider, frame);
+        if (!glider.isFlying() || glider.onGround) {
+            wing1L.rotateAngleX = 0.6f;
+            wing1L.rotateAngleY = -0.1f;
+            wing2L.rotateAngleY = 1.3f;
+            phalangeL11.rotateAngleY = -1.8f;
+            phalangeL21.rotateAngleY = -2.0f;
+            membrane2L.rotateAngleY = 0.1f;
+    
+            wing1R.rotateAngleX = 0.6f;
+            wing1R.rotateAngleY = 0.1f;
+            wing2R.rotateAngleY = -1.3f;
+            phalangeR11.rotateAngleY = 1.8f;
+            phalangeR21.rotateAngleY = 2.0f;
+            membrane2R.rotateAngleY = -0.1f;
+    
+            for (AdvancedRendererModel box : neckArray2) box.rotateAngleX = -0.4f;
+            neck3.rotateAngleX = 0.5f;
+            neck4.rotateAngleX = 0.25f;
+        }
+        
+        if (glider.isSitting() && currentAnim != SilverGliderEntity.SIT_ANIMATION)
+            staySitting();
+    
+        if (currentAnim == SilverGliderEntity.SLEEP_ANIMATION) sleepAnim(glider);
+        
+        if (glider.isSleeping() && currentAnim != SilverGliderEntity.SLEEP_ANIMATION) {
+            staySleeping(frame);
+            
+            return;
+        }
+        
+        if (currentAnim == SilverGliderEntity.SIT_ANIMATION) sitAnim();
+        
+        if (currentAnim == SilverGliderEntity.STAND_ANIMATION) standAnim();
+    
+        idleAnim(frame);
     }
     
     // animate the head and tail according to glider's state (flying or on ground)
-    private void idleAnim(SilverGliderEntity glider, float frame) {
-        if (glider.isFlying()) {
-            if (!glider.isRiding()) {
-                // Left Leg
-                legL1.rotateAngleX = 0.8f;
-                legL2.rotateAngleX = 0.8f;
-                legL3.rotateAngleX = -0.6f;
-                // Right leg
-                legR1.rotateAngleX = 0.8f;
-                legR2.rotateAngleX = 0.8f;
-                legR3.rotateAngleX = -0.6f;
-                // Toes
-                for (AdvancedRendererModel toe : toeArray) toe.rotateAngleX = 0.5f;
-                // Slightly move legs in flight if not riding
-                walk(legL1, globalSpeed + 0.2f, 0.03f, false, 0, 0, frame, 0.5f);
-                walk(legR1, globalSpeed + 0.2f, 0.03f, true, 0, 0, frame, 0.5f);
-            }
-            
-            // Neck + head
-            chainWave(neckArray, globalSpeed - 0.2f, 0.05f, 3f, frame, 0.5f);
-            
-            // Tail
-            chainWave(tailArray, globalSpeed - 0.25f, 0.06f, 2.5, frame, 0.5f);
-        } else {
-            // Neck
-            chainWave(neckArray2, globalSpeed - 0.4f, 0.02f, 0, frame, 0.5f);
-            
-            // Tail
-            chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, 0.5f);
-            chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, 0.5f);
-        }
+    private void idleAnim(float frame) {
+        // Neck
+        chainWave(neckArray2, globalSpeed - 0.4f, 0.02f, 0, frame, 0.5f);
+        
+        // Tail
+        chainSwing(tailArray, globalSpeed - 0.45f, 0.03f, 0, frame, 0.5f);
+        chainWave(tailArray, globalSpeed - 0.46f, 0.06f, 0, frame, 0.5f);
+        
+        // Wings
+        swing(phalangeL11, globalSpeed - 0.45f, 0.03f, false, 0, 0, frame, 0.5f);
+        swing(phalangeL21, globalSpeed - 0.45f, 0.03f, false, 0, 0, frame, 0.5f);
+        swing(phalangeR11, globalSpeed - 0.45f, 0.03f, true, 0, 0, frame, 0.5f);
+        swing(phalangeR21, globalSpeed - 0.45f, 0.03f, true, 0, 0, frame, 0.5f);
     }
     
+    private void staySitting() {
+        mainbody.offsetY = 0.25f;
+    
+        wing1L.rotateAngleX = 0.3f;
+        wing1L.rotateAngleY = -0.1f;
+        wing2L.rotateAngleY = 1.3f;
+        phalangeL11.rotateAngleY = -1.8f;
+        phalangeL21.rotateAngleY = -2.0f;
+        membrane2L.rotateAngleY = 0.1f;
+    
+        wing1R.rotateAngleX = 0.3f;
+        wing1R.rotateAngleY = 0.1f;
+        wing2R.rotateAngleY = -1.3f;
+        phalangeR11.rotateAngleY = 1.8f;
+        phalangeR21.rotateAngleY = 2.0f;
+        membrane2R.rotateAngleY = -0.1f;
+    
+        legL1.rotateAngleX = -1.2f;
+        legL2.rotateAngleX = 2.3f;
+        legL3.rotateAngleX = -2.5f;
+        legR1.rotateAngleX = -1.2f;
+        legR2.rotateAngleX = 2.3f;
+        legR3.rotateAngleX = -2.5f;
+        for (AdvancedRendererModel toe : toeArray) toe.rotateAngleX = -0.2f;
+    }
+    
+    private void staySleeping(float frame) {
+        staySitting();
+    
+        wing1R.rotateAngleX = 0.1f;
+    
+        for (AdvancedRendererModel segment : neckArray) {
+            segment.rotateAngleX = 0.1f;
+            segment.rotateAngleY = 0.5f;
+        }
+        head.rotateAngleX = -0.2f;
+        for (AdvancedRendererModel tailSegment : tailArray) {
+            tailSegment.rotateAngleY = -0.3f;
+            tailSegment.rotateAngleX = -0.05f;
+        }
+        
+        chainSwing(neckArray, globalSpeed - 0.46f, 0.03f, 0.4f, frame, 0.5f);
+        chainWave(neckArray, globalSpeed - 0.45f, 0.01f, 0, frame, 0.5f);
+        chainSwing(tailArray, globalSpeed - 0.46f, 0.03f, 0, frame, 0.5f);
+    }
+    
+    private void sitAnim() {
+        animator.setAnimation(SilverGliderEntity.SIT_ANIMATION);
+        
+        animator.startKeyframe(10);
+        animator.move(mainbody, 0, 4f,0);
+        animator.rotate(wing1L, -0.3f, 0, 0);
+        animator.rotate(wing1R, -0.3f, 0, 0);
+        animator.rotate(legR1, -0.6f, 0, 0);
+        animator.rotate(legR2, 0.95f, 0, 0);
+        animator.rotate(legR3, -1.15f, 0, 0);
+        animator.rotate(legL1, -0.6f, 0, 0);
+        animator.rotate(legL2, 0.95f, 0, 0);
+        animator.rotate(legL3, -1.15f, 0, 0);
+        for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, 0.75f, 0, 0);
+        animator.endKeyframe();
+    }
+    
+    private void standAnim() {
+        staySitting();
+    
+        animator.setAnimation(SilverGliderEntity.STAND_ANIMATION);
+    
+        animator.startKeyframe(10);
+        animator.move(mainbody, 0, -4f,0);
+        animator.rotate(wing1L, 0.3f, 0, 0);
+        animator.rotate(wing1R, 0.3f, 0, 0);
+        animator.rotate(legR1, 0.6f, 0, 0);
+        animator.rotate(legR2, -0.95f, 0, 0);
+        animator.rotate(legR3, 1.15f, 0, 0);
+        animator.rotate(legL1, 0.6f, 0, 0);
+        animator.rotate(legL2, -0.95f, 0, 0);
+        animator.rotate(legL3, 1.15f, 0, 0);
+        for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, -0.75f, 0, 0);
+        animator.endKeyframe();
+    }
+    
+    private void sleepAnim(SilverGliderEntity glider) {
+        animator.setAnimation(SilverGliderEntity.SLEEP_ANIMATION);
+    
+        animator.startKeyframe(20);
+    
+        if (!glider.isSitting()) {
+            animator.move(mainbody, 0, 4f, 0);
+            animator.rotate(wing1L, -0.3f, 0, 0);
+            animator.rotate(wing1R, -0.3f, 0, 0);
+            animator.rotate(legR1, -0.6f, 0, 0);
+            animator.rotate(legR2, 0.95f, 0, 0);
+            animator.rotate(legR3, -1.15f, 0, 0);
+            animator.rotate(legL1, -0.6f, 0, 0);
+            animator.rotate(legL2, 0.95f, 0, 0);
+            animator.rotate(legL3, -1.15f, 0, 0);
+        }
+        animator.rotate(wing1R, -0.2f, 0, 0);
+        animator.rotate(neck3, -0.5f, 0, 0);
+        animator.rotate(neck4, -0.2f, 0, 0);
+        animator.rotate(head, -0.3f, 0, 0);
+        for (AdvancedRendererModel neckSegment : neckArray2) animator.rotate(neckSegment, 0.4f, 0, 0);
+        for (AdvancedRendererModel neck : neckArray) animator.rotate(neck, 0.1f, 0.5f, 0);
+        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, -0.05f, -0.3f, 0);
+        for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, 0.75f, 0, 0);
+        animator.endKeyframe();
+    
+    }
 }

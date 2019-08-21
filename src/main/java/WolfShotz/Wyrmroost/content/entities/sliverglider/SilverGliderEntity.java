@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedAvoidGoal;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.NonTamedTemptGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.NetworkUtils;
 import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
@@ -32,6 +33,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
@@ -46,13 +48,17 @@ public class SilverGliderEntity extends AbstractDragonEntity
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(SilverGliderEntity.class, DataSerializers.VARINT);
 
     // Dragon Animation
-    private static final Animation SIT_ANIMATION = Animation.create(10);
+    public static final Animation SIT_ANIMATION = Animation.create(10);
+    public static final Animation STAND_ANIMATION = Animation.create(10);
     public static final Animation TALK_ANIMATION = Animation.create(20);
     
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
         
         hatchTimer = 18000;
+        
+        SLEEP_ANIMATION = Animation.create(20);
+        WAKE_ANIMATION = Animation.create(15);
     }
 
     @Override
@@ -173,7 +179,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         ItemStack stack = player.getHeldItem(hand);
         
         if (hand != Hand.MAIN_HAND) return false; // only fire on the main hand
-
+        
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
             tame(getRNG().nextInt(10) == 0, player);
@@ -233,6 +239,13 @@ public class SilverGliderEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return SetupSounds.SILVERGLIDER_DEATH; }
     
     @Override
+    public void setSit(boolean sitting) {
+        if (sitting != isSitting()) setAnimation(sitting? SIT_ANIMATION : STAND_ANIMATION);
+        
+        super.setSit(sitting);
+    }
+    
+    @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }
 
     /** Array Containing all of the dragons food items */
@@ -241,6 +254,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     // == Entity Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[0]; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TALK_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION}; }
     // ==
 }
