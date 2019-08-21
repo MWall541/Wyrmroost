@@ -7,6 +7,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 
+import java.util.Random;
+
 /**
  * Roost stalker - nova
  * Created using Tabula 7.0.1
@@ -198,15 +200,17 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         
         resetToDefaultPose();
         
-        if (stalker.isSitting())
+//        sleepAnim();
+        
+        if (stalker.isSleeping())
+            staySleep();
+
+        if (stalker.isSitting() && !stalker.isSleeping())
             staySit();
-        
-        if (stalker.getAnimation() == RoostStalkerEntity.SCAVENGE_ANIMATION)
-            scavengeAnim(frame);
-        
+
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, f);
         chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, f);
-        
+
         if (stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty()) {
             walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, f);
             chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
@@ -229,7 +233,37 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         footl3_1.rotateAngleZ = -legAngle;
     }
     
-    private void scavengeAnim(float frame) {
-        walk(neck, 0.5f, 0.5f, false, 0, 0, frame, 0.5f);
+    private void staySleep() {
+        staySit();
+        
+        torso.rotateAngleZ = 1.7f;
+        head.rotateAngleX = 1.3f;
+        head.rotateAngleY = -0.2f;
+        
+        for (AdvancedRendererModel segment : tailSegments) {
+            segment.rotateAngleX = -0.7f;
+            segment.rotateAngleZ = -0.1f;
+        }
+    
+        float legAngle = 0.7f;
+        legr1.rotateAngleZ = legAngle;
+        footl1_1.rotateAngleZ = -legAngle;
+        legr2.rotateAngleZ = legAngle + 0.09f;
+        footl2_1.rotateAngleZ = -legAngle;
+        legr3.rotateAngleZ = legAngle;
+        footl3_1.rotateAngleZ = -legAngle;
+    
+        legl1.rotateAngleZ = -legAngle;
+        footl1.rotateAngleZ = legAngle - 1f;
+        legl2.rotateAngleZ = -legAngle;
+        footl2.rotateAngleZ = legAngle - 1f;
+        legl3.rotateAngleZ = -legAngle;
+        footl3.rotateAngleZ = legAngle - 1f;
+    }
+    
+    private void sleepAnim() {
+        animator.setAnimation(RoostStalkerEntity.SLEEP_ANIMATION);
+        
+//        animator.rotate();
     }
 }

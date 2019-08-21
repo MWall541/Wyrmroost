@@ -45,6 +45,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         moveController = new MovementController(this);
         
         hatchTimer = 2400;
+        
+        SLEEP_ANIMATION = Animation.create(15);
     }
     
     @Override

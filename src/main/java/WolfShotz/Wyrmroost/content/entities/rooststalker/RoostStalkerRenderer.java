@@ -24,7 +24,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     private final ResourceLocation bodyAlb = ModUtils.location(loc + "body_alb.png");
     private final ResourceLocation bodyChristmas = ModUtils.location(loc + "body_christmas.png");
     private final ResourceLocation bodyGlow = ModUtils.location(loc + "body_glow.png");
-    private final ResourceLocation sleep = ModUtils.location(loc + "sleep.png");
+    private final ResourceLocation sleep = ModUtils.location(loc + "closed_eyes.png");
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
