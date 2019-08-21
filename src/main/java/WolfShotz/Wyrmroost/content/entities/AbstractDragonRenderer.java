@@ -64,7 +64,6 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
             GameRenderer gamerenderer = Minecraft.getInstance().gameRenderer;
-            
             int i = entity.getBrightnessForRender();
             int j = i % 65536;
             int k = i / 65536;
@@ -109,9 +108,6 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
                 getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
             }
         }
-        
-        @Override
-        public boolean shouldCombineTextures() { return false; }
     }
     
     
