@@ -19,8 +19,11 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
 {
     private static final String LOC = DEF_LOC + "silverglider/";
     private final ResourceLocation female = ModUtils.location(LOC + "female.png");
-    private final ResourceLocation sleep = ModUtils.location(DEF_LOC + "closed_eyes.png");
-    // Male Variants: "male_{the variant int}.png"
+    private final ResourceLocation femaleGlow = ModUtils.location(LOC + "f_glow.png");
+    private final ResourceLocation sleep = ModUtils.location(LOC + "closed_eyes.png");
+    // Male Variants:
+    // Body: "male_{the variant int}.png"
+    // Glow: "{the variant int}_glow.png"
 
     public SilverGliderRenderer(EntityRendererManager manager) {
         super(manager, new SilverGliderModel(), 1f);
@@ -49,7 +52,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
             int k = i / 65536;
             
             if (entity.getGender()) bindTexture(ModUtils.location(LOC + entity.getVariant() + "_glow.png"));
-            else bindTexture(ModUtils.location(LOC + "f_glow.png"));
+            else bindTexture(femaleGlow);
     
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL_ONE, GL_ONE);

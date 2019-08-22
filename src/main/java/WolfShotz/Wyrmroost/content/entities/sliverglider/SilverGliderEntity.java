@@ -32,6 +32,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IWorld;
@@ -137,7 +138,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         Entity entity = getRidingEntity();
         
         if (entity != null) {
-            if (!entity.isAlive()) {
+            if (!entity.isAlive() || entity.isInWater()) {
                 stopRiding();
                 return;
             }
@@ -152,7 +153,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     return;
                 }
 
-                if (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater()) {
+                if (ReflectionUtils.isEntityJumping(player) && !player.isElytraFlying() && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater()) {
                     Vec3d lookVec = player.getLookVec();
                     Vec3d playerMot = player.getMotion();
                     double xMot = playerMot.x + (lookVec.x / 12);
@@ -169,7 +170,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
                 setRotation(player.rotationYawHead, rotationPitch);
     
-                setPosition(player.posX, player.posY + 1.85d, player.posZ);
+                float radius = (player.isElytraFlying()? -2f : 0);
+                float angle = (0.01745329251F * player.renderYawOffset) + 90;
+                double extraX = (double) (radius * MathHelper.sin((float) (Math.PI + angle)));
+                double extraZ = (double) (radius * MathHelper.cos(angle));
+                
+                setPosition(player.posX + extraX, player.posY + 1.85d, player.posZ + extraZ);
             }
         }
     }
@@ -207,7 +213,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public static boolean canSpawnHere(EntityType<SilverGliderEntity> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand) {
         Block block = world.getBlockState(blockPos.down(1)).getBlock();
         
-        return block == Blocks.AIR;
+        return block == Blocks.AIR || block == Blocks.SAND || block == Blocks.WATER;
     }
     
     public boolean isRiding() { return getRidingEntity() != null; }
