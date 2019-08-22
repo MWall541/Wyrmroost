@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.util;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -23,6 +24,18 @@ public class TranslationUtils
         return translator;
     }
     
+    /**
+     * Equivalent to {@link #translation} but instead uses {@link StringTextComponent}
+     * @param text
+     * @param formats
+     * @return
+     */
+    public static ITextComponent stringTranslation(String text, TextFormatting... formats) {
+        StringTextComponent stringComponent = new StringTextComponent(text);
+        for (TextFormatting format : formats) stringComponent.applyTextStyle(format);
+        return stringComponent;
+    }
+    
     public static ITextComponent appendableTranslation(String... strings) {
         TranslationTextComponent translation = new TranslationTextComponent(strings[0]);
         for (int i = 1; i < strings.length; ++i) translation.appendSibling(new TranslationTextComponent(strings[i]));
@@ -38,14 +51,14 @@ public class TranslationUtils
     public static String format(String text) { return I18n.format(text); }
     
     /**
-     * Add a tooltip to an Item. (The Mouse-over description)
-     * <p> Output: "item.<code>MODID</code>.<code>ITEM</code>.tooltip"
+     * Add a addTooltip to an Item. (The Mouse-over description)
+     * <p> Output: "item.<code>MODID</code>.<code>ITEM</code>.addTooltip"
      * @param item (<code>this</code>)
      * @param formats OPTIONAL
-     * @return Item's Translation key + <code>".tooltip"</code>
+     * @return Item's Translation key + <code>".addTooltip"</code>
      */
-    public static ITextComponent tooltip(Item item, TextFormatting... formats) {
-        return translation(item.getTranslationKey() + ".tooltip", formats);
+    public static ITextComponent addTooltip(Item item, TextFormatting... formats) {
+        return translation(item.getTranslationKey() + ".addTooltip", formats);
     }
     
     /**

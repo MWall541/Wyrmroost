@@ -41,6 +41,6 @@ public class EggBlockItem extends BlockItem
         CompoundNBT tag = stack.getTag();
         
         if (tag != null && tag.contains("hatchTimer"))
-            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.tooltip", tag.getInt("hatchTimer") / 1200).applyTextStyle(TextFormatting.AQUA));
+            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.addTooltip", tag.getInt("hatchTimer") / 1200).applyTextStyle(TextFormatting.AQUA));
     }
 }

@@ -40,7 +40,7 @@ public class ModBookItem extends Item
     @Override
     @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip")
+        tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".addTooltip")
                             .appendSibling(new StringTextComponent("sgdshdf")
                                 .applyTextStyle(TextFormatting.OBFUSCATED))
                             .applyTextStyle(TextFormatting.GRAY));
