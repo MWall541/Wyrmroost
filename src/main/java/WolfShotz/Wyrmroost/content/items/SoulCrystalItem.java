@@ -3,7 +3,8 @@ package WolfShotz.Wyrmroost.content.items;
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TranslationUtils;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +18,13 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class SoulCrystalItem extends Item
 {
@@ -30,6 +37,7 @@ public class SoulCrystalItem extends Item
     public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
         World world = player.world;
         if (world.isRemote) return false;
+        if (containsDragon(stack)) return false;
         if (!(target instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) target;
         if (dragon.getOwner() != player) return false;
@@ -37,7 +45,6 @@ public class SoulCrystalItem extends Item
         CompoundNBT tag = new CompoundNBT();
         target.writeAdditional(tag);
         tag.putString("entity", EntityType.getKey(dragon.getType()).toString());
-        tag.putUniqueId("entityID", dragon.getUniqueID());
         stack.setTag(tag);
         dragon.remove();
         player.setHeldItem(hand, stack);
@@ -53,7 +60,7 @@ public class SoulCrystalItem extends Item
         ItemStack stack = context.getItem();
         if (!containsDragon(stack)) return ActionResultType.PASS;
         World world = context.getWorld();
-        Entity entity = getEntity(stack, world);
+        AbstractDragonEntity entity = getEntity(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
         
         // Spawn the entity on the server side only
@@ -66,12 +73,16 @@ public class SoulCrystalItem extends Item
         // Client Side Cosmetics
         if (world.isRemote) {
             PlayerEntity player = context.getPlayer();
+            EntitySize size = entity.getSize(entity.getPose());
         
             player.swingArm(context.getHand());
+            double posX = pos.getX() + (size.width + 0.5);
+            double posY = pos.getY() + (size.height / 2);
+            double posZ = pos.getX() + (size.width + 0.5);
             for (int x = -10; x < 11; ++x) {
                 double sx = Math.cos(x / 3) * random.nextFloat();
                 double sz = Math.sin(x / 3) * random.nextFloat();
-                world.addParticle(ParticleTypes.PORTAL, pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5, sx, random.nextDouble() - 0.8, sz);
+                world.addParticle(ParticleTypes.PORTAL, posX, posY, posZ, sx, random.nextDouble() - 0.8, sz);
             }
         }
         world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
@@ -80,15 +91,28 @@ public class SoulCrystalItem extends Item
     }
     
     @Override
+    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        if (containsDragon(stack)) {
+            AbstractDragonEntity dragon = getEntity(stack, world);
+            
+            tooltip.add(new StringTextComponent("Name: " + dragon.getName().getUnformattedComponentText()));
+            tooltip.add(new StringTextComponent("Health: " + Math.round(dragon.getHealth()) / 2 + " ")
+                        .appendSibling(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.DARK_RED)));
+            tooltip.add(new StringTextComponent("Tamer: " + dragon.getOwner().getName().getUnformattedComponentText()));
+        } else
+            tooltip.add(TranslationUtils.addTooltip(this, TextFormatting.GRAY));
+    }
+    
+    @Override
     public boolean hasEffect(ItemStack stack) { return containsDragon(stack); }
     
-    private boolean containsDragon(ItemStack stack) { return !stack.isEmpty() && stack.hasTag() && stack.getTag().hasUniqueId("entityID"); }
+    private boolean containsDragon(ItemStack stack) { return !stack.isEmpty() && stack.hasTag() && stack.getTag().contains("entity"); }
     
-    private Entity getEntity(ItemStack stack, World world) {
+    private AbstractDragonEntity getEntity(ItemStack stack, World world) {
         EntityType type = EntityType.byKey(stack.getTag().getString("entity")).orElse(null);
         
         if (type == null) return null;
-        Entity entity = type.create(world);
+        AbstractDragonEntity entity = (AbstractDragonEntity) type.create(world);
         entity.read(stack.getTag());
         return entity;
     }
