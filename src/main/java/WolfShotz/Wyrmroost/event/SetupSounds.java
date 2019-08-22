@@ -64,7 +64,11 @@ public class SetupSounds
                 registerSound("entity.owdrake.idle"),
                 registerSound("entity.owdrake.roar"),
                 registerSound("entity.owdrake.hurt"),
-                registerSound("entity.owdrake.death")
+                registerSound("entity.owdrake.death"),
+                
+                registerSound("entity.rooststalker.idle"),
+                registerSound("entity.rooststalker.hurt"),
+                registerSound("entity.rooststalker.death")
         );
     }
 

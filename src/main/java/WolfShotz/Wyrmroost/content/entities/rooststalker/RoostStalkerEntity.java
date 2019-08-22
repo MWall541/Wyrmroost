@@ -227,7 +227,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return SetupSounds.STALKER_HURT; }
+    protected SoundEvent getDeathSound() { return SetupSounds.STALKER_DEATH; }
     
     /**
      * Array Containing all of the dragons food items
@@ -241,6 +241,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     // == Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION}; }
     // ==
 }
