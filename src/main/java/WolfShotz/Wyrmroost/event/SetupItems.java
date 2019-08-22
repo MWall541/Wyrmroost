@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlockItem;
 import WolfShotz.Wyrmroost.content.items.MinutusItem;
 import WolfShotz.Wyrmroost.content.items.ModBookItem;
+import WolfShotz.Wyrmroost.content.items.SoulCrystalItem;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -124,6 +125,7 @@ public class SetupItems
                 new ModBookItem(),
                 new MinutusItem(),
                 new EggBlockItem(),
+                new SoulCrystalItem(),
 
                 new Item(ModUtils.itemBuilder().food(FoodList.jewelledapple)).setRegistryName("jewelled_apple"),
                 new Item(ModUtils.itemBuilder().food(FoodList.dragonfruit)).setRegistryName("dragon_fruit"),

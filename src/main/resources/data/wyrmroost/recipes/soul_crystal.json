@@ -1,0 +1,13 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "GGG",
+        "GEG",
+        "GGG"
+    ],
+    "key": {
+        "G": {"item": "wyrmroost:geode"},
+        "E": {"item": "minecraft:ender_eye"}
+    },
+    "result": {"item": "wyrmroost:soul_crystal"}
+}
