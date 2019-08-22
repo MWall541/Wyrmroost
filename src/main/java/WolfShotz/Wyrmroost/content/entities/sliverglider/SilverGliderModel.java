@@ -5,6 +5,7 @@ import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * WRSilverGlider - Kingdomall
@@ -372,6 +373,25 @@ public class SilverGliderModel extends AdvancedEntityModel
             for (AdvancedRendererModel box : neckArray2) box.rotateAngleX = -0.4f;
             neck3.rotateAngleX = 0.5f;
             neck4.rotateAngleX = 0.25f;
+        } else {
+            Vec3d lookVec = glider.getLookVec();
+            
+            mainbody.rotateAngleX = (float) -lookVec.y;
+            
+            if (lookVec.y < 0) {
+                wing1L.rotateAngleY = (float) lookVec.y * 2;
+                wing1R.rotateAngleY = (float) -lookVec.y * 2;
+            } else {
+                wing1L.rotateAngleX = (float) -(lookVec.y * 2);
+                wing1R.rotateAngleX = (float) -(lookVec.y * 2);
+            }
+            
+            legL1.rotateAngleX = -1.2f;
+            legL2.rotateAngleX = 2.3f;
+            legL3.rotateAngleX = -2.5f;
+            legR1.rotateAngleX = -1.2f;
+            legR2.rotateAngleX = 2.3f;
+            legR3.rotateAngleX = -2.5f;
         }
         
         if (glider.isSitting() && currentAnim != SilverGliderEntity.SIT_ANIMATION)
@@ -389,11 +409,11 @@ public class SilverGliderModel extends AdvancedEntityModel
         
         if (currentAnim == SilverGliderEntity.STAND_ANIMATION) standAnim();
     
-        idleAnim(frame);
+        idleAnim(glider, frame);
     }
     
     // animate the head and tail according to glider's state (flying or on ground)
-    private void idleAnim(float frame) {
+    private void idleAnim(SilverGliderEntity glider, float frame) {
         // Neck
         chainWave(neckArray2, globalSpeed - 0.4f, 0.02f, 0, frame, 0.5f);
         
