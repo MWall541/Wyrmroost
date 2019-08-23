@@ -5,7 +5,10 @@ import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Random;
 
 /**
  * WRSilverGlider - Kingdomall
@@ -73,6 +76,8 @@ public class SilverGliderModel extends AdvancedEntityModel
     private final AdvancedRendererModel[] neckArray;
     private final AdvancedRendererModel[] neckArray2;
     private final AdvancedRendererModel[] tailArray;
+    
+    private int flapTicks;
     
     private ModelAnimator animator;
 
@@ -355,71 +360,85 @@ public class SilverGliderModel extends AdvancedEntityModel
         resetToDefaultPose();
         animator.update(glider);
         
-        if (!glider.isFlying() || glider.onGround) {
+        if (glider.isFlying()) { // Should only perform these anims during flight
+            Vec3d lookVec = glider.getLookVec();
+    
+            mainbody.rotateAngleX = (float) -lookVec.y;
+            legL1.rotateAngleX = -1.2f;
+            legL2.rotateAngleX = 2.3f;
+            legL3.rotateAngleX = -2.5f;
+            legR1.rotateAngleX = -1.2f;
+            legR2.rotateAngleX = 2.3f;
+            legR3.rotateAngleX = -2.5f;
+    
+            if (lookVec.y < 0) { // Fold the wings in to "dive" down
+                wing1L.rotateAngleY = (float) lookVec.y;
+                wing1R.rotateAngleY = (float) -lookVec.y;
+            }
+            if (lookVec.y >= 0) {
+                wing1L.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
+                wing1R.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
+        
+                if ((lookVec.y <= 0.15 || glider.isRiding()) && flapTicks <= 0 && new Random().nextInt(200) == 0)
+                    flapTicks = 100; // Only flap while gliding/riding player
+            }
+            
+            flight(frame);
+            
+        } else { // Should only perform these anims on the ground
+            
+            // Default ground pose
+            // Left Wing
             wing1L.rotateAngleX = 0.6f;
             wing1L.rotateAngleY = -0.1f;
             wing2L.rotateAngleY = 1.3f;
             phalangeL11.rotateAngleY = -1.8f;
             phalangeL21.rotateAngleY = -2.0f;
             membrane2L.rotateAngleY = 0.1f;
-    
+            // Right wing
             wing1R.rotateAngleX = 0.6f;
             wing1R.rotateAngleY = 0.1f;
             wing2R.rotateAngleY = -1.3f;
             phalangeR11.rotateAngleY = 1.8f;
             phalangeR21.rotateAngleY = 2.0f;
             membrane2R.rotateAngleY = -0.1f;
-    
+            // Neck
             for (AdvancedRendererModel box : neckArray2) box.rotateAngleX = -0.4f;
             neck3.rotateAngleX = 0.5f;
             neck4.rotateAngleX = 0.25f;
-        } else {
-            Vec3d lookVec = glider.getLookVec();
             
-            mainbody.rotateAngleX = (float) -lookVec.y;
-            if (glider.isRiding()) {
-                legL1.rotateAngleX = (float) lookVec.y;
-                legR1.rotateAngleX = (float) lookVec.y;
-            } else {
-                legL1.rotateAngleX = -1.2f;
-                legL2.rotateAngleX = 2.3f;
-                legL3.rotateAngleX = -2.5f;
-                legR1.rotateAngleX = -1.2f;
-                legR2.rotateAngleX = 2.3f;
-                legR3.rotateAngleX = -2.5f;
+            flapTicks = 0;
+    
+            if (glider.isSitting() && currentAnim != SilverGliderEntity.SIT_ANIMATION)
+                staySitting();
+    
+            if (currentAnim == SilverGliderEntity.SIT_ANIMATION) sitAnim();
+    
+            if (currentAnim == SilverGliderEntity.STAND_ANIMATION) standAnim();
+    
+            if (glider.isSleeping() && currentAnim != SilverGliderEntity.SLEEP_ANIMATION) {
+                staySleeping(frame);
+        
+                return; // Do not perform default idle movements
             }
+    
+            if (currentAnim == SilverGliderEntity.SLEEP_ANIMATION) sleepAnim(glider.isSitting());
             
-            if (lookVec.y < 0) {
-                wing1L.rotateAngleY = (float) lookVec.y;
-                wing1R.rotateAngleY = (float) -lookVec.y;
-            }
+            if (currentAnim == SilverGliderEntity.WAKE_ANIMATION) wakeAnim(glider.isSitting());
             
-            if (lookVec.y >= 0) {
-                wing1L.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
-                wing1R.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
-            }
+            idleAnim(frame);
         }
         
-        if (glider.isSitting() && currentAnim != SilverGliderEntity.SIT_ANIMATION)
-            staySitting();
-    
-        if (currentAnim == SilverGliderEntity.SLEEP_ANIMATION) sleepAnim(glider);
-        
-        if (glider.isSleeping() && currentAnim != SilverGliderEntity.SLEEP_ANIMATION) {
-            staySleeping(frame);
+        if (flapTicks > 0) {
             
-            return;
+            wing1L.rotateAngleZ += MathHelper.cos(flapTicks * 0.05f);
+            
+            --flapTicks;
         }
-        
-        if (currentAnim == SilverGliderEntity.SIT_ANIMATION) sitAnim();
-        
-        if (currentAnim == SilverGliderEntity.STAND_ANIMATION) standAnim();
-    
-        idleAnim(glider, frame);
     }
     
     // animate the head and tail according to glider's state (flying or on ground)
-    private void idleAnim(SilverGliderEntity glider, float frame) {
+    private void idleAnim(float frame) {
         // Neck
         chainWave(neckArray2, globalSpeed - 0.4f, 0.02f, 0, frame, 0.5f);
         
@@ -516,12 +535,12 @@ public class SilverGliderModel extends AdvancedEntityModel
         animator.endKeyframe();
     }
     
-    private void sleepAnim(SilverGliderEntity glider) {
+    private void sleepAnim(boolean sitting) {
         animator.setAnimation(SilverGliderEntity.SLEEP_ANIMATION);
     
         animator.startKeyframe(20);
     
-        if (!glider.isSitting()) {
+        if (!sitting) {
             animator.move(mainbody, 0, 4f, 0);
             animator.rotate(wing1L, -0.3f, 0, 0);
             animator.rotate(wing1R, -0.3f, 0, 0);
@@ -542,5 +561,38 @@ public class SilverGliderModel extends AdvancedEntityModel
         for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, 0.75f, 0, 0);
         animator.endKeyframe();
     
+    }
+    
+    private void wakeAnim(boolean sitting) {
+        animator.setAnimation(SilverGliderEntity.SLEEP_ANIMATION);
+        
+        animator.startKeyframe(20);
+        
+        if (!sitting) {
+            animator.move(mainbody, 0, -4f, 0);
+            animator.rotate(wing1L, 0.3f, 0, 0);
+            animator.rotate(wing1R, 0.3f, 0, 0);
+            animator.rotate(legR1, 0.6f, 0, 0);
+            animator.rotate(legR2, -0.95f, 0, 0);
+            animator.rotate(legR3, 1.15f, 0, 0);
+            animator.rotate(legL1, 0.6f, 0, 0);
+            animator.rotate(legL2, -0.95f, 0, 0);
+            animator.rotate(legL3, 1.15f, 0, 0);
+        }
+        animator.rotate(wing1R, 0.2f, 0, 0);
+        animator.rotate(neck3, 0.5f, 0, 0);
+        animator.rotate(neck4, 0.2f, 0, 0);
+        animator.rotate(head, 0.3f, 0, 0);
+        for (AdvancedRendererModel neckSegment : neckArray2) animator.rotate(neckSegment, -0.4f, 0, 0);
+        for (AdvancedRendererModel neck : neckArray) animator.rotate(neck, -0.1f, -0.5f, 0);
+        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0.05f, 0.3f, 0);
+        for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, -0.75f, 0, 0);
+        animator.endKeyframe();
+        
+    }
+    
+    private void flight(float frame) {
+        
+        chainWave(tailArray, globalSpeed, 0.5f, 1, frame, 0.5f);
     }
 }
