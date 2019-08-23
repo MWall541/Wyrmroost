@@ -29,7 +29,7 @@ public class EggTileEntity extends TileEntity implements ITickableTileEntity
     
             if (dragonType == null) { // This Shouldnt happen...
                 world.setBlockState(getPos(), Blocks.AIR.getDefaultState());
-                ModUtils.L.error("Dragon type on Egg TE was null!");
+                ModUtils.L.error("Dragon Egg TE @ {} dragonType was invalid!", getPos());
                 return;
             }
     
