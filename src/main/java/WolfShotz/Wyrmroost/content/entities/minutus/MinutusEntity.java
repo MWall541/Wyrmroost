@@ -163,10 +163,13 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
 
             return true;
         }
+        // Easter egg ;)
         if (stack.getItem() == Items.BUCKET) {
             world.playSound(null, player.getPosition(), SoundEvents.ENTITY_COW_MILK, SoundCategory.NEUTRAL, 1f, 1f);
             stack.shrink(1);
             player.addItemStackToInventory(new ItemStack(Items.MILK_BUCKET));
+            
+            return true;
         }
         
         return super.processInteract(player, hand);
@@ -184,7 +187,7 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.MINUTUS_SCREECH; }
 
     @Override
-    protected float getSoundVolume() { return 0.5f; }
+    protected float getSoundVolume() { return 0.3f; }
     
     @Override
     public boolean canBePushed() { return !isBurrowed(); }
