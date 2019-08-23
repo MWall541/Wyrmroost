@@ -1,13 +1,25 @@
 package WolfShotz.Wyrmroost.compat;
 
+import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 @JeiPlugin
 public class JEIPlugin implements IModPlugin
 {
     @Override
-    public ResourceLocation getPluginUid() { return ModUtils.location("internal"); }
+    public ResourceLocation getPluginUid() { return ModUtils.location("info"); }
+    
+    @Override
+    public void registerRecipes(IRecipeRegistration registry) {
+        // Soul Crystal
+        registry.addIngredientInfo(new ItemStack(SetupItems.soulcrystal, 1), VanillaTypes.ITEM, "item.wyrmroost.soul_crystal.jeidesc");
+        
+        
+    }
 }

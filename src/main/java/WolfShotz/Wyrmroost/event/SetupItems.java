@@ -43,6 +43,9 @@ public class SetupItems
     @ObjectHolder(Wyrmroost.modID + ":egg")
     public static Item egg;
 
+    @ObjectHolder(Wyrmroost.modID + ":soul_crystal")
+    public static Item soulcrystal;
+    
     // Geode start
     @ObjectHolder(Wyrmroost.modID + ":geode")
     public static Item itemgeode;

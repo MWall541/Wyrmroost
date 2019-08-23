@@ -51,14 +51,14 @@ public class TranslationUtils
     public static String format(String text) { return I18n.format(text); }
     
     /**
-     * Add a addTooltip to an Item. (The Mouse-over description)
-     * <p> Output: "item.<code>MODID</code>.<code>ITEM</code>.addTooltip"
+     * Add a tooltip to an Item. (The Mouse-over description)
+     * <p> Output: "item.<code>MODID</code>.<code>ITEM</code>.tooltip"
      * @param item (<code>this</code>)
      * @param formats OPTIONAL
-     * @return Item's Translation key + <code>".addTooltip"</code>
+     * @return Item's Translation key + <code>".tooltip"</code>
      */
     public static ITextComponent addTooltip(Item item, TextFormatting... formats) {
-        return translation(item.getTranslationKey() + ".addTooltip", formats);
+        return translation(item.getTranslationKey() + ".tooltip", formats);
     }
     
     /**
