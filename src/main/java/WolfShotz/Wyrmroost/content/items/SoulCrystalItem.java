@@ -87,7 +87,7 @@ public class SoulCrystalItem extends Item
         return ActionResultType.SUCCESS;
     }
     
-    @Override
+/*    @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         RayTraceResult result = rayTrace(world, player, RayTraceContext.FluidMode.NONE);
@@ -97,7 +97,7 @@ public class SoulCrystalItem extends Item
         world.playSound(null, player.getPosition(), getEntity(stack,world).getIdleSound(), SoundCategory.AMBIENT, 0.5f, 0.5f);
         
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
-    }
+    }*/
     
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn) {

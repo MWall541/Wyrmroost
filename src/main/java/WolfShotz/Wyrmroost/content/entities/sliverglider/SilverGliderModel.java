@@ -377,21 +377,27 @@ public class SilverGliderModel extends AdvancedEntityModel
             Vec3d lookVec = glider.getLookVec();
             
             mainbody.rotateAngleX = (float) -lookVec.y;
-            
-            if (lookVec.y < 0) {
-                wing1L.rotateAngleY = (float) lookVec.y * 2;
-                wing1R.rotateAngleY = (float) -lookVec.y * 2;
+            if (glider.isRiding()) {
+                legL1.rotateAngleX = (float) lookVec.y;
+                legR1.rotateAngleX = (float) lookVec.y;
             } else {
-                wing1L.rotateAngleX = (float) -(lookVec.y * 2);
-                wing1R.rotateAngleX = (float) -(lookVec.y * 2);
+                legL1.rotateAngleX = -1.2f;
+                legL2.rotateAngleX = 2.3f;
+                legL3.rotateAngleX = -2.5f;
+                legR1.rotateAngleX = -1.2f;
+                legR2.rotateAngleX = 2.3f;
+                legR3.rotateAngleX = -2.5f;
             }
             
-            legL1.rotateAngleX = -1.2f;
-            legL2.rotateAngleX = 2.3f;
-            legL3.rotateAngleX = -2.5f;
-            legR1.rotateAngleX = -1.2f;
-            legR2.rotateAngleX = 2.3f;
-            legR3.rotateAngleX = -2.5f;
+            if (lookVec.y < 0) {
+                wing1L.rotateAngleY = (float) lookVec.y;
+                wing1R.rotateAngleY = (float) -lookVec.y;
+            }
+            
+            if (lookVec.y >= 0) {
+                wing1L.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
+                wing1R.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
+            }
         }
         
         if (glider.isSitting() && currentAnim != SilverGliderEntity.SIT_ANIMATION)

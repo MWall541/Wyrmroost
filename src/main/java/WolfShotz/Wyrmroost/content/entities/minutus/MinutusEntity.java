@@ -20,13 +20,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
@@ -140,6 +139,8 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
 
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
+        if (hand != Hand.MAIN_HAND) return false;
+        
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
             CompoundNBT nbt = new CompoundNBT();
@@ -162,7 +163,12 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
 
             return true;
         }
-
+        if (stack.getItem() == Items.BUCKET) {
+            world.playSound(null, player.getPosition(), SoundEvents.ENTITY_COW_MILK, SoundCategory.NEUTRAL, 1f, 1f);
+            stack.shrink(1);
+            player.addItemStackToInventory(new ItemStack(Items.MILK_BUCKET));
+        }
+        
         return super.processInteract(player, hand);
     }
     
