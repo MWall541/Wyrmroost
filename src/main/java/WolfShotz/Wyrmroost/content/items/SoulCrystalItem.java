@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.TranslationUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -13,11 +12,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -41,7 +39,7 @@ public class SoulCrystalItem extends Item
         if (!(target instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) target;
         if (dragon.getOwner() != player) return false;
-    
+        
         CompoundNBT tag = new CompoundNBT();
         target.writeAdditional(tag);
         tag.putString("entity", EntityType.getKey(dragon.getType()).toString());
@@ -50,15 +48,14 @@ public class SoulCrystalItem extends Item
         player.setHeldItem(hand, stack);
         player.swingArm(hand);
         world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
-        world.playSound(null, player.getPosition(), SoundEvents.ENTITY_ENDER_DRAGON_AMBIENT, SoundCategory.AMBIENT, 0.02f, 1f);
-    
+        
         return true;
     }
     
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {
         ItemStack stack = context.getItem();
-        if (!containsDragon(stack)) return ActionResultType.PASS;
+        if (!containsDragon(stack)) return super.onItemUse(context);
         World world = context.getWorld();
         AbstractDragonEntity entity = getEntity(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
@@ -74,20 +71,32 @@ public class SoulCrystalItem extends Item
         if (world.isRemote) {
             PlayerEntity player = context.getPlayer();
             EntitySize size = entity.getSize(entity.getPose());
-        
+            
             player.swingArm(context.getHand());
-            double posX = pos.getX() + (size.width + 0.5);
+            double posX = pos.getX() + (size.width + 0.5) * 0.1;
             double posY = pos.getY() + (size.height / 2);
-            double posZ = pos.getX() + (size.width + 0.5);
-            for (int x = -10; x < 11; ++x) {
+            double posZ = pos.getZ() + (size.width + 0.5) * 0.1;
+            for (int x = (int) -(size.width * 5); x < (int) (size.width * 5); ++x) {
                 double sx = Math.cos(x / 3) * random.nextFloat();
                 double sz = Math.sin(x / 3) * random.nextFloat();
                 world.addParticle(ParticleTypes.PORTAL, posX, posY, posZ, sx, random.nextDouble() - 0.8, sz);
             }
         }
         world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
-    
+        
         return ActionResultType.SUCCESS;
+    }
+    
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+        RayTraceResult result = rayTrace(world, player, RayTraceContext.FluidMode.NONE);
+        if (!containsDragon(stack)) return super.onItemRightClick(world, player, hand);
+        
+        player.getCooldownTracker().setCooldown(stack.getItem(), 40);
+        world.playSound(null, player.getPosition(), getEntity(stack,world).getIdleSound(), SoundCategory.AMBIENT, 0.5f, 0.5f);
+        
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
     
     @Override
@@ -97,10 +106,9 @@ public class SoulCrystalItem extends Item
             
             tooltip.add(new StringTextComponent("Name: " + dragon.getName().getUnformattedComponentText()));
             tooltip.add(new StringTextComponent("Health: " + Math.round(dragon.getHealth()) / 2 + " ")
-                        .appendSibling(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.DARK_RED)));
+                                .appendSibling(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.DARK_RED)));
             tooltip.add(new StringTextComponent("Tamer: " + dragon.getOwner().getName().getUnformattedComponentText()));
-        } else
-            tooltip.add(TranslationUtils.addTooltip(this, TextFormatting.GRAY));
+        }
     }
     
     @Override

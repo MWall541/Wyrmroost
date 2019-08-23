@@ -188,7 +188,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
         
         // If Saddled and not sneaking, start riding
-        if (isSaddled() && !isChild() && !isBreedingItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking()) {
+        if (isSaddled() && !isChild() && !isInteractItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking()) {
             if (isSleeping()) setSleeping(false);
             setSit(false);
             player.startRiding(this);

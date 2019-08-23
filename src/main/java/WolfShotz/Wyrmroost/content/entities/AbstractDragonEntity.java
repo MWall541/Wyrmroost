@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities;
 import WolfShotz.Wyrmroost.content.entities.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.content.entities.ai.FlightPathNavigator;
 import WolfShotz.Wyrmroost.content.entities.ai.goals.SleepGoal;
+import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -27,12 +28,14 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -380,6 +383,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
     
+    public boolean isInteractItem(ItemStack stack) {
+        Item item = stack.getItem();
+        return item == SetupItems.soulcrystal || isBreedingItem(stack);
+    }
+    
     /**
      * Array Containing all of the dragons food items
      */
@@ -393,6 +401,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     public void playAmbientSound() { if (!isSleeping()) super.playAmbientSound(); }
+    
+    /**
+     * Public access of {@link #getAmbientSound()}
+     */
+    public SoundEvent getIdleSound() { return getAmbientSound(); }
     
     /**
      * Set a damage source immunity
