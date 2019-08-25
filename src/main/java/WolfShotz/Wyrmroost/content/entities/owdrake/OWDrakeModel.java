@@ -396,28 +396,7 @@ public class OWDrakeModel extends AdvancedEntityModel
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         OWDrakeEntity entity = (OWDrakeEntity) entityIn;
-
-        if (!entity.isSitting() || entity.getAnimation() != AbstractDragonEntity.NO_ANIMATION) {
-            
-            // Left Arm
-            arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
-            palmL.walk(globalSpeed, f, true, 2.5f, 0, limbSwing, limbSwingAmount);
-            
-    
-            // Right Arm
-            arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
-            palmR.walk(globalSpeed, f, false, 2.5f, 0, limbSwing, limbSwingAmount);
-            
-            
-            // Left Leg
-            leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
-            footL.walk(globalSpeed, 0.2f, false, 2f, 0, limbSwing, limbSwingAmount);
-    
-            
-            // Right Leg
-            leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
-            footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
-        }
+        
     }
     
     @Override
@@ -429,6 +408,28 @@ public class OWDrakeModel extends AdvancedEntityModel
         resetToDefaultPose();
         animator.update(drake);
     
+        if (!drake.isSitting() || drake.getAnimation() != AbstractDragonEntity.NO_ANIMATION) {
+        
+            // Body bob
+            bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, 0.5f);
+            
+            // Left Arm
+            arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+            palmL.walk(globalSpeed, f, true, 2.5f, 0, limbSwing, limbSwingAmount);
+        
+            // Right Arm
+            arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+            palmR.walk(globalSpeed, f, false, 2.5f, 0, limbSwing, limbSwingAmount);
+        
+            // Left Leg
+            leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+            footL.walk(globalSpeed, 0.2f, false, 2f, 0, limbSwing, limbSwingAmount);
+        
+            // Right Leg
+            leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+            footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
+        }
+        
         if (drake.isSitting() && currentAnim != OWDrakeEntity.SIT_ANIMATION)
             staySitting();
     
@@ -441,9 +442,9 @@ public class OWDrakeModel extends AdvancedEntityModel
     
         if (currentAnim == OWDrakeEntity.STAND_ANIMATION) standAnim();
     
-        if (currentAnim == OWDrakeEntity.SLEEP_ANIMATION) sleepAnim(drake);
+        if (currentAnim == OWDrakeEntity.SLEEP_ANIMATION) sleepAnim(drake.isSitting());
     
-        if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim(drake);
+        if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim();
     
         if (currentAnim == OWDrakeEntity.GRAZE_ANIMATION) grazeAnim(drake, frame);
 
@@ -607,12 +608,12 @@ public class OWDrakeModel extends AdvancedEntityModel
         eyeR.rotateAngleY = -1f;
     }
     
-    private void sleepAnim(OWDrakeEntity drake) {
+    private void sleepAnim(boolean isSitting) {
         animator.setAnimation(OWDrakeEntity.SLEEP_ANIMATION);
         
         animator.startKeyframe(20);
         
-        if (!drake.isSitting()) {
+        if (!isSitting) {
             animator.move(body1, 0, 5.5f, 0);
             //Front Right
             animator.rotate(arm2R, -1.1f, 0, 0);
@@ -649,7 +650,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         
     }
     
-    private void wakeAnim(OWDrakeEntity drake) {
+    private void wakeAnim() {
         animator.setAnimation(OWDrakeEntity.WAKE_ANIMATION);
     
         staySleeping();
