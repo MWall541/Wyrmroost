@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
-import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -14,8 +14,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;

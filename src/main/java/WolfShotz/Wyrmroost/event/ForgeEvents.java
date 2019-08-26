@@ -1,11 +1,10 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
-import WolfShotz.Wyrmroost.network.SendKeyPressMessage;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.util.network.SendKeyPressMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,11 +14,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
-
-import java.util.Optional;
 
 /**
  * Class Used to hook into forge events to perform particular tasks when the event is called

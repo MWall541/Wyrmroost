@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.io.ScreenModBook;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +17,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;

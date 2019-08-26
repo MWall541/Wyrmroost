@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.blocks.eggblock;
 
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

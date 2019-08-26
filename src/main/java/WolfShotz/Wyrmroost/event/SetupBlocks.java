@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.content.blocks.GeodeOreBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlock;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

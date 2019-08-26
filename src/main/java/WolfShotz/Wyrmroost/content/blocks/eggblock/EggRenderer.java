@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.blocks.eggblock;
 
-import WolfShotz.Wyrmroost.content.entities.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.util.ResourceLocation;

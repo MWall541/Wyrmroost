@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.event;
 
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;

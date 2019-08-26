@@ -1,15 +1,15 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.minutus.MinutusEntity;
-import WolfShotz.Wyrmroost.content.entities.minutus.MinutusRenderer;
-import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeEntity;
-import WolfShotz.Wyrmroost.content.entities.owdrake.OWDrakeRenderer;
-import WolfShotz.Wyrmroost.content.entities.rooststalker.RoostStalkerEntity;
-import WolfShotz.Wyrmroost.content.entities.rooststalker.RoostStalkerRenderer;
-import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderEntity;
-import WolfShotz.Wyrmroost.content.entities.sliverglider.SilverGliderRenderer;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
@@ -25,7 +25,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 

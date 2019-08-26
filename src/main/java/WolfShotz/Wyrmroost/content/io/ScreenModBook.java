@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.io;
 
-import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.TranslationUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;

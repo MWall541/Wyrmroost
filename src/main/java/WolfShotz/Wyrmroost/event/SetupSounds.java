@@ -1,9 +1,8 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

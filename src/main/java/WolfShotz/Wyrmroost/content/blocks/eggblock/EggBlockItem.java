@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.blocks.eggblock;
 
 import WolfShotz.Wyrmroost.event.SetupBlocks;
-import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.TranslationUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;

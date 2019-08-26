@@ -6,7 +6,7 @@ import WolfShotz.Wyrmroost.content.items.MinutusItem;
 import WolfShotz.Wyrmroost.content.items.ModBookItem;
 import WolfShotz.Wyrmroost.content.items.SoulCrystalItem;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.Ingredient;
