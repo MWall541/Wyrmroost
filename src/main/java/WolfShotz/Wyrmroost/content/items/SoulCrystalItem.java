@@ -112,6 +112,16 @@ public class SoulCrystalItem extends Item
     }
     
     @Override
+    public ITextComponent getDisplayName(ItemStack stack) {
+        ITextComponent name = super.getDisplayName(stack);
+        
+        if (containsDragon(stack))
+            name.applyTextStyle(TextFormatting.AQUA).applyTextStyle(TextFormatting.ITALIC);
+        
+        return name;
+    }
+    
+    @Override
     public boolean hasEffect(ItemStack stack) { return containsDragon(stack); }
     
     private boolean containsDragon(ItemStack stack) { return !stack.isEmpty() && stack.hasTag() && stack.getTag().contains("entity"); }
