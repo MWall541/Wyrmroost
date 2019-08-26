@@ -32,8 +32,5 @@ public class SleepGoal extends Goal
     }
     
     @Override
-    public boolean shouldContinueExecuting() { return shouldExecute(); }
-    
-    @Override
     public void resetTask() { dragon.setSleeping(false); }
 }

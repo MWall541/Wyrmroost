@@ -82,8 +82,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, sitGoal = new SitGoal(this));
         goalSelector.addGoal(2, new SleepGoal(this));
+        goalSelector.addGoal(2, sitGoal = new SitGoal(this));
     }
 
     // ================================
@@ -252,7 +252,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
     }
-
+    
     public void switchPathController(boolean flying) {
         if (flying) {
             moveController = new FlightMovementController(this);

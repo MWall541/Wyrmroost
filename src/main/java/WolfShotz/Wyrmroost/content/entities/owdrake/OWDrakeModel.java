@@ -423,14 +423,14 @@ public class OWDrakeModel extends AdvancedEntityModel
             leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
             footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
         }
-    
-        if (currentAnim == OWDrakeEntity.TALK_ANIMATION) talkAnim();
         
         if (drake.isSitting() && currentAnim != OWDrakeEntity.SIT_ANIMATION)
             staySitting();
     
         if (drake.isSleeping() && currentAnim != OWDrakeEntity.SLEEP_ANIMATION)
             staySleeping();
+        
+        if (currentAnim == OWDrakeEntity.TALK_ANIMATION) talkAnim();
     
         if (currentAnim == OWDrakeEntity.SIT_ANIMATION) sitAnim();
     

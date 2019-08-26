@@ -61,9 +61,8 @@ public class ForgeEvents
      @OnlyIn(Dist.CLIENT)
      public static void ridingPerspective(EntityViewRenderEvent.CameraSetup event) {
          Minecraft mc = Minecraft.getInstance();
-         ClientPlayerEntity player = mc.player;
 
-         if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
+         if (mc.player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
              if (mc.gameSettings.thirdPersonView == 1) GL11.glTranslatef(0, -0.5f, -0.5f);
      }
      
