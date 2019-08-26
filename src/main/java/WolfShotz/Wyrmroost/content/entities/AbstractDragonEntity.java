@@ -31,6 +31,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -79,8 +82,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, new SleepGoal(this));
         goalSelector.addGoal(2, sitGoal = new SitGoal(this));
+        goalSelector.addGoal(2, new SleepGoal(this));
     }
 
     // ================================
@@ -287,49 +290,31 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     
-    public void attackInFront(int range, boolean single) {
-        attackInFront((int) (getSize(getPose()).width / 2) + 1, (int) (getSize(getPose()).height / 2), range, single);
+    public void attackInFront(int range) {
+        AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), range)).grow(range, 0, range);
+        List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this || getPassengers().stream().noneMatch(found::equals));
+        if (livingEntities.isEmpty()) return;
+        
+        livingEntities.forEach(this::attackEntityAsMob);
     }
     
-    public void attackInFront(int offsetX, int offsetY, int range, boolean single) {
-        AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), offsetX).up(offsetY)).grow(range);
-        Predicate<LivingEntity> filter = mob -> getPassengers().stream().noneMatch(passenger -> passenger == mob);
-        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, filter);
+    @Override // Dont damage owners other pets!
+    public boolean attackEntityAsMob(Entity entity) {
+        if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner())
+            return false;
         
-        if (entities.isEmpty()) return;
-        if (entities.size() == 1) attackEntityAsMob(entities.get(0));
-        
-        if (single) {
-            LivingEntity singleEntity = entities.stream().min((entity1, entity2) -> Float.compare(entity1.getDistance(this), entity2.getDistance(this))).get();
-            attackEntityAsMob(singleEntity);
-        }
-        else entities.forEach(this::attackEntityAsMob);
-    }
-    
-    @Override
-    public boolean attackEntityAsMob(Entity entityIn) {
-/*        if (entityIn instanceof TameableEntity) {
-            TameableEntity entity = (TameableEntity) entityIn;
-    
-            if (entity.getOwner() == getOwner()) return false;
-        }
-        */
-        return super.attackEntityAsMob(entityIn);
+        return super.attackEntityAsMob(entity);
     }
     
     /**
      * Should the dragon attack
-     * @param targetted
+     * @param target
      * @param owner
      */
-    @Override
-    public boolean shouldAttackEntity(LivingEntity targetted, LivingEntity owner) {
+    @Override // We shouldnt be targetting pets...
+    public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
         if (!isTamed()) return true;
-        if (targetted instanceof TameableEntity) {
-            TameableEntity target = (TameableEntity) targetted;
-    
-            return target.getOwner() != owner;
-        }
+        if (target instanceof TameableEntity) return ((TameableEntity) target).getOwner() != owner;
         
         return true;
     }
@@ -397,6 +382,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isBreedingItem(ItemStack stack) {
         if (getFoodItems().length == 0 || getFoodItems() == null) return false;
         return Arrays.asList(getFoodItems()).contains(stack.getItem());
+    }
+    
+    public List<LivingEntity> getEntitiesNearby(double radius) {
+        return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), found -> found != this && getPassengers().stream().noneMatch(found::equals));
     }
     
     @Override
