@@ -1,9 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.RandomLookGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -58,8 +60,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(10, new DragonBreedGoal(this, false));
         goalSelector.addGoal(11, new ScavengeGoal(this, 0.8d));
         goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1d));
-        goalSelector.addGoal(13, new LookAtGoal(this, LivingEntity.class, 5f));
-        goalSelector.addGoal(14, new LookRandomlyGoal(this));
+        goalSelector.addGoal(13, new WatchGoal(this, LivingEntity.class, 5f));
+        goalSelector.addGoal(14, new RandomLookGoal(this));
     
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));

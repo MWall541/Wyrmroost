@@ -1,10 +1,12 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.DragonGrazeGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.RandomLookGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
@@ -76,8 +78,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(6, new DragonBreedGoal(this, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
-        goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f));
-        goalSelector.addGoal(13, new LookRandomlyGoal(this));
+        goalSelector.addGoal(12, new WatchGoal(this, LivingEntity.class, 10f));
+        goalSelector.addGoal(13, new RandomLookGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));

@@ -1,9 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.goals.NonTamedAvoidGoal;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.goals.NonTamedTemptGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.*;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
@@ -78,8 +76,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 10, 4));
         goalSelector.addGoal(7, new DragonBreedGoal(this, true));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
-        goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 10f));
-        goalSelector.addGoal(12, new LookRandomlyGoal(this));
+        goalSelector.addGoal(11, new WatchGoal(this, LivingEntity.class, 10f));
+        goalSelector.addGoal(12, new RandomLookGoal(this));
     }
 
     // ================================

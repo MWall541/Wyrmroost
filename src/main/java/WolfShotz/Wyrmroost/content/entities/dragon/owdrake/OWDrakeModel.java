@@ -437,7 +437,7 @@ public class OWDrakeModel extends AdvancedEntityModel
     
         if (currentAnim == OWDrakeEntity.SLEEP_ANIMATION) sleepAnim(drake.isSitting());
     
-        if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim();
+        if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim(drake.isSitting());
     
         if (currentAnim == OWDrakeEntity.GRAZE_ANIMATION) grazeAnim(drake, frame);
 
@@ -455,7 +455,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         
         continueIdle(frame);
         
-        faceTarget(netHeadYaw, headPitch, 1, neck1, head);
+        if (!drake.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     
     
@@ -643,7 +643,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         
     }
     
-    private void wakeAnim() {
+    private void wakeAnim(boolean isSitting) {
         animator.setAnimation(OWDrakeEntity.WAKE_ANIMATION);
     
         staySleeping();
