@@ -40,6 +40,8 @@ public class Wyrmroost
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::debugStick);
+        
         SetupOreGen.setupOreGen();
         
         int networkIndex = 0;

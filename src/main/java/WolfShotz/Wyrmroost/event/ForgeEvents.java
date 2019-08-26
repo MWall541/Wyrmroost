@@ -8,11 +8,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Optional;
@@ -61,5 +65,19 @@ public class ForgeEvents
 
          if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
              if (mc.gameSettings.thirdPersonView == 1) GL11.glTranslatef(0, -0.5f, -0.5f);
+     }
+     
+     public static void debugStick(PlayerInteractEvent.EntityInteract evt) {
+         Entity entity = evt.getTarget();
+         if (!(entity instanceof AbstractDragonEntity)) return;
+         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+         PlayerEntity player = evt.getPlayer();
+         ItemStack stack = player.getHeldItem(evt.getHand());
+         
+         if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
+             evt.setCanceled(true);
+             String msg = "Gender: " + (dragon.getGender()? "Male " : "Female ") + "Sitting: " + dragon.isSitting() + " Sleeping: " + dragon.isSleeping();
+             player.sendStatusMessage(new StringTextComponent(msg), true);
+         }
      }
 }

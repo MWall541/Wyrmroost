@@ -392,7 +392,7 @@ public class SilverGliderModel extends AdvancedEntityModel
 //                phalangeR11.rotateAngleY = (float) -lookVec.y * 2.5f;
             }
             else { // Tilt the wings up for "gliding"
-                wing1L.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
+//                wing1L.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
                 wing1R.rotateAngleX = (float) Math.max(-(lookVec.y * 2), -0.21);
         
                 if ((lookVec.y <= 0.15 || glider.isRiding()) && flapTicks <= 0 && new Random().nextInt(200) == 0)
@@ -621,6 +621,9 @@ public class SilverGliderModel extends AdvancedEntityModel
     }
     
     private void flight(float frame) {
+        flap(wing1L, globalSpeed - 0.03f, 1f, false, 0, 0, frame, 0.5f);
+        flap(wing2L, globalSpeed - 0.03f, 1.2f, false, -0.7f, 0, frame, 0.5f);
+    
         chainWave(headArray, globalSpeed - 0.2f, 0.05f, 2.8, frame, 0.5f);
         chainWave(tailArray, globalSpeed - 0.15f, 0.05f, 2, frame, 0.5f);
     }

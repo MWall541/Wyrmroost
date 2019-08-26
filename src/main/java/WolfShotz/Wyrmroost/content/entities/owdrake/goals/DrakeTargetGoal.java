@@ -17,7 +17,7 @@ public class DrakeTargetGoal extends NonTamedTargetGoal
     
     @Override
     public void startExecuting() {
-        if (!drake.hasActiveAnimation()) NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.ROAR_ANIMATION);
+        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION) NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.ROAR_ANIMATION);
     
         super.startExecuting();
     }

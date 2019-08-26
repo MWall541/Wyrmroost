@@ -23,7 +23,8 @@ public class JEIPlugin implements IModPlugin
         // Soul Crystal
         registry.addIngredientInfo(new ItemStack(SetupItems.soulcrystal, 1), VanillaTypes.ITEM,
                                    new TranslationTextComponent("item.wyrmroost.soul_crystal.jeidesc",
-                                                                TranslationUtils.stringTranslation("dsabgi", TextFormatting.OBFUSCATED).getFormattedText()).getFormattedText());
+                                                                TranslationUtils.stringTranslation("dsabgi", TextFormatting.OBFUSCATED).getFormattedText())
+                                           .getFormattedText());
         
     }
 }

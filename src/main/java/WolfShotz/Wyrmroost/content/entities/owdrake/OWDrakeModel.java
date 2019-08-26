@@ -392,12 +392,6 @@ public class OWDrakeModel extends AdvancedEntityModel
         
         GlStateManager.popMatrix();
     }
-
-    @Override
-    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        OWDrakeEntity entity = (OWDrakeEntity) entityIn;
-        
-    }
     
     @Override
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
@@ -408,7 +402,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         resetToDefaultPose();
         animator.update(drake);
     
-        if (!drake.isSitting() || drake.getAnimation() != AbstractDragonEntity.NO_ANIMATION) {
+        if (!drake.isSitting() || !drake.hasActiveAnimation()) {
         
             // Body bob
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, 0.5f);
@@ -429,14 +423,14 @@ public class OWDrakeModel extends AdvancedEntityModel
             leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
             footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
         }
+    
+        if (currentAnim == OWDrakeEntity.TALK_ANIMATION) talkAnim();
         
         if (drake.isSitting() && currentAnim != OWDrakeEntity.SIT_ANIMATION)
             staySitting();
     
         if (drake.isSleeping() && currentAnim != OWDrakeEntity.SLEEP_ANIMATION)
             staySleeping();
-    
-        if (currentAnim == OWDrakeEntity.TALK_ANIMATION) talkAnim();
     
         if (currentAnim == OWDrakeEntity.SIT_ANIMATION) sitAnim();
     
@@ -462,7 +456,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         
         continueIdle(frame);
         
-        if (!drake.hasActiveAnimation()) faceTarget(netHeadYaw, headPitch, 4, neck1, head);
+        faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     
     
@@ -657,36 +651,38 @@ public class OWDrakeModel extends AdvancedEntityModel
         
         animator.startKeyframe(15);
     
-        animator.move(body1, 0, -5.5f, 0);
-        //Front Right
-        animator.rotate(arm2R, 1.1f, 0, 0);
-        animator.rotate(palmR, -1f, 0, 0);
-        //Front Left
-        animator.rotate(arm2L, 1.1f, 0, 0);
-        animator.rotate(palmL, -1f, 0, 0);
-        //Back Right
-        animator.rotate(leg2R, -0.35f, -0.4f, 0);
-        leg3R.setRotationPoint(-0.05F, 4.0F, 1.8F);
-        animator.rotate(leg3R, 1.9f, 0, 0);
-        animator.rotate(footR, -0.7f, 0, 0);
-        //Back Left
-        animator.rotate(leg2L, -0.35f, 0.4f, 0);
-        leg3L.setRotationPoint(-0.05F, 4.0F, 1.8F);
-        animator.rotate(leg3L, 1.9f, 0, 0);
-        animator.rotate(footL, -0.7f, 0, 0);
-        //Toes
-        for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, -0.8f, 0, 0);
-        //Tail
-        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
+        if (!isSitting) {
+            animator.move(body1, 0, -5.5f, 0);
+            //Front Right
+            animator.rotate(arm2R, 1.1f, 0, 0);
+            animator.rotate(palmR, -1f, 0, 0);
+            //Front Left
+            animator.rotate(arm2L, 1.1f, 0, 0);
+            animator.rotate(palmL, -1f, 0, 0);
+            //Back Right
+            animator.rotate(leg2R, -0.35f, -0.4f, 0);
+            leg3R.setRotationPoint(-0.05F, 4.0F, 1.8F);
+            animator.rotate(leg3R, 1.9f, 0, 0);
+            animator.rotate(footR, -0.7f, 0, 0);
+            //Back Left
+            animator.rotate(leg2L, -0.35f, 0.4f, 0);
+            leg3L.setRotationPoint(-0.05F, 4.0F, 1.8F);
+            animator.rotate(leg3L, 1.9f, 0, 0);
+            animator.rotate(footL, -0.7f, 0, 0);
+            //Toes
+            for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, -0.8f, 0, 0);
+            //Tail
+            for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
     
-        tail1.rotateAngleX = tail1.defaultRotationX;
-        tail3.rotateAngleZ = tail3.defaultRotationZ;
-        tail4.rotateAngleZ = tail4.defaultRotationZ;
-        tail5.rotateAngleZ = tail5.defaultRotationZ;
-        tail5.rotateAngleY = tail5.defaultRotationY;
+            tail1.rotateAngleX = tail1.defaultRotationX;
+            tail3.rotateAngleZ = tail3.defaultRotationZ;
+            tail4.rotateAngleZ = tail4.defaultRotationZ;
+            tail5.rotateAngleZ = tail5.defaultRotationZ;
+            tail5.rotateAngleY = tail5.defaultRotationY;
+        }
         eyeL.rotateAngleY = eyeL.defaultRotationY;
         eyeR.rotateAngleY = eyeR.defaultRotationY;
-        
+    
         animator.rotate(neck1, -1.2f, -0.4f, 0);
         animator.rotate(neck2, 0.5f, -0.6f, 0);
         animator.rotate(head, 0.52f, -0.4f, 0.4f);

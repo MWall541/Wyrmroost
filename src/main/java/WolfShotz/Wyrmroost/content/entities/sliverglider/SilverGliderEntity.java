@@ -183,12 +183,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        
         if (hand != Hand.MAIN_HAND) return false; // only fire on the main hand
         
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
             tame(getRNG().nextInt(10) == 0, player);
+            if (isSleeping()) setSleeping(false);
             
             return true;
         }
