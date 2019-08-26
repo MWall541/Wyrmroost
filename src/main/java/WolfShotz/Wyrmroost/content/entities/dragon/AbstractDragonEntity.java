@@ -1,8 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.FlightMovementController;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.FlightPathNavigator;
-import WolfShotz.Wyrmroost.content.entities.helpers.ai.goals.SleepGoal;
+import WolfShotz.Wyrmroost.content.entities.helper.DragonBodyController;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.DragonGroundPathNavigator;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.FlightMovementController;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.FlightPathNavigator;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
@@ -12,6 +14,7 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -25,7 +28,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -248,20 +250,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
     
-    @Override
-    protected float updateDistance(float p_110146_1_, float p_110146_2_) {
-        return super.updateDistance(p_110146_1_, p_110146_2_);
-    }
-    
     public void switchPathController(boolean flying) {
         if (flying) {
             moveController = new FlightMovementController(this);
             navigator = new FlightPathNavigator(this, world);
         } else {
             moveController = new MovementController(this);
-            navigator = new GroundPathNavigator(this, world);
+            navigator = new DragonGroundPathNavigator(this, world);
         }
     }
+    
+    /**
+     * Needed because the field is private >.>
+     */
+    @Override
+    protected BodyController createBodyController() { return new DragonBodyController(this); }
     
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
