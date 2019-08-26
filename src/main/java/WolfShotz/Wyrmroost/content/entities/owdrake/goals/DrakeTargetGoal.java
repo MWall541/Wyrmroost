@@ -18,6 +18,10 @@ public class DrakeTargetGoal extends NonTamedTargetGoal
     @Override
     public void startExecuting() {
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION) NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.ROAR_ANIMATION);
+        drake.getLookController().setLookPositionWithEntity(nearestTarget, 30, 30);
+        drake.prevRotationYaw = drake.rotationYaw = drake.rotationYawHead;
+        drake.setRotation(drake.rotationYaw, drake.rotationPitch);
+        drake.renderYawOffset = drake.rotationYaw;
     
         super.startExecuting();
     }

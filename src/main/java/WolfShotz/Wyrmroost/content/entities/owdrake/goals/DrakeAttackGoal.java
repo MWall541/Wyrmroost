@@ -20,9 +20,7 @@ public class DrakeAttackGoal extends MeleeAttackGoal
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
         double d0 = this.getAttackReachSqr(enemy);
-        if (distToEnemySqr <= d0 && this.attackTick <= 0 && !drake.isRidingOrBeingRiddenBy(enemy) && drake.getAnimation() != OWDrakeEntity.HORN_ATTACK_ANIMATION) {
+        if (distToEnemySqr <= d0 && this.attackTick <= 0 && !drake.isRidingOrBeingRiddenBy(enemy) && drake.getAnimation() != OWDrakeEntity.HORN_ATTACK_ANIMATION)
             NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.HORN_ATTACK_ANIMATION);
-//            drake.attackEntityAsMob(enemy);
-        }
     }
 }

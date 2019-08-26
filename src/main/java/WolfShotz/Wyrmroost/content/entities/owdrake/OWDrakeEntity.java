@@ -46,7 +46,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 0.8F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 0.5F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION = Animation.create(15);
@@ -94,7 +94,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         getAttribute(MAX_HEALTH).setBaseValue(50.0d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(6.0d);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8.0d);
     }
 
     // ================================
