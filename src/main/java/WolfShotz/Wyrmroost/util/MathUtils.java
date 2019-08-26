@@ -36,4 +36,13 @@ public class MathUtils
      * Subtract 1 from posZ as a workaround for a vanilla bug using the wrong pos when posZ is negative...
      */
     public static double getAltitude(World world, int x, double y, int z) { return y - world.getHeight(Heightmap.Type.WORLD_SURFACE, x, z - (z < 0? 1 : 0)); }
+    
+    public static double calcDistance(double z, double z2, double x, double x2) {
+        return Math.sqrt((z - z2) * (z - z2) + (x - x2) * (x - x2));
+    }
+    
+    public static float calcDistance(float z, float z2, float x, float x2) {
+        return (float) Math.sqrt((z - z2) * (z - z2) + (x - x2) * (x - x2));
+    
+    }
 }
