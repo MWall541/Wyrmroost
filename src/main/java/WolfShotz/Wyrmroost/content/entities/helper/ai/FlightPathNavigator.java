@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.helpers.ai;
+package WolfShotz.Wyrmroost.content.entities.helper.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.pathfinding.FlyingPathNavigator;

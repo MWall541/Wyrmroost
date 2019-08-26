@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.helpers.ai.goals;
+package WolfShotz.Wyrmroost.content.entities.helper.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.goal.TemptGoal;

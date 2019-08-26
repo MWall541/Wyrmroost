@@ -22,7 +22,9 @@ public class ModUtils
 {
     private ModUtils() {} // NU CONSTRUCTOR
     
-    /** Debug Logger */
+    /**
+     * Debug Logger
+     */
     public static final Logger L = LogManager.getLogger(Wyrmroost.modID);
 
     /**
@@ -36,6 +38,9 @@ public class ModUtils
      */
     public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
     
+    /**
+     * Block Properties builder
+     */
     public static Block.Properties blockBuilder(Material material) { return Block.Properties.create(material); }
 
     /**
