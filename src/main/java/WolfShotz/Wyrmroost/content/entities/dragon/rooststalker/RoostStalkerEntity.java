@@ -12,6 +12,7 @@ import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -48,6 +49,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         hatchTimer = 2400;
         
         SLEEP_ANIMATION = Animation.create(15);
+        WAKE_ANIMATION = Animation.create(15);
     }
     
     @Override
@@ -141,14 +143,14 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                     return true;
                 }
             
-                if (stack.getItem() != Items.GOLD_NUGGET && canPickUpStack(stack)) {
+                if (canPickUpStack(stack)) {
                     // Swap mouth holding items
                     if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
                     else player.setHeldItem(hand, ItemStack.EMPTY);
                     setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
     
                     return true;
-                }
+                } else return false;
             }
             
             // Retrieve the item in the mouth
@@ -196,15 +198,18 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
     
     protected void spawnDrops(DamageSource src) {
-    ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-    
-    if (!stack.isEmpty()) {
-        entityDropItem(stack);
-        setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+        ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        
+        if (!stack.isEmpty()) {
+            entityDropItem(stack);
+            setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+        }
+        
+        super.spawnDrops(src);
     }
     
-    super.spawnDrops(src);
-}
+    @Override // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P
+    protected BodyController createBodyController() { return new BodyController(this); }
     
     /**
      * Set The chances this dragon can be an albino.
@@ -236,11 +241,11 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected Item[] getFoodItems() { return new Item[] {Items.EGG, SetupItems.egg, Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON}; }
     
     public boolean canPickUpStack(ItemStack stack) {
-        return !(stack.getItem() instanceof BlockItem);
+        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
     }
     
     // == Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, SCAVENGE_ANIMATION}; }
     // ==
 }

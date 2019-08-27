@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
+import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
@@ -158,9 +159,14 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         updateDefaultPose();
     }
     
+    private float netHeadYaw;
+    private float headPitch;
+    
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
+        this.netHeadYaw = netHeadYaw;
+        this.headPitch = headPitch;
         
         GlStateManager.pushMatrix();
         
@@ -175,45 +181,49 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        faceTarget(netHeadYaw, headPitch, 2, head);
-        
-        float globalSpeed = 0.5f;
-        
-        swing(legl1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
-        swing(legl2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
-        swing(legl3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
-        
-        swing(legr1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
-        swing(legr2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
-        swing(legr3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
-    }
-    
-    @Override
     public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
+        Animation currentAnim = stalker.getAnimation();
         float frame = entity.ticksExisted;
         float f = 0.5f;
         float globalSpeed = 0.5f;
         
+        animator.update(stalker);
         resetToDefaultPose();
         
-//        sleepAnim();
+        if (!stalker.isSitting()) {
+            swing(legl1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+            swing(legl2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
+            swing(legl3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+    
+            swing(legr1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+            swing(legr2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
+            swing(legr3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
+        }
         
-        if (stalker.isSleeping())
+        if (stalker.isSleeping() && currentAnim != RoostStalkerEntity.SLEEP_ANIMATION)
             staySleep();
-
+        
         if (stalker.isSitting() && !stalker.isSleeping())
             staySit();
-
+        
+        if (currentAnim == RoostStalkerEntity.SLEEP_ANIMATION) sleepAnim();
+        
+        if (currentAnim == RoostStalkerEntity.WAKE_ANIMATION) {
+            staySleep();
+            wakeAnim();
+        }
+        
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, f);
         chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, f);
-
-        if (stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty()) {
+        
+        if (stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty() || stalker.isSleeping()) {
             walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, f);
             chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
         }
         else jaw.rotateAngleX = 0.15f;
+        
+        if (!stalker.isSleeping()) faceTarget(netHeadYaw, headPitch, 2, head);
     }
     
     private void staySit() {
@@ -232,8 +242,7 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     }
     
     private void staySleep() {
-        staySit();
-        
+        torso.offsetY = 0.21f;
         torso.rotateAngleZ = 1.7f;
         head.rotateAngleX = 1.3f;
         head.rotateAngleY = -0.2f;
@@ -242,7 +251,7 @@ public class RoostStalkerModel extends AdvancedEntityModel {
             segment.rotateAngleX = -0.7f;
             segment.rotateAngleZ = -0.1f;
         }
-    
+        
         float legAngle = 0.7f;
         legr1.rotateAngleZ = legAngle;
         footl1_1.rotateAngleZ = -legAngle;
@@ -250,7 +259,7 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         footl2_1.rotateAngleZ = -legAngle;
         legr3.rotateAngleZ = legAngle;
         footl3_1.rotateAngleZ = -legAngle;
-    
+        
         legl1.rotateAngleZ = -legAngle;
         footl1.rotateAngleZ = legAngle - 1f;
         legl2.rotateAngleZ = -legAngle;
@@ -262,6 +271,52 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     private void sleepAnim() {
         animator.setAnimation(RoostStalkerEntity.SLEEP_ANIMATION);
         
-//        animator.rotate();
+        animator.startKeyframe(20);
+        animator.rotate(torso, 0, 0, 1.7f);
+        animator.move(torso, 0, 3.4f, 0);
+        animator.rotate(head, 1f, -0.2f, 0);
+        
+        animator.rotate(legl1, 0, 0, -0.35f);
+        animator.rotate(footl1, 0, 0, -0.61f);
+        animator.rotate(legl2, 0, 0, -0.37f);
+        animator.rotate(footl2, 0, 0, -0.62f);
+        animator.rotate(legl3, 0, 0, -0.37f);
+        animator.rotate(footl3, 0, 0, -0.61f);
+        
+        animator.rotate(legr1, 0, 0, 0.37f);
+        animator.rotate(footl1_1, 0, 0, -0.35f);
+        animator.rotate(legr2, 0, 0, 0.48f);
+        animator.rotate(footl2_1, 0, 0, -0.38f);
+        animator.rotate(legr3, 0, 0, 0.4f);
+        animator.rotate(footl3_1, 0, 0, -0.38f);
+        
+        for (AdvancedRendererModel segment : tailSegments) animator.rotate(segment, -0.7f, 0, -0.1f);
+        animator.endKeyframe();
+    }
+    
+    private void wakeAnim() {
+        animator.setAnimation(RoostStalkerEntity.WAKE_ANIMATION);
+    
+        animator.startKeyframe(15);
+        animator.rotate(torso, 0, 0, -1.7f);
+        animator.move(torso, 0, -3.4f, 0);
+        animator.rotate(head, -1f, 0.2f, 0);
+    
+        animator.rotate(legl1, 0, 0, 0.35f);
+        animator.rotate(footl1, 0, 0, 0.61f);
+        animator.rotate(legl2, 0, 0, 0.37f);
+        animator.rotate(footl2, 0, 0, 0.62f);
+        animator.rotate(legl3, 0, 0, 0.37f);
+        animator.rotate(footl3, 0, 0, 0.61f);
+    
+        animator.rotate(legr1, 0, 0, -0.37f);
+        animator.rotate(footl1_1, 0, 0, 0.35f);
+        animator.rotate(legr2, 0, 0, -0.48f);
+        animator.rotate(footl2_1, 0, 0, -0.38f);
+        animator.rotate(legr3, 0, 0, -0.4f);
+        animator.rotate(footl3_1, 0, 0, 0.38f);
+    
+        for (AdvancedRendererModel segment : tailSegments) animator.rotate(segment, 0.7f, 0, 0.1f);
+        animator.endKeyframe();
     }
 }
