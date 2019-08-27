@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.util.network.SendKeyPressMessage;
 import net.minecraft.client.Minecraft;
@@ -69,10 +70,17 @@ public class ForgeEvents
          PlayerEntity player = evt.getPlayer();
          ItemStack stack = player.getHeldItem(evt.getHand());
          
+         if (stack.getItem() == Items.BEDROCK && stack.getDisplayName().getUnformattedComponentText().equals("Debugrock")) {
+             evt.setCanceled(true);
+             dragon.setGrowingAge(-2400);
+         }
+         
          if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
              evt.setCanceled(true);
              String msg = "Gender: " + (dragon.getGender()? "Male " : "Female ") + "Sitting: " + dragon.isSitting() + " Sleeping: " + dragon.isSleeping();
              player.sendStatusMessage(new StringTextComponent(msg), true);
+             
+             if (dragon instanceof RoostStalkerEntity) dragon.setAnimation(RoostStalkerEntity.SLEEP_ANIMATION);
          }
      }
 }

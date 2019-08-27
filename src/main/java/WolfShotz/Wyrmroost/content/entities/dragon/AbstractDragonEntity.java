@@ -280,12 +280,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (getGrowingAge() == 0 && canBreed()) {
                 consumeItemFromStack(player, stack);
                 setInLove(player);
+                
                 return true;
             }
         
             if (isChild()) {
                 consumeItemFromStack(player, stack);
                 ageUp((int)((float)(-getGrowingAge() / 20) * 0.1F), true);
+                if (isSleeping()) setSleeping(false);
+                
                 return true;
             }
         }
