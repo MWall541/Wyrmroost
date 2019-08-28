@@ -57,6 +57,7 @@ public class SetupEntities
         registerSpawning(overworld_drake, 10, 1, 3, getDrakeBiomes());
         registerSpawning(minutus, 35, 1, 1, BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY));
         registerSpawning(silver_glider, 5, 2, 5, getSilverGliderBiomes());
+        registerSpawning(roost_stalker, 10, 3, 18, getStalkerBiomes());
         EntitySpawnPlacementRegistry.register(silver_glider, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
     }
 
@@ -104,6 +105,14 @@ public class SetupEntities
         return ModUtils.collectAll(
                 BiomeDictionary.getBiomes(BiomeDictionary.Type.BEACH),
                 BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
+        );
+    }
+    
+    private static Set<Biome> getStalkerBiomes() {
+        return ModUtils.collectAll(
+                BiomeDictionary.getBiomes(BiomeDictionary.Type.FOREST),
+                BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS),
+                BiomeDictionary.getBiomes(BiomeDictionary.Type.MOUNTAIN)
         );
     }
 
