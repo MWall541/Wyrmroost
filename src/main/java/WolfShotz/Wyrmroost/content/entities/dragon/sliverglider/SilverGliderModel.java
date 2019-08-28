@@ -526,6 +526,10 @@ public class SilverGliderModel extends AdvancedEntityModel
         chainSwing(neckArray, globalSpeed - 0.46f, 0.03f, 0.4f, frame, 0.5f);
         chainWave(neckArray, globalSpeed - 0.45f, 0.01f, 0, frame, 0.5f);
         chainSwing(tailArray, globalSpeed - 0.46f, 0.03f, 0, frame, 0.5f);
+        swing(phalangeL11, globalSpeed - 0.45f, 0.03f, false, 0, 0, frame, 0.5f);
+        swing(phalangeL21, globalSpeed - 0.45f, 0.03f, false, 0, 0, frame, 0.5f);
+        swing(phalangeR11, globalSpeed - 0.45f, 0.03f, true, 0, 0, frame, 0.5f);
+        swing(phalangeR21, globalSpeed - 0.45f, 0.03f, true, 0, 0, frame, 0.5f);
     }
     
     private void sitAnim() {
