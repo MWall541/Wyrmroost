@@ -76,8 +76,6 @@ public class OWDrakeModel extends AdvancedEntityModel
 
     private ModelAnimator animator;
 
-    private float netHeadYaw, headPitch;
-
     public OWDrakeModel() {
         this.textureWidth = 200;
         this.textureHeight = 200;
@@ -376,9 +374,6 @@ public class OWDrakeModel extends AdvancedEntityModel
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         OWDrakeEntity dragon = (OWDrakeEntity) entity;
         
-        this.netHeadYaw = netHeadYaw;
-        this.headPitch = headPitch;
-
         GlStateManager.pushMatrix();
         
         if (dragon.isChild()) {
@@ -390,6 +385,11 @@ public class OWDrakeModel extends AdvancedEntityModel
         body1.render(scale);
         
         GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     
     @Override
@@ -454,8 +454,6 @@ public class OWDrakeModel extends AdvancedEntityModel
         }
         
         continueIdle(frame);
-        
-        if (!drake.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     
     

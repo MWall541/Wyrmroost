@@ -122,6 +122,8 @@ public class MinutusModel extends AdvancedEntityModel {
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
+        
+        faceTarget(netHeadYaw, headPitch, 1, head);
     }
 
     @Override
