@@ -48,7 +48,8 @@ import java.util.List;
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
     protected int animationTick;
-    public int flyingThreshold = 3;
+    public int shouldFlyThreshold = 3;
+    public int randomFlyChance = 3000; // Default to random chance of 0 out of 3000
     public int hatchTimer; // Used in subclasses for hatching time
     public int sleepTimeout;
     protected List<String> immunes = new ArrayList<>();
@@ -219,8 +220,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        if (MathUtils.getAltitude(this) > flyingThreshold && canFly() && !isFlying()) setFlying(true);
-        if (MathUtils.getAltitude(this) <= flyingThreshold - 1 && isFlying()) setFlying(false);
+        if ((MathUtils.getAltitude(this) > shouldFlyThreshold || fallDistance > shouldFlyThreshold) && !isSleeping() && canFly() && !isFlying()) setFlying(true);
+        if ((MathUtils.getAltitude(this) <= shouldFlyThreshold - 1 || onGround) && isFlying()) setFlying(false);
+        if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && !isSleeping()) setFlying(true);
         
         if (!world.isRemote) {
             // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
@@ -341,8 +343,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     public void eat(@Nullable ItemStack stack) {
-        if (stack != null && !stack.isEmpty()) {
+        if (stack != null && !stack.isEmpty() && stack.getItem().isFood()) {
             heal(Math.max((int) getMaxHealth() / 5, 6));
+            stack.getItem().getFood().getEffects().forEach(effect -> addPotionEffect(effect.getLeft()));
             stack.shrink(1);
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
             for (int i = 0; i < 6; ++i) {
@@ -437,7 +440,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void performSpecialAttack(boolean shouldContinue) {}
     
     @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? 1f : super.getJumpUpwardsMotion(); }
+    protected float getJumpUpwardsMotion() { return canFly() ? 0.8f : super.getJumpUpwardsMotion(); }
     
     public void liftOff() { if (canFly()) jump(); }
     

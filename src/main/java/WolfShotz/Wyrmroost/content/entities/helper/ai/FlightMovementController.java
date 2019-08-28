@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.helper.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.MathHelper;
@@ -30,34 +31,34 @@ public class FlightMovementController extends MovementController
 
         if (this.action == MovementController.Action.MOVE_TO) {
             this.action = MovementController.Action.WAIT;
-            double d0 = posX - mob.posX;
-            double d1 = posY - mob.posY;
-            double d2 = posZ - mob.posZ;
-            double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+            double x = posX - mob.posX;
+            double y = posY - mob.posY;
+            double z = posZ - mob.posZ;
+            double euclid = MathUtils.calcDistance3d(x, y, z);
 
             this.mob.setNoGravity(true);
 
-            if (d3 < (double)2.5000003E-7F) {
+            if (euclid < (double)2.5000003E-7F) { // Too small, dont move
                 mob.setMoveVertical(0.0F);
                 mob.setMoveForward(0.0F);
                 return;
             }
 
-            float f = (float)(MathHelper.atan2(d2, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
-            float f1;
+            float f = (float)(MathHelper.atan2(z, x) * (double)(180F / (float)Math.PI)) - 90.0F;
+            float moveSpeed;
 
             mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10.0F);
 
-            if (mob.onGround) f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
-            else f1 = (float)(speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
+            if (mob.onGround) moveSpeed = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
+            else moveSpeed = (float)(speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
 
-            mob.setAIMoveSpeed(f1);
+            mob.setAIMoveSpeed(moveSpeed);
 
-            double d4 = (double)MathHelper.sqrt(d0 * d0 + d2 * d2);
-            float f2 = (float)(-(MathHelper.atan2(d1, d4) * (double)(180F / (float)Math.PI)));
+            double d4 = (double) MathHelper.sqrt(x * x + z * z);
+            float f2 = (float) (-(MathHelper.atan2(y, d4) * (double)(180F / (float)Math.PI)));
 
             mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 10.0F);
-            mob.setMoveVertical(d1 > 0.0D ? f1 : -f1);
+            mob.setMoveVertical(y > 0.0D ? moveSpeed : -moveSpeed);
         } else {
             mob.setNoGravity(false);
             mob.setMoveVertical(0.0F);

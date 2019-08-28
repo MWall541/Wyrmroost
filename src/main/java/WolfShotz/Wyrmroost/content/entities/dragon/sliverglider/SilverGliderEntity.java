@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.goals.RandomFlightGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.*;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
@@ -13,8 +14,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -71,15 +70,30 @@ public class SilverGliderEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
 
-        goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
-        goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
-        goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 10, 4));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, true));
-        goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
-        goalSelector.addGoal(11, new WatchGoal(this, LivingEntity.class, 10f));
-        goalSelector.addGoal(12, new RandomLookGoal(this));
+        switchPathController(false);
     }
-
+    
+    @Override
+    public void switchPathController(boolean flying) {
+        super.switchPathController(flying);
+        
+        if (flying) { // Clear goal list and then apply flight goals
+            goalSelector.getRunningGoals().forEach(goalSelector::removeGoal);
+            
+            goalSelector.addGoal(10, new RandomFlightGoal(this));
+        } else {
+            goalSelector.getRunningGoals().forEach(goalSelector::removeGoal);
+            
+            goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
+            goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
+            goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 10, 4));
+            goalSelector.addGoal(7, new DragonBreedGoal(this, true));
+            goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
+            goalSelector.addGoal(11, new WatchGoal(this, LivingEntity.class, 10f));
+            goalSelector.addGoal(12, new RandomLookGoal(this));
+        }
+    }
+    
     // ================================
     //           Entity NBT
     // ================================
@@ -124,7 +138,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public void livingTick() {
         super.livingTick();
         
-        flyingThreshold = 3 + (isRiding()? 2 : 0);
+        shouldFlyThreshold = 3 + (isRiding()? 2 : 0);
     }
     
     @Override
@@ -149,7 +163,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     return;
                 }
 
-                if (ReflectionUtils.isEntityJumping(player) && !player.isElytraFlying() && MathUtils.getAltitude(player) > 1.3 && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater()) {
+                if ((ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3) && !player.isElytraFlying() && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater()) {
                     Vec3d lookVec = player.getLookVec();
                     Vec3d playerMot = player.getMotion();
                     double xMot = playerMot.x + (lookVec.x / 12);
@@ -165,13 +179,16 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
                 rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
                 setRotation(player.rotationYawHead, rotationPitch);
-    
-                float radius = (player.isElytraFlying()? -2f : 0);
-                float angle = (0.01745329251F * player.renderYawOffset) + 90;
-                double extraX = (double) (radius * MathHelper.sin((float) (Math.PI + angle)));
-                double extraZ = (double) (radius * MathHelper.cos(angle));
                 
-                setPosition(player.posX + extraX, player.posY + 1.85d, player.posZ + extraZ);
+                double offsetX = 0;
+                double offsetZ = 0;
+                if (player.isElytraFlying()) {
+                    float angle = (0.01745329251F * player.renderYawOffset) + 90;
+                    offsetX = (double) (-2f * MathHelper.sin((float) (Math.PI + angle)));
+                    offsetZ = (double) (-2f * MathHelper.cos(angle));
+                }
+                
+                setPosition(player.posX + offsetX, player.posY + 1.85d, player.posZ + offsetZ);
             }
         }
     }
