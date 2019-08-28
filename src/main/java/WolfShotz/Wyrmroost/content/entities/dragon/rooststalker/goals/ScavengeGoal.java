@@ -2,10 +2,12 @@ package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
+import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.IInventory;
@@ -28,11 +30,11 @@ public class ScavengeGoal extends MoveToBlockGoal
     private ServerWorld world;
     private Animation animation;
     private IInventory chest;
-    private boolean markScavenged;
+    private int searchDelay = 20 + new Random().nextInt(40) + 5;
     
     
     public ScavengeGoal(RoostStalkerEntity dragon, double speed, Animation animation) {
-        super(dragon, speed, 8);
+        super(dragon, speed, 16);
         this.dragon = dragon;
         this.world = (ServerWorld) dragon.world;
         this.animation = animation;
@@ -42,39 +44,38 @@ public class ScavengeGoal extends MoveToBlockGoal
     
     @Override
     public boolean shouldExecute() {
-        return super.shouldExecute() && !dragon.isTamed() && dragon.getItemStackFromSlot(EquipmentSlotType.MAINHAND) == ItemStack.EMPTY;
+        return super.shouldExecute() && !dragon.isTamed() && isHandEmpty(dragon);
     }
     
     @Override
     public void startExecuting() {
         chest = getInventoryAtPosition(world, destinationBlock);
-        markScavenged = false;
-        
+    
         super.startExecuting();
     }
     
     @Override
-    public boolean shouldContinueExecuting() { return super.shouldContinueExecuting() && !markScavenged; }
+    public boolean shouldContinueExecuting() { return super.shouldContinueExecuting() && isHandEmpty(dragon) && !chest.isEmpty(); }
     
     @Override
     public void tick() {
         super.tick();
         
-        if (getIsAboveDestination() && world.getTileEntity(destinationBlock) instanceof ChestTileEntity && !markScavenged) {
-            if (dragon.getItemStackFromSlot(EquipmentSlotType.MAINHAND) != ItemStack.EMPTY) return;
-            
-            if (markScavenged) return;
+        if (getIsAboveDestination()) {
+            if (!isHandEmpty(dragon)) return;
     
-            if (dragon.getAnimation() != RoostStalkerEntity.SCAVENGE_ANIMATION) NetworkUtils.sendAnimationPacket(dragon, animation);
+            if (dragon.getAnimation() != animation) NetworkUtils.sendAnimationPacket(dragon, animation);
             
-            if (!chest.isEmpty()) {
+            if (chest instanceof ChestTileEntity && ReflectionUtils.getChestPlayersUsing((ChestTileEntity) chest) == 0)
+                interactChest(chest, true);
+            
+            if (!chest.isEmpty() && --searchDelay <= 0) {
                 int index = new Random().nextInt(chest.getSizeInventory());
                 ItemStack stack = chest.getStackInSlot(index);
     
                 if (!stack.isEmpty() && dragon.canPickUpStack(stack)) {
                     chest.removeStackFromSlot(index);
                     dragon.setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
-                    markScavenged = true;
                 }
             }
         }
@@ -83,24 +84,8 @@ public class ScavengeGoal extends MoveToBlockGoal
     @Override
     public void resetTask() {
         super.resetTask();
-        markScavenged = false;
-    }
-    
-    /**
-     * Return true to set given position as destination
-     *
-     * @param worldIn
-     * @param pos
-     */
-    @Override
-    protected boolean shouldMoveTo(IWorldReader worldIn, BlockPos pos) {
-        if (!worldIn.isAirBlock(pos.up())) return false;
-        
-        BlockState blockstate = worldIn.getBlockState(pos);
-        Block block = blockstate.getBlock();
-        
-        if (block instanceof ChestBlock) return ChestTileEntity.getPlayersUsing(worldIn, pos) < 1;
-        return false;
+        interactChest(chest, false);
+        searchDelay = 20 + new Random().nextInt(40) + 5;
     }
     
     /**
@@ -124,4 +109,25 @@ public class ScavengeGoal extends MoveToBlockGoal
     
         return iinventory;
     }
+    
+    /**
+     * Return true to set given position as destination
+     */
+    @Override
+    protected boolean shouldMoveTo(IWorldReader world, BlockPos pos) {
+        return world.getTileEntity(pos) instanceof IInventory;
+    }
+    
+    /**
+     * Used to handle the chest opening animation when being used by the scavenger
+     */
+    private void interactChest(IInventory intentory, boolean open) {
+        if (!(intentory instanceof ChestTileEntity)) return; // not a chest, ignore it
+        ChestTileEntity chest = (ChestTileEntity) intentory;
+        
+        ReflectionUtils.setChestPlayersUsing(chest, open? 1 : -1, true);
+        chest.getWorld().addBlockEvent(chest.getPos(), chest.getBlockState().getBlock(), 1, ReflectionUtils.getChestPlayersUsing(chest));
+    }
+    
+    private boolean isHandEmpty(LivingEntity entity) { return entity.getItemStackFromSlot(EquipmentSlotType.MAINHAND) == ItemStack.EMPTY; }
 }

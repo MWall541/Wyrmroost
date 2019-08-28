@@ -159,14 +159,11 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         updateDefaultPose();
     }
     
-    private float netHeadYaw;
-    private float headPitch;
+    private float globalSpeed;
     
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
-        this.netHeadYaw = netHeadYaw;
-        this.headPitch = headPitch;
         
         GlStateManager.pushMatrix();
         
@@ -181,16 +178,21 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     }
     
     @Override
+    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        faceTarget(netHeadYaw, headPitch, 2, head);
+    }
+    
+    @Override
     public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
         Animation currentAnim = stalker.getAnimation();
         float frame = entity.ticksExisted;
         float f = 0.5f;
-        float globalSpeed = 0.5f;
+        globalSpeed = 0.5f;
         
         animator.update(stalker);
         resetToDefaultPose();
-        
+    
         if (!stalker.isSitting()) {
             swing(legl1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
             swing(legl2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
@@ -214,6 +216,9 @@ public class RoostStalkerModel extends AdvancedEntityModel {
             wakeAnim();
         }
         
+        if (currentAnim == RoostStalkerEntity.SCAVENGE_ANIMATION)
+            scavengeAnim(stalker.getAnimationTick(), frame);
+        
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, f);
         chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, f);
         
@@ -222,8 +227,6 @@ public class RoostStalkerModel extends AdvancedEntityModel {
             chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
         }
         else jaw.rotateAngleX = 0.15f;
-        
-        if (!stalker.isSleeping()) faceTarget(netHeadYaw, headPitch, 2, head);
     }
     
     private void staySit() {
@@ -318,5 +321,22 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     
         for (AdvancedRendererModel segment : tailSegments) animator.rotate(segment, 0.7f, 0, 0.1f);
         animator.endKeyframe();
+    }
+    
+    /**
+     * Bob the head up and down: makes it look like its "ruffling through a chest"
+     */
+    private void scavengeAnim(int animationTick, float frame) {
+        animator.setAnimation(RoostStalkerEntity.SCAVENGE_ANIMATION);
+        
+        animator.startKeyframe(5);
+        animator.rotate(neck, 1.5f, 0, 0);
+        animator.endKeyframe();
+        
+        if (animationTick > 5) walk(neck, globalSpeed + 0.5f, 0.4f, false, 0, 0, frame, 0.5f);
+        
+        animator.setStaticKeyframe(25);
+        
+        animator.resetKeyframe(5);
     }
 }

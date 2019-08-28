@@ -1,12 +1,9 @@
 package WolfShotz.Wyrmroost.util.utils;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
-import net.minecraft.util.NonNullList;
 
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.findField;
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue;
+import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.*;
 
 public class ReflectionUtils
 {
@@ -18,26 +15,18 @@ public class ReflectionUtils
     }
     
     /**
-     * Gets the chestContents field from ChestTileEntity class
-     *
-     * Surrounded in a try/catch block for perforamce reasons
-     * @param instance
-     * @return
+     * Get the amount of players using a chest
      */
-    public static NonNullList<ItemStack> getChestItems(ChestTileEntity instance) {
-        try {
-            return (NonNullList<ItemStack>) findField(ChestTileEntity.class, "field_145985_p").get(instance);
-        } catch (Exception e) {
-            ModUtils.L.error("Exception trying to get \"chestContents\" field");
-            throw new RuntimeException();
-        }
+    public static int getChestPlayersUsing(ChestTileEntity instance) {
+        return getPrivateValue(ChestTileEntity.class, instance, "field_145987_o");
     }
     
-    public static void setChestItems(ChestTileEntity instance, NonNullList<ItemStack> contents) {
-        try {
-            findField(ChestTileEntity.class, "field_145985_p").set(instance, contents);
-        } catch (Exception e) {
-            ModUtils.L.error("Exception trying to set \"chestConents\"");
-        }
+    /**
+     * Set the amount of players using a chest.
+     */
+    public static void setChestPlayersUsing(ChestTileEntity instance, int amount, boolean add) {
+        if (add) amount += getChestPlayersUsing(instance);
+        if (amount < 0) amount = 0;
+        setPrivateValue(ChestTileEntity.class, instance, amount, "field_145987_o");
     }
 }
