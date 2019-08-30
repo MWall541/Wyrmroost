@@ -67,7 +67,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> FLYING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SLEEPING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     
-    
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
         setTamed(false);

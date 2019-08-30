@@ -115,8 +115,7 @@ public class MinutusModel extends AdvancedEntityModel {
 
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        animate((MinutusEntity) entityIn);
-        this.body1.render(scale);
+        body1.render(scale);
     }
 
     @Override
@@ -128,10 +127,12 @@ public class MinutusModel extends AdvancedEntityModel {
 
     @Override
     public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
-        resetToDefaultPose();
         float frame = entity.ticksExisted;
         MinutusEntity minutus = (MinutusEntity) entity;
-
+    
+        animator.update(minutus);
+        resetToDefaultPose();
+        
         if (minutus.isBurrowed()) {
             body1.rotateAngleX = -0.8f;
             body1.offsetY = 0.2f;
@@ -151,17 +152,19 @@ public class MinutusModel extends AdvancedEntityModel {
         flap(wingR, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
         flap(leg1, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
         flap(leg1_1, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
+    
+        if (minutus.getAnimation() == MinutusEntity.BITE_ANIMATION) bite();
     }
 
-    private void animate(MinutusEntity entity) {
-        animator.update(entity);
-
+    private void bite() {
         animator.setAnimation(MinutusEntity.BITE_ANIMATION);
+        
         animator.startKeyframe(4);
         animator.rotate(head, 1f, 0, 0);
         animator.rotate(jaw, -1f, 0, 0);
         animator.move(body1, 0, -1f, 0);
         animator.endKeyframe();
+        
         animator.resetKeyframe(7);
     }
 }

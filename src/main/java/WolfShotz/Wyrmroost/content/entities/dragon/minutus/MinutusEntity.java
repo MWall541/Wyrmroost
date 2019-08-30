@@ -47,8 +47,7 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
     public static final Animation BITE_ANIMATION = Animation.create(10);
 
     private static final DataParameter<Boolean> BURROWED = EntityDataManager.createKey(MinutusEntity.class, DataSerializers.BOOLEAN);
-
-
+    
     public MinutusEntity(EntityType<? extends MinutusEntity> minutus, World world) {
         super(minutus, world);
 
@@ -113,7 +112,20 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
             attackAbove();
         }
     }
-
+    
+    /**
+     * Called to update the entity's position/logic.
+     */
+    @Override
+    public void tick() {
+        super.tick();
+        
+        if (getAnimation() != NO_ANIMATION) {
+            ++animationTick;
+            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
+        }
+    }
+    
     private void attackAbove() {
         Predicate<Entity> predicateFilter = filter -> {
             if (filter instanceof MinutusEntity) return false;
