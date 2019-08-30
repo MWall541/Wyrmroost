@@ -43,9 +43,7 @@ public class ScavengeGoal extends MoveToBlockGoal
     public ScavengeGoal(RoostStalkerEntity dragon, double speed) { this(dragon, speed, NO_ANIMATION); }
     
     @Override
-    public boolean shouldExecute() {
-        return super.shouldExecute() && !dragon.isTamed() && isHandEmpty(dragon);
-    }
+    public boolean shouldExecute() { return super.shouldExecute() && !dragon.isTamed() && isHandEmpty(dragon); }
     
     @Override
     public void startExecuting() {

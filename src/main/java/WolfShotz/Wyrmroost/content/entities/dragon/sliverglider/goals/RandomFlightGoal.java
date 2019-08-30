@@ -30,7 +30,6 @@ public class RandomFlightGoal extends AbstractFlightGoal
         
         if (isDescending()) {
             glider.getNavigator().tryMoveToXYZ(glider.getPosition().getX() + 0.5d, glider.getPosition().getY() - 4, glider.getPosition().getZ(), 1);
-            System.out.println("test");
             
             return;
         }
