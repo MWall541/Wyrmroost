@@ -299,7 +299,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     public void attackInFront(int range) {
-        AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), range)).grow(range, 0, range);
+        AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), range + range)).grow(range, 0, range);
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this || getPassengers().stream().noneMatch(found::equals));
         if (livingEntities.isEmpty()) return;
         
@@ -330,6 +330,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (isSleeping()) setSleeping(false);
+        if (isSitting()) setSit(false);
         
         return super.attackEntityFrom(source, amount);
     }

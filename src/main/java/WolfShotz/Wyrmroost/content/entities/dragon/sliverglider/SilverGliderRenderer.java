@@ -64,7 +64,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
             gamerenderer.setupFogColor(false);
     
             GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, (float) j, (float) k);
-            // setLightMap(Entity)
+            // setLightMap(Entity): deobf
             func_215334_a(entity);
             GlStateManager.depthMask(true);
             GlStateManager.disableBlend();

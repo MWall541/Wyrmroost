@@ -172,7 +172,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             Entity target = getAttackTarget();
             
             if (target != null) attackEntityAsMob(target);
-            else attackInFront(2);
+            else attackInFront(1);
         }
 
         super.livingTick();

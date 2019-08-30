@@ -58,6 +58,8 @@ public class SoulCrystalItem extends Item
         AbstractDragonEntity entity = getEntity(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
         
+        System.out.println(isSafe(entity));
+        
         // Spawn the entity on the server side only
         if (!world.isRemote) {
             entity.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
@@ -131,5 +133,9 @@ public class SoulCrystalItem extends Item
         AbstractDragonEntity entity = (AbstractDragonEntity) type.create(world);
         entity.read(stack.getTag());
         return entity;
+    }
+    
+    private boolean isSafe(AbstractDragonEntity dragon) {
+        return !dragon.world.checkBlockCollision(dragon.getBoundingBox());
     }
 }

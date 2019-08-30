@@ -47,6 +47,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         moveController = new MovementController(this);
         
         hatchTimer = 2400;
+        stepHeight = 0;
         
         SLEEP_ANIMATION = Animation.create(15);
         WAKE_ANIMATION = Animation.create(15);
@@ -241,7 +242,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected Item[] getFoodItems() { return new Item[] {Items.EGG, SetupItems.egg, Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON}; }
     
     public boolean canPickUpStack(ItemStack stack) {
-        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
+        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET && stack.getItem() != SetupItems.soulcrystal;
     }
     
     // == Animation ==

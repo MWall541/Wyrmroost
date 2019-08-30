@@ -27,7 +27,8 @@ public class SleepGoal extends Goal
      */
     @Override
     public boolean shouldExecute() {
-        if (dragon.isInWater() || dragon.isFlying() || !dragon.onGround) return false;
+        if (dragon.isInWater() || dragon.isFlying() || !dragon.onGround || dragon.isSwimming())
+            return false;
         return dragon.isSleeping();
     }
     
