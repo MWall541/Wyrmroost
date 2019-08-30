@@ -70,9 +70,9 @@ public class ForgeEvents
          PlayerEntity player = evt.getPlayer();
          ItemStack stack = player.getHeldItem(evt.getHand());
          
-         if (stack.getItem() == Items.BEDROCK && stack.getDisplayName().getUnformattedComponentText().equals("Debugrock")) {
+         if (stack.getItem() == SetupItems.itemminutus && stack.getDisplayName().getUnformattedComponentText().equals("Debug Wyrm")) {
              evt.setCanceled(true);
-             dragon.setGrowingAge(-2400);
+             dragon.setAnimation(AbstractDragonEntity.SLEEP_ANIMATION);
          }
          
          if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
