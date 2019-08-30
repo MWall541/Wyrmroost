@@ -231,7 +231,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     if (isSitting()) setSleeping(true);
                 } else setSleeping(true);
             }
-            if (world.isDaytime() && isSleeping() && getRNG().nextInt(150) == 0)
+            if (world.isDaytime() && isSleeping() && (getRNG().nextInt(150) == 0 || isInWaterOrBubbleColumn()))
                 setSleeping(false);
         }
 
