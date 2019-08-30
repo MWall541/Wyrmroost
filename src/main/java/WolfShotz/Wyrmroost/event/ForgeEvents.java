@@ -70,17 +70,10 @@ public class ForgeEvents
          PlayerEntity player = evt.getPlayer();
          ItemStack stack = player.getHeldItem(evt.getHand());
          
-         if (stack.getItem() == SetupItems.itemminutus && stack.getDisplayName().getUnformattedComponentText().equals("Debug Wyrm")) {
-             evt.setCanceled(true);
-             dragon.setAnimation(AbstractDragonEntity.SLEEP_ANIMATION);
-         }
-         
          if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
              evt.setCanceled(true);
              String msg = "Gender: " + (dragon.getGender()? "Male " : "Female ") + "Sitting: " + dragon.isSitting() + " Sleeping: " + dragon.isSleeping();
              player.sendStatusMessage(new StringTextComponent(msg), true);
-             
-             if (dragon instanceof RoostStalkerEntity) dragon.setAnimation(RoostStalkerEntity.SLEEP_ANIMATION);
          }
      }
 }
