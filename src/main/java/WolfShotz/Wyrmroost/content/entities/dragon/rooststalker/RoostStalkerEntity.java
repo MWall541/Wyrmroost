@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
+import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.RandomLookGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupItems;
@@ -57,7 +57,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
-        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 1));
+        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 2));
         goalSelector.addGoal(8, new MeleeAttackGoal(this, 1d, true));
         goalSelector.addGoal(9, new StoleItemFlee(this));
         goalSelector.addGoal(10, new DragonBreedGoal(this, false));
