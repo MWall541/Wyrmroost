@@ -29,7 +29,7 @@ public class RandomFlightGoal extends AbstractFlightGoal
         }
         
         if (isDescending()) {
-            glider.getNavigator().tryMoveToXYZ(glider.getPosition().getX() + 0.5d, glider.getPosition().getY() - 4, glider.getPosition().getZ(), 1);
+            glider.setMotion(0, -0.2f, 0);
             
             return;
         }
@@ -45,7 +45,6 @@ public class RandomFlightGoal extends AbstractFlightGoal
             
             double x = currentPos.getX() + (rand.nextFloat() * 2f - 1f) * 15f;
             double y = currentPos.getY() + (rand.nextFloat() * 1.3f + 1f);
-            System.out.println(y);
             double z = currentPos.getZ() + (rand.nextFloat() * 2f - 1f) * 15f;
             glider.getNavigator().tryMoveToXYZ(x, y, z, 1);
         }
