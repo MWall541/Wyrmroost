@@ -72,8 +72,6 @@ public class ForgeEvents
          
          if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
              evt.setCanceled(true);
-             String msg = "Gender: " + (dragon.getGender()? "Male " : "Female ") + "Sitting: " + dragon.isSitting() + " Sleeping: " + dragon.isSleeping();
-             player.sendStatusMessage(new StringTextComponent(msg), true);
          }
      }
 }
