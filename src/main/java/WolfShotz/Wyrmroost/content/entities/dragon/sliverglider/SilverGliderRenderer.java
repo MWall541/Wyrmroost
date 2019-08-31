@@ -17,9 +17,10 @@ import static org.lwjgl.opengl.GL11.GL_ONE;
 public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEntity>
 {
     private static final String LOC = DEF_LOC + "silverglider/";
-    private final ResourceLocation female = ModUtils.location(LOC + "female.png");
-    private final ResourceLocation femaleGlow = ModUtils.location(LOC + "f_glow.png");
-    private final ResourceLocation sleep = ModUtils.location(LOC + "closed_eyes.png");
+    private final ResourceLocation FEMALE = ModUtils.location(LOC + "female.png");
+    private final ResourceLocation GOLD = ModUtils.location(LOC + "gold.png");
+    private final ResourceLocation FEMALE_GLOW = ModUtils.location(LOC + "f_glow.png");
+    private final ResourceLocation SLEEP = ModUtils.location(LOC + "closed_eyes.png");
     // Male Variants:
     // Body: "male_{the variant int}.png"
     // Glow: "{the variant int}_glow.png"
@@ -27,14 +28,15 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     public SilverGliderRenderer(EntityRendererManager manager) {
         super(manager, new SilverGliderModel(), 1f);
         addLayer(new GliderGlowLayer(this));
-        addLayer(new SleepLayer(this, sleep));
+        addLayer(new SleepLayer(this, SLEEP));
     }
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(SilverGliderEntity entity) {
-        if (!entity.getGender()) return female;
-        return ModUtils.location(LOC + "male_" + entity.getVariant() + ".png");
+    protected ResourceLocation getEntityTexture(SilverGliderEntity glider) {
+        if (glider.isGolden()) return GOLD;
+        if (!glider.getGender()) return FEMALE;
+        return ModUtils.location(LOC + "male_" + glider.getVariant() + ".png");
     }
     
     
@@ -50,8 +52,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
             int j = i % 65536;
             int k = i / 65536;
             
-            if (entity.getGender()) bindTexture(ModUtils.location(LOC + entity.getVariant() + "_glow.png"));
-            else bindTexture(femaleGlow);
+            bindTexture(getGlowTexture(entity));
     
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL_ONE, GL_ONE);
@@ -72,5 +73,10 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     
         @Override
         public boolean shouldCombineTextures() { return false; }
+        
+        private ResourceLocation getGlowTexture(SilverGliderEntity glider) {
+            if (glider.isGolden() || !glider.getGender()) return FEMALE_GLOW;
+            return ModUtils.location(LOC + glider.getVariant() + "_glow.png");
+        }
     }
 }
