@@ -43,6 +43,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 {
     // Dragon Entity Data
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(SilverGliderEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<Boolean> GOLDEN = EntityDataManager.createKey(SilverGliderEntity.class, DataSerializers.BOOLEAN);
 
     // Dragon Animation
     public static final Animation SIT_ANIMATION = Animation.create(10);
@@ -64,41 +65,23 @@ public class SilverGliderEntity extends AbstractDragonEntity
         getAttribute(MAX_HEALTH).setBaseValue(30d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.257657d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4.0d);
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(1.2d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(4d);
     }
 
     @Override
     protected void registerGoals() {
+        switchPathController(false);
+        
         super.registerGoals();
     
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 10, 4));
         goalSelector.addGoal(7, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(8, new RandomFlightGoal(this));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(11, new WatchGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(12, new RandomLookGoal(this));
-    }
-    
-    @Override
-    public void switchPathController(boolean flying) {
-        super.switchPathController(flying);
-        
-        if (flying) { // Clear goal list and then apply flight goals
-            goalSelector.getRunningGoals().forEach(goalSelector::removeGoal);
-            
-            goalSelector.addGoal(10, new RandomFlightGoal(this));
-        } else {
-            goalSelector.getRunningGoals().forEach(goalSelector::removeGoal);
-            
-            goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
-            goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
-            goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 10, 4));
-            goalSelector.addGoal(7, new DragonBreedGoal(this, true));
-            goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1d));
-            goalSelector.addGoal(11, new WatchGoal(this, LivingEntity.class, 10f));
-            goalSelector.addGoal(12, new RandomLookGoal(this));
-        }
     }
     
     // ================================
@@ -109,6 +92,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerData();
 
         dataManager.register(VARIANT, getRNG().nextInt(3)); // For females, this value is redundant.
+        dataManager.register(GOLDEN, getRNG().nextInt(500) == 0);
     }
 
     /** Save Game */
@@ -117,6 +101,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.writeAdditional(compound);
 
         compound.putInt("variant", getVariant());
+        compound.putBoolean("golden", isGolden());
     }
 
     /** Load Game */
@@ -125,6 +110,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.readAdditional(compound);
 
         setVariant(compound.getInt("variant"));
+        setGolden(compound.getBoolean("golden"));
     }
 
     /**
@@ -132,7 +118,13 @@ public class SilverGliderEntity extends AbstractDragonEntity
      */
     public int getVariant() { return dataManager.get(VARIANT); }
     public void setVariant(int variant) { dataManager.set(VARIANT, variant); }
-
+    
+    /**
+     * Is the glider golden?
+     */
+    public boolean isGolden() { return dataManager.get(GOLDEN); }
+    public void setGolden(boolean golden) { dataManager.set(GOLDEN, golden); }
+    
     /**
      * Set The chances this dragon can be an albino. Set it to 0 to have no chance
      */
