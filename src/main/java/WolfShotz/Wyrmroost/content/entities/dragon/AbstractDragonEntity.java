@@ -442,7 +442,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void performSpecialAttack(boolean shouldContinue) {}
     
     @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? 0.8f : super.getJumpUpwardsMotion(); }
+    protected float getJumpUpwardsMotion() { return canFly() ? 0.5f : super.getJumpUpwardsMotion(); }
     
     public void liftOff() { if (canFly()) jump(); }
     

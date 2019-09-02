@@ -52,6 +52,7 @@ public class FlightMovementController extends MovementController
             else moveSpeed = (float)(speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
             
             mob.setAIMoveSpeed(moveSpeed);
+            mob.setMoveVertical(y > 0.1d? moveSpeed : -moveSpeed);
 
             mob.rotationPitch = limitAngle(mob.rotationPitch, lookPitch, 10.0F);
             mob.rotationYaw = limitAngle(mob.rotationYaw, lookDir, 10.0F);

@@ -74,7 +74,8 @@ public class ForgeEvents
          if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
              evt.setCanceled(true);
     
-             if (!dragon.world.isRemote) System.out.println(ReflectionUtils.getGoalsSet(dragon.goalSelector).size());
+             String msg = "IsFlying: " + dragon.isFlying() + " | Navigator: " + dragon.getNavigator().getClass().getSimpleName() + " | Navigating to: " + dragon.getNavigator().getPath().getCurrentPos();
+             if (!dragon.world.isRemote) player.sendStatusMessage(new StringTextComponent(msg), true);
          }
      }
 }

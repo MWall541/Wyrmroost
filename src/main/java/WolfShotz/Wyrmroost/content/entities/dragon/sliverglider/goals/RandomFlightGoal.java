@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -41,7 +41,9 @@ public class RandomFlightGoal extends Goal
     
     @Override
     public void tick() {
-        if (rand.nextInt(LAND_THRESHOLD) == 0 && !isDescending()) {
+        int landThresholdNight = glider.world.isDaytime()? LAND_THRESHOLD : LAND_THRESHOLD / 4;
+        
+        if (rand.nextInt(landThresholdNight) == 0 && !isDescending()) {
             currentFlightAction = FlightFlag.DESCEND;
             glider.getNavigator().clearPath();
             glider.setMotion(Vec3d.ZERO);
@@ -66,15 +68,20 @@ public class RandomFlightGoal extends Goal
         
     }
     
-    private void flyTick() { //TODO ReEvaluate!
-        if (--changeDirInterval <= 0) {
-            changeDirInterval = 40 + rand.nextInt(30) + 10;
+    private void flyTick() {
+        PathNavigator nav = glider.getNavigator();
+        
+        if (!glider.hasPath()) {
+            double x = glider.posX + rand.nextDouble() * 16;
+            double y = glider.posY + rand.nextDouble() * 16;
+            double z = glider.posZ + rand.nextDouble() * 16;
+            nav.tryMoveToXYZ(x, y, z, 1);
         }
     }
     
     private void descendTick() {
         Vec3d look = glider.getLookVec();
-        glider.setMotion(look.x / 22, -0.5f, look.z / 22);
+        glider.setMotion(look.x / 20, -0.5f, look.z / 20);
     }
     
     private void orbitTick() {
