@@ -3,7 +3,8 @@ package WolfShotz.Wyrmroost.util.utils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.*;
+import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue;
+import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.setPrivateValue;
 
 public class ReflectionUtils
 {

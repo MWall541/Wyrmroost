@@ -19,8 +19,8 @@ import java.util.function.Supplier;
  */
 public class SendKeyPressMessage
 {
-    int dragonID;
-    int key;
+    private int dragonID;
+    private int key;
     
     public SendKeyPressMessage(AbstractDragonEntity entity, int key) {
         this.dragonID = entity.getEntityId();
