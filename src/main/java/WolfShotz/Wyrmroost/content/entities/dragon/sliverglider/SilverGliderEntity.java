@@ -102,6 +102,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerData();
 
         dataManager.register(VARIANT, getRNG().nextInt(3)); // For females, this value is redundant.
+        dataManager.register(GOLDEN, getRNG().nextInt(500) == 0); // If golden, `VARIANT` is redundant.
     }
 
     /** Save Game */
@@ -207,7 +208,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         }
 
         // if tamed, then start riding the player
-        if (isTamed() && stack.isEmpty() && !player.isSneaking()) {
+        if (isTamed() && stack.isEmpty() && !player.isSneaking() && player.getPassengers().isEmpty()) {
             startRiding(player, true);
             setSit(false);
             

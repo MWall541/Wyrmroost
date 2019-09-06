@@ -155,7 +155,7 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
             CompoundNBT nbt = new CompoundNBT();
-            ItemStack newDrop = new ItemStack(SetupItems.itemminutus);
+            ItemStack newDrop = new ItemStack(SetupItems.minutus);
 
             nbt.putBoolean("isalive", true);
             nbt.putString("entitytype", EntityType.getKey(getType()).toString());

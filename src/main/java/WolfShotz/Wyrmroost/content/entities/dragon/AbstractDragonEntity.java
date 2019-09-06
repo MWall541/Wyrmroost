@@ -219,8 +219,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        if ((MathUtils.getAltitude(this) > shouldFlyThreshold || fallDistance > shouldFlyThreshold) && !isSleeping() && canFly() && !isFlying()) setFlying(true);
-        if ((MathUtils.getAltitude(this) <= shouldFlyThreshold - 1 || onGround) && isFlying()) setFlying(false);
+        boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold) && canFly();
+        if (shouldFly != isFlying()) {
+            setFlying(shouldFly);
+        }
+//        if ((MathUtils.getAltitude(this) <= shouldFlyThreshold - 1 || onGround) && isWandering()) setFlying(false);
+        
+        
         if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && !isSleeping()) setFlying(true);
         
         if (!world.isRemote) {
