@@ -17,7 +17,6 @@ public class RandomFlightGoal extends Goal
     private SilverGliderEntity glider;
     private FlightFlag currentFlightAction;
     private int changeDirInterval;
-    private BlockPos currentPos;
     private BlockPos orbitPos;
     private final Random rand;
     
@@ -34,10 +33,7 @@ public class RandomFlightGoal extends Goal
     public boolean shouldExecute() { return glider.isFlying() && !glider.isRiding(); }
     
     @Override
-    public void startExecuting() {
-        currentPos = glider.getPosition();
-        currentFlightAction = FlightFlag.FLY;
-    }
+    public void startExecuting() { currentFlightAction = FlightFlag.FLY; }
     
     @Override
     public void tick() {
@@ -46,25 +42,13 @@ public class RandomFlightGoal extends Goal
         if (rand.nextInt(landThresholdNight) == 0 && !isDescending()) {
             currentFlightAction = FlightFlag.DESCEND;
             glider.getNavigator().clearPath();
-            glider.setMotion(Vec3d.ZERO);
         }
         
 //        if (rand.nextInt(SWITCH_PATH_THRESHOLD) == 0 && !isDescending()) switchFlightFlag();
         
-        if (isFlying()) {
-            flyTick();
-            
-            return;
-        }
-        
-        if (isDescending()) {
-            descendTick();
-            
-            return;
-        }
-        
-        if (isOrbitting())
-            orbitTick();
+        if (isFlying()) flyTick();
+        else if (isDescending()) descendTick();
+        else if (isOrbitting()) orbitTick();
         
     }
     
@@ -88,19 +72,20 @@ public class RandomFlightGoal extends Goal
     }
     
     protected boolean isFlying() { return currentFlightAction == FlightFlag.FLY; }
-    protected boolean isOrbitting() { return currentFlightAction == FlightFlag.ORIBT; }
+    protected boolean isOrbitting() { return currentFlightAction == FlightFlag.ORBIT; }
     protected boolean isDescending() { return currentFlightAction == FlightFlag.DESCEND; }
     
     private void switchFlightFlag() {
         if (isFlying()) {
-            currentFlightAction = FlightFlag.ORIBT;
-            orbitPos = currentPos;
-        } else currentFlightAction = FlightFlag.FLY;
+            currentFlightAction = FlightFlag.ORBIT;
+            orbitPos = glider.getPosition();
+        }
+        else currentFlightAction = FlightFlag.FLY;
     }
     
     private enum FlightFlag {
         FLY,
-        ORIBT,
+        ORBIT,
         DESCEND
     }
 }
