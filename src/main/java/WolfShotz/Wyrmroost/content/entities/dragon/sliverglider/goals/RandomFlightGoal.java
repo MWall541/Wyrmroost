@@ -16,7 +16,6 @@ public class RandomFlightGoal extends Goal
     
     private SilverGliderEntity glider;
     private FlightFlag currentFlightAction;
-    private int changeDirInterval;
     private BlockPos orbitPos;
     private final Random rand;
     
