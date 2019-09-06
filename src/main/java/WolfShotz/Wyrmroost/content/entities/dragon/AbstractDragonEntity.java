@@ -15,7 +15,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.controller.BodyController;
-import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
@@ -49,7 +48,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 {
     protected int animationTick;
     public int shouldFlyThreshold = 3;
-    public int randomFlyChance = 3000; // Default to random chance of 0 out of 3000
+    public int flightheightLimit = 300; // TODO Revaluate: MAKE THIS CONFIGURABLE!
+    protected final int randomFlyChance = 1000; // Default to random chance of 0 out of 3000
     public int hatchTimer; // Used in subclasses for hatching time
     public int sleepTimeout;
     protected List<String> immunes = new ArrayList<>();
@@ -152,7 +152,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Whether or not the dragon can fly.
      * For ground entities, return false
      */
-    public boolean canFly() { return !isChild(); }
+    public boolean canFly() { return !isChild() && !isSleeping(); }
     public void setFlying(boolean fly) {
         if (canFly() && fly) {
             dataManager.set(FLYING, true);
@@ -223,7 +223,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (shouldFly != isFlying()) {
             setFlying(shouldFly);
         }
-//        if ((MathUtils.getAltitude(this) <= shouldFlyThreshold - 1 || onGround) && isWandering()) setFlying(false);
+//        if ((MathUtils.getAltitude(this) <= shouldFlyThreshold - 1 || onGround) && isFlying()) setFlying(false);
         
         
         if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && !isSleeping()) setFlying(true);
@@ -254,16 +254,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             ++animationTick;
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
+        
+        if (getPosition().getY() > flightheightLimit) setPosition(posX, flightheightLimit - 1, posZ);
     }
     
     public void switchPathController(boolean flying) {
-        if (flying) {
-            moveController = new FlightMovementController(this);
-            navigator = new FlightPathNavigator(this, world);
-        } else {
-            moveController = new MovementController(this);
-            navigator = new DragonGroundPathNavigator(this, world);
-        }
+        if (flying) navigator = new FlightPathNavigator(this, world);
+        else navigator = new DragonGroundPathNavigator(this, world);
     }
     
     /**
@@ -445,11 +442,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void performSpecialAttack(boolean shouldContinue) {}
     
     @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? 0.8f : super.getJumpUpwardsMotion(); }
+    protected float getJumpUpwardsMotion() { return canFly() ? 0.5f : super.getJumpUpwardsMotion(); }
     
     public void liftOff() { if (canFly()) jump(); }
     
-    @Override
+    @Override // Disable falling calculations if we can fly (fall damage etc.)
     public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }
     
     /**

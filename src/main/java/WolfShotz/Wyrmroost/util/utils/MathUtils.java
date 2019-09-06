@@ -68,4 +68,16 @@ public class MathUtils
      * Float
      */
     public static float calcDistance3d(float x, float y, float z) { return x * x + y * y + z * z; }
+    
+    /**
+     * Angle measurement converted to radians as a float value <P>
+     * <code>angle / 180.0 * PI</code>
+     */
+    public static float toRadians(float angle) { return (float) Math.toRadians(angle); }
+    
+    /**
+     * Angle measurement converted to degrees as a float value <P>
+     * <code>angle * 180.0 / PI</code>
+     */
+    public static float toDegrees(float angle) { return (float) Math.toDegrees(angle); }
 }

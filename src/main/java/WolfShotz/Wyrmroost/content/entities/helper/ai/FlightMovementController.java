@@ -26,41 +26,39 @@ public class FlightMovementController extends MovementController
         // Handle Vanilla movement if not flying
         if (!dragon.isFlying()) {
             super.tick();
+            mob.setNoGravity(false);
             return;
         }
-
-        if (this.action == MovementController.Action.MOVE_TO) {
-            this.action = MovementController.Action.WAIT;
+    
+        mob.setNoGravity(true);
+        
+        if (action == MovementController.Action.MOVE_TO) {
             double x = posX - mob.posX;
             double y = posY - mob.posY;
             double z = posZ - mob.posZ;
             double euclid = MathUtils.calcDistance3d(x, y, z);
+            double lookAngle = (double) MathHelper.sqrt(x * x + z * z);
+            float lookDir = MathUtils.toDegrees((float) MathHelper.atan2(x, z)) - 90f;
+            float moveSpeed;
+            float lookPitch = -MathUtils.toDegrees((float) MathHelper.atan2(y, lookAngle));
 
-            this.mob.setNoGravity(true);
-
-            if (euclid < (double)2.5000003E-7F) { // Too small, dont move
+            if (euclid < (double)2.5000003E-7F) { // Too small of a move target, dont move
                 mob.setMoveVertical(0.0F);
                 mob.setMoveForward(0.0F);
                 return;
             }
 
-            float f = (float)(MathHelper.atan2(z, x) * (double)(180F / (float)Math.PI)) - 90.0F;
-            float moveSpeed;
-
-            mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10.0F);
-
-            if (mob.onGround) moveSpeed = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
+            if (mob.onGround) moveSpeed = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()); // May not be needed... unsure, so do it anyway.
             else moveSpeed = (float)(speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
-
+            
             mob.setAIMoveSpeed(moveSpeed);
+            mob.setMoveVertical(y > 0.1d? moveSpeed : -moveSpeed);
 
-            double d4 = (double) MathHelper.sqrt(x * x + z * z);
-            float f2 = (float) (-(MathHelper.atan2(y, d4) * (double)(180F / (float)Math.PI)));
-
-            mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 10.0F);
-            mob.setMoveVertical(y > 0.0D ? moveSpeed : -moveSpeed);
+            mob.rotationPitch = limitAngle(mob.rotationPitch, lookPitch, 10.0F);
+            mob.rotationYaw = limitAngle(mob.rotationYaw, lookDir, 10.0F);
+    
+            action = MovementController.Action.WAIT;
         } else {
-            mob.setNoGravity(false);
             mob.setMoveVertical(0.0F);
             mob.setMoveForward(0.0F);
         }

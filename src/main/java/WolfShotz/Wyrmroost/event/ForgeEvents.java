@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.util.network.SendKeyPressMessage;
+import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -72,6 +73,7 @@ public class ForgeEvents
          
          if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
              evt.setCanceled(true);
+             
              String msg = "IsFlying: " + dragon.isFlying() + " | Navigator: " + dragon.getNavigator().getClass().getSimpleName() + " | Navigating to: " + dragon.getMoveHelper().getX() + " " + dragon.getMoveHelper().getY() + " " + dragon.getMoveHelper().getZ();
              if (!dragon.world.isRemote) player.sendStatusMessage(new StringTextComponent(msg), true);
          }
