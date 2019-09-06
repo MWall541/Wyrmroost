@@ -75,7 +75,7 @@ public class Wyrmroost
         private CreativeTab() { super("wyrmroost"); }
 
         @Override
-        public ItemStack createIcon() { return new ItemStack(SetupItems.itemgeode); }
+        public ItemStack createIcon() { return new ItemStack(SetupItems.geode); }
     }
 
 }

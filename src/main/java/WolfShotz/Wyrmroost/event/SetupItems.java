@@ -25,20 +25,20 @@ import net.minecraftforge.registries.ObjectHolder;
 public class SetupItems
 {
     @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
-    public static Item itemmodbook;
+    public static Item modbook;
 
 
     @ObjectHolder(Wyrmroost.modID + ":jewelled_apple")
-    public static Item itemfood_jewelledapple;
+    public static Item food_jewelledapple;
 
     @ObjectHolder(Wyrmroost.modID + ":dragon_fruit")
-    public static Item itemfood_dragonfruit;
+    public static Item food_dragonfruit;
 
     @ObjectHolder(Wyrmroost.modID + ":minutus")
-    public static Item itemminutus;
+    public static Item minutus;
 
     @ObjectHolder(Wyrmroost.modID + ":cooked_minutus")
-    public static Item itemfood_cookedminutus;
+    public static Item food_cookedminutus;
     
     @ObjectHolder(Wyrmroost.modID + ":egg")
     public static Item egg;
@@ -48,78 +48,78 @@ public class SetupItems
     
     // Geode start
     @ObjectHolder(Wyrmroost.modID + ":geode")
-    public static Item itemgeode;
+    public static Item geode;
 
 
     @ObjectHolder(Wyrmroost.modID + ":geode_sword")
-    public static Item itemswordgeode;
+    public static Item swordgeode;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_pick")
-    public static Item itempickgeode;
+    public static Item pickgeode;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_shovel")
-    public static Item itemshovelgeode;
+    public static Item shovelgeode;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_axe")
-    public static Item itemaxegeode;
+    public static Item axegeode;
 
 
     @ObjectHolder(Wyrmroost.modID + ":geode_helmet")
-    public static Item itemgeodehelm;
+    public static Item geodehelm;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_chestplate")
-    public static Item itemgeodechest;
+    public static Item geodechest;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_leggings")
-    public static Item itemgeodelegs;
+    public static Item geodelegs;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_boots")
-    public static Item itemgeodeboots;
+    public static Item geodeboots;
     // Geode end
 
     // Platinum start
     @ObjectHolder(Wyrmroost.modID + ":platinum_ingot")
-    public static Item itemplatinumingot;
+    public static Item platinumingot;
 
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_sword")
-    public static Item itemplatinumsword;
+    public static Item platinumsword;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_pick")
-    public static Item itemplatinumpick;
+    public static Item platinumpick;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_axe")
-    public static Item itemplatinumaxe;
+    public static Item platinumaxe;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_shovel")
-    public static Item itemplatinumshovel;
+    public static Item platinumshovel;
 
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_helmet")
-    public static Item itemplatinumhelm;
+    public static Item platinumhelm;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_chestplate")
-    public static Item itemplatinumchest;
+    public static Item platinumchest;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_leggings")
-    public static Item itemplatinumlegs;
+    public static Item platinumlegs;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_boots")
-    public static Item itemplatinumboots;
+    public static Item platinumboots;
     // Platinum end
 
     // Spawn Eggs start
     @ObjectHolder(Wyrmroost.modID + ":drake_egg")
-    public static Item itemegg_drake;
+    public static Item egg_drake;
 
     @ObjectHolder(Wyrmroost.modID + ":minutus_egg")
-    public static Item itemegg_minutus;
+    public static Item egg_minutus;
 
     @ObjectHolder(Wyrmroost.modID + ":silverglider_egg")
-    public static Item itemegg_silverglider;
+    public static Item egg_silverglider;
     
     @ObjectHolder(Wyrmroost.modID + ":rooststalker_egg")
-    public static Item itemegg_rooststalker;
+    public static Item egg_rooststalker;
     // Spawn Eggs end
 
     @SubscribeEvent
@@ -130,9 +130,9 @@ public class SetupItems
                 new EggBlockItem(),
                 new SoulCrystalItem(),
 
-                new Item(ModUtils.itemBuilder().food(FoodList.jewelledapple)).setRegistryName("jewelled_apple"),
-                new Item(ModUtils.itemBuilder().food(FoodList.dragonfruit)).setRegistryName("dragon_fruit"),
-                new Item(ModUtils.itemBuilder().food(FoodList.cookedminutus)).setRegistryName("cooked_minutus"),
+                new Item(ModUtils.itemBuilder().food(jewelledapple)).setRegistryName("jewelled_apple"),
+                new Item(ModUtils.itemBuilder().food(dragonfruit)).setRegistryName("dragon_fruit"),
+                new Item(ModUtils.itemBuilder().food(cookedminutus)).setRegistryName("cooked_minutus"),
 
                 // SpawnEggs start
                 new SpawnEggItem(SetupEntities.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
@@ -143,41 +143,41 @@ public class SetupItems
 
                 // Geode start
                 new Item(ModUtils.itemBuilder()).setRegistryName("geode"),
-                new SwordItem(ToolMaterialList.tool_geode, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("geode_sword"),
-                new PickaxeItem(ToolMaterialList.tool_geode, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
-                new AxeItem(ToolMaterialList.tool_geode, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
-                new ShovelItem(ToolMaterialList.tool_geode, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
-                new ItemArmorBase("geode_helmet", ArmorMaterialList.armor_geode, EquipmentSlotType.HEAD),
-                new ItemArmorBase("geode_chestplate", ArmorMaterialList.armor_geode, EquipmentSlotType.CHEST),
-                new ItemArmorBase("geode_leggings", ArmorMaterialList.armor_geode, EquipmentSlotType.LEGS),
-                new ItemArmorBase("geode_boots", ArmorMaterialList.armor_geode, EquipmentSlotType.FEET),
+                new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("geode_sword"),
+                new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
+                new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
+                new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
+                new ItemArmorBase("geode_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
+                new ItemArmorBase("geode_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
+                new ItemArmorBase("geode_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
+                new ItemArmorBase("geode_boots", ArmorMaterialList.GEODE, EquipmentSlotType.FEET),
                 // Geode End
 
                 // Platinum Start
                 new Item(ModUtils.itemBuilder()).setRegistryName("platinum_ingot"),
-                new SwordItem(ToolMaterialList.tool_platinum, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("platinum_sword"),
-                new PickaxeItem(ToolMaterialList.tool_platinum, 2, -2.8f,ModUtils.itemBuilder()).setRegistryName("platinum_pick"),
-                new AxeItem(ToolMaterialList.tool_platinum, 2, -2.8f,ModUtils.itemBuilder()).setRegistryName("platinum_axe"),
-                new ShovelItem(ToolMaterialList.tool_platinum, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("platinum_shovel"),
-                new ItemArmorBase("platinum_helmet", ArmorMaterialList.armor_platinum, EquipmentSlotType.HEAD),
-                new ItemArmorBase("platinum_chestplate", ArmorMaterialList.armor_platinum, EquipmentSlotType.CHEST),
-                new ItemArmorBase("platinum_leggings", ArmorMaterialList.armor_platinum, EquipmentSlotType.LEGS),
-                new ItemArmorBase("platinum_boots", ArmorMaterialList.armor_platinum, EquipmentSlotType.FEET)
+                new SwordItem(ToolMaterialList.PLATINUM, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("platinum_sword"),
+                new PickaxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("platinum_pick"),
+                new AxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("platinum_axe"),
+                new ShovelItem(ToolMaterialList.PLATINUM, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("platinum_shovel"),
+                new ItemArmorBase("platinum_helmet", ArmorMaterialList.PLATINUM, EquipmentSlotType.HEAD),
+                new ItemArmorBase("platinum_chestplate", ArmorMaterialList.PLATINUM, EquipmentSlotType.CHEST),
+                new ItemArmorBase("platinum_leggings", ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS),
+                new ItemArmorBase("platinum_boots", ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET)
                 // Platinum End
         );
         // BlockItem's
         SetupBlocks.BLOCKS.forEach(block -> event.getRegistry().register(new BlockItem(block, ModUtils.itemBuilder()).setRegistryName(block.getRegistryName())));
     }
 
-//  ===============================
-//          Material Lists
-//  ===============================
+    //  ===============================
+    //          Material Lists
+    //  ===============================
 
     /** Enum Handling the tool materials - Manages the mining speed, attck dmg, repair item etc. */
     protected enum ToolMaterialList implements IItemTier
     {
-        tool_geode(9.3f, 4.0f, 2164, 4, 25, itemgeode),
-        tool_platinum(5.5f, 2.5f, 645, 3, 20, itemplatinumingot);
+        GEODE(9.3f, 4.0f, 2164, 4, 25, geode),
+        PLATINUM(5.5f, 2.5f, 645, 3, 20, platinumingot);
 
         private float efficiency, attackDamage;
         private int durability, harvestLevel, enchantibility;
@@ -192,30 +192,19 @@ public class SetupItems
             this.repairMaterial = repairMaterial;
         }
 
-        @Override
-        public int getMaxUses() { return durability; }
-
-        @Override
-        public float getEfficiency() { return efficiency; }
-
-        @Override
-        public float getAttackDamage() { return attackDamage; }
-
-        @Override
-        public int getHarvestLevel() { return harvestLevel; }
-
-        @Override
-        public int getEnchantability() { return enchantibility; }
-
-        @Override
-        public Ingredient getRepairMaterial() { return Ingredient.fromItems(repairMaterial); }
+        @Override public int getMaxUses() { return durability; }
+        @Override public float getEfficiency() { return efficiency; }
+        @Override public float getAttackDamage() { return attackDamage; }
+        @Override public int getHarvestLevel() { return harvestLevel; }
+        @Override public int getEnchantability() { return enchantibility; }
+        @Override public Ingredient getRepairMaterial() { return Ingredient.fromItems(repairMaterial); }
     }
 
     /** Enum Handling the armor materials - Manages dmg reduction, enchantability, durability etc. */
     protected enum ArmorMaterialList implements IArmorMaterial
     {
-        armor_geode("geode", new int[] {4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, itemgeode),
-        armor_platinum("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, itemplatinumingot);
+        GEODE("geode", new int[] {4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, geode),
+        PLATINUM("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, platinumingot);
 
         private int[] durabilityArray = new int[]{13, 15, 16, 11};
         private int durability, enchantability;
@@ -235,55 +224,40 @@ public class SetupItems
             this.repairMaterial = repairMaterial;
         }
 
-        @Override
-        public int getDurability(EquipmentSlotType slotIn) { return durabilityArray[slotIn.getIndex()] * this.durability; }
-
-        @Override
-        public int getDamageReductionAmount(EquipmentSlotType slotIn) { return dmgReduction[slotIn.getIndex()]; }
-
-        @Override
-        public int getEnchantability() { return enchantability; }
-
-        @Override
-        public SoundEvent getSoundEvent() { return sound; }
-
-        @Override
-        public Ingredient getRepairMaterial() { return Ingredient.fromItems(repairMaterial); }
-
+        @Override public int getDurability(EquipmentSlotType slotIn) { return durabilityArray[slotIn.getIndex()] * this.durability; }
+        @Override public int getDamageReductionAmount(EquipmentSlotType slotIn) { return dmgReduction[slotIn.getIndex()]; }
+        @Override public int getEnchantability() { return enchantability; }
+        @Override public SoundEvent getSoundEvent() { return sound; }
+        @Override public Ingredient getRepairMaterial() { return Ingredient.fromItems(repairMaterial); }
+        @Override public float getToughness() { return toughness; }
         @Override
         @OnlyIn(Dist.CLIENT)
         public String getName() { return name; }
-
-        @Override
-        public float getToughness() { return toughness; }
     }
 
-//  ================================
-
-    /** Static class used to store the food items */
-    private static class FoodList
-    {
-        // Jewelled Apple
-        private static Food jewelledapple = new Food.Builder()
-                                                    .hunger(8)
-                                                    .saturation(0.9f)
-                                                    .setAlwaysEdible()
-                                                    .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
-                                                    .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
-                                                    .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
-                                                    .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
-                                                    .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
-                                                    .build();
-        // Dragon Fruit
-        private static Food dragonfruit = new Food.Builder()
-                                                  .hunger(6)
-                                                  .saturation(0.55f)
-                                                  .build();
-        // Cooked Desertwyrm
-        private static Food cookedminutus = new Food.Builder()
-                                                  .hunger(6)
-                                                  .saturation(0.7f)
-                                                  .build();
-
-    }
+    //  ===========================
+    //          Food List
+    //  ===========================
+    
+    // Jewelled Apple
+    private static Food jewelledapple = new Food.Builder()
+                                                .hunger(8)
+                                                .saturation(0.9f)
+                                                .setAlwaysEdible()
+                                                .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
+                                                .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
+                                                .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
+                                                .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
+                                                .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
+                                                .build();
+    // Dragon Fruit
+    private static Food dragonfruit = new Food.Builder()
+                                              .hunger(6)
+                                              .saturation(0.55f)
+                                              .build();
+    // Cooked Desertwyrm
+    private static Food cookedminutus = new Food.Builder()
+                                                .hunger(6)
+                                                .saturation(0.7f)
+                                                .build();
 }

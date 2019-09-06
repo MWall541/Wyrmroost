@@ -9,7 +9,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.*;
+import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue;
+import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.setPrivateValue;
 
 /**
  * Utility Class to help grab the private values of minecraft.
