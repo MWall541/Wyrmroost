@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -32,59 +32,62 @@ public class RandomFlightGoal extends Goal
     @Override
     public boolean shouldExecute() { return glider.isFlying() && !glider.isRiding(); }
     
-    @Override
-    public void startExecuting() { currentFlightAction = FlightFlag.FLY; }
+    @Override // Start with default flight
+    public void startExecuting() { currentFlightAction = FlightFlag.WANDER; }
     
     @Override
     public void tick() {
-        int landThresholdNight = glider.world.isDaytime()? LAND_THRESHOLD : LAND_THRESHOLD / 4;
+        // Increase chances to "want" to land at night, for sleep
+        final int LAND_THRESHOLD = glider.world.isDaytime()? this.LAND_THRESHOLD : this.LAND_THRESHOLD / 6;
         
-        if (rand.nextInt(landThresholdNight) == 0 && !isDescending()) {
+        if (rand.nextInt(LAND_THRESHOLD) == 0 && !isDescending()) { // Small chance to start descending
             currentFlightAction = FlightFlag.DESCEND;
             glider.getNavigator().clearPath();
-        }
+        } // Start cicling
+//        else if (rand.nextInt(SWITCH_PATH_THRESHOLD) == 0 && !isDescending()) switchFlightFlag();
         
-//        if (rand.nextInt(SWITCH_PATH_THRESHOLD) == 0 && !isDescending()) switchFlightFlag();
-        
-        if (isFlying()) flyTick();
+        if (isWandering()) wanderTick();
         else if (isDescending()) descendTick();
         else if (isOrbitting()) orbitTick();
-        
     }
     
-    private void flyTick() {
-        PathNavigator nav = glider.getNavigator();
+    private void wanderTick() {
+        MovementController moveHelper = glider.getMoveHelper();
         
-        if (!glider.hasPath()) {
-            double x = glider.posX + rand.nextDouble() * 16;
-            double y = glider.posY + rand.nextDouble() * 16;
-            double z = glider.posZ + rand.nextDouble() * 16;
-            nav.tryMoveToXYZ(x, y, z, 1);
+        if (!moveHelper.isUpdating()) {
+            double x = glider.posX + rand.nextInt(50) - 25;
+            double y = glider.posY + rand.nextInt(6) - 2;
+            double z = glider.posZ + rand.nextInt(50) - 25;
+            moveHelper.setMoveTo(x + 0.5d, y, z + 0.5d, 1);
+            glider.getLookController().setLookPosition(x, glider.posY, z, 180f, 20f);
         }
     }
     
     private void descendTick() {
+        System.out.println("out");
+        
         Vec3d look = glider.getLookVec();
         glider.setMotion(look.x / 20, -0.5f, look.z / 20);
     }
     
     private void orbitTick() {
+        // ...
     }
     
-    protected boolean isFlying() { return currentFlightAction == FlightFlag.FLY; }
+    protected boolean isWandering() { return currentFlightAction == FlightFlag.WANDER; }
     protected boolean isOrbitting() { return currentFlightAction == FlightFlag.ORBIT; }
     protected boolean isDescending() { return currentFlightAction == FlightFlag.DESCEND; }
     
     private void switchFlightFlag() {
-        if (isFlying()) {
+        if (isWandering()) {
             currentFlightAction = FlightFlag.ORBIT;
             orbitPos = glider.getPosition();
         }
-        else currentFlightAction = FlightFlag.FLY;
+        else currentFlightAction = FlightFlag.WANDER;
     }
     
     private enum FlightFlag {
-        FLY,
+        WANDER,
         ORBIT,
         DESCEND
     }
