@@ -445,10 +445,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
             
             if (currentAnim == SilverGliderEntity.SIT_ANIMATION) sitAnim();
             
-            if (currentAnim == SilverGliderEntity.STAND_ANIMATION) {
-                staySleeping(frame);
-                standAnim();
-            }
+            if (currentAnim == SilverGliderEntity.STAND_ANIMATION) standAnim();
             
             if (glider.isSleeping() && currentAnim != SilverGliderEntity.SLEEP_ANIMATION) {
                 staySleeping(frame);
@@ -458,7 +455,10 @@ public class SilverGliderModel extends AdvancedEntityModel {
             
             if (currentAnim == SilverGliderEntity.SLEEP_ANIMATION) sleepAnim(glider.isSitting());
             
-            if (currentAnim == SilverGliderEntity.WAKE_ANIMATION) wakeAnim(glider.isSitting());
+            if (currentAnim == SilverGliderEntity.WAKE_ANIMATION) {
+                staySleeping(frame);
+                wakeAnim(glider.isSitting());
+            }
             
             idleAnim(frame);
         }
