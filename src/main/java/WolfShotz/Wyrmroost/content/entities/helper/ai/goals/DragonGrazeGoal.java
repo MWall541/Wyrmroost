@@ -44,13 +44,15 @@ public class DragonGrazeGoal extends Goal
      * Returns whether the EntityAIBase should begin execution.
      */
     public boolean shouldExecute() {
-        if (herbivore.getRNG().nextInt(herbivore.isChild() ? 50 : 1000) != 0) return false;
+        if (herbivore.getAttackTarget() != null) return false;
         if (herbivore.isBeingRidden()) return false;
-        else {
-            BlockPos blockpos = new BlockPos(herbivore);
-            BlockPos offsetPos = blockpos.offset(herbivore.getHorizontalFacing(), blockPosOffset).down();
-            return IS_GRASS.test(entityWorld.getBlockState(new BlockPos(herbivore))) || entityWorld.getBlockState(offsetPos).getBlock() == Blocks.GRASS_BLOCK;
-        }
+        if (herbivore.getRNG().nextInt(herbivore.isChild() ? 50 : 1000) != 0) return false;
+        
+        BlockPos blockpos = new BlockPos(herbivore);
+        int blockPosOffset = herbivore.isChild()? this.blockPosOffset / 2 : this.blockPosOffset;
+        BlockPos offsetPos = blockpos.offset(herbivore.getHorizontalFacing(), blockPosOffset).down();
+        
+        return IS_GRASS.test(entityWorld.getBlockState(new BlockPos(herbivore))) || entityWorld.getBlockState(offsetPos).getBlock() == Blocks.GRASS_BLOCK;
     }
 
     /**

@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import net.minecraft.entity.ai.goal.NonTamedTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.math.MathHelper;
 
 public class DrakeTargetGoal extends NonTamedTargetGoal
 {
@@ -16,12 +17,12 @@ public class DrakeTargetGoal extends NonTamedTargetGoal
     }
     
     @Override
+    public boolean shouldExecute() { return super.shouldExecute() && !drake.isSleeping(); }
+    
+    @Override
     public void startExecuting() {
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION) NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.ROAR_ANIMATION);
-        drake.getLookController().setLookPositionWithEntity(nearestTarget, 30, 30);
-        drake.prevRotationYaw = drake.rotationYaw = drake.rotationYawHead;
-        drake.setRotation(drake.rotationYaw, drake.rotationPitch);
-        drake.renderYawOffset = drake.rotationYaw;
+        drake.getLookController().setLookPositionWithEntity(nearestTarget, 180, 30);
     
         super.startExecuting();
     }

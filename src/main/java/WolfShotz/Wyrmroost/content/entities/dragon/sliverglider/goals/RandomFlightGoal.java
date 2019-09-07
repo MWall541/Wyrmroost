@@ -73,10 +73,6 @@ public class RandomFlightGoal extends Goal
         // ...
     }
     
-    protected boolean isWandering() { return currentFlightAction == FlightFlag.WANDER; }
-    protected boolean isOrbitting() { return currentFlightAction == FlightFlag.ORBIT; }
-    protected boolean isDescending() { return currentFlightAction == FlightFlag.DESCEND; }
-    
     private void switchFlightFlag() {
         if (isWandering()) {
             currentFlightAction = FlightFlag.ORBIT;
@@ -84,6 +80,10 @@ public class RandomFlightGoal extends Goal
         }
         else currentFlightAction = FlightFlag.WANDER;
     }
+    
+    private boolean isWandering() { return currentFlightAction == FlightFlag.WANDER; }
+    private boolean isOrbitting() { return currentFlightAction == FlightFlag.ORBIT; }
+    private boolean isDescending() { return currentFlightAction == FlightFlag.DESCEND; }
     
     private enum FlightFlag {
         WANDER,
