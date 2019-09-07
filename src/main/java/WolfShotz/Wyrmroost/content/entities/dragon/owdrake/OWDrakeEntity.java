@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
@@ -16,6 +17,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -26,6 +28,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
@@ -53,7 +56,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public static final Animation STAND_ANIMATION = Animation.create(15);
     public static final Animation GRAZE_ANIMATION = Animation.create(35);
     public static final Animation HORN_ATTACK_ANIMATION = Animation.create(22);
-    public static final Animation ROAR_ANIMATION = Animation.create(35);
+    public static final Animation ROAR_ANIMATION = Animation.create(86);
     public static final Animation TALK_ANIMATION = Animation.create(20);
 
     // Dragon Entity Data
@@ -94,6 +97,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         getAttribute(MAX_HEALTH).setBaseValue(50.0d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+        getAttribute(FOLLOW_RANGE).setBaseValue(25d);
+        getAttribute(ATTACK_KNOCKBACK).setBaseValue(3.2d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8.0d);
     }
 
@@ -161,15 +166,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void livingTick() {
         if (!world.isRemote) {
-            setSprinting(isAngry());
             if (getAttackTarget() == null && isAngry()) setAngry(false);
+            setSprinting(isAngry());
         }
-    
-        if (getAnimation() == ROAR_ANIMATION && getAnimationTick() == 1)
-            playSound(SetupSounds.OWDRAKE_ROAR, 1, 1);
+        
+        if (getAnimation() == ROAR_ANIMATION) {
+            if (getAnimationTick() == 1)
+                playSound(SetupSounds.OWDRAKE_ROAR, 1, 1);
+        }
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 10) {
             Entity target = getAttackTarget();
+            
+            world.playSound(null, posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.HOSTILE, 1f, 1f);
             
             if (target != null) attackEntityAsMob(target);
             else attackInFront(1);
@@ -265,15 +274,16 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
-
-        if (!isTamed() && passenger instanceof LivingEntity && !world.isRemote) {
+        
+        if (!isTamed() && passenger instanceof LivingEntity) {
             int rand = new Random().nextInt(100);
 
             if (passenger instanceof PlayerEntity && rand == 0) tame(true, (PlayerEntity) passenger);
             else if (rand % 15 == 0) {
                 if (EntityPredicates.CAN_AI_TARGET.test(passenger)) setAttackTarget((LivingEntity) passenger);
-                passenger.addVelocity(0, 5, 0);
-                removePassengers();
+                passenger.stopRiding();
+                passenger.setMotion(getRNG().nextDouble(), getRNG().nextDouble() + 0.2d, getRNG().nextDouble());
+//                Wyrmroost.network.sendToServer();
             }
         }
     }

@@ -389,7 +389,8 @@ public class OWDrakeModel extends AdvancedEntityModel
     
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        faceTarget(netHeadYaw, headPitch, 1, neck1, head);
+        OWDrakeEntity drake = (OWDrakeEntity) entityIn; //TODO: Use cast until Alex re-evaluates citadel!
+        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     
     @Override
@@ -440,7 +441,7 @@ public class OWDrakeModel extends AdvancedEntityModel
     
         if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim(drake.isSitting());
     
-        if (currentAnim == OWDrakeEntity.GRAZE_ANIMATION) grazeAnim(drake, frame);
+        if (currentAnim == OWDrakeEntity.GRAZE_ANIMATION) grazeAnim(drake.getAnimationTick(), frame);
 
         if (currentAnim == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
             hornAttackAnim();
@@ -725,7 +726,7 @@ public class OWDrakeModel extends AdvancedEntityModel
      * Grass Eating Animation
      * Rotate neck down and then rotate the mouth "eat"
      */
-    private void grazeAnim(OWDrakeEntity entity, float frame) {
+    private void grazeAnim(int animationTick, float frame) {
         animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
 
         animator.startKeyframe(12);
@@ -734,7 +735,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         animator.setStaticKeyframe(15);
         animator.resetKeyframe(8);
 
-        if (entity.getAnimationTick() >= 8 && entity.getAnimationTick() <= 27) {
+        if (animationTick >= 8 && animationTick <= 27) {
             jaw.rotateAngleX -= (6 + Math.sin(frame / 2) * 0.25);
         }
     }
@@ -746,9 +747,19 @@ public class OWDrakeModel extends AdvancedEntityModel
     private void roarAnim(OWDrakeEntity entity, float frame) {
         animator.setAnimation(OWDrakeEntity.ROAR_ANIMATION);
         
-        animator.startKeyframe(5);
-        animator.rotate(neck1, -0.4f, 0, 0);
+        animator.startKeyframe(14);
+        animator.move(body1, 0, 0.8f, 0);
+        animator.rotate(leg2L, 0.2f, 0, 0);
+        animator.rotate(leg3L, -0.2f, 0, 0);
+        animator.rotate(leg2R, 0.2f, 0, 0);
+        animator.rotate(leg3R, -0.2f, 0, 0);
+        animator.rotate(neck1, -0.6f, -0.2f, 0);
         animator.rotate(neck2, 0.5f, 0, 0);
+        animator.rotate(head, 0.6f, -0.2f, 0);
+        animator.rotate(arm1R, 0.4f, 0, 0);
+        animator.rotate(arm2R, -0.4f, 0, 0);
+        animator.rotate(arm1L, 0.4f, 0, 0);
+        animator.rotate(arm2L, -0.4f, 0, 0);
         animator.endKeyframe();
         
         animator.startKeyframe(8);
@@ -758,7 +769,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0.1f, 0, 0);
         animator.endKeyframe();
         
-        animator.setStaticKeyframe(18);
+        animator.setStaticKeyframe(60);
         
         animator.resetKeyframe(4);
         
