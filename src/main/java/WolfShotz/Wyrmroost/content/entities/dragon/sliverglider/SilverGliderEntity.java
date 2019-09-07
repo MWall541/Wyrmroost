@@ -25,6 +25,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -133,11 +136,25 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     // ================================
     
+    
+    @Override
+    public void tick() {
+        super.tick();
+        
+        shouldFlyThreshold = 3 + (isRiding()? 2 : 0);
+    }
+    
     @Override
     public void livingTick() {
         super.livingTick();
         
-        shouldFlyThreshold = 3 + (isRiding()? 2 : 0);
+        if (world.isRemote) {
+            double x = posX + getRNG().nextGaussian();
+            double y = posY + getRNG().nextDouble();
+            double z = posZ + getRNG().nextGaussian();
+            if (isGolden() && ticksExisted % 5 == 0)
+                world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.1925f, 0);
+        }
     }
     
     @Override

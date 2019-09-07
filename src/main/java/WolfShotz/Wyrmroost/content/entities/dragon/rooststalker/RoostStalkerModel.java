@@ -179,12 +179,14 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        faceTarget(netHeadYaw, headPitch, 2, head);
+        RoostStalkerEntity stalker = (RoostStalkerEntity) entityIn; //TODO: Use cast until Alex re-evaluates citadel!
+        if (stalker.getAnimation() != RoostStalkerEntity.SCAVENGE_ANIMATION)
+            faceTarget(netHeadYaw, headPitch, 2, head);
     }
     
     @Override
     public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
-        RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
+        RoostStalkerEntity stalker = (RoostStalkerEntity) entity; //TODO: Use cast until Alex re-evaluates citadel!
         Animation currentAnim = stalker.getAnimation();
         float frame = entity.ticksExisted;
         float f = 0.5f;
@@ -192,7 +194,7 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         
         animator.update(stalker);
         resetToDefaultPose();
-    
+        
         if (!stalker.isSitting()) {
             swing(legl1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
             swing(legl2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
