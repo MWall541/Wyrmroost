@@ -9,6 +9,8 @@ import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.RandomLookGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
+import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
+import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -26,15 +28,18 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -98,7 +103,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
         getAttribute(FOLLOW_RANGE).setBaseValue(25d);
-        getAttribute(ATTACK_KNOCKBACK).setBaseValue(3.2d);
+        getAttribute(ATTACK_KNOCKBACK).setBaseValue(3.2d); //3.2
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8.0d);
     }
 
@@ -148,7 +153,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
-    public int getAlbinoChances() { return 50; }
+    public int getSpecialChances() { return 50; }
 
     // ================================
 
@@ -275,15 +280,17 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void updatePassenger(Entity passenger) {
         super.updatePassenger(passenger);
         
-        if (!isTamed() && passenger instanceof LivingEntity) {
+        if (!isTamed() && passenger instanceof LivingEntity && !world.isRemote) {
             int rand = new Random().nextInt(100);
 
             if (passenger instanceof PlayerEntity && rand == 0) tame(true, (PlayerEntity) passenger);
             else if (rand % 15 == 0) {
                 if (EntityPredicates.CAN_AI_TARGET.test(passenger)) setAttackTarget((LivingEntity) passenger);
                 passenger.stopRiding();
-                passenger.setMotion(getRNG().nextDouble(), getRNG().nextDouble() + 0.2d, getRNG().nextDouble());
-//                Wyrmroost.network.sendToServer();
+//                ((LivingEntity) passenger).addPotionEffect(new EffectInstance(Effects.LEVITATION, 2, 100));
+                passenger.setMotion(1, 1, 1);
+                if (passenger instanceof PlayerEntity)
+                    Wyrmroost.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) passenger), new EntityMoveMessage(passenger));
             }
         }
     }
@@ -305,7 +312,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn) {
-        playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
+        if (ticksExisted % 2 == 0) playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
 
         super.playStepSound(pos, blockIn);
     }
