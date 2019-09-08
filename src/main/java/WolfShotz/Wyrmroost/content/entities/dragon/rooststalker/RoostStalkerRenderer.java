@@ -20,24 +20,25 @@ import javax.annotation.Nullable;
 public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity>
 {
     private final String loc = DEF_LOC + "rooststalker/";
-    private final ResourceLocation body = ModUtils.location(loc + "body.png");
-    private final ResourceLocation bodyAlb = ModUtils.location(loc + "body_alb.png");
-    private final ResourceLocation bodyChristmas = ModUtils.location(loc + "body_christmas.png");
-    private final ResourceLocation bodyGlow = ModUtils.location(loc + "body_glow.png");
-    private final ResourceLocation sleep = ModUtils.location(loc + "closed_eyes.png");
+    private final ResourceLocation BODY = ModUtils.location(loc + "body.png");
+    private final ResourceLocation BODY_SPE = ModUtils.location(loc + "body_spe.png");
+    private final ResourceLocation BODY_XMAS = ModUtils.location(loc + "body_christmas.png");
+    private final ResourceLocation BODY_GLOW = ModUtils.location(loc + "body_glow.png");
+    private final ResourceLocation BODY_SPE_GLOW = ModUtils.location(loc + "body_spe_glow.png");
+    private final ResourceLocation SLEEP = ModUtils.location(loc + "sleep.png");
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
         addLayer(new ItemStackRenderer(this));
-        addLayer(new GlowLayer(this, bodyGlow));
-        addLayer(new SleepLayer(this, sleep));
+        addLayer(new GlowLayer(this, stalker -> stalker.isSpecial()? BODY_SPE_GLOW : BODY_GLOW));
+        addLayer(new SleepLayer(this, SLEEP));
     }
     
     @Nullable
     @Override
     protected ResourceLocation getEntityTexture(RoostStalkerEntity stalker) {
-        if (isChristmas) return bodyChristmas;
-        return stalker.isAlbino()? bodyAlb : body;
+        if (isChristmas) return BODY_XMAS;
+        return stalker.isSpecial()? BODY_SPE : BODY;
     }
     
     class ItemStackRenderer extends AbstractLayerRenderer

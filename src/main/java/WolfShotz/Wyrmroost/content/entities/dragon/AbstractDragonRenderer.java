@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import com.google.common.base.Predicate;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -12,13 +13,14 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Calendar;
+import java.util.function.Function;
 
 import static org.lwjgl.opengl.GL11.GL_ONE;
 
 public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> extends MobRenderer<T, EntityModel<T>>
 {
     protected static final String DEF_LOC = "textures/entity/dragon/";
-    protected boolean isChristmas = false;
+    protected boolean isChristmas = true;
 
     public AbstractDragonRenderer(EntityRendererManager manager, EntityModel<T> model, float shadowSize) {
         super(manager, model, shadowSize);
@@ -52,32 +54,42 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
      */
     public class GlowLayer extends AbstractLayerRenderer
     {
-        private ResourceLocation glowLoc;
+        private Function<T, ResourceLocation> glowLocation;
+        // Optional
+        private Predicate<T> conditionals = c -> true;
     
-        public GlowLayer(IEntityRenderer entityIn, ResourceLocation glowLocation) {
+        public GlowLayer(IEntityRenderer entityIn, Function<T, ResourceLocation> glowLocation) {
             super(entityIn);
-            this.glowLoc = glowLocation;
+            this.glowLocation = glowLocation;
+        }
+    
+        public GlowLayer(IEntityRenderer entityIn, Function<T, ResourceLocation> glowLocation, Predicate<T> conditionals) {
+            super(entityIn);
+            this.glowLocation = glowLocation;
+            this.conditionals = conditionals;
         }
     
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+            if (!conditionals.test(entity)) return;
+            
             GameRenderer gamerenderer = Minecraft.getInstance().gameRenderer;
             int i = entity.getBrightnessForRender();
             int j = i % 65536;
             int k = i / 65536;
-            
-            bindTexture(glowLoc);
+    
+            bindTexture(glowLocation.apply(entity));
     
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL_ONE, GL_ONE);
             GlStateManager.depthMask(!entity.isInvisible());
             GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240, 240);
             GlStateManager.color4f(1f, 1f, 1f, 1f);
-            
+    
             gamerenderer.setupFogColor(true);
             getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
             gamerenderer.setupFogColor(false);
-            
+    
             GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, (float) j, (float) k);
             // setLightMap(Entity)
             func_215334_a(entity);
@@ -86,47 +98,37 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         }
     }
     
-    
     /**
-     * Class Responsible for the sleep layer. normally consists of closed eyes
+     * A render layer that can only render if certain conditions are met.
+     * E.G. is the dragon sleeping, saddled, etc
      */
-    public class SleepLayer extends AbstractLayerRenderer
+    public class ConditionalLayer extends AbstractLayerRenderer
     {
         private ResourceLocation loc;
+        private Predicate<T> conditions;
         
-        public SleepLayer(IEntityRenderer entityIn, ResourceLocation locIn) {
+        public ConditionalLayer(IEntityRenderer entityIn, ResourceLocation locIn, Predicate<T> conditions) {
             super(entityIn);
             this.loc = locIn;
+            this.conditions = conditions;
         }
-        
+    
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            if (entity.isSleeping()) {
+            if (conditions.test(entity)) {
                 bindTexture(loc);
                 getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
             }
         }
     }
     
-    
     /**
-     * Class Responsible for Rendering the saddle layer
+     * Class Responsible for the sleep layer. normally consists of closed eyes
      */
-    public class SaddleLayer extends AbstractLayerRenderer
+    public class SleepLayer extends ConditionalLayer
     {
-        private ResourceLocation saddleloc;
-
-        public SaddleLayer(IEntityRenderer entityIn, ResourceLocation location) {
-            super(entityIn);
-            this.saddleloc = location;
-        }
-
-        @Override
-        public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            if (entity.isSaddled()) {
-                bindTexture(saddleloc);
-                getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-            }
+        public SleepLayer(IEntityRenderer entityIn, ResourceLocation locIn) {
+            super(entityIn, locIn, AbstractDragonEntity::isSleeping);
         }
     }
 }
