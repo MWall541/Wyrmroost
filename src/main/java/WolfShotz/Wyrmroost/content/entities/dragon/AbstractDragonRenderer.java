@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL11.GL_ONE;
 public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> extends MobRenderer<T, EntityModel<T>>
 {
     protected static final String DEF_LOC = "textures/entity/dragon/";
-    protected boolean isChristmas = true;
+    protected boolean isChristmas = false;
 
     public AbstractDragonRenderer(EntityRendererManager manager, EntityModel<T> model, float shadowSize) {
         super(manager, model, shadowSize);
