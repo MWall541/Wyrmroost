@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.util.utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 
@@ -45,29 +46,43 @@ public class MathUtils
      * Calculate the euclidean plane distance of two points.
      * Double
      */
-    public static double calcDistance2d(double z, double z2, double x, double x2) {
-        return Math.sqrt((z - z2) * (z - z2) + (x - x2) * (x - x2));
+    public static double calcDistance2d(double sourceX, double targetX, double sourceZ, double targetZ) {
+        double x = targetX - sourceX;
+        double z = targetZ - sourceZ;
+        return Math.sqrt(x * x + z * z);
     }
     
     /**
      * Calculate the euclidean plane distance between two points.
      * Float
      */
-    public static float calcDistance2d(float z, float z2, float x, float x2) {
-        return (float) Math.sqrt((z - z2) * (z - z2) + (x - x2) * (x - x2));
+    public static float calcDistance2d(float sourceX, float targetX, float sourceZ, float targetZ) {
+        float x = targetX - sourceX;
+        float z = targetZ - sourceZ;
+        return MathHelper.sqrt(x * x + z * z);
     }
     
     /**
      * Calculate euclidean space distance
      * Double
      */
-    public static double calcDistance3d(double x, double y, double z) { return x * x + y * y + z * z; }
+    public static double calcDistance3d(double sourceX, double targetX, double sourceY, double targetY, double sourceZ, double targetZ) {
+        double x = targetX - sourceX;
+        double y = targetY - sourceY;
+        double z = targetZ - sourceZ;
+        return x * x + y * y + z * z;
+    }
     
     /**
      * Calculate euclidean space distance
      * Float
      */
-    public static float calcDistance3d(float x, float y, float z) { return x * x + y * y + z * z; }
+    public static float calcDistance3d(float sourceX, float targetX, float sourceY, float targetY, float sourceZ, float targetZ) {
+        float x = targetX - sourceX;
+        float y = targetY - sourceY;
+        float z = targetZ - sourceZ;
+        return x * x + y * y + z * z;
+    }
     
     /**
      * Angle measurement converted to radians as a float value <P>

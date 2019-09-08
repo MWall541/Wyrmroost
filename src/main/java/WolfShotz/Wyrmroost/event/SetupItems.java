@@ -25,26 +25,26 @@ import net.minecraftforge.registries.ObjectHolder;
 public class SetupItems
 {
     @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
-    public static Item modbook;
+    public static Item modBook;
 
 
     @ObjectHolder(Wyrmroost.modID + ":jewelled_apple")
-    public static Item food_jewelledapple;
+    public static Item foodJewelledApple;
 
     @ObjectHolder(Wyrmroost.modID + ":dragon_fruit")
-    public static Item food_dragonfruit;
+    public static Item foodDragonFruit;
 
     @ObjectHolder(Wyrmroost.modID + ":minutus")
     public static Item minutus;
 
     @ObjectHolder(Wyrmroost.modID + ":cooked_minutus")
-    public static Item food_cookedminutus;
+    public static Item foodCookedMinutus;
     
     @ObjectHolder(Wyrmroost.modID + ":egg")
     public static Item egg;
 
     @ObjectHolder(Wyrmroost.modID + ":soul_crystal")
-    public static Item soulcrystal;
+    public static Item soulCrystal;
     
     // Geode start
     @ObjectHolder(Wyrmroost.modID + ":geode")
@@ -52,88 +52,92 @@ public class SetupItems
 
 
     @ObjectHolder(Wyrmroost.modID + ":geode_sword")
-    public static Item swordgeode;
+    public static Item swordGeode;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_pick")
-    public static Item pickgeode;
+    public static Item pickGeode;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_shovel")
-    public static Item shovelgeode;
+    public static Item shovelGeode;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_axe")
-    public static Item axegeode;
+    public static Item axeGeode;
 
 
     @ObjectHolder(Wyrmroost.modID + ":geode_helmet")
-    public static Item geodehelm;
+    public static Item geodeHelm;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_chestplate")
-    public static Item geodechest;
+    public static Item geodeChest;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_leggings")
-    public static Item geodelegs;
+    public static Item geodeLegs;
 
     @ObjectHolder(Wyrmroost.modID + ":geode_boots")
-    public static Item geodeboots;
+    public static Item geodeBoots;
     // Geode end
 
     // Platinum start
     @ObjectHolder(Wyrmroost.modID + ":platinum_ingot")
-    public static Item platinumingot;
+    public static Item platinumIngot;
 
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_sword")
-    public static Item platinumsword;
+    public static Item platinumSword;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_pick")
-    public static Item platinumpick;
+    public static Item platinumPick;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_axe")
-    public static Item platinumaxe;
+    public static Item platinumAxe;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_shovel")
-    public static Item platinumshovel;
+    public static Item platinumShovel;
 
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_helmet")
-    public static Item platinumhelm;
+    public static Item platinumHelm;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_chestplate")
-    public static Item platinumchest;
+    public static Item platinumChest;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_leggings")
-    public static Item platinumlegs;
+    public static Item platinumLegs;
 
     @ObjectHolder(Wyrmroost.modID + ":platinum_boots")
-    public static Item platinumboots;
+    public static Item platinumBoots;
     // Platinum end
 
     // Spawn Eggs start
     @ObjectHolder(Wyrmroost.modID + ":drake_egg")
-    public static Item egg_drake;
+    public static Item eggDrake;
 
     @ObjectHolder(Wyrmroost.modID + ":minutus_egg")
-    public static Item egg_minutus;
+    public static Item eggMinutus;
 
     @ObjectHolder(Wyrmroost.modID + ":silverglider_egg")
-    public static Item egg_silverglider;
+    public static Item eggSilverGlider;
     
     @ObjectHolder(Wyrmroost.modID + ":rooststalker_egg")
-    public static Item egg_rooststalker;
+    public static Item eggRoostStalker;
     // Spawn Eggs end
 
     @SubscribeEvent
     public static void itemSetup(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll (
+                // Misc Start
                 new ModBookItem(),
                 new MinutusItem(),
                 new EggBlockItem(),
                 new SoulCrystalItem(),
+                // Misc End
 
+                // Food Start
                 new Item(ModUtils.itemBuilder().food(jewelledapple)).setRegistryName("jewelled_apple"),
                 new Item(ModUtils.itemBuilder().food(dragonfruit)).setRegistryName("dragon_fruit"),
                 new Item(ModUtils.itemBuilder().food(cookedminutus)).setRegistryName("cooked_minutus"),
-
+                // Food End
+                
                 // SpawnEggs start
                 new SpawnEggItem(SetupEntities.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
                 new SpawnEggItem(SetupEntities.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
@@ -177,7 +181,7 @@ public class SetupItems
     protected enum ToolMaterialList implements IItemTier
     {
         GEODE(9.3f, 4.0f, 2164, 4, 25, geode),
-        PLATINUM(5.5f, 2.5f, 645, 3, 20, platinumingot);
+        PLATINUM(5.5f, 2.5f, 645, 3, 20, platinumIngot);
 
         private float efficiency, attackDamage;
         private int durability, harvestLevel, enchantibility;
@@ -204,7 +208,7 @@ public class SetupItems
     protected enum ArmorMaterialList implements IArmorMaterial
     {
         GEODE("geode", new int[] {4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, geode),
-        PLATINUM("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, platinumingot);
+        PLATINUM("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, platinumIngot);
 
         private int[] durabilityArray = new int[]{13, 15, 16, 11};
         private int durability, enchantability;

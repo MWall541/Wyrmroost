@@ -21,7 +21,7 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(IRecipeRegistration registry) {
         // Soul Crystal
-        registry.addIngredientInfo(new ItemStack(SetupItems.soulcrystal, 1), VanillaTypes.ITEM,
+        registry.addIngredientInfo(new ItemStack(SetupItems.soulCrystal, 1), VanillaTypes.ITEM,
                                    new TranslationTextComponent("item.wyrmroost.soul_crystal.jeidesc",
                                                                 TranslationUtils.stringTranslation("dsabgi", TextFormatting.OBFUSCATED).getFormattedText())
                                            .getFormattedText());

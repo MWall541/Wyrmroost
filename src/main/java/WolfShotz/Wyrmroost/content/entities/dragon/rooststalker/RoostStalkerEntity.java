@@ -218,7 +218,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      * Lower values have greater chances.
      */
     @Override
-    public int getAlbinoChances() { return 50; }
+    public int getSpecialChances() { return 50; }
     
     @Override
     public boolean canFly() { return false; }
@@ -242,7 +242,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected Item[] getFoodItems() { return new Item[] {Items.EGG, SetupItems.egg, Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON}; }
     
     public boolean canPickUpStack(ItemStack stack) {
-        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET && stack.getItem() != SetupItems.soulcrystal;
+        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET && stack.getItem() != SetupItems.soulCrystal;
     }
     
     // == Animation ==

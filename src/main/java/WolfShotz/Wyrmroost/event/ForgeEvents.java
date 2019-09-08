@@ -12,6 +12,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -51,32 +54,29 @@ public class ForgeEvents
             }
         }
     }
-
-     /**
-      * Handles the camera setup for what the player is looking at
-      * @deprecated Currently not functional. See:
-      * <a href="https://github.com/MinecraftForge/MinecraftForge/issues/5911">Issue #5911</a>
-      */
-     @OnlyIn(Dist.CLIENT)
-     public static void ridingPerspective(EntityViewRenderEvent.CameraSetup event) {
-         Minecraft mc = Minecraft.getInstance();
-
-         if (mc.player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
-             if (mc.gameSettings.thirdPersonView == 1) GL11.glTranslatef(0, -0.5f, -0.5f);
-     }
-     
-     public static void debugStick(PlayerInteractEvent.EntityInteract evt) {
-         Entity entity = evt.getTarget();
-         if (!(entity instanceof AbstractDragonEntity)) return;
-         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-         PlayerEntity player = evt.getPlayer();
-         ItemStack stack = player.getHeldItem(evt.getHand());
-         
-         if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
-             evt.setCanceled(true);
-             
-             if (dragon instanceof OWDrakeEntity)
-                 dragon.setAnimation(OWDrakeEntity.ROAR_ANIMATION);
-         }
-     }
+    
+    /**
+     * Handles the camera setup for what the player is looking at
+     * @deprecated Currently not functional. See:
+     * <a href="https://github.com/MinecraftForge/MinecraftForge/issues/5911">Issue #5911</a>
+     */
+    @OnlyIn(Dist.CLIENT)
+    public static void ridingPerspective(EntityViewRenderEvent.CameraSetup event) {
+        Minecraft mc = Minecraft.getInstance();
+        
+        if (mc.player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
+            if (mc.gameSettings.thirdPersonView == 1) GL11.glTranslatef(0, -0.5f, -0.5f);
+    }
+    
+    public static void debugStick(PlayerInteractEvent.EntityInteract evt) {
+        Entity entity = evt.getTarget();
+        if (!(entity instanceof AbstractDragonEntity)) return;
+        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+        PlayerEntity player = evt.getPlayer();
+        ItemStack stack = player.getHeldItem(evt.getHand());
+        
+        if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
+            evt.setCanceled(true);
+        }
+    }
 }
