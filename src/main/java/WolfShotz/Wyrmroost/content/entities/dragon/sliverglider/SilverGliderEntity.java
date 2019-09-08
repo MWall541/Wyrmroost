@@ -57,6 +57,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super(entity, world);
         
         hatchTimer = 18000;
+        specialOverrides = true;
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
@@ -67,8 +68,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerAttributes();
         getAttribute(MAX_HEALTH).setBaseValue(30d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.257657d);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4.0d);
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(4d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.366836d);
     }
 
     @Override
@@ -95,7 +95,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerData();
 
         dataManager.register(VARIANT, getRNG().nextInt(3)); // For females, this value is redundant.
-        dataManager.register(GOLDEN, getRNG().nextInt(500) == 0); // If golden, `VARIANT` is redundant.
     }
 
     /** Save Game */
@@ -104,7 +103,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.writeAdditional(compound);
 
         compound.putInt("variant", getVariant());
-        compound.putBoolean("golden", isGolden());
     }
 
     /** Load Game */
@@ -113,7 +111,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.readAdditional(compound);
 
         setVariant(compound.getInt("variant"));
-        setGolden(compound.getBoolean("golden"));
     }
 
     /**
@@ -122,17 +119,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public int getVariant() { return dataManager.get(VARIANT); }
     public void setVariant(int variant) { dataManager.set(VARIANT, variant); }
     
-    /**
-     * Is the glider golden?
-     */
-    public boolean isGolden() { return dataManager.get(GOLDEN); }
-    public void setGolden(boolean golden) { dataManager.set(GOLDEN, golden); }
-    
-    /**
-     * Set The chances this dragon can be an albino. Set it to 0 to have no chance
-     */
     @Override
-    public int getAlbinoChances() { return 0; }
+    public int getSpecialChances() { return 500; }
 
     // ================================
     
@@ -152,7 +140,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             double x = posX + getRNG().nextGaussian();
             double y = posY + getRNG().nextDouble();
             double z = posZ + getRNG().nextGaussian();
-            if (isGolden() && ticksExisted % 5 == 0)
+            if (isSpecial() && ticksExisted % 5 == 0)
                 world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.1925f, 0);
         }
     }
