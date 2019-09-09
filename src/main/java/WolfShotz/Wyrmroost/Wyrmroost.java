@@ -20,28 +20,31 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
-@Mod(Wyrmroost.modID)
+@Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
 {
-    public static final String modID = "wyrmroost";
-    public static final ItemGroup creativeTab = new CreativeTab();
+    public static final String MOD_ID = "wyrmroost";
+    public static final ItemGroup CREATIVE_TAB = new CreativeTab();
     
-    public static final String channel = modID;
-    private static final String channelver = "1.0";
+    public static final String NETWORK_CHANNEL = MOD_ID;
+    private static final String CHANNEL_VER = "1.0";
     public static SimpleChannel network = NetworkRegistry.ChannelBuilder
-            .named(ModUtils.location(channel))
-            .clientAcceptedVersions(channelver::equals)
-            .serverAcceptedVersions(channelver::equals)
-            .networkProtocolVersion(() -> channelver)
+            .named(ModUtils.location(NETWORK_CHANNEL))
+            .clientAcceptedVersions(CHANNEL_VER::equals)
+            .serverAcceptedVersions(CHANNEL_VER::equals)
+            .networkProtocolVersion(() -> CHANNEL_VER)
             .simpleChannel();
 
     public Wyrmroost() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }
-
+    
+    /**
+     * FML Common Setup Event
+     */
     private void commonSetup(final FMLCommonSetupEvent event) {
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::debugStick);
+        MinecraftForge.EVENT_BUS.register(EventHandler.Common.class);
         
         SetupOreGen.setupOreGen();
         
@@ -52,10 +55,12 @@ public class Wyrmroost
 
         ModUtils.L.debug("Fired FMLCommon Setup");
     }
-
+    
+    /**
+     * FML Client Setup Event
+     */
     private void clientSetup(final FMLClientSetupEvent event) {
-//        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::ridingPerspective);
-        MinecraftForge.EVENT_BUS.addListener(ForgeEvents::onKeyPress);
+        MinecraftForge.EVENT_BUS.register(EventHandler.Cient.class);
         
         SetupEntities.registerEntityRenders();
         SetupKeyBinds.registerKeys();
@@ -68,10 +73,13 @@ public class Wyrmroost
      * Needs to be in seperate <code>@OnlyIn</code> annotated method otherwise servers throw a fit...
      */
     @OnlyIn(Dist.CLIENT)
-    private void registerSpecialRenders() {
+    private static void registerSpecialRenders() {
         ClientRegistry.bindTileEntitySpecialRenderer(EggTileEntity.class, new EggRenderer());
     }
     
+    /**
+     * Mod Creative Tab (iTeM gRoUp* rEEE)
+     */
     private static class CreativeTab extends ItemGroup
     {
         private CreativeTab() { super("wyrmroost"); }

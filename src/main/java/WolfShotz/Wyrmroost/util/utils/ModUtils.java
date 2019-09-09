@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -25,18 +26,18 @@ public class ModUtils
     /**
      * Debug Logger
      */
-    public static final Logger L = LogManager.getLogger(Wyrmroost.modID);
+    public static final Logger L = LogManager.getLogger(Wyrmroost.MOD_ID);
 
     /**
      * Register a new Resource Location.
      * @param path
      */
-    public static ResourceLocation location(String path) { return new ResourceLocation(Wyrmroost.modID, path); }
+    public static ResourceLocation location(String path) { return new ResourceLocation(Wyrmroost.MOD_ID, path); }
 
     /**
      * Item Properties builder
      */
-    public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.creativeTab); }
+    public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.CREATIVE_TAB); }
     
     /**
      * Block Properties builder
@@ -71,5 +72,9 @@ public class ModUtils
         List<T> set = new ArrayList<>();
         for (List<T> listParam : lists) set.addAll(listParam);
         return set;
+    }
+    
+    public static List<LivingEntity> getEntitiesNearby(LivingEntity entity, double radius) {
+        return entity.world.getEntitiesWithinAABB(LivingEntity.class, entity.getBoundingBox().grow(radius), found -> found != entity && entity.getPassengers().stream().noneMatch(found::equals));
     }
 }

@@ -21,8 +21,6 @@ public class EntityMoveMessage
         this.x = entity.getMotion().x;
         this.y = entity.getMotion().y;
         this.z = entity.getMotion().z;
-        
-        System.out.println(x + " | " + z);
     }
     
     public EntityMoveMessage(PacketBuffer buf) {
@@ -45,7 +43,7 @@ public class EntityMoveMessage
         Entity entity = world.getEntityByID(entityID);
         if (entity == null) return;
         
-        System.out.println("test");
+        System.out.println(x + " " + z);
         
         entity.setMotion(x, y, z);
     }

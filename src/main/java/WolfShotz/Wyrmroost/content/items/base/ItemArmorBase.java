@@ -22,6 +22,6 @@ public class ItemArmorBase extends ArmorItem
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
         int layer = slot == EquipmentSlotType.LEGS ? 2 : 1;
-        return Wyrmroost.modID + ":textures/models/armor/" + material.getName() + "_layer_" + layer + ".png";
+        return Wyrmroost.MOD_ID + ":textures/models/armor/" + material.getName() + "_layer_" + layer + ".png";
     }
 }

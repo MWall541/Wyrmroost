@@ -19,25 +19,25 @@ import net.minecraftforge.registries.ObjectHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Wyrmroost.modID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupBlocks
 {
     // List Collection of all Blocks in preparation for BlockItem Registration
     public static List<Block> BLOCKS = new ArrayList<>();
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_ore")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_ore")
     public static Block blockplatinumore;
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_block")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_block")
     public static Block blockplatinum;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_ore")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_ore")
     public static Block blockgeodeore;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_block")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_block")
     public static Block blockgeode;
     
-    @ObjectHolder(Wyrmroost.modID + ":egg")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":egg")
     public static Block egg;
 
     @SubscribeEvent
@@ -57,7 +57,7 @@ public class SetupBlocks
     //   Tile Entities
     // =================
     
-    @ObjectHolder(Wyrmroost.modID + ":teegg")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":teegg")
     public static TileEntityType<EggTileEntity> teegg;
     
     @SubscribeEvent

@@ -21,104 +21,104 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
-@Mod.EventBusSubscriber(modid = Wyrmroost.modID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupItems
 {
-    @ObjectHolder(Wyrmroost.modID + ":tarragon_tome")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":tarragon_tome")
     public static Item modBook;
 
 
-    @ObjectHolder(Wyrmroost.modID + ":jewelled_apple")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":jewelled_apple")
     public static Item foodJewelledApple;
 
-    @ObjectHolder(Wyrmroost.modID + ":dragon_fruit")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_fruit")
     public static Item foodDragonFruit;
 
-    @ObjectHolder(Wyrmroost.modID + ":minutus")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":minutus")
     public static Item minutus;
 
-    @ObjectHolder(Wyrmroost.modID + ":cooked_minutus")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":cooked_minutus")
     public static Item foodCookedMinutus;
     
-    @ObjectHolder(Wyrmroost.modID + ":egg")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":egg")
     public static Item egg;
 
-    @ObjectHolder(Wyrmroost.modID + ":soul_crystal")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":soul_crystal")
     public static Item soulCrystal;
     
     // Geode start
-    @ObjectHolder(Wyrmroost.modID + ":geode")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode")
     public static Item geode;
 
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_sword")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_sword")
     public static Item swordGeode;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_pick")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_pick")
     public static Item pickGeode;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_shovel")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_shovel")
     public static Item shovelGeode;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_axe")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_axe")
     public static Item axeGeode;
 
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_helmet")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_helmet")
     public static Item geodeHelm;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_chestplate")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_chestplate")
     public static Item geodeChest;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_leggings")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_leggings")
     public static Item geodeLegs;
 
-    @ObjectHolder(Wyrmroost.modID + ":geode_boots")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_boots")
     public static Item geodeBoots;
     // Geode end
 
     // Platinum start
-    @ObjectHolder(Wyrmroost.modID + ":platinum_ingot")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_ingot")
     public static Item platinumIngot;
 
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_sword")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_sword")
     public static Item platinumSword;
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_pick")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_pick")
     public static Item platinumPick;
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_axe")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_axe")
     public static Item platinumAxe;
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_shovel")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_shovel")
     public static Item platinumShovel;
 
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_helmet")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_helmet")
     public static Item platinumHelm;
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_chestplate")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_chestplate")
     public static Item platinumChest;
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_leggings")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_leggings")
     public static Item platinumLegs;
 
-    @ObjectHolder(Wyrmroost.modID + ":platinum_boots")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_boots")
     public static Item platinumBoots;
     // Platinum end
 
     // Spawn Eggs start
-    @ObjectHolder(Wyrmroost.modID + ":drake_egg")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":drake_egg")
     public static Item eggDrake;
 
-    @ObjectHolder(Wyrmroost.modID + ":minutus_egg")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":minutus_egg")
     public static Item eggMinutus;
 
-    @ObjectHolder(Wyrmroost.modID + ":silverglider_egg")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":silverglider_egg")
     public static Item eggSilverGlider;
     
-    @ObjectHolder(Wyrmroost.modID + ":rooststalker_egg")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":rooststalker_egg")
     public static Item eggRoostStalker;
     // Spawn Eggs end
 

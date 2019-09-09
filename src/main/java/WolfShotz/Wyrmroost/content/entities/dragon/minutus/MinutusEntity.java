@@ -50,8 +50,6 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
     
     public MinutusEntity(EntityType<? extends MinutusEntity> minutus, World world) {
         super(minutus, world);
-
-        moveController = new MovementController(this);
     }
 
     @Override
@@ -208,6 +206,9 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
 
     @Override
     protected void collideWithEntity(Entity entityIn) { if (!isBurrowed()) super.collideWithEntity(entityIn); }
+    
+    @Override
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isBurrowed(); }
     
     @Nullable
     @Override

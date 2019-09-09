@@ -28,7 +28,6 @@ public class SetupOreGen
             if (overworldFilter.test(biome)) { // Filter Ores so they dont gen in the nether or end
                 registerOreEntry(biome, SetupBlocks.blockgeodeore.getDefaultState(), 8, geodeConfig);
                 registerOreEntry(biome, SetupBlocks.blockplatinumore.getDefaultState(), 9, platinumConfig);
-                ModUtils.L.debug("Registering Ore for:" + biome);
             }
         }
     }
@@ -38,6 +37,11 @@ public class SetupOreGen
      * Takes in the biome, ore blockstate, ore size and the chance configuration as params.
      */
     private static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config) {
-        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size), Placement.COUNT_RANGE, config));
+        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(
+                        Feature.ORE,
+                        new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size),
+                        Placement.COUNT_RANGE,
+                        config
+                ));
     }
 }

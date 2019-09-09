@@ -462,6 +462,8 @@ public class SilverGliderModel extends AdvancedEntityModel {
             
             idleAnim(frame);
         }
+        
+        if (currentAnim == SilverGliderEntity.TALK_ANIMATION) talkAnim();
     }
     
     // animate the head and tail according to glider's state (flying or on ground)
@@ -623,6 +625,16 @@ public class SilverGliderModel extends AdvancedEntityModel {
         for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0.05f, 0.3f, 0);
         for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, -0.75f, 0, 0);
         animator.endKeyframe();
+    }
+    
+    private void talkAnim() {
+        animator.startKeyframe(3);
+        animator.rotate(mouthBottom, 0.5f, 0, 0);
+        animator.endKeyframe();
+        
+        animator.setStaticKeyframe(14);
+        
+        animator.resetKeyframe(3);
     }
     
     private void flight(float frame) {

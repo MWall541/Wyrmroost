@@ -8,46 +8,46 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
-@Mod.EventBusSubscriber(modid = Wyrmroost.modID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupSounds
 {
-    @ObjectHolder(Wyrmroost.modID + ":entity.minutus.idle")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.minutus.idle")
     public static SoundEvent MINUTUS_IDLE;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.minutus.screech")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.minutus.screech")
     public static SoundEvent MINUTUS_SCREECH;
     
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.silverglider.idle")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.silverglider.idle")
     public static SoundEvent SILVERGLIDER_IDLE;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.silverglider.hurt")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.silverglider.hurt")
     public static SoundEvent SILVERGLIDER_HURT;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.silverglider.death")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.silverglider.death")
     public static SoundEvent SILVERGLIDER_DEATH;
     
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.idle")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.owdrake.idle")
     public static SoundEvent OWDRAKE_IDLE;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.roar")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.owdrake.roar")
     public static SoundEvent OWDRAKE_ROAR;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.hurt")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.owdrake.hurt")
     public static SoundEvent OWDRAKE_HURT;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.owdrake.death")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.owdrake.death")
     public static SoundEvent OWDRAKE_DEATH;
     
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.rooststalker.idle")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.rooststalker.idle")
     public static SoundEvent STALKER_IDLE;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.rooststalker.hurt")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.rooststalker.hurt")
     public static SoundEvent STALKER_HURT;
     
-    @ObjectHolder(Wyrmroost.modID + ":entity.rooststalker.death")
+    @ObjectHolder(Wyrmroost.MOD_ID + ":entity.rooststalker.death")
     public static SoundEvent STALKER_DEATH;
     
     @SubscribeEvent
