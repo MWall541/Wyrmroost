@@ -10,6 +10,7 @@ import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.RandomLookGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
+import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
@@ -54,13 +55,13 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 0.5F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.25F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION = Animation.create(15);
     public static final Animation STAND_ANIMATION = Animation.create(15);
     public static final Animation GRAZE_ANIMATION = Animation.create(35);
-    public static final Animation HORN_ATTACK_ANIMATION = Animation.create(22);
+    public static final Animation HORN_ATTACK_ANIMATION = Animation.create(15);
     public static final Animation ROAR_ANIMATION = Animation.create(86);
     public static final Animation TALK_ANIMATION = Animation.create(20);
 
@@ -102,8 +103,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         getAttribute(MAX_HEALTH).setBaseValue(50.0d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
-        getAttribute(FOLLOW_RANGE).setBaseValue(25d);
-        getAttribute(ATTACK_KNOCKBACK).setBaseValue(3.2d); //3.2
+        getAttribute(FOLLOW_RANGE).setBaseValue(20d);
+        getAttribute(ATTACK_KNOCKBACK).setBaseValue(3.2d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8.0d);
     }
 
@@ -151,7 +152,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (sprinting) attribute.applyModifier(SPRINTING_SPEED_BOOST);
     }
 
-    /** Set The chances this dragon can be an albino. Set it to 0 to have no chance */
     @Override
     public int getSpecialChances() { return 50; }
 
@@ -177,13 +177,25 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         if (getAnimation() == ROAR_ANIMATION) {
             if (getAnimationTick() == 1)
-                playSound(SetupSounds.OWDRAKE_ROAR, 1, 1);
+                playSound(SetupSounds.OWDRAKE_ROAR, 5, 1);
+            if (getAnimationTick() == 15) {
+                getEntitiesNearby(5).forEach(e -> { // Dont get too close now ;)
+                    double angle = (MathUtils.getAngle(posX, e.posX, posZ, e.posZ) + 90) * Math.PI / 180;
+                    double x = 1.2 * (-Math.cos(angle));
+                    double z = 1.2 * (-Math.sin(angle));
+                    e.setMotion(e.getMotion().add(x, 0.4, z));
+                    e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120));
+                });
+            }
+            if (getAnimationTick() > 15) {
+                getEntitiesNearby(20).forEach(e -> e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120)));
+            }
         }
         
-        if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 10) {
+        if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8) {
             Entity target = getAttackTarget();
             
-            world.playSound(null, posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.HOSTILE, 1f, 1f);
+            world.playSound(posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.AMBIENT, 1f, 0.5f, false);
             
             if (target != null) attackEntityAsMob(target);
             else attackInFront(1);
@@ -253,7 +265,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             LivingEntity rider = (LivingEntity) getControllingPassenger();
             if (canPassengerSteer()) {
                 float f = rider.moveForward, s = rider.moveStrafing;
-                float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting() ? 1.89f : 1);
+                float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting()? SPRINTING_SPEED_BOOST.getAmount() : 1));
                 boolean moving = (f != 0 || s != 0);
                 Vec3d target = new Vec3d(s, vec3d.y, f);
 

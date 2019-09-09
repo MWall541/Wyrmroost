@@ -95,4 +95,11 @@ public class MathUtils
      * <code>angle * 180.0 / PI</code>
      */
     public static float toDegrees(float angle) { return (float) Math.toDegrees(angle); }
+    
+    /**
+     * Get then angle between 2 sources
+     */
+    public static double getAngle(double x1, double x2, double z1, double z2) {
+        return Math.atan2(z2 - z1, x2 - x1) * (180 / Math.PI) + 90;
+    }
 }
