@@ -403,7 +403,7 @@ public class OWDrakeModel extends AdvancedEntityModel
         resetToDefaultPose();
         animator.update(drake);
         
-        if (!drake.isSitting() || !drake.hasActiveAnimation() || overrides) {
+        if ((!drake.isSitting() && !drake.isSleeping()) || overrides) {
         
             // Body bob
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, 0.5f);
@@ -695,31 +695,51 @@ public class OWDrakeModel extends AdvancedEntityModel
     private void hornAttackAnim() {
         animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION);
 
-        animator.startKeyframe(7);
-        animator.move(body1, 0, 0.5f, 0.2f);
+        animator.startKeyframe(5);
+        animator.move(body1, 0, 2f, 1);
+        animator.rotate(body1, 0.3f, 0, 0);
+        animator.rotate(body2, -0.3f, 0, 0);
         animator.rotate(neck1, -0.4f, 0, 0);
         animator.rotate(head, 0.8f, 0, 0);
-        animator.rotate(arm1L, 0.2f, 0, 0);
-        animator.rotate(arm2L, -0.2f, 0, 0);
-        animator.rotate(arm1R, 0.2f, 0, 0);
-        animator.rotate(arm2R, -0.2f, 0, 0);
-        animator.rotate(leg1L, 0.2f, 0, 0);
-        animator.rotate(leg1R, 0.2f, 0, 0);
-        animator.rotate(leg2L, -0.2f, 0, 0);
-        animator.rotate(leg2R, -0.2f, 0, 0);
-        animator.rotate(footL, -0.09f, 0, 0);
-        animator.rotate(footR, -0.09f, 0, 0);
+        animator.rotate(arm1L, 0.25f, 0, 0);
+        animator.rotate(arm2L, -0.75f, 0, 0);
+        animator.rotate(palmL, 0.25f, 0, 0);
+        animator.rotate(arm1R, 0.25f, 0, 0);
+        animator.rotate(arm2R, -0.75f, 0, 0);
+        animator.rotate(palmR, 0.25f, 0, 0);
+        animator.rotate(leg2L, 0.25f, 0, 0);
+        animator.rotate(leg3L, -0.25f, 0, 0);
+        animator.rotate(leg2R, 0.25f, 0, 0);
+        animator.rotate(leg3R, -0.25f, 0, 0);
+        for (AdvancedRendererModel segment : tailArray) animator.rotate(segment, -0.05f, 0, 0);
         animator.endKeyframe();
-
+        
+//        animator.setStaticKeyframe(1);
+        
         animator.startKeyframe(3);
-        animator.rotate(neck1, 0.6f, 0, 0);
+        animator.move(body1, 0, 2f, 1);
+        animator.rotate(body1, 0.3f, 0, 0);
+        animator.rotate(body2, -0.3f, 0, 0);
+        animator.rotate(arm1L, 0.25f, 0, 0);
+        animator.rotate(arm2L, -0.75f, 0, 0);
+        animator.rotate(palmL, 0.25f, 0, 0);
+        animator.rotate(arm1R, 0.25f, 0, 0);
+        animator.rotate(arm2R, -0.75f, 0, 0);
+        animator.rotate(palmR, 0.25f, 0, 0);
+        animator.rotate(leg2L, 0.25f, 0, 0);
+        animator.rotate(leg3L, -0.25f, 0, 0);
+        animator.rotate(leg2R, 0.25f, 0, 0);
+        animator.rotate(leg3R, -0.25f, 0, 0);
+        for (AdvancedRendererModel segment : tailArray) animator.rotate(segment, -0.05f, 0, 0);
+        animator.rotate(neck1, 0.3f, 0, 0);
         animator.endKeyframe();
-
-        animator.startKeyframe(5);
-        animator.rotate(head, -0.8f, 0, 0);
+        
+        animator.startKeyframe(2);
+        animator.rotate(neck1, -0.2f, 0, 0);
+        for (AdvancedRendererModel segment : tailArray) animator.rotate(segment, 0.025f, 0, 0);
         animator.endKeyframe();
-
-        animator.resetKeyframe(7);
+        
+        animator.resetKeyframe(5);
     }
 
     /**
