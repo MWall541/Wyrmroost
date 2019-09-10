@@ -60,8 +60,7 @@ public class EventHandler
     /**
      * Subscribe events playing on CLIENT only distribution
      */
-    @OnlyIn(Dist.CLIENT)
-    public static class Cient
+    public static class Client
     {
         /**
          * Handles custom keybind pressing
@@ -84,10 +83,11 @@ public class EventHandler
                     System.out.println("hooold...");
                     Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 1)); // Hold
                 }
-                if (!SetupKeyBinds.specialAttack.isKeyDown() && dragon.isSpecialAttacking) {
+                //todo Revaluate
+/*                if (!SetupKeyBinds.specialAttack.isKeyDown() && dragon.isSpecialAttacking) {
                     System.out.println("sending stop message");
                     Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 2)); // Release
-                }
+                }*/
             }
         }
         

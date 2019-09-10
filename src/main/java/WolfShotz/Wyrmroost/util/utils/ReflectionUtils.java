@@ -4,7 +4,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.tileentity.ChestTileEntity;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class ReflectionUtils
     /**
      * Get the goals set of this mob
      */
-    public static Set<PrioritizedGoal> getGoalsSet(@NonNull GoalSelector instance) {
+    public static Set<PrioritizedGoal> getGoalsSet(@Nonnull GoalSelector instance) {
         return getPrivateValue(GoalSelector.class, instance, "field_220892_d");
     }
 }

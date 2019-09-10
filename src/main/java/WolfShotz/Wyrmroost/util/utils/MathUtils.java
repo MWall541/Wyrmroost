@@ -6,6 +6,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 
+/**
+ * Math utility class to make my life like way easier.
+ *
+ * Half of this shit is just me throwing numbers in and hoping it works,
+ * seems to be going well so far!
+ */
 public class MathUtils
 {
     /**

@@ -60,7 +60,7 @@ public class Wyrmroost
      * FML Client Setup Event
      */
     private void clientSetup(final FMLClientSetupEvent event) {
-        MinecraftForge.EVENT_BUS.register(EventHandler.Cient.class);
+        MinecraftForge.EVENT_BUS.register(EventHandler.Client.class);
         
         SetupEntities.registerEntityRenders();
         SetupKeyBinds.registerKeys();
