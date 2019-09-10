@@ -50,10 +50,8 @@ public class RandomFlightGoal extends Goal
             currentFlightAction = FlightFlag.DESCEND;
             glider.getNavigator().clearPath();
         } // Start circling
-        else if (rand.nextInt(SWITCH_PATH_THRESHOLD) == 0 && !isDescending()) switchFlightFlag();
+//        else if (rand.nextInt(SWITCH_PATH_THRESHOLD) == 0 && !isDescending()) switchFlightFlag();
         
-        System.out.println(currentFlightAction == FlightFlag.ORBIT);
-    
         glider.getMoveHelper().setMoveTo(airTarget.x, airTarget.y, airTarget.z, 1);
         glider.getLookController().setLookPosition(airTarget.x, glider.posY, airTarget.z, 180f, 20f);
         

@@ -34,6 +34,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nullable;
@@ -55,7 +57,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public int sleepTimeout;
     public List<String> immunes = new ArrayList<>();
     public boolean isSpecialAttacking = false;
-    public boolean specialOverrides = false;
     
     // Dragon Entity Animations
     public Animation animation = NO_ANIMATION;
@@ -241,12 +242,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 setSleeping(false);
             
         } else { // Client Only Stuffs
-            if (isSpecial() && ticksExisted % 25 == 0 && !specialOverrides) {
-                double x = posX + getWidth() * (getRNG().nextGaussian() * 0.5d);
-                double y = posY + getHeight() * (getRNG().nextDouble());
-                double z = posZ + getWidth() * (getRNG().nextGaussian() * 0.5d);
-                world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
-            }
+            if (isSpecial()) doSpecialEffects();
         }
         
         super.livingTick();
@@ -344,6 +340,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSitting()) setSit(false);
         
         return super.attackEntityFrom(source, amount);
+    }
+    
+    /**
+     * Effects to play when the dragon is 'Special'
+     * Default to white sparklez around the body.
+     * Can be overriden to do custom effects.
+     */
+    @OnlyIn(Dist.CLIENT)
+    public void doSpecialEffects() {
+        if (ticksExisted % 25 == 0) {
+            double x = posX + getWidth() * (getRNG().nextGaussian() * 0.5d);
+            double y = posY + getHeight() * (getRNG().nextDouble());
+            double z = posZ + getWidth() * (getRNG().nextGaussian() * 0.5d);
+            world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
+        }
     }
     
     /**
@@ -453,7 +464,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void performSpecialAttack(boolean shouldContinue) {}
     
     @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? 0.5f : super.getJumpUpwardsMotion(); }
+    protected float getJumpUpwardsMotion() { return canFly() ? shouldFlyThreshold / 2.5f : super.getJumpUpwardsMotion(); }
     
     public void liftOff() { if (canFly()) jump(); }
     
@@ -481,8 +492,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     public void setAnimation(Animation animation) {
-        this.animation = animation;
         setAnimationTick(0);
+        this.animation = animation;
     }
     
     public boolean hasActiveAnimation() { return getAnimation() != NO_ANIMATION || getAnimationTick() != 0; }

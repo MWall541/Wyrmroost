@@ -170,6 +170,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     public void livingTick() {
+//        if (world.isRemote) System.out.println("rotation Yaw Head: " + rotationYawHead);
+        
         if (!world.isRemote) {
             if (getAttackTarget() == null && isAngry()) setAngry(false);
             setSprinting(isAngry());
@@ -184,7 +186,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
                     double x = 1.2 * (-Math.cos(angle));
                     double z = 1.2 * (-Math.sin(angle));
                     e.setMotion(e.getMotion().add(x, 0.4, z));
-                    e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120));
                 });
             }
             if (getAnimationTick() > 15) {
@@ -299,10 +300,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
             else if (rand % 15 == 0) {
                 if (EntityPredicates.CAN_AI_TARGET.test(passenger)) setAttackTarget((LivingEntity) passenger);
                 passenger.stopRiding();
-//                ((LivingEntity) passenger).addPotionEffect(new EffectInstance(Effects.LEVITATION, 2, 100));
-                passenger.setMotion(1, 1, 1);
-                if (passenger instanceof PlayerEntity)
-                    Wyrmroost.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) passenger), new EntityMoveMessage(passenger));
+                // Effect potionIn, int durationIn, int amplifierIn, boolean ambientIn, boolean showParticlesIn
+                ((LivingEntity) passenger).addPotionEffect(new EffectInstance(Effects.LEVITATION, 2, 100));
+//                passenger.setMotion(1, 1, 1);
+//                if (passenger instanceof PlayerEntity)
+//                    Wyrmroost.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) passenger), new EntityMoveMessage(passenger));
             }
         }
     }
