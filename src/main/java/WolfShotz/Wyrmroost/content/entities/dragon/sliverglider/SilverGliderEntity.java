@@ -14,7 +14,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -162,7 +161,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     if (yMot >= 0) yMot = -0.1f;
                     
                     player.setMotion(xMot, yMot, zMot);
-                    player.fallDistance = 0;
                 }
                 
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
@@ -190,6 +188,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
             tame(getRNG().nextInt(10) == 0, player);
+            eat(stack);
             if (isSleeping()) setSleeping(false);
             
             return true;
@@ -237,7 +236,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     @Override
     public void playAmbientSound() {
-        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+        if (!isSleeping() && !hasActiveAnimation())
+            setAnimation(TALK_ANIMATION);
         
         super.playAmbientSound();
     }

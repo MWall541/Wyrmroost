@@ -111,9 +111,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         // Change to tame if holding a dragon egg
         if (!isTamed() && stack.getItem() == SetupItems.egg) {
-            tame(getRNG().nextBoolean(), player);
-            getAttribute(MAX_HEALTH).setBaseValue(20d);
-            consumeItemFromStack(player, stack);
+            eat(stack);
+            if (tame(getRNG().nextBoolean(), player))
+                getAttribute(MAX_HEALTH).setBaseValue(20d);
             
             return true;
         }
@@ -213,12 +213,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected BodyController createBodyController() { return new BodyController(this); }
     
     /**
-     * Set The chances this dragon can be an albino.
+     * Set The chances this dragon can be a special.
      * Set it to 0 to have no chance.
      * Lower values have greater chances.
      */
     @Override
-    public int getSpecialChances() { return 50; }
+    public int getSpecialChances() { return 150; }
     
     @Override
     public boolean canFly() { return false; }

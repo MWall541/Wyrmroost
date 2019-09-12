@@ -5,12 +5,15 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.util.EntityPredicates;
 
+import java.util.function.Predicate;
+
 public class RunAwayGoal<T extends LivingEntity> extends AvoidEntityGoal<T>
 {
     private MinutusEntity entity;
+    private static final Predicate<LivingEntity> TEST = t -> EntityPredicates.CAN_AI_TARGET.test(t) && !(t instanceof MinutusEntity);
 
     public RunAwayGoal(MinutusEntity entity, Class<T> avoidingEntity) {
-        super(entity, avoidingEntity, 6f, 0.8d, 1.2d, EntityPredicates.CAN_AI_TARGET::test);
+        super(entity, avoidingEntity, 6f, 0.8d, 1.2d, TEST);
         this.entity = entity;
     }
 
@@ -19,4 +22,5 @@ public class RunAwayGoal<T extends LivingEntity> extends AvoidEntityGoal<T>
 
     @Override
     public boolean shouldContinueExecuting() { return super.shouldContinueExecuting() && !entity.isBurrowed(); }
+    
 }

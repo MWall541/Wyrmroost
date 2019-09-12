@@ -4,6 +4,7 @@ import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
@@ -351,13 +352,23 @@ public class SilverGliderModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        SilverGliderEntity glider = (SilverGliderEntity) entity;
+    
+        GlStateManager.pushMatrix();
+        if (glider.isChild()) {
+            GlStateManager.scaled(0.35d, 0.35d, 0.35d);
+            GlStateManager.translated(0, 2.75d, 0);
+        }
+    
         mainbody.render(scale);
+    
+        GlStateManager.popMatrix();
     }
     
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        faceTarget(netHeadYaw, headPitch, 2, headArray);
+        faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
     
     private float globalSpeed;
@@ -368,7 +379,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         float frame = entityIn.ticksExisted;
         globalSpeed = 0.5f;
         Animation currentAnim = glider.getAnimation();
-        
+    
         resetToDefaultPose();
         animator.update(glider);
         

@@ -14,6 +14,8 @@ import net.minecraft.world.gen.Heightmap;
  */
 public class MathUtils
 {
+    public static final float PI = (float) Math.PI;
+    
     /**
      * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max be
      * third parameter
@@ -30,6 +32,10 @@ public class MathUtils
         else if (f1 > 360.0F) f1 -= 360.0F;
 
         return f1;
+    }
+    
+    public static Vec3d rotateYaw(float amount, double xOffset, double zOffset) {
+        return new Vec3d(xOffset, 0, zOffset).rotateYaw(-amount * (PI / 180f));
     }
     
     /**
