@@ -27,12 +27,14 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -51,7 +53,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 {
     public int animationTick;
     public int shouldFlyThreshold = 3;
-    public int flightheightLimit = 300; // TODO Revaluate: MAKE THIS CONFIGURABLE!
     public final int randomFlyChance = 1000; // Default to random chance of 0 out of 3000
     public int hatchTimer; // Used in subclasses for hatching time
     public int sleepTimeout;
@@ -152,11 +153,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Whether or not the dragon is flying
      */
     public boolean isFlying() { return dataManager.get(FLYING); }
-    /**
-     * Whether or not the dragon can fly.
-     * For ground entities, return false
-     */
-    public boolean canFly() { return !isChild() && !isSleeping(); }
     public void setFlying(boolean fly) {
         if (canFly() && fly) {
             dataManager.set(FLYING, true);
@@ -178,6 +174,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * If we have a sleep animation, then play it.
      */
     public void setSleeping(boolean sleep) {
+        if (isSleeping() == sleep) return;
+        
         dataManager.set(SLEEPING, sleep);
         
         isJumping = false;
@@ -192,6 +190,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     public void setSit(boolean sitting) {
+        if (isSitting() == sitting) return;
+        
         if (!world.isRemote) {
             sitGoal.setSitting(sitting);
             isJumping = false;
@@ -224,11 +224,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void livingTick() {
         boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold) && canFly();
-        if (shouldFly != isFlying()) {
-            setFlying(shouldFly);
-        }
+        if (shouldFly != isFlying()) setFlying(shouldFly);
         
-        if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && !isSleeping()) setFlying(true);
+        if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && !canFly()) setFlying(true);
         
         if (!world.isRemote) { // Server Only Stuffs
             // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
@@ -259,8 +257,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             ++animationTick;
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
-        
-        if (getPosition().getY() > flightheightLimit) setPosition(posX, flightheightLimit - 1, posZ);
     }
     
     public void switchPathController(boolean flying) {
@@ -295,6 +291,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (isChild()) {
                 consumeItemFromStack(player, stack);
                 ageUp((int)((float)(-getGrowingAge() / 20) * 0.1F), true);
+                eat(stack);
                 if (isSleeping()) setSleeping(false);
                 
                 return true;
@@ -307,6 +304,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void attackInFront(int range) {
         AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), range + range)).grow(range, 0, range);
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
+        
         if (livingEntities.isEmpty()) return;
         
         livingEntities.forEach(this::attackEntityAsMob);
@@ -344,7 +342,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     /**
      * Effects to play when the dragon is 'Special'
-     * Default to white sparklez around the body.
+     * Default to white sparkles around the body.
      * Can be overriden to do custom effects.
      */
     @OnlyIn(Dist.CLIENT)
@@ -366,16 +364,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     public void eat(@Nullable ItemStack stack) {
-        if (stack != null && !stack.isEmpty() && stack.getItem().isFood()) {
-            heal(Math.max((int) getMaxHealth() / 5, 6));
-            stack.getItem().getFood().getEffects().forEach(effect -> addPotionEffect(effect.getLeft()));
+        if (stack != null && !stack.isEmpty()) {
+            Item item = stack.getItem();
+            
             stack.shrink(1);
+            if (item.isFood()) stack.getItem().getFood().getEffects().forEach(e -> { if (e.getLeft() != null) addPotionEffect(e.getLeft()); }); // Apply food effects if it has any
+            if (getHealth() < getMaxHealth()) heal(Math.max((int) getMaxHealth() / 5, 6));
+            
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
-            for (int i = 0; i < 6; ++i) {
-                double x = posX + getRNG().nextInt(2) - 1;
-                double y = posY + getRNG().nextDouble();
-                double z = posZ + getRNG().nextInt(2) - 1;
-                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
+            if (world.isRemote) {
+                Vec3d mouth = getApproximateMouthPos();
+                
+                for (int i = 0; i < 11; ++i) {
+                    Vec3d vec3d1 = new Vec3d(((double) rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) rand.nextFloat() - 0.5D) * 0.1D);
+                    vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * (MathUtils.PI / 180f));
+                    vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * (MathUtils.PI / 180f));
+                    world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), mouth.x, mouth.y, mouth.z, vec3d1.x, vec3d1.y, vec3d1.z);
+                }
             }
         }
     }
@@ -384,7 +389,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Tame the dragon to the tamer if true
      * else, play the failed tame effects
      */
-    public void tame(boolean tame, @Nullable PlayerEntity tamer) {
+    public boolean tame(boolean tame, @Nullable PlayerEntity tamer) {
         if (!world.isRemote && !isTamed()) {
             if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer)) {
                 setTamedBy(tamer);
@@ -393,11 +398,39 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 setHealth(getMaxHealth());
                 playTameEffect(true);
                 world.setEntityState(this, (byte) 7);
+                
+                return true;
             } else {
                 playTameEffect(false);
                 world.setEntityState(this, (byte) 6);
             }
         }
+        
+        return false;
+    }
+    
+    @Override
+    public void heal(float healAmount) {
+        super.heal(healAmount);
+    
+        if (world.isRemote) {
+            for (int i = 0; i < getWidth() * 5; ++i) {
+                double x = posX + (getRNG().nextGaussian() * getWidth()) / 1.5d;
+                double y = posY + getRNG().nextDouble() * (getRNG().nextDouble() + 2d);
+                double z = posZ + (getRNG().nextGaussian() * getWidth()) / 1.5d;
+                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
+            }
+        }
+    }
+    
+    /**
+     * A universal position for the position of the mouth on the dragon.
+     * This is prone to be inaccurate, but can serve good enough for most things
+     * If a more accurate position is needed, best to override and adjust accordingly.
+     * @return An approximate position of the mouth of the dragon
+     */
+    public Vec3d getApproximateMouthPos() {
+        return MathUtils.rotateYaw(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
     }
     
     public boolean isInteractItem(ItemStack stack) {
@@ -431,7 +464,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Set a damage source immunity
      */
-    protected void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
+    public void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
     
     /**
      * Whether or not the dragon is immune to the source or not
@@ -463,8 +496,25 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void performSpecialAttack(boolean shouldContinue) {}
     
+    /**
+     * Whether or not the dragon can fly.
+     * For ground entities, return false
+     */
+    public boolean canFly() {
+        boolean isSafe = true;
+        
+        for (int i = 1; i < (shouldFlyThreshold / 2.5f) + 1; ++i) {
+            if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement()) {
+                isSafe = false;
+                break;
+            }
+        }
+        
+        return !isChild() && !getLeashed() && !isSleeping() && !isSitting() && isSafe;
+    }
+    
     @Override
-    protected float getJumpUpwardsMotion() { return canFly() ? shouldFlyThreshold / 2.5f : super.getJumpUpwardsMotion(); }
+    protected float getJumpUpwardsMotion() { return canFly()? 1.2f : super.getJumpUpwardsMotion(); }
     
     public void liftOff() { if (canFly()) jump(); }
     
