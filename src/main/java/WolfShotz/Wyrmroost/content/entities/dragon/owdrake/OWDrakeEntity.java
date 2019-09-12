@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
@@ -9,9 +8,7 @@ import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.RandomLookGoal;
 import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
-import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -20,7 +17,6 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,7 +27,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.potion.Potion;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -40,7 +35,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -153,7 +147,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getSpecialChances() { return 50; }
+    public int getSpecialChances() { return 85; }
 
     // ================================
 
@@ -211,7 +205,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
-            consumeItemFromStack(player, stack);
+            eat(stack);
             setSaddled(true);
             playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
 
@@ -240,16 +234,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
             // If a child, tame it the old fashioned way
             if (isChild() && !isTamed()) {
                 tame(getRNG().nextInt(10) == 0, player);
-                consumeItemFromStack(player, stack);
                 
                 return true;
             }
             
-            // If health is low, then heal up (Heal has priority over setting love mode!)
-            if (isTamed() && getHealth() < getMaxHealth() && !player.isSneaking()) {
-                consumeItemFromStack(player, stack);
-                heal(stack.getItem() == Items.HAY_BLOCK? 6f : 2f);
-        
+            if (getHealth() < getMaxHealth()) {
+                eat(stack);
+                
                 return true;
             }
         }
@@ -316,9 +307,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
     
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || getAnimation() == ROAR_ANIMATION; }
-    
-    @Override
     public void eatGrassBonus() {
         if (isChild()) addGrowth(60);
         if (getHealth() < getMaxHealth()) heal(4f);
@@ -369,6 +357,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void performGenericAttack() {
         setAnimation(HORN_ATTACK_ANIMATION);
     }
+    
+    @Override
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || getAnimation() == ROAR_ANIMATION; }
     
     @Override
     public EntitySize getSize(Pose poseIn) {

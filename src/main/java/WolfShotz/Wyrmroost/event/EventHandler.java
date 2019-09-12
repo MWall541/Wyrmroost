@@ -22,6 +22,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -52,7 +54,17 @@ public class EventHandler
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
                 
-                dragon.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION);
+                dragon.setGrowingAge(-24000);
+            }
+        }
+        
+        @SubscribeEvent
+        public static void onEntityFall(LivingFallEvent evt) {
+            if (evt.getEntity() instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity) evt.getEntity();
+                
+                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance) && player.getMotion().y > -0.7f)
+                    evt.setCanceled(true);
             }
         }
     }
