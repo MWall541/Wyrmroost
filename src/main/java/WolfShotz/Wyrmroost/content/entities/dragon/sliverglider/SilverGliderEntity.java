@@ -76,8 +76,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
-        goalSelector.addGoal(6, new FollowOwnerFlightGoal(this, 20f, 6f));
-        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2f, 10f, 4f));
+//        goalSelector.addGoal(6, new FollowOwnerFlightGoal(this, 20f, 6f));
+        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2f, 10f, 4f));
         goalSelector.addGoal(8, new DragonBreedGoal(this, true));
         goalSelector.addGoal(9, new RandomFlightGoal(this));
         goalSelector.addGoal(10, new WanderGoal(this, 1d));

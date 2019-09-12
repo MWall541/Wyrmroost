@@ -15,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public class DragonFollowOwnerGoal extends FollowOwnerGoal
 {
     private final AbstractDragonEntity dragon;
+    private LivingEntity owner;
     private final float minDistance, maxDistance, speed;
     
     public DragonFollowOwnerGoal(AbstractDragonEntity dragon, float speed, float minDistance, float maxDistance) {
@@ -27,20 +28,36 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
     
     @Override
     public boolean shouldExecute() {
-        if (!dragon.isFlying()) return super.shouldExecute(); // Do normal checking.
+        if (!dragon.isFlying()) return super.shouldExecute(); // Do normal behaviour
         
-        LivingEntity owner = dragon.getOwner();
+        this.owner = dragon.getOwner();
         float minDistSq = (this.minDistance * this.minDistance) * 3;
         
         if (owner == null) return false; // *Visible confusion*
         if (dragon.isSitting()) return false; // Imagine if it did tho... starts scooting across the ground. lmao
         if (owner instanceof PlayerEntity && owner.isSpectator()) return false; // How would this... nvm
-        if (dragon.getDistanceSq(owner) < minDistSq) return false; // Too small of a dist, so nope
+        return !(dragon.getDistanceSq(owner) < minDistSq); // Too small of a dist, so nope
+    }
+    
+    @Override
+    public void startExecuting() {
+        if (!dragon.isFlying()) super.startExecuting();
+    }
+    
+    @Override
+    public boolean shouldContinueExecuting() {
+        if (!dragon.isFlying()) return super.shouldContinueExecuting(); // Do normal behaviour
+        
+        float maxDistSq = (maxDistance * maxDistance) * 3;
+        
+        if (dragon.isSitting()) return false; // uhhhhhhh
+        if (!dragon.getNavigator().noPath()) return false; // dont do that "seizure" thing .-.
+        return dragon.getDistanceSq(owner) > maxDistSq; // em no?
     }
     
     @Override
     public void tick() {
-        if (!dragon.isFlying()) super.tick(); // Just do the normal follow behaviour when not flying
+        if (!dragon.isFlying()) super.tick(); // Do normal behaviour
         
         
     }
