@@ -58,27 +58,27 @@ public class MathUtils
      * Calculate the euclidean plane distance of two points.
      * Double
      */
-    public static double calcDistance2d(double sourceX, double targetX, double sourceZ, double targetZ) {
+    public static double getPlaneDistSq(double sourceX, double targetX, double sourceZ, double targetZ) {
         double x = targetX - sourceX;
         double z = targetZ - sourceZ;
-        return Math.sqrt(x * x + z * z);
+        return x * x + z * z;
     }
     
     /**
      * Calculate the euclidean plane distance between two points.
      * Float
      */
-    public static float calcDistance2d(float sourceX, float targetX, float sourceZ, float targetZ) {
+    public static float getPlaneDistSq(float sourceX, float targetX, float sourceZ, float targetZ) {
         float x = targetX - sourceX;
         float z = targetZ - sourceZ;
-        return MathHelper.sqrt(x * x + z * z);
+        return x * x + z * z;
     }
     
     /**
      * Calculate euclidean space distance
      * Double
      */
-    public static double calcDistance3d(double sourceX, double targetX, double sourceY, double targetY, double sourceZ, double targetZ) {
+    public static double getSpaceDistSq(double sourceX, double targetX, double sourceY, double targetY, double sourceZ, double targetZ) {
         double x = targetX - sourceX;
         double y = targetY - sourceY;
         double z = targetZ - sourceZ;
@@ -89,7 +89,7 @@ public class MathUtils
      * Calculate euclidean space distance
      * Float
      */
-    public static float calcDistance3d(float sourceX, float targetX, float sourceY, float targetY, float sourceZ, float targetZ) {
+    public static float getSpaceDistSq(float sourceX, float targetX, float sourceY, float targetY, float sourceZ, float targetZ) {
         float x = targetX - sourceX;
         float y = targetY - sourceY;
         float z = targetZ - sourceZ;
@@ -109,7 +109,7 @@ public class MathUtils
     public static float toDegrees(float angle) { return (float) Math.toDegrees(angle); }
     
     /**
-     * Get then angle between 2 sources
+     * Get the angle between 2 sources
      */
     public static double getAngle(double x1, double x2, double z1, double z2) {
         return Math.atan2(z2 - z1, x2 - x1) * (180 / Math.PI) + 90;

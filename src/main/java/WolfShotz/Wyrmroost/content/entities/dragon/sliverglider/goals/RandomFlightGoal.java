@@ -18,12 +18,12 @@ public class RandomFlightGoal extends Goal
     private FlightFlag currentFlightAction;
     private Vec3d orbitPos;
     private Vec3d airTarget;
-    private final Random rand;
+    private final Random RAND;
     private int updateInterval;
     
     public RandomFlightGoal(SilverGliderEntity glider) {
         this.glider = glider;
-        this.rand = glider.getRNG();
+        this.RAND = glider.getRNG();
     
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
@@ -37,7 +37,7 @@ public class RandomFlightGoal extends Goal
     @Override // Start with default flight
     public void startExecuting() {
         generateAirTarget();
-        updateInterval = 80 + new Random().nextInt(20) + 10;
+        updateInterval = 90 + new Random().nextInt(30);
         currentFlightAction = FlightFlag.WANDER;
     }
     
@@ -45,19 +45,19 @@ public class RandomFlightGoal extends Goal
     public void tick() {
         // Increase chances to "want" to land at night, for sleep
         final int LAND_THRESHOLD = glider.world.isDaytime()? this.LAND_THRESHOLD : this.LAND_THRESHOLD / 6;
-        
-        if (rand.nextInt(LAND_THRESHOLD) == 0 && !isDescending()) { // Small chance to start descending
+    
+        if (RAND.nextInt(LAND_THRESHOLD) == 0 && !isDescending()) { // Small chance to start descending
             currentFlightAction = FlightFlag.DESCEND;
             glider.getNavigator().clearPath();
         } // Start circling
-//        else if (rand.nextInt(SWITCH_PATH_THRESHOLD) == 0 && !isDescending()) switchFlightFlag();
+//        else if (RAND.nextInt(SWITCH_PATH_THRESHOLD) == 0 && !isDescending()) switchFlightFlag();
         
         glider.getMoveHelper().setMoveTo(airTarget.x, airTarget.y, airTarget.z, 1);
         glider.getLookController().setLookPosition(airTarget.x, glider.posY, airTarget.z, 180f, 20f);
         
         if (isWandering() && --updateInterval <= 0) {
             generateAirTarget();
-            updateInterval = 120;
+            updateInterval = 90 + new Random().nextInt(30);
         }
         else if (isDescending()) {
             Vec3d look = glider.getLookVec();
@@ -80,9 +80,9 @@ public class RandomFlightGoal extends Goal
     }
     
     private void generateAirTarget() {
-        double x = glider.posX + rand.nextInt(100) - 50;
-        double y = glider.posY + rand.nextInt(6) - 2;
-        double z = glider.posZ + rand.nextInt(100) - 50;
+        double x = glider.posX + RAND.nextInt(100) - 50;
+        double y = glider.posY + RAND.nextInt(6) - 2;
+        double z = glider.posZ + RAND.nextInt(100) - 50;
         for (int i=1; i < 6; ++i) {
             if (glider.world.getBlockState(glider.getPosition().down(i)).getMaterial() == Material.WATER) { // Avoid Water
                 y = Math.abs(y);

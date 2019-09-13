@@ -1,11 +1,12 @@
 package WolfShotz.Wyrmroost.content.entities.helper.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.player.PlayerEntity;
-
-//TODO
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * Owner Following class made specifically for flyers.
@@ -14,9 +15,9 @@ import net.minecraft.entity.player.PlayerEntity;
  */
 public class DragonFollowOwnerGoal extends FollowOwnerGoal
 {
-    private final AbstractDragonEntity dragon;
+    private AbstractDragonEntity dragon;
     private LivingEntity owner;
-    private final float minDistance, maxDistance, speed;
+    private float minDistance, maxDistance, speed;
     
     public DragonFollowOwnerGoal(AbstractDragonEntity dragon, float speed, float minDistance, float maxDistance) {
         super(dragon, speed, minDistance, maxDistance);
@@ -31,7 +32,7 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
         if (!dragon.isFlying()) return super.shouldExecute(); // Do normal behaviour
         
         this.owner = dragon.getOwner();
-        float minDistSq = (this.minDistance * this.minDistance) * 3;
+        float minDistSq = (this.minDistance * this.minDistance) * 4;
         
         if (owner == null) return false; // *Visible confusion*
         if (dragon.isSitting()) return false; // Imagine if it did tho... starts scooting across the ground. lmao
@@ -40,25 +41,56 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
     }
     
     @Override
-    public void startExecuting() {
-        if (!dragon.isFlying()) super.startExecuting();
-    }
+    public void startExecuting() { if (!dragon.isFlying()) super.startExecuting(); }
     
     @Override
     public boolean shouldContinueExecuting() {
         if (!dragon.isFlying()) return super.shouldContinueExecuting(); // Do normal behaviour
         
-        float maxDistSq = (maxDistance * maxDistance) * 3;
+        float maxDistSq = (maxDistance * maxDistance) * 2;
+        float distEuclid = (float) MathUtils.getPlaneDistSq(dragon.posX, owner.posX, dragon.posZ, owner.posZ);
         
         if (dragon.isSitting()) return false; // uhhhhhhh
-        if (!dragon.getNavigator().noPath()) return false; // dont do that "seizure" thing .-.
-        return dragon.getDistanceSq(owner) > maxDistSq; // em no?
+        return distEuclid > maxDistSq; // em no?
     }
     
     @Override
     public void tick() {
-        if (!dragon.isFlying()) super.tick(); // Do normal behaviour
+        if (!dragon.isFlying()) { // Do normal behaviour
+            super.tick();
+            
+            return;
+        }
+    
+        Vec3d moveTo = new Vec3d(owner.posX + 0.5d, owner.posY + 15d, owner.posZ + 0.5d);
+        BlockPos tpPos = new BlockPos(moveTo.x, moveTo.y, moveTo.z);
+    
+        if (dragon.getDistanceSq(owner) > (minDistance * minDistance) * 8 && canTeleportToBlock(tpPos)) { // WOAH, too far, tp instead
+            dragon.setPositionAndRotation(tpPos.getX() + 0.5d, tpPos.getY(), tpPos.getZ() + 0.5d, owner.rotationYawHead, owner.rotationPitch);
         
+            return;
+        }
         
+        dragon.getMoveHelper().setMoveTo(moveTo.x, moveTo.y, moveTo.z, speed);
+        dragon.getLookController().setLookPosition(moveTo.x, moveTo.y, moveTo.z, 180f, 20f);
+    }
+    
+    @Override
+    public void resetTask() { if (!dragon.isFlying()) super.resetTask(); }
+    
+    @Override
+    protected boolean canTeleportToBlock(BlockPos pos) {
+        if (!dragon.isFlying()) return super.canTeleportToBlock(pos);
+
+        boolean canTeleport = true;
+
+        for (int xz = (int) (-Math.floor(dragon.getWidth() / 2)); xz < dragon.getWidth(); ++xz) {
+            for (int y = 0; y < dragon.getHeight(); ++y) {
+                if (world.getBlockState(pos.add(xz, y, xz)).getMaterial().blocksMovement()) canTeleport = false;
+                break;
+            }
+        }
+
+        return canTeleport;
     }
 }

@@ -37,7 +37,7 @@ public class FlightMovementController extends MovementController
             double x = posX - mob.posX;
             double y = posY - mob.posY;
             double z = posZ - mob.posZ;
-            double euclid = MathUtils.calcDistance3d(mob.posX, posX, mob.posY, posY, mob.posZ, posZ);
+            double euclid = MathHelper.sqrt(MathUtils.getSpaceDistSq(mob.posX, posX, mob.posY, posY, mob.posZ, posZ));
             double lookAngle = (double) MathHelper.sqrt(x * x + z * z);
             float lookDir = MathUtils.toDegrees((float) MathHelper.atan2(x, z)) - 90f;
             float moveSpeed;

@@ -22,9 +22,9 @@ public class DragonGroundPathNavigator extends GroundPathNavigator
         Vec3d vec3d1 = currentPath.getCurrentPos();
         double entityNavOffset = (entity.getWidth() + 1) / 2d;
         maxDistanceToWaypoint = entity.getWidth() > 0.75F ? entity.getWidth() / 2.0F : 0.75F - entity.getWidth() / 2.0F;
+        
         if (Math.abs(entity.posX - (vec3d1.x + entityNavOffset)) < (double) maxDistanceToWaypoint && Math.abs(entity.posZ - (vec3d1.z + entityNavOffset)) < (double) maxDistanceToWaypoint && Math.abs(entity.posY - vec3d1.y) < 1.0D)
             currentPath.setCurrentPathIndex(currentPath.getCurrentPathIndex() + 1);
-    
         checkForStuck(vec3d);
     }
 }

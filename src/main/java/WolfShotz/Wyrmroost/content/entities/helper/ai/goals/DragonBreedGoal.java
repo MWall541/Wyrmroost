@@ -16,6 +16,7 @@ public class DragonBreedGoal extends BreedGoal
 {
     private final AbstractDragonEntity dragon;
     private boolean straight;
+    private boolean canInAir = false;
     
     /**
      * @param dragon dragon type were breeding
@@ -26,8 +27,19 @@ public class DragonBreedGoal extends BreedGoal
         this.straight = straight;
     }
     
+    /**
+     * Setter to have dragons "get it on" in the air!
+     * Yeah idfk I blame the community.
+     */
+    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight, boolean canInAir) {
+        this(dragon, straight);
+        
+        this.canInAir = canInAir;
+    }
+    
     @Override
     public boolean shouldExecute() {
+        if (!canInAir) return false;
         if (straight)
             return super.shouldExecute() && ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
         else return super.shouldExecute();

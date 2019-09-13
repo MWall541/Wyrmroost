@@ -54,7 +54,7 @@ public class EventHandler
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
                 
-                dragon.setGrowingAge(-24000);
+                dragon.setFlying(!dragon.isFlying());
             }
         }
         
@@ -63,8 +63,9 @@ public class EventHandler
             if (evt.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) evt.getEntity();
                 
-                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance) && player.getMotion().y > -0.7f)
+                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance) && player.getMotion().y < -0.65f)
                     evt.setCanceled(true);
+                
             }
         }
     }
