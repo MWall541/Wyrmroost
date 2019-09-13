@@ -507,6 +507,10 @@ public class SilverGliderModel extends AdvancedEntityModel {
         legR2.rotateAngleX = 2.3f;
         legR3.rotateAngleX = -2.5f;
         for (AdvancedRendererModel toe : toeArray) toe.rotateAngleX = -0.2f;
+        for (AdvancedRendererModel segment : tailArray) {
+            segment.rotateAngleX = -0.035f;
+            segment.rotateAngleY = -0.35f;
+        }
     }
     
     private void staySleeping(float frame) {
@@ -527,8 +531,8 @@ public class SilverGliderModel extends AdvancedEntityModel {
         }
         head.rotateAngleX = -0.2f;
         for (AdvancedRendererModel tailSegment : tailArray) {
-            tailSegment.rotateAngleY = -0.3f;
-            tailSegment.rotateAngleX = -0.05f;
+            tailSegment.rotateAngleY = -0.35f;
+            tailSegment.rotateAngleX = -0.035f;
         }
         
         chainSwing(neckArray, globalSpeed - 0.46f, 0.03f, 0.4f, frame, 0.5f);
@@ -554,6 +558,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         animator.rotate(legL2, 0.95f, 0, 0);
         animator.rotate(legL3, -1.15f, 0, 0);
         for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, 0.75f, 0, 0);
+        for(AdvancedRendererModel segment : tailArray) animator.rotate(segment, -0.035f, -0.35f, 0);
         animator.endKeyframe();
     }
     
@@ -573,6 +578,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         animator.rotate(legL2, -0.95f, 0, 0);
         animator.rotate(legL3, 1.15f, 0, 0);
         for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, -0.75f, 0, 0);
+        for(AdvancedRendererModel segment : tailArray) animator.rotate(segment, 0.035f, 0.35f, 0);
         animator.endKeyframe();
     }
     
@@ -591,6 +597,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
             animator.rotate(legL1, -0.6f, 0, 0);
             animator.rotate(legL2, 0.95f, 0, 0);
             animator.rotate(legL3, -1.15f, 0, 0);
+            for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, -0.035f, -0.35f, 0);
         }
         animator.rotate(wing1L, 0, -0.55f, 0);
         animator.rotate(wing2L, 0, 1f, 0);
@@ -605,7 +612,6 @@ public class SilverGliderModel extends AdvancedEntityModel {
         animator.rotate(head, -0.3f, 0, 0);
         for (AdvancedRendererModel neckSegment : neckArray2) animator.rotate(neckSegment, 0.4f, 0, 0);
         for (AdvancedRendererModel neck : neckArray) animator.rotate(neck, 0.1f, 0.5f, 0);
-        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, -0.05f, -0.3f, 0);
         for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, 0.75f, 0, 0);
         animator.endKeyframe();
         
@@ -626,6 +632,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
             animator.rotate(legL1, 0.6f, 0, 0);
             animator.rotate(legL2, -0.95f, 0, 0);
             animator.rotate(legL3, 1.15f, 0, 0);
+            for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0.035f, 0.35f, 0);
         }
         animator.rotate(wing1R, 0.2f, 0, 0);
         animator.rotate(neck3, 0.5f, 0, 0);
@@ -633,7 +640,6 @@ public class SilverGliderModel extends AdvancedEntityModel {
         animator.rotate(head, 0.3f, 0, 0);
         for (AdvancedRendererModel neckSegment : neckArray2) animator.rotate(neckSegment, -0.4f, 0, 0);
         for (AdvancedRendererModel neck : neckArray) animator.rotate(neck, -0.1f, -0.5f, 0);
-        for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0.05f, 0.3f, 0);
         for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, -0.75f, 0, 0);
         animator.endKeyframe();
     }

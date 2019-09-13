@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import com.google.common.base.Predicate;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -14,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Calendar;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.lwjgl.opengl.GL11.GL_ONE;
 
@@ -55,24 +55,14 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     public class GlowLayer extends AbstractLayerRenderer
     {
         private Function<T, ResourceLocation> glowLocation;
-        // Optional
-        private Predicate<T> conditionals = c -> true;
     
-        public GlowLayer(IEntityRenderer entityIn, Function<T, ResourceLocation> glowLocation) {
+        public GlowLayer(IEntityRenderer<T, EntityModel<T>> entityIn, Function<T, ResourceLocation> glowLocation) {
             super(entityIn);
             this.glowLocation = glowLocation;
-        }
-    
-        public GlowLayer(IEntityRenderer entityIn, Function<T, ResourceLocation> glowLocation, Predicate<T> conditionals) {
-            super(entityIn);
-            this.glowLocation = glowLocation;
-            this.conditionals = conditionals;
         }
     
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            if (!conditionals.test(entity)) return;
-            
             GameRenderer gamerenderer = Minecraft.getInstance().gameRenderer;
             int i = entity.getBrightnessForRender();
             int j = i % 65536;
@@ -107,7 +97,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         private ResourceLocation loc;
         private Predicate<T> conditions;
         
-        public ConditionalLayer(IEntityRenderer entityIn, ResourceLocation locIn, Predicate<T> conditions) {
+        public ConditionalLayer(IEntityRenderer<T, EntityModel<T>> entityIn, ResourceLocation locIn, Predicate<T> conditions) {
             super(entityIn);
             this.loc = locIn;
             this.conditions = conditions;
@@ -127,7 +117,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
      */
     public class SleepLayer extends ConditionalLayer
     {
-        public SleepLayer(IEntityRenderer entityIn, ResourceLocation locIn) {
+        public SleepLayer(IEntityRenderer<T, EntityModel<T>> entityIn, ResourceLocation locIn) {
             super(entityIn, locIn, AbstractDragonEntity::isSleeping);
         }
     }

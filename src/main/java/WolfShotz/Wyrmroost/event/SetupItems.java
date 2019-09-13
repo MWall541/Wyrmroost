@@ -126,7 +126,7 @@ public class SetupItems
     public static void itemSetup(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll (
                 // Misc Start
-                new ModBookItem(),
+//                new ModBookItem(),
                 new MinutusItem(),
                 new EggBlockItem(),
                 new SoulCrystalItem(),

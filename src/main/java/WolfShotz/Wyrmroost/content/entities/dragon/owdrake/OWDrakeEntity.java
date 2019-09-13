@@ -49,7 +49,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.25F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION = Animation.create(15);
@@ -77,7 +77,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new DrakeAttackGoal(this));
-        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 12, 3));
+        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
@@ -205,7 +205,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
-            eat(stack);
+            consumeItemFromStack(player, stack);
             setSaddled(true);
             playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
 
@@ -292,7 +292,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 if (EntityPredicates.CAN_AI_TARGET.test(passenger)) setAttackTarget((LivingEntity) passenger);
                 passenger.stopRiding();
                 // Effect potionIn, int durationIn, int amplifierIn, boolean ambientIn, boolean showParticlesIn
-                ((LivingEntity) passenger).addPotionEffect(new EffectInstance(Effects.LEVITATION, 2, 100));
+                ((LivingEntity) passenger).addPotionEffect(new EffectInstance(Effects.LEVITATION, 2, 100, false, false));
 //                passenger.setMotion(1, 1, 1);
 //                if (passenger instanceof PlayerEntity)
 //                    Wyrmroost.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) passenger), new EntityMoveMessage(passenger));

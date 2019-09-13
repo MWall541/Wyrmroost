@@ -44,7 +44,6 @@ public class SoulCrystalItem extends Item
         stack.setTag(tag);
         dragon.remove();
         player.setHeldItem(hand, stack);
-        player.swingArm(hand);
         world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
         
         return true;

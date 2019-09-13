@@ -29,6 +29,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -39,11 +40,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -282,14 +285,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         if (isBreedingItem(stack) && isTamed()) {
             if (getGrowingAge() == 0 && canBreed()) {
-                consumeItemFromStack(player, stack);
+                eat(stack);
                 setInLove(player);
                 
                 return true;
             }
             
             if (isChild()) {
-                consumeItemFromStack(player, stack);
                 ageUp((int)((float)(-getGrowingAge() / 20) * 0.1F), true);
                 eat(stack);
                 if (isSleeping()) setSleeping(false);
@@ -366,9 +368,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void eat(@Nullable ItemStack stack) {
         if (stack != null && !stack.isEmpty()) {
             Item item = stack.getItem();
-            
+            List<Pair<EffectInstance, Float>> effects = stack.getItem().getFood().getEffects();
+    
             stack.shrink(1);
-            if (item.isFood()) stack.getItem().getFood().getEffects().forEach(e -> { if (e.getLeft() != null) addPotionEffect(e.getLeft()); }); // Apply food effects if it has any
+            if (item.isFood() && !effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
+                effects.forEach(e -> addPotionEffect(e.getLeft()));
             if (getHealth() < getMaxHealth()) heal(Math.max((int) getMaxHealth() / 5, 6));
             
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);

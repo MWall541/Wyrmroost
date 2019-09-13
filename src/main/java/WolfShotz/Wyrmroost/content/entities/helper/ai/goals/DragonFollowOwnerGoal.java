@@ -8,6 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.EnumSet;
+
 /**
  * Owner Following class made specifically for flyers.
  * minDistance and maxDistance is triple for flight, that way, the distance isnt too
@@ -17,14 +19,17 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
 {
     private AbstractDragonEntity dragon;
     private LivingEntity owner;
-    private float minDistance, maxDistance, speed;
+    private float minDistance, maxDistance;
+    private double speed;
     
-    public DragonFollowOwnerGoal(AbstractDragonEntity dragon, float speed, float minDistance, float maxDistance) {
+    public DragonFollowOwnerGoal(AbstractDragonEntity dragon, double speed, float minDistance, float maxDistance) {
         super(dragon, speed, minDistance, maxDistance);
         this.minDistance = minDistance;
         this.maxDistance = maxDistance;
         this.speed = speed;
         this.dragon = dragon;
+        
+        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
     
     @Override
@@ -41,7 +46,7 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
     }
     
     @Override
-    public void startExecuting() { if (!dragon.isFlying()) super.startExecuting(); }
+    public void startExecuting() {}
     
     @Override
     public boolean shouldContinueExecuting() {
@@ -76,7 +81,7 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
     }
     
     @Override
-    public void resetTask() { if (!dragon.isFlying()) super.resetTask(); }
+    public void resetTask() {}
     
     @Override
     protected boolean canTeleportToBlock(BlockPos pos) {
@@ -86,8 +91,10 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
 
         for (int xz = (int) (-Math.floor(dragon.getWidth() / 2)); xz < dragon.getWidth(); ++xz) {
             for (int y = 0; y < dragon.getHeight(); ++y) {
-                if (world.getBlockState(pos.add(xz, y, xz)).getMaterial().blocksMovement()) canTeleport = false;
-                break;
+                if (world.getBlockState(pos.add(xz, y, xz)).getMaterial().blocksMovement()) {
+                    canTeleport = false;
+                    break;
+                }
             }
         }
 

@@ -22,14 +22,14 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     // Body: "male_{the variant int}.png"
     // Glow: "male_{the variant int}_glow.png"
     
+    private Function<SilverGliderEntity, ResourceLocation> condition = sg -> {
+        if (sg.isSpecial()) return BODY_SPE_GLOW;
+        if (!sg.getGender()) return FEMALE_GLOW;
+        return ModUtils.location(LOC + "male_" + sg.getVariant() + "_glow.png");
+    };
+    
     public SilverGliderRenderer(EntityRendererManager manager) {
         super(manager, new SilverGliderModel(), 1f);
-        
-        Function<SilverGliderEntity, ResourceLocation> condition = sg -> {
-            if (sg.isSpecial()) return BODY_SPE_GLOW;
-            if (!sg.getGender()) return FEMALE_GLOW;
-            return ModUtils.location(LOC + "male_" + sg.getVariant() + "_glow.png");
-        };
         
         addLayer(new GlowLayer(this, condition));
         if (isChristmas) addLayer(new ConditionalLayer(this, XMAS_LAYER, c -> true));
