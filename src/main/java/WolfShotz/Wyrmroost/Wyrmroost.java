@@ -1,7 +1,5 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.content.blocks.eggblock.EggRenderer;
-import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.event.*;
 import WolfShotz.Wyrmroost.util.network.AnimationMessage;
 import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
@@ -9,10 +7,7 @@ import WolfShotz.Wyrmroost.util.network.SendKeyPressMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -64,17 +59,8 @@ public class Wyrmroost
         
         SetupEntities.registerEntityRenders();
         SetupKeyBinds.registerKeys();
-        registerSpecialRenders();
 
         ModUtils.L.info("Fired FMLClientSetup");
-    }
-    
-    /**
-     * Needs to be in seperate <code>@OnlyIn</code> annotated method otherwise servers throw a fit...
-     */
-    @OnlyIn(Dist.CLIENT)
-    private static void registerSpecialRenders() {
-        ClientRegistry.bindTileEntitySpecialRenderer(EggTileEntity.class, new EggRenderer());
     }
     
     /**

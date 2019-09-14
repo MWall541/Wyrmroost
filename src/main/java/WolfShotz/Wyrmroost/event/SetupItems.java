@@ -1,10 +1,8 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlockItem;
 import WolfShotz.Wyrmroost.content.items.DragonEggItem;
 import WolfShotz.Wyrmroost.content.items.MinutusItem;
-import WolfShotz.Wyrmroost.content.items.ModBookItem;
 import WolfShotz.Wyrmroost.content.items.SoulCrystalItem;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;

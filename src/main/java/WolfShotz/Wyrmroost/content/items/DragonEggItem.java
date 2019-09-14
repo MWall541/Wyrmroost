@@ -31,14 +31,17 @@ public class DragonEggItem extends Item
     public ActionResultType onItemUse(ItemUseContext ctx) {
         World world = ctx.getWorld();
         if (world.isRemote) return super.onItemUse(ctx);
+        
         CompoundNBT tag = ctx.getItem().getTag();
-        if (tag == null || !ctx.getItem().hasTag() || !tag.contains("dragonType")) return super.onItemUse(ctx);
+        if (tag == null || !tag.contains("dragonType")) return super.onItemUse(ctx);
     
         DragonEggEntity eggEntity = new DragonEggEntity(SetupEntities.dragon_egg, world);
         BlockPos pos = ctx.getPos();
         
         eggEntity.read(tag);
-        eggEntity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+        eggEntity.setPosition(pos.getX(), pos.getY() + 1, pos.getZ());
+        world.addEntity(eggEntity);
+        ctx.getItem().shrink(1);
         
         return ActionResultType.SUCCESS;
     }

@@ -1,7 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
+import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
+import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.entity.Entity;
 
 /**
  * WREggTemplate - Ukan
@@ -32,6 +35,8 @@ public class DragonEggModel extends Model {
         this.base.addChild(this.two);
         this.two.addChild(this.three);
     }
-
-    public void renderAll() { base.render(0.0625f); }
+    
+    public void render(Entity entityIn, float scale) {
+        base.render(scale);
+    }
 }

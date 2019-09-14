@@ -3,13 +3,10 @@ package WolfShotz.Wyrmroost.event;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.GeodeOreBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
-import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlock;
-import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,27 +40,11 @@ public class SetupBlocks
     @SubscribeEvent
     public static void blockSetup(RegistryEvent.Register<Block> event) {
         event.getRegistry().registerAll (
-                new EggBlock(),
-                
                 new BlockBase("platinum_ore", ModUtils.blockBuilder(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(3).sound(SoundType.STONE)),
                 new BlockBase("platinum_block", true, ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)),
 
                 new GeodeOreBlock(),
                 new BlockBase("geode_block", true, ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL))
-        );
-    }
-    
-    // =================
-    //   Tile Entities
-    // =================
-    
-    @ObjectHolder(Wyrmroost.MOD_ID + ":teegg")
-    public static TileEntityType<EggTileEntity> teegg;
-    
-    @SubscribeEvent
-    public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
-        event.getRegistry().register(
-                TileEntityType.Builder.create(EggTileEntity::new, SetupBlocks.egg).build(null).setRegistryName("teegg")
         );
     }
 }

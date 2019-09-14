@@ -10,6 +10,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerRend
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
@@ -70,6 +71,8 @@ public class SetupEntities
      */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
+        RenderingRegistry.registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
+        
         RenderingRegistry.registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);

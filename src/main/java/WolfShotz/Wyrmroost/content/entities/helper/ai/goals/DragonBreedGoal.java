@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.helper.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupBlocks;
+import WolfShotz.Wyrmroost.event.SetupItems;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.BreedGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
@@ -39,7 +40,7 @@ public class DragonBreedGoal extends BreedGoal
     
     @Override
     public boolean shouldExecute() {
-        if (!canInAir) return false;
+//        if (!canInAir) return false;
         if (straight)
             return super.shouldExecute() && ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
         else return super.shouldExecute();
@@ -53,10 +54,10 @@ public class DragonBreedGoal extends BreedGoal
     @Override
     protected void spawnBaby() {
         CompoundNBT tag = new CompoundNBT();
-        ItemStack eggStack = new ItemStack(SetupBlocks.egg);
+        ItemStack eggStack = new ItemStack(SetupItems.dragonEgg);
     
         tag.putString("dragonType", EntityType.getKey(dragon.getType()).toString());
-        tag.putInt("hatchTimer", dragon.hatchTimer);
+        tag.putInt("hatchTime", dragon.hatchTimer);
         eggStack.setTag(tag);
     
         ItemEntity eggItem = new ItemEntity(world, dragon.posX, dragon.posY, dragon.posZ, eggStack);
