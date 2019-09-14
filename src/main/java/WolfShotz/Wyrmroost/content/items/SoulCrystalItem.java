@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
@@ -11,9 +12,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -32,18 +39,32 @@ public class SoulCrystalItem extends Item
     @Override
     public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
         World world = player.world;
-        if (world.isRemote) return false;
         if (containsDragon(stack)) return false;
         if (!(target instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) target;
         if (dragon.getOwner() != player) return false;
         
-        CompoundNBT tag = new CompoundNBT();
-        target.writeAdditional(tag);
-        tag.putString("entity", EntityType.getKey(dragon.getType()).toString());
-        stack.setTag(tag);
-        dragon.remove();
-        player.setHeldItem(hand, stack);
+        if (!world.isRemote) {
+            CompoundNBT tag = new CompoundNBT();
+            target.writeAdditional(tag);
+            tag.putString("entity", EntityType.getKey(dragon.getType()).toString());
+            stack.setTag(tag);
+            dragon.remove();
+            player.setHeldItem(hand, stack);
+        } else {
+            for (int i = 0; i <= dragon.getWidth() * 25; ++i) {
+                double calcX = MathHelper.cos(i + 360 / MathUtils.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double calcZ = MathHelper.sin(i + 360 / MathUtils.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double x = dragon.posX + calcX;
+                double y = dragon.posY + (dragon.getHeight() * 1.8f);
+                double z = dragon.posZ + calcZ;
+                double xMot = -calcX / 5f;
+                double yMot = -(dragon.getHeight() / 8);
+                double zMot = -calcZ / 5f;
+                
+                world.addParticle(ParticleTypes.END_ROD, x, y, z, xMot, yMot, zMot);
+            }
+        }
         world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
         
         return true;
@@ -70,13 +91,19 @@ public class SoulCrystalItem extends Item
             EntitySize size = entity.getSize(entity.getPose());
             
             player.swingArm(context.getHand());
-            double posX = pos.getX() + (size.width + 0.5) * 0.1;
+            double posX = pos.getX() + 0.5d;
             double posY = pos.getY() + (size.height / 2);
-            double posZ = pos.getZ() + (size.width + 0.5) * 0.1;
-            for (int x = (int) -(size.width * 5); x < (int) (size.width * 5); ++x) {
-                double sx = Math.cos(x / 3) * random.nextFloat();
-                double sz = Math.sin(x / 3) * random.nextFloat();
-                world.addParticle(ParticleTypes.PORTAL, posX, posY, posZ, sx, random.nextDouble() - 0.8, sz);
+            double posZ = pos.getZ() + 0.5d;
+            for (int i = 0; i < entity.getWidth() * 25; ++i) {
+                double x = MathHelper.cos(i + 360 / MathUtils.PI * 360f) * (entity.getWidth() * 1.5d);
+                double z = MathHelper.sin(i + 360 / MathUtils.PI * 360f) * (entity.getWidth() * 1.5d);
+                double xMot = x / 10f;
+                double yMot = entity.getHeight() / 18f;
+                double zMot = z / 10f;
+    
+                world.addParticle(ParticleTypes.END_ROD, posX, posY, posZ, xMot, yMot, zMot);
+                world.addParticle(ParticleTypes.CLOUD, posX, posY + i, posZ, 0, 0, 0);
+    
             }
         }
         world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);

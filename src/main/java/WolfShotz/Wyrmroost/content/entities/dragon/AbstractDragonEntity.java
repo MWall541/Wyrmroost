@@ -368,21 +368,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void eat(@Nullable ItemStack stack) {
         if (stack != null && !stack.isEmpty()) {
             Item item = stack.getItem();
-            List<Pair<EffectInstance, Float>> effects = stack.getItem().getFood().getEffects();
+            List<Pair<EffectInstance, Float>> effects;
     
             stack.shrink(1);
-            if (item.isFood() && !effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
-                effects.forEach(e -> addPotionEffect(e.getLeft()));
             if (getHealth() < getMaxHealth()) heal(Math.max((int) getMaxHealth() / 5, 6));
-            
+            if (item.isFood()) {
+                effects = stack.getItem().getFood().getEffects();
+                if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
+                    effects.forEach(e -> addPotionEffect(e.getLeft()));
+            }
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
             if (world.isRemote) {
                 Vec3d mouth = getApproximateMouthPos();
                 
                 for (int i = 0; i < 11; ++i) {
                     Vec3d vec3d1 = new Vec3d(((double) rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) rand.nextFloat() - 0.5D) * 0.1D);
-                    vec3d1 = vec3d1.rotatePitch(-this.rotationPitch * (MathUtils.PI / 180f));
-                    vec3d1 = vec3d1.rotateYaw(-this.rotationYaw * (MathUtils.PI / 180f));
+                    vec3d1 = vec3d1.rotatePitch(-rotationPitch * (MathUtils.PI / 180f));
+                    vec3d1 = vec3d1.rotateYaw(-rotationYaw * (MathUtils.PI / 180f));
                     world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), mouth.x, mouth.y, mouth.z, vec3d1.x, vec3d1.y, vec3d1.z);
                 }
             }
