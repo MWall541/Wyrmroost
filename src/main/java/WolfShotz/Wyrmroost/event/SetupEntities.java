@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEnti
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
@@ -36,6 +37,9 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupEntities
 {
+    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_egg")
+    public static EntityType dragon_egg = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.AMBIENT, 0.2f, 0.2f);
+    
     // Entity List Start
     @ObjectHolder(Wyrmroost.MOD_ID + ":overworld_drake")
     public static EntityType overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);

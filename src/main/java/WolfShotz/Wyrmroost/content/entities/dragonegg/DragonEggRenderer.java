@@ -1,24 +1,45 @@
-package WolfShotz.Wyrmroost.content.blocks.eggblock;
+package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlock;
+import WolfShotz.Wyrmroost.content.blocks.eggblock.EggTileEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
-public class EggRenderer extends TileEntityRenderer<EggTileEntity>
+public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 {
     private final ResourceLocation TEXTURE = ModUtils.location("textures/block/egg.png");
-    private final EggModel eggModel = new EggModel();
-    private float wiggle = 0;
+    private final DragonEggModel EGG_MODEL = new DragonEggModel();
+    
+    public DragonEggRenderer(EntityRendererManager manager) {
+        super(manager);
+    }
     
     @Override
-    public void render(EggTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void doRender(DragonEggEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+        
+        
+    }
+    
+    @Nullable
+    @Override
+    protected ResourceLocation getEntityTexture(DragonEggEntity entity) { return TEXTURE; }
+    
+    public void render(DragonEggEntity entity, double x, double y, double z, float partialTicks, int destroyStage) {
         GlStateManager.enableDepthTest();
         GlStateManager.depthFunc(515);
         GlStateManager.depthMask(true);
@@ -29,7 +50,7 @@ public class EggRenderer extends TileEntityRenderer<EggTileEntity>
         GlStateManager.pushMatrix();
         GlStateManager.enableRescaleNormal();
         
-        int index = te.getBlockState().get(EggBlock.DRAGONTYPE);
+        int index = entity.getDragonType()
         switch (index) {
             case 0: {
                 GlStateManager.translatef((float) x + 0.5F, (float) y + 3f, (float) z + 0.5F);
@@ -52,27 +73,11 @@ public class EggRenderer extends TileEntityRenderer<EggTileEntity>
             }
         }
         
-        eggModel.renderAll();
+        EGG_MODEL.renderAll();
         
-        eggModel.base.rotateAngleX = getEggAngle(te, partialTicks);
-    
         GlStateManager.enableCull();
         GlStateManager.disableRescaleNormal();
         GlStateManager.popMatrix();
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    }
-    
-    private float getEggAngle(EggTileEntity te, float partialTicks) {
-        if (te.dragonType == null) { return 0; }
-        AbstractDragonEntity dragon = te.dragonType.create(te.getWorld());
-        
-        if (wiggle > 0) --wiggle;
-        if (dragon != null && te.hatchTimer < dragon.hatchTimer * 0.25f) {
-            if (new Random().nextInt(te.hatchTimer * 2) == 0) {
-                wiggle = 10;
-            }
-        }
-        
-        return wiggle > 0? (float) Math.sin(wiggle - partialTicks) * 8 : wiggle;
     }
 }

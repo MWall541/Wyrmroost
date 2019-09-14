@@ -110,7 +110,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
         
         // Change to tame if holding a dragon egg
-        if (!isTamed() && stack.getItem() == SetupItems.egg) {
+        if (!isTamed() && stack.getItem() == SetupItems.dragonEgg) {
             eat(stack);
             if (tame(getRNG().nextBoolean(), player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
@@ -239,7 +239,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.EGG, SetupItems.egg, Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON}; }
+    protected Item[] getFoodItems() { return new Item[] {Items.EGG, SetupItems.dragonEgg, Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON}; }
     
     public boolean canPickUpStack(ItemStack stack) {
         return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET && stack.getItem() != SetupItems.soulCrystal;

@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.eggblock.EggBlockItem;
+import WolfShotz.Wyrmroost.content.items.DragonEggItem;
 import WolfShotz.Wyrmroost.content.items.MinutusItem;
 import WolfShotz.Wyrmroost.content.items.ModBookItem;
 import WolfShotz.Wyrmroost.content.items.SoulCrystalItem;
@@ -40,8 +41,8 @@ public class SetupItems
     @ObjectHolder(Wyrmroost.MOD_ID + ":cooked_minutus")
     public static Item foodCookedMinutus;
     
-    @ObjectHolder(Wyrmroost.MOD_ID + ":egg")
-    public static Item egg;
+    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_egg")
+    public static Item dragonEgg;
 
     @ObjectHolder(Wyrmroost.MOD_ID + ":soul_crystal")
     public static Item soulCrystal;
@@ -128,7 +129,7 @@ public class SetupItems
                 // Misc Start
 //                new ModBookItem(),
                 new MinutusItem(),
-                new EggBlockItem(),
+                new DragonEggItem(),
                 new SoulCrystalItem(),
                 // Misc End
 

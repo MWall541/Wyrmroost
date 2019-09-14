@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.blocks.eggblock;
+package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
@@ -7,13 +7,13 @@ import net.minecraft.client.renderer.model.Model;
  * WREggTemplate - Ukan
  * Created using Tabula 7.0.1
  */
-public class EggModel extends Model {
+public class DragonEggModel extends Model {
     public RendererModel base;
     public RendererModel two;
     public RendererModel three;
     public RendererModel four;
     
-    public EggModel() {
+    public DragonEggModel() {
         this.textureWidth = 64;
         this.textureHeight = 32;
         this.four = new RendererModel(this, 0, 19);
