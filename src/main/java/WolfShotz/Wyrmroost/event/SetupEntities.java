@@ -38,10 +38,12 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupEntities
 {
-    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_egg")
-    public static EntityType dragon_egg = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.AMBIENT, 0.2f, 0.2f);
-    
     // Entity List Start
+    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_egg")
+    public static EntityType dragon_egg = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
+    
+    
+    
     @ObjectHolder(Wyrmroost.MOD_ID + ":overworld_drake")
     public static EntityType overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
     
@@ -82,6 +84,8 @@ public class SetupEntities
     @SubscribeEvent
     public static void entitySetup(RegistryEvent.Register<EntityType<?>> event) {
         event.getRegistry().registerAll (
+                dragon_egg,
+                
                 overworld_drake,
                 minutus,
                 silver_glider,

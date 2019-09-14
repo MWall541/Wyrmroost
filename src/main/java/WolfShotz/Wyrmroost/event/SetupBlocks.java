@@ -33,9 +33,6 @@ public class SetupBlocks
 
     @ObjectHolder(Wyrmroost.MOD_ID + ":geode_block")
     public static Block blockgeode;
-    
-    @ObjectHolder(Wyrmroost.MOD_ID + ":egg")
-    public static Block egg;
 
     @SubscribeEvent
     public static void blockSetup(RegistryEvent.Register<Block> event) {
