@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.helper;
+package WolfShotz.Wyrmroost.util.entityhelpers;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.controller.BodyController;

@@ -1,7 +1,6 @@
-package WolfShotz.Wyrmroost.content.entities.helper.ai.goals;
+package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupBlocks;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.BreedGoal;

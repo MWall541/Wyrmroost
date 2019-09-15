@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.helper.ai.goals;
+package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
