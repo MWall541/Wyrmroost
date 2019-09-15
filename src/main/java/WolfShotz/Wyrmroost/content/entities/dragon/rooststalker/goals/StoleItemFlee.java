@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals;
 
-import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.NonTamedAvoidGoal;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.NonTamedAvoidGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 

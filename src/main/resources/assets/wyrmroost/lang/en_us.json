@@ -45,7 +45,7 @@
   "item.wyrmroost.cooked_minutus": "Cooked Desertwyrm",
   
   "item.wyrmroost.egg.tooltip": "Hatching in: %smin",
-  "block.wyrmroost.egg": "Egg",
+  "item.wyrmroost.dragon_egg": "Egg",
   
   "item.wyrmroost.soul_crystal": "Dragon Soul Crystal",
   "item.wyrmroost.soul_crystal.jeidesc": "Infused with the mysterious properties of geodes, it has the potential to contain the souls of dragons that you have entrusted. The soul of a dragon can lead you to %s..."

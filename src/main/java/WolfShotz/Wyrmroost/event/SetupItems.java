@@ -23,102 +23,54 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupItems
 {
-    @ObjectHolder(Wyrmroost.MOD_ID + ":tarragon_tome")
-    public static Item modBook;
-
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":jewelled_apple")
-    public static Item foodJewelledApple;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_fruit")
-    public static Item foodDragonFruit;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":minutus")
-    public static Item minutus;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":cooked_minutus")
-    public static Item foodCookedMinutus;
+    private static final String ID = Wyrmroost.MOD_ID + ":";
     
-    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_egg")
-    public static Item dragonEgg;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":soul_crystal")
-    public static Item soulCrystal;
+    @ObjectHolder(ID + "tarragon_tome")         public static Item modBook;
+    @ObjectHolder(ID + "minutus")               public static Item minutus;
+    @ObjectHolder(ID + "dragon_egg")            public static Item dragonEgg;
+    @ObjectHolder(ID + "soul_crystal")          public static Item soulCrystal;
     
     // Geode start
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode")
-    public static Item geode;
+    @ObjectHolder(ID + "geode")                 public static Item geode;
 
+    @ObjectHolder(ID + "geode_sword")           public static Item geodeSword;
+    @ObjectHolder(ID + "geode_pick")            public static Item geodePick;
+    @ObjectHolder(ID + "geode_shovel")          public static Item geodeShovel;
+    @ObjectHolder(ID + "geode_axe")             public static Item geodeAxe;
 
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_sword")
-    public static Item swordGeode;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_pick")
-    public static Item pickGeode;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_shovel")
-    public static Item shovelGeode;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_axe")
-    public static Item axeGeode;
-
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_helmet")
-    public static Item geodeHelm;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_chestplate")
-    public static Item geodeChest;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_leggings")
-    public static Item geodeLegs;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":geode_boots")
-    public static Item geodeBoots;
+    @ObjectHolder(ID + "geode_helmet")          public static Item geodeHelm;
+    @ObjectHolder(ID + "geode_chestplate")      public static Item geodeChest;
+    @ObjectHolder(ID + "geode_leggings")        public static Item geodeLegs;
+    @ObjectHolder(ID + "geode_boots")           public static Item geodeBoots;
     // Geode end
 
     // Platinum start
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_ingot")
-    public static Item platinumIngot;
+    @ObjectHolder(ID + "platinum_ingot")        public static Item platinumIngot;
 
+    @ObjectHolder(ID + "platinum_sword")        public static Item platinumSword;
+    @ObjectHolder(ID + "platinum_pick")         public static Item platinumPick;
+    @ObjectHolder(ID + "platinum_axe")          public static Item platinumAxe;
+    @ObjectHolder(ID + "platinum_shovel")       public static Item platinumShovel;
 
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_sword")
-    public static Item platinumSword;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_pick")
-    public static Item platinumPick;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_axe")
-    public static Item platinumAxe;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_shovel")
-    public static Item platinumShovel;
-
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_helmet")
-    public static Item platinumHelm;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_chestplate")
-    public static Item platinumChest;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_leggings")
-    public static Item platinumLegs;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":platinum_boots")
-    public static Item platinumBoots;
+    @ObjectHolder(ID + "platinum_helmet")       public static Item platinumHelm;
+    @ObjectHolder(ID + "platinum_chestplate")   public static Item platinumChest;
+    @ObjectHolder(ID + "platinum_leggings")     public static Item platinumLegs;
+    @ObjectHolder(ID + "platinum_boots")        public static Item platinumBoots;
     // Platinum end
 
-    // Spawn Eggs start
-    @ObjectHolder(Wyrmroost.MOD_ID + ":drake_egg")
-    public static Item eggDrake;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":minutus_egg")
-    public static Item eggMinutus;
-
-    @ObjectHolder(Wyrmroost.MOD_ID + ":silverglider_egg")
-    public static Item eggSilverGlider;
+    // Food Start
+    @ObjectHolder(ID + "cooked_minutus")        public static Item foodCookedMinutus;
+    @ObjectHolder(ID + "drake_meat_raw")        public static Item foodDrakeMeatRaw;
+    @ObjectHolder(ID + "drake_meat_cooked")     public static Item foodDrakeMeatCooked;
+    @ObjectHolder(ID + "jewelled_apple")        public static Item foodJewelledApple;
+    @ObjectHolder(ID + "dragon_fruit")          public static Item foodDragonFruit;
+    // Food End
     
-    @ObjectHolder(Wyrmroost.MOD_ID + ":rooststalker_egg")
-    public static Item eggRoostStalker;
+    // Spawn Eggs start
+    @ObjectHolder(ID + "drake_egg")             public static Item eggDrake;
+    @ObjectHolder(ID + "minutus_egg")           public static Item eggMinutus;
+    @ObjectHolder(ID + "silverglider_egg")      public static Item eggSilverGlider;
+    @ObjectHolder(ID + "rooststalker_egg")      public static Item eggRoostStalker;
     // Spawn Eggs end
 
     @SubscribeEvent
@@ -135,6 +87,8 @@ public class SetupItems
                 new Item(ModUtils.itemBuilder().food(jewelledapple)).setRegistryName("jewelled_apple"),
                 new Item(ModUtils.itemBuilder().food(dragonfruit)).setRegistryName("dragon_fruit"),
                 new Item(ModUtils.itemBuilder().food(cookedminutus)).setRegistryName("cooked_minutus"),
+                new Item(ModUtils.itemBuilder().food(rawDrake)).setRegistryName("drake_meat_raw"),
+                new Item(ModUtils.itemBuilder().food(cookedDrake)).setRegistryName("drake_meat_cooked"),
                 // Food End
                 
                 // SpawnEggs start
@@ -262,5 +216,18 @@ public class SetupItems
     private static Food cookedminutus = new Food.Builder()
                                                 .hunger(6)
                                                 .saturation(0.7f)
+                                                .meat()
                                                 .build();
+    // Raw Drake Meat
+    private static Food rawDrake = new Food.Builder()
+                                           .hunger(4)
+                                           .saturation(0.45f)
+                                           .meat()
+                                           .build();
+    // Cooked Drake Meat
+    private static Food cookedDrake = new Food.Builder()
+                                           .hunger(8)
+                                           .saturation(1f)
+                                           .meat()
+                                           .build();
 }

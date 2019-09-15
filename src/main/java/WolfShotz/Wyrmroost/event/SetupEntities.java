@@ -38,23 +38,15 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupEntities
 {
+    private static final String ID = Wyrmroost.MOD_ID + ":";
+    
     // Entity List Start
-    @ObjectHolder(Wyrmroost.MOD_ID + ":dragon_egg")
-    public static EntityType dragon_egg = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
+    @ObjectHolder(ID + "dragon_egg")                    public static EntityType dragon_egg = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
     
-    
-    
-    @ObjectHolder(Wyrmroost.MOD_ID + ":overworld_drake")
-    public static EntityType overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
-    
-    @ObjectHolder(Wyrmroost.MOD_ID + ":minutus")
-    public static EntityType minutus = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
-    
-    @ObjectHolder(Wyrmroost.MOD_ID + ":silver_glider")
-    public static EntityType silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
-    
-    @ObjectHolder(Wyrmroost.MOD_ID + ":roost_stalker")
-    public static EntityType roost_stalker = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
+    @ObjectHolder(ID + "overworld_drake")               public static EntityType overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
+    @ObjectHolder(ID + "minutus")                       public static EntityType minutus = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
+    @ObjectHolder(ID + "silver_glider")                 public static EntityType silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
+    @ObjectHolder(ID + "roost_stalker")                 public static EntityType roost_stalker = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
     // Entity List End
     
     /**

@@ -16,22 +16,19 @@ public class BlockBase extends Block
      * @param name The Resource Location
      * @param properties the block properties
      */
-    public BlockBase(String name, Block.Properties properties) { this(name, false, properties); }
-
-    /**
-     * Constructor used for more advanced block properties
-     * @param name The Resource Location
-     * @param properties the block properties
-     * @param isBeaconBase Does this block work with beacons?
-     */
-    public BlockBase(String name, boolean isBeaconBase, Block.Properties properties) {
+    public BlockBase(String name, Block.Properties properties) {
         super(properties);
 
         setRegistryName(name);
-        this.isBeaconBase = isBeaconBase;
         SetupBlocks.BLOCKS.add(this);
     }
 
     @Override
     public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) { return isBeaconBase; }
+    
+    public BlockBase setBeaconBase(boolean flag) {
+        this.isBeaconBase = flag;
+        
+        return this;
+    }
 }

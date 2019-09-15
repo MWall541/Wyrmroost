@@ -15,7 +15,7 @@ import java.util.Random;
 public class GeodeOreBlock extends BlockBase
 {
     public GeodeOreBlock() {
-        super("geode_ore", false, Block.Properties.create(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE));
+        super("geode_ore", Block.Properties.create(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE));
     }
 
     @Override

@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.goals.RandomFlightGoal;
-import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.*;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.*;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;

@@ -1,11 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.helper.DragonBodyController;
-import WolfShotz.Wyrmroost.content.entities.helper.ai.DragonGroundPathNavigator;
-import WolfShotz.Wyrmroost.content.entities.helper.ai.DragonLookController;
-import WolfShotz.Wyrmroost.content.entities.helper.ai.FlightMovementController;
-import WolfShotz.Wyrmroost.content.entities.helper.ai.FlightPathNavigator;
-import WolfShotz.Wyrmroost.content.entities.helper.ai.goals.SleepGoal;
+import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightMovementController;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightPathNavigator;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
@@ -46,7 +46,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
