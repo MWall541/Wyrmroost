@@ -4,9 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupEntities;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -17,6 +15,8 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SSpawnMobPacket;
+import net.minecraft.particles.ItemParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -62,19 +62,10 @@ public class DragonEggEntity extends LivingEntity
     public void setDragonType(String dragonType) { dataManager.set(DRAGON_TYPE, dragonType); }
     public String getDragonType() { return dataManager.get(DRAGON_TYPE); }
     
-    public void setHatchTime(int hatchTime) {
-        dataManager.set(HATCH_TIME, hatchTime);
-//        this.hatchTime = hatchTime;
-    }
-    public int getHatchTime() {
-//        if (hatchTime != dataManager.get(HATCH_TIME)) // Sync hatch times
-//            dataManager.set(HATCH_TIME, hatchTime);
-        
-        return dataManager.get(HATCH_TIME);
-    }
+    public void setHatchTime(int hatchTime) { dataManager.set(HATCH_TIME, hatchTime); }
+    public int getHatchTime() { return dataManager.get(HATCH_TIME); }
     
     // ================================
-    
     
     @Override
     public void livingTick() {
@@ -92,7 +83,8 @@ public class DragonEggEntity extends LivingEntity
     public void tick() {
         super.tick();
     
-        System.out.println(getHatchTime());
+        DragonTypes type = getDragonTypeEnum();
+        if (getSize(getPose()) != EntitySize.flexible(type.getWidth(), type.getHeight())) recalculateSize();
         
         if (getDragonType() == null) {
             safeError();
@@ -130,13 +122,20 @@ public class DragonEggEntity extends LivingEntity
         
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
         
-        remove();
         if (!world.isRemote) {
-            world.addEntity(dragon);
             dragon.setPosition(posX + 0.5d, posY, posZ + 0.5d);
             dragon.setGrowingAge(-(dragon.hatchTimer * 2));
+            world.addEntity(dragon);
+        } else {
+            for (int i = 0; i < getWidth() * 25; ++i) {
+                double x = rand.nextGaussian() * 0.2f;
+                double y = rand.nextDouble() * 0.45f;
+                double z = rand.nextGaussian() * 0.2f;
+                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(SetupItems.dragonEgg)), posX, posY, posZ, x, y, z);
+            }
         }
         world.playSound(posX, posY, posZ, SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
+        remove();
         
     }
     
@@ -173,6 +172,14 @@ public class DragonEggEntity extends LivingEntity
         return false;
     }
     
+    @Override
+    public EntitySize getSize(Pose pose) {
+        DragonTypes type = getDragonTypeEnum();
+        
+        if (type == null) return super.getSize(pose);
+        else return super.getSize(pose).scale(type.getWidth(), type.getHeight());
+    }
+    
     public DragonTypes getDragonTypeEnum() {
         EntityType type = EntityType.byKey(getDragonType()).orElse(null);
     
@@ -181,6 +188,16 @@ public class DragonEggEntity extends LivingEntity
     }
     
     @Override
+    protected boolean isMovementBlocked() { return true; }
+    
+    @Override
+    public boolean canBePushed() { return false; }
+    
+    @Override
+    protected void collideWithEntity(Entity entityIn) { }
+    
+    // This is needed because it seems to be ignored on server world...
+    @Override
     public void onKillCommand() { remove(); }
     
     @Override
@@ -188,6 +205,7 @@ public class DragonEggEntity extends LivingEntity
     
     @Override
     public ItemStack getItemStackFromSlot(EquipmentSlotType slotIn) { return ItemStack.EMPTY; }
+    
     @Override
     public void setItemStackToSlot(EquipmentSlotType slotIn, ItemStack stack) { }
     
@@ -199,15 +217,24 @@ public class DragonEggEntity extends LivingEntity
     
     public enum DragonTypes
     {
-        DRAKE(SetupEntities.overworld_drake),
-        SILVER_GLIDER(SetupEntities.silver_glider),
-        ROOST_STALKER(SetupEntities.roost_stalker);
+        DRAKE(SetupEntities.overworld_drake, 0.65f, 1f),
+        SILVER_GLIDER(SetupEntities.silver_glider, 0.4f, 0.65f),
+        ROOST_STALKER(SetupEntities.roost_stalker, 0.25f, 0.35f);
         
         private EntityType dragonType;
-        private DragonTypes[] types = new DragonTypes[values().length];
+        private float width, height;
         
-        DragonTypes(EntityType type) { this.dragonType = type; }
+        DragonTypes(EntityType type, float width, float height) {
+            this.dragonType = type;
+            this.width = width;
+            this.height = height;
+        }
         
         public EntityType getType() { return dragonType; }
+        
+        public float getWidth() { return width; }
+        
+        public float getHeight() { return height; }
+        
     }
 }

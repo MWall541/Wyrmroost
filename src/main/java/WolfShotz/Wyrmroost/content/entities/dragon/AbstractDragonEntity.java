@@ -228,7 +228,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold) && canFly();
         if (shouldFly != isFlying()) setFlying(shouldFly);
         
-        if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && !canFly()) setFlying(true);
+        if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && canFly()) setFlying(true);
         
         if (!world.isRemote) { // Server Only Stuffs
             // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
@@ -366,16 +366,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     public void eat(@Nullable ItemStack stack) {
         if (stack != null && !stack.isEmpty()) {
-            Item item = stack.getItem();
-            List<Pair<EffectInstance, Float>> effects;
+//            Item item = stack.getItem();
+//            List<Pair<EffectInstance, Float>> effects;
     
             stack.shrink(1);
             if (getHealth() < getMaxHealth()) heal(Math.max((int) getMaxHealth() / 5, 6));
-            if (item.isFood()) {
-                effects = stack.getItem().getFood().getEffects();
-                if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
-                    effects.forEach(e -> addPotionEffect(e.getLeft()));
-            }
+//            if (item.isFood()) {
+//                effects = stack.getItem().getFood().getEffects();
+//                if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
+//                    effects.forEach(e -> addPotionEffect(e.getLeft()));
+//            }
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
             if (world.isRemote) {
                 Vec3d mouth = getApproximateMouthPos();

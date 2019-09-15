@@ -26,5 +26,6 @@ public class JEIPlugin implements IModPlugin
                                                                 TranslationUtils.stringTranslation("dsabgi", TextFormatting.OBFUSCATED).getFormattedText())
                                            .getFormattedText());
         
+        registry.addIngredientInfo(new ItemStack(SetupItems.dragonEgg, 1), VanillaTypes.ITEM, TranslationUtils.stringTranslation("item.wyrmroost.dragon_egg.jeidesc").getFormattedText());
     }
 }

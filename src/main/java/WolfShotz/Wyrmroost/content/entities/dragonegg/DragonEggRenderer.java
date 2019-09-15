@@ -13,24 +13,21 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 {
-    private final ResourceLocation TEXTURE = ModUtils.location("textures/block/dragon_egg.png");
+    private final ResourceLocation TEXTURE = ModUtils.location("textures/entity/dragonegg/dragon_egg.png");
     private final DragonEggModel EGG_MODEL = new DragonEggModel();
     
-    public DragonEggRenderer(EntityRendererManager manager) {
-        super(manager);
-    }
+    public DragonEggRenderer(EntityRendererManager manager) { super(manager); }
     
     @Override
     public void doRender(DragonEggEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.pushMatrix();
         GlStateManager.disableCull();
         GlStateManager.translated(x, y, z);
-//        GlStateManager.rotated(180, 1, 0, 0);
         renderShapeByType(entity);
         GlStateManager.translated(0, -1.5, 0);
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableAlphaTest();
-        
+    
         bindEntityTexture(entity);
         EGG_MODEL.base.render(0.0625f);
         
@@ -43,14 +40,16 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
     @Override
     protected ResourceLocation getEntityTexture(DragonEggEntity entity) { return TEXTURE; }
     
+    /**
+     * Render Custom egg sizes / shapes. <P>
+     * If none is defined, then calculate the model size according to egg size
+     */
     private void renderShapeByType(DragonEggEntity entity) {
         DragonEggEntity.DragonTypes type = entity.getDragonTypeEnum();
         
-        // Drake
         switch(type) {
-            case DRAKE: GlStateManager.scalef(2.0F, -2.0F, -2.0F); break;
-            case SILVER_GLIDER: GlStateManager.scalef(1.2F, -1.2F, -1.2F); break;
-            case ROOST_STALKER: GlStateManager.scalef(0.7f, -0.7f, -0.7f); break;
+//            case DRAKE: GlStateManager.scalef(2.0F, -2.0F, -2.0F); break;
+            default: GlStateManager.scalef(type.getWidth() * 2.95f, -(type.getHeight() * 2), -(type.getWidth() * 2.95f)); break;
         }
     }
 }
