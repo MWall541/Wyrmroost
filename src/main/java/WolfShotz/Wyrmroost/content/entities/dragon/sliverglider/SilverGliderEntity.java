@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.goals.RandomFlightGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.goals.OrbitFlightGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.*;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -71,9 +71,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
-        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f));
+        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f, 15d));
         goalSelector.addGoal(7, new DragonBreedGoal(this, true));
-        goalSelector.addGoal(8, new RandomFlightGoal(this));
+//        goalSelector.addGoal(8, new OrbitFlightGoal(this));
+        goalSelector.addGoal(8, aiFlyWander = new FlightWanderGoal(this, 1500, 1));
         goalSelector.addGoal(9, new WanderGoal(this, 1d));
         goalSelector.addGoal(10, new WatchGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(11, new RandomLookGoal(this));

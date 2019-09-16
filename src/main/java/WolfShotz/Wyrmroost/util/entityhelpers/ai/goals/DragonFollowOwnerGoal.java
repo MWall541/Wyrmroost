@@ -20,16 +20,17 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
     private AbstractDragonEntity dragon;
     private LivingEntity owner;
     private float minDistance, maxDistance;
-    private double speed;
+    private double speed, height;
     
-    public DragonFollowOwnerGoal(AbstractDragonEntity dragon, double speed, float minDistance, float maxDistance) {
+    public DragonFollowOwnerGoal(AbstractDragonEntity dragon, double speed, float minDistance, float maxDistance, double height) {
         super(dragon, speed, minDistance, maxDistance);
         this.minDistance = minDistance;
         this.maxDistance = maxDistance;
         this.speed = speed;
+        this.height = height;
         this.dragon = dragon;
         
-        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
+        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
     
     @Override
@@ -37,23 +38,28 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
         if (!dragon.isFlying()) return super.shouldExecute(); // Do normal behaviour
         
         this.owner = dragon.getOwner();
-        float minDistSq = (this.minDistance * this.minDistance) * 4;
+        float minDistSq = (this.minDistance * this.minDistance) * 2;
         
         if (owner == null) return false; // *Visible confusion*
         if (dragon.isSitting()) return false; // Imagine if it did tho... starts scooting across the ground. lmao
         if (owner instanceof PlayerEntity && owner.isSpectator()) return false; // How would this... nvm
-        return !(dragon.getDistanceSq(owner) < minDistSq); // Too small of a dist, so nope
+        return !(dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ) < minDistSq); // Too small of a dist, so nope
     }
     
     @Override
-    public void startExecuting() {}
+    public void startExecuting() {
+        if (!dragon.isFlying()) {
+            setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
+            super.startExecuting();
+        } else setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+    }
     
     @Override
     public boolean shouldContinueExecuting() {
         if (!dragon.isFlying()) return super.shouldContinueExecuting(); // Do normal behaviour
         
         float maxDistSq = (maxDistance * maxDistance) * 2;
-        float distEuclid = (float) MathUtils.getPlaneDistSq(dragon.posX, owner.posX, dragon.posZ, owner.posZ);
+        float distEuclid = (float) dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ);
         
         if (dragon.isSitting()) return false; // uhhhhhhh
         return distEuclid > maxDistSq; // em no?
@@ -67,21 +73,24 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
             return;
         }
     
-        Vec3d moveTo = new Vec3d(owner.posX + 0.5d, owner.posY + 15d, owner.posZ + 0.5d);
+        Vec3d moveTo = new Vec3d(owner.posX + 0.5d, owner.posY + height, owner.posZ + 0.5d);
         BlockPos tpPos = new BlockPos(moveTo.x, moveTo.y, moveTo.z);
     
-        if (dragon.getDistanceSq(owner) > (minDistance * minDistance) * 8 && canTeleportToBlock(tpPos)) { // WOAH, too far, tp instead
+        if (MathUtils.getPlaneDistSq(owner, dragon) > (minDistance * minDistance) * 7 && canTeleportToBlock(tpPos)) { // WOAH, too far, tp instead
             dragon.setPositionAndRotation(tpPos.getX() + 0.5d, tpPos.getY(), tpPos.getZ() + 0.5d, owner.rotationYawHead, owner.rotationPitch);
         
             return;
         }
         
         dragon.getMoveHelper().setMoveTo(moveTo.x, moveTo.y, moveTo.z, speed);
-        dragon.getLookController().setLookPosition(moveTo.x, moveTo.y, moveTo.z, 180f, 20f);
+        dragon.getLookController().setLookPosition(moveTo.x, moveTo.y, moveTo.z, 90f, 40f);
     }
     
     @Override
-    public void resetTask() {}
+    public void resetTask() {
+        if (!dragon.isFlying()) super.resetTask();
+        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+    }
     
     @Override
     protected boolean canTeleportToBlock(BlockPos pos) {
