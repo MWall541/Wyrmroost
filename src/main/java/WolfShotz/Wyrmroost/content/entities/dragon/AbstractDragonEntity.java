@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightPathNavigator;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.FlightWanderGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
@@ -55,11 +56,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 {
     public int animationTick;
     public int shouldFlyThreshold = 3;
-    public final int randomFlyChance = 1000; // Default to random chance of 0 out of 3000
+    public final int randomFlyChance = 1000; // Default to random chance
     public int hatchTimer; // Used in subclasses for hatching time
     public int sleepTimeout;
     public List<String> immunes = new ArrayList<>();
     public boolean isSpecialAttacking = false;
+    public FlightWanderGoal aiFlyWander;
     
     // Dragon Entity Animations
     public Animation animation = NO_ANIMATION;
@@ -300,6 +302,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         
         return false;
+    }
+    
+    /**
+     * Method called to "call" ur dragon.
+     * If its falling, try to descend down.
+     * If its sitting, try to stand.
+     */
+    public void callDragon() {
+        if (isFlying() && aiFlyWander != null) aiFlyWander.setDescending();
+        else if (isSitting()) setSit(false);
     }
     
     public void attackInFront(int range) {

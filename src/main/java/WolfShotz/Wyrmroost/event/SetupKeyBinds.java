@@ -9,12 +9,19 @@ public class SetupKeyBinds
     
     public static KeyBinding genericAttack;
     public static KeyBinding specialAttack;
+    public static KeyBinding callDragon;
     
     public static void registerKeys() {
-        genericAttack = new KeyBinding("key.genericAttack", 86, category);
-        specialAttack = new KeyBinding("key.specialAttack", 82, category);
+        genericAttack = registerKey("key.genericAttack", 86, category);
+//        specialAttack = new KeyBinding("key.specialAttack", 82, category);
+        callDragon = registerKey("key.callDragon", 70, category);
+    
+    }
+    
+    public static KeyBinding registerKey(String description, int keyCode, String category) {
+        KeyBinding key = new KeyBinding(description, keyCode, category);
+        ClientRegistry.registerKeyBinding(key);
         
-        ClientRegistry.registerKeyBinding(genericAttack);
-        ClientRegistry.registerKeyBinding(specialAttack);
+        return key;
     }
 }

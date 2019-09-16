@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.util.network.SendKeyPressMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -81,26 +83,18 @@ public class EventHandler
         @SubscribeEvent
         public static void onKeyPress(InputEvent.KeyInputEvent event) {
             if (Minecraft.getInstance().world == null) return; // Dont do anything on the main menu screen
-        
             PlayerEntity player = Minecraft.getInstance().player;
         
-            if (player.getRidingEntity() instanceof AbstractDragonEntity) {
+            // Generic Attack
+            if (SetupKeyBinds.genericAttack.isPressed()) {
+                if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
                 AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
-            
-                if (SetupKeyBinds.genericAttack.isPressed() && !dragon.hasActiveAnimation()) {
+                
+                if (!dragon.hasActiveAnimation()) {
                     dragon.performGenericAttack();
                     Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 0));
-                    return;
                 }
-                if (SetupKeyBinds.specialAttack.isKeyDown()) {
-                    System.out.println("hooold...");
-                    Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 1)); // Hold
-                }
-                //todo Revaluate
-/*                if (!SetupKeyBinds.specialAttack.isKeyDown() && dragon.isSpecialAttacking) {
-                    System.out.println("sending stop message");
-                    Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 2)); // Release
-                }*/
+            } else if (SetupKeyBinds.callDragon.isPressed()) { //TODO
             }
         }
         
