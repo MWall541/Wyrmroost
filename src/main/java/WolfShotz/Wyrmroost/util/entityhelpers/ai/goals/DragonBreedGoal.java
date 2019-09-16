@@ -70,6 +70,7 @@ public class DragonBreedGoal extends BreedGoal
         field_75391_e.setGrowingAge(6000);
         animal.resetInLove();
         field_75391_e.resetInLove();
+        eggItem.setMotion(0, animal.getHeight() / 2, 0);
         world.addEntity(eggItem);
         if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
             world.addEntity(new ExperienceOrbEntity(world, dragon.posX, dragon.posY, dragon.posZ, dragon.getRNG().nextInt(7) + 1));

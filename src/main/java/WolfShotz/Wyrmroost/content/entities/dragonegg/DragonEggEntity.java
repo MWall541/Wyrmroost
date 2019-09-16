@@ -4,6 +4,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupEntities;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import com.github.alexthe666.citadel.animation.Animation;
+import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,9 +22,20 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class DragonEggEntity extends LivingEntity
+import java.util.Random;
+
+public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
 {
+    private int animationTick;
+    private Animation animation = NO_ANIMATION;
+    @OnlyIn(Dist.CLIENT)
+    public boolean wiggleInvert, wiggleInvert2;
+    
+    public static final Animation WIGGLE_ANIMATION = Animation.create(10);
+    
     private static final DataParameter<String> DRAGON_TYPE = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.STRING);
     private static final DataParameter<Integer> HATCH_TIME = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.VARINT);
     
@@ -71,25 +84,44 @@ public class DragonEggEntity extends LivingEntity
     public void livingTick() {
         super.livingTick();
         
+        EntityType type = ModUtils.getTypeByString(getDragonType());
+        if (type != null) {
+            Entity entity = type.create(world);
+            Random rand = new Random(3257965L); // Use a seed so server + client is synced
+            int bounds = Math.max(getHatchTime() / 150, 3);
+            
+            if (entity instanceof AbstractDragonEntity && getHatchTime() < ((AbstractDragonEntity) entity).hatchTimer / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION) {
+                setAnimation(WIGGLE_ANIMATION);
+                playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1, 1);
+            }
+        }
+        
         if (world.isRemote && ticksExisted % 3 == 0) {
             double x = posX + rand.nextGaussian() * 0.2d;
             double y = posY + rand.nextDouble() + getHeight() / 2;
             double z = posZ + rand.nextGaussian() * 0.2d;
-            world.addParticle(new RedstoneParticleData(1, 1, 0, 0.5f), x, y, z, 0, 0, 0);
+            world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
         }
+        
+        
     }
     
     @Override
     public void tick() {
         super.tick();
     
-        DragonTypes type = getDragonTypeEnum();
-        if (getSize(getPose()) != EntitySize.flexible(type.getWidth(), type.getHeight())) recalculateSize();
-        
         if (getDragonType() == null) {
             safeError();
             return;
         }
+        
+        if (getAnimation() != NO_ANIMATION) {
+            ++animationTick;
+            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
+        }
+        
+        DragonTypes type = getDragonTypeEnum();
+        if (getWidth() != type.getWidth() || getHeight() != type.getHeight()) recalculateSize();
         
         int hatchTime = getHatchTime();
         if (hatchTime > 0) {
@@ -106,7 +138,7 @@ public class DragonEggEntity extends LivingEntity
      *  - Remove this entity (the egg) and play any effects
      */
     public void hatch() {
-        EntityType type = EntityType.byKey(getDragonType()).orElse(null);
+        EntityType type = ModUtils.getTypeByString(getDragonType());
         
         if (type == null) {
             safeError();
@@ -123,7 +155,7 @@ public class DragonEggEntity extends LivingEntity
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
         
         if (!world.isRemote) {
-            dragon.setPosition(posX + 0.5d, posY, posZ + 0.5d);
+            dragon.setPosition(posX, posY, posZ);
             dragon.setGrowingAge(-(dragon.hatchTimer * 2));
             world.addEntity(dragon);
         } else {
@@ -136,7 +168,6 @@ public class DragonEggEntity extends LivingEntity
         }
         world.playSound(posX, posY, posZ, SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
         remove();
-        
     }
     
     /**
@@ -181,7 +212,7 @@ public class DragonEggEntity extends LivingEntity
     }
     
     public DragonTypes getDragonTypeEnum() {
-        EntityType type = EntityType.byKey(getDragonType()).orElse(null);
+        EntityType type = ModUtils.getTypeByString(getDragonType());
     
         for (DragonTypes value : DragonTypes.values()) if (value.getType() == type) return value;
         return null;
@@ -215,6 +246,36 @@ public class DragonEggEntity extends LivingEntity
     @Override
     public IPacket<?> createSpawnPacket() { return new SSpawnMobPacket(this); }
     
+    // === Animation ===
+    @Override
+    public int getAnimationTick() { return animationTick; }
+    
+    @Override
+    public void setAnimationTick(int i) { this.animationTick = i; }
+    
+    @Override
+    public Animation getAnimation() { return animation; }
+    
+    @Override
+    public void setAnimation(Animation animation) {
+        this.animation = animation;
+        setAnimationTick(0);
+        
+        
+        if (world.isRemote && animation == WIGGLE_ANIMATION) {
+            wiggleInvert = rand.nextBoolean();
+            wiggleInvert2 = rand.nextBoolean();
+        }
+    }
+    
+    @Override
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, WIGGLE_ANIMATION}; }
+    
+    // ================
+    
+    /**
+     * Enum to define the hitbox sizes of the eggs depending on dragon type
+     */
     public enum DragonTypes
     {
         DRAKE(SetupEntities.overworld_drake, 0.65f, 1f),

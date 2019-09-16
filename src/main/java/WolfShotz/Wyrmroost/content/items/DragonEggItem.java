@@ -40,7 +40,7 @@ public class DragonEggItem extends Item
         eggEntity.readAdditional(tag);
         eggEntity.setPosition(pos.getX() + 0.5d, pos.getY() + 1, pos.getZ() + 0.5d);
         if (!world.isRemote) world.addEntity(eggEntity);
-        ctx.getItem().shrink(1);
+        ctx.getPlayer().setHeldItem(ctx.getHand(), ItemStack.EMPTY);
         
         return ActionResultType.SUCCESS;
     }

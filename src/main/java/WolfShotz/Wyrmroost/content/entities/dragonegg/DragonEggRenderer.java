@@ -29,7 +29,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
         GlStateManager.enableAlphaTest();
     
         bindEntityTexture(entity);
-        EGG_MODEL.base.render(0.0625f);
+        EGG_MODEL.render(entity);
         
         GlStateManager.popMatrix();
         
