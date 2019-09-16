@@ -164,8 +164,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     public void livingTick() {
-//        if (world.isRemote) System.out.println("rotation Yaw Head: " + rotationYawHead);
-        
         if (!world.isRemote) {
             if (getAttackTarget() == null && isAngry()) setAngry(false);
             setSprinting(isAngry());
@@ -173,18 +171,17 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         if (getAnimation() == ROAR_ANIMATION) {
             if (getAnimationTick() == 1)
-                playSound(SetupSounds.OWDRAKE_ROAR, 5, 1);
+                playSound(SetupSounds.OWDRAKE_ROAR, 50, 1);
             if (getAnimationTick() == 15) {
                 getEntitiesNearby(5).forEach(e -> { // Dont get too close now ;)
                     double angle = (MathUtils.getAngle(posX, e.posX, posZ, e.posZ) + 90) * Math.PI / 180;
                     double x = 1.2 * (-Math.cos(angle));
                     double z = 1.2 * (-Math.sin(angle));
-                    e.setMotion(e.getMotion().add(x, 0.4, z));
+                    e.addVelocity(x, 0.4d, z);
                 });
             }
-            if (getAnimationTick() > 15) {
+            if (getAnimationTick() > 15)
                 getEntitiesNearby(20).forEach(e -> e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120)));
-            }
         }
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8) {

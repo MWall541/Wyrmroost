@@ -367,8 +367,8 @@ public class SilverGliderModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        faceTarget(netHeadYaw, headPitch, 1, headArray);
+    public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        if (!((SilverGliderEntity) entity).isSleeping())faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
     
     private float globalSpeed;
@@ -383,7 +383,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
         resetToDefaultPose();
         animator.update(glider);
         
-        if (glider.isFlying()) { // Should only perform these anims during flight
+        if (glider.isFlying() && !glider.onGround) { // Should only perform these anims during flight
             Vec3d lookVec = glider.getLookVec();
             
             mainbody.rotateAngleX = (float) -lookVec.y;

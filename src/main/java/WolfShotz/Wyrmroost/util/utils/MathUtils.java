@@ -1,10 +1,13 @@
 package WolfShotz.Wyrmroost.util.utils;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
+
+import java.util.List;
 
 /**
  * Math utility class to make my life like way easier.
@@ -61,6 +64,16 @@ public class MathUtils
     public static double getPlaneDistSq(double sourceX, double targetX, double sourceZ, double targetZ) {
         double x = targetX - sourceX;
         double z = targetZ - sourceZ;
+        return x * x + z * z;
+    }
+    
+    /**
+     * Calculate the euclidean plane distance of two entities.
+     * Double
+     */
+    public static double getPlaneDistSq(Entity source, Entity target) {
+        double x = target.posX - source.posX;
+        double z = target.posZ - source.posZ;
         return x * x + z * z;
     }
     
