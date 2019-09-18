@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.RandomLookGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
@@ -67,7 +66,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         moveController = new MovementController(this);
         
-        hatchTimer = 12000;
+        hatchTimer = 18000;
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
@@ -82,7 +81,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new WatchGoal(this, LivingEntity.class, 10f));
-        goalSelector.addGoal(13, new RandomLookGoal(this));
+        goalSelector.addGoal(12, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));

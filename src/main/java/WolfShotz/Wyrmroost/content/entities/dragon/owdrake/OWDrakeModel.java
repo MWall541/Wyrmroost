@@ -398,12 +398,11 @@ public class OWDrakeModel extends AdvancedEntityModel
         float frame = entityIn.ticksExisted;
         OWDrakeEntity drake = (OWDrakeEntity) entityIn;
         Animation currentAnim = drake.getAnimation();
-        boolean overrides = currentAnim == OWDrakeEntity.GRAZE_ANIMATION || currentAnim == OWDrakeEntity.TALK_ANIMATION;
 
         resetToDefaultPose();
         animator.update(drake);
         
-        if ((!drake.isSitting() && !drake.isSleeping()) || overrides) {
+        if (!drake.isSitting() && !drake.isSleeping()) {
         
             // Body bob
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, 0.5f);

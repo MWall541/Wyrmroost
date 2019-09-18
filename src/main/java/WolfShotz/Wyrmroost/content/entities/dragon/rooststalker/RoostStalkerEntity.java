@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemF
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.RandomLookGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.WatchGoal;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.Entity;
@@ -46,7 +45,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         moveController = new MovementController(this);
         
-        hatchTimer = 2400;
+        hatchTimer = 6000;
         stepHeight = 0;
         
         SLEEP_ANIMATION = Animation.create(15);
@@ -64,7 +63,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(11, new ScavengeGoal(this, 1.1d, SCAVENGE_ANIMATION));
         goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(13, new WatchGoal(this, LivingEntity.class, 5f));
-        goalSelector.addGoal(14, new RandomLookGoal(this));
+        goalSelector.addGoal(14, new LookRandomlyGoal(this));
     
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
