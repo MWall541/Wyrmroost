@@ -13,6 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -47,12 +48,13 @@ public class SilverGliderEntity extends AbstractDragonEntity
     // Dragon Animation
     public static final Animation SIT_ANIMATION = Animation.create(10);
     public static final Animation STAND_ANIMATION = Animation.create(10);
-    public static final Animation TALK_ANIMATION = Animation.create(20);
+    public static final Animation FLAP_ANIMATION = Animation.create(30);
+    public static final Animation TAKE_OFF_ANIMATION = Animation.create(20);
     
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
         
-        hatchTimer = 18000;
+        hatchTimer = 12000;
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
@@ -71,13 +73,13 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
-        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f, 15d));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f, 15d));
 //        goalSelector.addGoal(8, new OrbitFlightGoal(this));
         goalSelector.addGoal(8, aiFlyWander = new FlightWanderGoal(this, 1500, 1));
         goalSelector.addGoal(9, new WanderGoal(this, 1d));
         goalSelector.addGoal(10, new WatchGoal(this, LivingEntity.class, 10f));
-        goalSelector.addGoal(11, new RandomLookGoal(this));
+        goalSelector.addGoal(11, new LookRandomlyGoal(this));
     }
     
     // ================================
@@ -105,7 +107,14 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         setVariant(compound.getInt("variant"));
     }
-
+    
+    @Override
+    public void setFlying(boolean fly) {
+        super.setFlying(fly);
+    
+        if (fly) setAnimation(TAKE_OFF_ANIMATION);
+    }
+    
     /**
      * Gets the variant of the Silver Glider.
      */
@@ -117,6 +126,15 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     // ================================
     
+    
+    @Override
+    public void livingTick() {
+        super.livingTick();
+        
+//        if (animation != SilverGliderEntity.TAKE_OFF_ANIMATION) setAnimation(SilverGliderEntity.TAKE_OFF_ANIMATION);
+        
+        if (isFlying() && !(posY < prevPosY)) setAnimation(FLAP_ANIMATION);
+    }
     
     @Override
     public void tick() {
@@ -147,7 +165,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     return;
                 }
 
-                if ((ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3) && !player.isElytraFlying() && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater() && canFly()) {
+                if ((ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3d) && !player.isElytraFlying() && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater() && canFly()) {
                     Vec3d lookVec = player.getLookVec();
                     Vec3d playerMot = player.getMotion();
                     double xMot = playerMot.x + (lookVec.x / 12);
@@ -163,15 +181,16 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
                 setRotation(player.rotationYawHead, rotationPitch);
                 
-                double offsetX = 0;
-                double offsetZ = 0;
+                Vec3d rotationOffset = MathUtils.rotateYaw(player.renderYawOffset, 0, 0.5d);
+                double offsetX = rotationOffset.x;
+                double offsetZ = rotationOffset.z;
                 if (player.isElytraFlying()) {
                     float angle = (0.01745329251F * player.renderYawOffset) + 90;
                     offsetX = (double) (-2f * MathHelper.sin((float) (Math.PI + angle)));
                     offsetZ = (double) (-2f * MathHelper.cos(angle));
                 }
                 
-                setPosition(player.posX + offsetX, player.posY + 1.85d, player.posZ + offsetZ);
+                setPosition(player.posX + offsetX, player.posY + 1.55d, player.posZ + offsetZ);
             }
         }
     }
@@ -183,7 +202,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
-            tame(getRNG().nextInt(10) == 0, player);
+            tame(getRNG().nextInt(7) == 0, player);
             eat(stack);
             if (isSleeping()) setSleeping(false);
             
@@ -224,30 +243,18 @@ public class SilverGliderEntity extends AbstractDragonEntity
         }
     }
     
+    @Override
+    public boolean canFly() { return super.canFly(); }
+    
     public boolean isRiding() { return getRidingEntity() != null; }
     
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() { return SetupSounds.SILVERGLIDER_IDLE; }
     
-    @Override
-    public void playAmbientSound() {
-        if (!isSleeping() && !hasActiveAnimation())
-            setAnimation(TALK_ANIMATION);
-        
-        super.playAmbientSound();
-    }
-    
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) { return SetupSounds.SILVERGLIDER_HURT; }
-    
-    @Override
-    protected void playHurtSound(DamageSource source) {
-        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
-        
-        super.playHurtSound(source);
-    }
     
     @Nullable
     @Override
@@ -262,13 +269,16 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }
-
+    
+    @Override
+    public boolean canBeCollidedWith() { return !isRiding(); }
+    
     /** Array Containing all of the dragons food items */
     @Override
     protected Item[] getFoodItems() { return new Item[] {Items.TROPICAL_FISH, Items.COD, Items.SALMON, Items.COOKED_COD, Items.COOKED_SALMON, Items.BAKED_POTATO}; }
     
     // == Entity Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TALK_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TAKE_OFF_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION}; }
     // ==
 }

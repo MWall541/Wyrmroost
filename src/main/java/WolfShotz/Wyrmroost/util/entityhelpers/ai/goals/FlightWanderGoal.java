@@ -26,8 +26,9 @@ public class FlightWanderGoal extends WaterAvoidingRandomWalkingGoal
     
     @Override
     public boolean shouldExecute() {
+        if (!dragon.getPassengers().isEmpty()) return false;
         if (dragon.isFlying()) return true;
-        else return super.shouldExecute();
+        return super.shouldExecute();
     }
     
     @Override // Start with default flight
@@ -48,6 +49,11 @@ public class FlightWanderGoal extends WaterAvoidingRandomWalkingGoal
     
     @Override
     public void tick() {
+        if (!dragon.isFlying()) {
+            super.tick();
+            return;
+        }
+        
         // Increase chances to "want" to land at night, for sleep
         final int LAND_THRESHOLD = dragon.world.isDaytime()? this.landThreshold : this.landThreshold / 6;
     

@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
+import java.util.Objects;
 
 /**
  * Owner Following class made specifically for flyers.
@@ -21,6 +22,7 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
     private LivingEntity owner;
     private float minDistance, maxDistance;
     private double speed, height;
+    private final boolean FLAG;
     
     public DragonFollowOwnerGoal(AbstractDragonEntity dragon, double speed, float minDistance, float maxDistance, double height) {
         super(dragon, speed, minDistance, maxDistance);
@@ -29,6 +31,7 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
         this.speed = speed;
         this.height = height;
         this.dragon = dragon;
+        this.FLAG = dragon.aiFlyWander != null && dragon.aiFlyWander.isDescending();
         
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
@@ -41,7 +44,7 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
         float minDistSq = (this.minDistance * this.minDistance) * 2;
         
         if (owner == null) return false; // *Visible confusion*
-        if (dragon.isSitting()) return false; // Imagine if it did tho... starts scooting across the ground. lmao
+        if (FLAG) return false;
         if (owner instanceof PlayerEntity && owner.isSpectator()) return false; // How would this... nvm
         return !(dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ) < minDistSq); // Too small of a dist, so nope
     }
@@ -57,9 +60,10 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
     @Override
     public boolean shouldContinueExecuting() {
         if (!dragon.isFlying()) return super.shouldContinueExecuting(); // Do normal behaviour
-        
-        float maxDistSq = (maxDistance * maxDistance) * 2;
-        float distEuclid = (float) dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ);
+        if (FLAG) return false;
+    
+        double maxDistSq = (maxDistance * maxDistance) * 2;
+        double distEuclid = (float) dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ);
         
         if (dragon.isSitting()) return false; // uhhhhhhh
         return distEuclid > maxDistSq; // em no?

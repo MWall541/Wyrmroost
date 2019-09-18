@@ -9,6 +9,7 @@ public class NonTamedAvoidGoal extends AvoidEntityGoal
 {
     private AbstractDragonEntity dragon;
     private boolean flysAway;
+    private float nearSpeed, farSpeed;
     
     public NonTamedAvoidGoal(AbstractDragonEntity dragon, float distance, float speedNear, float speedFar) {
         this(dragon, PlayerEntity.class, distance, speedNear, speedFar, false);
@@ -18,11 +19,15 @@ public class NonTamedAvoidGoal extends AvoidEntityGoal
         super(dragon, avoidingClass, distance, speedNear, speedFar, EntityPredicates.CAN_AI_TARGET);
         this.dragon = dragon;
         this.flysAway = flysAway;
+        this.nearSpeed = speedNear;
+        this.farSpeed = speedFar;
     }
     
-    @Override
-    public void startExecuting() {
-        super.startExecuting();
-        if (flysAway) dragon.setFlying(true);
+    public void tick() {
+        if (dragon.getDistanceSq(field_75376_d) < 49.0D) {
+            if (flysAway && !dragon.isFlying()) dragon.setFlying(true);
+            else dragon.getNavigator().setSpeed(nearSpeed);
+        }
+        else entity.getNavigator().setSpeed(farSpeed);
     }
 }

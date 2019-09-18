@@ -15,7 +15,10 @@ public class DragonLookController extends LookController
     
     @Override
     public void tick() {
-        if (dragon.isSleeping()) return; // Shouldnt be trying to look while asleep...
+        if (dragon.isSleeping()) { // Shouldnt be trying to look while asleep...
+            isLooking = false;
+            return;
+        }
         
         if (!dragon.isSitting()) { // Follow vanilla looking
             super.tick();
@@ -24,8 +27,7 @@ public class DragonLookController extends LookController
     
         if (isLooking) {
             isLooking = false;
-            float newYaw = func_220675_a(mob.rotationYawHead, func_220678_h(), deltaLookYaw);
-            mob.rotationYawHead = newYaw;
+            mob.rotationYawHead = func_220675_a(mob.rotationYawHead, func_220678_h(), deltaLookYaw);
             mob.rotationPitch = func_220675_a(mob.rotationPitch, func_220677_g(), this.deltaLookPitch);
         }
     }
