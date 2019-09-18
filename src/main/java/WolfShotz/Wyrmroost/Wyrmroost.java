@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.event.*;
 import WolfShotz.Wyrmroost.util.network.AnimationMessage;
 import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
-import WolfShotz.Wyrmroost.util.network.SendKeyPressMessage;
+import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -45,7 +45,7 @@ public class Wyrmroost
         
         int networkIndex = 0;
         network.registerMessage(++networkIndex, AnimationMessage.class, AnimationMessage::encode, AnimationMessage::new, AnimationMessage::handle);
-        network.registerMessage(++networkIndex, SendKeyPressMessage.class, SendKeyPressMessage::encode, SendKeyPressMessage::new, SendKeyPressMessage::handle);
+        network.registerMessage(++networkIndex, DragonKeyBindMessage.class, DragonKeyBindMessage::encode, DragonKeyBindMessage::new, DragonKeyBindMessage::handle);
         network.registerMessage(++networkIndex, EntityMoveMessage.class, EntityMoveMessage::encode, EntityMoveMessage::new, EntityMoveMessage::handle);
 
         ModUtils.L.debug("Fired FMLCommon Setup");

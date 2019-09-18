@@ -2,36 +2,22 @@ package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
-import WolfShotz.Wyrmroost.util.network.SendKeyPressMessage;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
+import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
+import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particles.ParticleType;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
-
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * Class Used to hook into forge events to perform particular tasks when the event is called
@@ -53,10 +39,10 @@ public class EventHandler
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
             
-            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
+            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick") && dragon instanceof SilverGliderEntity) {
                 evt.setCanceled(true);
                 
-                dragon.setFlying(!dragon.isFlying());
+                dragon.setAnimation(SilverGliderEntity.TAKE_OFF_ANIMATION);
             }
         }
         
@@ -65,7 +51,7 @@ public class EventHandler
             if (evt.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) evt.getEntity();
                 
-                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance) && player.getMotion().y < -0.65f)
+                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
                     evt.setCanceled(true);
                 
             }
@@ -92,9 +78,19 @@ public class EventHandler
                 
                 if (!dragon.hasActiveAnimation()) {
                     dragon.performGenericAttack();
-                    Wyrmroost.network.sendToServer(new SendKeyPressMessage(dragon, 0));
+                    Wyrmroost.network.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
                 }
-            } else if (SetupKeyBinds.callDragon.isPressed()) { //TODO
+            } else if (SetupKeyBinds.callDragon.isPressed()) {
+                RayTraceResult result = MathUtils.rayTrace(player.world, player, 50, true);
+                if (result.getType() != RayTraceResult.Type.ENTITY) return;
+                EntityRayTraceResult ertr = (EntityRayTraceResult) result;
+                Entity entity = ertr.getEntity();
+                if (!(entity instanceof AbstractDragonEntity)) return;
+                AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+                if (!dragon.isOwner(player)) return;
+                
+                if (!dragon.callDragon(player)) return;
+                Wyrmroost.network.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.CALL_DRAGON));
             }
         }
         

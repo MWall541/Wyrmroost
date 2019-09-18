@@ -2,12 +2,13 @@ package WolfShotz.Wyrmroost.util.utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Math utility class to make my life like way easier.
@@ -126,5 +127,74 @@ public class MathUtils
      */
     public static double getAngle(double x1, double x2, double z1, double z2) {
         return Math.atan2(z2 - z1, x2 - x1) * (180 / Math.PI) + 90;
+    }
+    
+    /**
+     * Created by TGG on 8/07/2015. Modified by WolfShotz on 9/16/2019 <P>
+     * Performs a ray trace of the player's line of sight to see what the player is looking at.
+     * Similar to the vanilla getMouseOver, which is client side only.
+     *
+     * Find what the player is looking at (block or entity), up to a maximum range
+     * based on code from EntityRenderer.getMouseOver. <P>
+     * <STRIKE>Will not target entities which are tamed by the player</STRIKE> <P>
+     * 9/16/2019 - WolfShotz: <P>
+     * - Small Cleanup <P>
+     * - Includes configurable tamed entity targetting <P>
+     * - Changed method name from <code>getMouseOver</code> to <code>rayTrace</code>
+     *
+     * @return the block or entity that the player is looking at / targeting with their cursor.  null if no collision
+     */
+    public static RayTraceResult rayTrace(World world, PlayerEntity serverPlayer, double range, boolean targetTamed) {
+        final RayTraceContext.FluidMode FLUID_MODE = RayTraceContext.FluidMode.NONE;
+        final RayTraceContext.BlockMode BLOCK_MODE = RayTraceContext.BlockMode.COLLIDER;
+        final Vec3d EYES_POSITION = serverPlayer.getEyePosition(1f);
+        final Vec3d LOOK_DIRECTION = serverPlayer.getLook(1f);
+        Vec3d endOfLook = EYES_POSITION.add(LOOK_DIRECTION.x * range, LOOK_DIRECTION.y * range, LOOK_DIRECTION.z * range);
+        RayTraceResult targetedBlock = world.rayTraceBlocks(new RayTraceContext(EYES_POSITION, endOfLook, BLOCK_MODE, FLUID_MODE, serverPlayer));
+        double collisionDistanceSQ = range * range;
+        
+        if (targetedBlock.getType() == RayTraceResult.Type.BLOCK) {
+            collisionDistanceSQ = targetedBlock.getHitVec().squareDistanceTo(EYES_POSITION);
+            endOfLook = targetedBlock.getHitVec();
+        }
+        
+        Vec3d endOfLookDelta = endOfLook.subtract(EYES_POSITION);
+        AxisAlignedBB searchBox = serverPlayer.getBoundingBox().expand(endOfLookDelta.x, endOfLookDelta.y, endOfLookDelta.z).grow(1f); //add
+        List<Entity> nearbyEntities = world.getEntitiesWithinAABBExcludingEntity(serverPlayer, searchBox);
+        Entity closestEntityHit = null;
+        double closestEntityDistanceSQ = Double.MAX_VALUE;
+        
+        for (Entity entity : nearbyEntities) {
+            if (!entity.canBeCollidedWith() || entity == serverPlayer.getRidingEntity())
+                continue;
+            if (!targetTamed && entity instanceof TameableEntity) {
+                TameableEntity tamedEntity = (TameableEntity) entity;
+                if (tamedEntity.isOwner(serverPlayer))
+                    continue;
+            }
+            
+            float collisionBorderSize = entity.getCollisionBorderSize();
+            AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(collisionBorderSize);
+            Optional<Vec3d> movingobjectposition = axisalignedbb.rayTrace(EYES_POSITION, endOfLook);
+            
+            if (axisalignedbb.contains(endOfLook)) {
+                double distanceSQ = (!movingobjectposition.isPresent()) ? EYES_POSITION.squareDistanceTo(endOfLook) : EYES_POSITION.squareDistanceTo(movingobjectposition.get());
+                if (distanceSQ <= closestEntityDistanceSQ) {
+                    closestEntityDistanceSQ = distanceSQ;
+                    closestEntityHit = entity;
+                }
+            } else if (movingobjectposition.isPresent()) {
+                double distanceSQ = EYES_POSITION.squareDistanceTo(movingobjectposition.get());
+                if (distanceSQ <= closestEntityDistanceSQ) {
+                    closestEntityDistanceSQ = distanceSQ;
+                    closestEntityHit = entity;
+                }
+            }
+        }
+        
+        if (closestEntityDistanceSQ <= collisionDistanceSQ && closestEntityHit != null)
+            return new EntityRayTraceResult(closestEntityHit, closestEntityHit.getPositionVec());
+        
+        return targetedBlock;
     }
 }

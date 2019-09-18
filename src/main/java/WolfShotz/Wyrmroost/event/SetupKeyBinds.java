@@ -14,7 +14,7 @@ public class SetupKeyBinds
     public static void registerKeys() {
         genericAttack = registerKey("key.genericAttack", 86, category);
 //        specialAttack = new KeyBinding("key.specialAttack", 82, category);
-        callDragon = registerKey("key.callDragon", 70, category);
+        callDragon = registerKey("key.callDragon", 78, category);
     
     }
     

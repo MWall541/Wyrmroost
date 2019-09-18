@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
@@ -7,7 +8,6 @@ import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightPathNavigator;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.FlightWanderGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
-import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -30,7 +30,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -41,7 +40,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -59,6 +57,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public final int randomFlyChance = 1000; // Default to random chance
     public int hatchTimer; // Used in subclasses for hatching time
     public int sleepTimeout;
+    @OnlyIn(Dist.CLIENT) public int glowTicks;
     public List<String> immunes = new ArrayList<>();
     public boolean isSpecialAttacking = false;
     public FlightWanderGoal aiFlyWander;
@@ -245,6 +244,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             
         } else { // Client Only Stuffs
             if (isSpecial()) doSpecialEffects();
+            
+            if (glowTicks > 0) {
+                if (glowTicks % 4 == 0) setGlowing(true);
+                else setGlowing(false);
+                --glowTicks;
+            }
         }
         
         super.livingTick();
@@ -308,10 +313,30 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Method called to "call" ur dragon.
      * If its falling, try to descend down.
      * If its sitting, try to stand.
+     *
+     * boolean to make sure we can perform this. if not, ignore it
+     * @param player NULLABLE: pass null for server, not needed there.
      */
-    public void callDragon() {
-        if (isFlying() && aiFlyWander != null) aiFlyWander.setDescending();
-        else if (isSitting()) setSit(false);
+    public boolean callDragon(@Nullable PlayerEntity player) {
+        boolean result = false;
+        if (isFlying()) {
+            if (world.isRemote) result = true;
+            else if (aiFlyWander != null) {
+                aiFlyWander.setDescending();
+                result = true;
+            }
+        }
+        else if (isSitting()) {
+            setSit(false);
+            result = true;
+        }
+        
+        if (world.isRemote && result) {
+            player.playSound(SoundEvents.ENTITY_FOX_SCREECH, 1, 1);
+            glowTicks = 8;
+        }
+        
+        return result;
     }
     
     public void attackInFront(int range) {
