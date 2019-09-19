@@ -17,7 +17,7 @@ public class DrakeTargetGoal extends NonTamedTargetGoal
     }
     
     @Override
-    public boolean shouldExecute() { return super.shouldExecute() && !drake.isSleeping(); }
+    public boolean shouldExecute() { return super.shouldExecute() && !drake.isSleeping() && !drake.isChild(); }
     
     @Override
     public void startExecuting() {
