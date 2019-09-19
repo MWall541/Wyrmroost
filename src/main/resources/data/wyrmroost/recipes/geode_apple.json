@@ -1,0 +1,13 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " G ",
+        "GAG",
+        " G "
+    ],
+    "key": {
+        "G": {"item": "wyrmroost:geode"},
+        "A": {"item": "minecraft:apple"}
+    },
+    "result": {"item": "wyrmroost:jewelled_apple"}
+}

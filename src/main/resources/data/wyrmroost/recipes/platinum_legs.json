@@ -1,0 +1,11 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "PPP",
+        "P P",
+        "P P"
+    ],
+    "key": {
+        "P": { "item": "wyrmroost:platinum_ingot" } },
+    "result": {"item": "wyrmroost:platinum_leggings"}
+}

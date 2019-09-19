@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "wyrmroost:geode_block"
+        }
+    ],
+    "result": {
+        "item": "wyrmroost:geode",
+        "count": 9
+    }
+}
