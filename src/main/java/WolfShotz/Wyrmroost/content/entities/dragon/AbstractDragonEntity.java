@@ -477,7 +477,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     public boolean isInteractItem(ItemStack stack) {
         Item item = stack.getItem();
-        return item == SetupItems.soulCrystal || isBreedingItem(stack);
+        
+        return item == SetupItems.soulCrystal ||
+                        item == Items.NAME_TAG ||
+                        isBreedingItem(stack);
     }
     
     /**
@@ -487,7 +490,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     public boolean isBreedingItem(ItemStack stack) {
-        if (getFoodItems().length == 0 || getFoodItems() == null) return false;
+        if (getFoodItems() == null || getFoodItems().length == 0) return false;
         return Arrays.asList(getFoodItems()).contains(stack.getItem());
     }
     
