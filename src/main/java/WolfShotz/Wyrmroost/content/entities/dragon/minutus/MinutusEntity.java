@@ -158,8 +158,9 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
             nbt.putString("entitytype", EntityType.getKey(getType()).toString());
 
             setBurrowed(false);
-            writeAdditional(nbt);
+            writeWithoutTypeId(nbt);
             newDrop.setTag(nbt);
+            if (hasCustomName()) newDrop.setDisplayName(getCustomName());
             ItemEntity drop = new ItemEntity(world, posX, posY + 0.5d, posZ, newDrop);
             double d0 = player.posX - posX;
             double d1 = player.posY - posY;

@@ -44,9 +44,10 @@ public class SoulCrystalItem extends Item
         AbstractDragonEntity dragon = (AbstractDragonEntity) target;
         if (dragon.getOwner() != player) return false;
         
+        if (!dragon.getPassengers().isEmpty()) dragon.removePassengers();
         if (!world.isRemote) {
             CompoundNBT tag = new CompoundNBT();
-            target.writeAdditional(tag);
+            target.writeWithoutTypeId(tag);
             tag.putString("entity", EntityType.getKey(dragon.getType()).toString());
             stack.setTag(tag);
             dragon.remove();

@@ -31,7 +31,7 @@ public class MinutusItem extends Item
 
     @Override
     public void inventoryTick(ItemStack stack, World worldIn, Entity player, int itemSlot, boolean isSelected) {
-        if (stack.hasTag() && stack.getTag().getBoolean("isalive") && new Random().nextInt(60) == 0 && (isSelected))
+        if (stack.hasTag() && stack.getTag().getBoolean("isalive") && new Random().nextInt(60) == 0 && isSelected)
             worldIn.playSound(player.posX, player.posY, player.posZ, SetupSounds.MINUTUS_SCREECH, SoundCategory.NEUTRAL, 1f, 1f, false);
     }
 
