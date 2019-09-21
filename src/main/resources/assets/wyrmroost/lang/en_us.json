@@ -1,9 +1,16 @@
 {
   "itemGroup.wyrmroost": "Wyrmroost",
   
+  "_comment": "Controls",
+  "keyCategory.wyrmroost": "Wyrmroost Controls",
+  "key.callDragon": "Dragon Call",
+  "key.genericAttack": "Mount Attack",
+  
   "_comment": "Entities",
   "entity.wyrmroost.overworld_drake": "Overworld Drake",
   "entity.wyrmroost.silver_glider": "Silver Glider",
+  "entity.wyrmroost.roost_stalker": "Rooststalker",
+  "entity.wyrmroost.minutus": "Lesser Desertwyrm",
   
   "_comment": "Spawn Eggs",
   "item.wyrmroost.drake_egg": "Overworld Drake Spawn Egg",
@@ -21,7 +28,7 @@
   "item.wyrmroost.geode_sword": "Geode Sword",
   "item.wyrmroost.geode_helmet": "Geode Helmet",
   "item.wyrmroost.geode_chestplate": "Geode Chestplate",
-  "item.wyrmroost.geode_legs": "Geode Leggings",
+  "item.wyrmroost.geode_leggings": "Geode Leggings",
   "item.wyrmroost.geode_boots": "Geode Boots",
   
   "_comment": "Platinum Items",
@@ -51,6 +58,7 @@
   
   "item.wyrmroost.dragon_egg": "Egg",
   "item.wyrmroost.egg.tooltip": "Hatching in: %smin",
+  "item.wyrmroost.egg.creativetooltip": "You are in Creative: Shift-Right Clicking will iterate through different dragon types",
   
   "item.wyrmroost.soul_crystal": "Dragon Soul Crystal",
   "item.wyrmroost.soul_crystal.jeidesc": "Infused with the mysterious properties of geodes, it has the potential to contain the souls of dragons that you have entrusted. The soul of a dragon can lead you to %s..."
