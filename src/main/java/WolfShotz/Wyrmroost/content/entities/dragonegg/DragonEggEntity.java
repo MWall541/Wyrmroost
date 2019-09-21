@@ -10,6 +10,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -185,16 +186,9 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
             
             tag.putInt("hatchTime", getHatchTime());
             tag.putString("dragonType", getDragonType());
-            
             ItemStack itemStack = new ItemStack(SetupItems.dragonEgg);
-            
             itemStack.setTag(tag);
-            
-            ItemEntity itemEntity = new ItemEntity(world, posX, posY, posZ, itemStack);
-            
-            itemEntity.setMotion(rand.nextGaussian() * 0.05d, 0.25d, rand.nextGaussian() * 0.05d);
-            world.addEntity(itemEntity);
-            
+            InventoryHelper.spawnItemStack(world, posX, posY, posZ, itemStack);
             remove();
             
             return true;
@@ -214,6 +208,13 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     public DragonTypes getDragonTypeEnum() {
         EntityType type = ModUtils.getTypeByString(getDragonType());
     
+        for (DragonTypes value : DragonTypes.values()) if (value.getType() == type) return value;
+        return null;
+    }
+    
+    public static DragonTypes getDragonTypeEnum(String typeKey) {
+        EntityType type = ModUtils.getTypeByString(typeKey);
+        
         for (DragonTypes value : DragonTypes.values()) if (value.getType() == type) return value;
         return null;
     }

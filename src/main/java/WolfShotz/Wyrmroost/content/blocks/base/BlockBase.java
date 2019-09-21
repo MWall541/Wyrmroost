@@ -44,15 +44,5 @@ public class BlockBase extends Block
         return this;
     }
     
-    public BlockBase setXPDrops(int amount) {
-        this.xpAmount = (s, w, p, f, si) -> amount;
-        
-        return this;
-    }
-    
-    @FunctionalInterface
-    public interface IXPSupplier
-    {
-        int xpAmount(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch);
-    }
+    public BlockBase setXPDrops(int amount) { return setXPDrops((s, w, p, f, si) -> amount); }
 }
