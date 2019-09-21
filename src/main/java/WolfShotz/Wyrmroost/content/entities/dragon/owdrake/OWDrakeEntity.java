@@ -362,6 +362,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
         return (isSitting() || isSleeping())? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
     }
     
+    @Override
+    protected int getExperiencePoints(PlayerEntity player) { return 2 + rand.nextInt(3); }
+    
     /**
      * Array Containing all of the dragons food items
      */
