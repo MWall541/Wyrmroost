@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.goals.OrbitFlightGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.*;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
@@ -48,8 +47,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     // Dragon Animation
     public static final Animation SIT_ANIMATION = Animation.create(10);
     public static final Animation STAND_ANIMATION = Animation.create(10);
-    public static final Animation FLAP_ANIMATION = Animation.create(30);
-    public static final Animation TAKE_OFF_ANIMATION = Animation.create(20);
+    public static final Animation TAKE_OFF_ANIMATION = Animation.create(10);
     
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
@@ -112,7 +110,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public void setFlying(boolean fly) {
         super.setFlying(fly);
     
-        if (fly) setAnimation(TAKE_OFF_ANIMATION);
+        setAnimation(TAKE_OFF_ANIMATION);
     }
     
     /**
@@ -130,10 +128,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public void livingTick() {
         super.livingTick();
-        
-//        if (animation != SilverGliderEntity.TAKE_OFF_ANIMATION) setAnimation(SilverGliderEntity.TAKE_OFF_ANIMATION);
-        
-        if (isFlying() && !(posY < prevPosY)) setAnimation(FLAP_ANIMATION);
     }
     
     @Override
@@ -164,13 +158,13 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     stopRiding();
                     return;
                 }
-
-                if ((ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > 1.3d) && !player.isElytraFlying() && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater() && canFly()) {
+                
+                if ((ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > shouldFlyThreshold) && !player.isElytraFlying() && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater() && canFly()) {
                     Vec3d lookVec = player.getLookVec();
                     Vec3d playerMot = player.getMotion();
                     double xMot = playerMot.x + (lookVec.x / 12);
                     double zMot = playerMot.z + (lookVec.z / 12);
-                    double yMot = lookVec.y;
+                    double yMot = lookVec.y * 1.5;
                     
                     if (yMot >= 0) yMot = -0.1f;
                     
@@ -185,7 +179,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 double offsetX = rotationOffset.x;
                 double offsetZ = rotationOffset.z;
                 if (player.isElytraFlying()) {
-                    float angle = (0.01745329251F * player.renderYawOffset) + 90;
+                    float angle = (0.01745329251f * player.renderYawOffset) + 90;
                     offsetX = (double) (-2f * MathHelper.sin((float) (Math.PI + angle)));
                     offsetZ = (double) (-2f * MathHelper.cos(angle));
                 }
