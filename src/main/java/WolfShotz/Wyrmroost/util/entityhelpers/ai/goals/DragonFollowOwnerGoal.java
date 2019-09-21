@@ -63,6 +63,7 @@ public class DragonFollowOwnerGoal extends FollowOwnerGoal
         if (FLAG) return false;
     
         double maxDistSq = (maxDistance * maxDistance) * 2;
+        if (owner == null) return false;
         double distEuclid = (float) dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ);
         
         if (dragon.isSitting()) return false; // uhhhhhhh

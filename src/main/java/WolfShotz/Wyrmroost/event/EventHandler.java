@@ -39,10 +39,10 @@ public class EventHandler
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
             
-            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick") && dragon instanceof SilverGliderEntity) {
+            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
                 
-                dragon.setAnimation(SilverGliderEntity.TAKE_OFF_ANIMATION);
+                dragon.setFlying(true);
             }
         }
         
@@ -51,9 +51,8 @@ public class EventHandler
             if (evt.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) evt.getEntity();
                 
-                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
+                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance) && !(player.getMotion().y > -1))
                     evt.setCanceled(true);
-                
             }
         }
     }

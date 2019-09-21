@@ -50,19 +50,22 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
             ItemStack stack = stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
             
             if (!stack.isEmpty()) {
+                float i = stalker.isChild()? 0.25f : 1;
+                
                 GlStateManager.pushMatrix();
-    
+                
                 GlStateManager.rotatef(netHeadYaw / 3f, 0, 1f, 0);
                 GlStateManager.rotatef(90, 1, 0, 0);
                 
                 if (stalker.isSleeping() && stalker.getAnimation() != RoostStalkerEntity.WAKE_ANIMATION) {
-                    GlStateManager.translatef(-0.5f, -0.6f, -1.49f);
+                    GlStateManager.translatef(-0.5f * (i * 2.8f), -0.6f * (i * 1.8f), -1.49f);
                     GlStateManager.rotatef(240, 0, 0, 1);
                 } else {
-                    GlStateManager.translatef(0, -0.5f, stalker.isSitting()? -1.3f : -1.2f);
+                    GlStateManager.translatef(0, -0.5f * (i * 1.2f), (stalker.isSitting()? -1.3f : -1.2f) * (i * 4.5f));
                     GlStateManager.rotatef(headPitch / 1.7f, 1f, 0, 0);
                     GlStateManager.translatef(0, -0.3f, 0f);
                 }
+                if (stalker.isChild()) GlStateManager.scalef(0.45f, 0.45f, 0.45f);
                 
                 Minecraft.getInstance().getItemRenderer().renderItem(stack, stalker, ItemCameraTransforms.TransformType.GROUND, false);
                 

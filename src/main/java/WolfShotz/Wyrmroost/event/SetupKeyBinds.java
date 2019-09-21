@@ -5,7 +5,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class SetupKeyBinds
 {
-    private static final String category = "wyrmroost.keyCategory";
+    private static final String category = "keyCategory.wyrmroost";
     
     public static KeyBinding genericAttack;
     public static KeyBinding specialAttack;
