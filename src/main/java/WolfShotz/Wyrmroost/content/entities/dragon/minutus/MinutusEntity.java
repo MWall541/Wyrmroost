@@ -172,14 +172,14 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
 
             return true;
         }
-        // Easter egg ;)
-        if (stack.getItem() == Items.BUCKET) {
-            world.playSound(null, player.getPosition(), SoundEvents.ENTITY_COW_MILK, SoundCategory.NEUTRAL, 1f, 1f);
-            stack.shrink(1);
-            player.addItemStackToInventory(new ItemStack(Items.MILK_BUCKET));
-            
-            return true;
-        }
+//        // Easter egg ;) // Second note: Other devs got mad at me I cant keep this ;~; cri
+//        if (stack.getItem() == Items.BUCKET) {
+//            world.playSound(null, player.getPosition(), SoundEvents.ENTITY_COW_MILK, SoundCategory.NEUTRAL, 1f, 1f);
+//            stack.shrink(1);
+//            player.addItemStackToInventory(new ItemStack(Items.MILK_BUCKET));
+//
+//            return true;
+//        }
         
         return super.processInteract(player, hand);
     }

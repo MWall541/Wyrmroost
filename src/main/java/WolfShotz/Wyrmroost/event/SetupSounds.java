@@ -14,6 +14,8 @@ public class SetupSounds
     private static final String ID = Wyrmroost.MOD_ID + ":";
     private static final String ID_E = ID + "entity.";
     
+    @ObjectHolder(ID + "call_whistle")                     public static SoundEvent CALL_WHISTLE;
+    
     @ObjectHolder(ID_E + "minutus.idle")                   public static SoundEvent MINUTUS_IDLE;
     @ObjectHolder(ID_E + "minutus.screech")                public static SoundEvent MINUTUS_SCREECH;
     
@@ -33,6 +35,8 @@ public class SetupSounds
     @SubscribeEvent
     public static void soundSetup(RegistryEvent.Register<SoundEvent> event) {
         event.getRegistry().registerAll(
+                registerSound("call_whistle"), // Seperated from the parrot entity
+                
                 registerSound("entity.minutus.idle"),
                 registerSound("entity.minutus.screech"),
                 

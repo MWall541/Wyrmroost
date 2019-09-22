@@ -422,39 +422,37 @@ public class SilverGliderModel extends AdvancedEntityModel {
         this.frame = entityIn.ticksExisted;
         this.globalSpeed = 0.05f;
         Animation current = this.currentAnim = glider.getAnimation();
-        Entity passenger = glider.getRidingEntity();
-        boolean flightFlag = isFlying || (glider.isRiding() && MathUtils.getAltitude(passenger) > glider.shouldFlyThreshold);
 
         resetToDefaultPose();
         animator.update(glider);
-        setPositions(flightFlag && (current != TAKE_OFF_ANIMATION && glider.isFlying()) || (current == TAKE_OFF_ANIMATION && !glider.isFlying()));
+        setPositions(isFlying && (current != TAKE_OFF_ANIMATION && glider.isFlying()) || (current == TAKE_OFF_ANIMATION && !glider.isFlying()));
     
         if (current == TAKE_OFF_ANIMATION) takeOffAnim();
         
-        if (flightFlag) {
+        if (isFlying) { // Flight Only Anims
             globalSpeed = 0.3f;
             
             Random rand = new Random();
             swing(wingphalangetipL, globalSpeed * rand.nextFloat() + 1f, Math.min(rand.nextFloat(), 0.15f), false, 0, 0, frame, 0.5f);
             swing(wingphalangetipR, globalSpeed * rand.nextFloat() + 1f, Math.min(rand.nextFloat(), 0.15f), false, 0, 0, frame, 0.5f);
             
-        } else {
-            if (!glider.hasActiveAnimation()) { // Walk Cycle
+        } else { // Ground only Anims
+            if (!glider.hasActiveAnimation() && !isSleeping && !isSitting) { // Walk Cycle
                 float walkSpeed = globalSpeed * 9;
                 
-                bob(mainbody, walkSpeed + 0.3f, 0.4f, false, limbSwing, 0.5f);
+                bob(mainbody, walkSpeed + 0.1f, 0.4f, false, limbSwing, 0.5f);
     
                 walk(wingphalange1L, walkSpeed, 0.4f, false, 0, 0, limbSwing, limbSwingAmount);
-                swing(wingphalange2L, walkSpeed, 0.3f, true, 0f, 0, limbSwing, limbSwingAmount);
+                swing(wingphalange2L, walkSpeed, 0.3f, true, -1.2f, 0, limbSwing, limbSwingAmount);
                 swing(wingphalange3L, walkSpeed, 0.1f, true, -0.4f, 0, limbSwing, limbSwingAmount);
                 swing(wingphalangemiddle1L, walkSpeed, 0.1f, true, -0.4f, 0, limbSwing, limbSwingAmount);
-                swing(membrane2L, walkSpeed, 0.1f, false, -0.4f, 0, limbSwing, limbSwingAmount);
+                swing(membrane2L, walkSpeed, 0.25f, false, -1.2f, 0, limbSwing, limbSwingAmount);
     
                 walk(wingphalange1R, walkSpeed, -0.4f, false, 0, 0, limbSwing, limbSwingAmount);
-                swing(wingphalange2R, walkSpeed, 0.3f, true, 0f, 0, limbSwing, limbSwingAmount);
+                swing(wingphalange2R, walkSpeed, 0.3f, true, -1.2f, 0, limbSwing, limbSwingAmount);
                 swing(wingphalange3R, walkSpeed, 0.1f, true, -0.4f, 0, limbSwing, limbSwingAmount);
                 swing(wingphalangemiddle1R, walkSpeed, 0.1f, true, -0.4f, 0, limbSwing, limbSwingAmount);
-                swing(membrane2R, walkSpeed, 0.1f, false, -0.4f, 0, limbSwing, limbSwingAmount);
+                swing(membrane2R, walkSpeed, 0.25f, false, -1.2f, 0, limbSwing, limbSwingAmount);
     
                 walk(legL1, walkSpeed, 0.4f, false, 0, 0.1f, limbSwing, limbSwingAmount);
                 walk(legR1, walkSpeed, 0.4f, true, 0, 0.1f, limbSwing, limbSwingAmount);
@@ -505,7 +503,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
             float yVec = (float) lookVec.y;
             
             mainbody.rotateAngleX = Math.max(-yVec * 1.2f, 0);
-            wingphalangetipL.rotateAngleZ = Math.min(-Math.max(yVec, -0.2f), 0) - 0.25f;
+            wingphalangetipL.rotateAngleZ = -(Math.max(Math.min(yVec, 0.2f), 0) + 0.25f);
             wingphalangetipR.rotateAngleZ = Math.max(Math.min(yVec, 0.2f), 0) + 0.25f;
             if (lookVec.y < 0) {
                 wingphalange1L.rotateAngleY = Math.min(yVec * 1.3f, wingphalange1L.defaultRotationY);

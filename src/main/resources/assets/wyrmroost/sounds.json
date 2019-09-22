@@ -1,4 +1,10 @@
 {
+  "call_whistle": {
+    "category": "player",
+    "subtitle": "Whistle",
+    "sounds": [{"name": "wyrmroost:whistle"}]
+  },
+  
   "entity.minutus.idle": {
     "category": "entity",
     "subtitle": "Minutus Idle",

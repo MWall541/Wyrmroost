@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 {
-    private final ResourceLocation TEXTURE = ModUtils.location("textures/entity/dragonegg/dragon_egg.png");
+    private final ResourceLocation TEXTURE = ModUtils.location("textures/entity/dragonegg/default.png");
     private final DragonEggModel EGG_MODEL = new DragonEggModel();
     
     public DragonEggRenderer(EntityRendererManager manager) { super(manager); }
