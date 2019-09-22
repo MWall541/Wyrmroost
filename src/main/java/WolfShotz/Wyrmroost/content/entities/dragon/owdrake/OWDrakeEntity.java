@@ -180,7 +180,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 });
             }
             if (getAnimationTick() > 15)
-                getEntitiesNearby(20).forEach(e -> e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120)));
+                getEntitiesNearby(20, this).forEach(e -> {
+                    if (e instanceof LivingEntity && !(e instanceof OWDrakeEntity)) ((LivingEntity) e).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120));
+                });
         }
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8) {

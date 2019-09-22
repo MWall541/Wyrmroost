@@ -51,7 +51,7 @@ public class EventHandler
             if (evt.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) evt.getEntity();
                 
-                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance) && !(player.getMotion().y > -1))
+                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
                     evt.setCanceled(true);
             }
         }

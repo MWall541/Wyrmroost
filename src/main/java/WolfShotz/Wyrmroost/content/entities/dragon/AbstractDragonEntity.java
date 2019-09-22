@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -494,8 +496,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return Arrays.asList(getFoodItems()).contains(stack.getItem());
     }
     
-    public List<LivingEntity> getEntitiesNearby(double radius) {
+    public List<Entity> getEntitiesNearby(double radius) {
         return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), found -> found != this && getPassengers().stream().noneMatch(found::equals));
+    }
+    
+    public List<Entity> getEntitiesNearby(double radius, Entity instanceExclusion) {
+        return world.getEntitiesInAABBexcluding(instanceExclusion, getBoundingBox().grow(radius), found -> getPassengers().stream().noneMatch(found::equals));
     }
     
     @Override
