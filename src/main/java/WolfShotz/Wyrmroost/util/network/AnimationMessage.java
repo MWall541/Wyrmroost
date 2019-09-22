@@ -37,5 +37,6 @@ public class AnimationMessage
         
         if (animationIndex < 0) dragon.setAnimation(IAnimatedEntity.NO_ANIMATION);
         else dragon.setAnimation(dragon.getAnimations()[animationIndex]);
+        context.get().setPacketHandled(true);
     }
 }

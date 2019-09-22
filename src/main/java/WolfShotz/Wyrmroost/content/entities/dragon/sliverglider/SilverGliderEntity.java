@@ -33,6 +33,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.world.NoteBlockEvent;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -159,7 +160,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     return;
                 }
                 
-                if ((ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > shouldFlyThreshold) && !player.isElytraFlying() && player.getRidingEntity() == null && !player.abilities.isFlying && !player.isInWater() && canFly()) {
+                if (shouldGlide(player)) {
                     Vec3d lookVec = player.getLookVec();
                     Vec3d playerMot = player.getMotion();
                     double xMot = playerMot.x + (lookVec.x / 12);
@@ -169,6 +170,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     if (yMot >= 0) yMot = -0.1f;
                     
                     player.setMotion(xMot, yMot, zMot);
+                    if (!isFlying()) setFlying(true);
                 }
                 
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
@@ -187,6 +189,15 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 setPosition(player.posX + offsetX, player.posY + 1.55d, player.posZ + offsetZ);
             }
         }
+    }
+    
+    public boolean shouldGlide(PlayerEntity player) {
+        return (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > shouldFlyThreshold) &&
+                       !player.isElytraFlying()         &&
+                       player.getRidingEntity() == null &&
+                       !player.abilities.isFlying       &&
+                       !player.isInWater()              &&
+                       super.canFly();
     }
     
     @Override
@@ -238,7 +249,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
     
     @Override
-    public boolean canFly() { return super.canFly(); }
+    public boolean canFly() {
+        if (isRiding() && getRidingEntity() instanceof PlayerEntity) return super.canFly() && shouldGlide((PlayerEntity) getRidingEntity());
+        if (isRiding()) return false;
+        return super.canFly();
+    }
     
     public boolean isRiding() { return getRidingEntity() != null; }
     

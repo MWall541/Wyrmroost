@@ -50,7 +50,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
             ItemStack stack = stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
             
             if (!stack.isEmpty()) {
-                float i = stalker.isChild()? 0.25f : 1;
+                float i = stalker.isChild()? 1f : 0;
                 
                 GlStateManager.pushMatrix();
                 
@@ -58,11 +58,11 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
                 GlStateManager.rotatef(90, 1, 0, 0);
                 
                 if (stalker.isSleeping() && stalker.getAnimation() != RoostStalkerEntity.WAKE_ANIMATION) {
-                    GlStateManager.translatef(-0.5f * (i * 2.8f), -0.6f * (i * 1.8f), -1.49f);
+                    GlStateManager.translatef(-0.5f - (i * 2.8f), -0.6f - (i * 1.8f), -1.49f);
                     GlStateManager.rotatef(240, 0, 0, 1);
                 } else {
-                    GlStateManager.translatef(0, -0.5f * (i * 1.2f), (stalker.isSitting()? -1.3f : -1.2f) * (i * 4.5f));
-                    GlStateManager.rotatef(headPitch / 1.7f, 1f, 0, 0);
+                    GlStateManager.translatef(0, -0.5f - (i * -0.4f), (stalker.isSitting()? -1.3f : -1.2f) - (i * 0.135f));
+                    GlStateManager.rotatef(headPitch / (1.7f - (i * -1f)), 1f, 0, 0);
                     GlStateManager.translatef(0, -0.3f, 0f);
                 }
                 if (stalker.isChild()) GlStateManager.scalef(0.45f, 0.45f, 0.45f);

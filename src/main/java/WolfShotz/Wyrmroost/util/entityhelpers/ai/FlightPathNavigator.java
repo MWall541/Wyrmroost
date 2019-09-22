@@ -12,7 +12,5 @@ public class FlightPathNavigator extends FlyingPathNavigator
     }
     
     @Override
-    public boolean canEntityStandOnPos(BlockPos pos) {
-        return world.isAirBlock(pos.down());
-    }
+    public boolean canEntityStandOnPos(BlockPos pos) { return world.isAirBlock(pos.down()); }
 }

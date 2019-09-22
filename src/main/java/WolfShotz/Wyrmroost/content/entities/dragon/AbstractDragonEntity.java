@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.event.SetupItems;
+import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
@@ -30,10 +31,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -45,6 +43,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -60,6 +59,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @OnlyIn(Dist.CLIENT) public int glowTicks;
     public List<String> immunes = new ArrayList<>();
     public boolean isSpecialAttacking = false;
+    public Random syncRand = new Random(rand.nextLong()); // Use a seed to sync between server and client
     public FlightWanderGoal aiFlyWander;
     
     // Dragon Entity Animations
@@ -228,8 +228,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void livingTick() {
         boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold) && canFly();
         if (shouldFly != isFlying()) setFlying(shouldFly);
-        
-        if (!isFlying() && getRNG().nextInt(randomFlyChance) == 0 && canFly()) setFlying(true);
+    
+        if (!isFlying() && syncRand.nextInt(randomFlyChance) == 0 && canFly()) setFlying(true);
         
         if (!world.isRemote) { // Server Only Stuffs
             // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
@@ -239,7 +239,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     if (isSitting()) setSleeping(true);
                 } else setSleeping(true);
             }
-            if (world.isDaytime() && isSleeping() && (getRNG().nextInt(150) == 0 || isInWaterOrBubbleColumn()))
+            if (world.isDaytime() && isSleeping() && (rand.nextInt(150) == 0 || isInWaterOrBubbleColumn()))
                 setSleeping(false);
             
         } else { // Client Only Stuffs
@@ -269,8 +269,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     public void switchPathController(boolean flying) {
-        if (flying) navigator = new FlightPathNavigator(this, world);
-        else navigator = new DragonGroundPathNavigator(this, world);
+//        if (flying) navigator = new FlightPathNavigator(this, world);
+//        else navigator = new DragonGroundPathNavigator(this, world);
     }
     
     /**
@@ -332,7 +332,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         
         if (world.isRemote && result) {
-            player.playSound(SoundEvents.ENTITY_FOX_SCREECH, 1, 1);
+            player.playSound(SetupSounds.CALL_WHISTLE, 1, 1);
             glowTicks = 8;
         }
         

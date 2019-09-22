@@ -54,7 +54,7 @@ public class DragonKeyBindMessage
             case 2: dragon.performSpecialAttack(false); break;
             case 3: dragon.callDragon(null); break;
             default: ModUtils.L.error("Unknown KeyPress packet key... wat?");
-            
         }
+        context.get().setPacketHandled(true);
     }
 }
