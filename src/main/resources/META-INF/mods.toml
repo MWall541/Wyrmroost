@@ -20,10 +20,10 @@ displayName="Wyrmroost" #mandatory
 # logoFile="examplemod.png" #optional
 
 # A text field displayed in the mod UI
-# credits=" " #optional
+credits="Novacraft: Rooststalker Model and Textures" #optional
 
 # A text field displayed in the mod UI
-authors="WolfShotz, Kingdomall, Shannieann, Toucan, Moon" #optional
+authors="WolfShotz, Kingdomall, Shannieann, Ukan, Moon" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 #description='''

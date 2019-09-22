@@ -29,7 +29,8 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 
 group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "${project.archiveBaseName}"
+String modState = (project.mod_state != "RELEASE"? " [${project.mod_state}] " : "-")
+archivesBaseName = "${project.archiveBaseName}" + modState + "${project.mc_version}"
 version = "${project.mod_version}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -41,19 +42,16 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP' // Recommended logging data for a userdev environment
             property 'forge.logging.console.level', 'debug' // Recommended logging level for the console
             mods { wyrmroost { source sourceSets.main } }
         }
         server {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP' // Recommended logging data for a userdev environment
             property 'forge.logging.console.level', 'debug' // Recommended logging level for the console
             mods { wyrmroost { source sourceSets.main } }
         }
         data {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP' // Recommended logging data for a userdev environment
             property 'forge.logging.console.level', 'debug' // Recommended logging level for the console
             args '--mod', 'wyrmroost', '--all', '--output', file('src/generated/resources/')
             mods { wyrmroost { source sourceSets.main } }
@@ -66,6 +64,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     compile "citadel:citadel:${citadel_version}:deobf"
+
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 }
@@ -74,9 +73,9 @@ jar {
 
     manifest {
         attributes([
-            "Specification-Title": project.name,
+            "Specification-Title": "Wyrmroost",
             "Specification-Vendor": "WolfShotz",
-            "Specification-Version": "1", // We are version 1 of ourselves
+            "Specification-Version": project.version, // We are version 1 of ourselves
             "Implementation-Title": project.name,
             "Implementation-Version": "${project.mod_version}",
             "Implementation-Vendor" :"WolfShotz",
@@ -98,7 +97,6 @@ def reobfArtifact = artifacts.add('default', reobfFile) {
 }
 
 publishing {
-
     publications { mavenJava(MavenPublication) { artifact reobfArtifact } }
     repositories { maven { url "file:///${project.projectDir}/mcmodsrepo" } }
 }
