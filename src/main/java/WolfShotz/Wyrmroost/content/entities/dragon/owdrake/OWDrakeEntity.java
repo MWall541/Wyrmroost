@@ -170,9 +170,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         if (getAnimation() == ROAR_ANIMATION) {
             if (getAnimationTick() == 1)
-                playSound(SetupSounds.OWDRAKE_ROAR, 50, 1);
+                playSound(SetupSounds.OWDRAKE_ROAR, 2.5f, 1f);
             if (getAnimationTick() == 15) {
                 getEntitiesNearby(5).forEach(e -> { // Dont get too close now ;)
+                    if (e instanceof OWDrakeEntity) return;
                     double angle = (MathUtils.getAngle(posX, e.posX, posZ, e.posZ) + 90) * Math.PI / 180;
                     double x = 1.2 * (-Math.cos(angle));
                     double z = 1.2 * (-Math.sin(angle));
