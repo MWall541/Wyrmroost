@@ -2,12 +2,18 @@ package WolfShotz.Wyrmroost.util.utils;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -91,4 +97,13 @@ public class ModUtils
      */
     @Nullable
     public static EntityType<?> getTypeByString(@Nonnull String key) { return EntityType.byKey(key).orElse(null); }
+    
+    public static boolean isBoxSafe(AxisAlignedBB aabb, World world) {
+        for (int x = MathHelper.floor(aabb.minX); x < MathHelper.floor(aabb.maxX); ++x)
+            for (int y = MathHelper.ceil(aabb.minY); y < MathHelper.floor(aabb.maxY); ++y)
+                for (int z = MathHelper.floor(aabb.minZ); z < MathHelper.floor(aabb.maxZ); ++z)
+                    if (world.getBlockState(new BlockPos(x, y, z)).isSolid()) return false;
+                    
+        return true;
+    }
 }
