@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.io;
+package WolfShotz.Wyrmroost.content.io.screen;
 
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.TranslationUtils;

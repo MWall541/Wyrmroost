@@ -15,31 +15,22 @@ import net.minecraft.world.GameRules;
 public class DragonBreedGoal extends BreedGoal
 {
     private final AbstractDragonEntity dragon;
-    private boolean straight;
-    private boolean canInAir = false;
+    private boolean canInAir, straight;
     
     /**
-     * @param dragon dragon type were breeding
+     * @param canInAir - Setter to have dragons "get it on" in the air! Yeah idfk I blame the community.
      */
-    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight) {
+    public DragonBreedGoal(AbstractDragonEntity dragon, boolean canInAir, boolean straight) {
         super(dragon, 1.0d);
+        
         this.dragon = dragon;
         this.straight = straight;
-    }
-    
-    /**
-     * Setter to have dragons "get it on" in the air!
-     * Yeah idfk I blame the community.
-     */
-    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight, boolean canInAir) {
-        this(dragon, straight);
-        
         this.canInAir = canInAir;
     }
     
     @Override
     public boolean shouldExecute() {
-//        if (!canInAir) return false;
+//        if (!canInAir) return false; TODO
         if (straight)
             return super.shouldExecute() && ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
         else return super.shouldExecute();

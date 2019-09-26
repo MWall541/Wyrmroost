@@ -44,9 +44,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         super(stalker, world);
         
         moveController = new MovementController(this);
-        
-        hatchTimer = 6000;
         stepHeight = 0;
+        hatchTimer = 6000;
         
         SLEEP_ANIMATION = Animation.create(15);
         WAKE_ANIMATION = Animation.create(15);
@@ -59,7 +58,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 2));
         goalSelector.addGoal(8, new MeleeAttackGoal(this, 1d, true));
         goalSelector.addGoal(9, new StoleItemFlee(this));
-        goalSelector.addGoal(10, new DragonBreedGoal(this, false));
+        goalSelector.addGoal(10, new DragonBreedGoal(this, false, false));
         goalSelector.addGoal(11, new ScavengeGoal(this, 1.1d, SCAVENGE_ANIMATION));
         goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(13, new WatchGoal(this, LivingEntity.class, 5f));
@@ -100,6 +99,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         ItemStack stack = player.getHeldItem(hand);
         ItemStack heldItem = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        Item item = stack.getItem();
         
         // Apply Name if holding nametag
         if (stack.getItem() == Items.NAME_TAG) {
@@ -109,9 +109,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
         
         // Change to tame if holding a dragon egg
-        if (!isTamed() && stack.getItem() == SetupItems.dragonEgg) {
+        if (!isTamed() && item == SetupItems.dragonEgg || item == Items.EGG) {
             eat(stack);
-            if (tame(getRNG().nextBoolean(), player))
+            if (tame(rand.nextInt(4) == 0, player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
             
             return true;
@@ -129,7 +129,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             if (!stack.isEmpty()) {
             
                 // Breed with gold nuggets (Yeah idk, always blame Nova)
-                if (getGrowingAge() == 0 && canBreed() && stack.getItem() == Items.GOLD_NUGGET) {
+                if (getGrowingAge() == 0 && canBreed() && item == Items.GOLD_NUGGET) {
                     consumeItemFromStack(player, stack);
                     setInLove(player);
                     return true;
@@ -208,16 +208,11 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         super.spawnDrops(src);
     }
     
+    @Override
+    public int getSpecialChances() { return 185; }
+    
     @Override // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P
     protected BodyController createBodyController() { return new BodyController(this); }
-    
-    /**
-     * Set The chances this dragon can be a special.
-     * Set it to 0 to have no chance.
-     * Lower values have greater chances.
-     */
-    @Override
-    public int getSpecialChances() { return 150; }
     
     @Override
     public boolean canFly() { return false; }

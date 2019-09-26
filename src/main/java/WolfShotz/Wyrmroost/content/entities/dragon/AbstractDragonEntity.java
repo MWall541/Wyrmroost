@@ -1,13 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightMovementController;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightPathNavigator;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.FlightWanderGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
@@ -32,7 +29,9 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -45,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -53,31 +51,32 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
-    public int animationTick;
+    public int hatchTimer, sleepTimeout;
     public int shouldFlyThreshold = 3;
     public final int randomFlyChance = 1000; // Default to random chance
-    public int hatchTimer; // Used in subclasses for hatching time
-    public int sleepTimeout;
     @OnlyIn(Dist.CLIENT) public int glowTicks;
     public List<String> immunes = new ArrayList<>();
     public boolean isSpecialAttacking = false;
-    public Random syncRand = new Random(rand.nextLong()); // Use a seed to sync between server and client
+    public Random syncRand = new Random(6045323340150860495L); // Use a seed to sync between server and client
     public FlightWanderGoal aiFlyWander;
     
     // Dragon Entity Animations
+    public int animationTick;
     public Animation animation = NO_ANIMATION;
     public static Animation SLEEP_ANIMATION;
     public static Animation WAKE_ANIMATION;
     
     // Dragon Entity Data
-    public static final DataParameter<Boolean> GENDER = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SPECIAL = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> FLYING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SLEEPING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> GENDER       = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> SPECIAL      = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> SADDLED      = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> FLYING       = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> SLEEPING     = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> ARMORED      = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
+        
         setTamed(false);
         
         moveController = new FlightMovementController(this);
@@ -102,8 +101,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         dataManager.register(GENDER, getRNG().nextBoolean());
         dataManager.register(SPECIAL, getSpecialChances() != 0 && getRNG().nextInt(getSpecialChances()) == 0);
-        dataManager.register(SADDLED, false);
         dataManager.register(FLYING, false);
+        dataManager.register(SADDLED, false);
         dataManager.register(SLEEPING, false);
     }
     
@@ -112,8 +111,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void writeAdditional(CompoundNBT compound) {
         compound.putBoolean("gender", getGender());
         compound.putBoolean("special", isSpecial());
-        compound.putBoolean("saddled", isSaddled());
         compound.putBoolean("sleeping", isSleeping());
+        compound.putBoolean("saddled", isSaddled());
         
         super.writeAdditional(compound);
     }
@@ -123,8 +122,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void readAdditional(CompoundNBT compound) {
         setGender(compound.getBoolean("gender"));
         setSpecial(compound.getBoolean("special"));
-        setSaddled(compound.getBoolean("saddled"));
         dataManager.set(SLEEPING, compound.getBoolean("sleeping")); // Use data manager: Setter method controls animation
+        setSaddled(compound.getBoolean("saddled"));
         
         super.readAdditional(compound);
     }
@@ -141,18 +140,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isSpecial() { return dataManager.get(SPECIAL); }
     public void setSpecial(boolean albino) { dataManager.set(SPECIAL, albino); }
-    /**
-     * Set The chances this dragon can be an albino.
-     * Set it to 0 to have no chance.
-     * Lower values have greater chances
-     */
-    public int getSpecialChances() { return 0; }
-    
-    /**
-     * Whether or not the dragon is saddled
-     */
-    public boolean isSaddled() { return dataManager.get(SADDLED); }
-    public void setSaddled(boolean saddled) { dataManager.set(SADDLED, saddled); }
+    public int getSpecialChances() { return rand.nextInt(400) + 100; }
     
     /**
      * Whether or not the dragon is flying
@@ -168,6 +156,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             switchPathController(false);
         }
     }
+    
+    /**
+     * Whether or not the dragon is saddled
+     */
+    public boolean isSaddled() { return dataManager.get(SADDLED); }
+    public void setSaddled(boolean saddled) { dataManager.set(SADDLED, saddled); }
     
     /**
      * Whether or not the dragon is sleeping.
@@ -187,7 +181,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         navigator.clearPath();
         setAttackTarget(null);
         
-        if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null && !hasActiveAnimation())
+        if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null && noActiveAnimation())
             NetworkUtils.sendAnimationPacket(this, sleep? SLEEP_ANIMATION : WAKE_ANIMATION);
         if (!sleep) sleepTimeout = 350;
         
@@ -230,7 +224,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void livingTick() {
         boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold) && canFly();
         if (shouldFly != isFlying()) setFlying(shouldFly);
-    
+        
         if (!isFlying() && syncRand.nextInt(randomFlyChance) == 0 && canFly()) setFlying(true);
         
         if (!world.isRemote) { // Server Only Stuffs
@@ -333,7 +327,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             result = true;
         }
         
-        if (world.isRemote && result) {
+        if (world.isRemote && result && player != null) {
             player.playSound(SetupSounds.CALL_WHISTLE, 1, 1);
             glowTicks = 8;
         }
@@ -361,8 +355,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     /**
      * Should the dragon attack
-     * @param target
-     * @param owner
      */
     @Override // We shouldnt be targetting pets...
     public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
@@ -407,7 +399,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (stack != null && !stack.isEmpty()) {
 //            Item item = stack.getItem();
 //            List<Pair<EffectInstance, Float>> effects;
-    
+            
             stack.shrink(1);
             if (getHealth() < getMaxHealth()) heal(Math.max((int) getMaxHealth() / 5, 6));
 //            if (item.isFood()) {
@@ -456,7 +448,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void heal(float healAmount) {
         super.heal(healAmount);
-    
+        
         if (world.isRemote) {
             for (int i = 0; i < getWidth() * 5; ++i) {
                 double x = posX + (getRNG().nextGaussian() * getWidth()) / 1.5d;
@@ -481,8 +473,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         Item item = stack.getItem();
         
         return item == SetupItems.soulCrystal ||
-                        item == Items.NAME_TAG ||
-                        isBreedingItem(stack);
+                       item == Items.NAME_TAG ||
+                       isBreedingItem(stack);
     }
     
     /**
@@ -506,11 +498,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     public void playAmbientSound() { if (!isSleeping()) super.playAmbientSound(); }
-    
-    /**
-     * Public access of {@link #getAmbientSound()}
-     */
-    public SoundEvent getIdleSound() { return getAmbientSound(); }
     
     /**
      * Set a damage source immunity
@@ -597,10 +584,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.animation = animation;
     }
     
-    public boolean hasActiveAnimation() { return getAnimation() != NO_ANIMATION || getAnimationTick() != 0; }
+    public boolean noActiveAnimation() { return getAnimation() != NO_ANIMATION || getAnimationTick() != 0; }
     
     // ================================
-    
-    
-    
 }

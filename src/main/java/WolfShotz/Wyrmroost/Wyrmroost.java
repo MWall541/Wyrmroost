@@ -59,6 +59,7 @@ public class Wyrmroost
         
         SetupEntities.registerEntityRenders();
         SetupKeyBinds.registerKeys();
+        SetupIO.screenSetup();
 
         ModUtils.L.info("Fired FMLClientSetup");
     }

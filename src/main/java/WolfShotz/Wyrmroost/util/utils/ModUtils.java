@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -98,6 +99,9 @@ public class ModUtils
     @Nullable
     public static EntityType<?> getTypeByString(@Nonnull String key) { return EntityType.byKey(key).orElse(null); }
     
+    /**
+     * Is the given aabb clear of all (solid) blocks?
+     */
     public static boolean isBoxSafe(AxisAlignedBB aabb, World world) {
         for (int x = MathHelper.floor(aabb.minX); x < MathHelper.floor(aabb.maxX); ++x)
             for (int y = MathHelper.ceil(aabb.minY); y < MathHelper.floor(aabb.maxY); ++y)

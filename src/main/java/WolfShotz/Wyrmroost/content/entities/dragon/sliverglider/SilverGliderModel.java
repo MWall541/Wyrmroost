@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
@@ -437,7 +436,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
             swing(wingphalangetipR, globalSpeed * rand.nextFloat() + 1f, Math.min(rand.nextFloat(), 0.15f), false, 0, 0, frame, 0.5f);
             
         } else { // Ground only Anims
-            if (!glider.hasActiveAnimation() && !isSleeping && !isSitting) { // Walk Cycle
+            if (glider.noActiveAnimation() && !isSleeping && !isSitting) { // Walk Cycle
                 float walkSpeed = globalSpeed * 9;
                 
                 bob(mainbody, walkSpeed + 0.1f, 0.4f, false, limbSwing, 0.5f);

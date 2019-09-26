@@ -2,14 +2,15 @@ package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -20,6 +21,7 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -44,6 +46,8 @@ public class EventHandler
             
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
+    
+                if (player instanceof ServerPlayerEntity) NetworkHooks.openGui((ServerPlayerEntity) player, (OWDrakeEntity) dragon);
             }
         }
     
@@ -91,7 +95,7 @@ public class EventHandler
                 if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
                 AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
                 
-                if (!dragon.hasActiveAnimation()) {
+                if (dragon.noActiveAnimation()) {
                     dragon.performGenericAttack();
                     Wyrmroost.network.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
                 }

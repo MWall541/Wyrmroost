@@ -130,7 +130,9 @@ public class SetupItems
     //          Material Lists
     //  ===============================
 
-    /** Enum Handling the tool materials - Manages the mining speed, attck dmg, repair item etc. */
+    /**
+     *  Enum Handling the tool materials - Manages the mining speed, attck dmg, repair item etc.
+     */
     protected enum ToolMaterialList implements IItemTier
     {
         GEODE(9.3f, 4.0f, 2164, 4, 25, geode),
@@ -157,8 +159,10 @@ public class SetupItems
         @Override public Ingredient getRepairMaterial() { return Ingredient.fromItems(repairMaterial); }
     }
 
-    /** Enum Handling the armor materials - Manages dmg reduction, enchantability, durability etc. */
-    protected enum ArmorMaterialList implements IArmorMaterial
+    /**
+     *  Enum Handling the armor materials - Manages dmg reduction, enchantability, durability etc.
+     */
+    public enum ArmorMaterialList implements IArmorMaterial
     {
         GEODE("geode", new int[] {4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, geode),
         PLATINUM("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, platinumIngot);

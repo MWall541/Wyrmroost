@@ -18,7 +18,7 @@ public class DrakeAttackGoal extends MeleeAttackGoal
     public boolean shouldExecute() { return super.shouldExecute() && !drake.isChild(); }
     
     @Override
-    public void tick() { if (!drake.hasActiveAnimation()) super.tick(); }
+    public void tick() { if (drake.noActiveAnimation()) super.tick(); }
     
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {

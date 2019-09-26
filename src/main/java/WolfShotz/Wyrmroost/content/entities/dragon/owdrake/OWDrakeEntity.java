@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
+import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
@@ -17,6 +18,9 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -46,7 +50,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 /**
  * Created by WolfShotz 7/10/19 - 22:18
  */
-public class OWDrakeEntity extends AbstractDragonEntity
+public class OWDrakeEntity extends AbstractDragonEntity implements INamedContainerProvider
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
@@ -64,10 +68,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
-
-        moveController = new MovementController(this);
         
         hatchTimer = 18000;
+        
+        moveController = new MovementController(this);
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
@@ -78,7 +82,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new DrakeAttackGoal(this));
         goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d ));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
         goalSelector.addGoal(12, new WatchGoal(this, LivingEntity.class, 10f));
@@ -109,12 +113,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerData() {
         super.registerData();
         dataManager.register(VARIANT, false);
+        dataManager.register(ARMORED, false);
     }
 
     /** Save Game */
     @Override
     public void writeAdditional(CompoundNBT compound) {
         compound.putBoolean("variant", getVariant());
+        compound.putBoolean("armored", isArmored());
     
         super.writeAdditional(compound);
     }
@@ -123,6 +129,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void readAdditional(CompoundNBT compound) {
         setVariant(compound.getBoolean("variant"));
+        setArmored(compound.getBoolean("armored"));
     
         super.readAdditional(compound);
     }
@@ -133,7 +140,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
      */
     public boolean getVariant() { return dataManager.get(VARIANT); }
     public void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
-
+    
+    /**
+     * Whether or not the dragon is armored
+     */
+    public boolean isArmored() { return dataManager.get(ARMORED); }
+    public void setArmored(boolean armored) { dataManager.set(ARMORED, armored); }
+    
     /**
      * Set sprinting switch for Entity.
      */
@@ -147,8 +160,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getSpecialChances() { return 85; }
-
+    public int getSpecialChances() { return 100; }
+    
     // ================================
 
     @Nullable
@@ -291,13 +304,21 @@ public class OWDrakeEntity extends AbstractDragonEntity
             else if (rand % 15 == 0) {
                 if (EntityPredicates.CAN_AI_TARGET.test(passenger)) setAttackTarget((LivingEntity) passenger);
                 passenger.stopRiding();
-                // Effect potionIn, int durationIn, int amplifierIn, boolean ambientIn, boolean showParticlesIn
                 ((LivingEntity) passenger).addPotionEffect(new EffectInstance(Effects.LEVITATION, 2, 100, false, false));
 //                passenger.setMotion(1, 1, 1);
 //                if (passenger instanceof PlayerEntity)
 //                    Wyrmroost.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) passenger), new EntityMoveMessage(passenger));
             }
         }
+    }
+    
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (isArmored()) {
+        
+        }
+        
+        return super.attackEntityFrom(source, amount);
     }
     
     @Override
@@ -332,7 +353,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void playAmbientSound() {
         if (!isSleeping()) {
-            if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+            if (noActiveAnimation()) setAnimation(TALK_ANIMATION);
             super.playAmbientSound();
         }
     }
@@ -343,7 +364,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Override
     protected void playHurtSound(DamageSource source) {
-        if (!hasActiveAnimation()) setAnimation(TALK_ANIMATION);
+        if (noActiveAnimation()) setAnimation(TALK_ANIMATION);
         
         super.playHurtSound(source);
     }
@@ -383,6 +404,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Override
     public boolean canFly() { return false; }
+    
+    @Nullable
+    @Override
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new OWDrakeInvContainer(windowID, playerInv); }
     
     // == Entity Animation ==
     @Override

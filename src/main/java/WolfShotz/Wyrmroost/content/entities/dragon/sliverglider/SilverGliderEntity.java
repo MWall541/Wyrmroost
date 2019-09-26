@@ -71,7 +71,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
 //        goalSelector.addGoal(8, new OrbitFlightGoal(this));
         goalSelector.addGoal(8, aiFlyWander = new FlightWanderGoal(this, 1500, 1));
@@ -121,7 +121,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     @Override
     public int getSpecialChances() { return 500; }
-
+    
     // ================================
     
     
