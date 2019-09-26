@@ -66,4 +66,9 @@ public class TranslationUtils
      * @param text
      */
     public static String clean(String text) { return text.replace(" ", ""); }
+    
+    public static boolean containsArray(String string, String... elements) {
+        for (String test : elements) if (string.contains(test)) return true;
+        return false;
+    }
 }

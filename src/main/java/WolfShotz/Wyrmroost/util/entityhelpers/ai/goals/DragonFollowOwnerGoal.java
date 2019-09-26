@@ -1,114 +1,156 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.FollowOwnerGoal;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IWorldReader;
 
 import java.util.EnumSet;
 
-/**
- * Owner Following class made specifically for flyers.
- * minDistance and maxDistance is triple for flight, that way, the distance isnt too
- * short when in the air.
- */
-public class DragonFollowOwnerGoal extends FollowOwnerGoal
-{
-    private AbstractDragonEntity dragon;
+public class DragonFollowOwnerGoal extends Goal {
+    protected final AbstractDragonEntity dragon;
     private LivingEntity owner;
-    private float minDistance, maxDistance;
-    private double speed, height;
+    protected final IWorldReader world;
+    private final double followSpeed;
+    private final PathNavigator navigator;
+    private int timeToRecalcPath;
+    private final double maxDist, minDist, maxHeight;
+    private float oldWaterCost;
     
-    public DragonFollowOwnerGoal(AbstractDragonEntity dragon, double speed, float minDistance, float maxDistance, double height) {
-        super(dragon, speed, minDistance, maxDistance);
-        this.minDistance = minDistance;
-        this.maxDistance = maxDistance;
-        this.speed = speed;
-        this.height = height;
-        this.dragon = dragon;
-        
-        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
+    public DragonFollowOwnerGoal(AbstractDragonEntity dragonIn, double followSpeedIn, double minDistIn, double maxDistIn, double maxHeightIn) {
+        this.dragon = dragonIn;
+        this.world = dragonIn.world;
+        this.followSpeed = followSpeedIn;
+        this.navigator = dragonIn.getNavigator();
+        this.minDist = minDistIn;
+        this.maxDist = maxDistIn;
+        this.maxHeight = maxHeightIn;
+        setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
     
-    @Override
+    public DragonFollowOwnerGoal(AbstractDragonEntity dragonIn, double followSpeedIn, double minDistIn, double maxDistIn) {
+        this.dragon = dragonIn;
+        this.world = dragonIn.world;
+        this.followSpeed = followSpeedIn;
+        this.navigator = dragonIn.getNavigator();
+        this.minDist = minDistIn;
+        this.maxDist = maxDistIn;
+        this.maxHeight = 0;
+        setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+    }
+    
+    /**
+     * Returns whether the EntityAIBase should begin execution.
+     */
     public boolean shouldExecute() {
-        if (!dragon.isFlying()) return super.shouldExecute(); // Do normal behaviour
+        LivingEntity preOwner = dragon.getOwner();
         
-        this.owner = dragon.getOwner();
-        float minDistSq = (this.minDistance * this.minDistance) * 2;
+        if (dragon.isSitting() || preOwner == null || (preOwner instanceof PlayerEntity && preOwner.isSpectator()))
+            return false;
+    
+        double minDistSq = (minDist * minDist);
+        boolean tooClose = dragon.isFlying()? (dragon.getDistanceSq(preOwner.getPositionVec().add(0, maxHeight, 0)) < minDistSq) : (dragon.getDistanceSq(preOwner) < minDistSq);
         
-        if (owner == null) return false; // *Visible confusion*
-        if (dragon.aiFlyWander != null && dragon.aiFlyWander.isDescending()) return false;
-        if (owner instanceof PlayerEntity && owner.isSpectator()) return false; // How would this... nvm
-        return !(dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ) < minDistSq); // Too small of a dist, so nope
+        if (tooClose) return false;
+        else {
+            owner = preOwner;
+            return true;
+        }
     }
     
-    @Override
-    public void startExecuting() {
-        if (!dragon.isFlying()) {
-            setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
-            super.startExecuting();
-        } else setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-    }
-    
-    @Override
+    /**
+     * Returns whether an in-progress EntityAIBase should continue executing
+     */
     public boolean shouldContinueExecuting() {
-        if (owner == null) return false;
-        if (!dragon.isFlying()) return super.shouldContinueExecuting(); // Do normal behaviour
-        if (dragon.aiFlyWander != null && dragon.aiFlyWander.isDescending()) return false;
-    
-        double maxDistSq = (maxDistance * maxDistance) * 2;
-        double distEuclid = (float) dragon.getDistanceSq(owner.posX, owner.posY + height, owner.posZ);
+        if (dragon.isSitting() || owner == null) return false;
         
-        if (dragon.isSitting()) return false; // uhhhhhhh
-        return distEuclid > maxDistSq; // em no?
+        double maxDistSq = (maxDist * maxDist);
+        
+        if (dragon.isFlying()) {
+            return dragon.getDistanceSq(owner.getPositionVec().add(0, maxHeight, 0)) > maxDistSq;
+        }
+        else return !navigator.noPath() && dragon.getDistanceSq(owner) > maxDistSq;
     }
     
-    @Override
-    public void tick() {
-        if (!dragon.isFlying()) { // Do normal behaviour
-            super.tick();
-            
-            return;
-        }
-    
-        Vec3d moveTo = new Vec3d(owner.posX + 0.5d, owner.posY + height, owner.posZ + 0.5d);
-        BlockPos tpPos = new BlockPos(moveTo.x, moveTo.y, moveTo.z);
-    
-        if (MathUtils.getPlaneDistSq(owner, dragon) > (minDistance * minDistance) * 7 && canTeleportToBlock(tpPos)) { // WOAH, too far, tp instead
-            dragon.setPositionAndRotation(tpPos.getX() + 0.5d, tpPos.getY(), tpPos.getZ() + 0.5d, owner.rotationYawHead, owner.rotationPitch);
-        
-            return;
-        }
-        
-        dragon.getMoveHelper().setMoveTo(moveTo.x, moveTo.y, moveTo.z, speed);
-        dragon.getLookController().setLookPosition(moveTo.x, moveTo.y, moveTo.z, 90f, 40f);
+    /**
+     * Execute a one shot task or start executing a continuous task
+     */
+    public void startExecuting() {
+        this.timeToRecalcPath = 0;
+        this.oldWaterCost = this.dragon.getPathPriority(PathNodeType.WATER);
+        this.dragon.setPathPriority(PathNodeType.WATER, 0.0F);
     }
     
-    @Override
+    /**
+     * Reset the task's internal state. Called when this task is interrupted by another one
+     */
     public void resetTask() {
-        if (!dragon.isFlying()) super.resetTask();
-        setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        this.owner = null;
+        this.navigator.clearPath();
+        this.dragon.setPathPriority(PathNodeType.WATER, this.oldWaterCost);
     }
     
-    @Override
-    protected boolean canTeleportToBlock(BlockPos pos) {
-        if (!dragon.isFlying()) return super.canTeleportToBlock(pos);
-
-        boolean canTeleport = true;
-
-        for (int xz = (int) (-Math.floor(dragon.getWidth() / 2)); xz < dragon.getWidth(); ++xz) {
-            for (int y = 0; y < dragon.getHeight(); ++y) {
-                if (world.getBlockState(pos.add(xz, y, xz)).getMaterial().blocksMovement()) {
-                    canTeleport = false;
-                    break;
+    /**
+     * Keep ticking a continuous task that has already been started
+     */
+    public void tick() {
+        if (dragon.isSitting()) return;
+        if (--this.timeToRecalcPath > 0) return;
+        timeToRecalcPath = 10;
+        if (dragon.getLeashed() || dragon.isPassenger()) return;
+        
+        if (dragon.isFlying()) {
+            if (dragon.getDistanceSq(owner.getPositionVec().add(0, maxHeight, 0)) > (3d * (minDist * minDist)))
+                tryTeleport();
+            else {
+                double x = owner.posX + 0.5d;
+                double y = owner.posY + maxHeight;
+                double z = owner.posZ + 0.5d;
+                dragon.getMoveHelper().setMoveTo(x, y, z, followSpeed);
+                dragon.getLookController().setLookPosition(x, y, z, 10f, dragon.getVerticalFaceSpeed());
+            }
+        }
+        else {
+            if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
+                tryTeleport();
+            else {
+                navigator.tryMoveToEntityLiving(owner, followSpeed);
+                dragon.getLookController().setLookPositionWithEntity(owner, 10f, dragon.getVerticalFaceSpeed());
+            }
+        }
+    }
+    
+    public void tryTeleport() {
+        boolean isFlying = dragon.isFlying();
+        int x = MathHelper.floor(owner.posX) - (isFlying? 0 : 2);
+        int y = MathHelper.floor(isFlying? (owner.posY + maxHeight) : owner.getBoundingBox().minY);
+        int z = MathHelper.floor(owner.posZ) - (isFlying? 0 : 2);
+    
+        for(int l = 0; l <= 4; ++l) {
+            for(int i1 = 0; i1 <= 4; ++i1) {
+                if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && canTeleportToBlock(new BlockPos(x + l, y, z + i1))) {
+                    dragon.setPosition((double)((float)(x + l) + 0.5F), (double)y, (double)((float)(z + i1) + 0.5F));
+                    navigator.clearPath();
+                    return;
                 }
             }
         }
-
-        return canTeleport;
+    }
+    
+    public boolean canTeleportToBlock(BlockPos pos) {
+        AxisAlignedBB aabb = dragon.getBoundingBox();
+        double growX = aabb.maxX - aabb.minX;
+        double growY = aabb.maxY - aabb.minY;
+        double growZ = aabb.maxZ - aabb.minZ;
+        AxisAlignedBB potentialAABB = new AxisAlignedBB(pos).grow(growX, 0, growZ).expand(0, growY, 0);
+        
+        return ModUtils.isBoxSafe(potentialAABB, dragon.world) && (dragon.isFlying() || !world.getBlockState(pos.down()).isAir(world, pos));
     }
 }

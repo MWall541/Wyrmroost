@@ -33,7 +33,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.world.NoteBlockEvent;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -73,7 +72,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true));
-        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f, 15d));
+        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
 //        goalSelector.addGoal(8, new OrbitFlightGoal(this));
         goalSelector.addGoal(8, aiFlyWander = new FlightWanderGoal(this, 1500, 1));
         goalSelector.addGoal(9, new WanderGoal(this, 1d));
@@ -191,15 +190,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         }
     }
     
-    public boolean shouldGlide(PlayerEntity player) {
-        return (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > shouldFlyThreshold) &&
-                       !player.isElytraFlying()         &&
-                       player.getRidingEntity() == null &&
-                       !player.abilities.isFlying       &&
-                       !player.isInWater()              &&
-                       super.canFly();
-    }
-    
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
@@ -215,14 +205,15 @@ public class SilverGliderEntity extends AbstractDragonEntity
         }
 
         // if tamed, then start riding the player
-        if (isTamed() && stack.isEmpty() && !player.isSneaking() && player.getPassengers().isEmpty()) {
+        if (isTamed() && stack.isEmpty() && !player.isSneaking() && player.getPassengers().isEmpty() && isOwner(player)) {
             startRiding(player, true);
             setSit(false);
+            getNavigator().clearPath();
             
             return true;
         }
         
-        if (isTamed() && stack.isEmpty() && player.isSneaking()) {
+        if (isTamed() && stack.isEmpty() && player.isSneaking() && isOwner(player)) {
             setSit(!isSitting());
             
             return true;
@@ -230,7 +221,16 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         return super.processInteract(player, hand);
     }
-
+    
+    public boolean shouldGlide(PlayerEntity player) {
+        return (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > shouldFlyThreshold) &&
+                       !player.isElytraFlying()         &&
+                       player.getRidingEntity() == null &&
+                       !player.abilities.isFlying       &&
+                       !player.isInWater()              &&
+                       super.canFly();
+    }
+    
     public static boolean canSpawnHere(EntityType<SilverGliderEntity> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand) {
         Block block = world.getBlockState(blockPos.down(1)).getBlock();
         
