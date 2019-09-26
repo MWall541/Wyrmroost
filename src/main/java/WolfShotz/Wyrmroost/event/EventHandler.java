@@ -5,6 +5,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.Explosion;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -41,8 +44,21 @@ public class EventHandler
             
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
-                
-                dragon.setFlying(true);
+            }
+        }
+    
+        @SubscribeEvent
+        public static void begoneTHOT(PlayerInteractEvent.EntityInteract evt) {
+            Entity entity = evt.getTarget();
+            if (!(entity instanceof AbstractDragonEntity)) return;
+            AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+            PlayerEntity player = evt.getPlayer();
+            ItemStack stack = player.getHeldItem(evt.getHand());
+        
+            if (stack.getItem() == Items.NAME_TAG && TranslationUtils.containsArray(stack.getDisplayName().getUnformattedComponentText().toLowerCase(), "owo", "uwu", "owu", "uwo")) {
+                evt.setCanceled(true);
+                stack.clearCustomName();
+                dragon.world.createExplosion(dragon, player.posX, player.posY + 1, player.posZ, 6f, Explosion.Mode.NONE);
             }
         }
         
