@@ -159,7 +159,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                     return;
                 }
                 
-                if (shouldGlide(player)) {
+                if (shouldGlide(player) && !player.isElytraFlying()) {
                     Vec3d lookVec = player.getLookVec();
                     Vec3d playerMot = player.getMotion();
                     double xMot = playerMot.x + (lookVec.x / 12);
@@ -197,7 +197,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {
-            tame(getRNG().nextInt(7) == 0, player);
+            tame(getRNG().nextInt(5) == 0, player);
             eat(stack);
             if (isSleeping()) setSleeping(false);
             
@@ -224,7 +224,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     public boolean shouldGlide(PlayerEntity player) {
         return (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > shouldFlyThreshold) &&
-                       !player.isElytraFlying()         &&
                        player.getRidingEntity() == null &&
                        !player.abilities.isFlying       &&
                        !player.isInWater()              &&
@@ -250,7 +249,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     @Override
     public boolean canFly() {
-        if (isRiding() && getRidingEntity() instanceof PlayerEntity) return super.canFly() && shouldGlide((PlayerEntity) getRidingEntity());
+        if (isRiding() && getRidingEntity() instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) getRidingEntity();
+            return super.canFly() && shouldGlide(player) || player.isElytraFlying();
+        }
         if (isRiding()) return false;
         return super.canFly();
     }

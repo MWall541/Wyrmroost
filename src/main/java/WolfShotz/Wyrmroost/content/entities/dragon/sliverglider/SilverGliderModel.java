@@ -482,11 +482,6 @@ public class SilverGliderModel extends AdvancedEntityModel {
     
     private void setPositions(boolean flight) {
         boolean flag = (isSitting || isSleeping) && (currentAnim != SIT_ANIMATION && currentAnim != SLEEP_ANIMATION) || (currentAnim == STAND_ANIMATION || currentAnim == WAKE_ANIMATION);
-        
-        // Neck
-        for (AdvancedRendererModel box : neckArray2) box.rotateAngleX = -0.4f;
-        neck3.rotateAngleX = 0.5f;
-        neck4.rotateAngleX = 0.25f;
     
         // Pull the legs in for sitting or sleeping
         if (flag || glider.isRiding() || isFlying) {
@@ -521,6 +516,11 @@ public class SilverGliderModel extends AdvancedEntityModel {
                 wingphalange1R.rotateAngleX = -Math.min(yVec, max);
             }
         } else {
+            // Neck
+            for (AdvancedRendererModel box : neckArray2) box.rotateAngleX = -0.4f;
+            neck3.rotateAngleX = 0.5f;
+            neck4.rotateAngleX = 0.25f;
+            
             if (!glider.isRiding()) { // Default ground pose
                 // Left Wing
                 wingphalange1L.rotateAngleX = 0.6f;

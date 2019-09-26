@@ -21,7 +21,7 @@ public class SetupOreGen
     private static final Predicate<Biome> overworldFilter = biome -> overworldOnly.stream().noneMatch(biome::equals);
     
     private static CountRangeConfig platinumConfig = new CountRangeConfig(2, 0, 0, 28);
-    private static CountRangeConfig geodeConfig = new CountRangeConfig(1, 0, 0, 16);
+    private static CountRangeConfig geodeConfig = new CountRangeConfig(1, 0, 0, 20);
 
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
