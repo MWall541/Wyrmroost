@@ -184,7 +184,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         PlayerEntity player = (PlayerEntity) entity;
         
-        if (player.isSneaking()) {
+        if (player.isSneaking() && !player.abilities.isFlying) {
             stopRiding();
             return;
         }
