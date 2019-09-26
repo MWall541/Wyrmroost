@@ -120,7 +120,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         if (isTamed()) {
         
             // if player is sneaking, sit/stand
-            if (player.isSneaking()) {
+            if (player.isSneaking() && isOwner(player)) {
                 setSit(!isSitting());
             
                 return true;
@@ -143,7 +143,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                     return true;
                 }
             
-                if (canPickUpStack(stack)) {
+                if (canPickUpStack(stack) && isOwner(player)) {
                     // Swap mouth holding items
                     if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
                     else player.setHeldItem(hand, ItemStack.EMPTY);
@@ -154,12 +154,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             }
             
             // Retrieve the item in the mouth
-            if (!heldItem.isEmpty()) {
+            if (!heldItem.isEmpty() && isOwner(player)) {
                 setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
                 player.setHeldItem(hand, heldItem);
                 
                 return true;
-            } else if (player.getPassengers().isEmpty()) {
+            } else if (player.getPassengers().isEmpty() && isOwner(player)) {
                 setSit(false);
                 startRiding(player, true);
     
