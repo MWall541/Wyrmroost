@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
@@ -76,7 +77,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new DrakeAttackGoal(this));
-        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2d, 12f, 3f));
+        goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d ));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
@@ -212,7 +213,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
         
         // If Saddled and not sneaking, start riding
-        if (isSaddled() && !isChild() && !isInteractItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking()) {
+        if (isSaddled() && !isChild() && !isInteractItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking() && isOwner(player)) {
             if (isSleeping()) setSleeping(false);
             setSit(false);
             player.startRiding(this);
@@ -310,7 +311,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (isChild()) addGrowth(60);
         if (getHealth() < getMaxHealth()) heal(4f);
     }
-
+    
+    @Override
+    protected void spawnDrops(DamageSource src) {
+        if (isSaddled()) entityDropItem(Items.SADDLE);
+        super.spawnDrops(src);
+    }
+    
     @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn) {
         if (ticksExisted % 2 == 0) playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
