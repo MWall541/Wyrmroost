@@ -7,7 +7,7 @@ Github Repostory for the Wyrmroost Minecraft Mod.
 Thats great but not really! You can report it by submitting an issue on the issues tab of this page. Please provide a crash log (if applicable) and/or steps to reproduce the problems
 
 ## I want to add my own language!1!
-Thats sweet! By all means go for it, just edit the [`en_us.lang`](src/main/resources/assets/wyrmroost/lang/en_us.lang) and submit a pull request with the correct language and file name!
+Thats sweet! By all means go for it, just edit the [`en_us.lang`](src/main/resources/assets/wyrmroost/lang) and submit a pull request with the correct language and file name!
 
 ## Licensing
 Wyrmroost is licensed under the GNU Lesser General Public License v2.1
