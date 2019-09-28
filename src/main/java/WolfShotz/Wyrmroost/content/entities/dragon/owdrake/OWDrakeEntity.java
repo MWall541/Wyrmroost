@@ -10,6 +10,7 @@ import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -19,6 +20,7 @@ import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
@@ -26,9 +28,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SaddleItem;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
@@ -54,6 +55,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    public Inventory drakeInv;
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION = Animation.create(15);
@@ -64,7 +66,8 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     public static final Animation TALK_ANIMATION = Animation.create(20);
 
     // Dragon Entity Data
-    private static final DataParameter<Boolean> VARIANT = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> VARIANT_BOOL = createBoolean(OWDrakeEntity.class);
+    private static final DataParameter<Boolean> HAS_CHEST    = createBoolean(OWDrakeEntity.class);
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
@@ -75,8 +78,10 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
+        
+        drakeInv = new Inventory(19);
     }
-
+    
     @Override
     protected void registerGoals() {
         super.registerGoals();
@@ -112,25 +117,53 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     @Override
     protected void registerData() {
         super.registerData();
-        dataManager.register(VARIANT, false);
+        dataManager.register(VARIANT_BOOL, false);
         dataManager.register(ARMORED, false);
+        dataManager.register(SADDLED, false);
+        dataManager.register(HAS_CHEST, false);
     }
 
     /** Save Game */
     @Override
     public void writeAdditional(CompoundNBT compound) {
-        compound.putBoolean("variant", getVariant());
-        compound.putBoolean("armored", isArmored());
-    
+        compound.putBoolean("variant", getDrakeVariant());
+        if (!drakeInv.isEmpty()) {
+            ListNBT items = new ListNBT();
+            
+            for (int i = 0; i < 19; ++i) {
+                ItemStack stack = drakeInv.getStackInSlot(i);
+                if (!stack.isEmpty()) {
+                    CompoundNBT nbt = new CompoundNBT();
+                    nbt.putByte("slot", (byte) i);
+                    stack.write(nbt);
+                    items.add(nbt);
+                }
+            }
+            
+            compound.put("invitems", items);
+        }
+        
         super.writeAdditional(compound);
     }
     
     /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {
-        setVariant(compound.getBoolean("variant"));
-        setArmored(compound.getBoolean("armored"));
+        setDrakeVariant(compound.getBoolean("variant"));
+        if (!compound.getList("invitems", 10).isEmpty()) {
+            ListNBT items = compound.getList("invitems", 10);
+            for (int i = 0; i < 19; ++i) {
+                CompoundNBT nbt = items.getCompound(i);
+                System.out.println(ItemStack.read(nbt));
+                drakeInv.setInventorySlotContents(nbt.getByte("slot") & 255, ItemStack.read(nbt));
+            }
+        }
     
+        setHasChest(!drakeInv.getStackInSlot(0).isEmpty());
+        if (compound.getBoolean("saddled")) drakeInv.setInventorySlotContents(1, new ItemStack(Items.SADDLE, 1)); // Datafix
+        setSaddled(!drakeInv.getStackInSlot(1).isEmpty());
+        setArmored(!drakeInv.getStackInSlot(2).isEmpty());
+        
         super.readAdditional(compound);
     }
 
@@ -138,14 +171,11 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
      * The Variant of the drake.
      * false == Common, true == Savanna. Boolean since we only have 2 different variants
      */
-    public boolean getVariant() { return dataManager.get(VARIANT); }
-    public void setVariant(boolean variant) { dataManager.set(VARIANT, variant); }
+    public boolean getDrakeVariant() { return dataManager.get(VARIANT_BOOL); }
+    public void setDrakeVariant(boolean variant) { dataManager.set(VARIANT_BOOL, variant); }
     
-    /**
-     * Whether or not the dragon is armored
-     */
-    public boolean isArmored() { return dataManager.get(ARMORED); }
-    public void setArmored(boolean armored) { dataManager.set(ARMORED, armored); }
+    public boolean hasChest() { return dataManager.get(HAS_CHEST); }
+    public void setHasChest(boolean set) { dataManager.set(HAS_CHEST, set); }
     
     /**
      * Set sprinting switch for Entity.
@@ -163,17 +193,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     public int getSpecialChances() { return 100; }
     
     // ================================
-
-    @Nullable
-    @Override
-    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-        Biome biome = worldIn.getBiome(new BlockPos(this));
-        Set<Biome> biomes = BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA);
-
-        if (biomes.contains(biome)) setVariant(true);
-
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-    }
 
     @Override
     public void livingTick() {
@@ -219,8 +238,8 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
             consumeItemFromStack(player, stack);
+            drakeInv.setInventorySlotContents(1, stack);
             setSaddled(true);
-            playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
 
             return true;
         }
@@ -312,6 +331,17 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         }
     }
     
+    @Nullable
+    @Override
+    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+        Biome biome = worldIn.getBiome(new BlockPos(this));
+        Set<Biome> biomes = BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA);
+        
+        if (biomes.contains(biome)) setDrakeVariant(true);
+        
+        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+    
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (isArmored()) {
@@ -334,16 +364,17 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     }
     
     @Override
-    protected void spawnDrops(DamageSource src) {
-        if (isSaddled()) entityDropItem(Items.SADDLE);
-        super.spawnDrops(src);
-    }
-    
-    @Override
     protected void playStepSound(BlockPos pos, BlockState blockIn) {
         if (ticksExisted % 2 == 0) playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
 
         super.playStepSound(pos, blockIn);
+    }
+    
+    @Override
+    protected void spawnDrops(DamageSource src) {
+        if (drakeInv.isEmpty()) return;
+        for (int i = 0; i < 19; ++i) entityDropItem(drakeInv.getStackInSlot(i));
+        
     }
     
     @Nullable
@@ -407,7 +438,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new OWDrakeInvContainer(windowID, playerInv); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new OWDrakeInvContainer(windowID, playerInv, this); }
     
     // == Entity Animation ==
     @Override

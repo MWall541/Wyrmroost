@@ -47,7 +47,7 @@ public class EventHandler
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
     
-                if (player instanceof ServerPlayerEntity) NetworkHooks.openGui((ServerPlayerEntity) player, (OWDrakeEntity) dragon);
+                if (player instanceof ServerPlayerEntity) NetworkHooks.openGui((ServerPlayerEntity) player, (OWDrakeEntity) dragon, buf -> buf.writeInt(dragon.getEntityId()));
             }
         }
     

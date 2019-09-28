@@ -1,9 +1,13 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.OWDrakeInvScreen;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -23,7 +27,10 @@ public class SetupIO
     @SubscribeEvent
     public static void containerSetup(RegistryEvent.Register<ContainerType<?>> event) {
         event.getRegistry().registerAll(
-                IForgeContainerType.create((windowId, inv, data) -> new OWDrakeInvContainer(windowId, inv)).setRegistryName("owdrake_inv")
+                IForgeContainerType.create((windowId, inv, buf) -> {
+                    Entity drake = ModUtils.getClientWorld().getEntityByID(buf.readInt());
+                    return new OWDrakeInvContainer(windowId, inv, (OWDrakeEntity) drake);
+                }).setRegistryName("owdrake_inv")
         );
     }
     

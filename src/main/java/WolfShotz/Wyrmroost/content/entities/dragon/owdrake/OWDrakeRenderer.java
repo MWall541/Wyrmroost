@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.layers.SaddleLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,7 +36,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     @Override
     protected ResourceLocation getEntityTexture(OWDrakeEntity drake) {
         if (drake.hasCustomName() && drake.getCustomName().getUnformattedComponentText().equals("Daisy")) return DAISY;
-        return getDrakeTexture(drake.getGender(), drake.getVariant(), drake.isSpecial(), drake.isChild());
+        return getDrakeTexture(drake.getGender(), drake.getDrakeVariant(), drake.isSpecial(), drake.isChild());
     }
 
     private ResourceLocation getDrakeTexture(boolean gender, boolean isSavannah, boolean isSpecial, boolean isChild) {
