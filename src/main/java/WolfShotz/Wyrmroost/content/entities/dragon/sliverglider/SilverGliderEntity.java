@@ -41,9 +41,6 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class SilverGliderEntity extends AbstractDragonEntity
 {
-    // Dragon Entity Data
-    private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(SilverGliderEntity.class, DataSerializers.VARINT);
-
     // Dragon Animation
     public static final Animation SIT_ANIMATION = Animation.create(10);
     public static final Animation STAND_ANIMATION = Animation.create(10);

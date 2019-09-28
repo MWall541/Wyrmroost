@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.FlightWanderGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
@@ -67,12 +68,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static Animation WAKE_ANIMATION;
     
     // Dragon Entity Data
-    public static final DataParameter<Boolean> GENDER       = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SPECIAL      = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SADDLED      = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> FLYING       = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SLEEPING     = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> ARMORED      = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> GENDER       = createBoolean();
+    public static final DataParameter<Boolean> SPECIAL      = createBoolean();
+    public static final DataParameter<Boolean> SADDLED      = createBoolean();
+    public static final DataParameter<Boolean> FLYING       = createBoolean();
+    public static final DataParameter<Boolean> SLEEPING     = createBoolean();
+    public static final DataParameter<Boolean> ARMORED      = createBoolean();
+    public static final DataParameter<Integer> VARIANT      = createInt();
     
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
@@ -102,7 +104,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.register(GENDER, getRNG().nextBoolean());
         dataManager.register(SPECIAL, getSpecialChances() != 0 && getRNG().nextInt(getSpecialChances()) == 0);
         dataManager.register(FLYING, false);
-        dataManager.register(SADDLED, false);
         dataManager.register(SLEEPING, false);
     }
     
@@ -112,7 +113,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         compound.putBoolean("gender", getGender());
         compound.putBoolean("special", isSpecial());
         compound.putBoolean("sleeping", isSleeping());
-        compound.putBoolean("saddled", isSaddled());
         
         super.writeAdditional(compound);
     }
@@ -123,7 +123,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setGender(compound.getBoolean("gender"));
         setSpecial(compound.getBoolean("special"));
         dataManager.set(SLEEPING, compound.getBoolean("sleeping")); // Use data manager: Setter method controls animation
-        setSaddled(compound.getBoolean("saddled"));
         
         super.readAdditional(compound);
     }
@@ -161,18 +160,29 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Whether or not the dragon is saddled
      */
     public boolean isSaddled() { return dataManager.get(SADDLED); }
-    public void setSaddled(boolean saddled) { dataManager.set(SADDLED, saddled); }
+    public void setSaddled(boolean saddled) {
+        dataManager.set(SADDLED, saddled);
+        if (saddled) playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
+    }
+    
+    /**
+     * Get the variant of the dragon (if it has them)
+     */
+    public int getVariant() { return dataManager.get(VARIANT); }
+    public void setVariant(int variant) { dataManager.set(VARIANT, variant); }
+    
+    /**
+     * Whether or not the dragon is armored
+     */
+    public boolean isArmored() { return dataManager.get(ARMORED); }
+    public void setArmored(boolean armored) { dataManager.set(ARMORED, armored); }
     
     /**
      * Whether or not the dragon is sleeping.
      */
     @Override
     public boolean isSleeping() { return dataManager.get(SLEEPING); }
-    /**
-     * Sleep setter for dragon.
-     * If we have a sleep animation, then play it.
-     */
-    public void setSleeping(boolean sleep) {
+    public void setSleeping(boolean sleep) { // If we have a sleep animation, then play it.
         if (isSleeping() == sleep) return;
         
         dataManager.set(SLEEPING, sleep);
@@ -307,7 +317,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     /**
      * Method called to "call" ur dragon.
-     * If its falling, try to descend down.
+     * If its flying, try to descend down.
      * If its sitting, try to stand.
      *
      * boolean to make sure we can perform this. if not, ignore it
@@ -364,6 +374,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return true;
     }
     
+    /**
+     * Called when the entity is attacked by something
+     */
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (isSleeping()) setSleeping(false);
@@ -385,6 +398,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             double z = posZ + getWidth() * (getRNG().nextGaussian() * 0.5d);
             world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
         }
+    }
+    
+    @Override
+    protected void spawnDrops(DamageSource src) {
+        if (isSaddled()) entityDropItem(Items.SADDLE);
+        super.spawnDrops(src);
     }
     
     /**
@@ -469,6 +488,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return MathUtils.rotateYaw(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
     }
     
+    /**
+     * Is the stack passed an item that is interactable with dragons?
+     */
     public boolean isInteractItem(ItemStack stack) {
         Item item = stack.getItem();
         
@@ -587,4 +609,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean noActiveAnimation() { return getAnimation() != NO_ANIMATION || getAnimationTick() != 0; }
     
     // ================================
+    
+    /**
+     * Create a boolean data Parameter
+     */
+    public static DataParameter<Boolean> createBoolean() { return EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN); }
+    public static DataParameter<Boolean> createBoolean(Class<? extends Entity> clazz) { return EntityDataManager.createKey(clazz, DataSerializers.BOOLEAN); }
+    
+    /**
+     * Create an integer data parameter
+     * @return
+     */
+    public static DataParameter<Integer> createInt() { return EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.VARINT); }
+    public static DataParameter<Integer> createInt(Class<? extends Entity> clazz) { return EntityDataManager.createKey(clazz, DataSerializers.VARINT); }
 }
