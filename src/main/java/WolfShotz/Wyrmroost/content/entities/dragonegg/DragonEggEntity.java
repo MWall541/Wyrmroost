@@ -122,6 +122,10 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         }
         
         DragonTypes type = getDragonTypeEnum();
+        if (type == null) {
+            safeError();
+            return;
+        }
         if (getWidth() != type.getWidth() || getHeight() != type.getHeight()) recalculateSize();
         
         int hatchTime = getHatchTime();

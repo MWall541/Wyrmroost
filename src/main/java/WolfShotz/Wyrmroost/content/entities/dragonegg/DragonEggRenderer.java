@@ -46,6 +46,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
      */
     private void renderShapeByType(DragonEggEntity entity) {
         DragonEggEntity.DragonTypes type = entity.getDragonTypeEnum();
+        if (type == null) return;
         
         switch(type) {
 //            case DRAKE: GlStateManager.scalef(2.0F, -2.0F, -2.0F); break;
