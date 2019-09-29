@@ -12,6 +12,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRend
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
@@ -29,6 +30,8 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.Objects;
 import java.util.Set;
+
+import static net.minecraftforge.common.BiomeDictionary.Type;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
@@ -53,10 +56,10 @@ public class SetupEntities
      * Registers World Spawning for entities
      */
     private static void registerEntityWorldSpawns() {
-        registerSpawning(overworld_drake, 10, 1, 3, getDrakeBiomes());
+        registerSpawning(overworld_drake, 8, 1, 3, getDrakeBiomes());
         registerSpawning(minutus, 35, 1, 1, BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY));
-        registerSpawning(silver_glider, 5, 2, 5, getSilverGliderBiomes());
-        registerSpawning(roost_stalker, 10, 3, 18, getStalkerBiomes());
+        registerSpawning(silver_glider, 2, 2, 5, getSilverGliderBiomes());
+        registerSpawning(roost_stalker, 9, 3, 18, getStalkerBiomes());
         EntitySpawnPlacementRegistry.register(silver_glider, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
     }
 
@@ -99,24 +102,32 @@ public class SetupEntities
 
     private static Set<Biome> getDrakeBiomes() {
         return ModUtils.collectAll(
-                BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA),
-                BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS)
+                BiomeDictionary.getBiomes(Type.SAVANNA),
+                BiomeDictionary.getBiomes(Type.PLAINS)
         );
     }
     
     private static Set<Biome> getSilverGliderBiomes() {
         return ModUtils.collectAll(
-                BiomeDictionary.getBiomes(BiomeDictionary.Type.BEACH),
-                BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
+                BiomeDictionary.getBiomes(Type.BEACH),
+                BiomeDictionary.getBiomes(Type.OCEAN)
         );
     }
     
     private static Set<Biome> getStalkerBiomes() {
         return ModUtils.collectAll(
-                BiomeDictionary.getBiomes(BiomeDictionary.Type.FOREST),
-                BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS),
-                BiomeDictionary.getBiomes(BiomeDictionary.Type.MOUNTAIN)
+                BiomeDictionary.getBiomes(Type.FOREST),
+                BiomeDictionary.getBiomes(Type.PLAINS),
+                BiomeDictionary.getBiomes(Type.MOUNTAIN)
         );
+    }
+    
+    private static Set<Biome> getMinutusBiomes() {
+        Set<Biome> biomes = Sets.newHashSet();
+        for (Biome biome : BiomeDictionary.getBiomes(Type.SANDY))
+            if (!BiomeDictionary.hasType(biome, Type.MESA)) biomes.add(biome);
+        
+        return biomes;
     }
 
     // ================================

@@ -185,6 +185,9 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
     }
     
     @Override
+    public boolean canDespawn(double distanceToClosestPlayer) { return true; }
+    
+    @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || source == DamageSource.IN_WALL; }
     
     @Nullable
