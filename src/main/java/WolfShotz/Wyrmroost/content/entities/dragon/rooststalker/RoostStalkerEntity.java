@@ -94,10 +94,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
     
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) {
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
         if (hand != Hand.MAIN_HAND) return false; // Only fire on main hand
         
-        ItemStack stack = player.getHeldItem(hand);
         ItemStack heldItem = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
         Item item = stack.getItem();
         
