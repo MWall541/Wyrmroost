@@ -30,6 +30,8 @@ import net.minecraft.item.SaddleItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
@@ -58,16 +60,16 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     public Inventory drakeInv;
     
     // Dragon Entity Animations
-    public static final Animation SIT_ANIMATION = Animation.create(15);
-    public static final Animation STAND_ANIMATION = Animation.create(15);
-    public static final Animation GRAZE_ANIMATION = Animation.create(35);
+    public static final Animation SIT_ANIMATION         = Animation.create(15);
+    public static final Animation STAND_ANIMATION       = Animation.create(15);
+    public static final Animation GRAZE_ANIMATION       = Animation.create(35);
     public static final Animation HORN_ATTACK_ANIMATION = Animation.create(15);
-    public static final Animation ROAR_ANIMATION = Animation.create(86);
-    public static final Animation TALK_ANIMATION = Animation.create(20);
+    public static final Animation ROAR_ANIMATION        = Animation.create(86);
+    public static final Animation TALK_ANIMATION        = Animation.create(20);
 
     // Dragon Entity Data
-    private static final DataParameter<Boolean> VARIANT_BOOL = createBoolean(OWDrakeEntity.class);
-    private static final DataParameter<Boolean> HAS_CHEST    = createBoolean(OWDrakeEntity.class);
+    private static final DataParameter<Boolean> VARIANT_BOOL = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> HAS_CHEST    = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
@@ -86,7 +88,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new DrakeAttackGoal(this));
-        goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d ));
+        goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
         goalSelector.addGoal(6, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
@@ -95,7 +97,9 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        targetSelector.addGoal(3, new HurtByTargetGoal(this) {
+            @Override public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
+        });
         targetSelector.addGoal(4, new DrakeTargetGoal(this));
     }
 
@@ -181,6 +185,8 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
      * Set sprinting switch for Entity.
      */
     public void setSprinting(boolean sprinting) {
+        if (isSprinting() == sprinting) return;
+        
         IAttributeInstance attribute = getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
         super.setSprinting(sprinting);
@@ -232,8 +238,8 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
+        if (super.processInteract(player, hand, stack)) return true;
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
@@ -259,25 +265,16 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
             return true;
         }
+    
+    
+        // If a child, tame it the old fashioned way
+        if (isBreedingItem(stack) && isChild() && !isTamed()) {
+            tame(getRNG().nextInt(10) == 0, player);
         
-        // If holding this dragons favorite food...
-        if (isBreedingItem(stack)) {
-            
-            // If a child, tame it the old fashioned way
-            if (isChild() && !isTamed()) {
-                tame(getRNG().nextInt(10) == 0, player);
-                
-                return true;
-            }
-            
-            if (getHealth() < getMaxHealth()) {
-                eat(stack);
-                
-                return true;
-            }
+            return true;
         }
-
-        return super.processInteract(player, hand);
+        
+        return false;
     }
     
     /**

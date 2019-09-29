@@ -36,7 +36,7 @@ public class DragonGrazeGoal extends Goal
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
     
-    public DragonGrazeGoal (AbstractDragonEntity herbivoreIn, Animation animation) { this(herbivoreIn, 0, animation); }
+    public DragonGrazeGoal(AbstractDragonEntity herbivoreIn, Animation animation) { this(herbivoreIn, 0, animation); }
     
     public DragonGrazeGoal(AbstractDragonEntity herbivoreIn) { this(herbivoreIn, 0, NO_ANIMATION); }
 

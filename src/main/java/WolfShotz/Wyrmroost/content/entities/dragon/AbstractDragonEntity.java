@@ -147,6 +147,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isFlying() { return dataManager.get(FLYING); }
     public void setFlying(boolean fly) {
         if (canFly() && fly) {
+            setSit(false);
+            setSleeping(false);
             dataManager.set(FLYING, true);
             switchPathController(true);
             liftOff();
@@ -219,6 +221,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isAngry() { return (dataManager.get(TAMED) & 2) != 0; }
     public void setAngry(boolean angry) {
+        if (isAngry() == angry) return;
+        
         byte b0 = dataManager.get(TAMED);
         
         if (angry) dataManager.set(TAMED, (byte) (b0 | 2));
@@ -232,19 +236,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold) && canFly();
-        if (shouldFly != isFlying()) setFlying(shouldFly);
-        
-        if (!isFlying() && syncRand.nextInt(randomFlyChance) == 0 && canFly()) setFlying(true);
+        if (canFly()) {
+            boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold);
+            if (shouldFly != isFlying()) setFlying(shouldFly);
+    
+            if (!isFlying() && syncRand.nextInt(randomFlyChance) == 0 && !isSleeping() && !isSitting()) setFlying(true);
+        }
         
         if (!world.isRemote) { // Server Only Stuffs
             // world time is always day on client, so we need to sync sleeping from server to client with sleep getter...
             if (sleepTimeout > 0) --sleepTimeout;
-            if (!world.isDaytime() && !isSleeping() && sleepTimeout <= 0 && getAttackTarget() == null && getNavigator().noPath() && !isFlying() && !isBeingRidden() && getRNG().nextInt(300) == 0) {
-                if (isTamed()) {
-                    if (isSitting()) setSleeping(true);
-                } else setSleeping(true);
-            }
+            else if (!world.isDaytime() && !isSleeping() && getAttackTarget() == null && getNavigator().noPath() && !isFlying() && !isBeingRidden() && rand.nextInt(300) == 0 && (!isTamed() || isSitting()))
+                setSleeping(true);
             if (world.isDaytime() && isSleeping() && (rand.nextInt(150) == 0 || isInWaterOrBubbleColumn()))
                 setSleeping(false);
             
@@ -286,32 +289,44 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected BodyController createBodyController() { return new DragonBodyController(this); }
     
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        
+    public boolean processInteract(PlayerEntity player, Hand hand) { return processInteract(player, hand, player.getHeldItem(hand)); }
+    
+    /**
+     * Called when the player interacts with this dragon
+     * @param player - The player interacting
+     * @param hand - hand they used to interact
+     * @param stack - the itemstack used when interacted
+     */
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
-            
+        
             return true;
         }
-        
+    
         if (isBreedingItem(stack) && isTamed()) {
-            if (getGrowingAge() == 0 && canBreed()) {
+            if (getHealth() < getMaxHealth()) {
                 eat(stack);
-                setInLove(player);
                 
                 return true;
             }
             
+            if (getGrowingAge() == 0 && canBreed()) {
+                eat(stack);
+                setInLove(player);
+            
+                return true;
+            }
+        
             if (isChild()) {
                 ageUp((int)((float)(-getGrowingAge() / 20) * 0.1F), true);
                 eat(stack);
                 if (isSleeping()) setSleeping(false);
-                
+            
                 return true;
             }
         }
-        
+    
         return false;
     }
     
@@ -561,16 +576,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * For ground entities, return false
      */
     public boolean canFly() {
-        boolean isSafe = true;
-        
         for (int i = 1; i < (shouldFlyThreshold / 2.5f) + 1; ++i) {
-            if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement()) {
-                isSafe = false;
-                break;
-            }
+            if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement())
+                return false;
         }
         
-        return !isChild() && !getLeashed() && !isSleeping() && !isSitting() && isSafe;
+        return !isChild() && !getLeashed();
     }
     
     @Override
@@ -606,7 +617,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.animation = animation;
     }
     
-    public boolean noActiveAnimation() { return getAnimation() != NO_ANIMATION || getAnimationTick() != 0; }
+    public boolean noActiveAnimation() { return getAnimation() == NO_ANIMATION || getAnimationTick() == 0; }
     
     // ================================
     
@@ -614,12 +625,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Create a boolean data Parameter
      */
     public static DataParameter<Boolean> createBoolean() { return EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN); }
-    public static DataParameter<Boolean> createBoolean(Class<? extends Entity> clazz) { return EntityDataManager.createKey(clazz, DataSerializers.BOOLEAN); }
     
     /**
      * Create an integer data parameter
-     * @return
      */
     public static DataParameter<Integer> createInt() { return EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.VARINT); }
-    public static DataParameter<Integer> createInt(Class<? extends Entity> clazz) { return EntityDataManager.createKey(clazz, DataSerializers.VARINT); }
 }
