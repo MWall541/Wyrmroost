@@ -35,7 +35,7 @@ public abstract class ContainerBase<T extends AbstractDragonEntity> extends Cont
     }
     
     public void buildPlayerSlots(PlayerInventory playerInv, int initialX, int initialY) {
-        buildSlotArea(playerInv, 9, initialX, initialY, 9, 3); // Player inv 83
+        buildSlotArea(playerInv, 9, initialX, initialY, 9, 3); // Player inv
         buildSlotArea(playerInv, 0, initialX, initialY + 58, 9, 1); // Hotbar
     }
     

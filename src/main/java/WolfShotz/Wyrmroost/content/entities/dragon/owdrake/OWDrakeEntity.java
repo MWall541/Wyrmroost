@@ -4,13 +4,12 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
+import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.WatchGoal;
-import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -57,7 +56,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
-    public Inventory drakeInv;
+    public Inventory drakeInv = new Inventory(19);
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION         = Animation.create(15);
@@ -81,7 +80,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
         
-        drakeInv = new Inventory(19);
     }
     
     @Override
@@ -138,7 +136,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
                 ItemStack stack = drakeInv.getStackInSlot(i);
                 if (!stack.isEmpty()) {
                     CompoundNBT nbt = new CompoundNBT();
-                    nbt.putByte("slot", (byte) i);
+                    nbt.putInt("slot", i);
                     stack.write(nbt);
                     items.add(nbt);
                 }
@@ -158,8 +156,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
             ListNBT items = compound.getList("invitems", 10);
             for (int i = 0; i < 19; ++i) {
                 CompoundNBT nbt = items.getCompound(i);
-                System.out.println(ItemStack.read(nbt));
-                drakeInv.setInventorySlotContents(nbt.getByte("slot") & 255, ItemStack.read(nbt));
+                drakeInv.setInventorySlotContents(nbt.getInt("slot"), ItemStack.read(nbt));
             }
         }
     
@@ -282,7 +279,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
      */
     @Override
     public void travel(Vec3d vec3d) {
-        if (isBeingRidden() && canBeSteered() && isTamed()) {
+        if (isBeingRidden() && canBeSteered() && isOwner((LivingEntity) getControllingPassenger())) {
             LivingEntity rider = (LivingEntity) getControllingPassenger();
             if (canPassengerSteer()) {
                 float f = rider.moveForward, s = rider.moveStrafing;
@@ -347,6 +344,9 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
         return super.attackEntityFrom(source, amount);
     }
+    
+    @Override
+    public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
     
     @Override
     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn) {
