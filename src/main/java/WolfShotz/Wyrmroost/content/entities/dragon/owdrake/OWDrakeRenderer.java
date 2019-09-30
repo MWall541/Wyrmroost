@@ -41,12 +41,12 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 
     private ResourceLocation getDrakeTexture(boolean gender, boolean isSavannah, boolean isSpecial, boolean isChild) {
         if (isChild) {
-            if (isSavannah) return CHILD_SAV;
             if (isSpecial) return CHILD_SPE;
+            if (isSavannah) return CHILD_SAV;
             return CHILD_COM;
         }
-        if (isSavannah) return gender? MALE_SAV : FEMALE_SAV;
         if (isSpecial) return gender? MALE_SPE : FEMALE_SPE;
+        if (isSavannah) return gender? MALE_SAV : FEMALE_SAV;
         return gender? MALE_COM : FEMALE_COM;
     }
 }

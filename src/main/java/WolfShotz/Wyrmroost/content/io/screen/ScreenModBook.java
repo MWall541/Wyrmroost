@@ -41,7 +41,7 @@ public class ScreenModBook extends Screen
     public void render(int param1, int param2, float param3) {
         renderBackground();
         GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-        minecraft.getTextureManager().bindTexture(this.ioLoc);
+        minecraft.getTextureManager().bindTexture(ioLoc);
         blit((width - 256) / 2, 5, 0, 0, 256, 192);
         super.render(param1, param2, param3);
     }

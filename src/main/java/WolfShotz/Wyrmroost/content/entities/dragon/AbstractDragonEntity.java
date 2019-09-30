@@ -34,6 +34,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -163,6 +164,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isSaddled() { return dataManager.get(SADDLED); }
     public void setSaddled(boolean saddled) {
+        if (isSaddled() == saddled) return;
         dataManager.set(SADDLED, saddled);
         if (saddled) playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
     }
@@ -171,13 +173,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Get the variant of the dragon (if it has them)
      */
     public int getVariant() { return dataManager.get(VARIANT); }
-    public void setVariant(int variant) { dataManager.set(VARIANT, variant); }
+    public void setVariant(int variant) {
+        if (getVariant() == variant) return;
+        dataManager.set(VARIANT, variant);
+    }
     
     /**
      * Whether or not the dragon is armored
      */
     public boolean isArmored() { return dataManager.get(ARMORED); }
-    public void setArmored(boolean armored) { dataManager.set(ARMORED, armored); }
+    public void setArmored(boolean armored) {
+        if (isArmored() == armored) return;
+        dataManager.set(ARMORED, armored);
+        if (armored) playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
+    }
     
     /**
      * Whether or not the dragon is sleeping.
@@ -336,16 +345,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * If its sitting, try to stand.
      *
      * boolean to make sure we can perform this. if not, ignore it
-     * @param player NULLABLE: pass null for server, not needed there.
      */
-    public boolean callDragon(@Nullable PlayerEntity player) {
+    public boolean callDragon(PlayerEntity player) {
         boolean result = false;
         if (isFlying()) {
-            if (world.isRemote) result = true;
-            else if (aiFlyWander != null) {
-                aiFlyWander.setDescending();
+            if (aiFlyWander != null && !world.isRemote) {
+                if (aiFlyWander.isDescending()) tryTeleportToOwner(); // Failing to descend, tp instead!
+                else aiFlyWander.setDescending();
                 result = true;
             }
+            else result = true;
         }
         else if (isSitting()) {
             setSit(false);
@@ -419,6 +428,33 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void spawnDrops(DamageSource src) {
         if (isSaddled()) entityDropItem(Items.SADDLE);
         super.spawnDrops(src);
+    }
+    
+    public void tryTeleportToOwner() {
+        LivingEntity owner = getOwner();
+        if (owner == null) return;
+        tryTeleportToPos(owner.getPosition().add(-2, 0, -2));
+    }
+    
+    public boolean tryTeleportToPos(BlockPos pos) {
+        AxisAlignedBB aabb = getBoundingBox();
+        double growX = aabb.maxX - aabb.minX;
+        double growY = aabb.maxY - aabb.minY;
+        double growZ = aabb.maxZ - aabb.minZ;
+        AxisAlignedBB potentialAABB = new AxisAlignedBB(pos).grow(growX, 0, growZ).expand(0, growY, 0);
+        
+        for(int i = 0; i <= 4; ++i) {
+            for(int l = 0; l <= 4; ++l) {
+                if ((i < 1 || l < 1 || i > 3 || l > 3) && ModUtils.isBoxSafe(potentialAABB, world) && (isFlying() || !world.getBlockState(pos.down()).isAir(world, pos))) {
+                    setPosition(pos.getX(), pos.getY(), pos.getZ());
+                    getNavigator().clearPath();
+                    
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     /**
