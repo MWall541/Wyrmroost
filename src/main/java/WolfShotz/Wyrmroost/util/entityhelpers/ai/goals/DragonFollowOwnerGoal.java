@@ -107,7 +107,7 @@ public class DragonFollowOwnerGoal extends Goal {
         
         if (dragon.isFlying()) {
             if (dragon.getDistanceSq(owner.getPositionVec().add(0, maxHeight, 0)) > (3d * (minDist * minDist)))
-                tryTeleport();
+                dragon.tryTeleportToPos(owner.getPosition().add(-2, maxHeight, -2));
             else {
                 double x = owner.posX + 0.5d;
                 double y = owner.posY + maxHeight;
@@ -115,41 +115,13 @@ public class DragonFollowOwnerGoal extends Goal {
                 dragon.getMoveHelper().setMoveTo(x, y, z, followSpeed);
                 dragon.getLookController().setLookPosition(x, y, z, 10f, dragon.getVerticalFaceSpeed());
             }
-        }
-        else {
+        } else {
             if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
-                tryTeleport();
+                dragon.tryTeleportToOwner();
             else {
                 navigator.tryMoveToEntityLiving(owner, followSpeed);
                 dragon.getLookController().setLookPositionWithEntity(owner, 10f, dragon.getVerticalFaceSpeed());
             }
         }
-    }
-    
-    public void tryTeleport() {
-        boolean isFlying = dragon.isFlying();
-        int x = MathHelper.floor(owner.posX) - (isFlying? 0 : 2);
-        int y = MathHelper.floor(isFlying? (owner.posY + maxHeight) : owner.getBoundingBox().minY);
-        int z = MathHelper.floor(owner.posZ) - (isFlying? 0 : 2);
-    
-        for(int l = 0; l <= 4; ++l) {
-            for(int i1 = 0; i1 <= 4; ++i1) {
-                if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && canTeleportToBlock(new BlockPos(x + l, y, z + i1))) {
-                    dragon.setPosition((double)((float)(x + l) + 0.5F), (double)y, (double)((float)(z + i1) + 0.5F));
-                    navigator.clearPath();
-                    return;
-                }
-            }
-        }
-    }
-    
-    public boolean canTeleportToBlock(BlockPos pos) {
-        AxisAlignedBB aabb = dragon.getBoundingBox();
-        double growX = aabb.maxX - aabb.minX;
-        double growY = aabb.maxY - aabb.minY;
-        double growZ = aabb.maxZ - aabb.minZ;
-        AxisAlignedBB potentialAABB = new AxisAlignedBB(pos).grow(growX, 0, growZ).expand(0, growY, 0);
-        
-        return ModUtils.isBoxSafe(potentialAABB, dragon.world) && (dragon.isFlying() || !world.getBlockState(pos.down()).isAir(world, pos));
     }
 }

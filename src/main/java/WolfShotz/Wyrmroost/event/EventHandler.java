@@ -47,8 +47,7 @@ public class EventHandler
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
     
-//                if (player instanceof ServerPlayerEntity) NetworkHooks.openGui((ServerPlayerEntity) player, (OWDrakeEntity) dragon, buf -> buf.writeInt(dragon.getEntityId()));
-                dragon.setGrowingAge(-24000);
+                if (player instanceof ServerPlayerEntity) NetworkHooks.openGui((ServerPlayerEntity) player, (OWDrakeEntity) dragon, buf -> buf.writeInt(dragon.getEntityId()));
             }
         }
     
@@ -72,8 +71,14 @@ public class EventHandler
             if (evt.getEntity() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) evt.getEntity();
                 
-                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
+                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance)) {
                     evt.setCanceled(true);
+                    return;
+                }
+                if (player.getRidingEntity() instanceof AbstractDragonEntity) { // Disable fall damage of players when riding dragons. this doesnt make any sense.
+                    evt.setCanceled(true);
+//                    return;
+                }
             }
         }
     }
