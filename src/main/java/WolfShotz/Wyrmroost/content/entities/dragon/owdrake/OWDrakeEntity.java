@@ -10,6 +10,7 @@ import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -74,7 +75,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         super(drake, world);
         
         hatchTimer = 18000;
-        
         moveController = new MovementController(this);
         
         SLEEP_ANIMATION = Animation.create(20);
@@ -248,7 +248,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         }
         
         // If Saddled and not sneaking, start riding
-        if (isSaddled() && !isChild() && !isInteractItem(stack) && hand == Hand.MAIN_HAND && !player.isSneaking() && (!isTamed() || isOwner(player))) {
+        if (isSaddled() && !isChild() && !ModUtils.isInteractItem(stack, this) && hand == Hand.MAIN_HAND && !player.isSneaking() && (!isTamed() || isOwner(player))) {
             if (isSleeping()) setSleeping(false);
             setSit(false);
             player.startRiding(this);

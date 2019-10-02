@@ -162,6 +162,7 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         if (!world.isRemote) {
             dragon.setPosition(posX, posY, posZ);
             dragon.setGrowingAge(-(dragon.hatchTimer * 2));
+            dragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
             world.addEntity(dragon);
         } else {
             for (int i = 0; i < getWidth() * 25; ++i) {

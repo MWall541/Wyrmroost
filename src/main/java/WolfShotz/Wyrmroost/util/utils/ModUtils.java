@@ -1,12 +1,16 @@
 package WolfShotz.Wyrmroost.util.utils;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.event.SetupItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -105,5 +109,16 @@ public class ModUtils
                     if (world.getBlockState(new BlockPos(x, y, z)).isSolid()) return false;
                     
         return true;
+    }
+    
+    /**
+     * Is the stack passed an item that is interactable with dragons?
+     */
+    public static boolean isInteractItem(ItemStack stack, AbstractDragonEntity entity) {
+        Item item = stack.getItem();
+        
+        return item == SetupItems.soulCrystal ||
+                       item == Items.NAME_TAG ||
+                       entity.isBreedingItem(stack);
     }
 }

@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
@@ -95,6 +94,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         goalSelector.addGoal(2, new SleepGoal(this));
     }
     
+    //TODO
+    public void switchPathController(boolean flying) {
+//        if (flying) navigator = new FlightPathNavigator(this, world);
+//        else navigator = new DragonGroundPathNavigator(this, world);
+    }
+    
+    /**
+     * Needed because the field is private >.>
+     */
+    @Override
+    protected BodyController createBodyController() { return new DragonBodyController(this); }
+    
     // ================================
     //           Entity NBT
     // ================================
@@ -147,12 +158,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isFlying() { return dataManager.get(FLYING); }
     public void setFlying(boolean fly) {
-        if (canFly() && fly) {
-            setSit(false);
-            setSleeping(false);
+        if (canFly() && fly && liftOff()) {
             dataManager.set(FLYING, true);
             switchPathController(true);
-            liftOff();
         } else {
             dataManager.set(FLYING, false);
             switchPathController(false);
@@ -209,6 +217,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         recalculateSize(); // Change the hitbox for sitting / sleeping
     }
     
+    /**
+     * Setter for dragon sitting
+     */
     public void setSit(boolean sitting) {
         if (isSitting() == sitting) return;
         
@@ -226,7 +237,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     *  Whether or not the dragonEntity is pissed or not.
+     * Whether or not the dragonEntity is pissed or not.
      */
     public boolean isAngry() { return (dataManager.get(TAMED) & 2) != 0; }
     public void setAngry(boolean angry) {
@@ -286,20 +297,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
     
-    public void switchPathController(boolean flying) {
-//        if (flying) navigator = new FlightPathNavigator(this, world);
-//        else navigator = new DragonGroundPathNavigator(this, world);
-    }
-    
-    /**
-     * Needed because the field is private >.>
-     */
-    @Override
-    protected BodyController createBodyController() { return new DragonBodyController(this); }
-    
-    @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) { return processInteract(player, hand, player.getHeldItem(hand)); }
-    
     /**
      * Called when the player interacts with this dragon
      * @param player - The player interacting
@@ -338,6 +335,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
         return false;
     }
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand) { return processInteract(player, hand, player.getHeldItem(hand)); }
     
     /**
      * Method called to "call" ur dragon.
@@ -540,17 +539,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * Is the stack passed an item that is interactable with dragons?
-     */
-    public boolean isInteractItem(ItemStack stack) {
-        Item item = stack.getItem();
-        
-        return item == SetupItems.soulCrystal ||
-                       item == Items.NAME_TAG ||
-                       isBreedingItem(stack);
-    }
-    
-    /**
      * Array Containing all of the dragons food items
      */
     protected abstract Item[] getFoodItems();
@@ -611,19 +599,26 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Whether or not the dragon can fly.
      * For ground entities, return false
      */
-    public boolean canFly() {
+    public boolean canFly() { return !isChild() && !getLeashed(); }
+    
+    @Override
+    protected float getJumpUpwardsMotion() { return canFly()? 1.2f : super.getJumpUpwardsMotion(); }
+    
+    public boolean liftOff() {
         for (int i = 1; i < (shouldFlyThreshold / 2.5f) + 1; ++i) {
             if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement())
                 return false;
         }
         
-        return !isChild() && !getLeashed();
+        if (canFly()) {
+            setSit(false);
+            setSleeping(false);
+            jump();
+            return true;
+        }
+        
+        return false;
     }
-    
-    @Override
-    protected float getJumpUpwardsMotion() { return canFly()? 1.2f : super.getJumpUpwardsMotion(); }
-    
-    public void liftOff() { if (canFly()) jump(); }
     
     @Override // Disable falling calculations if we can fly (fall damage etc.)
     public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }

@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.event.*;
 import WolfShotz.Wyrmroost.util.network.AnimationMessage;
-import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
 import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
+import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
     public static final ItemGroup CREATIVE_TAB = new CreativeTab();
-    
+
     public static final String NETWORK_CHANNEL = MOD_ID;
     private static final String CHANNEL_VER = "1.0";
     public static SimpleChannel network = NetworkRegistry.ChannelBuilder
@@ -34,7 +34,7 @@ public class Wyrmroost
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
     }
-    
+
     /**
      * FML Common Setup Event
      */
@@ -47,10 +47,10 @@ public class Wyrmroost
         network.registerMessage(++networkIndex, AnimationMessage.class, AnimationMessage::encode, AnimationMessage::new, AnimationMessage::handle);
         network.registerMessage(++networkIndex, DragonKeyBindMessage.class, DragonKeyBindMessage::encode, DragonKeyBindMessage::new, DragonKeyBindMessage::handle);
         network.registerMessage(++networkIndex, EntityMoveMessage.class, EntityMoveMessage::encode, EntityMoveMessage::new, EntityMoveMessage::handle);
-
+        
         ModUtils.L.debug("Fired FMLCommon Setup");
     }
-    
+
     /**
      * FML Client Setup Event
      */
@@ -63,7 +63,7 @@ public class Wyrmroost
 
         ModUtils.L.info("Fired FMLClientSetup");
     }
-    
+
     /**
      * Mod Creative Tab (iTeM gRoUp* rEEE)
      */

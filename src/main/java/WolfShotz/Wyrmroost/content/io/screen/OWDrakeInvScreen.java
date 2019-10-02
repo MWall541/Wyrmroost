@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.Random;
 
 public class OWDrakeInvScreen extends ContainerScreen<OWDrakeInvContainer>
 {
@@ -35,16 +36,27 @@ public class OWDrakeInvScreen extends ContainerScreen<OWDrakeInvContainer>
     
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        minecraft.textureManager.bindTexture(HEART);
-        blit(54, 57, 0, 0, 15, 15, 15, 15);
-        font.drawString(Integer.toString((int) Math.floor(drakeInv.dragon.getHealth() / 2)), 56, 62, 0xffffff);
-    
-        if (drakeInv.dragon.isSpecial()) {
-            GlStateManager.color3f(Color.ORANGE.getRed(), Color.ORANGE.getGreen(), Color.ORANGE.getBlue());
-            minecraft.textureManager.bindTexture(SPECIAL);
-            blit(8, 11, 0, 0, 10, 10, 10, 10);
-            GlStateManager.disableBlend();
+        int health = (int) Math.floor(drakeInv.dragon.getHealth() / 2);
+        boolean shake = health < drakeInv.dragon.getMaxHealth() / 5;
+        
+        if (shake) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translated(0, new Random().nextDouble() * 2d, 0);
         }
+            minecraft.textureManager.bindTexture(HEART);
+            blit(54, 57, 0, 0, 15, 15, 15, 15);
+            drawCenteredString(font, Integer.toString(health), 62, 62, 0xffffff);
+        
+        if (drakeInv.dragon.isSpecial()) {
+            GlStateManager.pushMatrix();
+            GlStateManager.color4f(1f, 0.65f, 0, 1);
+            minecraft.textureManager.bindTexture(new ResourceLocation("textures/particle/glitter_7.png"));
+            blit(6, 11, 0, 0, 10, 10, 10, 10);
+            GlStateManager.color4f(1f, 1f, 1f, 1f);
+            GlStateManager.popMatrix();
+        }
+        
+        if (shake) GlStateManager.popMatrix();
     }
     
     @Override

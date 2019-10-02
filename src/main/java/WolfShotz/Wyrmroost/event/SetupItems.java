@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.content.items.DragonEggItem;
 import WolfShotz.Wyrmroost.content.items.MinutusItem;
 import WolfShotz.Wyrmroost.content.items.SoulCrystalItem;
@@ -81,6 +82,12 @@ public class SetupItems
                 new MinutusItem(),
                 new DragonEggItem(),
                 new SoulCrystalItem(),
+                new DragonArmorItem("iron_dragonarmor", DragonArmorItem.DragonArmorType.IRON),
+                new DragonArmorItem("gold_dragonarmor", DragonArmorItem.DragonArmorType.GOLD),
+                new DragonArmorItem("diamond_dragonarmor", DragonArmorItem.DragonArmorType.DIAMOND),
+                new DragonArmorItem("platinum_dragonarmor", DragonArmorItem.DragonArmorType.PLATINUM),
+                new DragonArmorItem("geode_dragonarmor", DragonArmorItem.DragonArmorType.GEODE),
+
                 // Misc End
 
                 // Food Start
