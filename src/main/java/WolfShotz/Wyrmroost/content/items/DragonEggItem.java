@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.event.SetupEntities;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityType;
@@ -50,9 +51,14 @@ public class DragonEggItem extends Item
     
         DragonEggEntity eggEntity = new DragonEggEntity(SetupEntities.dragon_egg, world);
         BlockPos pos = ctx.getPos();
+        BlockPos offsetPos;
+        BlockState state = world.getBlockState(pos);
+    
+        if (state.getCollisionShape(world, pos).isEmpty()) offsetPos = pos;
+        else offsetPos = pos.offset(ctx.getFace());
         
         eggEntity.readAdditional(tag);
-        eggEntity.setPosition(pos.getX() + 0.5d, pos.getY() + 1, pos.getZ() + 0.5d);
+        eggEntity.setPosition(offsetPos.getX() + 0.5d, offsetPos.getY() + 1, offsetPos.getZ() + 0.5d);
         if (!world.isRemote) world.addEntity(eggEntity);
         if (!player.isCreative()) player.setHeldItem(ctx.getHand(), ItemStack.EMPTY);
         
