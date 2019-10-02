@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
+import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
@@ -79,7 +80,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
-        
     }
     
     @Override
@@ -337,16 +337,16 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     }
     
     @Override
+    public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
+    
+    @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (isArmored()) {
-        
-        }
+        if (isArmored()) amount *= getArmorTypeInInv().getDmgReduction();
         
         return super.attackEntityFrom(source, amount);
     }
     
-    @Override
-    public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
+    public DragonArmorItem.DragonArmorType getArmorTypeInInv() { return ((DragonArmorItem) drakeInv.getStackInSlot(2).getItem()).getType(); }
     
     @Override
     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn) {
@@ -409,9 +409,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     }
     
     @Override
-    public void performGenericAttack() {
-        setAnimation(HORN_ATTACK_ANIMATION);
-    }
+    public void performGenericAttack() { setAnimation(HORN_ATTACK_ANIMATION); }
     
     @Override
     protected boolean isMovementBlocked() { return super.isMovementBlocked() || getAnimation() == ROAR_ANIMATION; }

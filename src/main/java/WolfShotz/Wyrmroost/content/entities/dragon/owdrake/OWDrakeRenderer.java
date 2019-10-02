@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,23 +12,29 @@ import javax.annotation.Nullable;
 @OnlyIn(Dist.CLIENT)
 public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 {
-    private final String loc = DEF_LOC + "owdrake/";
-    private final ResourceLocation MALE_COM = ModUtils.location(loc + "male_com.png");
-    private final ResourceLocation FEMALE_COM = ModUtils.location(loc + "female_com.png");
-    private final ResourceLocation MALE_SAV = ModUtils.location(loc + "male_sav.png");
-    private final ResourceLocation FEMALE_SAV = ModUtils.location(loc + "female_sav.png");
-    private final ResourceLocation MALE_SPE = ModUtils.location(loc + "male_spe.png");
-    private final ResourceLocation FEMALE_SPE = ModUtils.location(loc + "female_spe.png");
-    private final ResourceLocation CHILD_COM = ModUtils.location(loc + "child_com.png");
-    private final ResourceLocation CHILD_SAV = ModUtils.location(loc + "child_sav.png");
-    private final ResourceLocation CHILD_SPE = ModUtils.location(loc + "child_spe.png");
+    public final ResourceLocation MALE_COM = location("male_com.png");
+    public final ResourceLocation FEMALE_COM = location("female_com.png");
+    public final ResourceLocation MALE_SAV = location("male_sav.png");
+    public final ResourceLocation FEMALE_SAV = location("female_sav.png");
+    public final ResourceLocation MALE_SPE = location("male_spe.png");
+    public final ResourceLocation FEMALE_SPE = location("female_spe.png");
+    public final ResourceLocation CHILD_COM = location("child_com.png");
+    public final ResourceLocation CHILD_SAV = location("child_sav.png");
+    public final ResourceLocation CHILD_SPE = location("child_spe.png");
     // Easter Egg
-    private final ResourceLocation DAISY = ModUtils.location(loc + "dasy.png");
+    public final ResourceLocation DAISY = location("dasy.png");
     // Saddle
-    private final ResourceLocation SADDLE_LAYER = ModUtils.location(loc + "saddle.png");
+    public final ResourceLocation SADDLE_LAYER = location("accessories/saddle.png");
+    // Armor
+    public final ResourceLocation ARMOR_IRON = location("accessories/armor_iron.png");
+    public final ResourceLocation ARMOR_GOLD = location("accessories/armor_gold.png");
+    public final ResourceLocation ARMOR_DIAMOND = location("accessories/armor_diamond.png");
+    public final ResourceLocation ARMOR_PLATINUM = location("accessories/armor_platinum.png");
+    public final ResourceLocation ARMOR_GEODE = location("accessories/armor_geode.png");
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);
+        addLayer(new ConditionalLayer(this, d -> getArmorTexture(d.getArmorTypeInInv()), OWDrakeEntity::isArmored));
         addLayer(new ConditionalLayer(this, SADDLE_LAYER, OWDrakeEntity::isSaddled));
     }
 
@@ -49,4 +55,18 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
         if (isSavannah) return gender? MALE_SAV : FEMALE_SAV;
         return gender? MALE_COM : FEMALE_COM;
     }
+    
+    private ResourceLocation getArmorTexture(DragonArmorItem.DragonArmorType type) {
+        switch (type) {
+            default:
+            case IRON:      return ARMOR_IRON;
+            case GOLD:      return ARMOR_GOLD;
+            case DIAMOND:   return ARMOR_DIAMOND;
+            case PLATINUM:  return ARMOR_PLATINUM;
+            case GEODE:     return ARMOR_GEODE;
+        }
+    }
+    
+    @Override
+    public String getResourceDirectory() { return DEF_LOC + "owdrake/"; }
 }

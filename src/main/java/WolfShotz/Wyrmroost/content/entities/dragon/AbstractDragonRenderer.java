@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -19,8 +21,8 @@ import static org.lwjgl.opengl.GL11.GL_ONE;
 
 public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> extends MobRenderer<T, EntityModel<T>>
 {
-    protected static final String DEF_LOC = "textures/entity/dragon/";
-    protected boolean isChristmas = false;
+    public static final String DEF_LOC = "textures/entity/dragon/";
+    public boolean isChristmas = false;
 
     public AbstractDragonRenderer(EntityRendererManager manager, EntityModel<T> model, float shadowSize) {
         super(manager, model, shadowSize);
@@ -29,6 +31,10 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
     }
+    
+    public abstract String getResourceDirectory();
+    
+    public ResourceLocation location(String png) { return ModUtils.location(getResourceDirectory() + png); }
     
     // =================
     //   Render Layers
@@ -40,10 +46,10 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     public abstract class AbstractLayerRenderer extends LayerRenderer<T, EntityModel<T>>
     {
         public AbstractLayerRenderer(IEntityRenderer<T, EntityModel<T>> entityIn) { super(entityIn); }
-    
+        
         @Override // Override to deobfuscate params
         public abstract void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale);
-    
+        
         @Override
         public boolean shouldCombineTextures() { return false; }
     }
@@ -96,6 +102,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     {
         private ResourceLocation loc;
         private Predicate<T> conditions;
+        private Function<T, ResourceLocation> func;
         
         public ConditionalLayer(IEntityRenderer<T, EntityModel<T>> entityIn, ResourceLocation locIn, Predicate<T> conditions) {
             super(entityIn);
@@ -103,12 +110,19 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
             this.conditions = conditions;
         }
     
+        public ConditionalLayer(IEntityRenderer<T, EntityModel<T>> entityIn, Function<T, ResourceLocation> funcIn, Predicate<T> conditions) {
+            super(entityIn);
+            this.func = funcIn;
+            this.conditions = conditions;
+        }
+    
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            if (conditions.test(entity)) {
-                bindTexture(loc);
-                getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-            }
+            if (!conditions.test(entity)) return;
+            if (func != null) loc = func.apply(entity);
+            
+            bindTexture(loc);
+            getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         }
     }
     

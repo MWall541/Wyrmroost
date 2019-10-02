@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -19,13 +18,12 @@ import javax.annotation.Nullable;
 @SuppressWarnings("deprecation")
 public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity>
 {
-    private final String loc = DEF_LOC + "rooststalker/";
-    private final ResourceLocation BODY = ModUtils.location(loc + "body.png");
-    private final ResourceLocation BODY_SPE = ModUtils.location(loc + "body_spe.png");
-    private final ResourceLocation BODY_XMAS = ModUtils.location(loc + "body_christmas.png");
-    private final ResourceLocation BODY_GLOW = ModUtils.location(loc + "body_glow.png");
-    private final ResourceLocation BODY_SPE_GLOW = ModUtils.location(loc + "body_spe_glow.png");
-    private final ResourceLocation SLEEP = ModUtils.location(loc + "sleep.png");
+    private final ResourceLocation BODY = location("body.png");
+    private final ResourceLocation BODY_SPE = location("body_spe.png");
+    private final ResourceLocation BODY_XMAS = location("body_christmas.png");
+    private final ResourceLocation BODY_GLOW = location("body_glow.png");
+    private final ResourceLocation BODY_SPE_GLOW = location("body_spe_glow.png");
+    private final ResourceLocation SLEEP = location("sleep.png");
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
@@ -36,10 +34,13 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(RoostStalkerEntity stalker) {
+    protected ResourceLocation getEntityTexture(RoostStalkerEntity entity) {
         if (isChristmas) return BODY_XMAS;
-        return stalker.isSpecial()? BODY_SPE : BODY;
+        return entity.isSpecial()? BODY_SPE : BODY;
     }
+    
+    @Override
+    public String getResourceDirectory() { return DEF_LOC + "rooststalker/"; }
     
     class ItemStackRenderer extends AbstractLayerRenderer
     {
@@ -71,11 +72,6 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
                 
                 GlStateManager.popMatrix();
             }
-        }
-        
-        @Override
-        public boolean shouldCombineTextures() {
-            return false;
         }
     }
 }
