@@ -57,7 +57,7 @@ public class SetupEntities
      */
     private static void registerEntityWorldSpawns() {
         registerSpawning(overworld_drake, 8, 1, 3, getDrakeBiomes());
-        registerSpawning(minutus, 35, 1, 1, BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY));
+        registerSpawning(minutus, 35, 1, 1, getMinutusBiomes());
         registerSpawning(silver_glider, 2, 2, 5, getSilverGliderBiomes());
         registerSpawning(roost_stalker, 9, 3, 18, getStalkerBiomes());
         EntitySpawnPlacementRegistry.register(silver_glider, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);

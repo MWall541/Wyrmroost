@@ -73,6 +73,13 @@ public class SetupItems
     @ObjectHolder(ID + "silverglider_egg")      public static Item eggSilverGlider;
     @ObjectHolder(ID + "rooststalker_egg")      public static Item eggRoostStalker;
     // Spawn Eggs end
+    
+    // Dragon Armor Start
+    @ObjectHolder(ID + "iron_dragonarmor")      public static Item dragonarmor_iron;
+    @ObjectHolder(ID + "gold_dragonarmor")      public static Item dragonarmor_gold;
+    @ObjectHolder(ID + "diamond_dragonarmor")   public static Item dragonarmor_diamond;
+    @ObjectHolder(ID + "platinum_dragonarmor")  public static Item dragonarmor_platinum;
+    @ObjectHolder(ID + "geode_dragonarmor")     public static Item dragonarmor_geode;
 
     @SubscribeEvent
     public static void itemSetup(RegistryEvent.Register<Item> event) {

@@ -2,7 +2,9 @@ package WolfShotz.Wyrmroost.content.io.container;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
+import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.event.SetupItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
@@ -43,7 +45,7 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         });
     
         addSlot(new Slot(drake.drakeInv, 2, 75, 50) { // Armor
-            Predicate<Item> isArmor = HorseArmorItem.class::isInstance;
+            Predicate<Item> isArmor = DragonArmorItem.class::isInstance;
             
             @Override public boolean isItemValid(ItemStack stack) { return isArmor.test(stack.getItem()); }
         

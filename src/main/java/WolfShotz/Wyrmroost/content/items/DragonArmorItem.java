@@ -34,8 +34,20 @@ public class DragonArmorItem extends Item
     
     public DragonArmorType getType() { return type; }
     
+    public float getDmgReduction() { return type.getDmgReduction(); }
+    
     public enum DragonArmorType
     {
-        IRON, GOLD, DIAMOND, PLATINUM, GEODE
+        IRON(0.8f),
+        GOLD(0.87f),
+        DIAMOND(0.75f),
+        PLATINUM(0.78f),
+        GEODE(0.68f);
+        
+        private float dmgReduction;
+        
+        DragonArmorType(float dmgReduction) { this.dmgReduction = dmgReduction; }
+    
+        public float getDmgReduction() { return dmgReduction; }
     }
 }
