@@ -39,7 +39,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
-import org.apache.commons.lang3.ObjectUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -144,7 +143,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Gets the Gender of the dragonEntity. <P>
      * true = Male | false = Female. Anything else is an abomination.
      */
-    public boolean getGender() { return dataManager.get(GENDER); }
+    public boolean getGender() {
+        try { return dataManager.get(GENDER); }
+        catch (NullPointerException ignore) {}
+        return true;
+    }
     public void setGender(boolean sex) { dataManager.set(GENDER, sex); }
     
     /**
@@ -171,7 +174,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Whether or not the dragon is saddled
      */
-    public boolean isSaddled() { return dataManager.get(SADDLED); }
+    public boolean isSaddled() {
+        try { return dataManager.get(SADDLED); }
+        catch (NullPointerException ignore) {}
+        return false;
+    }
     public void setSaddled(boolean saddled) {
         if (isSaddled() == saddled) return;
         dataManager.set(SADDLED, saddled);
@@ -181,7 +188,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Get the variant of the dragon (if it has them)
      */
-    public int getVariant() { return dataManager.get(VARIANT); }
+    public int getVariant() {
+        try { return dataManager.get(VARIANT); }
+        catch (NullPointerException ignore) {}
+        return 0;
+    }
     public void setVariant(int variant) {
         if (getVariant() == variant) return;
         dataManager.set(VARIANT, variant);
@@ -190,7 +201,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Whether or not the dragon is armored
      */
-    public boolean isArmored() { return dataManager.get(ARMORED); }
+    public boolean isArmored() {
+        try { return dataManager.get(ARMORED); }
+        catch (NullPointerException ignore) {}
+        return false;
+    }
     public void setArmored(boolean armored) {
         if (isArmored() == armored) return;
         dataManager.set(ARMORED, armored);
@@ -296,15 +311,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @param stack - the itemstack used when interacted
      */
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
-        if (isSleeping() && hand == Hand.MAIN_HAND) {
-            setSleeping(false);
-            
-            return true;
-        }
-        
         if (stack.getItem() == Items.NAME_TAG) {
             stack.interactWithEntity(player, this, hand);
             
+            return true;
+        }
+    
+        if (isSleeping() && hand == Hand.MAIN_HAND) {
+            setSleeping(false);
+        
             return true;
         }
         
@@ -423,9 +438,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     protected void spawnDrops(DamageSource src) {
-        try { if (isSaddled()) entityDropItem(Items.SADDLE); }
-        catch (NullPointerException ignored) {}
-        
+        if (isSaddled()) entityDropItem(Items.SADDLE);
         super.spawnDrops(src);
     }
     
