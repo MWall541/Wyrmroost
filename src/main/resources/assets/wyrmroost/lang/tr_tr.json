@@ -1,0 +1,65 @@
+{
+  "itemGroup.wyrmroost": "Wyrmroost",
+  
+  "_comment": "Controls",
+  "keyCategory.wyrmroost": "Wyrmroost Kontrolleri",
+  "key.callDragon": "Ejderha Çağır",
+  "key.genericAttack": "Ejderha ile Saldır",
+  
+  "_comment": "Entities",
+  "entity.wyrmroost.overworld_drake": "Sade Ejderha",
+  "entity.wyrmroost.silver_glider": "Süzülen Gümüş Ejderha",
+  "entity.wyrmroost.roost_stalker": "Rooststalker",
+  "entity.wyrmroost.minutus": "Küçük Çöl Ejderi",
+  
+  "_comment": "Spawn Eggs",
+  "item.wyrmroost.drake_egg": "Sade Ejderha Çağırma Yumurtası",
+  "item.wyrmroost.minutus_egg": "Küçük Çöl Ejderi Çağırma Yumurtası",
+  "item.wyrmroost.silverglider_egg": "Süzülen Gümüş Ejderha Çağırma Yumurtası",
+  "item.wyrmroost.rooststalker_egg": "Rooststalker Çağırma Yumurtası",
+  
+  "_comment": "Geode Items",
+  "item.wyrmroost.geode": "Jeot Taşı",
+  "block.wyrmroost.geode_ore": "Jeot Cevheri",
+  "block.wyrmroost.geode_block": "Jeot Bloğu",
+  "item.wyrmroost.geode_pick": "Jeot Kazma",
+  "item.wyrmroost.geode_axe": "Jeot Balta",
+  "item.wyrmroost.geode_shovel": "Jeot Kürek",
+  "item.wyrmroost.geode_sword": "Jeot Kılıç",
+  "item.wyrmroost.geode_helmet": "Jeot Kask",
+  "item.wyrmroost.geode_chestplate": "Jeot Göğüslük",
+  "item.wyrmroost.geode_leggings": "Jeot Pantolon",
+  "item.wyrmroost.geode_boots": "Jeot Bot",
+  
+  "_comment": "Platinum Items",
+  "item.wyrmroost.platinum_ingot": "Platinyum Külçesi",
+  "block.wyrmroost.platinum_ore": "Platinyum Cevheri",
+  "block.wyrmroost.platinum_block": "Platinyum Bloğu",
+  "item.wyrmroost.platinum_pick": "Platinyum Kazma",
+  "item.wyrmroost.platinum_axe": "Platinyum Balta",
+  "item.wyrmroost.platinum_shovel": "Platinyum Kürek",
+  "item.wyrmroost.platinum_sword": "Platinyum Kılıç",
+  "item.wyrmroost.platinum_helmet": "Platinyum Kask",
+  "item.wyrmroost.platinum_chestplate": "Platinyum Göğüslük",
+  "item.wyrmroost.platinum_leggings": "Platinyum Pantolon",
+  "item.wyrmroost.platinum_boots": "Platinyum Bot",
+  
+  "_comment": "Food Items",
+  "item.wyrmroost.jewelled_apple": "Mücevher Kaplı Elma",
+  "item.wyrmroost.dragon_fruit": "Ejderha Meyvesi",
+  "item.wyrmroost.minutus": "Küçük Çöl Ejderi",
+  "item.wyrmroost.cooked_minutus": "Pişmiş Çöl Ejderi",
+  "item.wyrmroost.drake_meat_raw": "Çiğ Ejderha Eti",
+  "item.wyrmroost.drake_meat_cooked": "Pişmiş Ejderha Eti",
+  
+  "_comment": "Misc Items",
+  "item.wyrmroost.tarragon_tome": "Büyük Tarhun Kitabı",
+  "item.wyrmroost.tarragon_tome.tooltip": "Yazar : ",
+  
+  "item.wyrmroost.dragon_egg": "Ejderha Yumurtası",
+  "item.wyrmroost.egg.tooltip": "%s dakika içerisinde yumurta çatlayacak!",
+  "item.wyrmroost.egg.creativetooltip": "Yaratıcı moddasın: Sağdaki Shift tuşuna basarak farklı ejderha tipleri arasında geçiş yapabilirsin.",
+  
+  "item.wyrmroost.soul_crystal": "Ejderha ruhu kristali",
+  "item.wyrmroost.soul_crystal.jeidesc": "Jeotların gizemli özellikleri ile dolduruldu. Bu taş sana emanet edilen ejderhaların ruhunu içerebilir. Bir ejderhanın ruhu sizi %s'e götürebilir..."
+}
