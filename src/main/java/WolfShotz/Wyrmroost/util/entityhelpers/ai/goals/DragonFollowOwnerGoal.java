@@ -50,6 +50,8 @@ public class DragonFollowOwnerGoal extends Goal {
      * Returns whether the EntityAIBase should begin execution.
      */
     public boolean shouldExecute() {
+        if (dragon.isSleeping()) return false;
+        
         LivingEntity preOwner = dragon.getOwner();
         
         if (dragon.isSitting() || preOwner == null || (preOwner instanceof PlayerEntity && preOwner.isSpectator()))

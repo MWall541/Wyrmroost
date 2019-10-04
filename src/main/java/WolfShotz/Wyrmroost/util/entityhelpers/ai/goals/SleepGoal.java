@@ -2,24 +2,24 @@ package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.World;
 
 import java.util.EnumSet;
+import java.util.Random;
 
-/**
- * Sleep Goal
- * Created by WolfShotz - 8/18/19
- *
- * Sole purpose of this goal is to completely override/stop any other goal from executing. Thus the mutex flags. NOT to put it asleep.
- * That should be handled in the entity class itself. <P>
- * A sleeping creature should act like its asleep.
- */
 public class SleepGoal extends Goal
 {
     private AbstractDragonEntity dragon;
+    private int sleepTimeout;
+    private final boolean NOCTURNAL;
+    private final Random RANDOM = new Random();
+    private final World WORLD;
     
-    public SleepGoal(AbstractDragonEntity dragon) {
+    public SleepGoal(AbstractDragonEntity dragon, boolean nocturnal) {
         this.dragon = dragon;
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP, Flag.TARGET));
+        this.NOCTURNAL = nocturnal;
+        this.WORLD = dragon.world;
     }
     
     /**
@@ -27,11 +27,25 @@ public class SleepGoal extends Goal
      */
     @Override
     public boolean shouldExecute() {
-        if (dragon.isInWaterOrBubbleColumn() || dragon.isFlying() || !dragon.onGround)
-            return false;
-        return dragon.isSleeping();
+        if (--sleepTimeout > 0) return false;
+        if (dragon.isInWaterOrBubbleColumn() || dragon.isFlying()) return false;
+        return NOCTURNAL == WORLD.isDaytime() && (!dragon.isTamed() || dragon.isSitting()) && RANDOM.nextInt(300) == 0;
     }
     
     @Override
-    public void resetTask() { dragon.setSleeping(false); }
+    public boolean shouldContinueExecuting() {
+        if (WORLD.isDaytime() && dragon.isSleeping() && RANDOM.nextInt(150) != 0) return false; // Stop sleeping at daytime
+        if ((dragon.isTamed() && dragon.isSitting()) || dragon.isBeingRidden()) return false; // lol sleep while being ridden. Snorlax intensifies
+        if (dragon.getAttackTarget() != null || !dragon.getNavigator().noPath() || dragon.isAngry()) return false; // Check ai shtuffs. Shouldnt sleep when were angry
+        return !dragon.isInWaterOrBubbleColumn() && !dragon.isFlying(); // Check actually reasonable things (imagine sleeping while flying)
+    }
+    
+    @Override
+    public void startExecuting() { dragon.setSleeping(true); }
+    
+    @Override
+    public void resetTask() {
+        sleepTimeout = 350;
+        dragon.setSleeping(false);
+    }
 }

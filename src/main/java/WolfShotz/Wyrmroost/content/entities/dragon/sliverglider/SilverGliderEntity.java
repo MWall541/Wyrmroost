@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -70,10 +71,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
-//        goalSelector.addGoal(8, new OrbitFlightGoal(this));
         goalSelector.addGoal(8, aiFlyWander = new FlightWanderGoal(this, 1500, 1));
-        goalSelector.addGoal(9, new WanderGoal(this, 1d));
-        goalSelector.addGoal(10, new WatchGoal(this, LivingEntity.class, 10f));
+        goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
     }
     

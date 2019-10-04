@@ -9,7 +9,6 @@ import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.WatchGoal;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -89,15 +88,13 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
         goalSelector.addGoal(6, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
-        goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d));
-        goalSelector.addGoal(12, new WatchGoal(this, LivingEntity.class, 10f));
-        goalSelector.addGoal(12, new LookRandomlyGoal(this));
+        goalSelector.addGoal(11, new WaterAvoidingRandomWalkingGoal(this, 1d) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
+        goalSelector.addGoal(12, new LookAtGoal(this, LivingEntity.class, 10f) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
+        goalSelector.addGoal(12, new LookRandomlyGoal(this) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this) {
-            @Override public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
-        });
+        targetSelector.addGoal(3, new HurtByTargetGoal(this) {@Override public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }});
         targetSelector.addGoal(4, new DrakeTargetGoal(this));
     }
 
@@ -249,7 +246,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
         // If Saddled and not sneaking, start riding
         if (isSaddled() && !isChild() && !ModUtils.isInteractItem(stack, this) && hand == Hand.MAIN_HAND && !player.isSneaking() && (!isTamed() || isOwner(player))) {
-            if (isSleeping()) setSleeping(false);
             setSit(false);
             player.startRiding(this);
         

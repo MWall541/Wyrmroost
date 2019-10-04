@@ -26,6 +26,7 @@ public class FlightWanderGoal extends WaterAvoidingRandomWalkingGoal
     
     @Override
     public boolean shouldExecute() {
+        if (dragon.isSleeping()) return false;
         if (!dragon.getPassengers().isEmpty()) return false;
         if (dragon.isFlying()) return true;
         return super.shouldExecute();
