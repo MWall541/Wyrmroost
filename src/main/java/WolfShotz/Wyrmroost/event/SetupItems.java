@@ -33,6 +33,8 @@ public class SetupItems
     
     // Geode start
     @ObjectHolder(ID + "geode")                 public static Item geode;
+    @ObjectHolder(ID + "geode_red")             public static Item geode_red;
+    @ObjectHolder(ID + "geide_purple")          public static Item geode_purple;
 
     @ObjectHolder(ID + "geode_sword")           public static Item geodeSword;
     @ObjectHolder(ID + "geode_pick")            public static Item geodePick;
@@ -114,6 +116,8 @@ public class SetupItems
 
                 // Geode start
                 new Item(ModUtils.itemBuilder()).setRegistryName("geode"),
+                new Item(ModUtils.itemBuilder()).setRegistryName("geode_red"),
+                new Item(ModUtils.itemBuilder()).setRegistryName("geode_purple"),
                 new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("geode_sword"),
                 new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
                 new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
@@ -122,6 +126,22 @@ public class SetupItems
                 new ItemArmorBase("geode_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
                 new ItemArmorBase("geode_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
                 new ItemArmorBase("geode_boots", ArmorMaterialList.GEODE, EquipmentSlotType.FEET),
+                new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("geode_red_sword"),
+                new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_red_pick"),
+                new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_red_axe"),
+                new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_red_shovel"),
+                new ItemArmorBase("geode_red_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
+                new ItemArmorBase("geode_red_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
+                new ItemArmorBase("geode_red_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
+                new ItemArmorBase("geode_red_boots", ArmorMaterialList.GEODE, EquipmentSlotType.FEET),
+                new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()).setRegistryName("geode_purple_sword"),
+                new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_purple_pick"),
+                new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_purple_axe"),
+                new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_purple_shovel"),
+                new ItemArmorBase("geode_purple_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
+                new ItemArmorBase("geode_purple_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
+                new ItemArmorBase("geode_purple_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
+                new ItemArmorBase("geode_purple_boots", ArmorMaterialList.GEODE, EquipmentSlotType.FEET),
                 // Geode End
 
                 // Platinum Start
