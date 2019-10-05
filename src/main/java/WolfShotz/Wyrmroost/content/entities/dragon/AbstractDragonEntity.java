@@ -318,7 +318,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return true;
         }
     
-        if (isSleeping() && hand == Hand.MAIN_HAND) {
+        if (isSleeping()) {
             setSleeping(false);
         
             return true;
@@ -362,7 +362,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean callDragon(PlayerEntity player) {
         boolean result = false;
         if (isFlying()) {
-            moveController.setMoveTo(player.posX - rand.nextInt(3), player.posY, player.posZ - rand.nextInt(3), getAttribute(FLYING_SPEED).getBaseValue());
+            moveController.setMoveTo(player.posX - rand.nextInt(3), Math.ceil(player.posY), player.posZ - rand.nextInt(3), getAttribute(FLYING_SPEED).getBaseValue());
             result = true;
         }
         else if (isSitting()) {

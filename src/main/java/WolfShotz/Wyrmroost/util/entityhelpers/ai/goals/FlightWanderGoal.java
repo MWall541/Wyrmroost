@@ -34,18 +34,17 @@ public class FlightWanderGoal extends Goal
         MovementController moveController = dragon.getMoveHelper();
         double euclid = MathUtils.getSpaceDistSq(dragon.posX, moveController.getX(), dragon.posY, moveController.getY(), dragon.posZ, moveController.getZ());
         
-        return euclid < 1 || euclid > Double.MAX_VALUE;
+        return euclid < 1 || euclid > 3068d;
     }
     
     @Override
     public void startExecuting() {
-        Random rand = new Random();
+        Random rand = dragon.getRNG();
         
-        double x = dragon.posX + (double)((rand.nextFloat() * 2.0F - 1.0F) * 24.0F);
-        double y = dragon.posY + (double)((rand.nextFloat() * 2.0F - 1.0F) * 16.0F);
-        double z = dragon.posZ + (double)((rand.nextFloat() * 2.0F - 1.0F) * 24.0F);
+        double x = dragon.posX + MathUtils.nextPseudoDouble(rand) * 24d;
+        double y = dragon.posY + -MathUtils.nextPseudoDouble(rand) * 16.0F;
+        double z = dragon.posZ + MathUtils.nextPseudoDouble(rand) * 24.0F;
         dragon.getMoveHelper().setMoveTo(x, y, z, dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
-        dragon.getLookController().setLookPosition(x, y, z, 30, 30);
     }
     
     @Override

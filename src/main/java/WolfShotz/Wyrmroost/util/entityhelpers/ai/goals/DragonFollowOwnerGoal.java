@@ -115,14 +115,12 @@ public class DragonFollowOwnerGoal extends Goal {
                 double y = owner.posY + maxHeight;
                 double z = owner.posZ + 0.5d;
                 dragon.getMoveHelper().setMoveTo(x, y, z, followSpeed);
-                dragon.getLookController().setLookPosition(x, y, z, 10f, dragon.getVerticalFaceSpeed());
             }
         } else {
             if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
                 dragon.tryTeleportToOwner();
             else {
                 navigator.tryMoveToEntityLiving(owner, followSpeed);
-                dragon.getLookController().setLookPositionWithEntity(owner, 10f, dragon.getVerticalFaceSpeed());
             }
         }
     }
