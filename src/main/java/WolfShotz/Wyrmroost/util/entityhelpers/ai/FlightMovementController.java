@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -15,6 +16,7 @@ import net.minecraft.util.math.MathHelper;
 public class FlightMovementController extends MovementController
 {
     private AbstractDragonEntity dragon;
+    private int courseCooldown;
 
     public FlightMovementController(AbstractDragonEntity entity) {
         super(entity);
@@ -26,42 +28,41 @@ public class FlightMovementController extends MovementController
         // Handle Vanilla movement if not flying
         if (!dragon.isFlying()) {
             super.tick();
-            mob.setNoGravity(false);
             return;
         }
-        
-        mob.setNoGravity(true);
         
         if (action == Action.MOVE_TO) {
             double x = posX - mob.posX;
             double y = posY - mob.posY;
             double z = posZ - mob.posZ;
             double euclid = MathHelper.sqrt(MathUtils.getSpaceDistSq(mob.posX, posX, mob.posY, posY, mob.posZ, posZ));
-            double lookAngle = (double) MathHelper.sqrt(x * x + z * z);
-            float lookDir = MathUtils.toDegrees((float) MathHelper.atan2(x, z)) - 90f;
-            float moveSpeed;
-            float lookPitch = -MathUtils.toDegrees((float) MathHelper.atan2(y, lookAngle));
-    
+            
             if (euclid < (double)2.5000003E-7F) { // Too small of a move target, dont move
-                mob.setMoveVertical(0.0F);
-                mob.setMoveForward(0.0F);
-                
+                action = Action.WAIT;
                 return;
             }
-
-            if (mob.onGround) moveSpeed = (float)(speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()); // May not be needed... unsure, so do it anyway.
-            else moveSpeed = (float) (speed * mob.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
             
-            mob.setAIMoveSpeed(moveSpeed);
-            mob.setMoveVertical(y > 0.1d? moveSpeed : -moveSpeed);
-
-            mob.rotationPitch = limitAngle(mob.rotationPitch, lookPitch, 10.0F);
-            mob.rotationYaw = limitAngle(mob.rotationYaw, lookDir, 10.0F);
-    
-            action = Action.WAIT;
-        } else {
-            mob.setMoveVertical(0.0F);
-            mob.setMoveForward(0.0F);
+            if (isNotColliding(posX, posY, posZ, euclid)) {
+                mob.addVelocity(x / euclid * 0.1d, y / euclid * 0.1d, z / euclid * 0.1d);
+                courseCooldown = dragon.getRNG().nextInt(5) + 2;
+            }
+            else action = Action.WAIT;
         }
+    }
+    
+    /**
+     * Checks if entity bounding box is not colliding with terrain
+     */
+    private boolean isNotColliding(double x, double y, double z, double offset)
+    {
+        double x1 = (x - mob.posX) / offset;
+        double y1 = (y - mob.posY) / offset;
+        double z1 = (z - mob.posZ) / offset;
+        AxisAlignedBB axisalignedbb = mob.getBoundingBox();
+        
+        for (int i = 1; (double) i < offset; ++i)
+            if (mob.world.checkBlockCollision(axisalignedbb.offset(x1, y1, z1))) return false;
+        
+        return true;
     }
 }

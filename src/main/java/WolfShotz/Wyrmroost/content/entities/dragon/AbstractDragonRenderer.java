@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -81,11 +80,11 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
             GlStateManager.depthMask(!entity.isInvisible());
             GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, 240, 240);
             GlStateManager.color4f(1f, 1f, 1f, 1f);
-    
             gamerenderer.setupFogColor(true);
+            
             getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+            
             gamerenderer.setupFogColor(false);
-    
             GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, (float) j, (float) k);
             // setLightMap(Entity)
             func_215334_a(entity);
@@ -100,9 +99,9 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
      */
     public class ConditionalLayer extends AbstractLayerRenderer
     {
-        private ResourceLocation loc;
-        private Predicate<T> conditions;
-        private Function<T, ResourceLocation> func;
+        public ResourceLocation loc;
+        public Predicate<T> conditions;
+        public Function<T, ResourceLocation> func;
         
         public ConditionalLayer(IEntityRenderer<T, EntityModel<T>> entityIn, ResourceLocation locIn, Predicate<T> conditions) {
             super(entityIn);
@@ -135,4 +134,26 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
             super(entityIn, locIn, AbstractDragonEntity::isSleeping);
         }
     }
+    
+//    public class DragonArmorLayer extends ConditionalLayer
+//    {
+//        private final ResourceLocation ENCHANTED_ITEM_GLINT_RES = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+//
+//        private Predicate<T> renderGlint;
+//
+//        public DragonArmorLayer(IEntityRenderer<T, EntityModel<T>> entityIn, Function<T, ResourceLocation> func, Predicate<T> renderGlint) {
+//            super(entityIn, func, T::isArmored);
+//            this.renderGlint = renderGlint;
+//        }
+//
+//        @Override
+//        public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+//            if (!conditions.test(entity)) return;
+//
+//            super.render(entity, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+//            if (renderGlint.test(entity))
+//                renderGlint(entity, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale);
+//
+//        }
+//    }
 }

@@ -46,6 +46,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
+
 /**
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
@@ -60,7 +62,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public final boolean nocturnal = false;
     public List<String> immunes = new ArrayList<>();
     public Random syncRand = new Random(6045323340150860495L); // Use a seed to sync between server and client
-    public FlightWanderGoal aiFlyWander;
     
     // Dragon Entity Animations
     public int animationTick;
@@ -361,12 +362,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean callDragon(PlayerEntity player) {
         boolean result = false;
         if (isFlying()) {
-            if (aiFlyWander != null && !world.isRemote) {
-                if (aiFlyWander.isDescending()) tryTeleportToOwner(); // Failing to descend, tp instead!
-                else aiFlyWander.setDescending();
-                result = true;
-            }
-            else result = true;
+            moveController.setMoveTo(player.posX - rand.nextInt(3), player.posY, player.posZ - rand.nextInt(3), getAttribute(FLYING_SPEED).getBaseValue());
+            result = true;
         }
         else if (isSitting()) {
             setSit(false);
@@ -417,7 +414,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (isSleeping()) setSleeping(false);
         if (isSitting()) setSit(false);
-        
+    
         return super.attackEntityFrom(source, amount);
     }
     
