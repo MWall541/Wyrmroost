@@ -14,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -71,9 +72,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
-        goalSelector.addGoal(8, aiFlyWander = new FlightWanderGoal(this, 1500, 1));
+        goalSelector.addGoal(8, new FlightWanderGoal(this));
+//        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1) {@Override public boolean shouldExecute() { return !isFlying() && super.shouldExecute(); }});
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
-        goalSelector.addGoal(11, new LookRandomlyGoal(this));
+        goalSelector.addGoal(11, new LookRandomlyGoal(this) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
     }
     
     // ================================
@@ -119,12 +121,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public int getSpecialChances() { return 500; }
     
     // ================================
-    
-    
-    @Override
-    public void livingTick() {
-        super.livingTick();
-    }
     
     @Override
     public void tick() {
@@ -255,10 +251,14 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     public boolean isRiding() { return getRidingEntity() != null; }
     
+    @Override
+    protected float getSoundVolume() { return 0.5f; }
+    
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() { return SetupSounds.SILVERGLIDER_IDLE; }
     
+
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) { return SetupSounds.SILVERGLIDER_HURT; }
