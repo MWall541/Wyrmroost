@@ -8,12 +8,10 @@ import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -46,12 +44,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public static final Animation SIT_ANIMATION = Animation.create(10);
     public static final Animation STAND_ANIMATION = Animation.create(10);
     public static final Animation TAKE_OFF_ANIMATION = Animation.create(10);
+    public static final Animation FLAP_ANIMATION = Animation.create(10);
     
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
         
         hatchTimer = 12000;
-        
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
     }
@@ -63,7 +61,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.257657d);
         getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.366836d);
     }
-
+    
     @Override
     protected void registerGoals() {
         super.registerGoals();
@@ -71,9 +69,26 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
-        goalSelector.addGoal(8, aiFlyWander = new FlightWanderGoal(this, 1500, 1));
+//        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1) {@Override public boolean shouldExecute() { return !isFlying() && super.shouldExecute(); }});
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
-        goalSelector.addGoal(11, new LookRandomlyGoal(this));
+        goalSelector.addGoal(11, new LookRandomlyGoal(this) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
+    
+        goalSelector.addGoal(8, new FlightWanderGoal(this) {
+            @Override
+            public void startExecuting() {
+                double x = posX + MathUtils.nextPseudoDouble(rand) * 24d;
+                double y = posY + MathUtils.nextPseudoDouble(rand) * 16d;
+                double z = posZ + MathUtils.nextPseudoDouble(rand) * 24.0F;
+                for (int i = 1; i < 6; i++) {
+                    if (world.getBlockState(getPosition().down(i)).getMaterial().isLiquid()) {
+                        y = Math.abs(y);
+                        break;
+                    }
+                }
+                moveController.setMoveTo(x, y, z, getAttribute(FLYING_SPEED).getValue());
+                lookController.setLookPosition(x, y, z, 30, 30);
+            }
+        });
     }
     
     // ================================
@@ -104,6 +119,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     @Override
     public void setFlying(boolean fly) {
+        if (isFlying() == fly) return;
         super.setFlying(fly);
     
         setAnimation(TAKE_OFF_ANIMATION);
@@ -124,6 +140,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public void livingTick() {
         super.livingTick();
+        
+        if (getAnimation() == FLAP_ANIMATION && getAnimationTick() == 0) setMotion(getMotion().add(0, 0.5d, 0));
     }
     
     @Override
@@ -255,10 +273,14 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     public boolean isRiding() { return getRidingEntity() != null; }
     
+    @Override
+    protected float getSoundVolume() { return 0.5f; }
+    
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() { return SetupSounds.SILVERGLIDER_IDLE; }
     
+
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) { return SetupSounds.SILVERGLIDER_HURT; }
@@ -286,6 +308,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     // == Entity Animation ==
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TAKE_OFF_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TAKE_OFF_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, FLAP_ANIMATION}; }
     // ==
 }

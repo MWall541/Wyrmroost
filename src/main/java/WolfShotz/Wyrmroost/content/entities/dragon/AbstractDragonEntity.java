@@ -45,6 +45,8 @@ import java.util.*;
 
 import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
 
+import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
+
 /**
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
@@ -323,7 +325,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return true;
         }
     
-        if (isSleeping() && hand == Hand.MAIN_HAND) {
+        if (isSleeping()) {
             setSleeping(false);
         
             return true;
@@ -419,7 +421,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (isSleeping()) setSleeping(false);
         if (isSitting()) setSit(false);
-        
+    
         return super.attackEntityFrom(source, amount);
     }
     

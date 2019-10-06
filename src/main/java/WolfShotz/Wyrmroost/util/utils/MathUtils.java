@@ -9,6 +9,7 @@ import net.minecraft.world.gen.Heightmap;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * Math utility class to make my life like way easier.
@@ -19,6 +20,11 @@ import java.util.Optional;
 public class MathUtils
 {
     public static final float PI = (float) Math.PI;
+    
+    /**
+     * Returns a new pseudo random double value constrained to the values of {@code (-1.0d)} and {@code (1.0d)}
+     */
+    public static double nextPseudoDouble(Random rand) { return 2 * rand.nextDouble() - 1; }
     
     /**
      * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max be

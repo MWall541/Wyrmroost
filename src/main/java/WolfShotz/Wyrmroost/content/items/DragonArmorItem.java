@@ -2,6 +2,9 @@ package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,6 +29,11 @@ public class DragonArmorItem extends Item
             case PLATINUM: return SetupItems.ArmorMaterialList.PLATINUM.getEnchantability();
             case BLUE_GEODE: return SetupItems.ArmorMaterialList.GEODE.getEnchantability();
         }
+    }
+    
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return enchantment == Enchantments.PROTECTION && enchantment.getMaxLevel() == 2;
     }
     
     @Override
