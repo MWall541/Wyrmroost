@@ -95,7 +95,7 @@ public class SetupItems
                 new DragonArmorItem("gold_dragonarmor", DragonArmorItem.DragonArmorType.GOLD),
                 new DragonArmorItem("diamond_dragonarmor", DragonArmorItem.DragonArmorType.DIAMOND),
                 new DragonArmorItem("platinum_dragonarmor", DragonArmorItem.DragonArmorType.PLATINUM),
-                new DragonArmorItem("geode_dragonarmor", DragonArmorItem.DragonArmorType.GEODE),
+                new DragonArmorItem("geode_dragonarmor", DragonArmorItem.DragonArmorType.BLUE_GEODE),
 
                 // Misc End
 

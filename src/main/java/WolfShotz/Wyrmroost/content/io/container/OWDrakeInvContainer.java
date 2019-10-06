@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
-import WolfShotz.Wyrmroost.event.SetupItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
@@ -49,7 +48,11 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
             
             @Override public boolean isItemValid(ItemStack stack) { return isArmor.test(stack.getItem()); }
         
-            @Override public void onSlotChanged() { dragon.setArmored(isArmor.test(getStack().getItem())); }
+            @Override public void onSlotChanged() {
+                DragonArmorItem item = (DragonArmorItem) getStack().getItem();
+                if (isArmor.test(item)) dragon.setArmor(item.getID());
+                else dragon.setArmor(-1);
+            }
         });
 
         buildSlotArea((index, posX, posY) -> new Slot(drake.drakeInv, index, posX, posY) {

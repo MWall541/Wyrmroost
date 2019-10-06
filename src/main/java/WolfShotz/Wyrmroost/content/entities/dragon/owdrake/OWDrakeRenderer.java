@@ -34,7 +34,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ConditionalLayer(this, d -> getArmorTexture(d.getArmorTypeInInv()), OWDrakeEntity::isArmored));
+        addLayer(new ConditionalLayer(this, d -> getArmorTexture(d.getArmor()), OWDrakeEntity::hasArmor));
         addLayer(new ConditionalLayer(this, SADDLE_LAYER, OWDrakeEntity::isSaddled));
     }
 
@@ -63,7 +63,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
             case GOLD:      return ARMOR_GOLD;
             case DIAMOND:   return ARMOR_DIAMOND;
             case PLATINUM:  return ARMOR_PLATINUM;
-            case GEODE:     return ARMOR_GEODE;
+            case BLUE_GEODE:     return ARMOR_GEODE;
         }
     }
     

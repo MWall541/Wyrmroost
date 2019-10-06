@@ -44,6 +44,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
+import java.util.OptionalInt;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -117,7 +118,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     protected void registerData() {
         super.registerData();
         dataManager.register(VARIANT_BOOL, false);
-        dataManager.register(ARMORED, false);
+        dataManager.register(ARMOR, OptionalInt.empty());
         dataManager.register(SADDLED, false);
         dataManager.register(HAS_CHEST, false);
     }
@@ -160,7 +161,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         setHasChest(!drakeInv.getStackInSlot(0).isEmpty());
         if (compound.getBoolean("saddled")) drakeInv.setInventorySlotContents(1, new ItemStack(Items.SADDLE, 1)); // Datafix
         setSaddled(!drakeInv.getStackInSlot(1).isEmpty());
-        setArmored(!drakeInv.getStackInSlot(2).isEmpty());
+        setArmor(getArmorIntInInv());
         
         super.readAdditional(compound);
     }
@@ -335,14 +336,11 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     @Override
     public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
     
-    @Override
-    public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (isArmored()) amount *= getArmorTypeInInv().getDmgReduction();
-        
-        return super.attackEntityFrom(source, amount);
+    public int getArmorIntInInv() {
+        ItemStack stack = drakeInv.getStackInSlot(2);
+        if (stack.isEmpty()) return -1;
+        return ((DragonArmorItem) stack.getItem()).getID();
     }
-    
-    public DragonArmorItem.DragonArmorType getArmorTypeInInv() { return ((DragonArmorItem) drakeInv.getStackInSlot(2).getItem()).getType(); }
     
     @Override
     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn) {

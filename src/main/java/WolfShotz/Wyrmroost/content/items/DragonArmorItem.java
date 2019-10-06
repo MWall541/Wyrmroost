@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 public class DragonArmorItem extends Item
 {
@@ -25,7 +24,7 @@ public class DragonArmorItem extends Item
             case GOLD: return ArmorMaterial.GOLD.getEnchantability();
             case DIAMOND: return ArmorMaterial.DIAMOND.getEnchantability();
             case PLATINUM: return SetupItems.ArmorMaterialList.PLATINUM.getEnchantability();
-            case GEODE: return SetupItems.ArmorMaterialList.GEODE.getEnchantability();
+            case BLUE_GEODE: return SetupItems.ArmorMaterialList.GEODE.getEnchantability();
         }
     }
     
@@ -34,20 +33,32 @@ public class DragonArmorItem extends Item
     
     public DragonArmorType getType() { return type; }
     
-    public float getDmgReduction() { return type.getDmgReduction(); }
+    public int getDmgReduction() { return type.getDmgReduction(); }
+    
+    public int getID() { return type.getId(); }
     
     public enum DragonArmorType
     {
-        IRON(0.8f),
-        GOLD(0.87f),
-        DIAMOND(0.75f),
-        PLATINUM(0.78f),
-        GEODE(0.68f);
+        IRON(0, 5),
+        GOLD(1, 7),
+        DIAMOND(2, 11),
+        PLATINUM(3, 6),
+        BLUE_GEODE(4, 11);
         
-        private float dmgReduction;
+        private int dmgReduction;
+        private int id;
         
-        DragonArmorType(float dmgReduction) { this.dmgReduction = dmgReduction; }
+        DragonArmorType(int id, int dmgReduction) {
+            this.dmgReduction = dmgReduction;
+            this.id = id;
+        }
     
-        public float getDmgReduction() { return dmgReduction; }
+        public int getDmgReduction() { return dmgReduction; }
+        public int getId()           { return id; }
+        
+        public static DragonArmorType getTypeByID(int id) {
+            for (DragonArmorType type : values()) if (type.id == id) return type;
+            return null;
+        }
     }
 }
