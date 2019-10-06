@@ -21,7 +21,7 @@ import java.util.Random;
 public class FlightMovementController extends MovementController
 {
     private AbstractDragonEntity dragon;
-    private int courseCooldown;
+    public int courseCooldown;
 
     public FlightMovementController(AbstractDragonEntity entity) {
         super(entity);
@@ -54,7 +54,7 @@ public class FlightMovementController extends MovementController
                 } else action = Action.WAIT;
             }
     
-            dragon.rotationYaw = -((float)MathHelper.atan2(dragon.getMotion().x, dragon.getMotion().z)) * (180F / (float)Math.PI);
+            dragon.rotationYaw = -((float) MathHelper.atan2(dragon.getMotion().x, dragon.getMotion().z)) * (180F / MathUtils.PI);
             dragon.renderYawOffset = dragon.rotationYaw;
             dragon.getLookController().setLookPosition(posX, posY, posZ, 30, 30);
             
