@@ -34,7 +34,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ConditionalLayer(this, d -> getArmorTexture(d.getArmor()), OWDrakeEntity::hasArmor));
+        addLayer(new ConditionalLayer(this, d -> getArmorTexture(d.getArmor(1)), d -> d.hasArmor(1)));
         addLayer(new ConditionalLayer(this, SADDLE_LAYER, OWDrakeEntity::isSaddled));
     }
 

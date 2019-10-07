@@ -42,6 +42,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.OptionalInt;
@@ -58,7 +59,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
-    public Inventory drakeInv = new Inventory(19);
+//    public Inventory drakeInv = new Inventory(19);
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION         = Animation.create(15);
@@ -77,6 +78,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
         hatchTimer = 18000;
         moveController = new MovementController(this);
+        inventory = new Inventory(19);
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
@@ -118,8 +120,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     protected void registerData() {
         super.registerData();
         dataManager.register(VARIANT_BOOL, false);
-        dataManager.register(ARMOR, OptionalInt.empty());
-        dataManager.register(SADDLED, false);
         dataManager.register(HAS_CHEST, false);
     }
 
@@ -127,21 +127,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     @Override
     public void writeAdditional(CompoundNBT compound) {
         compound.putBoolean("variant", getDrakeVariant());
-        if (!drakeInv.isEmpty()) {
-            ListNBT items = new ListNBT();
-            
-            for (int i = 0; i < 19; ++i) {
-                ItemStack stack = drakeInv.getStackInSlot(i);
-                if (!stack.isEmpty()) {
-                    CompoundNBT nbt = new CompoundNBT();
-                    nbt.putInt("slot", i);
-                    stack.write(nbt);
-                    items.add(nbt);
-                }
-            }
-            
-            compound.put("invitems", items);
-        }
         
         super.writeAdditional(compound);
     }
@@ -150,18 +135,9 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     @Override
     public void readAdditional(CompoundNBT compound) {
         setDrakeVariant(compound.getBoolean("variant"));
-        if (!compound.getList("invitems", 10).isEmpty()) {
-            ListNBT items = compound.getList("invitems", 10);
-            for (int i = 0; i < 19; ++i) {
-                CompoundNBT nbt = items.getCompound(i);
-                drakeInv.setInventorySlotContents(nbt.getInt("slot"), ItemStack.read(nbt));
-            }
-        }
     
-        setHasChest(!drakeInv.getStackInSlot(0).isEmpty());
-        if (compound.getBoolean("saddled")) drakeInv.setInventorySlotContents(1, new ItemStack(Items.SADDLE, 1)); // Datafix
-        setSaddled(!drakeInv.getStackInSlot(1).isEmpty());
-        setArmor(getArmorIntInInv());
+        setHasChest(!inventory.getStackInSlot(0).isEmpty());
+        if (compound.getBoolean("saddled")) inventory.setInventorySlotContents(1, new ItemStack(Items.SADDLE, 1)); // Datafix
         
         super.readAdditional(compound);
     }
@@ -238,9 +214,10 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
-            consumeItemFromStack(player, stack);
-            drakeInv.setInventorySlotContents(1, stack);
-            setSaddled(true);
+            getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(s -> {
+                s.insertItem(0, stack, false);
+                consumeItemFromStack(player, stack);
+            });
 
             return true;
         }
@@ -337,7 +314,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
     public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
     
     public int getArmorIntInInv() {
-        ItemStack stack = drakeInv.getStackInSlot(2);
+        ItemStack stack = inventory.getStackInSlot(2);
         if (stack.isEmpty()) return -1;
         return ((DragonArmorItem) stack.getItem()).getID();
     }
@@ -359,13 +336,6 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         if (ticksExisted % 2 == 0) playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1);
 
         super.playStepSound(pos, blockIn);
-    }
-    
-    @Override
-    protected void spawnDrops(DamageSource src) {
-        if (drakeInv.isEmpty()) return;
-        for (int i = 0; i < 19; ++i) entityDropItem(drakeInv.getStackInSlot(i));
-        
     }
     
     @Nullable

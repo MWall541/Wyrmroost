@@ -6,9 +6,15 @@ import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.*;
+import net.minecraft.util.SoundEvents;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
@@ -19,45 +25,31 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         
         buildPlayerSlots(playerInv, 7, 83);
         
-        addSlot(new Slot(drake.drakeInv, 0, 75, 16) { // Chest
-            @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() == Items.CHEST; }
+        dragon.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+            addSlot(buildSaddleSlot(h, 75, 34));
     
-            @Override public int getSlotStackLimit() { return 1; }
-    
-            @Override
-            public void onSlotChanged() { dragon.setHasChest(getStack().getItem() == Items.CHEST); }
-    
-            @Override
-            public boolean canTakeStack(PlayerEntity playerIn) {
-                for (int i = 3; i < 19; ++i)
-                    if (!drake.drakeInv.getStackInSlot(i).isEmpty()) return false;
-                return true;
-            }
-        });
-        
-        addSlot(new Slot(drake.drakeInv, 1, 75, 33) { // Saddle
-            @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() instanceof SaddleItem; }
-    
-            @Override public boolean isEnabled() { return !drake.isChild(); }
-    
-            @Override public void onSlotChanged() { dragon.setSaddled(getStack().getItem() instanceof SaddleItem); }
-        });
-    
-        addSlot(new Slot(drake.drakeInv, 2, 75, 50) { // Armor
-            Predicate<Item> isArmor = DragonArmorItem.class::isInstance;
+            addSlot(buildArmorSlot(h, 75, 52));
             
-            @Override public boolean isItemValid(ItemStack stack) { return isArmor.test(stack.getItem()); }
-        
-            @Override public void onSlotChanged() {
-                DragonArmorItem item = (DragonArmorItem) getStack().getItem();
-                if (isArmor.test(item)) dragon.setArmor(item.getID());
-                else dragon.setArmor(-1);
-            }
+            addSlot(new SlotItemHandler(h, 2, 75, 16) {
+                @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() == Items.CHEST; }
+    
+                @Override public int getSlotStackLimit() { return 1; }
+    
+                @Override
+                public void onSlotChanged() { dragon.setHasChest(getStack().getItem() == Items.CHEST); }
+    
+                @Override
+                public boolean canTakeStack(PlayerEntity playerIn) {
+                    for (int i = 3; i < 19; ++i)
+                        if (!drake.inventory.getStackInSlot(i).isEmpty()) return false;
+                    return true;
+                }
+            });
+            
+            buildSlotArea((index, posX, posY) -> new Slot(drake.inventory, index, posX, posY) {
+                @Override public boolean isEnabled() { return drake.hasChest(); }
+            }, 3, 97, 7, 4, 4);
         });
-
-        buildSlotArea((index, posX, posY) -> new Slot(drake.drakeInv, index, posX, posY) {
-            @Override public boolean isEnabled() { return drake.hasChest(); }
-        }, 3, 97, 7, 4, 4);
     }
     
     /**
@@ -90,6 +82,6 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
     @Override
     public void onContainerClosed(PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
-        dragon.drakeInv.closeInventory(playerIn);
+        dragon.inventory.closeInventory(playerIn);
     }
 }

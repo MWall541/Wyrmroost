@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.io.screen;
 
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
+import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -14,17 +15,10 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.Random;
 
-public class OWDrakeInvScreen extends ContainerScreen<OWDrakeInvContainer>
+public class OWDrakeInvScreen extends AbstractContainerScreen<OWDrakeInvContainer>
 {
-    private static final ResourceLocation GUI = ModUtils.location("textures/io/dragon/owdrake.png");
-    private static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
-    private static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glint.png");
-    
-    private OWDrakeInvContainer drakeInv;
-    
     public OWDrakeInvScreen(OWDrakeInvContainer container, PlayerInventory playerInv, ITextComponent name) {
         super(container, playerInv, name);
-        this.drakeInv = container;
     }
     
     @Override
@@ -36,39 +30,17 @@ public class OWDrakeInvScreen extends ContainerScreen<OWDrakeInvContainer>
     
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        int health = (int) Math.floor(drakeInv.dragon.getHealth() / 2);
-        boolean shake = health < drakeInv.dragon.getMaxHealth() / 5;
-        
-        if (shake) {
-            GlStateManager.pushMatrix();
-            GlStateManager.translated(0, new Random().nextDouble() * 2d, 0);
-        }
-            minecraft.textureManager.bindTexture(HEART);
-            blit(54, 57, 0, 0, 15, 15, 15, 15);
-            drawCenteredString(font, Integer.toString(health), 62, 62, 0xffffff);
-        
-        if (drakeInv.dragon.isSpecial()) {
-            GlStateManager.pushMatrix();
-            GlStateManager.color4f(1f, 0.65f, 0, 1);
-            minecraft.textureManager.bindTexture(new ResourceLocation("textures/particle/glitter_7.png"));
-            blit(6, 11, 0, 0, 10, 10, 10, 10);
-            GlStateManager.color4f(1f, 1f, 1f, 1f);
-            GlStateManager.popMatrix();
-        }
-        
-        if (shake) GlStateManager.popMatrix();
+        drawHealth(54, 57);
+        if (dragonInv.dragon.isSpecial()) drawSpecialIcon(6, 11);
     }
     
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bindTexture(GUI);
-        int relX = (width - xSize) / 2;
-        int relY = (height - ySize) / 2;
-        blit(relX, relY, 0, 0, xSize, ySize);
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         
-        if (drakeInv.dragon.hasChest()) blit(relX + 96, relY + 6, 0, ySize, 72, 72);
-        
-        InventoryScreen.drawEntityOnScreen(relX + 40, relY + 60, 15, (float)(relX + 40) - mouseX, (float)(relY + 75 - 30) - mouseY, drakeInv.dragon);
+//        drawWithSlotDim(SLOT_ARMOR, 74, 51);
+//        drawWithSlotDim(SLOT_ARMOR, 74, 15);
+//        drawWithSlotDim(SLOT_SADDLE, 74, 33);
+        if (dragonInv.dragon.hasChest()) drawRowedSlots(96, 6, 4, 4);
     }
 }

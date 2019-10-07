@@ -11,19 +11,19 @@ import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -38,13 +38,19 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.ObjectUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
-
+import static net.minecraft.entity.SharedMonsterAttributes.ARMOR;
 import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
 
 /**
@@ -61,6 +67,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public final boolean nocturnal = false;
     public List<String> immunes = new ArrayList<>();
     public Random syncRand = new Random(6045323340150860495L); // Use a seed to sync between server and client
+    public Inventory inventory;
+    public LazyOptional<?> invHandler;
+    public static final UUID ARMOR_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     
     // Dragon Entity Animations
     public int animationTick;
@@ -69,13 +78,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static Animation WAKE_ANIMATION;
     
     // Dragon Entity Data
-    public static final DataParameter<Boolean>     GENDER     = createBoolean();
-    public static final DataParameter<Boolean>     SPECIAL    = createBoolean();
-    public static final DataParameter<Boolean>     SADDLED    = createBoolean();
-    public static final DataParameter<Boolean>     FLYING     = createBoolean();
-    public static final DataParameter<Boolean>     SLEEPING   = createBoolean();
-    public static final DataParameter<Integer>     VARIANT    = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.VARINT);
-    public static final DataParameter<OptionalInt> ARMOR      = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.OPTIONAL_VARINT);
+    public static final DataParameter<Boolean> GENDER     = createBoolean();
+    public static final DataParameter<Boolean> SPECIAL    = createBoolean();
+    public static final DataParameter<Boolean> FLYING     = createBoolean();
+    public static final DataParameter<Boolean> SLEEPING   = createBoolean();
+    public static final DataParameter<Integer> VARIANT    = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.VARINT);
     
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
@@ -86,6 +93,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         lookController = new DragonLookController(this);
         stepHeight = 1;
         hatchTimer = 12000;
+        if (inventory != null) invHandler = LazyOptional.of(() -> new InvWrapper(inventory));
     }
     
     @Override
@@ -126,6 +134,22 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         compound.putBoolean("gender", getGender());
         compound.putBoolean("special", isSpecial());
         compound.putBoolean("sleeping", isSleeping());
+    
+        if (inventory != null && !inventory.isEmpty()) {
+            ListNBT items = new ListNBT();
+        
+            for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (!stack.isEmpty()) {
+                    CompoundNBT nbt = new CompoundNBT();
+                    nbt.putInt("slot", i);
+                    stack.write(nbt);
+                    items.add(nbt);
+                }
+            }
+        
+            compound.put("invitems", items);
+        }
         
         super.writeAdditional(compound);
     }
@@ -136,6 +160,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setGender(compound.getBoolean("gender"));
         setSpecial(compound.getBoolean("special"));
         dataManager.set(SLEEPING, compound.getBoolean("sleeping")); // Use data manager: Setter method controls animation
+    
+        if (inventory != null && !compound.getList("invitems", 10).isEmpty()) {
+            ListNBT items = compound.getList("invitems", 10);
+            for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+                CompoundNBT nbt = items.getCompound(i);
+                inventory.setInventorySlotContents(nbt.getInt("slot"), ItemStack.read(nbt));
+            }
+        }
         
         super.readAdditional(compound);
     }
@@ -174,17 +206,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     /**
      * Whether or not the dragon is saddled
+     * SADDLE INV SLOT IS ALWAYS 0!
      */
-    public boolean isSaddled() {
-        try { return dataManager.get(SADDLED); }
-        catch (NullPointerException ignore) {}
-        return false;
-    }
-    public void setSaddled(boolean saddled) {
-        if (isSaddled() == saddled) return;
-        dataManager.set(SADDLED, saddled);
-        if (saddled) playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f);
-    }
+    public boolean isSaddled() { return getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false); }
     
     /**
      * Get the variant of the dragon (if it has them)
@@ -202,21 +226,22 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Whether or not the dragon is armored
      */
-    public boolean hasArmor() {
-        try { return dataManager.get(ARMOR).isPresent(); }
+    public boolean hasArmor(int slot) {
+        try { return getArmor(slot).getId() != -1; }
         catch (NullPointerException ignore) {}
         return false;
     }
-    public DragonArmorItem.DragonArmorType getArmor() {
-        try { return DragonArmorItem.DragonArmorType.getTypeByID(dataManager.get(ARMOR).getAsInt()); }
-        catch (NullPointerException ignore) {}
-        return null;
+    public DragonArmorItem.DragonArmorType getArmor(int slot) {
+        LazyOptional<IItemHandler> cap = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        ItemStack stack = cap.map(s -> s.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
+        if (stack.isEmpty()) return null;
+        int id = cap.map(s -> ((DragonArmorItem) stack.getItem()).getID()).orElse(-1);
+        return DragonArmorItem.DragonArmorType.getTypeByID(id);
     }
-    /** Armor setter. set to -1 to clear the armor value */
-    public void setArmor(int armorID) {
-        if (armorID == -1) dataManager.set(ARMOR, OptionalInt.empty());
-        else {
-            dataManager.set(ARMOR, OptionalInt.of(armorID));
+    public void setArmored(int slot) {
+        if (hasArmor(slot) && !world.isRemote) {
+            getAttribute(SharedMonsterAttributes.ARMOR).removeModifier(ARMOR_UUID);
+            getAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier("Armor Modifier", getArmor(slot).getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(false));
             playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
         }
     }
@@ -271,6 +296,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         if (angry) dataManager.set(TAMED, (byte) (b0 | 2));
         else dataManager.set(TAMED, (byte) (b0 & -3));
+    }
+    
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
+        if (isAlive() && cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && invHandler != null)
+            return invHandler.cast();
+        return super.getCapability(cap);
+    }
+    
+    @Override
+    public void remove(boolean keepData) {
+        super.remove(keepData);
+        if (!keepData && invHandler != null) {
+            invHandler.invalidate();
+            invHandler = null;
+        }
     }
     
     // ================================
@@ -442,7 +484,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     protected void spawnDrops(DamageSource src) {
-        if (isSaddled()) entityDropItem(Items.SADDLE);
+        getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(i -> { for (int index=0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index)); });
         super.spawnDrops(src);
     }
     
