@@ -1,6 +1,9 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
+import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
+import WolfShotz.Wyrmroost.event.SetupIO;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
@@ -18,7 +21,10 @@ import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -29,6 +35,9 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.potion.Potions;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -44,20 +53,18 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.apache.commons.lang3.ObjectUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static net.minecraft.entity.SharedMonsterAttributes.ARMOR;
 import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
+public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity, INamedContainerProvider
 {
     public int shouldFlyThreshold = 3;
     @OnlyIn(Dist.CLIENT) public int flashTicks;
@@ -208,7 +215,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Whether or not the dragon is saddled
      * SADDLE INV SLOT IS ALWAYS 0!
      */
-    public boolean isSaddled() { return getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false); }
+    public boolean isSaddled() { return getInvCap().map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false); }
     
     /**
      * Get the variant of the dragon (if it has them)
@@ -232,7 +239,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     public DragonArmorItem.DragonArmorType getArmor(int slot) {
-        LazyOptional<IItemHandler> cap = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+        LazyOptional<IItemHandler> cap = getInvCap();
         ItemStack stack = cap.map(s -> s.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
         if (stack.isEmpty()) return null;
         int id = cap.map(s -> ((DragonArmorItem) stack.getItem()).getID()).orElse(-1);
@@ -298,13 +305,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         else dataManager.set(TAMED, (byte) (b0 & -3));
     }
     
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-        if (isAlive() && cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && invHandler != null)
-            return invHandler.cast();
-        return super.getCapability(cap);
-    }
+    public LazyOptional<IItemHandler> getInvCap() {
+        if (isAlive() && invHandler != null) return invHandler.cast();
+        return super.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+}
     
     @Override
     public void remove(boolean keepData) {
@@ -332,6 +336,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (world.isRemote) { // Client Only Stuffs
             if (isSpecial()) doSpecialEffects();
             
+            if (isGlowing() && flashTicks <= 0 && getActivePotionEffect(Effects.GLOWING) != null) setGlowing(false);
             if (flashTicks > 0) {
                 setGlowing(flashTicks % 4 == 0);
                 --flashTicks;
@@ -484,7 +489,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     protected void spawnDrops(DamageSource src) {
-        getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(i -> { for (int index=0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index)); });
+        getInvCap().ifPresent(i -> { for (int index=0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index)); });
         super.spawnDrops(src);
     }
     
@@ -683,6 +688,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Nullable
     @Override
     public AgeableEntity createChild(AgeableEntity ageable) { return null; }
+    
+    @Nullable
+    @Override
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ContainerBase<>(this, SetupIO.baseContainer, windowID); }
     
     /**
      * Array Containing all of the dragons food items

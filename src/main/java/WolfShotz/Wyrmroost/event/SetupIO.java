@@ -1,13 +1,18 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.io.screen.OWDrakeInvScreen;
+import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
+import WolfShotz.Wyrmroost.content.io.screen.base.BasicDragonScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,20 +27,33 @@ public class SetupIO
 {
     private static final String ID = Wyrmroost.MOD_ID + ":";
     
-    @ObjectHolder(ID + "owdrake_inv")   public static ContainerType<OWDrakeInvContainer> owDrakeContainer;
+    @ObjectHolder(ID + "base_dragon_inv")   public static ContainerType<ContainerBase>       baseContainer;
+    @ObjectHolder(ID + "owdrake_inv")       public static ContainerType<OWDrakeInvContainer> owDrakeContainer;
+    @ObjectHolder(ID + "stalker_inv")       public static ContainerType<StalkerInvContainer> stalkerContainer;
     
     @SubscribeEvent
     public static void containerSetup(RegistryEvent.Register<ContainerType<?>> event) {
         event.getRegistry().registerAll(
-                IForgeContainerType.create((windowId, inv, buf) -> {
-                    Entity drake = ModUtils.getClientWorld().getEntityByID(buf.readInt());
-                    return new OWDrakeInvContainer(windowId, inv, (OWDrakeEntity) drake);
-                }).setRegistryName("owdrake_inv")
+                createEntityContainer(((windowID, inv, entity) -> new ContainerBase((AbstractDragonEntity) entity, windowID)), "base_dragon_inv"),
+                createEntityContainer(OWDrakeInvContainer::new, "owdrake_inv")
         );
+    }
+    
+    private static <E extends Entity> ContainerType<? extends Container> createEntityContainer(IEntityContainerFactory<?, E> creation, String name) {
+        return IForgeContainerType.create((windowId, inv, buf) -> {
+            E entity = (E) ModUtils.getClientWorld().getEntityByID(buf.readInt());
+            return creation.get(windowId, inv, entity);
+        }).setRegistryName(name);
     }
     
     @OnlyIn(Dist.CLIENT)
     public static void screenSetup() {
         ScreenManager.registerFactory(owDrakeContainer, OWDrakeInvScreen::new);
+        ScreenManager.registerFactory(baseContainer, BasicDragonScreen::new);
+    }
+    
+    private interface IEntityContainerFactory<T extends Container, E extends Entity>
+    {
+        T get(int windowID, PlayerInventory inv, E entity);
     }
 }

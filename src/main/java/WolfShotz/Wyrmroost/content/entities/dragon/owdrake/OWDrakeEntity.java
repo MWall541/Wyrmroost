@@ -55,7 +55,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 /**
  * Created by WolfShotz 7/10/19 - 22:18
  */
-public class OWDrakeEntity extends AbstractDragonEntity implements INamedContainerProvider
+public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
@@ -214,7 +214,7 @@ public class OWDrakeEntity extends AbstractDragonEntity implements INamedContain
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
-            getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(s -> {
+            getInvCap().ifPresent(s -> {
                 s.insertItem(0, stack, false);
                 consumeItemFromStack(player, stack);
             });

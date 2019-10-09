@@ -25,18 +25,17 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         
         buildPlayerSlots(playerInv, 7, 83);
         
-        dragon.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
-            addSlot(buildSaddleSlot(h, 75, 34));
+        dragon.getInvCap().ifPresent(h -> {
+            addSlot(buildSaddleSlot(h, 73, 34));
     
-            addSlot(buildArmorSlot(h, 75, 52));
+            addSlot(buildArmorSlot(h, 73, 52));
             
-            addSlot(new SlotItemHandler(h, 2, 75, 16) {
+            addSlot(new SlotItemHandler(h, 2, 73, 16) {
                 @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() == Items.CHEST; }
     
                 @Override public int getSlotStackLimit() { return 1; }
     
-                @Override
-                public void onSlotChanged() { dragon.setHasChest(getStack().getItem() == Items.CHEST); }
+                @Override public void onSlotChanged() { dragon.setHasChest(getStack().getItem() == Items.CHEST); }
     
                 @Override
                 public boolean canTakeStack(PlayerEntity playerIn) {
@@ -51,12 +50,6 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
             }, 3, 97, 7, 4, 4);
         });
     }
-    
-    /**
-     * Determines whether supplied player can use this container
-     */
-    @Override
-    public boolean canInteractWith(PlayerEntity playerIn) { return true; }
     
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
@@ -77,11 +70,5 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         }
         
         return itemstack;
-    }
-    
-    @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
-        dragon.inventory.closeInventory(playerIn);
     }
 }

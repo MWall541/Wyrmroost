@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -13,56 +14,79 @@ import java.util.Random;
 
 public abstract class AbstractContainerScreen<T extends ContainerBase> extends ContainerScreen<T>
 {
-    public static final ResourceLocation GUI = ModUtils.location("textures/io/dragoninv.png");
+    public static final ResourceLocation STANDARD_GUI = ModUtils.location("textures/io/dragoninv.png");
     public static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
     public static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glitter_7.png");
-    public static final ResourceLocation SLOT = ModUtils.location("textures/io/slots/slot.png");
-    public static final ResourceLocation SLOT_ARMOR = ModUtils.location("textures/io/slots/armor_slot.png");
-    public static final ResourceLocation SLOT_SADDLE = ModUtils.location("textures/io/slots/saddle_slot.png");
+    public static final ResourceLocation SLOT = ModUtils.location("textures/io/slot.png");
     
     public T dragonInv;
-    private Random rand = new Random();
-    int relX;
-    int relY;
+    public ResourceLocation background;
+    public Random rand = new Random();
+    public TextFieldWidget nameField;
+    private String prevName;
     
     public AbstractContainerScreen(T container, PlayerInventory playerInv, ITextComponent name) {
         super(container, playerInv, name);
         this.dragonInv = container;
+        background = STANDARD_GUI;
     }
     
     @Override
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
-        super.render(p_render_1_, p_render_2_, p_render_3_);
-        relX = (width - xSize) / 2;
-        relY = (height - ySize) / 2;
+    protected void init() {
+        super.init();
+        prevName = dragonInv.dragon.hasCustomName()? dragonInv.dragon.getCustomName().getUnformattedComponentText() : dragonInv.dragon.getDisplayName().getUnformattedComponentText();
+        nameField = new TextFieldWidget(font, guiLeft + 6, guiTop, 80, 12, prevName);
+        nameField.setMaxStringLength(16);
+        nameField.setTextColor(16777215);
+        nameField.setEnableBackgroundDrawing(false);
+        nameField.setText(prevName);
+        children.add(nameField);
+        GlStateManager.color4f(1f ,1f, 1f, 1f);
+    }
+    
+    @Override
+    public void tick() {
+        super.tick();
+        nameField.tick();
+    }
+    
+    @Override
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        super.render(mouseX, mouseY, partialTicks);
+    
+        renderBackground();
+        super.render(mouseX, mouseY, partialTicks);
+        renderHoveredToolTip(mouseX, mouseY);
     }
     
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        bindTexture(GUI);
-        blit(relX, relY, 0, 0, xSize, ySize);
+        bindTexture(background);
+        blit(guiLeft, guiTop, 0, 0, xSize, ySize);
+        nameField.render(mouseX, mouseY, partialTicks);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
     
-        InventoryScreen.drawEntityOnScreen(relX + 40, relY + 60, 15, (float)(relX + 40) - mouseX, (float)(relY + 75 - 30) - mouseY, dragonInv.dragon);
+        InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (float)(guiLeft + 40) - mouseX, (float)(guiTop + 75 - 30) - mouseY, dragonInv.dragon);
+    }
+    
+    @Override
+    public boolean keyPressed(int p1, int p2, int p3) {
+        nameField.keyPressed(p1, p2, p3);
+        return nameField.isFocused() && nameField.getVisible() && p1 != 256 || super.keyPressed(p1, p2, p3);
     }
     
     public void drawSlot(int x, int y) {
         bindTexture(SLOT);
-        blit(relX + x, relY + y, 0, 0, 18, 18, 18, 18);
-    }
-    
-    public void drawWithSlotDim(ResourceLocation slot, int x, int y) {
-        bindTexture(slot);
-        blit(relX + x, relY + y, 0, 0, 18, 18, 18, 18);
+        blit(guiLeft + x, guiTop + y, 0, 0, 18, 18, 18, 18);
     }
     
     public void drawRowedSlots(int initialX, int initialY, int rows, int columns) {
         bindTexture(SLOT);
         
         for (int row=0; row < rows; ++row)
-            for (int column=0; column < columns; ++column) {
-                blit(relX + initialX + row * 18, relY + initialY + column * 18, 0, 0, 18, 18, 18, 18);
-            }
+            for (int column=0; column < columns; ++column)
+                blit(guiLeft + initialX + row * 18, guiTop + initialY + column * 18, 0, 0, 18, 18, 18, 18);
     }
     
     public void drawHealth(int x, int y) {
@@ -86,5 +110,8 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
         GlStateManager.popMatrix();
     }
     
-    public void bindTexture(ResourceLocation texture) { minecraft.getTextureManager().bindTexture(texture); }
+    public void bindTexture(ResourceLocation texture) {
+        assert minecraft != null;
+        minecraft.getTextureManager().bindTexture(texture);
+    }
 }

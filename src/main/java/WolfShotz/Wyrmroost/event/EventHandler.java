@@ -46,11 +46,10 @@ public class EventHandler
             
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
-    
-                if (player instanceof ServerPlayerEntity) NetworkHooks.openGui((ServerPlayerEntity) player, (OWDrakeEntity) dragon, buf -> buf.writeInt(dragon.getEntityId()));
             }
         }
     
+        private static final String[] begoneThot = {"owo", "uwu", "owu", "uwo", "0wo", "ow0", "0w0"};
         @SubscribeEvent
         public static void begoneTHOT(PlayerInteractEvent.EntityInteract evt) {
             Entity entity = evt.getTarget();
@@ -59,8 +58,9 @@ public class EventHandler
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
         
-            if (stack.getItem() == Items.NAME_TAG && TranslationUtils.containsArray(stack.getDisplayName().getUnformattedComponentText().toLowerCase(), "owo", "uwu", "owu", "uwo")) {
+            if (stack.getItem() == Items.NAME_TAG && TranslationUtils.containsArray(TranslationUtils.clean(stack.getDisplayName().getUnformattedComponentText().toLowerCase()), begoneThot)) {
                 evt.setCanceled(true);
+                
                 stack.clearCustomName();
                 dragon.world.createExplosion(dragon, player.posX, player.posY + 1, player.posZ, 6f, Explosion.Mode.NONE);
             }
