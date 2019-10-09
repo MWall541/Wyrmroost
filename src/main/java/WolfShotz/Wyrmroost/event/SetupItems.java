@@ -94,7 +94,9 @@ public class SetupItems
                 new DragonArmorItem("gold_dragonarmor", DragonArmorItem.DragonArmorType.GOLD),
                 new DragonArmorItem("diamond_dragonarmor", DragonArmorItem.DragonArmorType.DIAMOND),
                 new DragonArmorItem("platinum_dragonarmor", DragonArmorItem.DragonArmorType.PLATINUM),
-                new DragonArmorItem("geode_dragonarmor", DragonArmorItem.DragonArmorType.BLUE_GEODE),
+                new DragonArmorItem("bluegeode_dragonarmor", DragonArmorItem.DragonArmorType.BLUE_GEODE),
+                new DragonArmorItem("redgeode_dragonarmor", DragonArmorItem.DragonArmorType.RED_GEODE),
+                new DragonArmorItem("purplegeode_dragonarmor", DragonArmorItem.DragonArmorType.RED_GEODE),
                 // Misc End
 
                 // Food Start

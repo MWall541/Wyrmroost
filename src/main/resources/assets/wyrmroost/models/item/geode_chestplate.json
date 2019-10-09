@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "wyrmroost:item/tools/geode/geode_chestplate"
+        "layer0": "wyrmroost:item/tools/geode/geode_chestplate_blue"
     }
 }

@@ -51,7 +51,9 @@ public class DragonArmorItem extends Item
         GOLD(1, 7),
         DIAMOND(2, 11),
         PLATINUM(3, 6),
-        BLUE_GEODE(4, 11);
+        BLUE_GEODE(4, 11),
+        RED_GEODE(5, 12),
+        PURPLE_GEODE(6, 13);
         
         private int dmgReduction;
         private int id;

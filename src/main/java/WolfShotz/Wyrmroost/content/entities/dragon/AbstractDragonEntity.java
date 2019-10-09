@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
@@ -336,7 +337,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (world.isRemote) { // Client Only Stuffs
             if (isSpecial()) doSpecialEffects();
             
-            if (isGlowing() && flashTicks <= 0 && getActivePotionEffect(Effects.GLOWING) != null) setGlowing(false);
+//            if (isGlowing() && flashTicks <= 0 && getActivePotionEffect(Effects.GLOWING) == null) setGlowing(false);
             if (flashTicks > 0) {
                 setGlowing(flashTicks % 4 == 0);
                 --flashTicks;
@@ -366,7 +367,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @param stack - the itemstack used when interacted
      */
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
-        if (stack.getItem() == Items.NAME_TAG) {
+        if (stack.getItem() == Items.NAME_TAG || stack.getItem() == SetupItems.dragonStaff) {
             stack.interactWithEntity(player, this, hand);
             
             return true;

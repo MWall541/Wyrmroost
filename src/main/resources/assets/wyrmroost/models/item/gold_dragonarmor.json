@@ -1,4 +1,4 @@
 {
     "parent": "item/generated",
-    "textures": { "layer0": "wyrmroost:item/tools/armor_gold" }
+    "textures": { "layer0": "wyrmroost:item/tools/dragonarmors/armor_gold" }
 }

@@ -1,0 +1,4 @@
+{
+    "parent": "item/generated",
+    "textures": { "layer0": "wyrmroost:item/tools/dragonarmors/armor_geode_red" }
+}

@@ -1,0 +1,4 @@
+{
+    "parent": "item/handheld",
+    "textures": { "layer0": "wyrmroost:item/tools/dragon_staff" }
+}

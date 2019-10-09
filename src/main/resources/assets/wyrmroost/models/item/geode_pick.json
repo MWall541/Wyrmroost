@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "wyrmroost:item/tools/geode/geode_pickaxe"
+    "layer0": "wyrmroost:item/tools/geode/geode_pickaxe_blue"
   }
 }

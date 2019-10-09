@@ -174,7 +174,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void livingTick() {
         if (!world.isRemote) {
-            if (getAttackTarget() == null && isAngry()) setAngry(false);
+            if ((getAttackTarget() == null || !getAttackTarget().isAlive()) && isAngry()) setAngry(false);
             setSprinting(isAngry());
         }
         
@@ -312,12 +312,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Override
     public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
-    
-    public int getArmorIntInInv() {
-        ItemStack stack = inventory.getStackInSlot(2);
-        if (stack.isEmpty()) return -1;
-        return ((DragonArmorItem) stack.getItem()).getID();
-    }
     
     @Override
     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn) {

@@ -1,6 +1,4 @@
 {
     "parent": "item/generated",
-    "textures": {
-        "layer0": "wyrmroost:item/food/jewelled_apple"
-    }
+    "textures": {"layer0": "wyrmroost:item/food/jewelled_apple_blue"}
 }
