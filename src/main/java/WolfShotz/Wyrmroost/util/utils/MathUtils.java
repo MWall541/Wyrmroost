@@ -150,13 +150,13 @@ public class MathUtils
      *
      * @return the block or entity that the player is looking at / targeting with their cursor.  null if no collision
      */
-    public static RayTraceResult rayTrace(World world, PlayerEntity serverPlayer, double range, boolean targetTamed) {
+    public static RayTraceResult rayTrace(World world, PlayerEntity player, double range, boolean targetTamed) {
         final RayTraceContext.FluidMode FLUID_MODE = RayTraceContext.FluidMode.NONE;
         final RayTraceContext.BlockMode BLOCK_MODE = RayTraceContext.BlockMode.COLLIDER;
-        final Vec3d EYES_POSITION = serverPlayer.getEyePosition(1f);
-        final Vec3d LOOK_DIRECTION = serverPlayer.getLook(1f);
+        final Vec3d EYES_POSITION = player.getEyePosition(1f);
+        final Vec3d LOOK_DIRECTION = player.getLook(1f);
         Vec3d endOfLook = EYES_POSITION.add(LOOK_DIRECTION.x * range, LOOK_DIRECTION.y * range, LOOK_DIRECTION.z * range);
-        RayTraceResult targetedBlock = world.rayTraceBlocks(new RayTraceContext(EYES_POSITION, endOfLook, BLOCK_MODE, FLUID_MODE, serverPlayer));
+        RayTraceResult targetedBlock = world.rayTraceBlocks(new RayTraceContext(EYES_POSITION, endOfLook, BLOCK_MODE, FLUID_MODE, player));
         double collisionDistanceSQ = range * range;
         
         if (targetedBlock.getType() == RayTraceResult.Type.BLOCK) {
@@ -165,17 +165,17 @@ public class MathUtils
         }
         
         Vec3d endOfLookDelta = endOfLook.subtract(EYES_POSITION);
-        AxisAlignedBB searchBox = serverPlayer.getBoundingBox().expand(endOfLookDelta.x, endOfLookDelta.y, endOfLookDelta.z).grow(1f); //add
-        List<Entity> nearbyEntities = world.getEntitiesWithinAABBExcludingEntity(serverPlayer, searchBox);
+        AxisAlignedBB searchBox = player.getBoundingBox().expand(endOfLookDelta.x, endOfLookDelta.y, endOfLookDelta.z).grow(1f); //add
+        List<Entity> nearbyEntities = world.getEntitiesWithinAABBExcludingEntity(player, searchBox);
         Entity closestEntityHit = null;
         double closestEntityDistanceSQ = Double.MAX_VALUE;
         
         for (Entity entity : nearbyEntities) {
-            if (!entity.canBeCollidedWith() || entity == serverPlayer.getRidingEntity())
+            if (!entity.canBeCollidedWith() || entity == player.getRidingEntity())
                 continue;
             if (!targetTamed && entity instanceof TameableEntity) {
                 TameableEntity tamedEntity = (TameableEntity) entity;
-                if (tamedEntity.isOwner(serverPlayer))
+                if (tamedEntity.isOwner(player))
                     continue;
             }
             

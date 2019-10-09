@@ -1,10 +1,7 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.content.items.DragonEggItem;
-import WolfShotz.Wyrmroost.content.items.MinutusItem;
-import WolfShotz.Wyrmroost.content.items.SoulCrystalItem;
+import WolfShotz.Wyrmroost.content.items.*;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -30,6 +27,7 @@ public class SetupItems
     @ObjectHolder(ID + "minutus")               public static Item minutus;
     @ObjectHolder(ID + "dragon_egg")            public static Item dragonEgg;
     @ObjectHolder(ID + "soul_crystal")          public static Item soulCrystal;
+    @ObjectHolder(ID + "dragon_staff")          public static Item dragonStaff;
     
     // Geode start
     @ObjectHolder(ID + "geode")                 public static Item geode;
@@ -91,12 +89,12 @@ public class SetupItems
                 new MinutusItem(),
                 new DragonEggItem(),
                 new SoulCrystalItem(),
+                new DragonStaffItem(),
                 new DragonArmorItem("iron_dragonarmor", DragonArmorItem.DragonArmorType.IRON),
                 new DragonArmorItem("gold_dragonarmor", DragonArmorItem.DragonArmorType.GOLD),
                 new DragonArmorItem("diamond_dragonarmor", DragonArmorItem.DragonArmorType.DIAMOND),
                 new DragonArmorItem("platinum_dragonarmor", DragonArmorItem.DragonArmorType.PLATINUM),
                 new DragonArmorItem("geode_dragonarmor", DragonArmorItem.DragonArmorType.BLUE_GEODE),
-
                 // Misc End
 
                 // Food Start

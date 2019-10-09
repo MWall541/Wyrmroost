@@ -75,7 +75,7 @@ public class FlightMovementController extends MovementController
     
             if (f < 0.0F) {
                 double d10 = d8 * (double) (-MathHelper.sin(f)) * 0.04D;
-                dragon.addVelocity(-(vec3d.x * d10 / d6), d10 * 3.2d, -(vec3d.z * d10 / d6));
+                dragon.addVelocity(-(vec3d.x * d10 / d6), d10 * 2.4d, -(vec3d.z * d10 / d6));
             }
     
             if (d6 > 0.0D)
@@ -83,9 +83,6 @@ public class FlightMovementController extends MovementController
             
             double planeMot = 0.9900000095367432d;
             dragon.setMotion(dragon.getMotion().mul(planeMot, 0.9800000190734863d, planeMot));
-    
-            if (posY - dragon.posY > 0 && dragon.getMotion().y < 0 && dragon.noActiveAnimation()) NetworkUtils.sendAnimationPacket(dragon, SilverGliderEntity.FLAP_ANIMATION);
-    
         }
     }
     
