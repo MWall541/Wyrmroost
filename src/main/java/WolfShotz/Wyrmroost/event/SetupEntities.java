@@ -1,6 +1,8 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
@@ -44,23 +46,38 @@ public class SetupEntities
     private static final String ID = Wyrmroost.MOD_ID + ":";
     
     // Entity List Start
-    @ObjectHolder(ID + "dragon_egg")                    public static EntityType dragon_egg = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
+    @ObjectHolder(ID + "dragon_egg")            public static EntityType<DragonEggEntity>           dragonEgg;
     
-    @ObjectHolder(ID + "overworld_drake")               public static EntityType overworld_drake = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
-    @ObjectHolder(ID + "minutus")                       public static EntityType minutus = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
-    @ObjectHolder(ID + "silver_glider")                 public static EntityType silver_glider = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
-    @ObjectHolder(ID + "roost_stalker")                 public static EntityType roost_stalker = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
+    @ObjectHolder(ID + "overworld_drake")       public static EntityType<OWDrakeEntity>             overworldDrake;
+    @ObjectHolder(ID + "minutus")               public static EntityType<MinutusEntity>             minutus;
+    @ObjectHolder(ID + "silver_glider")         public static EntityType<SilverGliderEntity>        silverGlider;
+    @ObjectHolder(ID + "roost_stalker")         public static EntityType<RoostStalkerEntity>        roostStalker;
+    @ObjectHolder(ID + "butterfly_leviathan")   public static EntityType<ButterflyLeviathanEntity>  butterflyLeviathan;
     // Entity List End
+    
+    /**
+     * Method called in before item registry event to instatiate these fields.
+     * It is important that these fields are populated BEFORE item registration so spawn eggs are registered properly.
+     * TODO Not ideal. use this until forge reevaluates
+     */
+    public static void buildEntities() {
+        dragonEgg           = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
+        overworldDrake      = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
+        minutus             = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
+        silverGlider        = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
+        roostStalker        = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
+        butterflyLeviathan  = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 2.65f, 2.65f);
+    }
     
     /**
      * Registers World Spawning for entities
      */
     private static void registerEntityWorldSpawns() {
-        registerSpawning(overworld_drake, 8, 1, 3, getDrakeBiomes());
+        registerSpawning(overworldDrake, 8, 1, 3, getDrakeBiomes());
         registerSpawning(minutus, 35, 1, 1, getMinutusBiomes());
-        registerSpawning(silver_glider, 2, 2, 5, getSilverGliderBiomes());
-        registerSpawning(roost_stalker, 9, 3, 18, getStalkerBiomes());
-        EntitySpawnPlacementRegistry.register(silver_glider, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
+        registerSpawning(silverGlider, 2, 2, 5, getSilverGliderBiomes());
+        registerSpawning(roostStalker, 9, 3, 18, getStalkerBiomes());
+        EntitySpawnPlacementRegistry.register(silverGlider, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
     }
 
     /**
@@ -74,17 +91,19 @@ public class SetupEntities
         RenderingRegistry.registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(RoostStalkerEntity.class, RoostStalkerRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(ButterflyLeviathanEntity.class, ButterflyLeviathanRenderer::new);
     }
 
     @SubscribeEvent
     public static void entitySetup(RegistryEvent.Register<EntityType<?>> event) {
         event.getRegistry().registerAll (
-                dragon_egg,
-                
-                overworld_drake,
+                dragonEgg,
+
+                overworldDrake,
                 minutus,
-                silver_glider,
-                roost_stalker
+                silverGlider,
+                roostStalker,
+                butterflyLeviathan
         );
         registerEntityWorldSpawns();
     }
@@ -137,12 +156,10 @@ public class SetupEntities
     /**
      * Helper Function that turns this stupidly long line into something more nicer to look at
      */
-    private static <T extends Entity> EntityType<?> buildEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float width, float height) {
-        return EntityType.Builder
-                       .create(entity, classify)
-                       .size(width, height)
-                       .build(Wyrmroost.MOD_ID + ":" + name)
-                       .setRegistryName(name);
+    private static <T extends Entity> EntityType<T> buildEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float width, float height) {
+        EntityType<T> builder = EntityType.Builder.create(entity, classify).size(width, height).build(Wyrmroost.MOD_ID + ":" + name);
+        builder.setRegistryName(name);
+        return builder;
     }
 
     /**

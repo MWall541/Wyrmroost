@@ -83,6 +83,7 @@ public class SetupItems
 
     @SubscribeEvent
     public static void itemSetup(RegistryEvent.Register<Item> event) {
+        SetupEntities.buildEntities(); // Instatiate entity fields before item registration (for spawn eggs)
         event.getRegistry().registerAll (
                 // Misc Start
 //                new ModBookItem(),
@@ -108,10 +109,11 @@ public class SetupItems
                 // Food End
                 
                 // SpawnEggs start
-                new SpawnEggItem(SetupEntities.overworld_drake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
+                
+                new SpawnEggItem(SetupEntities.overworldDrake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
                 new SpawnEggItem(SetupEntities.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
-                new SpawnEggItem(SetupEntities.silver_glider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
-                new SpawnEggItem(SetupEntities.roost_stalker, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("rooststalker_egg"),
+                new SpawnEggItem(SetupEntities.silverGlider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
+                new SpawnEggItem(SetupEntities.roostStalker, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("rooststalker_egg"),
                 // SpawnEggs end
 
                 // Geode start

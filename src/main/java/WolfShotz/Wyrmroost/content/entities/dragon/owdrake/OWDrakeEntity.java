@@ -119,6 +119,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     protected void registerData() {
         super.registerData();
+        dataManager.register(GENDER, getRNG().nextBoolean());
         dataManager.register(VARIANT_BOOL, false);
         dataManager.register(HAS_CHEST, false);
     }
@@ -126,6 +127,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     /** Save Game */
     @Override
     public void writeAdditional(CompoundNBT compound) {
+        compound.putBoolean("gender", getGender());
         compound.putBoolean("variant", getDrakeVariant());
         
         super.writeAdditional(compound);
@@ -134,6 +136,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {
+        setGender(compound.getBoolean("gender"));
         setDrakeVariant(compound.getBoolean("variant"));
     
         setHasChest(!inventory.getStackInSlot(0).isEmpty());

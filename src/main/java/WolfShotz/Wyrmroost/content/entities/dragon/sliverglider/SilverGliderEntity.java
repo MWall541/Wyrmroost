@@ -97,24 +97,25 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     protected void registerData() {
         super.registerData();
-
+    
+        dataManager.register(GENDER, getRNG().nextBoolean());
         dataManager.register(VARIANT, getRNG().nextInt(3)); // For females, this value is redundant.
     }
 
-    /** Save Game */
     @Override
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
-
+    
+        compound.putBoolean("gender", getGender());
         compound.putInt("variant", getVariant());
     }
 
-    /** Load Game */
     @Override
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
 
         setVariant(compound.getInt("variant"));
+        setGender(compound.getBoolean("gender"));
     }
     
     @Override
