@@ -104,6 +104,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (inventory != null) invHandler = LazyOptional.of(() -> new InvWrapper(inventory));
     }
     
+    /**
+     * Register the AI Goals
+     */
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
@@ -126,20 +129,24 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     // ================================
     //           Entity NBT
     // ================================
+    
+    /**
+     * Register the NBT data
+     */
     @Override
     protected void registerData() {
         super.registerData();
         
-        dataManager.register(GENDER, getRNG().nextBoolean());
         dataManager.register(SPECIAL, getSpecialChances() != 0 && getRNG().nextInt(getSpecialChances()) == 0);
         dataManager.register(FLYING, false);
         dataManager.register(SLEEPING, false);
     }
     
-    /** Save Game */
+    /**
+     * Sava data
+     */
     @Override
     public void writeAdditional(CompoundNBT compound) {
-        compound.putBoolean("gender", getGender());
         compound.putBoolean("special", isSpecial());
         compound.putBoolean("sleeping", isSleeping());
     
@@ -162,10 +169,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super.writeAdditional(compound);
     }
     
-    /** Load Game */
+    /**
+     * Load data
+     */
     @Override
     public void readAdditional(CompoundNBT compound) {
-        setGender(compound.getBoolean("gender"));
         setSpecial(compound.getBoolean("special"));
         dataManager.set(SLEEPING, compound.getBoolean("sleeping")); // Use data manager: Setter method controls animation
     
@@ -306,11 +314,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         else dataManager.set(TAMED, (byte) (b0 & -3));
     }
     
+    /**
+     * Get the inventory (IItemHandler) Capability of this dragon (if it has one)
+     */
     public LazyOptional<IItemHandler> getInvCap() {
         if (isAlive() && invHandler != null) return invHandler.cast();
         return super.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-}
+    }
     
+    /**
+     * Remove and invalidate the Inventory handler capability
+     */
     @Override
     public void remove(boolean keepData) {
         super.remove(keepData);
@@ -433,6 +447,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return result;
     }
     
+    /**
+     * Get all entities in a given range in front of this entity and damage all within it
+     */
     public void attackInFront(int range) {
         AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), range + range)).grow(range, 0, range);
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
@@ -442,6 +459,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         livingEntities.forEach(this::attackEntityAsMob);
     }
     
+    /**
+     * Called to damage entites
+     */
     @Override // Dont damage owners other pets!
     public boolean attackEntityAsMob(Entity entity) {
         if (entity == getOwner()) return false;
@@ -452,7 +472,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * Should the dragon attack
+     * Whether the dragon should attack or not
      */
     @Override // We shouldnt be targetting pets...
     public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) {
@@ -488,18 +508,27 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
     
+    /**
+     * Spawn drops that may not be able to be covered in the loot table
+     */
     @Override
     protected void spawnDrops(DamageSource src) {
         getInvCap().ifPresent(i -> { for (int index=0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index)); });
         super.spawnDrops(src);
     }
     
+    /**
+     * Try to teleport to this owners position after a search for a safe location
+     */
     public void tryTeleportToOwner() {
         LivingEntity owner = getOwner();
         if (owner == null) return;
         tryTeleportToPos(owner.getPosition().add(-2, 0, -2));
     }
     
+    /**
+     * Try teleporting to a pos after a search for a safe location
+     */
     public boolean tryTeleportToPos(BlockPos pos) {
         AxisAlignedBB aabb = getBoundingBox();
         double growX = aabb.maxX - aabb.minX;
@@ -529,6 +558,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.rotationPitch = pitch % 360.0F;
     }
     
+    /**
+     * Handle eating. (Effects, healing, breeding etc)
+     */
     public void eat(@Nullable ItemStack stack) {
         if (stack != null && !stack.isEmpty()) {
 //            Item item = stack.getItem();
@@ -579,6 +611,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     
+    /**
+     * Add health to the current amount
+     */
     @Override
     public void heal(float healAmount) {
         super.heal(healAmount);
@@ -594,7 +629,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * A universal position for the position of the mouth on the dragon.
+     * A universal getter for the position of the mouth on the dragon.
      * This is prone to be inaccurate, but can serve good enough for most things
      * If a more accurate position is needed, best to override and adjust accordingly.
      * @return An approximate position of the mouth of the dragon
@@ -603,20 +638,32 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return MathUtils.rotateYaw(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
     }
     
+    /**
+     * Is the passed stack considered a food/breeding item?
+     */
     @Override
     public boolean isBreedingItem(ItemStack stack) {
         if (getFoodItems() == null || getFoodItems().length == 0) return false;
         return Arrays.asList(getFoodItems()).contains(stack.getItem());
     }
     
+    /**
+     * Get all entities in this entities bounding box increased by a range
+     */
     public List<Entity> getEntitiesNearby(double radius) {
         return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), found -> found != this && getPassengers().stream().noneMatch(found::equals));
     }
     
+    /**
+     * Get all entities excluding certain ones in this entities bounding box increased by a range
+     */
     public List<Entity> getEntitiesNearby(double radius, Entity instanceExclusion) {
         return world.getEntitiesInAABBexcluding(instanceExclusion, getBoundingBox().grow(radius), found -> getPassengers().stream().noneMatch(found::equals));
     }
     
+    /**
+     * Nuff' said
+     */
     @Override
     public void playAmbientSound() { if (!isSleeping()) super.playAmbientSound(); }
     
@@ -630,15 +677,27 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     private boolean isImmune(DamageSource source) { return !immunes.isEmpty() && immunes.contains(source.getDamageType()); }
     
+    /**
+     * Are we immune to this damage source?
+     */
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || isImmune(source); }
     
+    /**
+     * Can the rider "steer" or control this entity?
+     */
     @Override
     public boolean canPassengerSteer() { return getControllingPassenger() != null && canBeSteered(); }
     
+    /**
+     * Can we be "steered" or controlled in general?
+     */
     @Override
     public boolean canBeSteered() { return getControllingPassenger() instanceof LivingEntity && isSaddled(); }
     
+    /**
+     * Get the passenger controlling this entity
+     */
     @Nullable
     @Override
     public Entity getControllingPassenger() { return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0); }
@@ -661,9 +720,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean canFly() { return !isChild() && !getLeashed(); }
     
+    /**
+     * Get the motion this entity performs when jumping
+     */
     @Override
     protected float getJumpUpwardsMotion() { return canFly()? 1.2f : super.getJumpUpwardsMotion(); }
     
+    /**
+     * Called to "liftoff" the dragon. (Shoots it up in the air for flight)
+     */
     public boolean liftOff() {
         for (int i = 1; i < (shouldFlyThreshold / 2.5f) + 1; ++i) {
             if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement())
@@ -680,6 +745,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     
+    /**
+     * Handle landing after a fall
+     */
     @Override // Disable falling calculations if we can fly (fall damage etc.)
     public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }
     
@@ -690,6 +758,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public AgeableEntity createChild(AgeableEntity ageable) { return null; }
     
+    /**
+     * A gui created when right clicked by a {@link SetupItems.dragonStaff}
+     */
     @Nullable
     @Override
     public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ContainerBase<>(this, SetupIO.baseContainer, windowID); }
@@ -702,21 +773,37 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     // ================================
     //        Entity Animation
     // ================================
+    
+    /**
+     * Get the current tick time for the playing animation
+     */
     @Override
     public int getAnimationTick() { return animationTick; }
     
+    /**
+     * Set the animation tick for the playing animation
+     */
     @Override
     public void setAnimationTick(int tick) { animationTick = tick; }
     
+    /**
+     * Get the current playing animation
+     */
     @Override
     public Animation getAnimation() { return animation; }
     
+    /**
+     * Set an animation
+     */
     @Override
     public void setAnimation(Animation animation) {
         setAnimationTick(0);
         this.animation = animation;
     }
     
+    /**
+     * Is no active animation playing currently?
+     */
     public boolean noActiveAnimation() { return getAnimation() == NO_ANIMATION || getAnimationTick() == 0; }
     
     // ================================
