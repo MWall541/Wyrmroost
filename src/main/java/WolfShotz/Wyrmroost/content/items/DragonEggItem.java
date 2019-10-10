@@ -17,9 +17,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -49,13 +49,15 @@ public class DragonEggItem extends Item
         CompoundNBT tag = ctx.getItem().getTag();
         if (tag == null || !tag.contains("dragonType")) return super.onItemUse(ctx);
     
-        DragonEggEntity eggEntity = new DragonEggEntity(SetupEntities.dragon_egg, world);
+        DragonEggEntity eggEntity = new DragonEggEntity(SetupEntities.dragonEgg, world);
         BlockPos pos = ctx.getPos();
         BlockPos offsetPos;
         BlockState state = world.getBlockState(pos);
     
         if (state.getCollisionShape(world, pos).isEmpty()) offsetPos = pos;
         else offsetPos = pos.offset(ctx.getFace());
+        
+        if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(offsetPos)).isEmpty()) return ActionResultType.FAIL;
         
         eggEntity.readAdditional(tag);
         eggEntity.setPosition(offsetPos.getX() + 0.5d, offsetPos.getY() + 1, offsetPos.getZ() + 0.5d);

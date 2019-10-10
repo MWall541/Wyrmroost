@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.items;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -34,24 +35,31 @@ public class DragonStaffItem extends Item
     }
     
     @Override
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity target) {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putInt("bound", target.getEntityId());
+        stack.setTag(tag);
+        player.setHeldItem(player.getActiveHand(), stack);
+        player.playSound(SoundEvents.BLOCK_CONDUIT_ACTIVATE, 1f, 1f);
+        return true;
+    }
+    
+    @Override
     public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
         if (!target.isAlive()) return false;
         if (!(target instanceof AbstractDragonEntity)) return false;
         
-        AbstractDragonEntity dragon = (AbstractDragonEntity) target;
         World world = player.world;
         
-        System.out.println(isBound(stack));
         if (isBound(stack) && !world.isRemote) {
+            AbstractDragonEntity dragon = (AbstractDragonEntity) target;
+            
             NetworkHooks.openGui((ServerPlayerEntity) player, dragon, buf -> buf.writeInt(dragon.getEntityId()));
+            player.playSound(SoundEvents.UI_TOAST_IN, 1f, 1f);
             return true;
         }
         
-        CompoundNBT tag = new CompoundNBT();
-        tag.putInt("bound", target.getEntityId());
-        stack.setTag(tag);
-        player.setHeldItem(hand, stack);
-        return true;
+        return false;
     }
     
     @Override

@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.*;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.InventoryHelper;
@@ -110,28 +109,22 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     @Override
     public void tick() {
         super.tick();
-    
-        if (getDragonType() == null) {
-            safeError();
-            return;
-        }
         
         if (getAnimation() != NO_ANIMATION) {
             ++animationTick;
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
         
-        DragonTypes type = getDragonTypeEnum();
-        if (type == null) {
-            safeError();
-            return;
+        try {
+            DragonTypes type = getDragonTypeEnum();
+            if (getWidth() != type.getWidth() || getHeight() != type.getHeight()) recalculateSize();
+            int hatchTime = getHatchTime();
+            if (hatchTime > 0) {
+                setHatchTime(--hatchTime);
+            }
+            else hatch();
         }
-        if (getWidth() != type.getWidth() || getHeight() != type.getHeight()) recalculateSize();
-        
-        int hatchTime = getHatchTime();
-        if (hatchTime > 0) {
-            setHatchTime(--hatchTime);
-        } else hatch();
+        catch (NullPointerException e) { safeError(); }
     }
     
     /**
@@ -144,19 +137,15 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
      */
     public void hatch() {
         EntityType type = ModUtils.getTypeByString(getDragonType());
-        
         if (type == null) {
             safeError();
             return;
         }
-        
         Entity entity = type.create(world);
-        
         if (!(entity instanceof AbstractDragonEntity)) {
             safeError();
             return;
         }
-        
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
         
         if (!world.isRemote) {
@@ -284,9 +273,9 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
      */
     public enum DragonTypes
     {
-        DRAKE(SetupEntities.overworld_drake, 0.65f, 1f),
-        SILVER_GLIDER(SetupEntities.silver_glider, 0.4f, 0.65f),
-        ROOST_STALKER(SetupEntities.roost_stalker, 0.25f, 0.35f);
+        DRAKE(SetupEntities.overworldDrake, 0.65f, 1f),
+        SILVER_GLIDER(SetupEntities.silverGlider, 0.4f, 0.65f),
+        ROOST_STALKER(SetupEntities.roostStalker, 0.25f, 0.35f);
         
         private EntityType dragonType;
         private float width, height;
