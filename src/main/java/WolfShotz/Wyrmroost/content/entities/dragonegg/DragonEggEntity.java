@@ -1,8 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupItems;
+import WolfShotz.Wyrmroost.util.network.HatchMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.*;
@@ -23,7 +26,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.lang3.ObjectUtils;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -33,6 +36,7 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     private int animationTick;
     private Animation animation = NO_ANIMATION;
     public AbstractDragonEntity containedDragon;
+    public int hatchTime;
     @OnlyIn(Dist.CLIENT)
     public boolean wiggleInvert, wiggleInvert2;
     Random rand = new Random(3257965L); // Use a seed so server + client is synced
@@ -44,7 +48,6 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         super(dragonEgg, world);
     }
     
-    private static final DataParameter<Integer> HATCH_TIME = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.VARINT);
     private static final DataParameter<String> DRAGON_TYPE = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.STRING);
     
     // ================================
@@ -55,7 +58,6 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     protected void registerData() {
         super.registerData();
         
-        dataManager.register(HATCH_TIME, 12000);
         dataManager.register(DRAGON_TYPE, "");
     }
     
@@ -65,7 +67,7 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         super.readAdditional(compound);
     
         setDragonType(compound.getString("dragonType"));
-        setHatchTime(compound.getInt("hatchTime"));
+        hatchTime = compound.getInt("hatchTime");
     }
     
     @Override
@@ -73,34 +75,41 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         super.writeAdditional(compound);
     
         compound.putString("dragonType", getDragonType());
-        compound.putInt("hatchTime", getHatchTime());
+        compound.putInt("hatchTime", hatchTime);
     }
     
     public void setDragonType(String dragonType) { dataManager.set(DRAGON_TYPE, dragonType); }
     public String getDragonType() { return dataManager.get(DRAGON_TYPE); }
-    
-    public void setHatchTime(int hatchTime) { dataManager.set(HATCH_TIME, hatchTime); }
-    public int getHatchTime() { return dataManager.get(HATCH_TIME); }
     
     // ================================
     
     @Override
     public void livingTick() {
         super.livingTick();
-        
-        int bounds = Math.max(getHatchTime() / 150, 3);
-        
-        if (getHatchTime() < getProperties().HATCH_TIME / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION) {
-            setAnimation(WIGGLE_ANIMATION);
-            playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1, 1);
+    
+        if (getProperties().CONDITIONS.test(this)) {
+            if (world.isRemote) {
+                if (ticksExisted % 3 == 0) {
+                    double x = posX + rand.nextGaussian() * 0.2d;
+                    double y = posY + rand.nextDouble() + getHeight() / 2;
+                    double z = posZ + rand.nextGaussian() * 0.2d;
+                    world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
+                }
+            } else {
+                int bounds = Math.max(hatchTime / 2, 3);
+            
+                if (hatchTime < getProperties().HATCH_TIME / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION) {
+                    NetworkUtils.sendAnimationPacket(this, WIGGLE_ANIMATION);
+                    playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1, 1);
+                }
+            }
         }
-        
-        if (world.isRemote && ticksExisted % 3 == 0) {
-            double x = posX + rand.nextGaussian() * 0.2d;
-            double y = posY + rand.nextDouble() + getHeight() / 2;
-            double z = posZ + rand.nextGaussian() * 0.2d;
-            world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
-        }
+
+    }
+    
+    @Override
+    protected void collideWithNearbyEntities() {
+        super.collideWithNearbyEntities();
     }
     
     @Override
@@ -116,11 +125,14 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         
         EntitySize size = getProperties().getSize();
         if (getWidth() != size.width || getHeight() != size.height) recalculateSize();
-        if (getHatchTime() > 0 && getProperties().CONDITIONS.test(this)) {
-            int timer = getHatchTime();
-            setHatchTime(--timer);
+        
+        if (!world.isRemote) {
+            if (hatchTime > 0 && getProperties().CONDITIONS.test(this)) --hatchTime;
+            else {
+                hatch();
+                Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new HatchMessage(this));
+            }
         }
-        else hatch();
     }
     
     /**
@@ -163,7 +175,7 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         if (source.getImmediateSource() instanceof PlayerEntity) {
             CompoundNBT tag = new CompoundNBT();
             
-            tag.putInt("hatchTime", getHatchTime());
+            tag.putInt("hatchTime", hatchTime);
             tag.putString("dragonType", EntityType.getKey(containedDragon.getType()).toString());
             ItemStack itemStack = new ItemStack(SetupItems.dragonEgg);
             itemStack.setTag(tag);
