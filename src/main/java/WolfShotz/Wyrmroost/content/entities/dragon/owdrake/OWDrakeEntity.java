@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupSounds;
@@ -43,6 +44,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.OptionalInt;
@@ -76,9 +78,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
         
-        hatchTimer = 18000;
+        eggProperties = new DragonEggProperties(0.65f, 1f, 18000);
         moveController = new MovementController(this);
-        inventory = new Inventory(19);
         
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
@@ -126,23 +127,23 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     /** Save Game */
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        compound.putBoolean("gender", getGender());
-        compound.putBoolean("variant", getDrakeVariant());
+    public void writeAdditional(CompoundNBT nbt) {
+        nbt.putBoolean("gender", getGender());
+        nbt.putBoolean("variant", getDrakeVariant());
         
-        super.writeAdditional(compound);
+        super.writeAdditional(nbt);
     }
     
     /** Load Game */
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        setGender(compound.getBoolean("gender"));
-        setDrakeVariant(compound.getBoolean("variant"));
+    public void readAdditional(CompoundNBT nbt) {
+        setGender(nbt.getBoolean("gender"));
+        setDrakeVariant(nbt.getBoolean("variant"));
     
-        setHasChest(!inventory.getStackInSlot(0).isEmpty());
-        if (compound.getBoolean("saddled")) inventory.setInventorySlotContents(1, new ItemStack(Items.SADDLE, 1)); // Datafix
+        setHasChest(invHandler.map(h -> !h.getStackInSlot(0).isEmpty()).orElse(false));
+        if (nbt.getBoolean("saddled")) invHandler.ifPresent(h -> h.setStackInSlot(1, new ItemStack(Items.SADDLE, 1))); // Datafix
         
-        super.readAdditional(compound);
+        super.readAdditional(nbt);
     }
 
     /**
@@ -171,6 +172,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     public int getSpecialChances() { return 100; }
+    
+    @Override
+    public ItemStackHandler createInv() { return new ItemStackHandler(19); }
     
     // ================================
 

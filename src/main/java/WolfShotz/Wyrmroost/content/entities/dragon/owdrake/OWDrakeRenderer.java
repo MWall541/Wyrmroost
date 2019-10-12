@@ -31,8 +31,8 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     public final ResourceLocation ARMOR_DIAMOND      = location("accessories/armor_diamond.png");
     public final ResourceLocation ARMOR_PLATINUM     = location("accessories/armor_platinum.png");
     public final ResourceLocation ARMOR_GEODE_BLUE   = location("accessories/armor_geode_blue.png");
-    public final ResourceLocation ARMOR_GEODE_RED    = location("accessories/armor_geode_red");
-    public final ResourceLocation ARMOR_GEODE_PURPLE = location("accessories/armor_geode_purple");
+    public final ResourceLocation ARMOR_GEODE_RED    = location("accessories/armor_geode_red.png");
+    public final ResourceLocation ARMOR_GEODE_PURPLE = location("accessories/armor_geode_purple.png");
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);

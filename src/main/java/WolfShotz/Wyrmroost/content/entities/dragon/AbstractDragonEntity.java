@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
@@ -23,6 +24,7 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -49,10 +51,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
@@ -67,17 +72,16 @@ import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
  */
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity, INamedContainerProvider
 {
+    public static final UUID ARMOR_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     public int shouldFlyThreshold = 3;
     @OnlyIn(Dist.CLIENT) public int flashTicks;
     public final int randomFlyChance = 1000; // Default to random chance
-    public int hatchTimer;
     public boolean isSpecialAttacking = false;
-    public final boolean nocturnal = false;
+    public boolean nocturnal = false;
     public List<String> immunes = new ArrayList<>();
     public Random syncRand = new Random(6045323340150860495L); // Use a seed to sync between server and client
-    public Inventory inventory;
-    public LazyOptional<?> invHandler;
-    public static final UUID ARMOR_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
+    public LazyOptional<IItemHandlerModifiable> invHandler = createInv() == null ? LazyOptional.empty() : LazyOptional.of(this::createInv);
+    public DragonEggProperties eggProperties;
     
     // Dragon Entity Animations
     public int animationTick;
@@ -100,8 +104,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         moveController = new FlightMovementController(this);
         lookController = new DragonLookController(this);
         stepHeight = 1;
-        hatchTimer = 12000;
-        if (inventory != null) invHandler = LazyOptional.of(() -> new InvWrapper(inventory));
     }
     
     /**
@@ -118,6 +120,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void switchPathController(boolean flying) {
 //        if (flying) navigator = new FlightPathNavigator(this, world);
 //        else navigator = new DragonGroundPathNavigator(this, world);
+    }
+    
+    /**
+     * If this dragon flies, obtain the flight movement controller
+     * Note: This should only be called if we're sure this dragon can fly. So run a check first! ({@code canFly()})
+     */
+    public FlightMovementController getFlightMoveController() {
+        try { return (FlightMovementController) moveController; }
+        catch (ClassCastException e) { throw new ClassCastException("moveController is not a Flight Movement Controller!"); }
     }
     
     /**
@@ -146,46 +157,26 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Sava data
      */
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        compound.putBoolean("special", isSpecial());
-        compound.putBoolean("sleeping", isSleeping());
+    public void writeAdditional(CompoundNBT nbt) {
+        nbt.putBoolean("special", isSpecial());
+        nbt.putBoolean("sleeping", isSleeping());
     
-        if (inventory != null && !inventory.isEmpty()) {
-            ListNBT items = new ListNBT();
+        if (invHandler.isPresent()) invHandler.ifPresent(i -> nbt.put("inv", ((ItemStackHandler) i).serializeNBT()));
         
-            for (int i = 0; i < inventory.getSizeInventory(); ++i) {
-                ItemStack stack = inventory.getStackInSlot(i);
-                if (!stack.isEmpty()) {
-                    CompoundNBT nbt = new CompoundNBT();
-                    nbt.putInt("slot", i);
-                    stack.write(nbt);
-                    items.add(nbt);
-                }
-            }
-        
-            compound.put("invitems", items);
-        }
-        
-        super.writeAdditional(compound);
+        super.writeAdditional(nbt);
     }
     
     /**
      * Load data
      */
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        setSpecial(compound.getBoolean("special"));
-        dataManager.set(SLEEPING, compound.getBoolean("sleeping")); // Use data manager: Setter method controls animation
+    public void readAdditional(CompoundNBT nbt) {
+        setSpecial(nbt.getBoolean("special"));
+        dataManager.set(SLEEPING, nbt.getBoolean("sleeping")); // Use data manager: Setter method controls animation
     
-        if (inventory != null && !compound.getList("invitems", 10).isEmpty()) {
-            ListNBT items = compound.getList("invitems", 10);
-            for (int i = 0; i < inventory.getSizeInventory(); ++i) {
-                CompoundNBT nbt = items.getCompound(i);
-                inventory.setInventorySlotContents(nbt.getInt("slot"), ItemStack.read(nbt));
-            }
-        }
+        if (invHandler.isPresent()) invHandler.ifPresent(i -> ((ItemStackHandler) i).deserializeNBT(nbt.getCompound("inv")));
         
-        super.readAdditional(compound);
+        super.readAdditional(nbt);
     }
     
     /**
@@ -248,10 +239,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     public DragonArmorItem.DragonArmorType getArmor(int slot) {
-        LazyOptional<IItemHandler> cap = getInvCap();
-        ItemStack stack = cap.map(s -> s.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
+        ItemStack stack = invHandler.map(s -> s.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
         if (stack.isEmpty()) return null;
-        int id = cap.map(s -> ((DragonArmorItem) stack.getItem()).getID()).orElse(-1);
+        int id = invHandler.map(s -> ((DragonArmorItem) stack.getItem()).getID()).orElse(-1);
         return DragonArmorItem.DragonArmorType.getTypeByID(id);
     }
     public void setArmored(int slot) {
@@ -322,6 +312,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return super.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
     }
     
+    public ItemStackHandler createInv() { return null; }
+    
     /**
      * Remove and invalidate the Inventory handler capability
      */
@@ -387,11 +379,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return true;
         }
     
-        if (isSleeping()) {
-            setSleeping(false);
-        
-            return true;
-        }
+        setSleeping(false);
         
         if (isBreedingItem(stack) && isTamed()) {
             if (getHealth() < getMaxHealth()) {
@@ -420,32 +408,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) { return processInteract(player, hand, player.getHeldItem(hand)); }
-    
-    /**
-     * Method called to "call" ur dragon.
-     * If its flying, try to descend down.
-     * If its sitting, try to stand.
-     *
-     * boolean to make sure we can perform this. if not, ignore it
-     */
-    public boolean callDragon(PlayerEntity player) {
-        boolean result = false;
-        if (isFlying()) {
-            moveController.setMoveTo(player.posX - rand.nextInt(3), Math.ceil(player.posY), player.posZ - rand.nextInt(3), getAttribute(FLYING_SPEED).getBaseValue());
-            result = true;
-        }
-        else if (isSitting()) {
-            setSit(false);
-            result = true;
-        }
-        
-        if (world.isRemote && result && player != null) {
-            player.playSound(SetupSounds.CALL_WHISTLE, 1, 1);
-            flashTicks = 8;
-        }
-        
-        return result;
-    }
     
     /**
      * Get all entities in a given range in front of this entity and damage all within it
@@ -626,6 +588,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
             }
         }
+    }
+    
+    /**
+     * Method getter to define egg properties of this dragon
+     */
+    public DragonEggProperties getEggProperties() {
+        if (eggProperties == null) {
+            ModUtils.L.warn("{} is missing dragon egg properties! Using default values...", getType().getName().getUnformattedComponentText());
+            eggProperties = new DragonEggProperties(2f, 2f, 12000);
+        }
+        return eggProperties;
     }
     
     /**
