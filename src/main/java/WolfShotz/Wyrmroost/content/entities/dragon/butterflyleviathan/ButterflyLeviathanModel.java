@@ -121,7 +121,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         teethBottom.addBox(-2.5F, -0.7F, -0.7F, 5, 1, 8, 0.0F);
         body1 = new AdvancedRendererModel(this, 96, 0);
         body1.setRotationPoint(0.0F, -10.5F, 0.0F);
-        body1.addBox(-5.5F, -6.3F, -4.6F, 11, 13, 15, 0.0F);
+        body1.addBox(-5.5F, -6.3F, -4.6F, 11, 13, 15, 0.0F); // -5.5f 4.6f
         topWingFinPhalangeL1 = new AdvancedRendererModel(this, 113, 155);
         topWingFinPhalangeL1.setRotationPoint(-5.1F, -3.7F, -1.9F);
         topWingFinPhalangeL1.addBox(0.0F, -1.1F, -1.5F, 14, 2, 3, 0.0F);
@@ -294,13 +294,14 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
     }
 
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) { 
+    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
         GlStateManager.pushMatrix();
         GlStateManager.translatef(body1.offsetX, body1.offsetY, body1.offsetZ);
         GlStateManager.translatef(body1.rotationPointX * f5, body1.rotationPointY * f5, body1.rotationPointZ * f5);
         GlStateManager.scaled(3d, 3d, 3d);
         GlStateManager.translatef(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
         GlStateManager.translatef(-body1.rotationPointX * f5, -body1.rotationPointY * f5, -body1.rotationPointZ * f5);
+        GlStateManager.translatef(0, 4.9f * f5, 0);
         body1.render(f5);
         GlStateManager.popMatrix();
     }

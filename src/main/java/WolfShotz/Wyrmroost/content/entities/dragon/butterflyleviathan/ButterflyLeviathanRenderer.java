@@ -22,9 +22,9 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     protected ResourceLocation getEntityTexture(ButterflyLeviathanEntity entity) {
         if (entity.isSpecial()) return ALBINO;
         switch (entity.getVariant()) {
-            default:
-            case 1: return BLUE;
-            case 2: return PURPLE;
+            default: // Fall back: WHAT VARIANT IS THIS?!
+            case 0: return BLUE;
+            case 1: return PURPLE;
         }
     }
     
