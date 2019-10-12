@@ -12,6 +12,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +26,7 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         
         buildPlayerSlots(playerInv, 7, 83);
         
-        dragon.getInvCap().ifPresent(h -> {
+        dragon.invHandler.ifPresent(h -> {
             addSlot(buildSaddleSlot(h, 73, 34));
     
             addSlot(buildArmorSlot(h, 73, 52));
@@ -40,12 +41,12 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
                 @Override
                 public boolean canTakeStack(PlayerEntity playerIn) {
                     for (int i = 3; i < 19; ++i)
-                        if (!drake.inventory.getStackInSlot(i).isEmpty()) return false;
+                        if (!h.getStackInSlot(i).isEmpty()) return false;
                     return true;
                 }
             });
             
-            buildSlotArea((index, posX, posY) -> new Slot(drake.inventory, index, posX, posY) {
+            buildSlotArea((index, posX, posY) -> new SlotItemHandler(h, index, posX, posY) {
                 @Override public boolean isEnabled() { return drake.hasChest(); }
             }, 3, 97, 7, 4, 4);
         });

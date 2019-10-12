@@ -8,15 +8,14 @@ import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -28,9 +27,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
-
-import static WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity.DragonTypes;
+import java.util.Optional;
 
 public class DragonEggItem extends Item
 {
@@ -60,7 +57,7 @@ public class DragonEggItem extends Item
         if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(offsetPos)).isEmpty()) return ActionResultType.FAIL;
         
         eggEntity.readAdditional(tag);
-        eggEntity.setPosition(offsetPos.getX() + 0.5d, offsetPos.getY() + 1, offsetPos.getZ() + 0.5d);
+        eggEntity.setPosition(offsetPos.getX() + 0.5d, offsetPos.getY() + 0.5d, offsetPos.getZ() + 0.5d);
         if (!world.isRemote) world.addEntity(eggEntity);
         if (!player.isCreative()) player.setHeldItem(ctx.getHand(), ItemStack.EMPTY);
         
@@ -68,35 +65,29 @@ public class DragonEggItem extends Item
     }
     
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        if (!player.isCreative() || !player.isSneaking()) return super.onItemRightClick(world, player, hand);
-        ItemStack stack = player.getHeldItem(hand);
-        CompoundNBT currentTag = stack.getTag();
-        CompoundNBT tag = new CompoundNBT();
-        String dragonType;
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+        if (!player.isCreative()) return false;
+        if (!entity.isAlive()) return false;
+        if (!(entity instanceof AbstractDragonEntity)) return false;
         
-        if (currentTag != null && currentTag.contains("dragonType")) {
-            DragonTypes typeEnum = DragonEggEntity.getDragonTypeEnum(currentTag.getString("dragonType"));
-            int ordinal = (typeEnum.ordinal() >= DragonTypes.values().length - 1)? 0 : typeEnum.ordinal() + 1;
-            
-            dragonType = EntityType.getKey(DragonTypes.values()[ordinal].getType()).toString();
-        }
-        else dragonType = EntityType.getKey(DragonTypes.values()[new Random().nextInt(DragonTypes.values().length)].getType()).toString();
+        CompoundNBT nbt = new CompoundNBT();
+        int hatchTime = ((AbstractDragonEntity) entity.getType().create(player.world)).getEggProperties().HATCH_TIME;
         
-        tag.putString("dragonType", dragonType);
-        tag.putInt("hatchTime", ((AbstractDragonEntity) ModUtils.getTypeByString(dragonType).create(world)).hatchTimer);
-        stack.setTag(tag);
+        nbt.putString("dragonType", EntityType.getKey(entity.getType()).toString());
+        nbt.putInt("hatchTime", hatchTime);
+        stack.setTag(nbt);
         player.sendStatusMessage(getDisplayName(stack), true);
-        
-        return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        return true;
     }
     
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
         CompoundNBT tag = stack.getTag();
+        if (tag == null || tag.isEmpty()) return super.getDisplayName(stack);
+        Optional<EntityType<?>> type = EntityType.byKey(tag.getString("dragonType"));
         
-        if (tag != null && tag.contains("dragonType")) {
-            String dragonTranslation = EntityType.byKey(tag.getString("dragonType")).get().getName().getUnformattedComponentText();
+        if (type.isPresent()) {
+            String dragonTranslation = type.get().getName().getUnformattedComponentText();
             
             return TranslationUtils.appendableTranslation(dragonTranslation + " ", getTranslationKey());
         }
