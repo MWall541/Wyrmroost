@@ -72,6 +72,7 @@ public class SetupItems
     @ObjectHolder(ID + "minutus_egg")           public static Item eggMinutus;
     @ObjectHolder(ID + "silverglider_egg")      public static Item eggSilverGlider;
     @ObjectHolder(ID + "rooststalker_egg")      public static Item eggRoostStalker;
+    @ObjectHolder(ID + "butterflyleviathan_egg")public static Item eggButterflyLeviathan;
     // Spawn Eggs end
     
     // Dragon Armor Start
@@ -109,11 +110,11 @@ public class SetupItems
                 // Food End
                 
                 // SpawnEggs start
-                
                 new SpawnEggItem(SetupEntities.overworldDrake, 0x15ff00, 0x085e00, ModUtils.itemBuilder()).setRegistryName("drake_egg"),
                 new SpawnEggItem(SetupEntities.minutus, 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()).setRegistryName("minutus_egg"),
                 new SpawnEggItem(SetupEntities.silverGlider, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("silverglider_egg"),
                 new SpawnEggItem(SetupEntities.roostStalker, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("rooststalker_egg"),
+                new SpawnEggItem(SetupEntities.butterflyLeviathan, 0xffffff, 0xffffff, ModUtils.itemBuilder()).setRegistryName("butterflyleviathan_egg"),
                 // SpawnEggs end
 
                 // Geode start

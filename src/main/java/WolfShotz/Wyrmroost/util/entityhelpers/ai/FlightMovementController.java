@@ -86,6 +86,12 @@ public class FlightMovementController extends MovementController
         }
     }
     
+    public FlightMovementController resetCourse() {
+        this.courseCooldown = 0;
+        
+        return this;
+    }
+    
     /**
      * Checks if entity bounding box is not colliding with terrain
      */

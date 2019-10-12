@@ -19,6 +19,7 @@ import net.minecraft.world.Explosion;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -107,17 +108,6 @@ public class EventHandler
                     dragon.performGenericAttack();
                     Wyrmroost.network.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
                 }
-            } else if (SetupKeyBinds.callDragon.isPressed()) {
-                RayTraceResult result = MathUtils.rayTrace(player.world, player, 50, true);
-                if (result.getType() != RayTraceResult.Type.ENTITY) return;
-                EntityRayTraceResult ertr = (EntityRayTraceResult) result;
-                Entity entity = ertr.getEntity();
-                if (!(entity instanceof AbstractDragonEntity)) return;
-                AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-                if (!dragon.isOwner(player)) return;
-                
-                if (!dragon.callDragon(player)) return;
-                Wyrmroost.network.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.CALL_DRAGON));
             }
         }
         

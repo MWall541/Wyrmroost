@@ -33,7 +33,10 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     
     public abstract String getResourceDirectory();
     
-    public ResourceLocation location(String png) { return ModUtils.location(getResourceDirectory() + png); }
+    public ResourceLocation location(String png) {
+        if (!png.contains(".png")) png += ".png";
+        return ModUtils.location(getResourceDirectory() + png);
+    }
     
     // =================
     //   Render Layers

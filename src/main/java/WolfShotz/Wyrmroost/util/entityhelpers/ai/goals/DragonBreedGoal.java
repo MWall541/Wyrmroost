@@ -47,7 +47,7 @@ public class DragonBreedGoal extends BreedGoal
         ItemStack eggStack = new ItemStack(SetupItems.dragonEgg);
     
         tag.putString("dragonType", EntityType.getKey(dragon.getType()).toString());
-        tag.putInt("hatchTime", dragon.hatchTimer);
+        tag.putInt("hatchTime", dragon.getEggProperties().HATCH_TIME);
         eggStack.setTag(tag);
     
         ItemEntity eggItem = new ItemEntity(world, dragon.posX, dragon.posY, dragon.posZ, eggStack);

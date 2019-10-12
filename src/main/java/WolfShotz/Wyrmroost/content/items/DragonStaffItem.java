@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.Citadel;
@@ -27,6 +28,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
+
 public class DragonStaffItem extends Item
 {
     public DragonStaffItem() {
@@ -39,7 +42,6 @@ public class DragonStaffItem extends Item
         CompoundNBT tag = new CompoundNBT();
         tag.putInt("bound", target.getEntityId());
         stack.setTag(tag);
-        player.setHeldItem(player.getActiveHand(), stack);
         player.playSound(SoundEvents.BLOCK_CONDUIT_ACTIVATE, 1f, 1f);
         return true;
     }
@@ -71,19 +73,38 @@ public class DragonStaffItem extends Item
             stack.getTag().remove("bound");
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
+        
         RayTraceResult rtr = MathUtils.rayTrace(world, player, 50, true);
         
-        if (rtr.getType() != RayTraceResult.Type.ENTITY) return new ActionResult<>(ActionResultType.FAIL, stack);
+        if (rtr.getType() != RayTraceResult.Type.ENTITY) return new ActionResult<>(ActionResultType.PASS, stack);
         
         EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
         Entity entityResult = ertr.getEntity();
-        
+    
         if (entityResult instanceof AbstractDragonEntity && ((AbstractDragonEntity) entityResult).isOwner(player)) {
-            ((AbstractDragonEntity) entityResult).callDragon(player);
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            AbstractDragonEntity dragon = (AbstractDragonEntity) entityResult;
+            boolean pass = false;
+            
+            if (dragon.isFlying()) {
+                dragon.getFlightMoveController().resetCourse().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(FLYING_SPEED).getBaseValue());
+                pass = true;
+            }
+            else if (dragon.isSitting()) {
+                dragon.setSit(false);
+                pass = true;
+            }
+    
+            if (pass) {
+                if (world.isRemote) {
+                    dragon.flashTicks = 8;
+                    player.playSound(SoundEvents.BLOCK_CONDUIT_ATTACK_TARGET, 1f, 1f);
+                }
+                return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            }
         }
         else if (isBound && entityResult instanceof LivingEntity) {
             AbstractDragonEntity ownedDragon = getDragon(stack, world);
+            if (ownedDragon == null) return new ActionResult<>(ActionResultType.FAIL, stack);
             if (ownedDragon.shouldAttackEntity((LivingEntity) entityResult, player)) ownedDragon.setAttackTarget((LivingEntity) entityResult);
             player.playSound(SoundEvents.ENTITY_ILLUSIONER_CAST_SPELL, 1f, 1f);
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
@@ -94,7 +115,8 @@ public class DragonStaffItem extends Item
     
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-        if (world.isRemote && isBound(stack)) getDragon(stack, world).setGlowing(isSelected);
+        AbstractDragonEntity dragon = getDragon(stack, world);
+        if (world.isRemote && isBound(stack) && dragon != null) dragon.setGlowing(isSelected);
     }
     
     @Override
@@ -112,6 +134,9 @@ public class DragonStaffItem extends Item
         return tag.contains("bound");
     }
     
+    /**
+     * run a check using {@code isBound} first
+     */
     public AbstractDragonEntity getDragon(ItemStack stack, World world) {
         assert (isBound(stack));
         CompoundNBT tag = stack.getTag();

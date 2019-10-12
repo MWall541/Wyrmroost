@@ -66,7 +66,7 @@ public class SetupEntities
         minutus             = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
         silverGlider        = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
         roostStalker        = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
-        butterflyLeviathan  = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 2.65f, 2.65f);
+        butterflyLeviathan  = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 3.25f, 3.25f);
     }
     
     /**
@@ -85,6 +85,8 @@ public class SetupEntities
      */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
+//        RenderingRegistry.registerEntityRenderingHandler(PartEntity.class, MultiPartRenderer::new);
+        
         RenderingRegistry.registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
         
         RenderingRegistry.registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
@@ -158,6 +160,15 @@ public class SetupEntities
      */
     private static <T extends Entity> EntityType<T> buildEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify, float width, float height) {
         EntityType<T> builder = EntityType.Builder.create(entity, classify).size(width, height).build(Wyrmroost.MOD_ID + ":" + name);
+        builder.setRegistryName(name);
+        return builder;
+    }
+    
+    /**
+     * Builder w/out size
+     */
+    private static <T extends Entity> EntityType<T> buildEntity(String name, EntityType.IFactory<T> entity, EntityClassification classify) {
+        EntityType<T> builder = EntityType.Builder.create(entity, classify).build(Wyrmroost.MOD_ID + ":" + name);
         builder.setRegistryName(name);
         return builder;
     }

@@ -92,10 +92,8 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
         };
     }
     
-    @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
-        try { dragon.inventory.closeInventory(playerIn); }
-        catch (NullPointerException ignore) {/* Dragon doesnt have an inventory */}
-    }
+    /**
+     * If this dragon does not have a saddle slot, this shouldnt be used. else, override.
+     */
+    public int getSaddleSlot() { return -1; }
 }

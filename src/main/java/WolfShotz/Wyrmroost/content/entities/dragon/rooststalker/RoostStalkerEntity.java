@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
@@ -44,7 +45,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         moveController = new MovementController(this);
         stepHeight = 0;
-        hatchTimer = 6000;
+        eggProperties = new DragonEggProperties(0.25f, 0.35f, 6000);
         
         SLEEP_ANIMATION = Animation.create(15);
         WAKE_ANIMATION = Animation.create(15);

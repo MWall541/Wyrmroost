@@ -35,7 +35,7 @@ public class SleepGoal extends Goal
     @Override
     public boolean shouldContinueExecuting() {
         if (WORLD.isDaytime() && dragon.isSleeping() && RANDOM.nextInt(150) != 0) return false; // Stop sleeping at daytime
-        if ((dragon.isTamed() && dragon.isSitting()) || dragon.isBeingRidden()) return false; // lol sleep while being ridden. Snorlax intensifies
+        if ((dragon.isTamed() && !dragon.isSitting()) || dragon.isBeingRidden()) return false; // lol sleep while being ridden. Snorlax intensifies
         if (dragon.getAttackTarget() != null || !dragon.getNavigator().noPath() || dragon.isAngry()) return false; // Check ai shtuffs. Shouldnt sleep when were angry
         return !dragon.isInWaterOrBubbleColumn() && !dragon.isFlying(); // Check actually reasonable things (imagine sleeping while flying)
     }

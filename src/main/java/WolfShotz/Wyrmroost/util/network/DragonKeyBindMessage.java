@@ -24,7 +24,6 @@ public class DragonKeyBindMessage
     public static final int PERFORM_GENERIC_ATTACK = 0;
     public static final int START_SPECIAL_ATTACK = 1;
     public static final int END_SPECIAL_ATTACK = 2;
-    public static final int CALL_DRAGON = 3;
     
     private int dragonID;
     private int key;
@@ -52,7 +51,6 @@ public class DragonKeyBindMessage
             case 0: dragon.performGenericAttack(); break;
             case 1: dragon.performSpecialAttack(true); break;
             case 2: dragon.performSpecialAttack(false); break;
-            case 3: dragon.callDragon((PlayerEntity) dragon.getOwner()); break;
             default: ModUtils.L.error("Unknown KeyPress packet key... wat?");
         }
         context.get().setPacketHandled(true);

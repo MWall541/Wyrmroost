@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.*;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
@@ -49,7 +50,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
         
-        hatchTimer = 12000;
+        eggProperties = new DragonEggProperties(0.4f, 0.65f, 12000);
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
     }
@@ -103,19 +104,19 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
+    public void writeAdditional(CompoundNBT nbt) {
+        super.writeAdditional(nbt);
     
-        compound.putBoolean("gender", getGender());
-        compound.putInt("variant", getVariant());
+        nbt.putBoolean("gender", getGender());
+        nbt.putInt("variant", getVariant());
     }
 
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        super.readAdditional(compound);
+    public void readAdditional(CompoundNBT nbt) {
+        super.readAdditional(nbt);
 
-        setVariant(compound.getInt("variant"));
-        setGender(compound.getBoolean("gender"));
+        setVariant(nbt.getInt("variant"));
+        setGender(nbt.getBoolean("gender"));
     }
     
     @Override

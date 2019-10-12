@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupEntities;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -24,42 +23,47 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.lang3.ObjectUtils;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
 {
     private int animationTick;
     private Animation animation = NO_ANIMATION;
+    public AbstractDragonEntity containedDragon;
     @OnlyIn(Dist.CLIENT)
     public boolean wiggleInvert, wiggleInvert2;
+    Random rand = new Random(3257965L); // Use a seed so server + client is synced
+    
     
     public static final Animation WIGGLE_ANIMATION = Animation.create(10);
-    
-    private static final DataParameter<String> DRAGON_TYPE = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.STRING);
-    private static final DataParameter<Integer> HATCH_TIME = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.VARINT);
     
     public DragonEggEntity(EntityType<? extends DragonEggEntity> dragonEgg, World world) {
         super(dragonEgg, world);
     }
     
-    
-    @Override
-    protected void registerData() {
-        super.registerData();
-        
-        dataManager.register(DRAGON_TYPE, "");
-        dataManager.register(HATCH_TIME, 1200);
-    }
+    private static final DataParameter<Integer> HATCH_TIME = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<String> DRAGON_TYPE = EntityDataManager.createKey(DragonEggEntity.class, DataSerializers.STRING);
     
     // ================================
     //           Entity NBT
     // ================================
     
     @Override
+    protected void registerData() {
+        super.registerData();
+        
+        dataManager.register(HATCH_TIME, 12000);
+        dataManager.register(DRAGON_TYPE, "");
+    }
+    
+    
+    @Override
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
-        
+    
         setDragonType(compound.getString("dragonType"));
         setHatchTime(compound.getInt("hatchTime"));
     }
@@ -67,7 +71,7 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     @Override
     public void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
-        
+    
         compound.putString("dragonType", getDragonType());
         compound.putInt("hatchTime", getHatchTime());
     }
@@ -84,16 +88,11 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     public void livingTick() {
         super.livingTick();
         
-        EntityType type = ModUtils.getTypeByString(getDragonType());
-        if (type != null) {
-            Entity entity = type.create(world);
-            Random rand = new Random(3257965L); // Use a seed so server + client is synced
-            int bounds = Math.max(getHatchTime() / 150, 3);
-            
-            if (entity instanceof AbstractDragonEntity && getHatchTime() < ((AbstractDragonEntity) entity).hatchTimer / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION) {
-                setAnimation(WIGGLE_ANIMATION);
-                playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1, 1);
-            }
+        int bounds = Math.max(getHatchTime() / 150, 3);
+        
+        if (getHatchTime() < getProperties().HATCH_TIME / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION) {
+            setAnimation(WIGGLE_ANIMATION);
+            playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1, 1);
         }
         
         if (world.isRemote && ticksExisted % 3 == 0) {
@@ -102,12 +101,12 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
             double z = posZ + rand.nextGaussian() * 0.2d;
             world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
         }
-        
-        
     }
     
     @Override
     public void tick() {
+        if (containedDragon == null) containedDragon = getTypeSafely();
+        
         super.tick();
         
         if (getAnimation() != NO_ANIMATION) {
@@ -115,16 +114,13 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
         
-        try {
-            DragonTypes type = getDragonTypeEnum();
-            if (getWidth() != type.getWidth() || getHeight() != type.getHeight()) recalculateSize();
-            int hatchTime = getHatchTime();
-            if (hatchTime > 0) {
-                setHatchTime(--hatchTime);
-            }
-            else hatch();
+        EntitySize size = getProperties().getSize();
+        if (getWidth() != size.width || getHeight() != size.height) recalculateSize();
+        if (getHatchTime() > 0 && getProperties().CONDITIONS.test(this)) {
+            int timer = getHatchTime();
+            setHatchTime(--timer);
         }
-        catch (NullPointerException e) { safeError(); }
+        else hatch();
     }
     
     /**
@@ -136,23 +132,12 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
      *  - Remove this entity (the egg) and play any effects
      */
     public void hatch() {
-        EntityType type = ModUtils.getTypeByString(getDragonType());
-        if (type == null) {
-            safeError();
-            return;
-        }
-        Entity entity = type.create(world);
-        if (!(entity instanceof AbstractDragonEntity)) {
-            safeError();
-            return;
-        }
-        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-        
+        AbstractDragonEntity newDragon = (AbstractDragonEntity) containedDragon.getType().create(world); // May not be necessary, not sure, do it anyway tho.
         if (!world.isRemote) {
-            dragon.setPosition(posX, posY, posZ);
-            dragon.setGrowingAge(-(dragon.hatchTimer * 2));
-            dragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
-            world.addEntity(dragon);
+            newDragon.setPosition(posX, posY, posZ);
+            newDragon.setGrowingAge(-(newDragon.getEggProperties().HATCH_TIME * 2));
+            newDragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
+            world.addEntity(newDragon);
         } else {
             for (int i = 0; i < getWidth() * 25; ++i) {
                 double x = rand.nextGaussian() * 0.2f;
@@ -179,7 +164,7 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
             CompoundNBT tag = new CompoundNBT();
             
             tag.putInt("hatchTime", getHatchTime());
-            tag.putString("dragonType", getDragonType());
+            tag.putString("dragonType", EntityType.getKey(containedDragon.getType()).toString());
             ItemStack itemStack = new ItemStack(SetupItems.dragonEgg);
             itemStack.setTag(tag);
             InventoryHelper.spawnItemStack(world, posX, posY, posZ, itemStack);
@@ -191,27 +176,29 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         return false;
     }
     
-    @Override
-    public EntitySize getSize(Pose pose) {
-        DragonTypes type = getDragonTypeEnum();
-        
-        if (type == null) return super.getSize(pose);
-        else return super.getSize(pose).scale(type.getWidth(), type.getHeight());
+    public DragonEggProperties getProperties() {
+        try { return containedDragon.getEggProperties(); }
+        catch (NullPointerException e) { return new DragonEggProperties(0.65f, 1f, 12000); }
     }
     
-    public DragonTypes getDragonTypeEnum() {
+    @Nullable
+    public AbstractDragonEntity getTypeSafely() {
         EntityType type = ModUtils.getTypeByString(getDragonType());
-    
-        for (DragonTypes value : DragonTypes.values()) if (value.getType() == type) return value;
-        return null;
-    }
-    
-    public static DragonTypes getDragonTypeEnum(String typeKey) {
-        EntityType type = ModUtils.getTypeByString(typeKey);
+        if (type == null) {
+            safeError();
+            return null;
+        }
+        Entity entity = type.create(world);
+        if (!(entity instanceof AbstractDragonEntity)) {
+            safeError();
+            return null;
+        }
         
-        for (DragonTypes value : DragonTypes.values()) if (value.getType() == type) return value;
-        return null;
+        return (AbstractDragonEntity) entity;
     }
+    
+    @Override
+    public EntitySize getSize(Pose poseIn) { return getProperties().getSize(); }
     
     @Override
     protected boolean isMovementBlocked() { return true; }
@@ -267,30 +254,4 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, WIGGLE_ANIMATION}; }
     
     // ================
-    
-    /**
-     * Enum to define the hitbox sizes of the eggs depending on dragon type
-     */
-    public enum DragonTypes
-    {
-        DRAKE(SetupEntities.overworldDrake, 0.65f, 1f),
-        SILVER_GLIDER(SetupEntities.silverGlider, 0.4f, 0.65f),
-        ROOST_STALKER(SetupEntities.roostStalker, 0.25f, 0.35f);
-        
-        private EntityType dragonType;
-        private float width, height;
-        
-        DragonTypes(EntityType type, float width, float height) {
-            this.dragonType = type;
-            this.width = width;
-            this.height = height;
-        }
-        
-        public EntityType getType() { return dragonType; }
-        
-        public float getWidth() { return width; }
-        
-        public float getHeight() { return height; }
-        
-    }
 }
