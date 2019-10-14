@@ -14,6 +14,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRend
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartRenderer;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
@@ -71,7 +72,7 @@ public class SetupEntities
         minutus            = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
         silverGlider       = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
         roostStalker       = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
-        butterflyLeviathan = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 3.25f, 3.25f);
+        butterflyLeviathan = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 4f, 3f);
     
         multiPartEntity    = buildEntity("multipart_entity", EntityType.Builder
                                                                      .<MultiPartEntity>create(EntityClassification.MISC)
@@ -99,7 +100,7 @@ public class SetupEntities
      */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
-//        RenderingRegistry.registerEntityRenderingHandler(PartEntity.class, MultiPartRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(MultiPartEntity.class, MultiPartRenderer::new);
         
         RenderingRegistry.registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
         

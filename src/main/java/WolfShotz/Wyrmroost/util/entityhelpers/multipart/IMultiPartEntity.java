@@ -4,25 +4,59 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface IMultiPartEntity
 {
     MultiPartEntity[] getParts();
     
-    default Stream<MultiPartEntity> iterateParts() { return Arrays.stream(getParts()); }
+    /**
+     * MultiPartEntity Streamer used to iterate the parts
+     */
+    default Stream<MultiPartEntity> iterateParts() { return Arrays.stream(getParts()).filter(Objects::nonNull); }
     
+    /**
+     * Method used to update the parts per tick
+     */
     default void tickParts() { iterateParts().forEach(MultiPartEntity::tick); }
     
+    /**
+     * Create an additional "hitbox" on the passed host. SHOULD BE CREATED ON SERVER!
+     * @param host entity were adding this part to
+     * @param radius how far the part is away from the host's center
+     * @param angleYaw angle at which the box is at
+     * @param offsetY how high the part is
+     * @param sizeX the width of the part
+     * @param sizeY the height of the part
+     */
     default MultiPartEntity createPart(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY) {
         return createPart(host, radius, angleYaw, offsetY, sizeX, sizeY, 1f);
     }
     
+    /**
+     * Create an additional "hitbox" on the passed host. SHOULD BE CREATED ON SERVER!
+     * @param host entity were adding this part to
+     * @param radius how far the part is away from the host's center
+     * @param angleYaw angle at which the box is at
+     * @param offsetY how high the part is
+     * @param sizeX the width of the part
+     * @param sizeY the height of the part
+     * @param damageMultiplier the amount of damage multiplied applied to the target when this part is damaged
+     */
     default MultiPartEntity createPart(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier) {
         return new MultiPartEntity(host, radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier);
     }
     
-    default void addPartsToWorld(World world) { iterateParts().forEach(world::addEntity); }
+    /**
+     * Method called on server to add all parts to this world.
+     * @param world the world were adding the parts in
+     */
+    default void addPartsToWorld(World world) {
+        if (world.isRemote) return;
+        iterateParts().forEach(world::addEntity);
+    }
     
     default LivingEntity getHost() { return (LivingEntity) this; }
 }
