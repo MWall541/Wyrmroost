@@ -13,6 +13,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEnti
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
+import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.Objects;
@@ -46,6 +48,8 @@ public class SetupEntities
     private static final String ID = Wyrmroost.MOD_ID + ":";
     
     // Entity List Start
+    @ObjectHolder(ID + "multipart_entity")      public static EntityType<MultiPartEntity>           multiPartEntity;
+    
     @ObjectHolder(ID + "dragon_egg")            public static EntityType<DragonEggEntity>           dragonEgg;
     
     @ObjectHolder(ID + "overworld_drake")       public static EntityType<OWDrakeEntity>             overworldDrake;
@@ -61,12 +65,22 @@ public class SetupEntities
      * TODO Not ideal. use this until forge reevaluates
      */
     public static void buildEntities() {
-        dragonEgg           = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
-        overworldDrake      = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
-        minutus             = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
-        silverGlider        = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
-        roostStalker        = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
-        butterflyLeviathan  = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 3.25f, 3.25f);
+        dragonEgg          = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
+        
+        overworldDrake     = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
+        minutus            = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
+        silverGlider       = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
+        roostStalker       = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
+        butterflyLeviathan = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 3.25f, 3.25f);
+    
+        multiPartEntity    = buildEntity("multipart_entity", EntityType.Builder
+                                                                     .<MultiPartEntity>create(EntityClassification.MISC)
+                                                                     .immuneToFire()
+                                                                     .disableSummoning()
+                                                                     .disableSerialization()
+                                                                     .setShouldReceiveVelocityUpdates(false)
+                                                                     .setCustomClientFactory(MultiPartEntity::new)
+        );
     }
     
     /**
@@ -105,7 +119,9 @@ public class SetupEntities
                 minutus,
                 silverGlider,
                 roostStalker,
-                butterflyLeviathan
+                butterflyLeviathan,
+                
+                multiPartEntity
         );
         registerEntityWorldSpawns();
     }
@@ -171,6 +187,12 @@ public class SetupEntities
         EntityType<T> builder = EntityType.Builder.create(entity, classify).build(Wyrmroost.MOD_ID + ":" + name);
         builder.setRegistryName(name);
         return builder;
+    }
+    
+    private static <T extends Entity> EntityType<T> buildEntity(String name, EntityType.Builder<T> customBuilder) {
+        EntityType<T> type = customBuilder.build(name);
+        type.setRegistryName(name);
+        return type;
     }
 
     /**

@@ -1,5 +1,8 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.multipart;
 
+import WolfShotz.Wyrmroost.event.SetupEntities;
+import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
@@ -7,25 +10,29 @@ import net.minecraft.entity.Pose;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.List;
 
 public class MultiPartEntity extends Entity
 {
     protected LivingEntity host;
+    public float radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier;
     
-    public float radius, angleYaw, offsetY, sizeX, sizeY;
-    public final float damageMultiplier;
+    public MultiPartEntity(FMLPlayMessages.SpawnEntity packet, World world) {
+        super(SetupEntities.multiPartEntity, world);
+    }
     
     public MultiPartEntity(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier) {
-        super(host.getType(), host.world);
+        super(SetupEntities.multiPartEntity, host.world);
         this.host = host;
         
         this.radius = radius;
-        this.angleYaw = (angleYaw + 90.0F) * ((float) Math.PI / 180.0F);
+        this.angleYaw = (angleYaw + 90f) * (MathUtils.PI / 180.0F);
         this.offsetY = offsetY;
         
         this.damageMultiplier = damageMultiplier;
@@ -34,10 +41,20 @@ public class MultiPartEntity extends Entity
     
     @Override
     public void tick() {
-        setPositionAndUpdate(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180.0F) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180.0F) + angleYaw));
+        System.out.println(getPositionVec());
+        
         if (!world.isRemote) {
+            if (!host.isAlive()) { // Our host is dead, so we shouldnt exist!
+                remove();
+                return;
+            }
             collideWithNearbyEntities();
-            if (!host.isAlive()) ((ServerWorld) world).removeEntityComplete(this, true);
+            if (host == null) {
+                ModUtils.L.error("Unknown host type; removing.");
+                remove();
+                return;
+            }
+            setPositionAndUpdate(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
         }
         
         super.baseTick();
@@ -82,5 +99,5 @@ public class MultiPartEntity extends Entity
     public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) { }
     
     @Override
-    public IPacket<?> createSpawnPacket() { throw new UnsupportedOperationException(); }
+    public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 }
