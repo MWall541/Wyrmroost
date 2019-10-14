@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragonegg;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupItems;
-import WolfShotz.Wyrmroost.util.network.HatchMessage;
+import WolfShotz.Wyrmroost.util.network.EggHatchMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -23,13 +23,13 @@ import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
 {
@@ -39,7 +39,6 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
     public int hatchTime;
     @OnlyIn(Dist.CLIENT)
     public boolean wiggleInvert, wiggleInvert2;
-    Random rand = new Random(3257965L); // Use a seed so server + client is synced
     
     
     public static final Animation WIGGLE_ANIMATION = Animation.create(10);
@@ -130,7 +129,7 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
             if (hatchTime > 0 && getProperties().CONDITIONS.test(this)) --hatchTime;
             else {
                 hatch();
-                Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new HatchMessage(this));
+                Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
             }
         }
     }
@@ -207,6 +206,12 @@ public class DragonEggEntity extends LivingEntity implements IAnimatedEntity
         }
         
         return (AbstractDragonEntity) entity;
+    }
+    
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBox(Entity entityIn) {
+        return super.getCollisionBox(entityIn);
     }
     
     @Override

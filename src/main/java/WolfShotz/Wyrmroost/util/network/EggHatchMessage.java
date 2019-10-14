@@ -10,15 +10,15 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class HatchMessage
+public class EggHatchMessage
 {
     private int entityID;
     
-    public HatchMessage(DragonEggEntity entity) {
+    public EggHatchMessage(DragonEggEntity entity) {
         this.entityID = entity.getEntityId();
     }
     
-    public HatchMessage(PacketBuffer buf) {
+    public EggHatchMessage(PacketBuffer buf) {
         entityID = buf.readInt();
     }
     

@@ -11,6 +11,8 @@ import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
+import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
+import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
@@ -59,6 +61,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -161,7 +164,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         nbt.putBoolean("special", isSpecial());
         nbt.putBoolean("sleeping", isSleeping());
     
-        if (invHandler.isPresent()) invHandler.ifPresent(i -> nbt.put("inv", ((ItemStackHandler) i).serializeNBT()));
+        invHandler.ifPresent(i -> nbt.put("inv", ((ItemStackHandler) i).serializeNBT()));
         
         super.writeAdditional(nbt);
     }
@@ -174,7 +177,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setSpecial(nbt.getBoolean("special"));
         dataManager.set(SLEEPING, nbt.getBoolean("sleeping")); // Use data manager: Setter method controls animation
     
-        if (invHandler.isPresent()) invHandler.ifPresent(i -> ((ItemStackHandler) i).deserializeNBT(nbt.getCompound("inv")));
+        invHandler.ifPresent(i -> ((ItemStackHandler) i).deserializeNBT(nbt.getCompound("inv")));
         
         super.readAdditional(nbt);
     }

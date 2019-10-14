@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.event.*;
 import WolfShotz.Wyrmroost.util.network.AnimationMessage;
 import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
-import WolfShotz.Wyrmroost.util.network.HatchMessage;
+import WolfShotz.Wyrmroost.util.network.EggHatchMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -48,7 +48,7 @@ public class Wyrmroost
         network.registerMessage(++networkIndex, AnimationMessage.class, AnimationMessage::encode, AnimationMessage::new, AnimationMessage::handle);
         network.registerMessage(++networkIndex, DragonKeyBindMessage.class, DragonKeyBindMessage::encode, DragonKeyBindMessage::new, DragonKeyBindMessage::handle);
         network.registerMessage(++networkIndex, EntityMoveMessage.class, EntityMoveMessage::encode, EntityMoveMessage::new, EntityMoveMessage::handle);
-        network.registerMessage(++networkIndex, HatchMessage.class, HatchMessage::encode, HatchMessage::new, HatchMessage::handle);
+        network.registerMessage(++networkIndex, EggHatchMessage.class, EggHatchMessage::encode, EggHatchMessage::new, EggHatchMessage::handle);
         
         ModUtils.L.debug("Fired FMLCommon Setup");
     }
