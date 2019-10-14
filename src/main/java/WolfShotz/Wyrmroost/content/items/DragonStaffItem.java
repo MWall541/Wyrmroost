@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.event.SetupSounds;
+import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.Citadel;
@@ -39,6 +40,10 @@ public class DragonStaffItem extends Item
     
     @Override
     public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity target) {
+        if (!(target instanceof AbstractDragonEntity || target instanceof MultiPartEntity)) return false;
+        if (target instanceof MultiPartEntity && ((MultiPartEntity) target).host instanceof AbstractDragonEntity)
+            target = ((MultiPartEntity) target).host;
+        
         CompoundNBT tag = new CompoundNBT();
         tag.putInt("bound", target.getEntityId());
         stack.setTag(tag);
@@ -115,8 +120,9 @@ public class DragonStaffItem extends Item
     
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
+        if (!isBound(stack)) return;
         AbstractDragonEntity dragon = getDragon(stack, world);
-        if (world.isRemote && isBound(stack) && dragon != null) dragon.setGlowing(isSelected);
+        if (world.isRemote && dragon != null) dragon.setGlowing(isSelected);
     }
     
     @Override

@@ -41,7 +41,9 @@ public class DragonArmorItem extends Item
     
     public DragonArmorType getType() { return type; }
     
-    public int getDmgReduction() { return type.getDmgReduction(); }
+    public int getDmgReduction() {
+        return type.getDmgReduction();
+    }
     
     public int getID() { return type.getId(); }
     

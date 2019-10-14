@@ -65,6 +65,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.text.html.Option;
 import java.util.*;
 
 import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
@@ -233,24 +234,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(VARIANT, variant);
     }
     
-    /**
-     * Whether or not the dragon is armored
-     */
-    public boolean hasArmor(int slot) {
-        try { return getArmor(slot).getId() != -1; }
-        catch (NullPointerException ignore) {}
-        return false;
-    }
-    public DragonArmorItem.DragonArmorType getArmor(int slot) {
-        ItemStack stack = invHandler.map(s -> s.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
-        if (stack.isEmpty()) return null;
-        int id = invHandler.map(s -> ((DragonArmorItem) stack.getItem()).getID()).orElse(-1);
-        return DragonArmorItem.DragonArmorType.getTypeByID(id);
+    public Optional<DragonArmorItem> getArmor(int slot) {
+        return Optional.of(invHandler.ifPresent(i -> i.getStackInSlot(slot).getItem()));
     }
     public void setArmored(int slot) {
         if (hasArmor(slot) && !world.isRemote) {
             getAttribute(SharedMonsterAttributes.ARMOR).removeModifier(ARMOR_UUID);
-            getAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier("Armor Modifier", getArmor(slot).getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(false));
+            getAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier("Armor Modifier", getArmor(slot).getEnchant, AttributeModifier.Operation.ADDITION).setSaved(false));
             playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
         }
     }

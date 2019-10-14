@@ -3,31 +3,39 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ILivingEntityData;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
+    // Multipart
     public MultiPartEntity headPart;
+    public MultiPartEntity wingLeftPart;
+    public MultiPartEntity wingRightPart;
+    public MultiPartEntity tail1Part;
+    public MultiPartEntity tail2Part;
+    public MultiPartEntity tail3Part;
     
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world) {
         super(blevi, world);
-        
-        headPart = createPart(this, 2, 0, 1, 1, 1);
+    
+        headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
+        wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
+        wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
+        tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
+        tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
+        tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
     }
     
     // ================================
@@ -57,11 +65,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     // =================================
     
-    
     @Override
     public void tick() {
         super.tick();
-    
         tickParts();
     }
     
@@ -73,15 +79,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    public MultiPartEntity[] getParts() { return new MultiPartEntity[] {headPart}; }
-    
-    @Nullable
-    @Override
-    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-        addPartsToWorld(world);
-        
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-    }
+    public MultiPartEntity[] getParts() { return new MultiPartEntity[] {headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part}; }
     
     @Override
     public boolean canFly() { return false; }
