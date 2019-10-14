@@ -12,6 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import java.util.Random;
 
+// #blit(xPos, yPos, initialX pixel, initialY pixel, x width, y width, .png width, .png height);
 public abstract class AbstractContainerScreen<T extends ContainerBase> extends ContainerScreen<T>
 {
     public static final ResourceLocation STANDARD_GUI = ModUtils.location("textures/io/dragoninv.png");
@@ -24,6 +25,7 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
     public Random rand = new Random();
     public TextFieldWidget nameField;
     private String prevName;
+    public int textureWidth, textureHeight;
     
     public AbstractContainerScreen(T container, PlayerInventory playerInv, ITextComponent name) {
         super(container, playerInv, name);
@@ -62,31 +64,18 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        bindTexture(background);
-        blit(guiLeft, guiTop, 0, 0, xSize, ySize);
+        
         nameField.render(mouseX, mouseY, partialTicks);
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    
         InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (float)(guiLeft + 40) - mouseX, (float)(guiTop + 75 - 30) - mouseY, dragonInv.dragon);
+        
+        bindTexture(background); // Bind background layer last so we can do other rendering in subclasses
+        blit(guiLeft, guiTop, 0, 0, xSize, ySize, textureWidth, textureHeight);
     }
     
     @Override
     public boolean keyPressed(int p1, int p2, int p3) {
         nameField.keyPressed(p1, p2, p3);
         return nameField.isFocused() && nameField.getVisible() && p1 != 256 || super.keyPressed(p1, p2, p3);
-    }
-    
-    public void drawSlot(int x, int y) {
-        bindTexture(SLOT);
-        blit(guiLeft + x, guiTop + y, 0, 0, 18, 18, 18, 18);
-    }
-    
-    public void drawRowedSlots(int initialX, int initialY, int rows, int columns) {
-        bindTexture(SLOT);
-        
-        for (int row=0; row < rows; ++row)
-            for (int column=0; column < columns; ++column)
-                blit(guiLeft + initialX + row * 18, guiTop + initialY + column * 18, 0, 0, 18, 18, 18, 18);
     }
     
     public void drawHealth(int x, int y) {

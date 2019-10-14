@@ -27,11 +27,11 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         buildPlayerSlots(playerInv, 7, 83);
         
         dragon.invHandler.ifPresent(h -> {
-            addSlot(buildSaddleSlot(h, 73, 34));
+            addSlot(buildSaddleSlot(h, 73, 16)); // 34
     
-            addSlot(buildArmorSlot(h, 73, 52));
+            addSlot(buildArmorSlot(h, 73, 34)); // 52
             
-            addSlot(new SlotItemHandler(h, 2, 73, 16) {
+            addSlot(new SlotItemHandler(h, 2, 73, 52) { // 16
                 @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() == Items.CHEST; }
     
                 @Override public int getSlotStackLimit() { return 1; }

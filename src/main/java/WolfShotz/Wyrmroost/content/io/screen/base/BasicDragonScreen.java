@@ -12,7 +12,7 @@ public class BasicDragonScreen extends AbstractContainerScreen<ContainerBase>
     
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        drawHealth(100, 80);
+        drawHealth(115, 5);
         if (dragonInv.dragon.isSpecial()) drawSpecialIcon(6, 11);
     }
 }
