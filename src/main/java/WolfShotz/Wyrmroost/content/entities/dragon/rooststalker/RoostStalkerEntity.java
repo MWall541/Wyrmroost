@@ -49,6 +49,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         SLEEP_ANIMATION = Animation.create(15);
         WAKE_ANIMATION = Animation.create(15);
+        
+        setImmune(DamageSource.DROWN);
     }
     
     @Override
