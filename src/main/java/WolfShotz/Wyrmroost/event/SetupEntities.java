@@ -3,6 +3,8 @@ package WolfShotz.Wyrmroost.event;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
@@ -49,15 +51,15 @@ public class SetupEntities
     private static final String ID = Wyrmroost.MOD_ID + ":";
     
     // Entity List Start
-    @ObjectHolder(ID + "multipart_entity")      public static EntityType<MultiPartEntity>           multiPartEntity;
-    
-    @ObjectHolder(ID + "dragon_egg")            public static EntityType<DragonEggEntity>           dragonEgg;
-    
     @ObjectHolder(ID + "overworld_drake")       public static EntityType<OWDrakeEntity>             overworldDrake;
     @ObjectHolder(ID + "minutus")               public static EntityType<MinutusEntity>             minutus;
     @ObjectHolder(ID + "silver_glider")         public static EntityType<SilverGliderEntity>        silverGlider;
     @ObjectHolder(ID + "roost_stalker")         public static EntityType<RoostStalkerEntity>        roostStalker;
     @ObjectHolder(ID + "butterfly_leviathan")   public static EntityType<ButterflyLeviathanEntity>  butterflyLeviathan;
+    @ObjectHolder(ID + "dragon_fruit_drake")    public static EntityType<DragonFruitDrakeEntity>    dragonFruitDrake;
+    
+    @ObjectHolder(ID + "dragon_egg")            public static EntityType<DragonEggEntity>           dragonEgg;
+    @ObjectHolder(ID + "multipart_entity")      public static EntityType<MultiPartEntity>           multiPartEntity;
     // Entity List End
     
     /**
@@ -66,14 +68,18 @@ public class SetupEntities
      * TODO Not ideal. use this until forge reevaluates
      */
     public static void buildEntities() {
-        dragonEgg          = buildEntity("dragon_egg", DragonEggEntity::new, EntityClassification.CREATURE, 1f, 1f);
-        
         overworldDrake     = buildEntity("overworld_drake", OWDrakeEntity::new, EntityClassification.CREATURE, 2.376f, 2.45f);
         minutus            = buildEntity("minutus", MinutusEntity::new, EntityClassification.CREATURE, 0.6f, 0.2f);
         silverGlider       = buildEntity("silver_glider", SilverGliderEntity::new, EntityClassification.CREATURE, 1.5f, 0.75f);
         roostStalker       = buildEntity("roost_stalker", RoostStalkerEntity::new, EntityClassification.CREATURE, 0.65f, 0.5f);
         butterflyLeviathan = buildEntity("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.CREATURE, 4f, 3f);
+        dragonFruitDrake   = buildEntity("dragon_fruit_drake", DragonFruitDrakeEntity::new, EntityClassification.CREATURE, 1.5f, 1.4f);
     
+        dragonEgg          = buildEntity("dragon_egg", EntityType.Builder
+                                                               .<DragonEggEntity>create(DragonEggEntity::new, EntityClassification.MISC)
+                                                               .disableSummoning()
+                                                               .setCustomClientFactory(DragonEggEntity::new)
+        );
         multiPartEntity    = buildEntity("multipart_entity", EntityType.Builder
                                                                      .<MultiPartEntity>create(EntityClassification.MISC)
                                                                      .immuneToFire()
@@ -109,6 +115,8 @@ public class SetupEntities
         RenderingRegistry.registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(RoostStalkerEntity.class, RoostStalkerRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(ButterflyLeviathanEntity.class, ButterflyLeviathanRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(DragonFruitDrakeEntity.class, DragonFruitDrakeRenderer::new);
+        
     }
 
     @SubscribeEvent
@@ -121,6 +129,7 @@ public class SetupEntities
                 silverGlider,
                 roostStalker,
                 butterflyLeviathan,
+                dragonFruitDrake,
                 
                 multiPartEntity
         );
