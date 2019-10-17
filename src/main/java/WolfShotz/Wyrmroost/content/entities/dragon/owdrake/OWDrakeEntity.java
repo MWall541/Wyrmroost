@@ -230,7 +230,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
         
         // If Saddled and not sneaking, start riding
-        if (isSaddled() && !isChild() && !ModUtils.isInteractItem(stack, this) && hand == Hand.MAIN_HAND && !player.isSneaking() && (!isTamed() || isOwner(player))) {
+        if (isSaddled() && !isChild() && !player.isSneaking() && (!isTamed() || isOwner(player))) {
             setSit(false);
             player.startRiding(this);
         
@@ -398,7 +398,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new OWDrakeInvContainer(windowID, playerInv, this); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new OWDrakeInvContainer(this, playerInv, windowID); }
     
     // == Entity Animation ==
     @Override

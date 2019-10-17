@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -36,7 +37,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ConditionalLayer(this, d -> getArmorTexture(d.getArmor(1).getType()), d -> d.hasArmor(1)));
+        addLayer(new ConditionalLayer(this, d -> getArmorTexture(((DragonArmorItem) d.getArmor()).getType()), d -> d.hasArmor()));
         addLayer(new ConditionalLayer(this, SADDLE_LAYER, OWDrakeEntity::isSaddled));
     }
 

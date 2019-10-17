@@ -44,7 +44,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
      * If none is defined, then calculate the model size according to egg size
      */
     private void renderShapeByType(DragonEggEntity entity) {
-        EntitySize size = entity.getProperties().getSize();
+        EntitySize size = entity.getSize(entity.getPose());
         if (size == null) return;
         GlStateManager.scalef(size.width * 2.95f, -(size.height * 2), -(size.width * 2.95f));
     }

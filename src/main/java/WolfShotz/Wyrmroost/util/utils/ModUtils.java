@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.event.SetupItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -97,7 +98,7 @@ public class ModUtils
      * @return
      */
     @Nullable
-    public static EntityType<?> getTypeByString(@Nonnull String key) { return EntityType.byKey(key).orElse(null); }
+    public static <T extends Entity> EntityType<T> getTypeByString(@Nonnull String key) { return (EntityType<T>) EntityType.byKey(key).orElse(null); }
     
     /**
      * Is the given aabb clear of all (solid) blocks?
@@ -109,16 +110,5 @@ public class ModUtils
                     if (world.getBlockState(new BlockPos(x, y, z)).isSolid()) return false;
                     
         return true;
-    }
-    
-    /**
-     * Is the stack passed an item that is interactable with dragons?
-     */
-    public static boolean isInteractItem(ItemStack stack, AbstractDragonEntity entity) {
-        Item item = stack.getItem();
-        
-        return item == SetupItems.soulCrystal ||
-                       item == Items.NAME_TAG ||
-                       entity.isBreedingItem(stack);
     }
 }

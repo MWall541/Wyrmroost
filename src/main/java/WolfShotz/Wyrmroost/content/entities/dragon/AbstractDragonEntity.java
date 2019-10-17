@@ -2,17 +2,13 @@ package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
-import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
 import WolfShotz.Wyrmroost.event.SetupItems;
-import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
@@ -26,23 +22,17 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.potion.Potions;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -52,23 +42,15 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
-import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.text.html.Option;
 import java.util.*;
-
-import static net.minecraft.entity.SharedMonsterAttributes.FLYING_SPEED;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -118,12 +100,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(2, new SleepGoal(this, nocturnal));
         goalSelector.addGoal(3, sitGoal = new SitGoal(this));
-    }
-    
-    //TODO
-    public void switchPathController(boolean flying) {
-//        if (flying) navigator = new FlightPathNavigator(this, world);
-//        else navigator = new DragonGroundPathNavigator(this, world);
     }
     
     /**
@@ -206,18 +182,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isFlying() { return dataManager.get(FLYING); }
     public void setFlying(boolean fly) {
-        if (canFly() && fly && liftOff()) {
-            dataManager.set(FLYING, true);
-            switchPathController(true);
-        } else {
-            dataManager.set(FLYING, false);
-            switchPathController(false);
-        }
+        if (canFly() && fly && liftOff()) dataManager.set(FLYING, true);
+        else dataManager.set(FLYING, false);
     }
     
     /**
      * Whether or not the dragon is saddled
-     * SADDLE INV SLOT IS ALWAYS 0!
      */
     public boolean isSaddled() { return getInvCap().map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false); }
     
@@ -234,13 +204,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(VARIANT, variant);
     }
     
-    public Optional<DragonArmorItem> getArmor(int slot) {
-        return Optional.of(invHandler.ifPresent(i -> i.getStackInSlot(slot).getItem()));
-    }
-    public void setArmored(int slot) {
-        if (hasArmor(slot) && !world.isRemote) {
+    public boolean hasArmor() { return getArmor() instanceof DragonArmorItem; }
+    public Item getArmor() { return getInvCap().map(i -> i.getStackInSlot(1).getItem()).orElse(Items.AIR); }
+    public void setArmored() {
+        if (hasArmor() && !world.isRemote) {
             getAttribute(SharedMonsterAttributes.ARMOR).removeModifier(ARMOR_UUID);
-            getAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier("Armor Modifier", getArmor(slot).getEnchant, AttributeModifier.Operation.ADDITION).setSaved(false));
+            getAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier("Armor Modifier", ((DragonArmorItem) getArmor()).getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(false));
             playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
         }
     }
@@ -366,7 +335,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @param stack - the itemstack used when interacted
      */
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
-        if (stack.getItem() == Items.NAME_TAG || stack.getItem() == SetupItems.dragonStaff) {
+        if (isInteractItem(stack)) {
             stack.interactWithEntity(player, this, hand);
             
             return true;
@@ -401,6 +370,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) { return processInteract(player, hand, player.getHeldItem(hand)); }
+    
+    /**
+     * Helper method to determine whether this item stack should interact with this dragon
+     */
+    public boolean isInteractItem(ItemStack stack) {
+        Item item = stack.getItem();
+        return item == Items.NAME_TAG
+                       || item == SetupItems.dragonStaff
+                       || item == SetupItems.soulCrystal;
+    }
     
     /**
      * Get all entities in a given range in front of this entity and damage all within it
@@ -696,19 +675,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Called to "liftoff" the dragon. (Shoots it up in the air for flight)
      */
     public boolean liftOff() {
+        if (!canFly()) return false;
+    
         for (int i = 1; i < (shouldFlyThreshold / 2.5f) + 1; ++i) {
             if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement())
                 return false;
         }
-        
-        if (canFly()) {
-            setSit(false);
-            setSleeping(false);
-            jump();
-            return true;
-        }
-        
-        return false;
+        setSit(false);
+        setSleeping(false);
+        jump();
+    
+        return true;
     }
     
     /**

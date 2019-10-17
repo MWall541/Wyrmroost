@@ -1,5 +1,7 @@
 package WolfShotz.Wyrmroost.content.io.screen.base;
 
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -31,6 +33,7 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
         super(container, playerInv, name);
         this.dragonInv = container;
         background = STANDARD_GUI;
+        textureWidth = textureHeight = 256;
     }
     
     @Override
@@ -54,8 +57,6 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
     
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        super.render(mouseX, mouseY, partialTicks);
-    
         renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         renderHoveredToolTip(mouseX, mouseY);
@@ -66,7 +67,7 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         
         nameField.render(mouseX, mouseY, partialTicks);
-        InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (float)(guiLeft + 40) - mouseX, (float)(guiTop + 75 - 30) - mouseY, dragonInv.dragon);
+        InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 8, (float)(guiLeft + 40) - mouseX, (float)(guiTop + 75 - 30) - mouseY, dragonInv.dragon);
         
         bindTexture(background); // Bind background layer last so we can do other rendering in subclasses
         blit(guiLeft, guiTop, 0, 0, xSize, ySize, textureWidth, textureHeight);

@@ -84,7 +84,7 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
         
             @Override public void onSlotChanged() {
                 if (getStack().isEmpty()) return;
-                dragon.setArmored(1);
+                dragon.setArmored();
             }
             
             @Override

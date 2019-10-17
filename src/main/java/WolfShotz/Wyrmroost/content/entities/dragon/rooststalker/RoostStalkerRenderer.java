@@ -27,7 +27,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
-        addLayer(new ItemStackRenderer(this));
+        addLayer(new ItemStackRenderer());
         addLayer(new GlowLayer(this, stalker -> stalker.isSpecial()? BODY_SPE_GLOW : BODY_GLOW));
         addLayer(new SleepLayer(this, SLEEP));
     }
@@ -44,7 +44,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     
     class ItemStackRenderer extends AbstractLayerRenderer
     {
-        ItemStackRenderer(IEntityRenderer entity) { super(entity); }
+        ItemStackRenderer() { super(RoostStalkerRenderer.this); }
         
         @Override
         public void render(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {

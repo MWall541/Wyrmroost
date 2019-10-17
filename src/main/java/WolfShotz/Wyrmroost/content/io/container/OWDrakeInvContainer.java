@@ -20,18 +20,17 @@ import java.util.function.Predicate;
 
 public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
 {
-    public OWDrakeInvContainer(int windowID, PlayerInventory playerInv, OWDrakeEntity drake) {
+    public OWDrakeInvContainer(OWDrakeEntity drake, PlayerInventory playerInv, int windowID) {
         super(drake, SetupIO.owDrakeContainer, windowID);
-        this.dragon = drake;
         
         buildPlayerSlots(playerInv, 7, 83);
         
-        dragon.invHandler.ifPresent(h -> {
-            addSlot(buildSaddleSlot(h, 73, 16)); // 34
+        dragon.getInvCap().ifPresent(h -> {
+            addSlot(buildSaddleSlot(h, 73, 16));
     
-            addSlot(buildArmorSlot(h, 73, 34)); // 52
+            addSlot(buildArmorSlot(h, 73, 34));
             
-            addSlot(new SlotItemHandler(h, 2, 73, 52) { // 16
+            addSlot(new SlotItemHandler(h, 2, 73, 52) {
                 @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() == Items.CHEST; }
     
                 @Override public int getSlotStackLimit() { return 1; }
