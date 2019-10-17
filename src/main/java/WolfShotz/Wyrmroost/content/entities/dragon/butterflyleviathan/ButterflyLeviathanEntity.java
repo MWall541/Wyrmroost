@@ -1,24 +1,34 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.tileentity.ConduitTileEntity;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
+    public ButterflyConduit butterflyConduit;
+    
     // Multipart
     public MultiPartEntity headPart;
     public MultiPartEntity wingLeftPart;
@@ -29,7 +39,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world) {
         super(blevi, world);
-    
+        
         headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
         wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
         wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
@@ -69,13 +79,36 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public void tick() {
         super.tick();
         tickParts();
+        
+        if (hasConduit()) {
+            if (butterflyConduit == null) {
+                updateConduitStatus();
+                return;
+            }
+    
+            long i = world.getGameTime();
+            if (i % 40L == 0L) applyEffects();
+            if (i % 80L == 0L) {
+                if (rand.nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 1f, 1f);
+                else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 1f, 1f);
+            }
+        }
     }
     
-    @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
-        if (super.processInteract(player, hand, stack)) return true;
-        
-        return false;
+    public boolean hasConduit() { return getInvCap().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false); }
+    public void updateConduitStatus() {
+        butterflyConduit = new ButterflyConduit();
+        playSound(SoundEvents.BLOCK_CONDUIT_ACTIVATE, 1f, 1f);
+        System.out.println(butterflyConduit == null);
+    }
+    
+    public void applyEffects() {
+        AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(18d).expand(0, world.getHeight(), 0);
+        List<PlayerEntity> list = world.getEntitiesWithinAABB(PlayerEntity.class, axisalignedbb);
+        if (list.isEmpty()) return;
+        for(PlayerEntity player : list)
+            if (player.isWet() && getPosition().withinDistance(new BlockPos(player), 18d))
+                player.addPotionEffect(new EffectInstance(Effects.CONDUIT_POWER, 260, 0, true, true));
     }
     
     @Override
@@ -87,12 +120,43 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public boolean canBeRiddenInWater(Entity rider) { return true; }
     
+    @Override
+    public boolean canBreatheUnderwater() { return true; }
+    
     /**
      * Array Containing all of the dragons food items
      */
     @Override
     protected Item[] getFoodItems() { return new Item[] {Items.SEAGRASS}; }
     
+    @Nullable
+    @Override
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ButterflyInvContainer(this, playerInv, windowID); }
+    
+    @Override
+    public ItemStackHandler createInv() { return new ItemStackHandler(1); }
+    
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
+    
+    public class ButterflyConduit extends ConduitTileEntity
+    {
+        public ButterflyConduit() {
+            super();
+            this.world = ButterflyLeviathanEntity.this.world;
+        }
+        
+        @Override
+        public void tick() {
+        }
+    
+        @Override // todo
+        public boolean isActive() { return true; }
+    
+        @Override
+        public float getActiveRotation(float p_205036_1_) { return 0; }
+    
+        @Override
+        public boolean isEyeOpen() { return true; }
+    }
 }

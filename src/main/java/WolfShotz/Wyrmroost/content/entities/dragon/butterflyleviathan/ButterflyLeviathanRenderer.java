@@ -1,8 +1,15 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.IEntityRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.tileentity.ConduitTileEntityRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
 
@@ -30,4 +37,6 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     
     @Override
     public String getResourceDirectory() { return DEF_LOC + "butterflyleviathan/"; }
+    
+    
 }
