@@ -15,7 +15,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.tileentity.ConduitTileEntity;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -25,10 +24,10 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static net.minecraft.entity.SharedMonsterAttributes.*;
+
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
-    public ButterflyConduit butterflyConduit;
-    
     // Multipart
     public MultiPartEntity headPart;
     public MultiPartEntity wingLeftPart;
@@ -46,6 +45,22 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
         tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
         tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
+    }
+    
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        
+        
+    }
+    
+    @Override
+    protected void registerAttributes() {
+        super.registerAttributes();
+        
+        getAttribute(MAX_HEALTH).setBaseValue(70d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.01892d);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
     
     // ================================
@@ -81,11 +96,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         tickParts();
         
         if (hasConduit()) {
-            if (butterflyConduit == null) {
-                updateConduitStatus();
-                return;
-            }
-    
             long i = world.getGameTime();
             if (i % 40L == 0L) applyEffects();
             if (i % 80L == 0L) {
@@ -96,11 +106,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     public boolean hasConduit() { return getInvCap().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false); }
-    public void updateConduitStatus() {
-        butterflyConduit = new ButterflyConduit();
-        playSound(SoundEvents.BLOCK_CONDUIT_ACTIVATE, 1f, 1f);
-        System.out.println(butterflyConduit == null);
-    }
     
     public void applyEffects() {
         AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(18d).expand(0, world.getHeight(), 0);
@@ -138,25 +143,4 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
-    
-    public class ButterflyConduit extends ConduitTileEntity
-    {
-        public ButterflyConduit() {
-            super();
-            this.world = ButterflyLeviathanEntity.this.world;
-        }
-        
-        @Override
-        public void tick() {
-        }
-    
-        @Override // todo
-        public boolean isActive() { return true; }
-    
-        @Override
-        public float getActiveRotation(float p_205036_1_) { return 0; }
-    
-        @Override
-        public boolean isEyeOpen() { return true; }
-    }
 }

@@ -106,12 +106,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerAttributes() {
         super.registerAttributes();
         
-        getAttribute(MAX_HEALTH).setBaseValue(50.0d);
+        getAttribute(MAX_HEALTH).setBaseValue(50d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
         getAttribute(FOLLOW_RANGE).setBaseValue(20d);
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(3.2d);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8.0d);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8d);
     }
 
     // ================================

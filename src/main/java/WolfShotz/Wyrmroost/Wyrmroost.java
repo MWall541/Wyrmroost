@@ -1,10 +1,7 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.event.*;
-import WolfShotz.Wyrmroost.util.network.AnimationMessage;
-import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
-import WolfShotz.Wyrmroost.util.network.EntityMoveMessage;
-import WolfShotz.Wyrmroost.util.network.EggHatchMessage;
+import WolfShotz.Wyrmroost.util.network.*;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -44,13 +41,11 @@ public class Wyrmroost
         
         SetupOreGen.setupOreGen();
         
-        int networkIndex = 0;
-        network.registerMessage(++networkIndex, AnimationMessage.class, AnimationMessage::encode, AnimationMessage::new, AnimationMessage::handle);
-        network.registerMessage(++networkIndex, DragonKeyBindMessage.class, DragonKeyBindMessage::encode, DragonKeyBindMessage::new, DragonKeyBindMessage::handle);
-        network.registerMessage(++networkIndex, EntityMoveMessage.class, EntityMoveMessage::encode, EntityMoveMessage::new, EntityMoveMessage::handle);
-        network.registerMessage(++networkIndex, EggHatchMessage.class, EggHatchMessage::encode, EggHatchMessage::new, EggHatchMessage::handle);
-        
-        ModUtils.L.debug("Fired FMLCommon Setup");
+        int index = 0;
+        network.registerMessage(++index, AnimationMessage.class, AnimationMessage::encode, AnimationMessage::new, AnimationMessage::handle);
+        network.registerMessage(++index, DragonKeyBindMessage.class, DragonKeyBindMessage::encode, DragonKeyBindMessage::new, DragonKeyBindMessage::handle);
+        network.registerMessage(++index, EggHatchMessage.class, EggHatchMessage::encode, EggHatchMessage::new, EggHatchMessage::handle);
+        network.registerMessage(++index, SyncInventoryMessage.class, SyncInventoryMessage::encode, SyncInventoryMessage::new, SyncInventoryMessage::handle);
     }
 
     /**
@@ -62,8 +57,6 @@ public class Wyrmroost
         SetupEntities.registerEntityRenders();
         SetupKeyBinds.registerKeys();
         SetupIO.screenSetup();
-
-        ModUtils.L.info("Fired FMLClientSetup");
     }
 
     /**

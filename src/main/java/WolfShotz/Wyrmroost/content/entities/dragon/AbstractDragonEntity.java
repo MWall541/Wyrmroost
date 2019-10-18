@@ -155,7 +155,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(SLEEPING, nbt.getBoolean("sleeping")); // Use data manager: Setter method controls animation
     
         invHandler.ifPresent(i -> ((ItemStackHandler) i).deserializeNBT(nbt.getCompound("inv")));
-        
+    
+        ModUtils.L.info("Read Call");
+    
         super.readAdditional(nbt);
     }
     

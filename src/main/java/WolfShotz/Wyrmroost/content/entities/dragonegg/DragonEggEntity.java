@@ -67,7 +67,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     //           Entity NBT
     // ================================
     @Override
-    protected void registerData() { }
+    protected void registerData() {}
     
     @Override
     public void readAdditional(CompoundNBT compound) {
