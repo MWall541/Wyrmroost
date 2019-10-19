@@ -40,8 +40,6 @@ public class EventHandler
             
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
-                
-                
             }
         }
     

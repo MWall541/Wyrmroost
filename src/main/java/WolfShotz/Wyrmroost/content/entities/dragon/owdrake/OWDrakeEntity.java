@@ -43,6 +43,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -61,7 +62,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
-//    public Inventory drakeInv = new Inventory(19);
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION         = Animation.create(15);
@@ -391,7 +391,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.WHEAT, Items.HAY_BLOCK.asItem()}; }
+    protected Item[] getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements().toArray(new Item[0]); }
     
     @Override
     public boolean canFly() { return false; }
