@@ -12,6 +12,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -111,4 +113,6 @@ public class ModUtils
                     
         return true;
     }
+    
+    public static <T> ActionResult<T> passAction(T result) { return new ActionResult<>(ActionResultType.PASS, result); }
 }
