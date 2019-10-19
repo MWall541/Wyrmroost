@@ -4,14 +4,14 @@ import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class OWDrakeInvScreen extends AbstractContainerScreen<OWDrakeInvContainer>
 {
-    private static final ResourceLocation DRAKE_GUI = ModUtils.location("textures/io/owdrakeinv.png");
+    private static final ResourceLocation DRAKE_GUI = ModUtils.location("textures/io/dragonscreen/owdrakeinv.png");
     
     public OWDrakeInvScreen(OWDrakeInvContainer container, PlayerInventory playerInv, ITextComponent name) {
         super(container, playerInv, name);

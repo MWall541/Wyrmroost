@@ -1,7 +1,5 @@
 package WolfShotz.Wyrmroost.content.io.screen.base;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -66,11 +64,10 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         
-        nameField.render(mouseX, mouseY, partialTicks);
-        InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 8, (float)(guiLeft + 40) - mouseX, (float)(guiTop + 75 - 30) - mouseY, dragonInv.dragon);
-        
         bindTexture(background); // Bind background layer last so we can do other rendering in subclasses
         blit(guiLeft, guiTop, 0, 0, xSize, ySize, textureWidth, textureHeight);
+        renderEntity(mouseX, mouseY);
+        nameField.render(mouseX, mouseY, partialTicks);
     }
     
     @Override
@@ -90,6 +87,8 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
         drawCenteredString(font, Integer.toString(health), x + 8, y + 5, 0xffffff);
         GlStateManager.popMatrix();
     }
+    
+    public void renderEntity(int mouseX, int mouseY) { InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (guiLeft + 40) - mouseX, (guiTop + 75 - 30) - mouseY, dragonInv.dragon); }
     
     public void drawSpecialIcon(int x, int y) {
         GlStateManager.pushMatrix();

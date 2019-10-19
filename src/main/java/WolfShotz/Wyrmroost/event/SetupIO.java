@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
+import WolfShotz.Wyrmroost.content.io.screen.ButterflyInvScreen;
 import WolfShotz.Wyrmroost.content.io.screen.OWDrakeInvScreen;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.io.screen.base.BasicDragonScreen;
@@ -53,7 +54,7 @@ public class SetupIO
     public static void screenSetup() {
         ScreenManager.registerFactory(owDrakeContainer, OWDrakeInvScreen::new);
         ScreenManager.registerFactory(baseContainer, BasicDragonScreen::new);
-        ScreenManager.registerFactory(butterflyContainer, BasicDragonScreen::new);
+        ScreenManager.registerFactory(butterflyContainer, ButterflyInvScreen::new);
     }
     
     private interface IEntityContainerFactory<T extends Container, E extends Entity>

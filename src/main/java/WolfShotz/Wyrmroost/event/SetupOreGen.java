@@ -17,15 +17,15 @@ import java.util.function.Predicate;
 
 public class SetupOreGen
 {
-    private static final Set<Biome> overworldOnly = new HashSet<>(ModUtils.collectAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.END), BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER)));
-    private static final Predicate<Biome> overworldFilter = biome -> overworldOnly.stream().noneMatch(biome::equals);
+    private static final Set<Biome> OVERWORLD_CONFIG = new HashSet<>(ModUtils.collectAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.END), BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER)));
+    private static final Predicate<Biome> OVERWORLD_FILTER = biome -> OVERWORLD_CONFIG.stream().noneMatch(biome::equals);
     
     private static CountRangeConfig platinumConfig = new CountRangeConfig(2, 0, 0, 28);
     private static CountRangeConfig geodeConfig = new CountRangeConfig(1, 0, 0, 20);
 
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            if (overworldFilter.test(biome)) { // Filter Ores so they dont gen in the nether or end
+            if (OVERWORLD_FILTER.test(biome)) { // Filter Ores so they dont gen in the nether or end
                 registerOreEntry(biome, SetupBlocks.blockgeodeore.getDefaultState(), 8, geodeConfig);
                 registerOreEntry(biome, SetupBlocks.blockplatinumore.getDefaultState(), 9, platinumConfig);
             }
