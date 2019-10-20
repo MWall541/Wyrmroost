@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.util.entityhelpers.render.ArrowLayer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

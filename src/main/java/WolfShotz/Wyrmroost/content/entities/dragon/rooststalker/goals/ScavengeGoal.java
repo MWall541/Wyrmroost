@@ -64,9 +64,9 @@ public class ScavengeGoal extends MoveToBlockGoal
     
             if (dragon.getAnimation() != animation) NetworkUtils.sendAnimationPacket(dragon, animation);
             
+            if (chest == null) return;
             if (chest instanceof ChestTileEntity && ReflectionUtils.getChestPlayersUsing((ChestTileEntity) chest) == 0)
                 interactChest(chest, true);
-            
             if (!chest.isEmpty() && --searchDelay <= 0) {
                 int index = new Random().nextInt(chest.getSizeInventory());
                 ItemStack stack = chest.getStackInSlot(index);
@@ -101,7 +101,6 @@ public class ScavengeGoal extends MoveToBlockGoal
                 if (iinventory instanceof ChestTileEntity && block instanceof ChestBlock) {
                     iinventory = ChestBlock.getInventory(blockstate, worldIn, blockpos, true);
                 }
-                else iinventory = null;
             }
         }
     

@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.render;
+package WolfShotz.Wyrmroost.util.entityhelpers.render.layer;
 
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
