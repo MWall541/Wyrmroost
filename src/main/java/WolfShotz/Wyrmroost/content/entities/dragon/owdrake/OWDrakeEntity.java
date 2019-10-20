@@ -248,6 +248,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         // If a child, tame it the old fashioned way
         if (isBreedingItem(stack) && isChild() && !isTamed()) {
             tame(getRNG().nextInt(10) == 0, player);
+            consumeItemFromStack(player, stack);
         
             return true;
         }
