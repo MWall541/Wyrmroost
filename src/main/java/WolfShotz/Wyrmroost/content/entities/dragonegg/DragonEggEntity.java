@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -28,10 +29,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -109,14 +107,13 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
                 else {
                     hatch();
                     Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
+                    return;
                 }
     
                 int bounds = Math.max(hatchTime / 2, 3);
                 
-                if (hatchTime < getProperties().HATCH_TIME / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION) {
-                    NetworkUtils.sendAnimationPacket(this, WIGGLE_ANIMATION);
-                    playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1, 1);
-                }
+                if (hatchTime < getProperties().HATCH_TIME / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION)
+                    crack(true);
             }
         }
     
@@ -126,6 +123,16 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         if (getAnimation() != NO_ANIMATION) {
             ++animationTick;
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
+        }
+    }
+    
+    @Override
+    protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
+        super.updateFallState(y, onGroundIn, state, pos);
+        
+        if (onGroundIn) {
+            setAnimation(WIGGLE_ANIMATION);
+            crack(false);
         }
     }
     
@@ -177,6 +184,12 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         remove();
     }
     
+    public void crack(boolean sendPacket) {
+        playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1f, 1f);
+        if (sendPacket) NetworkUtils.sendAnimationPacket(this, WIGGLE_ANIMATION);
+        else setAnimation(WIGGLE_ANIMATION);
+    }
+    
     /**
      * Called When the dragon type of the egg is not what it should be.
      */
@@ -187,21 +200,16 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (source.getImmediateSource() instanceof PlayerEntity) {
-            CompoundNBT tag = new CompoundNBT();
-            
-            tag.putInt("hatchTime", hatchTime);
-            tag.putString("dragonType", getDragonKey());
-            ItemStack itemStack = new ItemStack(SetupItems.dragonEgg);
-            itemStack.setTag(tag);
-            InventoryHelper.spawnItemStack(world, posX, posY, posZ, itemStack);
-            remove();
-            
-            return true;
-        } else {
-            setAnimation(WIGGLE_ANIMATION);
-            return super.attackEntityFrom(source, amount);
-        }
+        CompoundNBT tag = new CompoundNBT();
+        
+        tag.putInt("hatchTime", hatchTime);
+        tag.putString("dragonType", getDragonKey());
+        ItemStack itemStack = new ItemStack(SetupItems.dragonEgg);
+        itemStack.setTag(tag);
+        InventoryHelper.spawnItemStack(world, posX, posY, posZ, itemStack);
+        remove();
+        
+        return true;
     }
     
     public DragonEggProperties getProperties() {

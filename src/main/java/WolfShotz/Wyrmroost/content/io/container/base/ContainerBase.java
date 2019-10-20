@@ -82,10 +82,7 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
         
             @Override public boolean isItemValid(@Nonnull ItemStack stack) { return isArmor.test(stack.getItem()); }
         
-            @Override public void onSlotChanged() {
-                if (getStack().isEmpty()) return;
-                dragon.setArmored();
-            }
+            @Override public void onSlotChanged() { dragon.setArmored(); }
             
             @Override
             public ResourceLocation getBackgroundLocation() { return ModUtils.location("textures/io/slots/armor_slot.png"); }

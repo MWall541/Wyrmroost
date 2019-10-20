@@ -16,6 +16,8 @@ import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -167,8 +169,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean getGender() {
         try { return dataManager.get(GENDER); }
-        catch (NullPointerException ignore) {}
-        return true;
+        catch (NullPointerException ignore) { return true; }
     }
     public void setGender(boolean sex) { dataManager.set(GENDER, sex); }
     
@@ -198,21 +199,28 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public int getVariant() {
         try { return dataManager.get(VARIANT); }
-        catch (NullPointerException ignore) {}
-        return 0;
+        catch (NullPointerException ignore) { return 0; }
     }
     public void setVariant(int variant) {
         if (getVariant() == variant) return;
         dataManager.set(VARIANT, variant);
     }
     
-    public boolean hasArmor() { return getArmor() instanceof DragonArmorItem; }
-    public Item getArmor() { return getInvCap().map(i -> i.getStackInSlot(1).getItem()).orElse(Items.AIR); }
+    public boolean hasArmor() { return getArmor() != null; }
+    public DragonArmorItem getArmor() {
+        try { return getInvCap().map(i -> (DragonArmorItem) i.getStackInSlot(1).getItem()).orElseThrow(() -> new IllegalArgumentException("Item in slot is not instanceof DragonArmorItem!")); }
+        catch (Exception ignore) { return null; }
+    }
     public void setArmored() {
-        if (hasArmor() && !world.isRemote) {
-            getAttribute(SharedMonsterAttributes.ARMOR).removeModifier(ARMOR_UUID);
-            getAttribute(SharedMonsterAttributes.ARMOR).applyModifier(new AttributeModifier("Armor Modifier", ((DragonArmorItem) getArmor()).getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(false));
-            playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
+        if (!world.isRemote) {
+            IAttributeInstance armor = getAttribute(SharedMonsterAttributes.ARMOR);
+            
+            if (hasArmor()) {
+                armor.removeModifier(ARMOR_UUID);
+                armor.applyModifier(new AttributeModifier("Armor Modifier", getArmor().getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(false));
+                playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
+            }
+            else armor.removeModifier(ARMOR_UUID);
         }
     }
     
@@ -342,8 +350,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             
             return true;
         }
-    
-        setSleeping(false);
         
         if (isBreedingItem(stack) && isTamed()) {
             if (getHealth() < getMaxHealth()) {
@@ -371,7 +377,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) { return processInteract(player, hand, player.getHeldItem(hand)); }
+    public boolean processInteract(PlayerEntity player, Hand hand) {
+        if (processInteract(player, hand, player.getHeldItem(hand))) {
+            setSleeping(false);
+            return true;
+        }
+        return false;
+    }
     
     /**
      * Helper method to determine whether this item stack should interact with this dragon

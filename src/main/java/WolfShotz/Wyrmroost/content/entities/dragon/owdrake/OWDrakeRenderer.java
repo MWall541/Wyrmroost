@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
+import WolfShotz.Wyrmroost.util.entityhelpers.render.ArrowLayer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,7 +38,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 
     public OWDrakeRenderer(EntityRendererManager manager) {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ConditionalLayer(this, d -> getArmorTexture(((DragonArmorItem) d.getArmor()).getType()), d -> d.hasArmor()));
+        addLayer(new ConditionalLayer(this, d -> getArmorTexture(d.getArmor().getType()), AbstractDragonEntity::hasArmor));
         addLayer(new ConditionalLayer(this, SADDLE_LAYER, OWDrakeEntity::isSaddled));
     }
 
@@ -45,17 +46,17 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     @Override
     protected ResourceLocation getEntityTexture(OWDrakeEntity drake) {
         if (drake.hasCustomName() && drake.getCustomName().getUnformattedComponentText().equals("Daisy")) return DAISY;
-        return getDrakeTexture(drake.getGender(), drake.getDrakeVariant(), drake.isSpecial(), drake.isChild());
-    }
-
-    private ResourceLocation getDrakeTexture(boolean gender, boolean isSavannah, boolean isSpecial, boolean isChild) {
-        if (isChild) {
+        boolean isSavannah = drake.getDrakeVariant();
+        boolean isSpecial = drake.isSpecial();
+        boolean gender = drake.getGender();
+    
+        if (drake.isChild()) {
             if (isSpecial)  return CHILD_SPE;
             if (isSavannah) return CHILD_SAV;
             return CHILD_COM;
         }
-        if (isSpecial)      return gender? MALE_SPE : FEMALE_SPE;
-        if (isSavannah)     return gender? MALE_SAV : FEMALE_SAV;
+        if (isSpecial)  return gender? MALE_SPE : FEMALE_SPE;
+        if (isSavannah) return gender? MALE_SAV : FEMALE_SAV;
         return gender? MALE_COM : FEMALE_COM;
     }
     
