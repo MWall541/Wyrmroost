@@ -60,29 +60,33 @@ public class FlightMovementController extends MovementController
             
             Vec3d vec3d = dragon.getLookVec();
             Vec3d motion = dragon.getMotion();
-            float f = dragon.rotationPitch * 0.017453292F;
+            float f = dragon.rotationPitch * (MathUtils.PI / 180f);
             double d6 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
             double d8 = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
             double d1 = vec3d.length();
             double f4 = MathHelper.cos(f);
-            f4 = f4 * f4 * Math.min(1.0D, d1 / 0.4D);
-            dragon.addVelocity(0, f4 * 0.06d, 0);
-    
-            if (dragon.getMotion().y < 0.0D && d6 > 0.0D) {
-                double d2 = dragon.getMotion().y * -0.1D * f4;
+            f4 = f4 * f4 * Math.min(1d, d1 / 0.4d);
+            dragon.addVelocity(0, f4 * 0.1d, 0);
+            
+            if (dragon.getMotion().y < 0 && d6 > 0) {
+                double d2 = dragon.getMotion().y * -0.1 * f4;
                 dragon.addVelocity(vec3d.x * d2 / d6, d2, vec3d.z * d2 / d6);
             }
-    
-            if (f < 0.0F) {
-                double d10 = d8 * (double) (-MathHelper.sin(f)) * 0.04D;
-                dragon.addVelocity(-(vec3d.x * d10 / d6), d10 * 2.4d, -(vec3d.z * d10 / d6));
+            if (f < 0) { // If look is up
+                double d10 = d8 * (double) (-MathHelper.sin(f)) * 0.02d;
+                dragon.addVelocity(-(vec3d.x * d10 / d6), (d10 * 2.4d), -(vec3d.z * d10 / d6));
+                if (f < -1.35f) dragon.addVelocity(0, 0.1f, 0);
+            } else {
+                double d11 = d8 * Math.sin(f) * 0.6d;
+                dragon.addVelocity(0, -d11, 0);
             }
     
-            if (d6 > 0.0D)
+            if (d6 > 0)
                 dragon.addVelocity(vec3d.x / d6 * d8 - dragon.getMotion().x, 0, vec3d.z / d6 * d8 - dragon.getMotion().z);
             
             double planeMot = 0.9900000095367432d;
             dragon.setMotion(dragon.getMotion().mul(planeMot, 0.9800000190734863d, planeMot));
+            
         }
     }
     

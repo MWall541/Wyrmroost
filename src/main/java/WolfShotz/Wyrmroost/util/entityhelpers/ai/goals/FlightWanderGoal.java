@@ -16,6 +16,7 @@ import java.util.Random;
 public class FlightWanderGoal extends Goal
 {
     public AbstractDragonEntity dragon;
+    boolean nightTempted;
     
     public FlightWanderGoal(AbstractDragonEntity dragon) {
         this.dragon = dragon;
