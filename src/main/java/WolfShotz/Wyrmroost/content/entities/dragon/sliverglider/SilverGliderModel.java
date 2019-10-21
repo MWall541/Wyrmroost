@@ -520,7 +520,27 @@ public class SilverGliderModel extends AdvancedEntityModel {
             neck3.rotateAngleX = 0.5f;
             neck4.rotateAngleX = 0.25f;
             
-            if (!glider.isRiding()) { // Default ground pose
+            if (glider.isInWater()) {
+                wingphalange1L.rotateAngleZ = 0.2f;
+                wingphalange1L.rotateAngleY = -0.1f;
+                wingphalange2L.rotateAngleY = 0.8f;
+                wingphalange3L.rotateAngleY = -1f;
+                wingphalangemiddle1L.rotateAngleY = -1.7f;
+                wingphalangetipL.rotateAngleY = -0.3f;
+                membrane2L.rotateAngleY = -0.6f;
+                membrane2L.rotateAngleZ = 0.06f;
+                membrane3L.rotateAngleY = 0.1f;
+    
+                wingphalange1R.rotateAngleZ = -0.2f;
+                wingphalange1R.rotateAngleY = 0.1f;
+                wingphalange2R.rotateAngleY = -0.8f;
+                wingphalange3R.rotateAngleY = 1f;
+                wingphalangemiddle1R.rotateAngleY = 1.7f;
+                wingphalangetipR.rotateAngleY = 0.3f;
+                membrane2R.rotateAngleY = 0.6f;
+                membrane2R.rotateAngleZ = 0.06f;
+                membrane3R.rotateAngleY = -0.1f;
+            } else if (!glider.isRiding()) { // Default ground pose
                 // Left Wing
                 wingphalange1L.rotateAngleX = 0.6f;
                 wingphalange1L.rotateAngleY = -0.1f;

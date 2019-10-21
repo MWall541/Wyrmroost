@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeEntity;
@@ -32,7 +33,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.Objects;
@@ -94,11 +94,10 @@ public class SetupEntities
      * Registers World Spawning for entities
      */
     private static void registerEntityWorldSpawns() {
-        registerSpawning(overworldDrake, 8, 1, 3, getDrakeBiomes());
+        registerSpawnEntry(overworldDrake, getDrakeBiomes(), 8, 1, 3);
         registerSpawning(minutus, 35, 1, 1, getMinutusBiomes());
-        registerSpawning(silverGlider, 2, 2, 5, getSilverGliderBiomes());
-        registerSpawning(roostStalker, 9, 3, 18, getStalkerBiomes());
-        EntitySpawnPlacementRegistry.register(silverGlider, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
+        registerSpawnEntry(silverGlider, getSilverGliderBiomes(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
+        registerSpawnEntry(roostStalker, getStalkerBiomes(), 9, 3, 18);
     }
 
     /**
@@ -204,7 +203,20 @@ public class SetupEntities
         type.setRegistryName(name);
         return type;
     }
-
+    
+    private static <T extends AbstractDragonEntity> void registerSpawnEntry(EntityType<T> entity, Set<Biome> biomes, int frequency, int minAmount, int maxAmount) {
+        registerSpawning(entity, frequency, minAmount, maxAmount, biomes);
+        registerGenericSpawnEntry(entity);
+    }
+    
+    /**
+     * Helper method allowing for easier entity world spawning setting
+     */
+    private static <T extends AbstractDragonEntity> void registerSpawnEntry(EntityType<T> entity, Set<Biome> biomes, int frequency, int minAmount, int maxAmount, EntitySpawnPlacementRegistry.PlacementType placementType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate canSpawnHere) {
+        registerSpawning(entity, frequency, minAmount, maxAmount, biomes);
+        EntitySpawnPlacementRegistry.register(entity, placementType, heightMapType, canSpawnHere);
+    }
+    
     /**
      * Helper method allowing for easier entity world spawning setting
      */
@@ -212,8 +224,12 @@ public class SetupEntities
         biomes.stream()
                 .filter(Objects::nonNull)
                 .forEach(biome -> biome
-                         .getSpawns(entity.getClassification())
-                         .add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
+                                          .getSpawns(entity.getClassification())
+                                          .add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
+    }
+    
+    private static <T extends AbstractDragonEntity> void registerGenericSpawnEntry(EntityType<T> entity) {
+        EntitySpawnPlacementRegistry.register(entity, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, AbstractDragonEntity::canSpawnHere);
     }
 
 }

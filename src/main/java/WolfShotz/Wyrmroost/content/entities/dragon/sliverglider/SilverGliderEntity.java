@@ -15,6 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -69,7 +70,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
-//        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1) {@Override public boolean shouldExecute() { return !isFlying() && super.shouldExecute(); }});
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
         goalSelector.addGoal(11, new LookRandomlyGoal(this) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
     
@@ -78,7 +78,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
             public void startExecuting() {
                 double x = posX + MathUtils.nextPseudoDouble(rand) * 24d;
                 double y = posY + MathUtils.nextPseudoDouble(rand) * 16d;
-                double z = posZ + MathUtils.nextPseudoDouble(rand) * 24.0F;
+                double z = posZ + MathUtils.nextPseudoDouble(rand) * 24d;
+                if (!world.isDaytime() && rand.nextInt(5) == 0) y = -Math.abs(y);
                 for (int i = 1; i < 6; i++) {
                     if (world.getBlockState(getPosition().down(i)).getMaterial().isLiquid()) {
                         y = Math.abs(y);
@@ -88,6 +89,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 moveController.setMoveTo(x, y, z, getAttribute(FLYING_SPEED).getValue());
                 lookController.setLookPosition(x, y, z, 30, 30);
             }
+        });
+    
+        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1) {
+            @Override public boolean shouldExecute() { return !isFlying() && super.shouldExecute(); }
+            @Override public boolean shouldContinueExecuting() { return super.shouldContinueExecuting() && !isFlying(); }
         });
     }
     
@@ -245,7 +251,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                        super.canFly();
     }
     
-    public static boolean canSpawnHere(EntityType<SilverGliderEntity> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand) {
+    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand) {
         Block block = world.getBlockState(blockPos.down(1)).getBlock();
         
         return block == Blocks.AIR || block == Blocks.SAND || block == Blocks.WATER;
