@@ -1,15 +1,21 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
+import WolfShotz.Wyrmroost.util.entityhelpers.render.SocketModelRenderer;
 import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.Arrays;
 
 /**
  * butterfly leviathan - Kingdomall
  * Created using Tabula 7.0.1
  */
-public class ButterflyLeviathanModel extends AdvancedEntityModel {
+public class ButterflyLeviathanModel extends AdvancedEntityModel
+{
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
     public AdvancedRendererModel neck1;
@@ -17,14 +23,14 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
     public AdvancedRendererModel bottomWingFinPhalangeR1;
     public AdvancedRendererModel topWingFinPhalangeL1;
     public AdvancedRendererModel bottomWingFinPhalangeL1;
-    public AdvancedRendererModel tail1;
+    public SocketModelRenderer tail1;
     public AdvancedRendererModel legThighR1;
     public AdvancedRendererModel legThighL1;
-    public AdvancedRendererModel tail2;
-    public AdvancedRendererModel tail3;
-    public AdvancedRendererModel tail4;
-    public AdvancedRendererModel tail5;
-    public AdvancedRendererModel tail6;
+    public SocketModelRenderer tail2;
+    public SocketModelRenderer tail3;
+    public SocketModelRenderer tail4;
+    public SocketModelRenderer tail5;
+    public SocketModelRenderer tail6;
     public AdvancedRendererModel tailFinTop;
     public AdvancedRendererModel tailFinBottom;
     public AdvancedRendererModel legSegmentR1;
@@ -60,6 +66,12 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
     public AdvancedRendererModel bottomWingFinMembraneL1;
     public AdvancedRendererModel bottomWingFinMembraneL2;
     public AdvancedRendererModel bottomWingFinMembraneL3;
+    
+    public SocketModelRenderer[] tailArray;
+    public SocketModelRenderer[] dynamicTailArray;
+    private final AdvancedRendererModel[] neckArray;
+    private final AdvancedRendererModel[] headArray;
+    public ModelAnimator animator;
 
     public ButterflyLeviathanModel() {
         textureWidth = 150;
@@ -83,7 +95,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         body2 = new AdvancedRendererModel(this, 102, 30);
         body2.setRotationPoint(0.0F, 0.1F, 10.2F);
         body2.addBox(-5.0F, -6.3F, -2.2F, 10, 12, 13, 0.0F);
-        tail6 = new AdvancedRendererModel(this, 6, 130);
+        tail6 = new SocketModelRenderer(this, 6, 130);
         tail6.setRotationPoint(0.1F, 0.1F, 10.0F);
         tail6.addBox(-2.2F, -3.9F, -2.2F, 4, 6, 14, 0.0F);
         setRotateAngle(tail6, 0.0F, 0.16667894356545848F, 0.0F);
@@ -131,7 +143,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         topWingFinPhalangeL2_1 = new AdvancedRendererModel(this, 21, 173);
         topWingFinPhalangeL2_1.setRotationPoint(6.0F, 0.0F, 0.4F);
         topWingFinPhalangeL2_1.addBox(-5.9F, 0.0F, -10.7F, 13, 0, 11, 0.0F);
-        tail2 = new AdvancedRendererModel(this, 106, 82);
+        tail2 = new SocketModelRenderer(this, 106, 82);
         tail2.setRotationPoint(0.0F, 0.0F, 10.2F);
         tail2.addBox(-4.0F, -3.9F, -2.2F, 8, 10, 13, 0.0F);
         setRotateAngle(tail2, 0.0F, -0.08726646259971647F, 0.0F);
@@ -159,11 +171,11 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         eyeR = new AdvancedRendererModel(this, 1, 19);
         eyeR.setRotationPoint(2.8F, -1.5F, -5.5F);
         eyeR.addBox(0.1F, -0.5F, -0.6F, 1, 1, 1, 0.0F);
-        tail1 = new AdvancedRendererModel(this, 106, 57);
+        tail1 = new SocketModelRenderer(this, 106, 57);
         tail1.setRotationPoint(0.0F, -2.0F, 10.2F);
         tail1.addBox(-4.5F, -4.1F, -2.2F, 9, 11, 13, 0.0F);
         setRotateAngle(tail1, 0.0F, 0.08726646259971647F, 0.0F);
-        tail4 = new AdvancedRendererModel(this, 82, 129);
+        tail4 = new SocketModelRenderer(this, 82, 129);
         tail4.setRotationPoint(0.0F, -0.1F, 10.2F);
         tail4.addBox(-3.0F, -3.7F, -2.2F, 6, 8, 13, 0.0F);
         setRotateAngle(tail4, 0.0F, 0.22235494670407757F, 0.0F);
@@ -207,7 +219,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         bottomWingFinPhalangeL2.setRotationPoint(-11.8F, -0.1F, -0.4F);
         bottomWingFinPhalangeL2.addBox(-12.1F, -1.1F, -0.9F, 14, 2, 2, 0.0F);
         setRotateAngle(bottomWingFinPhalangeL2, 0.0F, 0.0F, 0.3665191429188092F);
-        tail5 = new AdvancedRendererModel(this, 44, 130);
+        tail5 = new SocketModelRenderer(this, 44, 130);
         tail5.setRotationPoint(0.1F, 0.3F, 10.2F);
         tail5.addBox(-2.6F, -3.9F, -2.2F, 5, 7, 13, 0.0F);
         setRotateAngle(tail5, 0.0F, 0.2501056818107874F, 0.0F);
@@ -220,7 +232,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         tailFinTop = new AdvancedRendererModel(this, 0, 97);
         tailFinTop.setRotationPoint(-0.2F, -3.4F, 5.4F);
         tailFinTop.addBox(0.0F, -6.8F, -6.2F, 0, 7, 16, 0.0F);
-        tail3 = new AdvancedRendererModel(this, 108, 107);
+        tail3 = new SocketModelRenderer(this, 108, 107);
         tail3.setRotationPoint(0.0F, 0.1F, 10.2F);
         tail3.addBox(-3.5F, -3.9F, -2.2F, 7, 9, 13, 0.0F);
         setRotateAngle(tail3, 0.0F, -0.1424188669627373F, 0.0F);
@@ -291,10 +303,19 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         bottomWingFinPhalangeL1.addChild(bottomWingFinMembraneL1);
         body1.addChild(topWingFinPhalangeR1);
         head.addChild(mouthTop);
+        
+        animator = ModelAnimator.create();
+        tailArray = new SocketModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6};
+        dynamicTailArray = new SocketModelRenderer[tailArray.length];
+        neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3};
+        headArray = ArrayUtils.add(neckArray, head);
+        updateDefaultPose();
     }
     
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+        ButterflyLeviathanEntity bfly = (ButterflyLeviathanEntity) entityIn;
+        
         GlStateManager.pushMatrix();
         GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
         GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
@@ -303,6 +324,31 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         GlStateManager.translated(-body1.rotationPointX * scale, -body1.rotationPointY * scale, -body1.rotationPointZ * scale);
         GlStateManager.translatef(0, 4.9f * scale, 0);
         body1.render(scale);
+        if (bfly.dc != null) bfly.dc.render(scale, dynamicTailArray);
         GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, neck3);
+    }
+    
+    private float globalSpeed = 0.5f;
+    private float globalDegree = 0.5f;
+    
+    @Override
+    public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
+        ButterflyLeviathanEntity bfly = (ButterflyLeviathanEntity) entity;
+        float frame = entity.ticksExisted + partialTick;
+    
+        resetToDefaultPose();
+        bfly.dc.updateChain(partialTick, tailArray, dynamicTailArray, 0, 0.1f, 0.1f, 0.97f, 35, false);
+        idle(frame);
+    }
+    
+    public void idle(float frame) {
+        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, 3, frame, 0.5f);
+        walk(mouthBottom, globalSpeed - 0.45f, 0.15f, false, 0, 0.15f, frame, 0.5f);
+//        chainWave(dynamicTailArray, globalSpeed - 0.45f, globalDegree, 0, frame, 0.5f);
     }
 }

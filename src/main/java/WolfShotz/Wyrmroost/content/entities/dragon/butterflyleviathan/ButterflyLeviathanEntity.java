@@ -4,9 +4,12 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -19,6 +22,8 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -36,6 +41,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public MultiPartEntity tail2Part;
     public MultiPartEntity tail3Part;
     
+    @OnlyIn(Dist.CLIENT) public DynamicChain dc;
+    
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world) {
         super(blevi, world);
         
@@ -45,13 +52,15 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
         tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
         tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
+        
+        if (world.isRemote) dc = new DynamicChain(this);
     }
     
     @Override
     protected void registerGoals() {
         super.registerGoals();
         
-        
+//        goalSelector.addGoal(0, new LookAtGoal(this, LivingEntity.class, 25));
     }
     
     @Override
@@ -60,7 +69,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         
         getAttribute(MAX_HEALTH).setBaseValue(70d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.01892d);
-        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+//        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
     
     // ================================
@@ -94,6 +103,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public void tick() {
         super.tick();
         tickParts();
+        
+//        rotationYaw += 1;
+//        renderYawOffset += 1;
         
         if (hasConduit()) {
             long i = world.getGameTime();

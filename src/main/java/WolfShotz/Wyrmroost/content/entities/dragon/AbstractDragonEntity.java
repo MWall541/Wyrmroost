@@ -16,7 +16,6 @@ import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -41,6 +40,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -158,8 +158,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
         invHandler.ifPresent(i -> ((ItemStackHandler) i).deserializeNBT(nbt.getCompound("inv")));
     
-        ModUtils.L.info("Read Call");
-    
         super.readAdditional(nbt);
     }
     
@@ -185,7 +183,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isFlying() { return dataManager.get(FLYING); }
     public void setFlying(boolean fly) {
-        if (canFly() && fly && liftOff()) dataManager.set(FLYING, true);
+        if (isFlying() == fly) return;
+        if (canFly() && fly && liftOff()) {
+            getNavigator().clearPath();
+            dataManager.set(FLYING, true);
+        }
         else dataManager.set(FLYING, false);
     }
     
@@ -383,6 +385,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Checks if we can spawn here. For basic spawning, check if we are near (or close) to the surface and if the block has light
+     */
+    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> entityType, IWorld world, SpawnReason spawnReason, BlockPos blockPos, Random random) {
+        return blockPos.getY() > world.getSeaLevel() - 20 && world.getLightSubtracted(blockPos, 0) > 8;
     }
     
     /**
