@@ -14,22 +14,22 @@ import javax.vecmath.Vector3d;
  *
  * Created by Josh on 5/8/2017.
  */
-public class SocketModelRenderer extends AdvancedRendererModel
+public class SocketRendererModel extends AdvancedRendererModel
 {
-    public SocketModelRenderer(AdvancedEntityModel model, String name) {
+    public SocketRendererModel(AdvancedEntityModel model, String name) {
         super(model, name);
     }
     
-    public SocketModelRenderer(AdvancedEntityModel model) {
+    public SocketRendererModel(AdvancedEntityModel model) {
         this(model, null);
     }
     
-    public SocketModelRenderer(AdvancedEntityModel model, int textureOffsetX, int textureOffsetY) {
+    public SocketRendererModel(AdvancedEntityModel model, int textureOffsetX, int textureOffsetY) {
         this(model);
         this.setTextureOffset(textureOffsetX, textureOffsetY);
     }
     
-    public SocketModelRenderer(SocketModelRenderer modelRenderer) {
+    public SocketRendererModel(SocketRendererModel modelRenderer) {
         super(modelRenderer.getModel(), modelRenderer.textureOffsetX, modelRenderer.textureOffsetY);
         this.rotationPointX = modelRenderer.rotationPointX;
         this.rotationPointY = modelRenderer.rotationPointY;

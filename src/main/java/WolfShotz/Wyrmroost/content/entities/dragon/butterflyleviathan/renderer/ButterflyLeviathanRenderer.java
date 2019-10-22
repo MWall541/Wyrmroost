@@ -1,18 +1,23 @@
-package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
+package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.renderer;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import net.minecraft.client.Minecraft;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanModel;
+import WolfShotz.Wyrmroost.util.entityhelpers.render.SocketRendererModel;
+import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.IEntityRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
-import net.minecraft.client.renderer.tileentity.ConduitTileEntityRenderer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
+@OnlyIn(Dist.CLIENT)
 public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<ButterflyLeviathanEntity>
 {
     public final ResourceLocation BLUE   = location("butterfly_leviathan.png");
@@ -22,6 +27,16 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     
     public ButterflyLeviathanRenderer(EntityRendererManager manager) {
         super(manager, new ButterflyLeviathanModel(), 2f);
+        addLayer(new GlowLayer())
+    }
+    
+    @Override
+    public void doRender(ButterflyLeviathanEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+        
+        if (entity.hasConduit()) {
+            ConduitRenderer.render(entity, x, y + 3, z, partialTicks, this::bindTexture);
+        }
     }
     
     @Nullable
@@ -37,6 +52,5 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     
     @Override
     public String getResourceDirectory() { return DEF_LOC + "butterflyleviathan/"; }
-    
     
 }

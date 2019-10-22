@@ -1,6 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
+import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -47,7 +49,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
      */
     public abstract class AbstractLayerRenderer extends LayerRenderer<T, EntityModel<T>>
     {
-        public AbstractLayerRenderer(IEntityRenderer<T, EntityModel<T>> entityIn) { super(entityIn); }
+        public AbstractLayerRenderer() { super(AbstractDragonRenderer.this); }
         
         @Override // Override to deobfuscate params
         public abstract void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale);
@@ -63,14 +65,20 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     public class GlowLayer extends AbstractLayerRenderer
     {
         private Function<T, ResourceLocation> glowLocation;
+        private Predicate<T> shouldRender;
     
-        public GlowLayer(IEntityRenderer<T, EntityModel<T>> entityIn, Function<T, ResourceLocation> glowLocation) {
-            super(entityIn);
+        public GlowLayer(Function<T, ResourceLocation> glowLocation) {
             this.glowLocation = glowLocation;
         }
     
+        public GlowLayer(Function<T, ResourceLocation> glowLocation, Predicate<T> predicate) {
+            this(glowLocation);
+            this.shouldRender = predicate;
+        }
+        
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+            if (shouldRender == null || !shouldRender.test(entity)) return;
             GameRenderer gamerenderer = Minecraft.getInstance().gameRenderer;
             int i = entity.getBrightnessForRender();
             int j = i % 65536;
@@ -106,14 +114,12 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         public Predicate<T> conditions;
         public Function<T, ResourceLocation> func;
         
-        public ConditionalLayer(IEntityRenderer<T, EntityModel<T>> entityIn, ResourceLocation locIn, Predicate<T> conditions) {
-            super(entityIn);
+        public ConditionalLayer(ResourceLocation locIn, Predicate<T> conditions) {
             this.loc = locIn;
             this.conditions = conditions;
         }
     
-        public ConditionalLayer(IEntityRenderer<T, EntityModel<T>> entityIn, Function<T, ResourceLocation> funcIn, Predicate<T> conditions) {
-            super(entityIn);
+        public ConditionalLayer(Function<T, ResourceLocation> funcIn, Predicate<T> conditions) {
             this.func = funcIn;
             this.conditions = conditions;
         }
@@ -133,8 +139,8 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
      */
     public class SleepLayer extends ConditionalLayer
     {
-        public SleepLayer(IEntityRenderer<T, EntityModel<T>> entityIn, ResourceLocation locIn) {
-            super(entityIn, locIn, AbstractDragonEntity::isSleeping);
+        public SleepLayer(ResourceLocation locIn) {
+            super(locIn, AbstractDragonEntity::isSleeping);
         }
     }
 }

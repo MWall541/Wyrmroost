@@ -121,7 +121,7 @@ public class DynamicChain
         }
     }
     
-    public void setChain(SocketModelRenderer[] chainOrig, SocketModelRenderer[] chainDynamic) {
+    public void setChain(SocketRendererModel[] chainOrig, SocketRendererModel[] chainDynamic) {
         p = new Vec3d[chainOrig.length];
         v = new Vec3d[chainOrig.length];
         a = new Vec3d[chainOrig.length];
@@ -160,12 +160,12 @@ public class DynamicChain
         
         for (int i = 0; i < chainOrig.length; i++) {
             if (chainDynamic[i] == null) {
-                chainDynamic[i] = new SocketModelRenderer(chainOrig[i]);
+                chainDynamic[i] = new SocketRendererModel(chainOrig[i]);
             }
         }
     }
     
-    public void updateChain(float delta, SocketModelRenderer[] chainOrig, SocketModelRenderer[] chainDynamic, float gravityAmount, float stiffness, float stiffnessFalloff, float damping, int numUpdates, boolean useFloor) {
+    public void updateChain(float delta, SocketRendererModel[] chainOrig, SocketRendererModel[] chainDynamic, float gravityAmount, float stiffness, float stiffnessFalloff, float damping, int numUpdates, boolean useFloor) {
         if (p.length != chainOrig.length || Double.isNaN(p[1].x)) {
             setChain(chainOrig, chainDynamic);
         }
@@ -203,7 +203,7 @@ public class DynamicChain
         }
     }
     
-    public void render(float f5, SocketModelRenderer[] dynModelRenderers) {
+    public void render(float f5, SocketRendererModel[] dynModelRenderers) {
         if (dynModelRenderers == null) return;
         for (int i = 0; i < dynModelRenderers.length - 1; i++) {
             if (dynModelRenderers[i] == null) return;

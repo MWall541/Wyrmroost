@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
 import com.github.alexthe666.citadel.animation.Animation;
+import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -72,6 +73,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 //        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
     
+    @Override
+    public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
+    
     // ================================
     //           Entity NBT
     // ================================
@@ -103,9 +107,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public void tick() {
         super.tick();
         tickParts();
-        
-//        rotationYaw += 1;
-//        renderYawOffset += 1;
         
         if (hasConduit()) {
             long i = world.getGameTime();
@@ -144,7 +145,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.SEAGRASS}; }
+    protected Item[] getFoodItems() { return new Item[] {Items.SEAGRASS, Items.KELP}; }
     
     @Nullable
     @Override
