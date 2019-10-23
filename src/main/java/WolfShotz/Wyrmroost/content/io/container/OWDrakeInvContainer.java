@@ -34,6 +34,8 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
                 @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() == Items.CHEST; }
     
                 @Override public int getSlotStackLimit() { return 1; }
+                @Override public int getItemStackLimit(@Nonnull ItemStack stack) { return 1; }
+    
     
                 @Override public void onSlotChanged() { dragon.setHasChest(getStack().getItem() == Items.CHEST); }
     

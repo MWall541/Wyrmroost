@@ -3,6 +3,8 @@ package WolfShotz.Wyrmroost.content.io.container.base;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
+import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,7 +43,13 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
      * Determines whether supplied player can use this container
      */
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) { return dragon.getDistance(playerIn) < 10; }
+    public boolean canInteractWith(PlayerEntity playerIn) {
+        if (dragon instanceof IMultiPartEntity)
+            for (MultiPartEntity part : ((IMultiPartEntity) dragon).getParts())
+                if (part.getDistance(playerIn) < 10) return true;
+                
+        return dragon.getDistance(playerIn) < 10;
+    }
     
     public void buildSlotArea(IInventory inventory, int index, int initialX, int initialY, int length, int height) {
         for(int y = 0; y < height; ++y) {
