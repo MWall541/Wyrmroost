@@ -24,19 +24,19 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public final ResourceLocation PURPLE = location("butterfly_leviathan_purple.png");
     // Special
     public final ResourceLocation ALBINO = location("butterfly_leviathan_alb.png");
+    // Glow
+    public final ResourceLocation GLOW   = location("butterfly_leviathan_activated.png");
     
     public ButterflyLeviathanRenderer(EntityRendererManager manager) {
         super(manager, new ButterflyLeviathanModel(), 2f);
-        addLayer(new GlowLayer())
+        addLayer(new GlowLayer(d -> GLOW, ButterflyLeviathanEntity::hasConduit));
     }
     
     @Override
     public void doRender(ButterflyLeviathanEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
         
-        if (entity.hasConduit()) {
-            ConduitRenderer.render(entity, x, y + 3, z, partialTicks, this::bindTexture);
-        }
+        if (entity.hasConduit()) ConduitRenderer.render(entity, x, y + 3, z, partialTicks, this::bindTexture);
     }
     
     @Nullable

@@ -112,8 +112,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             long i = world.getGameTime();
             if (i % 40L == 0L) applyEffects();
             if (i % 80L == 0L) {
-                if (rand.nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 1f, 1f);
-                else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 1f, 1f);
+                if (rand.nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 2f, 1f);
+                else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 2f, 1f);
             }
         }
     }

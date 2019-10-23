@@ -63,6 +63,8 @@ public class ConduitRenderer {
         textureBinder.accept(OPEN_EYE_TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) x, (float) y + 0.3f + f2 * 0.2f, (float) z);
+        GlStateManager.rotatef(entity.renderYawOffset - 90, 0, 1, 0);
+        GlStateManager.translatef(0, 0, 4f);
         GlStateManager.scalef(0.5f, 0.5f, 0.5f);
         GlStateManager.rotatef(-activeRenderInfo.getYaw(), 0, 1f, 0);
         GlStateManager.rotatef(activeRenderInfo.getPitch(), 1f, 0, 0);
