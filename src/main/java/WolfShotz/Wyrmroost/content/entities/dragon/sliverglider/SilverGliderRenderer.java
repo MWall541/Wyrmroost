@@ -30,10 +30,10 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     public SilverGliderRenderer(EntityRendererManager manager) {
         super(manager, new SilverGliderModel(), 1f);
         
-        addLayer(new GlowLayer(this, condition));
-        if (isChristmas) addLayer(new ConditionalLayer(this, XMAS_LAYER, c -> true));
-        if (isChristmas) addLayer(new GlowLayer(this, sg -> XMAS_GLOW));
-        addLayer(new SleepLayer(this, SLEEP));
+        addLayer(new GlowLayer(condition));
+        if (isChristmas) addLayer(new ConditionalLayer(XMAS_LAYER, c -> true));
+        if (isChristmas) addLayer(new GlowLayer(sg -> XMAS_GLOW));
+        addLayer(new SleepLayer(SLEEP));
     }
     
 //        if (glider.isSpecial()) return BODY_SPE;
