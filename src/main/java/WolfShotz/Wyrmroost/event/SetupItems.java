@@ -38,6 +38,7 @@ public class SetupItems
     @ObjectHolder(ID + "geode_pick")            public static Item geodePick;
     @ObjectHolder(ID + "geode_shovel")          public static Item geodeShovel;
     @ObjectHolder(ID + "geode_axe")             public static Item geodeAxe;
+    @ObjectHolder(ID + "geode_hoe")             public static Item geodeHoe;
 
     @ObjectHolder(ID + "geode_helmet")          public static Item geodeHelm;
     @ObjectHolder(ID + "geode_chestplate")      public static Item geodeChest;
@@ -52,6 +53,7 @@ public class SetupItems
     @ObjectHolder(ID + "platinum_pick")         public static Item platinumPick;
     @ObjectHolder(ID + "platinum_axe")          public static Item platinumAxe;
     @ObjectHolder(ID + "platinum_shovel")       public static Item platinumShovel;
+    @ObjectHolder(ID + "platinum_hoe")          public static Item platinumHoe;
 
     @ObjectHolder(ID + "platinum_helmet")       public static Item platinumHelm;
     @ObjectHolder(ID + "platinum_chestplate")   public static Item platinumChest;
@@ -125,6 +127,7 @@ public class SetupItems
                 new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
                 new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
                 new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
+                new HoeItem(ToolMaterialList.GEODE, 1.5f, ModUtils.itemBuilder()).setRegistryName("geode_hoe"),
                 new ItemArmorBase("geode_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
                 new ItemArmorBase("geode_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
                 new ItemArmorBase("geode_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
@@ -153,6 +156,7 @@ public class SetupItems
                 new PickaxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("platinum_pick"),
                 new AxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("platinum_axe"),
                 new ShovelItem(ToolMaterialList.PLATINUM, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("platinum_shovel"),
+                new HoeItem(ToolMaterialList.PLATINUM, 1.5f, ModUtils.itemBuilder()).setRegistryName("platinum_hoe"),
                 new ItemArmorBase("platinum_helmet", ArmorMaterialList.PLATINUM, EquipmentSlotType.HEAD),
                 new ItemArmorBase("platinum_chestplate", ArmorMaterialList.PLATINUM, EquipmentSlotType.CHEST),
                 new ItemArmorBase("platinum_leggings", ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS),
