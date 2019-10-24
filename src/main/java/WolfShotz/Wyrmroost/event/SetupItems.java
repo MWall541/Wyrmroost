@@ -52,6 +52,7 @@ public class SetupItems
     @ObjectHolder(ID + "platinum_pick")         public static Item platinumPick;
     @ObjectHolder(ID + "platinum_axe")          public static Item platinumAxe;
     @ObjectHolder(ID + "platinum_shovel")       public static Item platinumShovel;
+    @ObjectHolder(ID + "platinum_hoe")          public static Item platinumHoe;
 
     @ObjectHolder(ID + "platinum_helmet")       public static Item platinumHelm;
     @ObjectHolder(ID + "platinum_chestplate")   public static Item platinumChest;
@@ -118,6 +119,7 @@ public class SetupItems
                 new PickaxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("platinum_pick"),
                 new AxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("platinum_axe"),
                 new ShovelItem(ToolMaterialList.PLATINUM, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("platinum_shovel"),
+                new HoeItem(ToolMaterialList.PLATINUM, 1.5f, ModUtils.itemBuilder()).setRegistryName("platinum_hoe"),
                 new ItemArmorBase("platinum_helmet", ArmorMaterialList.PLATINUM, EquipmentSlotType.HEAD),
                 new ItemArmorBase("platinum_chestplate", ArmorMaterialList.PLATINUM, EquipmentSlotType.CHEST),
                 new ItemArmorBase("platinum_leggings", ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS),
