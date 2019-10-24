@@ -34,6 +34,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -50,6 +51,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -370,7 +372,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (isChild()) {
                 ageUp((int)((float)(-getGrowingAge() / 20) * 0.1F), true);
                 eat(stack);
-                if (isSleeping()) setSleeping(false);
                 
                 return true;
             }
@@ -520,16 +521,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void eat(@Nullable ItemStack stack) {
         if (stack != null && !stack.isEmpty()) {
-//            Item item = stack.getItem();
-//            List<Pair<EffectInstance, Float>> effects;
-            
             stack.shrink(1);
             if (getHealth() < getMaxHealth()) heal(Math.max((int) getMaxHealth() / 5, 6));
-//            if (item.isFood()) {
-//                effects = stack.getItem().getFood().getEffects();
-//                if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
-//                    effects.forEach(e -> addPotionEffect(e.getLeft()));
-//            }
+            if (stack.getItem().isFood()) {
+                try { // Surrounding in try catch block. checking for null doesnt seem to work...
+                    List<Pair<EffectInstance, Float>> effects = stack.getItem().getFood().getEffects();
+                    if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
+                        effects.forEach(e -> addPotionEffect(e.getLeft()));
+                } catch (Exception ignore) {}
+            }
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
             if (world.isRemote) {
                 Vec3d mouth = getApproximateMouthPos();
@@ -681,6 +681,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @param shouldContinue True = continue attacking | False = interrupt / stop attack
      */
     public void performSpecialAttack(boolean shouldContinue) {}
+    
+    /**
+     * Whether or not we should move
+     */
+    @Override
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSitting() || isSleeping(); }
     
     /**
      * Whether or not the dragon can fly.
