@@ -37,6 +37,7 @@ public class SetupItems
     @ObjectHolder(ID + "geode_pick")            public static Item geodePick;
     @ObjectHolder(ID + "geode_shovel")          public static Item geodeShovel;
     @ObjectHolder(ID + "geode_axe")             public static Item geodeAxe;
+    @ObjectHolder(ID + "geode_hoe")             public static Item geodeHoe;
 
     @ObjectHolder(ID + "geode_helmet")          public static Item geodeHelm;
     @ObjectHolder(ID + "geode_chestplate")      public static Item geodeChest;
@@ -104,6 +105,7 @@ public class SetupItems
                 new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
                 new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
                 new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
+                new HoeItem(ToolMaterialList.GEODE, 1.5f, ModUtils.itemBuilder()).setRegistryName("geode_hoe"),
                 new ItemArmorBase("geode_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
                 new ItemArmorBase("geode_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
                 new ItemArmorBase("geode_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
