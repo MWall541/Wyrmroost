@@ -1,17 +1,10 @@
-package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.renderer;
+package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanModel;
-import WolfShotz.Wyrmroost.util.entityhelpers.render.SocketRendererModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.client.renderer.model.Model;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -36,7 +29,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public void doRender(ButterflyLeviathanEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
         
-        if (entity.hasConduit()) ConduitRenderer.render(entity, x, y + 3, z, partialTicks, this::bindTexture);
+        if (entity.hasConduit()) ConduitRenderer.render(entity, this::bindTexture, x, y + 3, z, partialTicks);
     }
     
     @Nullable
@@ -52,5 +45,4 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     
     @Override
     public String getResourceDirectory() { return DEF_LOC + "butterflyleviathan/"; }
-    
 }

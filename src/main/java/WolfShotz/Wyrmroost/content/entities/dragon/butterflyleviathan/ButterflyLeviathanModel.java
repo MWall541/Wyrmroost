@@ -6,14 +6,19 @@ import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * butterfly leviathan - Kingdomall
  * Created using Tabula 7.0.1
  */
+@OnlyIn(Dist.CLIENT)
 public class ButterflyLeviathanModel extends AdvancedEntityModel
 {
+    public ButterflyLeviathanEntity entity;
+    
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
     public AdvancedRendererModel neck1;
@@ -341,12 +346,35 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
     
         resetToDefaultPose();
         bfly.dc.updateChain(partialTick, tailArray, dynamicTailArray, 0, 0.1f, 0.1f, 0.97f, 35, false);
+        
+//        setInitialPositions();
+        neck1.rotateAngleX = -0.8f;
+        neck2.rotateAngleX = 0.25f;
+        neck3.rotateAngleX = 0.2f;
+        head.rotateAngleX = 0.35f;
+        
+        legThighL1.rotateAngleX = -1.55f;
+        legThighL1.rotateAngleY = 0.5f;
+        legSegmentL1.rotateAngleX = 1.6f;
+        legSegmentL2.rotateAngleX = -1.6f;
+        footL.rotateAngleX = 0f;
+    
+        legThighR1.rotateAngleX = -1.55f;
+        legThighR1.rotateAngleY = -0.5f;
+        legSegmentR1.rotateAngleX = 1.6f;
+        legSegmentR2.rotateAngleX = -1.6f;
+        footR.rotateAngleX = 0f;
+        
         idle(frame);
     }
     
+    private void setInitialPositions() {
+    
+    }
+    
     public void idle(float frame) {
-        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, 3, frame, 0.5f);
-        walk(mouthBottom, globalSpeed - 0.45f, 0.15f, false, 0, 0.15f, frame, 0.5f);
+        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, -3, frame, 0.5f);
+        walk(mouthBottom, globalSpeed - 0.45f, 0.15f, false, -0.5f, 0.15f, frame, 0.5f);
 //        chainWave(dynamicTailArray, globalSpeed - 0.45f, globalDegree, 0, frame, 0.5f);
     }
 }

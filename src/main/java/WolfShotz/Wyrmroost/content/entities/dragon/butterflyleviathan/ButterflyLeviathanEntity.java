@@ -1,27 +1,36 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
+import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -55,13 +64,16 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
         
         if (world.isRemote) dc = new DynamicChain(this);
+        
+        moveController = new ButterFlyMoveController(this);
     }
     
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        
-//        goalSelector.addGoal(0, new LookAtGoal(this, LivingEntity.class, 25));
+        goalSelector.addGoal(4, new RandomSwimmingGoal(this, 1d, 120));
+        goalSelector.addGoal(5, SharedEntityGoals.lookAtNoSleeping(this, 10f));
+        goalSelector.addGoal(6, SharedEntityGoals.lookRandomlyNoSleeping(this));
     }
     
     @Override
@@ -69,7 +81,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         super.registerAttributes();
         
         getAttribute(MAX_HEALTH).setBaseValue(70d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.01892d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(1.026235d);
 //        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
     
@@ -110,12 +122,25 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         
         if (hasConduit()) {
             long i = world.getGameTime();
+            if (world.isRemote) spawnParticles();
             if (i % 40L == 0L) applyEffects();
             if (i % 80L == 0L) {
                 if (rand.nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 2f, 1f);
                 else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 2f, 1f);
             }
         }
+    }
+    
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
+        if (super.processInteract(player, hand, stack)) return true;
+        
+        if (isTamed()) {
+            player.startRiding(this);
+            return true;
+        }
+        
+        return false;
     }
     
     public boolean hasConduit() { return getInvCap().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false); }
@@ -129,6 +154,16 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 player.addPotionEffect(new EffectInstance(Effects.CONDUIT_POWER, 260, 0, true, true));
     }
     
+    private void spawnParticles() {
+        if (rand.nextInt(50) != 0) return;
+        for (int i=0; i < 16; ++i) {
+            double motionX = MathUtils.nextPseudoDouble(rand) * 1.5f;
+            double motionY = MathUtils.nextPseudoDouble(rand);
+            double motionZ = MathUtils.nextPseudoDouble(rand) * 1.5f;
+            world.addParticle(ParticleTypes.NAUTILUS, posX, posY + 5, posZ, motionX, motionY, motionZ);
+        }
+    }
+    
     @Override
     public MultiPartEntity[] getParts() { return new MultiPartEntity[] {headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part}; }
     
@@ -137,6 +172,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Override
     public boolean canBeRiddenInWater(Entity rider) { return true; }
+    
+    @Override
+    public double getMountedYOffset() { return super.getMountedYOffset(); }
     
     @Override
     public boolean canBreatheUnderwater() { return true; }

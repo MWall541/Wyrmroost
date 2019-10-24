@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.renderer;
+package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
@@ -7,11 +7,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.Random;
 import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
@@ -24,10 +26,10 @@ public class ConduitRenderer {
     private static final EyeModel EYE = new EyeModel();
     private static final WindModel WIND = new WindModel();
     
-    public static void render(ButterflyLeviathanEntity entity, double x, double y, double z, float partialTicks, Consumer<ResourceLocation> textureBinder) {
+    public static void render(ButterflyLeviathanEntity entity, Consumer<ResourceLocation> textureBinder, double x, double y, double z, float partialTicks) {
         float f = (float) entity.ticksExisted + partialTicks;
         float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
-        f2 = f2 * f2 + f2;
+        f2 += f2 * f2;
         
         // Render Cage Model
         textureBinder.accept(CAGE_TEXTURE);
@@ -63,8 +65,6 @@ public class ConduitRenderer {
         textureBinder.accept(OPEN_EYE_TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) x, (float) y + 0.3f + f2 * 0.2f, (float) z);
-        GlStateManager.rotatef(entity.renderYawOffset - 90, 0, 1, 0);
-        GlStateManager.translatef(0, 0, 4f);
         GlStateManager.scalef(0.5f, 0.5f, 0.5f);
         GlStateManager.rotatef(-activeRenderInfo.getYaw(), 0, 1f, 0);
         GlStateManager.rotatef(activeRenderInfo.getPitch(), 1f, 0, 0);
@@ -84,9 +84,7 @@ public class ConduitRenderer {
             this.cageBox.addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8);
         }
         
-        public void render() {
-            this.cageBox.render(0.0625f);
-        }
+        public void render() { this.cageBox.render(0.0625f); }
     }
     
     @OnlyIn(Dist.CLIENT)
@@ -100,9 +98,7 @@ public class ConduitRenderer {
             this.eyeBox.addBox(-4.0F, -4.0F, 0.0F, 8, 8, 0, 0.01F);
         }
         
-        public void render() {
-            this.eyeBox.render(0.083333336f);
-        }
+        public void render() { this.eyeBox.render(0.083333336f); }
     }
     
     @OnlyIn(Dist.CLIENT)
@@ -125,8 +121,6 @@ public class ConduitRenderer {
             this.boxIndex = index;
         }
         
-        public void render() {
-            windBoxes[boxIndex].render(0.0625f);
-        }
+        public void render() { windBoxes[boxIndex].render(0.0625f); }
     }
 }
