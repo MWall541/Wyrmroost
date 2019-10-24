@@ -354,17 +354,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             
             return true;
         }
+    
+        if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player)) {
+            eat(stack);
+            setInLove(player);
         
-        if (isBreedingItem(stack) && isTamed()) {
+            return true;
+        }
+        
+        if (isFoodItem(stack) && isTamed()) {
+            
             if (getHealth() < getMaxHealth()) {
                 eat(stack);
-                
-                return true;
-            }
-            
-            if (getGrowingAge() == 0 && canBreed()) {
-                eat(stack);
-                setInLove(player);
                 
                 return true;
             }
@@ -607,15 +608,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * Is the passed stack considered a food/breeding item?
-     */
-    @Override
-    public boolean isBreedingItem(ItemStack stack) {
-        if (getFoodItems() == null || getFoodItems().length == 0) return false;
-        return Arrays.asList(getFoodItems()).contains(stack.getItem());
-    }
-    
-    /**
      * Get all entities in this entities bounding box increased by a range
      */
     public List<Entity> getEntitiesNearby(double radius) {
@@ -736,6 +728,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Nullable
     @Override
     public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ContainerBase<>(this, SetupIO.baseContainer, windowID); }
+    
+    /**
+     * Is the passed stack considered a breeding item?
+     * Default return {@link #isFoodItem(ItemStack)} - Intended to be overrided if applicable
+     */
+    @Override
+    public boolean isBreedingItem(ItemStack stack) { return isFoodItem(stack); }
+    
+    /**
+     * Is the passed stack considered a food item defined in {@link #getFoodItems()}
+     * @param stack
+     * @return
+     */
+    public boolean isFoodItem(ItemStack stack) {
+        if (getFoodItems() == null || getFoodItems().length == 0) return false;
+        return Arrays.asList(getFoodItems()).contains(stack.getItem());
+    }
     
     /**
      * Array Containing all of the dragons food items

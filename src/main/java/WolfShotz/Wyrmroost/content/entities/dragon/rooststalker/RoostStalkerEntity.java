@@ -29,6 +29,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
@@ -98,79 +99,55 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
-        if (hand != Hand.MAIN_HAND) return false; // Only fire on main hand
+        if (super.processInteract(player, hand, stack)) return true;
         
         ItemStack heldItem = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
         Item item = stack.getItem();
         
-        // Apply Name if holding nametag
-        if (stack.getItem() == Items.NAME_TAG) {
-            stack.interactWithEntity(player, this, hand);
-        
-            return true;
-        }
-        
-        // Change to tame if holding a dragon egg
-        if (!isTamed() && item == SetupItems.dragonEgg || item == Items.EGG) {
+        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == SetupItems.dragonEgg) { //TODO add dragon egg under EGGS tag
             eat(stack);
             if (tame(rand.nextInt(4) == 0, player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
             
             return true;
         }
-    
-        if (isTamed()) {
         
-            // if player is sneaking, sit/stand
-            if (player.isSneaking() && isOwner(player)) {
+        if (isTamed() && isOwner(player)) {
+            if (player.isSneaking()) {
                 setSit(!isSitting());
-            
+                
                 return true;
             }
-        
-            if (!stack.isEmpty()) {
-            
-                // Breed with gold nuggets (Yeah idk, always blame Nova)
-                if (getGrowingAge() == 0 && canBreed() && item == Items.GOLD_NUGGET) {
-                    consumeItemFromStack(player, stack);
-                    setInLove(player);
-                    return true;
-                }
-            
-                // Increase the age
-                if (isChild() && isBreedingItem(stack)) {
-                    consumeItemFromStack(player, stack);
-                    ageUp((int)((float)(-getGrowingAge() / 20) * 0.1F), true);
-                
-                    return true;
-                }
-            
-                if (canPickUpStack(stack) && isOwner(player)) {
-                    // Swap mouth holding items
-                    if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
-                    else player.setHeldItem(hand, ItemStack.EMPTY);
-                    setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
     
-                    return true;
-                } else return false;
+            if (!stack.isEmpty() && canPickUpStack(stack)) {
+                if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
+                else player.setHeldItem(hand, ItemStack.EMPTY);
+                setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
+                
+                return true;
             }
             
-            // Retrieve the item in the mouth
-            if (!heldItem.isEmpty() && isOwner(player)) {
+            if (!heldItem.isEmpty()) {
                 setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
                 player.setHeldItem(hand, heldItem);
-                
+
                 return true;
-            } else if (player.getPassengers().isEmpty() && isOwner(player)) {
+            }
+            
+            if (player.getPassengers().isEmpty()) {
                 setSit(false);
                 startRiding(player, true);
-    
+
                 return true;
             }
         }
         
+        
         return false;
     }
+    
+    @Override
+    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.GOLD_NUGGET; }
     
     @Override
     public void updateRidden() {
@@ -235,10 +212,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.EGG, SetupItems.dragonEgg, Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON}; }
+    protected Item[] getFoodItems() { return new Item[] {Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, SetupItems.foodDrakeMeatCooked, SetupItems.foodDrakeMeatRaw}; }
     
     public boolean canPickUpStack(ItemStack stack) {
-        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET && stack.getItem() != SetupItems.soulCrystal;
+        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
     }
     
     // == Animation ==
