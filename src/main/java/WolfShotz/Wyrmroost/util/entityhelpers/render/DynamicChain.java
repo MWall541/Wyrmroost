@@ -54,7 +54,7 @@ public class DynamicChain
         for (int j = 0; j < numUpdates; j++) {
             for (int i = 0; i < p.length - 1; i++) {
                 if (i == 0) {
-                    Vec3d root = pOrig[i]; //origModelRenderers[i].getWorldPos(entity, LLibrary.PROXY.getPartialTicks());
+                    Vec3d root = pOrig[i];
                     
                     p[i] = root;
                     v[i] = p[i].subtract(prevPos[i]);
@@ -62,10 +62,8 @@ public class DynamicChain
                 }
                 
                 Vec3d target = angleBetween(
-                        pOrig[i], //origModelRenderers[i].getWorldPos(entity, LLibrary.PROXY.getPartialTicks()),
-                        pOrig[i + 1]); //origModelRenderers[i + 1].getWorldPos(entity, LLibrary.PROXY.getPartialTicks()));
-                //float gravity = 1 - (float) Math.pow(1 - gravityAmount, (i + 1));
-                //target = new Vec3d(target.x, (1-gravity) * target.y + gravity * Math.PI, target.z);
+                        pOrig[i],
+                        pOrig[i + 1]);
                 
                 r[i] = angleBetween(p[i], p[i + 1]);
                 
@@ -195,10 +193,6 @@ public class DynamicChain
                 chainDynamic[i].rotateAngleY = chainDynamic[i].defaultRotationY + yaw;
                 chainDynamic[i].rotateAngleX = chainDynamic[i].defaultRotationZ + pitch;
                 chainDynamic[i].rotateAngleZ = (float) r[i].z;
-                
-                Vec3d diffRotated = diff;
-                diffRotated = diffRotated.rotateYaw(yaw);
-                diffRotated = diffRotated.rotatePitch(pitch);
             }
         }
     }

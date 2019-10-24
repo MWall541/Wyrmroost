@@ -38,8 +38,8 @@ public class ButterflyInvContainer extends ContainerBase<ButterflyLeviathanEntit
         if (slot != null && slot.getHasStack()) {
             ItemStack itemStack1 = slot.getStack();
             itemStack = itemStack1.copy();
-            if (index < 36 && !mergeItemStack(itemStack1, 36, 37, false)) return ItemStack.EMPTY;
-            else if (!mergeItemStack(itemStack1, 0, 36, true)) return ItemStack.EMPTY;
+            if (index < 36 && !mergeItemStack(itemStack1, 36, inventorySlots.size(), false)) return ItemStack.EMPTY;
+            else if (!mergeItemStack(itemStack1, 0, 37, true)) return ItemStack.EMPTY;
 
             if (itemStack1.isEmpty()) slot.putStack(ItemStack.EMPTY);
             else slot.onSlotChanged();

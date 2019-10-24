@@ -45,32 +45,22 @@ public class DragonArmorItem extends Item
         return type.getDmgReduction();
     }
     
-    public int getID() { return type.getId(); }
-    
     public enum DragonArmorType
     {
-        IRON(0, 5),
-        GOLD(1, 7),
-        DIAMOND(2, 11),
-        PLATINUM(3, 6),
-        BLUE_GEODE(4, 11),
-        RED_GEODE(5, 12),
-        PURPLE_GEODE(6, 13);
+        IRON(5),
+        GOLD(7),
+        DIAMOND(11),
+        PLATINUM(6),
+        BLUE_GEODE(11),
+        RED_GEODE(12),
+        PURPLE_GEODE(13);
         
         private int dmgReduction;
-        private int id;
         
-        DragonArmorType(int id, int dmgReduction) {
+        DragonArmorType(int dmgReduction) {
             this.dmgReduction = dmgReduction;
-            this.id = id;
         }
     
         public int getDmgReduction() { return dmgReduction; }
-        public int getId()           { return id; }
-        
-        public static DragonArmorType getTypeByID(int id) {
-            for (DragonArmorType type : values()) if (type.id == id) return type;
-            return null;
-        }
     }
 }

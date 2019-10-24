@@ -16,7 +16,7 @@ import net.minecraft.util.math.MathHelper;
 import java.util.Random;
 
 /**
- * A slighly more optimized arrow entity renderer
+ * A slighly more optimized arrow entity render
  */
 public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M>
 {

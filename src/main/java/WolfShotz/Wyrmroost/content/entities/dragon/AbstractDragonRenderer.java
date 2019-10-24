@@ -45,7 +45,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     // =================
     
     /**
-     * Abstract layer renderer to handle the generalizing
+     * Abstract layer render to handle the generalizing
      */
     public abstract class AbstractLayerRenderer extends LayerRenderer<T, EntityModel<T>>
     {

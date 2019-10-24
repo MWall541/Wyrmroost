@@ -66,11 +66,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(4, new NonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
+        goalSelector.addGoal(4, SharedEntityGoals.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
-        goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
+        goalSelector.addGoal(10, SharedEntityGoals.lookAtNoSleeping(this, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this) {@Override public boolean shouldExecute() { return !isSleeping() && super.shouldExecute(); }});
     
         goalSelector.addGoal(8, new FlightWanderGoal(this) {

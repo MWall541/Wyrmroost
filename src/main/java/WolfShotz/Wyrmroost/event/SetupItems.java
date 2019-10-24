@@ -32,7 +32,7 @@ public class SetupItems
     // Geode start
     @ObjectHolder(ID + "geode")                 public static Item geode;
     @ObjectHolder(ID + "geode_red")             public static Item geode_red;
-    @ObjectHolder(ID + "geide_purple")          public static Item geode_purple;
+    @ObjectHolder(ID + "geode_purple")          public static Item geode_purple;
 
     @ObjectHolder(ID + "geode_sword")           public static Item geodeSword;
     @ObjectHolder(ID + "geode_pick")            public static Item geodePick;
