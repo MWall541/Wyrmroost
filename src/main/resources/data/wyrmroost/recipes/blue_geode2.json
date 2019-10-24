@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "wyrmroost:geode_ore"
+  },
+  "result": "wyrmroost:geode",
+  "experience": 0.7,
+  "cookingtime": 200
+}

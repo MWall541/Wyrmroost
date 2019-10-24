@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "wyrmroost:drake_meat_raw"
+  },
+  "result": "wyrmroost:drake_meat_cooked",
+  "experience": 0.35,
+  "cookingtime": 100
+}
