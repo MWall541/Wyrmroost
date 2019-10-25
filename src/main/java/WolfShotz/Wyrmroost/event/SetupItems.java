@@ -38,12 +38,34 @@ public class SetupItems
     @ObjectHolder(ID + "geode_pick")            public static Item geodePick;
     @ObjectHolder(ID + "geode_shovel")          public static Item geodeShovel;
     @ObjectHolder(ID + "geode_axe")             public static Item geodeAxe;
-    @ObjectHolder(ID + "geode_hoe")             public static Item geodeHoe;
+    @ObjectHolder(ID + "geode_blue_hoe")        public static Item geodeHoe;
+
+    @ObjectHolder(ID + "geode_red_sword")       public static Item geodeRedSword;
+    @ObjectHolder(ID + "geode_red_pick")        public static Item geodeRedPick;
+    @ObjectHolder(ID + "geode_red_shovel")      public static Item geodeRedShovel;
+    @ObjectHolder(ID + "geode_red_axe")         public static Item geodeRedAxe;
+    @ObjectHolder(ID + "geode_red_hoe")         public static Item geodeRedHoe;
+
+    @ObjectHolder(ID + "geode_purple_sword")       public static Item geodePurpleSword;
+    @ObjectHolder(ID + "geode_purple_pick")        public static Item geodePurplePick;
+    @ObjectHolder(ID + "geode_purple_shovel")      public static Item geodePurpleShovel;
+    @ObjectHolder(ID + "geode_purple_axe")         public static Item geodePurpleAxe;
+    @ObjectHolder(ID + "geode_purple_hoe")         public static Item geodePurpleHoe;
 
     @ObjectHolder(ID + "geode_helmet")          public static Item geodeHelm;
     @ObjectHolder(ID + "geode_chestplate")      public static Item geodeChest;
     @ObjectHolder(ID + "geode_leggings")        public static Item geodeLegs;
     @ObjectHolder(ID + "geode_boots")           public static Item geodeBoots;
+
+    @ObjectHolder(ID + "geode_red_helmet")          public static Item geodeRedHelm;
+    @ObjectHolder(ID + "geode_red_chestplate")      public static Item geodeRedChest;
+    @ObjectHolder(ID + "geode_red_leggings")        public static Item geodeRedLegs;
+    @ObjectHolder(ID + "geode_red_boots")           public static Item geodeRedBoots;
+
+    @ObjectHolder(ID + "geode_purple_helmet")          public static Item geodePurpleHelm;
+    @ObjectHolder(ID + "geode_purple_chestplate")      public static Item geodePurpleChest;
+    @ObjectHolder(ID + "geode_purple_leggings")        public static Item geodePurpleLegs;
+    @ObjectHolder(ID + "geode_purple_boots")           public static Item geodePurpleBoots;
     // Geode end
 
     // Platinum start
@@ -127,7 +149,7 @@ public class SetupItems
                 new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_pick"),
                 new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_axe"),
                 new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_shovel"),
-                new HoeItem(ToolMaterialList.GEODE, 1.5f, ModUtils.itemBuilder()).setRegistryName("geode_hoe"),
+                new HoeItem(ToolMaterialList.GEODE, 1.5f, ModUtils.itemBuilder()).setRegistryName("geode_blue_hoe"),
                 new ItemArmorBase("geode_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
                 new ItemArmorBase("geode_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
                 new ItemArmorBase("geode_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
@@ -136,6 +158,7 @@ public class SetupItems
                 new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_red_pick"),
                 new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_red_axe"),
                 new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_red_shovel"),
+                new HoeItem(ToolMaterialList.GEODE, 1.5f, ModUtils.itemBuilder()).setRegistryName("geode_red_hoe"),
                 new ItemArmorBase("geode_red_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
                 new ItemArmorBase("geode_red_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
                 new ItemArmorBase("geode_red_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),
@@ -144,6 +167,7 @@ public class SetupItems
                 new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_purple_pick"),
                 new AxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()).setRegistryName("geode_purple_axe"),
                 new ShovelItem(ToolMaterialList.GEODE, 1.5f, -3.0f, ModUtils.itemBuilder()).setRegistryName("geode_purple_shovel"),
+                new HoeItem(ToolMaterialList.GEODE, 1.5f, ModUtils.itemBuilder()).setRegistryName("geode_purple_hoe"),
                 new ItemArmorBase("geode_purple_helmet", ArmorMaterialList.GEODE, EquipmentSlotType.HEAD),
                 new ItemArmorBase("geode_purple_chestplate", ArmorMaterialList.GEODE, EquipmentSlotType.CHEST),
                 new ItemArmorBase("geode_purple_leggings", ArmorMaterialList.GEODE, EquipmentSlotType.LEGS),

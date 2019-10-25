@@ -9,5 +9,5 @@
         "G": {"item": "wyrmroost:geode"},
         "S": {"item": "minecraft:stick"}
     },
-    "result": {"item": "wyrmroost:geode_hoe"}
+    "result": {"item": "wyrmroost:geode_blue_hoe"}
 }
