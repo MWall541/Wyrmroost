@@ -17,13 +17,14 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRend
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartRenderer;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.google.common.collect.Sets;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
@@ -105,17 +106,16 @@ public class SetupEntities
      */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
-        RenderingRegistry.registerEntityRenderingHandler(MultiPartEntity.class, MultiPartRenderer::new);
-        
-        RenderingRegistry.registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
-        
         RenderingRegistry.registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(RoostStalkerEntity.class, RoostStalkerRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(ButterflyLeviathanEntity.class, ButterflyLeviathanRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(DragonFruitDrakeEntity.class, DragonFruitDrakeRenderer::new);
-        
+    
+        RenderingRegistry.registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
+    
+        RenderingRegistry.registerEntityRenderingHandler(MultiPartEntity.class, mgr -> new EntityRenderer<MultiPartEntity>(mgr) {protected ResourceLocation getEntityTexture(MultiPartEntity entity) {return null;}});
     }
 
     @SubscribeEvent

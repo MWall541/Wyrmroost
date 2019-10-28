@@ -5,11 +5,13 @@ import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -68,7 +70,6 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         
         collideWithNearbyEntities();
         setPosition(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
-        
     }
     
     @Override
@@ -81,7 +82,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         if (host != null) return;
         host = (LivingEntity) world.getEntityByID(hostID);
         if (host == null) {
-            ModUtils.L.error("Could not retrieve host by ID: {}, Removing", hostID);
+            ModUtils.L.error("removing");
             remove();
         }
     }
@@ -122,12 +123,15 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     
     public void collideWithNearbyEntities() {
         List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(0.20000000298023224d, 0, 0.20000000298023224d));
-        entities.stream().filter(entity -> entity != host && !(entity instanceof MultiPartEntity) && entity.canBePushed()).forEach(entity -> entity.applyEntityCollision(host));
+        entities.stream().filter(entity -> entity != host && !(entity instanceof MultiPartEntity) && entity.canBePushed()).forEach(e -> host.applyEntityCollision(e));
     }
     
     @Override
+    public ItemStack getPickedResult(RayTraceResult target) { return host.getPickedResult(target); }
+    
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) { }
+    public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) {}
     
     @Override
     public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }

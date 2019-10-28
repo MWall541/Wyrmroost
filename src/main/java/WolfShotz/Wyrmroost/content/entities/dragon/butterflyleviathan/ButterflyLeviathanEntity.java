@@ -4,18 +4,18 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
+import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
+import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -24,13 +24,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.pathfinding.SwimmerPathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -70,8 +75,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Override
     protected void registerGoals() {
-        super.registerGoals();
-        goalSelector.addGoal(4, new RandomSwimmingGoal(this, 1d, 120));
+        goalSelector.addGoal(2, new SleepGoal(this, false));
+        goalSelector.addGoal(4, new RandomWalkingGoal(this, 1d, 10));
         goalSelector.addGoal(5, SharedEntityGoals.lookAtNoSleeping(this, 10f));
         goalSelector.addGoal(6, SharedEntityGoals.lookRandomlyNoSleeping(this));
     }
@@ -81,9 +86,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         super.registerAttributes();
         
         getAttribute(MAX_HEALTH).setBaseValue(70d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(1.026235d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(3d);
 //        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
+    
+    @Override
+    protected PathNavigator createNavigator(World worldIn) { return new SwimmerPathNavigator(this, world); }
     
     @Override
     public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
@@ -118,17 +126,27 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public void tick() {
         super.tick();
-        tickParts();
         
         if (hasConduit()) {
             long i = world.getGameTime();
-            if (world.isRemote) spawnParticles();
+            if (world.isRemote) spawnConduitParticles();
             if (i % 40L == 0L) applyEffects();
             if (i % 80L == 0L) {
                 if (rand.nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 2f, 1f);
                 else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 2f, 1f);
             }
         }
+    }
+    
+    @Override
+    public void travel(Vec3d vec3d) {
+        if (isServerWorld() && isInWater()) {
+            moveRelative(getAIMoveSpeed(), vec3d);
+            move(MoverType.SELF, getMotion());
+            setMotion(getMotion().scale(0.9d));
+            addMotion(0, -0.005d, 0);
+        }
+        else super.travel(vec3d);
     }
     
     @Override
@@ -145,6 +163,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     public boolean hasConduit() { return getInvCap().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false); }
     
+    public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER); }
+    
     public void applyEffects() {
         AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(18d).expand(0, world.getHeight(), 0);
         List<PlayerEntity> list = world.getEntitiesWithinAABB(PlayerEntity.class, axisalignedbb);
@@ -154,13 +174,13 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 player.addPotionEffect(new EffectInstance(Effects.CONDUIT_POWER, 260, 0, true, true));
     }
     
-    private void spawnParticles() {
-        if (rand.nextInt(50) != 0) return;
+    private void spawnConduitParticles() {
+        if (rand.nextInt(35) != 0) return;
         for (int i=0; i < 16; ++i) {
             double motionX = MathUtils.nextPseudoDouble(rand) * 1.5f;
             double motionY = MathUtils.nextPseudoDouble(rand);
             double motionZ = MathUtils.nextPseudoDouble(rand) * 1.5f;
-            world.addParticle(ParticleTypes.NAUTILUS, posX, posY + 5, posZ, motionX, motionY, motionZ);
+            world.addParticle(ParticleTypes.NAUTILUS, headPart.posX, headPart.posY + 4, headPart.posZ, motionX, motionY, motionZ);
         }
     }
     
@@ -174,10 +194,13 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public boolean canBeRiddenInWater(Entity rider) { return true; }
     
     @Override
-    public double getMountedYOffset() { return super.getMountedYOffset(); }
+    public boolean isNotColliding(IWorldReader worldIn) { return worldIn.checkNoEntityCollision(this); }
     
     @Override
     public boolean canBreatheUnderwater() { return true; }
+    
+    @Override
+    public boolean isPushedByWater() { return false; }
     
     /**
      * Array Containing all of the dragons food items

@@ -6,6 +6,7 @@ import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.tags.FluidTags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.ArrayUtils;
@@ -34,8 +35,8 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
     public SocketRendererModel tail4;
     public SocketRendererModel tail5;
     public SocketRendererModel tail6;
-    public AdvancedRendererModel tailFinTop;
-    public AdvancedRendererModel tailFinBottom;
+    public SocketRendererModel tailFinTop;
+    public SocketRendererModel tailFinBottom;
     public AdvancedRendererModel legSegmentR1;
     public AdvancedRendererModel legSegmentR2;
     public AdvancedRendererModel footR;
@@ -89,7 +90,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
         mouthBottom = new AdvancedRendererModel(this, 0, 55);
         mouthBottom.setRotationPoint(0.0F, 1.4F, -6.2F);
         mouthBottom.addBox(-3.0F, -1.3F, -7.1F, 6, 4, 8, 0.0F);
-        tailFinBottom = new AdvancedRendererModel(this, 0, 108);
+        tailFinBottom = new SocketRendererModel(this, 0, 108);
         tailFinBottom.setRotationPoint(-0.2F, 1.6F, 5.4F);
         tailFinBottom.addBox(0.0F, -0.5F, -6.2F, 0, 5, 16, 0.0F);
         bottomWingFinMembraneL2 = new AdvancedRendererModel(this, 22, 210);
@@ -232,7 +233,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
         neck2 = new AdvancedRendererModel(this, 30, 0);
         neck2.setRotationPoint(0.0F, 0.0F, -4.7F);
         neck2.addBox(-3.5F, -4.0F, -7.1F, 7, 9, 8, 0.0F);
-        tailFinTop = new AdvancedRendererModel(this, 0, 97);
+        tailFinTop = new SocketRendererModel(this, 0, 97);
         tailFinTop.setRotationPoint(-0.2F, -3.4F, 5.4F);
         tailFinTop.addBox(0.0F, -6.8F, -6.2F, 0, 7, 16, 0.0F);
         tail3 = new SocketRendererModel(this, 108, 107);
@@ -308,7 +309,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
         head.addChild(mouthTop);
         
         animator = ModelAnimator.create();
-        tailArray = new SocketRendererModel[] {tail1, tail2, tail3, tail4, tail5, tail6};
+        tailArray = new SocketRendererModel[] {tail1, tail2, tail3, tail4, tail5, tail6, tailFinBottom, tailFinTop};
         dynamicTailArray = new SocketRendererModel[tailArray.length];
         neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3};
         headArray = ArrayUtils.add(neckArray, head);
@@ -317,8 +318,6 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
     
     @Override
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        ButterflyLeviathanEntity bfly = (ButterflyLeviathanEntity) entityIn;
-        
         GlStateManager.pushMatrix();
         GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
         GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
@@ -327,7 +326,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
         GlStateManager.translated(-body1.rotationPointX * scale, -body1.rotationPointY * scale, -body1.rotationPointZ * scale);
         GlStateManager.translatef(0, 4.9f * scale, 0);
         body1.render(scale);
-        if (bfly.dc != null) bfly.dc.render(scale, dynamicTailArray);
+        if (entity.dc != null) entity.dc.render(scale, dynamicTailArray);
         GlStateManager.popMatrix();
     }
     
@@ -340,41 +339,53 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
     private float globalDegree = 0.5f;
     
     @Override
-    public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
-        ButterflyLeviathanEntity bfly = (ButterflyLeviathanEntity) entity;
+    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+        entity = (ButterflyLeviathanEntity) entityIn;
         float frame = entity.ticksExisted + partialTick;
     
         resetToDefaultPose();
-        bfly.dc.updateChain(partialTick, tailArray, dynamicTailArray, 0, 0.1f, 0.1f, 0.97f, 35, false);
+        globalSpeed = 0.5f;
+        globalDegree = 0.5f;
+        entity.dc.updateChain(partialTick, tailArray, dynamicTailArray, 0, 0.1f, 0.1f, 0.97f, 35, false);
         
-//        setInitialPositions();
-        neck1.rotateAngleX = -0.8f;
-        neck2.rotateAngleX = 0.25f;
-        neck3.rotateAngleX = 0.2f;
-        head.rotateAngleX = 0.35f;
-        
-        legThighL1.rotateAngleX = -1.55f;
-        legThighL1.rotateAngleY = 0.5f;
-        legSegmentL1.rotateAngleX = 1.6f;
-        legSegmentL2.rotateAngleX = -1.6f;
-        footL.rotateAngleX = 0f;
-    
-        legThighR1.rotateAngleX = -1.55f;
-        legThighR1.rotateAngleY = -0.5f;
-        legSegmentR1.rotateAngleX = 1.6f;
-        legSegmentR2.rotateAngleX = -1.6f;
-        footR.rotateAngleX = 0f;
+        setInitialPositions();
+
         
         idle(frame);
     }
     
     private void setInitialPositions() {
+        if (entity.isUnderWater()) {
+        
+        } else {
+            neck1.rotateAngleX = -0.8f;
+            neck2.rotateAngleX = 0.25f;
+            neck3.rotateAngleX = 0.2f;
+            head.rotateAngleX = 0.35f;
     
+            legThighL1.rotateAngleX = -1.55f;
+            legThighL1.rotateAngleY = 0.5f;
+            legSegmentL1.rotateAngleX = 1.6f;
+            legSegmentL2.rotateAngleX = -1.6f;
+            footL.rotateAngleX = 0f;
+    
+            legThighR1.rotateAngleX = -1.55f;
+            legThighR1.rotateAngleY = -0.5f;
+            legSegmentR1.rotateAngleX = 1.6f;
+            legSegmentR2.rotateAngleX = -1.6f;
+            footR.rotateAngleX = 0f;
+        }
     }
     
     public void idle(float frame) {
-        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, -3, frame, 0.5f);
-        walk(mouthBottom, globalSpeed - 0.45f, 0.15f, false, -0.5f, 0.15f, frame, 0.5f);
+        double i = -3;
+        if (entity.isUnderWater()) {
+            i = 3;
+            globalSpeed = 0.55f;
+            globalDegree = 0.51f;
+        }
+        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, i, frame, 0.5f);
+        walk(mouthBottom, globalSpeed - 0.45f, 0.15f, false, -0.6f, 0.15f, frame, 0.5f);
 //        chainWave(dynamicTailArray, globalSpeed - 0.45f, globalDegree, 0, frame, 0.5f);
     }
 }

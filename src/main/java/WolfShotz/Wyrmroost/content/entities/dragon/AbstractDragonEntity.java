@@ -319,7 +319,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (world.isRemote) { // Client Only Stuffs
             if (isSpecial()) doSpecialEffects();
             
-//            if (isGlowing() && flashTicks <= 0 && getActivePotionEffect(Effects.GLOWING) == null) setGlowing(false);
             if (flashTicks > 0) {
                 setGlowing(flashTicks % 4 == 0);
                 --flashTicks;
@@ -620,6 +619,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public List<Entity> getEntitiesNearby(double radius, Entity instanceExclusion) {
         return world.getEntitiesInAABBexcluding(instanceExclusion, getBoundingBox().grow(radius), found -> getPassengers().stream().noneMatch(found::equals));
     }
+    
+    public void addMotion(Vec3d vec3d) { setMotion(getMotion().add(vec3d)); }
+    
+    public void addMotion(double x, double y, double z) { setMotion(getMotion().add(x, y, z)); }
     
     /**
      * Nuff' said
