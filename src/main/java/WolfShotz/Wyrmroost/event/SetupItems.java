@@ -111,7 +111,7 @@ public class SetupItems
         SetupEntities.buildEntities(); // Instatiate entity fields before item registration (for spawn eggs)
         event.getRegistry().registerAll (
                 // Misc Start
-//                new ModBookItem(),
+                new ModBookItem(),
                 new MinutusItem(),
                 new DragonEggItem(),
                 new SoulCrystalItem(),

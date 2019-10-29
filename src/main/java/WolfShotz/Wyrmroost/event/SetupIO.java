@@ -8,7 +8,6 @@ import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.io.screen.ButterflyInvScreen;
 import WolfShotz.Wyrmroost.content.io.screen.OWDrakeInvScreen;
-import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.io.screen.base.BasicDragonScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.gui.ScreenManager;
@@ -37,7 +36,7 @@ public class SetupIO
     @SubscribeEvent
     public static void containerSetup(RegistryEvent.Register<ContainerType<?>> event) {
         event.getRegistry().registerAll (
-                createEntityContainer(((entity, inv, windowID) -> new ContainerBase((AbstractDragonEntity) entity, windowID)), "base_dragon_inv"),
+                createEntityContainer(((entity, inv, windowID) -> new ContainerBase<>((AbstractDragonEntity) entity, windowID)), "base_dragon_inv"),
                 createEntityContainer(OWDrakeInvContainer::new, "owdrake_inv"),
                 createEntityContainer(ButterflyInvContainer::new, "butterfly_inv")
         );

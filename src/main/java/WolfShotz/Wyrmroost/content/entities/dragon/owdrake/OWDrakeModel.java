@@ -453,11 +453,10 @@ public class OWDrakeModel extends AdvancedEntityModel
             return;
         }
         
-        continueIdle(frame);
+        animatieIdle(frame);
     }
     
-    
-    private void continueIdle(float frame) {
+    public void animatieIdle(float frame) {
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
     

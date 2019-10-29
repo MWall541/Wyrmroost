@@ -43,8 +43,6 @@ public class EntityMoveMessage
         Entity entity = world.getEntityByID(entityID);
         if (entity == null) return;
         
-        System.out.println(x + " " + z);
-        
         entity.setMotion(x, y, z);
     }
     

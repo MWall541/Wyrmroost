@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.event.*;
 import WolfShotz.Wyrmroost.util.network.*;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
