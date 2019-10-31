@@ -11,9 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -35,6 +33,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -66,7 +66,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(4, SharedEntityGoals.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems())));
+        goalSelector.addGoal(4, SharedEntityGoals.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
@@ -311,7 +311,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     /** Array Containing all of the dragons food items */
     @Override
-    protected Item[] getFoodItems() { return ItemTags.FISHES.getAllElements().toArray(new Item[0]); }
+    public List<Item> getFoodItems() { return new ArrayList<>(ItemTags.FISHES.getAllElements()); }
     
     // == Entity Animation ==
     @Override

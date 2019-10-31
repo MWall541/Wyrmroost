@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
@@ -10,11 +11,8 @@ import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
-import net.minecraft.entity.CreatureAttribute;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
+import com.google.common.collect.Lists;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -25,7 +23,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.pathfinding.SwimmerPathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
@@ -33,7 +30,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -44,7 +40,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static net.minecraft.entity.SharedMonsterAttributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.MAX_HEALTH;
+import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
@@ -55,6 +52,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public MultiPartEntity tail1Part;
     public MultiPartEntity tail2Part;
     public MultiPartEntity tail3Part;
+    
+    public RandomWalkingGoal moveGoal;
     
     @OnlyIn(Dist.CLIENT) public DynamicChain dc;
     
@@ -76,7 +75,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(2, new SleepGoal(this, false));
-        goalSelector.addGoal(4, new RandomWalkingGoal(this, 1d, 10));
+        goalSelector.addGoal(4, moveGoal = new RandomWalkingGoal(this, 1d, 10));
         goalSelector.addGoal(5, SharedEntityGoals.lookAtNoSleeping(this, 10f));
         goalSelector.addGoal(6, SharedEntityGoals.lookRandomlyNoSleeping(this));
     }
@@ -91,7 +90,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    protected PathNavigator createNavigator(World worldIn) { return new SwimmerPathNavigator(this, world); }
+    protected PathNavigator createNavigator(World worldIn) { return new ButterflyNavigator(this, worldIn); }
     
     @Override
     public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
@@ -136,6 +135,32 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 2f, 1f);
             }
         }
+    }
+    
+    @Override
+    protected void updateAITasks() {
+        super.updateAITasks();
+        
+        if (isInWater()) {
+            moveGoal.setExecutionChance(10);
+        }
+        else {
+            moveGoal.setExecutionChance(120);
+        }
+    }
+    
+    @Override
+    public void recalculateSize() {
+        super.recalculateSize();
+    }
+    
+    @Override
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
+        if (isUnderWater()) {
+        
+        }
+        
+        return super.getStandingEyeHeight(poseIn, sizeIn);
     }
     
     @Override
@@ -206,7 +231,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.SEAGRASS, Items.KELP}; }
+    public List<Item> getFoodItems() { return Lists.newArrayList(Items.SEAGRASS, Items.KELP); }
     
     @Nullable
     @Override

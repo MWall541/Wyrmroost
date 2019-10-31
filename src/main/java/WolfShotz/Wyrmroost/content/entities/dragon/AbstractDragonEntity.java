@@ -745,14 +745,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @return
      */
     public boolean isFoodItem(ItemStack stack) {
-        if (getFoodItems() == null || getFoodItems().length == 0) return false;
+        if (getFoodItems() == null || getFoodItems().size() == 0) return false;
         return Arrays.asList(getFoodItems()).contains(stack.getItem());
     }
     
     /**
      * Array Containing all of the dragons food items
      */
-    protected abstract Item[] getFoodItems();
+    public abstract List<Item> getFoodItems();
     
     // ================================
     //        Entity Animation

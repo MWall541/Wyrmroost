@@ -17,7 +17,9 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.MovementController;
-import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.entity.ai.goal.OwnerHurtByTargetGoal;
+import net.minecraft.entity.ai.goal.OwnerHurtTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -43,9 +45,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -386,7 +386,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements().toArray(new Item[0]); }
+    public List<Item> getFoodItems() { return new ArrayList<>(Tags.Items.CROPS_WHEAT.getAllElements()); }
     
     @Override
     public boolean canFly() { return false; }

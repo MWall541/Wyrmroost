@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import com.github.alexthe666.citadel.animation.Animation;
+import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -32,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -212,7 +214,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    protected Item[] getFoodItems() { return new Item[] {Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, SetupItems.foodDrakeMeatCooked, SetupItems.foodDrakeMeatRaw}; }
+    public List<Item> getFoodItems() { return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, SetupItems.foodDrakeMeatCooked, SetupItems.foodDrakeMeatRaw); }
     
     public boolean canPickUpStack(ItemStack stack) {
         return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
