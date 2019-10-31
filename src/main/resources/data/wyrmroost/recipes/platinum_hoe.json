@@ -2,8 +2,8 @@
     "type": "minecraft:crafting_shaped",
     "pattern": [
         "PP",
-        " S ",
-        " S "
+        " S",
+        " S"
     ],
     "key": {
         "P": {"item": "wyrmroost:platinum_ingot"},
