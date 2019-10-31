@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -14,15 +15,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-@SuppressWarnings("deprecation")
+@SuppressWarnings("deprecation") // This literally never works lmfao
 public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity>
 {
-    private final ResourceLocation BODY = location("body.png");
-    private final ResourceLocation BODY_SPE = location("body_spe.png");
-    private final ResourceLocation BODY_XMAS = location("body_christmas.png");
-    private final ResourceLocation BODY_GLOW = location("body_glow.png");
-    private final ResourceLocation BODY_SPE_GLOW = location("body_spe_glow.png");
-    private final ResourceLocation SLEEP = location("sleep.png");
+    public static final ResourceLocation BODY          = resource("body.png");
+    public static final ResourceLocation BODY_SPE      = resource("body_spe.png");
+    public static final ResourceLocation BODY_XMAS     = resource("body_christmas.png");
+    public static final ResourceLocation BODY_GLOW     = resource("body_glow.png");
+    public static final ResourceLocation BODY_SPE_GLOW = resource("body_spe_glow.png");
+    public static final ResourceLocation SLEEP         = resource("sleep.png");
     
     public RoostStalkerRenderer(EntityRendererManager manager) {
         super(manager, new RoostStalkerModel(), 0.5f);
@@ -38,8 +39,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
         return entity.isSpecial()? BODY_SPE : BODY;
     }
     
-    @Override
-    public String getResourceDirectory() { return DEF_LOC + "rooststalker/"; }
+    public static ResourceLocation resource(String png) { return ModUtils.location(DEF_LOC + "rooststalker/" + png); }
     
     // Item Stack Layer Renderer
     private final AbstractLayerRenderer ITEM_STACK_RENDERER = new AbstractLayerRenderer() {

@@ -3,25 +3,23 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanModel;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
 public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<ButterflyLeviathanEntity>
 {
-    public final ResourceLocation BLUE   = location("butterfly_leviathan.png");
-    public final ResourceLocation PURPLE = location("butterfly_leviathan_purple.png");
+    public static final ResourceLocation BLUE   = resource("butterfly_leviathan.png");
+    public static final ResourceLocation PURPLE = resource("butterfly_leviathan_purple.png");
     // Special
-    public final ResourceLocation ALBINO = location("butterfly_leviathan_alb.png");
+    public static final ResourceLocation ALBINO = resource("butterfly_leviathan_alb.png");
     // Glow
-    public final ResourceLocation GLOW   = location("butterfly_leviathan_activated.png");
+    public static final ResourceLocation GLOW   = resource("butterfly_leviathan_activated.png");
     
     public ButterflyLeviathanRenderer(EntityRendererManager manager) {
         super(manager, new ButterflyLeviathanModel(), 2f);
@@ -52,6 +50,5 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         }
     }
     
-    @Override
-    public String getResourceDirectory() { return DEF_LOC + "butterflyleviathan/"; }
+    public static ResourceLocation resource(String png) { return ModUtils.location(DEF_LOC + "butterflyleviathan/" + png); }
 }

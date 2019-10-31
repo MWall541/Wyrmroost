@@ -6,7 +6,6 @@ import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.tags.FluidTags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.ArrayUtils;
@@ -309,7 +308,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel
         head.addChild(mouthTop);
         
         animator = ModelAnimator.create();
-        tailArray = new SocketRendererModel[] {tail1, tail2, tail3, tail4, tail5, tail6, tailFinBottom, tailFinTop};
+        tailArray = new SocketRendererModel[] {tail1, tail2, tail3, tail4, tail5, tail6};
         dynamicTailArray = new SocketRendererModel[tailArray.length];
         neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3};
         headArray = ArrayUtils.add(neckArray, head);

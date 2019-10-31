@@ -1,14 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -31,13 +27,6 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
-    }
-    
-    public abstract String getResourceDirectory();
-    
-    public ResourceLocation location(String png) {
-        if (!png.contains(".png")) png += ".png";
-        return ModUtils.location(getResourceDirectory() + png);
     }
     
     // =================
