@@ -273,7 +273,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
                     renderYawOffset = rotationYaw;
                     rotationYawHead = renderYawOffset;
                 }
-//              setRotation(ModUtils.limitAngle(rotationYaw, ModUtils.calcAngle(target), 15), rotationPitch); TODO: Smooth Rotations
 
                 return;
             }

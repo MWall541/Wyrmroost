@@ -56,18 +56,16 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         private Function<T, ResourceLocation> glowLocation;
         private Predicate<T> shouldRender;
     
-        public GlowLayer(Function<T, ResourceLocation> glowLocation) {
-            this.glowLocation = glowLocation;
-        }
+        public GlowLayer(Function<T, ResourceLocation> glowLocation) { this(glowLocation, e -> true); }
     
         public GlowLayer(Function<T, ResourceLocation> glowLocation, Predicate<T> predicate) {
-            this(glowLocation);
+            this.glowLocation = glowLocation;
             this.shouldRender = predicate;
         }
         
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            if (shouldRender == null || !shouldRender.test(entity)) return;
+            if (!shouldRender.test(entity)) return;
             GameRenderer gamerenderer = Minecraft.getInstance().gameRenderer;
             int i = entity.getBrightnessForRender();
             int j = i % 65536;
@@ -99,12 +97,11 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
      */
     public class ConditionalLayer extends AbstractLayerRenderer
     {
-        public ResourceLocation loc;
         public Predicate<T> conditions;
         public Function<T, ResourceLocation> func;
         
         public ConditionalLayer(ResourceLocation locIn, Predicate<T> conditions) {
-            this.loc = locIn;
+            this.func = e -> locIn;
             this.conditions = conditions;
         }
     
@@ -116,9 +113,8 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         @Override
         public void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
             if (!conditions.test(entity)) return;
-            if (func != null) loc = func.apply(entity);
             
-            bindTexture(loc);
+            bindTexture(func.apply(entity));
             getEntityModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         }
     }

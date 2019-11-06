@@ -12,6 +12,8 @@ import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.google.common.collect.Lists;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,6 +32,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -45,6 +48,10 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
+    public RandomWalkingGoal moveGoal;
+    @OnlyIn(Dist.CLIENT) public DynamicChain dc;
+    public boolean dirtyHitBox;
+    
     // Multipart
     public MultiPartEntity headPart;
     public MultiPartEntity wingLeftPart;
@@ -52,10 +59,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public MultiPartEntity tail1Part;
     public MultiPartEntity tail2Part;
     public MultiPartEntity tail3Part;
-    
-    public RandomWalkingGoal moveGoal;
-    
-    @OnlyIn(Dist.CLIENT) public DynamicChain dc;
     
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world) {
         super(blevi, world);
@@ -125,6 +128,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public void tick() {
         super.tick();
+    
+        recalculateSize();
         
         if (hasConduit()) {
             long i = world.getGameTime();
@@ -150,26 +155,35 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    public void recalculateSize() {
-        super.recalculateSize();
-    }
-    
-    @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
-        if (isUnderWater()) {
-        
-        }
-        
-        return super.getStandingEyeHeight(poseIn, sizeIn);
+    public float getEyeHeight(Pose pose) {
+        if (isUnderWater()) return 2f;
+        return 2.55f;
     }
     
     @Override
     public void travel(Vec3d vec3d) {
+        float f1 = (float) (getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
+        float speed = isInWater()? f1 * 0.02f : f1 * 0.1f;
+        if (isBeingRidden() && canPassengerSteer()) {
+            LivingEntity rider = (LivingEntity) getControllingPassenger();
+            
+            prevRotationYaw = rotationYaw = rider.rotationYaw;
+            rotationPitch = rider.rotationPitch * 0.5f;
+            setRotation(rotationYaw, rotationPitch);
+            renderYawOffset = rotationYaw;
+            rotationYawHead = renderYawOffset;
+            if (isInWater()) {
+                float f4 = MathHelper.sin(rotationPitch * (MathUtils.PI / 180f));
+                setMotion(getMotion().x, -f4 * f1, getMotion().z);
+            }
+            setAIMoveSpeed(speed);
+            vec3d = new Vec3d(rider.moveStrafing, vec3d.y, rider.moveForward);
+        }
+        
         if (isServerWorld() && isInWater()) {
             moveRelative(getAIMoveSpeed(), vec3d);
             move(MoverType.SELF, getMotion());
             setMotion(getMotion().scale(0.9d));
-            addMotion(0, -0.005d, 0);
         }
         else super.travel(vec3d);
     }
@@ -214,6 +228,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Override
     public boolean canFly() { return false; }
+    
+    @Override
+    public boolean canBeSteered() { return true; }
     
     @Override
     public boolean canBeRiddenInWater(Entity rider) { return true; }
