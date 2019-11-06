@@ -389,13 +389,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * Checks if we can spawn here. For basic spawning, check if we are near (or close) to the surface and if the block has light
-     */
-    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> entityType, IWorld world, SpawnReason spawnReason, BlockPos blockPos, Random random) {
-        return blockPos.getY() > world.getSeaLevel() - 20 && world.getLightSubtracted(blockPos, 0) > 8;
-    }
-    
-    /**
      * Helper method to determine whether this item stack should interact with this dragon
      */
     public boolean isInteractItem(ItemStack stack) {
@@ -650,13 +643,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Can the rider "steer" or control this entity?
      */
     @Override
-    public boolean canPassengerSteer() { return getControllingPassenger() != null && canBeSteered(); }
+    public boolean canPassengerSteer() { return getControllingPassenger() != null && canBeSteered() && isOwner((LivingEntity) getControllingPassenger()); }
     
     /**
      * Can we be "steered" or controlled in general?
      */
     @Override
-    public boolean canBeSteered() { return getControllingPassenger() instanceof LivingEntity && isSaddled(); }
+    public boolean canBeSteered() { return isSaddled(); }
     
     /**
      * Get the passenger controlling this entity
