@@ -1,7 +1,10 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.event.*;
-import WolfShotz.Wyrmroost.util.network.*;
+import WolfShotz.Wyrmroost.util.network.AnimationMessage;
+import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
+import WolfShotz.Wyrmroost.util.network.EggHatchMessage;
+import WolfShotz.Wyrmroost.util.network.SyncInventoryMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -17,7 +20,9 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
-    public static final ItemGroup CREATIVE_TAB = new CreativeTab();
+    public static final ItemGroup CREATIVE_TAB = new ItemGroup("wyrmroost") {
+        @Override public ItemStack createIcon() { return new ItemStack(SetupItems.geode); }
+    };
 
     public static final String NETWORK_CHANNEL = MOD_ID;
     private static final String CHANNEL_VER = "1.0";
@@ -58,16 +63,4 @@ public class Wyrmroost
         SetupKeyBinds.registerKeys();
         SetupIO.screenSetup();
     }
-
-    /**
-     * Mod Creative Tab (iTeM gRoUp* rEEE)
-     */
-    private static class CreativeTab extends ItemGroup
-    {
-        private CreativeTab() { super("wyrmroost"); }
-
-        @Override
-        public ItemStack createIcon() { return new ItemStack(SetupItems.geode); }
-    }
-
 }

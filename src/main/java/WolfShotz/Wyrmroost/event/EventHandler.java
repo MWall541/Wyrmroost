@@ -11,10 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -22,7 +19,6 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -44,7 +40,6 @@ public class EventHandler
         public static void registerDimension(RegisterDimensionsEvent evt) {
             if (ModUtils.getDimensionInstance() == null)
                 DimensionManager.registerDimension(ModUtils.location("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
-            
         }
     
         /**
