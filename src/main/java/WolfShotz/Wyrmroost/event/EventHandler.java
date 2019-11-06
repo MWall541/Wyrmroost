@@ -4,18 +4,25 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -30,6 +37,19 @@ public class EventHandler
      */
     public static class Common
     {
+        /**
+         * Register the Mod Dimension
+         */
+        @SubscribeEvent
+        public static void registerDimension(RegisterDimensionsEvent evt) {
+            if (ModUtils.getDimensionInstance() == null)
+                DimensionManager.registerDimension(ModUtils.location("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
+            
+        }
+    
+        /**
+         * Nuff' said
+         */
         @SubscribeEvent
         public static void debugStick(PlayerInteractEvent.EntityInteract evt) {
             Entity entity = evt.getTarget();
@@ -45,12 +65,14 @@ public class EventHandler
             }
         }
     
+        /**
+         * Focken yeet the little shits that try this crap
+         */
         private static final String[] begoneWEEB = {"owo", "uwu", "owu", "uwo", "0wo", "ow0", "0w0"};
         @SubscribeEvent
         public static void begoneWEEB(PlayerInteractEvent.EntityInteract evt) {
             Entity entity = evt.getTarget();
             if (!(entity instanceof AbstractDragonEntity)) return;
-            AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
         
@@ -58,10 +80,13 @@ public class EventHandler
                 evt.setCanceled(true);
                 
                 stack.clearCustomName();
-                dragon.world.createExplosion(dragon, player.posX, player.posY + 1, player.posZ, 6f, Explosion.Mode.NONE); // WEEB GO BOOM
+                entity.world.createExplosion(entity, player.posX, player.posY + 1, player.posZ, 6f, Explosion.Mode.NONE); // WEEB GO BOOM
             }
         }
-        
+    
+        /**
+         * Disable Damage when riding dragons. This makes as much sense as mojang themselves
+         */
         @SubscribeEvent
         public static void onEntityFall(LivingFallEvent evt) {
             if (evt.getEntity() instanceof PlayerEntity) {
@@ -71,7 +96,7 @@ public class EventHandler
                     evt.setCanceled(true);
                     return;
                 }
-                if (player.getRidingEntity() instanceof AbstractDragonEntity) { // Disable fall damage of players when riding dragons. this doesnt make any sense.
+                if (player.getRidingEntity() instanceof AbstractDragonEntity) {
                     evt.setCanceled(true);
                 }
             }

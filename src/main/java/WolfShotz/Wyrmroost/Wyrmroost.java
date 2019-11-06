@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.event.*;
 import WolfShotz.Wyrmroost.util.network.*;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,7 +39,7 @@ public class Wyrmroost
     private void commonSetup(final FMLCommonSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(EventHandler.Common.class);
         
-        SetupOreGen.setupOreGen();
+        SetupWorld.setupOreGen();
         
         int index = 0;
         network.registerMessage(++index, AnimationMessage.class, AnimationMessage::encode, AnimationMessage::new, AnimationMessage::handle);

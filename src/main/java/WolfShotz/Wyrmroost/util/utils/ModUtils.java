@@ -19,8 +19,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.DimensionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -115,4 +117,8 @@ public class ModUtils
     }
     
     public static <T> ActionResult<T> passAction(T result) { return new ActionResult<>(ActionResultType.PASS, result); }
+    
+    public static DimensionType getDimensionInstance() {
+        return DimensionType.byName(ModUtils.location("dim_wyrmroost"));
+    }
 }
