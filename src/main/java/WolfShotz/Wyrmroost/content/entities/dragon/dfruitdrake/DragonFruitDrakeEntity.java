@@ -1,12 +1,14 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -17,12 +19,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -38,7 +42,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     protected void registerGoals() {
         super.registerGoals();
         
-        goalSelector.addGoal(5, SharedEntityGoals.nonTamedTemptGoal(this, 0.8f, false, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
+        goalSelector.addGoal(5, SharedEntityGoals.nonTamedTemptGoal(this, 0.8f, false, Ingredient.fromItems((Item[]) getFoodItems().toArray())));
     }
     
     @Override
@@ -46,7 +50,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.registerAttributes();
         getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.9986521f);
         getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
-        getAttribute(SharedMonsterAttributes.ATTACK_SPEED).setBaseValue(20d);
         getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4d);
     }
     
@@ -84,6 +87,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime += 12000;
         return Lists.newArrayList(new ItemStack(SetupItems.foodDragonFruit, 1));
+    }
+    
+    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> glider, IWorld worldIn, SpawnReason reason, BlockPos blockPos, Random rand) {
+        World world = worldIn.getWorld();
+        
+        return world.getDimension() instanceof OverworldDimension && world.getCapability(CapabilityOverworld.OW_CAP).map(CapabilityOverworld::isSpawnsTriggered).orElse(false);
     }
     
     @Override

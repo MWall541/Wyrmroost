@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.event;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
@@ -12,9 +13,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
@@ -42,6 +45,13 @@ public class EventHandler
                 DimensionManager.registerDimension(ModUtils.location("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
         }
     
+        @SubscribeEvent
+        public static void onAttachCapabilities(AttachCapabilitiesEvent<World> evt) {
+            if (evt.getObject() == null) return;
+            if (!evt.getObject().getCapability(CapabilityOverworld.OW_CAP).isPresent())
+                evt.addCapability(ModUtils.location("overworldproperties"), new CapabilityOverworld.PropertiesDispatcher());
+        }
+        
         /**
          * Nuff' said
          */
@@ -52,12 +62,14 @@ public class EventHandler
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
+    
+            ModUtils.L.debug(evt.getWorld().getCapability(CapabilityOverworld.OW_CAP).map(CapabilityOverworld::isSpawnsTriggered).orElse(false));
             
-            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
-                evt.setCanceled(true);
-                
-                dragon.setTamedBy(player);
-            }
+//            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
+//                evt.setCanceled(true);
+//
+//                dragon.setTamedBy(player);
+//            }
         }
     
         /**
