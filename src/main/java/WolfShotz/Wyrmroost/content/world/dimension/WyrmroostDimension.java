@@ -1,8 +1,6 @@
 package WolfShotz.Wyrmroost.content.world.dimension;
 
-import com.mojang.datafixers.Dynamic;
 import net.minecraft.block.BlockState;
-import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -10,16 +8,14 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.biome.provider.BiomeProviderType;
-import net.minecraft.world.biome.provider.SingleBiomeProvider;
-import net.minecraft.world.biome.provider.SingleBiomeProviderSettings;
+import net.minecraft.world.biome.provider.OverworldBiomeProvider;
+import net.minecraft.world.biome.provider.OverworldBiomeProviderSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.ChunkGeneratorType;
-import net.minecraft.world.gen.FlatGenerationSettings;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.gen.*;
 
 import javax.annotation.Nullable;
 
@@ -31,11 +27,13 @@ public class WyrmroostDimension extends Dimension
     
     @Override
     public ChunkGenerator<?> createChunkGenerator() {
-        BiomeProviderType<SingleBiomeProviderSettings, SingleBiomeProvider> biomeprovidertype = BiomeProviderType.FIXED;
-        FlatGenerationSettings flatgenerationsettings = FlatGenerationSettings.createFlatGenerator(new Dynamic<>(NBTDynamicOps.INSTANCE, world.getWorldInfo().getGeneratorOptions()));
-        SingleBiomeProviderSettings singlebiomeprovidersettings1 = biomeprovidertype.createSettings().setBiome(flatgenerationsettings.getBiome());
-        
-        return ChunkGeneratorType.FLAT.create(world, biomeprovidertype.create(singlebiomeprovidersettings1), flatgenerationsettings);
+        ChunkGeneratorType<OverworldGenSettings, OverworldChunkGenerator> chunkgeneratortype4 = ChunkGeneratorType.SURFACE;
+        OverworldGenSettings overworldgensettings1 = chunkgeneratortype4.createSettings();
+        BiomeProviderType<OverworldBiomeProviderSettings, OverworldBiomeProvider> biomeProviderType = BiomeProviderType.VANILLA_LAYERED;
+        OverworldBiomeProviderSettings overWorldBiomeProvider = biomeProviderType.createSettings().setGeneratorSettings(new OverworldGenSettings()).setWorldInfo(world.getWorldInfo());
+        BiomeProvider biomeProvider = biomeProviderType.create(overWorldBiomeProvider);
+    
+        return chunkgeneratortype4.create(world, biomeProvider, overworldgensettings1);
     }
     
     @Nullable

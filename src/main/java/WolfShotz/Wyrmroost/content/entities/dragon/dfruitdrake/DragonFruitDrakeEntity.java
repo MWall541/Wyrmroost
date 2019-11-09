@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
+import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.EntityType;
@@ -42,7 +43,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     protected void registerGoals() {
         super.registerGoals();
         
-        goalSelector.addGoal(5, SharedEntityGoals.nonTamedTemptGoal(this, 0.8f, false, Ingredient.fromItems((Item[]) getFoodItems().toArray())));
+        goalSelector.addGoal(5, SharedEntityGoals.nonTamedTemptGoal(this, 0.8f, false, Ingredient.fromItems(ModUtils.toArray(getFoodItems()))));
     }
     
     @Override
@@ -89,7 +90,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         return Lists.newArrayList(new ItemStack(SetupItems.foodDragonFruit, 1));
     }
     
-    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> glider, IWorld worldIn, SpawnReason reason, BlockPos blockPos, Random rand) {
+    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> drake, IWorld worldIn, SpawnReason reason, BlockPos blockPos, Random rand) {
         World world = worldIn.getWorld();
         
         return world.getDimension() instanceof OverworldDimension && world.getCapability(CapabilityOverworld.OW_CAP).map(CapabilityOverworld::isSpawnsTriggered).orElse(false);

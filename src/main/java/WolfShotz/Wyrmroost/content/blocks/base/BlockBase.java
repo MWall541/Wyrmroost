@@ -6,7 +6,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 
-import java.util.function.Supplier;
+import java.util.Random;
+import java.util.function.Function;
 
 /**
  * Blockbase - Helper Class allowing for easier block registration
@@ -14,7 +15,7 @@ import java.util.function.Supplier;
 public class BlockBase extends Block
 {
     private boolean isBeaconBase;
-    private IXPSupplier xpAmount;
+    private Function<Random, Integer> xpAmount;
     
     
     public BlockBase(String name, Block.Properties properties) {
@@ -27,22 +28,20 @@ public class BlockBase extends Block
     @Override
     public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) { return isBeaconBase; }
     
-    public BlockBase setBeaconBase(boolean flag) {
-        this.isBeaconBase = flag;
+    public BlockBase setBeaconBase() {
+        this.isBeaconBase = true;
         
         return this;
     }
     
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
-        return xpAmount == null? 0 : xpAmount.xpAmount(state, world, pos, fortune, silktouch);
+        return silktouch == 0? xpAmount.apply(RANDOM) : 0;
     }
     
-    public BlockBase setXPDrops(IXPSupplier supplier) {
-        this.xpAmount = supplier;
+    public BlockBase setXPDrops(Function<Random, Integer> function) {
+        this.xpAmount = function;
         
         return this;
     }
-    
-    public BlockBase setXPDrops(int amount) { return setXPDrops((s, w, p, f, si) -> amount); }
 }

@@ -1,8 +1,6 @@
 package WolfShotz.Wyrmroost.util.utils;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -10,8 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
@@ -22,13 +18,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,16 +75,8 @@ public class ModUtils
         return set;
     }
     
-    /**
-     * List version of {@link #collectAll(Set[])}
-     * @param lists The lists to merge
-     * @return One list collection with passed merged elemtents
-     */
-    @SafeVarargs
-    public static <T> List<T> collectAll(List<T>... lists) {
-        List<T> set = new ArrayList<>();
-        for (List<T> listParam : lists) set.addAll(listParam);
-        return set;
+    public static <T> T[] toArray(Collection<T> collection) {
+        return (T[]) collection.toArray();
     }
     
     public static List<LivingEntity> getEntitiesNearby(LivingEntity entity, double radius) {

@@ -14,7 +14,6 @@ import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -62,8 +61,8 @@ public class SetupWorld
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
             if (OVERWORLD_FILTER.test(biome)) { // Filter Ores so they dont gen in the nether or end
-                registerOreEntry(biome, SetupBlocks.blockgeodeore.getDefaultState(), 8, GEODE_CONFIG);
-                registerOreEntry(biome, SetupBlocks.blockplatinumore.getDefaultState(), 9, PLATINUM_CONFIG);
+                registerOreEntry(biome, SetupBlocks.geodeOreBlock.getDefaultState(), 8, GEODE_CONFIG);
+                registerOreEntry(biome, SetupBlocks.platinumOreBlock.getDefaultState(), 9, PLATINUM_CONFIG);
             }
         }
     }

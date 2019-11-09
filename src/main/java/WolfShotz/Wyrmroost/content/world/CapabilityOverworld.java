@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 public class CapabilityOverworld
 {
     @CapabilityInject(CapabilityOverworld.class)
-    public static final Capability<CapabilityOverworld> OW_CAP = null;
+    public static Capability<CapabilityOverworld> OW_CAP;
     
     private boolean isSpawnsTriggered;
     
