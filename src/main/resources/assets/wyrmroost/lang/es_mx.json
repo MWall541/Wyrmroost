@@ -1,0 +1,65 @@
+{
+    "itemGroup.wyrmroost": "Wyrmroost",
+    
+    "_comment": "Controles",
+    "keyCategory.wyrmroost": "Controles de Wyrmroost",
+    "key.callDragon": "Llamar Dragón",
+    "key.genericAttack": "Atacar Montado",
+    
+    "_comment": "Entidades",
+    "entity.wyrmroost.overworld_drake": "Draco del Mundo",
+    "entity.wyrmroost.silver_glider": "Planeador Plateado",
+    "entity.wyrmroost.roost_stalker": "Hostigador de Nidos",
+    "entity.wyrmroost.minutus": "Wyrm Desértica Menor",
+    
+    "_comment": "Generar",
+    "item.wyrmroost.drake_egg": "Generar Draco del Mundo",
+    "item.wyrmroost.minutus_egg": "Generar Wyrm Desértica Menor",
+    "item.wyrmroost.silverglider_egg": "Generar Planeador Plateado",
+    "item.wyrmroost.rooststalker_egg": "Generar Hostigador de Nidos",
+    
+    "_comment": "Artículos de Geoda",
+    "item.wyrmroost.geode": "Geoda",
+    "block.wyrmroost.geode_ore": "Mineral de Geoda",
+    "block.wyrmroost.geode_block": "Bloque de Geoda",
+    "item.wyrmroost.geode_pick": "Pico de Geoda",
+    "item.wyrmroost.geode_axe": "Hacha de Geoda",
+    "item.wyrmroost.geode_shovel": "Pala de Geoda",
+    "item.wyrmroost.geode_sword": "Espada de Geoda",
+    "item.wyrmroost.geode_helmet": "Casco de Geoda",
+    "item.wyrmroost.geode_chestplate": "Peto de Geoda",
+    "item.wyrmroost.geode_leggings": "Grebas de Geoda",
+    "item.wyrmroost.geode_boots": "Botas de Geoda",
+    
+    "_comment": "Artículos de Platino",
+    "item.wyrmroost.platinum_ingot": "Lingote de Platino",
+    "block.wyrmroost.platinum_ore": "Mineral de Platino",
+    "block.wyrmroost.platinum_block": "Bloque de Platino",
+    "item.wyrmroost.platinum_pick": "Pico de Platino",
+    "item.wyrmroost.platinum_axe": "Hacha de Platino",
+    "item.wyrmroost.platinum_shovel": "Pala de Platino",
+    "item.wyrmroost.platinum_sword": "Espada de Platino",
+    "item.wyrmroost.platinum_helmet": "Casco de Platino",
+    "item.wyrmroost.platinum_chestplate": "Peto de Platino",
+    "item.wyrmroost.platinum_leggings": "Grebas de Platino",
+    "item.wyrmroost.platinum_boots": "Botas de Platino",
+    
+    "_comment": "Artículos de Comida",
+    "item.wyrmroost.jewelled_apple": "Manzana Joyada",
+    "item.wyrmroost.dragon_fruit": "Fruta del Dragón",
+    "item.wyrmroost.minutus": "Wyrm Desértica Menor",
+    "item.wyrmroost.cooked_minutus": "Wyrm Desértica Cocida",
+    "item.wyrmroost.drake_meat_raw": "Carne de Draco Cruda",
+    "item.wyrmroost.drake_meat_cooked": "Filete de Draco",
+    
+    "_comment": "Artículos Misceláneos",
+    "item.wyrmroost.tarragon_tome": "Libro de Dragoncillo",
+    "item.wyrmroost.tarragon_tome.tooltip": "Escrito por ",
+    
+    "item.wyrmroost.dragon_egg": "Huevo",
+    "item.wyrmroost.egg.tooltip": "Eclosiona en: %smin",
+    "item.wyrmroost.egg.creativetooltip": "Estás en Creativo: Shift + Click Derecho hará que cambie entre los diferentes tipos de dragón",
+    
+    "item.wyrmroost.soul_crystal": "Cristal de Alma de Dragón",
+    "item.wyrmroost.soul_crystal.jeidesc": "Infundido con las misteriosas propiedades de las geodas, tiene el potencial de contener las almas de dragones que confían en ti. El alma de un dragón puede guiarte a %s.."
+}
