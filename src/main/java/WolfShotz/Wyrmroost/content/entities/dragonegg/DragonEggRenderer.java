@@ -37,7 +37,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
     
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(DragonEggEntity entity) { return entity.getProperties().TEXTURE; }
+    protected ResourceLocation getEntityTexture(DragonEggEntity entity) { return entity.getProperties().getEggTexture(); }
     
     /**
      * Render Custom egg sizes / shapes. <P>

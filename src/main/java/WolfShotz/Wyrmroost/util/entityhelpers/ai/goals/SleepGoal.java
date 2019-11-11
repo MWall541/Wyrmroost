@@ -9,11 +9,11 @@ import java.util.Random;
 
 public class SleepGoal extends Goal
 {
-    private AbstractDragonEntity dragon;
-    private int sleepTimeout;
-    private final boolean NOCTURNAL;
-    private final Random RANDOM = new Random();
-    private final World WORLD;
+    public AbstractDragonEntity dragon;
+    public int sleepTimeout;
+    public final boolean NOCTURNAL;
+    public final Random RANDOM = new Random();
+    public final World WORLD;
     
     public SleepGoal(AbstractDragonEntity dragon, boolean nocturnal) {
         this.dragon = dragon;

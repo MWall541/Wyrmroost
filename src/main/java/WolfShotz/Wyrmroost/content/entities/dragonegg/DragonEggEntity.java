@@ -10,26 +10,21 @@ import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.play.server.SSpawnMobPacket;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,10 +32,6 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
-
-import javax.annotation.Nullable;
-
-import static net.minecraft.entity.LivingEntity.ENTITY_GRAVITY;
 
 public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityAdditionalSpawnData
 {
@@ -94,7 +85,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         
         updateMotion();
         
-        if (getProperties().CONDITIONS.test(this)) {
+        if (getProperties().getConditions().test(this)) {
             if (world.isRemote) {
                 if (ticksExisted % 3 == 0) {
                     double x = posX + rand.nextGaussian() * 0.2d;
@@ -103,7 +94,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
                     world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
                 }
             } else {
-                if (hatchTime > 0 && getProperties().CONDITIONS.test(this)) --hatchTime;
+                if (hatchTime > 0) --hatchTime;
                 else {
                     hatch();
                     Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
@@ -112,7 +103,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     
                 int bounds = Math.max(hatchTime / 2, 3);
                 
-                if (hatchTime < getProperties().HATCH_TIME / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION)
+                if (hatchTime < getProperties().getHatchTime() / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION)
                     crack(true);
             }
         }
@@ -169,7 +160,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         AbstractDragonEntity newDragon = (AbstractDragonEntity) containedDragon.getType().create(world); // May not be necessary, not sure, do it anyway tho.
         if (!world.isRemote) {
             newDragon.setPosition(posX, posY, posZ);
-            newDragon.setGrowingAge(-(newDragon.getEggProperties().HATCH_TIME * 2));
+            newDragon.setGrowingAge(-(newDragon.getEggProperties().getHatchTime() * 2));
             newDragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
             world.addEntity(newDragon);
         } else {
@@ -222,7 +213,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         ItemStack stack = new ItemStack(SetupItems.dragonEgg);
         CompoundNBT tag = new CompoundNBT();
         tag.putString("dragonType", getDragonKey());
-        tag.putInt("hatchTime", getProperties().HATCH_TIME);
+        tag.putInt("hatchTime", getProperties().getHatchTime());
         stack.setTag(tag);
         return stack;
     }

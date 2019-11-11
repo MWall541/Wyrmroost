@@ -49,7 +49,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         moveController = new MovementController(this);
         stepHeight = 0;
-        eggProperties = new DragonEggProperties(0.25f, 0.35f, 6000);
         
         SLEEP_ANIMATION = Animation.create(15);
         WAKE_ANIMATION = Animation.create(15);
@@ -219,6 +218,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public boolean canPickUpStack(ItemStack stack) {
         return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
     }
+    
+    @Override
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
     
     // == Animation ==
     @Override

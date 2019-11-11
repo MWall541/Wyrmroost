@@ -72,7 +72,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world) {
         super(drake, world);
         
-        eggProperties = new DragonEggProperties(0.65f, 1f, 18000);
         moveController = new MovementController(this);
         
         SLEEP_ANIMATION = Animation.create(20);
@@ -312,6 +311,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
     
     @Override
+    public boolean canFly() { return false; }
+    
+    @Override
     public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
     
     @Override
@@ -388,7 +390,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public List<Item> getFoodItems() { return new ArrayList<>(Tags.Items.CROPS_WHEAT.getAllElements()); }
     
     @Override
-    public boolean canFly() { return false; }
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.65f, 1f, 18000); }
     
     @Nullable
     @Override

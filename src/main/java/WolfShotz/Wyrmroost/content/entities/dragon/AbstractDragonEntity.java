@@ -41,7 +41,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -93,6 +92,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         moveController = new FlightMovementController(this);
         lookController = new DragonLookController(this);
+        eggProperties = createEggProperties();
         stepHeight = 1;
     }
     
@@ -579,17 +579,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * Method getter to define egg properties of this dragon
-     */
-    public DragonEggProperties getEggProperties() {
-        if (eggProperties == null) {
-            ModUtils.L.warn("{} is missing dragon egg properties! Using default values...", getType().getName().getUnformattedComponentText());
-            eggProperties = new DragonEggProperties(2f, 2f, 12000);
-        }
-        return eggProperties;
-    }
-    
-    /**
      * A universal getter for the position of the mouth on the dragon.
      * This is prone to be inaccurate, but can serve good enough for most things
      * If a more accurate position is needed, best to override and adjust accordingly.
@@ -677,6 +666,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSitting() || isSleeping(); }
     
     /**
+     * Whether or not this entity is moving
+     */
+    public boolean isMoving() { return !getPositionVector().equals(getPrevPositionVector()); }
+    
+    /**
+     * Get the {@link Vec3d} of the previous position
+     */
+    public Vec3d getPrevPositionVector() { return new Vec3d(prevPosX, prevPosY, prevPosZ); }
+    
+    /**
      * Whether or not the dragon can fly.
      * For ground entities, return false
      */
@@ -739,13 +738,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isFoodItem(ItemStack stack) {
         if (getFoodItems() == null || getFoodItems().size() == 0) return false;
-        return Arrays.asList(getFoodItems()).contains(stack.getItem());
+        return Objects.equals(getFoodItems(), stack.getItem());
     }
     
     /**
      * Array Containing all of the dragons food items
      */
     public abstract List<Item> getFoodItems();
+    
+    public DragonEggProperties getEggProperties() {
+        if (eggProperties == null) {
+            ModUtils.L.warn("{} is missing dragon egg properties! Using default values...", getType().getName().getUnformattedComponentText());
+            eggProperties = new DragonEggProperties(2f, 2f, 12000);
+        }
+        return eggProperties;
+    }
+    
+    public abstract DragonEggProperties createEggProperties();
     
     // ================================
     //        Entity Animation
