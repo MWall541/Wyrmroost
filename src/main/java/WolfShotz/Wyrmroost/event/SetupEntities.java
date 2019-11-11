@@ -95,6 +95,7 @@ public class SetupEntities
         registerSpawnEntry(minutus, getMinutusBiomes(), 35, 1, 1);
         registerCustomSpawnEntry(silverGlider, getSilverGliderBiomes(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
         registerSpawnEntry(roostStalker, getStalkerBiomes(), 9, 3, 18);
+        registerCustomSpawnEntry(dragonFruitDrake, getDFDBiomes(), 5, 1, 3, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, DragonFruitDrakeEntity::canSpawnHere);
     }
 
     /**
@@ -171,6 +172,10 @@ public class SetupEntities
         
         return biomes;
     }
+    
+    private static Set<Biome> getDFDBiomes() {
+        return BiomeDictionary.getBiomes(Type.JUNGLE);
+    }
 
     // ================================
     //   SetupEntity Helper Functions
@@ -194,6 +199,10 @@ public class SetupEntities
     private static <T extends MobEntity> void registerSpawnEntry(EntityType<T> entity, Set<Biome> biomes, int frequency, int minAmount, int maxAmount) {
         registerBiomeSpawnEntry(entity, frequency, minAmount, maxAmount, biomes);
         registerGenericSpawnPlacement(entity);
+    }
+    
+    private static <T extends MobEntity> void registerSpawnEntry(EntityType<T> entity, int frequency, int min, int max) {
+        registerSpawnEntry(entity, Sets.newHashSet(), frequency, min, max);
     }
     
     /**

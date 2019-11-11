@@ -1,15 +1,11 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IWorldReader;
 
 import java.util.EnumSet;
@@ -95,7 +91,7 @@ public class DragonFollowOwnerGoal extends Goal {
     public void resetTask() {
         this.owner = null;
         this.navigator.clearPath();
-        this.dragon.setPathPriority(PathNodeType.WATER, this.oldWaterCost);
+        this.dragon.setPathPriority(PathNodeType.WATER, oldWaterCost);
     }
     
     /**
