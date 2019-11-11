@@ -3,7 +3,8 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
-import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.content.io.container.BasicSlotInvContainer;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
@@ -12,8 +13,6 @@ import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
 import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.google.common.collect.Lists;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +38,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -50,7 +51,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 {
     public RandomWalkingGoal moveGoal;
     @OnlyIn(Dist.CLIENT) public DynamicChain dc;
-    public boolean dirtyHitBox;
     
     // Multipart
     public MultiPartEntity headPart;
@@ -252,10 +252,21 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ButterflyInvContainer(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) {
+        return new BasicSlotInvContainer<>(this, playerInv, windowID, 7, 83, i -> new SlotItemHandler[] {
+                new SlotItemHandler(i, 0, 127, 56) {
+                    @Override public boolean isItemValid(@Nonnull ItemStack stack) { return stack.getItem() == Items.CONDUIT; }
+                    @Override public int getSlotStackLimit() { return 1; }
+                    @Override public int getItemStackLimit(@Nonnull ItemStack stack) { return 1; }
+                }
+        });
+    }
     
     @Override
     public ItemStackHandler createInv() { return new ItemStackHandler(1); }
+    
+    @Override
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(1.5f, 2.5f, 40000).setConditions(Entity::isInWater); }
     
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }

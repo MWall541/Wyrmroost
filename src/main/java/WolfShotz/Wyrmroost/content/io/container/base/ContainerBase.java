@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.event.SetupIO;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -22,7 +21,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 public class ContainerBase<T extends AbstractDragonEntity> extends Container
@@ -80,6 +78,16 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
     
             @Override public boolean isEnabled() { return !dragon.isChild(); }
     
+            @Override public void onSlotChanged() { if (!getStack().isEmpty()) dragon.playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f); }
+        };
+    }
+    
+    public static SlotItemHandler buildSaddleSlot(AbstractDragonEntity dragon, IItemHandler handler, int x, int y) {
+        return new SlotItemHandler(handler, 0, x, y) {
+            @Override public boolean isItemValid(ItemStack stack) { return stack.getItem() == Items.SADDLE; }
+            
+            @Override public boolean isEnabled() { return !dragon.isChild(); }
+            
             @Override public void onSlotChanged() { if (!getStack().isEmpty()) dragon.playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1f, 1f); }
         };
     }

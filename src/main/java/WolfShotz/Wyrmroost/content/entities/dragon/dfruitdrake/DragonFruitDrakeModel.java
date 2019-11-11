@@ -10,6 +10,8 @@ import net.minecraft.entity.Entity;
  * Created using Tabula 7.0.1
  */
 public class DragonFruitDrakeModel extends AdvancedEntityModel {
+    public DragonFruitDrakeEntity entity;
+    
     public AdvancedRendererModel Body1;
     public AdvancedRendererModel Body2;
     public AdvancedRendererModel neck2;
@@ -21,7 +23,7 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     public AdvancedRendererModel SideLeaf2R;
     public AdvancedRendererModel SideLeaf1L;
     public AdvancedRendererModel SideLeaf2L;
-    public AdvancedRendererModel LegfrontR1_1;
+    public AdvancedRendererModel LegfrontL1;
     public AdvancedRendererModel Tail1;
     public AdvancedRendererModel LegThighR;
     public AdvancedRendererModel BackLeaf2Middle;
@@ -44,9 +46,9 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     public AdvancedRendererModel LegSegmentR2;
     public AdvancedRendererModel LegSegmentR3;
     public AdvancedRendererModel backfootR;
-    public AdvancedRendererModel LegSegmentR1_1;
-    public AdvancedRendererModel LegSegmentR2_1;
-    public AdvancedRendererModel LegSegmentR3_1;
+    public AdvancedRendererModel LegSegmentL1;
+    public AdvancedRendererModel LegSegmentL2;
+    public AdvancedRendererModel LegSegmentL3;
     public AdvancedRendererModel backfootR_1;
     public AdvancedRendererModel neck3;
     public AdvancedRendererModel Neck1Leaf;
@@ -63,9 +65,12 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     public AdvancedRendererModel LegfrontR2;
     public AdvancedRendererModel LegfrontR3;
     public AdvancedRendererModel frontfootR;
-    public AdvancedRendererModel LegfrontR2_1;
+    public AdvancedRendererModel LegfrontL2;
     public AdvancedRendererModel LegfrontR3_1;
-    public AdvancedRendererModel frontfootR_1;
+    public AdvancedRendererModel frontfootL;
+    
+    private final AdvancedRendererModel[] headArray;
+    private final AdvancedRendererModel[] tailArray;
 
     public DragonFruitDrakeModel() {
         textureWidth = 100;
@@ -109,11 +114,11 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         BackLeafL.setRotationPoint(-2.5F, -3.0F, 0.4F);
         BackLeafL.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
         setRotateAngle(BackLeafL, -1.252448271231131F, 0.0F, 0.0F);
-        LegSegmentR3_1 = new AdvancedRendererModel(this, 61, 50);
-        LegSegmentR3_1.mirror = true;
-        LegSegmentR3_1.setRotationPoint(0.01F, 0.6F, 5.7F);
-        LegSegmentR3_1.addBox(-1.5F, -1.1F, -0.9F, 3, 2, 3, 0.0F);
-        setRotateAngle(LegSegmentR3_1, -0.6944665093685437F, 0.0F, 0.0F);
+        LegSegmentL3 = new AdvancedRendererModel(this, 61, 50);
+        LegSegmentL3.mirror = true;
+        LegSegmentL3.setRotationPoint(0.01F, 0.6F, 5.7F);
+        LegSegmentL3.addBox(-1.5F, -1.1F, -0.9F, 3, 2, 3, 0.0F);
+        setRotateAngle(LegSegmentL3, -0.6944665093685437F, 0.0F, 0.0F);
         Head = new AdvancedRendererModel(this, 0, 4);
         Head.setRotationPoint(0.0F, 0.4F, -4.2F);
         Head.addBox(-3.0F, -1.9F, -4.7F, 6, 5, 6, 0.0F);
@@ -149,10 +154,10 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         Tail3.setRotationPoint(0.0F, 0.3F, 4.4F);
         Tail3.addBox(-2.0F, -1.8F, -1.3F, 4, 4, 5, 0.0F);
         setRotateAngle(Tail3, -0.12224096245892761F, 0.0F, 0.0F);
-        LegfrontR1_1 = new AdvancedRendererModel(this, 34, 18);
-        LegfrontR1_1.setRotationPoint(-3.3F, 1.2F, -1.8F);
-        LegfrontR1_1.addBox(-1.3F, -2.0F, -0.6F, 3, 4, 7, 0.0F);
-        setRotateAngle(LegfrontR1_1, -0.9873327578531922F, 0.0F, 0.0F);
+        LegfrontL1 = new AdvancedRendererModel(this, 34, 18);
+        LegfrontL1.setRotationPoint(-3.3F, 1.2F, -1.8F);
+        LegfrontL1.addBox(-1.3F, -2.0F, -0.6F, 3, 4, 7, 0.0F);
+        setRotateAngle(LegfrontL1, -0.9873327578531922F, 0.0F, 0.0F);
         mouthtop = new AdvancedRendererModel(this, 15, 15);
         mouthtop.setRotationPoint(0.0F, 2.0F, -4.0F);
         mouthtop.addBox(-2.0F, -3.0F, -5.0F, 4, 3, 5, 0.0F);
@@ -184,10 +189,10 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         NeckLeaf3.setRotationPoint(0.0F, -1.2F, -2.3F);
         NeckLeaf3.addBox(0.0F, -6.0F, -1.0F, 0, 6, 2, 0.0F);
         setRotateAngle(NeckLeaf3, -0.255167136641571F, 0.0F, 0.0F);
-        LegSegmentR2_1 = new AdvancedRendererModel(this, 55, 41);
-        LegSegmentR2_1.setRotationPoint(0.1F, 1.0F, 4.5F);
-        LegSegmentR2_1.addBox(-1.5F, -0.9F, -0.3F, 3, 3, 6, 0.0F);
-        setRotateAngle(LegSegmentR2_1, -1.4456562194269031F, 0.0F, 0.0F);
+        LegSegmentL2 = new AdvancedRendererModel(this, 55, 41);
+        LegSegmentL2.setRotationPoint(0.1F, 1.0F, 4.5F);
+        LegSegmentL2.addBox(-1.5F, -0.9F, -0.3F, 3, 3, 6, 0.0F);
+        setRotateAngle(LegSegmentL2, -1.4456562194269031F, 0.0F, 0.0F);
         SideLeaf2L = new AdvancedRendererModel(this, 0, 29);
         SideLeaf2L.setRotationPoint(-4.0F, 0.4F, 1.6F);
         SideLeaf2L.addBox(0.0F, -1.0F, 0.0F, 0, 2, 5, 0.0F);
@@ -263,28 +268,28 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         LegfrontR1.setRotationPoint(3.3F, 1.2F, -1.8F);
         LegfrontR1.addBox(-1.5F, -2.0F, -0.6F, 3, 4, 7, 0.0F);
         setRotateAngle(LegfrontR1, -0.9873327578531922F, 0.0F, 0.0F);
-        LegSegmentR1_1 = new AdvancedRendererModel(this, 57, 31);
-        LegSegmentR1_1.mirror = true;
-        LegSegmentR1_1.setRotationPoint(-0.2F, 4.3F, 0.0F);
-        LegSegmentR1_1.addBox(-1.5F, -1.3F, -0.6F, 3, 4, 6, 0.0F);
-        setRotateAngle(LegSegmentR1_1, -0.30543261909900765F, 0.0F, 0.0F);
+        LegSegmentL1 = new AdvancedRendererModel(this, 57, 31);
+        LegSegmentL1.mirror = true;
+        LegSegmentL1.setRotationPoint(-0.2F, 4.3F, 0.0F);
+        LegSegmentL1.addBox(-1.5F, -1.3F, -0.6F, 3, 4, 6, 0.0F);
+        setRotateAngle(LegSegmentL1, -0.30543261909900765F, 0.0F, 0.0F);
         TailLeaf4 = new AdvancedRendererModel(this, 0, 29);
         TailLeaf4.setRotationPoint(-0.2F, -1.1F, 1.8F);
         TailLeaf4.addBox(-1.0F, -3.9F, 0.0F, 2, 4, 0, 0.0F);
         setRotateAngle(TailLeaf4, -1.3800318395519162F, 0.0F, 0.0F);
-        LegfrontR2_1 = new AdvancedRendererModel(this, 34, 29);
-        LegfrontR2_1.setRotationPoint(0.3F, 0.0F, 5.9F);
-        LegfrontR2_1.addBox(-1.5F, -1.5F, -0.9F, 3, 3, 7, 0.0F);
-        setRotateAngle(LegfrontR2_1, -0.8052949168701837F, 0.0F, 0.0F);
+        LegfrontL2 = new AdvancedRendererModel(this, 34, 29);
+        LegfrontL2.setRotationPoint(0.3F, 0.0F, 5.9F);
+        LegfrontL2.addBox(-1.5F, -1.5F, -0.9F, 3, 3, 7, 0.0F);
+        setRotateAngle(LegfrontL2, -0.8052949168701837F, 0.0F, 0.0F);
         neck4 = new AdvancedRendererModel(this, 23, 0);
         neck4.setRotationPoint(0.0F, -0.05F, -3.2F);
         neck4.addBox(-2.5F, -1.9F, -3.8F, 5, 5, 4, 0.0F);
         setRotateAngle(neck4, 0.4300491276914028F, 0.0F, 0.0F);
-        frontfootR_1 = new AdvancedRendererModel(this, 40, 46);
-        frontfootR_1.mirror = true;
-        frontfootR_1.setRotationPoint(0.01F, -0.5F, 2.8F);
-        frontfootR_1.addBox(-1.5F, -1.0F, -0.4F, 3, 2, 4, 0.0F);
-        setRotateAngle(frontfootR_1, -0.8737118235483614F, 0.0F, 0.0F);
+        frontfootL = new AdvancedRendererModel(this, 40, 46);
+        frontfootL.mirror = true;
+        frontfootL.setRotationPoint(0.01F, -0.5F, 2.8F);
+        frontfootL.addBox(-1.5F, -1.0F, -0.4F, 3, 2, 4, 0.0F);
+        setRotateAngle(frontfootL, -0.8737118235483614F, 0.0F, 0.0F);
         BackLeaf1 = new AdvancedRendererModel(this, 0, 29);
         BackLeaf1.setRotationPoint(-0.3F, -1.1F, 1.8F);
         BackLeaf1.addBox(-1.0F, -3.9F, 0.0F, 2, 4, 0, 0.0F);
@@ -301,24 +306,24 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         Body2.addChild(Tail1);
         Body1.addChild(SideLeaf1R);
         Tail6.addChild(Tail7);
-        LegfrontR2_1.addChild(LegfrontR3_1);
+        LegfrontL2.addChild(LegfrontR3_1);
         Tail7.addChild(TailLeafEND);
         Body1.addChild(SideLeaf2R);
         neck3.addChild(Neck2Leaf);
         Body2.addChild(LegThighR);
         Head.addChild(EyeR);
         Body1.addChild(BackLeafL);
-        LegSegmentR2_1.addChild(LegSegmentR3_1);
+        LegSegmentL2.addChild(LegSegmentL3);
         neck4.addChild(Head);
         Head.addChild(mouthbottom);
         Body2.addChild(BackLeaf2Middle);
         Tail3.addChild(Tail4);
-        LegSegmentR3_1.addChild(backfootR_1);
+        LegSegmentL3.addChild(backfootR_1);
         Body1.addChild(BackLeafMiddle);
         Body1.addChild(SideLeaf1L);
         Tail4.addChild(Tail5);
         Tail2.addChild(Tail3);
-        Body1.addChild(LegfrontR1_1);
+        Body1.addChild(LegfrontL1);
         Head.addChild(mouthtop);
         LegSegmentR3.addChild(backfootR);
         Head.addChild(shape71_1);
@@ -327,7 +332,7 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         Tail1.addChild(TailLeaf1);
         Body2.addChild(LegThighR_1);
         neck4.addChild(NeckLeaf3);
-        LegSegmentR1_1.addChild(LegSegmentR2_1);
+        LegSegmentL1.addChild(LegSegmentL2);
         Body1.addChild(SideLeaf2L);
         neck2.addChild(Neck1Leaf);
         Body2.addChild(BackLeafR_1);
@@ -345,14 +350,19 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         Tail5.addChild(Tail6);
         LegThighR.addChild(LegSegmentR1);
         Body1.addChild(LegfrontR1);
-        LegThighR_1.addChild(LegSegmentR1_1);
+        LegThighR_1.addChild(LegSegmentL1);
         Tail4.addChild(TailLeaf4);
-        LegfrontR1_1.addChild(LegfrontR2_1);
+        LegfrontL1.addChild(LegfrontL2);
         neck3.addChild(neck4);
-        LegfrontR3_1.addChild(frontfootR_1);
+        LegfrontR3_1.addChild(frontfootL);
         Tail5.addChild(BackLeaf1);
         Head.addChild(shape71);
         Body1.addChild(BackLeafR);
+        
+        headArray = new AdvancedRendererModel[] {neck2, neck3, neck4, Head};
+        tailArray = new AdvancedRendererModel[] {Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7};
+        
+        updateDefaultPose();
     }
     
     @Override
@@ -361,5 +371,56 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         GlStateManager.scaled(2, 2, 2);
         Body1.render(scale);
         GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+        faceTarget(netHeadYaw, headPitch, 1, headArray);
+    }
+    
+    private float globalSpeed = 0.5f;
+    private float globalDegree = 0.5f;
+    
+    @Override
+    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+        this.entity = (DragonFruitDrakeEntity) entityIn;
+        float frame = partialTick + entityIn.ticksExisted;
+        boolean flag;
+        
+        globalDegree = 0.5f;
+        globalSpeed = 0.5f;
+        resetToDefaultPose();
+    
+        if (!entity.isSleeping() && entity.isMoving())
+        globalDegree = 0.515f;
+        globalSpeed = 0.7f;
+        
+        bob(Body1, 0.6f, 0.2f, false, frame, 0.5f);
+        
+        // Front
+        walk(LegfrontR1, 0.3f, 0.6f, false, 0, 0, frame, 0.5f);
+        walk(LegfrontR2, 0.3f, 0.2f, false, 2.5f, 0, frame, 0.5f);
+        walk(frontfootR, 0.3f, 0.3f, false, 2.5f, -0.35f, frame, 0.5f);
+
+        walk(LegfrontL1, 0.3f, 0.6f, true, 0, 0, frame, 0.5f);
+        walk(LegfrontL2, 0.3f, 0.2f, true, 2.5f, 0, frame, 0.5f);
+        walk(frontfootL, 0.3f, 0.3f, true, 2.5f, 0.35f, frame, 0.5f);
+
+        // Back
+        walk(LegThighR, 0.3f, 0.6f, true, 0, 0, frame, 0.5f);
+        walk(backfootR, 0.3f, 0.6f, true, 2.5f, 0.35f, frame, 0.5f);
+
+        walk(LegThighR_1, 0.3f, 0.6f, false, 0, 0, frame, 0.5f);
+        walk(backfootR_1, 0.3f, 0.6f, false, 2.5f, -0.35f, frame, 0.5f);
+
+    
+        idleAnim(frame, !entity.isMoving());
+    }
+    
+    public void idleAnim(float frame, boolean mouth) {
+        walk(mouthbottom, globalSpeed - 0.425f, 0.1f, false, 0.5f, 0.1f, frame, 0.5f);
+        chainWave(headArray, globalSpeed - 0.425f, globalDegree - 0.47f, 2, frame, 0.5f);
+        chainWave(tailArray, globalSpeed - 0.45f, globalDegree - 0.45f, 2, frame, 0.5f);
+        chainSwing(tailArray, globalSpeed - 0.465f, globalDegree - 0.45f, 3d, frame, 0.5f);
     }
 }

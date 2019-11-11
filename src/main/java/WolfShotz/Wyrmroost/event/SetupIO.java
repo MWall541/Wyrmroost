@@ -2,13 +2,12 @@ package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.io.container.BasicSlotInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
-import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.io.screen.ButterflyInvScreen;
 import WolfShotz.Wyrmroost.content.io.screen.OWDrakeInvScreen;
-import WolfShotz.Wyrmroost.content.io.screen.base.BasicDragonScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.Entity;
@@ -28,7 +27,7 @@ public class SetupIO
 {
     private static final String ID = Wyrmroost.MOD_ID + ":";
     
-    @ObjectHolder(ID + "base_dragon_inv")   public static ContainerType<ContainerBase>          baseContainer;
+    @ObjectHolder(ID + "basic_inv")         public static ContainerType<BasicSlotInvContainer>  basicSlotContainer;
     @ObjectHolder(ID + "owdrake_inv")       public static ContainerType<OWDrakeInvContainer>    owDrakeContainer;
     @ObjectHolder(ID + "stalker_inv")       public static ContainerType<StalkerInvContainer>    stalkerContainer;
     @ObjectHolder(ID + "butterfly_inv")     public static ContainerType<ButterflyInvContainer>  butterflyContainer;
@@ -36,9 +35,8 @@ public class SetupIO
     @SubscribeEvent
     public static void containerSetup(RegistryEvent.Register<ContainerType<?>> event) {
         event.getRegistry().registerAll (
-                createEntityContainer(((entity, inv, windowID) -> new ContainerBase<>((AbstractDragonEntity) entity, windowID)), "base_dragon_inv"),
-                createEntityContainer(OWDrakeInvContainer::new, "owdrake_inv"),
-                createEntityContainer(ButterflyInvContainer::new, "butterfly_inv")
+                createEntityContainer((entity, inv, id) -> new BasicSlotInvContainer<>((AbstractDragonEntity) entity, id), "basic_inv"),
+                createEntityContainer(OWDrakeInvContainer::new, "owdrake_inv")
         );
     }
     
@@ -52,7 +50,6 @@ public class SetupIO
     @OnlyIn(Dist.CLIENT)
     public static void screenSetup() {
         ScreenManager.registerFactory(owDrakeContainer, OWDrakeInvScreen::new);
-        ScreenManager.registerFactory(baseContainer, BasicDragonScreen::new);
         ScreenManager.registerFactory(butterflyContainer, ButterflyInvScreen::new);
     }
     

@@ -1,29 +1,26 @@
 package WolfShotz.Wyrmroost.content.io.container;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.event.SetupIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nonnull;
-
-public class ButterflyInvContainer extends ContainerBase<ButterflyLeviathanEntity>
+public class BasicSlotInvContainer<T extends AbstractDragonEntity> extends ContainerBase<T>
 {
-    public ButterflyInvContainer(ButterflyLeviathanEntity dragon, PlayerInventory playerInv, int windowID) {
-        super(dragon, SetupIO.butterflyContainer, windowID);
+    public BasicSlotInvContainer(T dragon, int windowID) {
+        super(dragon, SetupIO.basicSlotContainer, windowID);
+    }
     
-        buildPlayerSlots(playerInv, 7, 83);
+    public BasicSlotInvContainer(T dragon, PlayerInventory inv, int windowID, int playerX, int playerY, ISlotSupplier slots) {
+        this(dragon, windowID);
         
-        dragon.getInvCap().ifPresent(i -> addSlot(new SlotItemHandler(i, 0, 127, 56) {
-            @Override public boolean isItemValid(@Nonnull ItemStack stack) { return stack.getItem() == Items.CONDUIT; }
-            @Override public int getSlotStackLimit() { return 1; }
-            @Override public int getItemStackLimit(@Nonnull ItemStack stack) { return 1; }
-        }));
+        buildPlayerSlots(inv, playerX, playerY);
+        
+        dragon.getInvCap().ifPresent(i -> { for (Slot slot : slots.get(i)) addSlot(slot); });
     }
     
     @Override
@@ -35,11 +32,16 @@ public class ButterflyInvContainer extends ContainerBase<ButterflyLeviathanEntit
             itemStack = itemStack1.copy();
             if (index < 36 && !mergeItemStack(itemStack1, 36, inventorySlots.size(), false)) return ItemStack.EMPTY;
             else if (!mergeItemStack(itemStack1, 0, 37, true)) return ItemStack.EMPTY;
-
+            
             if (itemStack1.isEmpty()) slot.putStack(ItemStack.EMPTY);
             else slot.onSlotChanged();
         }
-
+        
         return itemStack;
+    }
+    
+    public interface ISlotSupplier
+    {
+        Slot[] get(IItemHandler handler);
     }
 }
