@@ -18,11 +18,9 @@ public class BlockBase extends Block
     private Function<Random, Integer> xpAmount;
     
     
-    public BlockBase(String name, Block.Properties properties) {
+    public BlockBase(Block.Properties properties) {
         super(properties);
-
-        setRegistryName(name);
-        SetupBlocks.BLOCKS.add(this);
+        SetupBlocks.BLOCK_ITEMS.add(this);
     }
 
     @Override

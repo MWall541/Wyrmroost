@@ -18,7 +18,7 @@ import net.minecraftforge.common.DimensionManager;
 public class PortalBlock extends BlockBase
 {
     public PortalBlock() {
-        super("wyrmroost_portal", ModUtils.blockBuilder(Material.PORTAL).doesNotBlockMovement().lightValue(15).hardnessAndResistance(-1f, Float.MAX_VALUE).noDrops());
+        super(ModUtils.blockBuilder(Material.PORTAL).doesNotBlockMovement().lightValue(15).hardnessAndResistance(-1f, Float.MAX_VALUE).noDrops());
     }
     
     @Override
