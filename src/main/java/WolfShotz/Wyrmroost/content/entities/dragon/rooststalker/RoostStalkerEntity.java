@@ -4,6 +4,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.content.io.container.base.BasicSlotInvContainer;
+import WolfShotz.Wyrmroost.event.SetupIO;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
@@ -21,16 +23,20 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -102,10 +108,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
         if (super.processInteract(player, hand, stack)) return true;
         
-        ItemStack heldItem = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        ItemStack heldItem = getStackInSlot(1);
         Item item = stack.getItem();
         
-        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == SetupItems.dragonEgg) { //TODO add dragon egg under EGGS tag
+        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == SetupItems.DRAGON_EGG.get()) { //TODO add dragon egg under EGGS tag
             eat(stack);
             if (tame(rand.nextInt(4) == 0, player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
@@ -123,13 +129,13 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             if (!stack.isEmpty() && canPickUpStack(stack)) {
                 if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
                 else player.setHeldItem(hand, ItemStack.EMPTY);
-                setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
+                setStackInSlot(1, stack);
                 
                 return true;
             }
             
             if (!heldItem.isEmpty()) {
-                setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+                setStackInSlot(1, ItemStack.EMPTY);
                 player.setHeldItem(hand, heldItem);
 
                 return true;
@@ -177,17 +183,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         setPosition(player.posX, player.posY + 1.8, player.posZ);
     }
     
-    protected void spawnDrops(DamageSource src) {
-        ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-        
-        if (!stack.isEmpty()) {
-            entityDropItem(stack);
-            setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
-        }
-        
-        super.spawnDrops(src);
-    }
-    
     @Override
     public int getSpecialChances() { return 185; }
     
@@ -213,11 +208,16 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() { return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, SetupItems.foodDrakeMeatCooked, SetupItems.foodDrakeMeatRaw); }
+    public List<Item> getFoodItems() { return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, SetupItems.FOOD_DRAKE_MEAT_RAW.get(), SetupItems.FOOD_DRAKE_MEAT_COOKED.get()); }
     
-    public boolean canPickUpStack(ItemStack stack) {
-        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
-    }
+    public boolean canPickUpStack(ItemStack stack) { return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET; }
+    
+    @Nullable
+    @Override
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return BasicSlotInvContainer.stalkerContainer(this, playerInv, windowID); }
+    
+    @Override
+    public ItemStackHandler createInv() { return new ItemStackHandler(1); }
     
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }

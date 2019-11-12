@@ -13,10 +13,7 @@ import javax.annotation.Nullable;
  */
 public class ItemArmorBase extends ArmorItem
 {
-    public ItemArmorBase(String name, IArmorMaterial material, EquipmentSlotType equipType) {
-        super(material, equipType, ModUtils.itemBuilder());
-        setRegistryName(name);
-    }
+    public ItemArmorBase(IArmorMaterial material, EquipmentSlotType equipType) { super(material, equipType, ModUtils.itemBuilder()); }
 
     @Nullable
     @Override

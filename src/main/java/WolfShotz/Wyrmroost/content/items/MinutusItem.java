@@ -21,7 +21,6 @@ public class MinutusItem extends Item
 {
     public MinutusItem() {
         super(ModUtils.itemBuilder());
-        setRegistryName("minutus");
 
         addPropertyOverride(ModUtils.location("isalive"), (item, world, player) -> {
             if (item.hasTag()) if (item.getTag().getBoolean("isalive")) return 1f;

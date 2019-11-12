@@ -33,7 +33,6 @@ public class DragonEggItem extends Item
 {
     public DragonEggItem() {
         super(ModUtils.itemBuilder().maxStackSize(1));
-        setRegistryName("dragon_egg");
     }
     
     @Override
@@ -46,7 +45,7 @@ public class DragonEggItem extends Item
         CompoundNBT tag = ctx.getItem().getTag();
         if (tag == null || !tag.contains("dragonType")) return super.onItemUse(ctx);
     
-        DragonEggEntity eggEntity = new DragonEggEntity(SetupEntities.dragonEgg, world);
+        DragonEggEntity eggEntity = new DragonEggEntity(SetupEntities.DRAGON_EGG.get(), world);
         BlockPos pos = ctx.getPos();
         BlockPos offsetPos;
         BlockState state = world.getBlockState(pos);
@@ -71,7 +70,7 @@ public class DragonEggItem extends Item
         if (!(entity instanceof AbstractDragonEntity)) return false;
         
         CompoundNBT nbt = new CompoundNBT();
-        int hatchTime = ((AbstractDragonEntity) entity.getType().create(player.world)).getEggProperties().HATCH_TIME;
+        int hatchTime = ((AbstractDragonEntity) entity.getType().create(player.world)).getEggProperties().getHatchTime();
         
         nbt.putString("dragonType", EntityType.getKey(entity.getType()).toString());
         nbt.putInt("hatchTime", hatchTime);

@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.items;
 
+import WolfShotz.Wyrmroost.content.items.base.ArmorMaterialList;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.enchantment.Enchantment;
@@ -13,9 +14,8 @@ public class DragonArmorItem extends Item
 {
     private DragonArmorType type;
     
-    public DragonArmorItem(String name, DragonArmorType type) {
+    public DragonArmorItem(DragonArmorType type) {
         super(ModUtils.itemBuilder().maxStackSize(1));
-        setRegistryName(name);
         this.type = type;
     }
     
@@ -26,8 +26,8 @@ public class DragonArmorItem extends Item
             case IRON: return ArmorMaterial.IRON.getEnchantability();
             case GOLD: return ArmorMaterial.GOLD.getEnchantability();
             case DIAMOND: return ArmorMaterial.DIAMOND.getEnchantability();
-            case PLATINUM: return SetupItems.ArmorMaterialList.PLATINUM.getEnchantability();
-            case BLUE_GEODE: return SetupItems.ArmorMaterialList.GEODE.getEnchantability();
+            case PLATINUM: return ArmorMaterialList.PLATINUM.getEnchantability();
+            case BLUE_GEODE: return ArmorMaterialList.GEODE.getEnchantability();
         }
     }
     
@@ -41,9 +41,7 @@ public class DragonArmorItem extends Item
     
     public DragonArmorType getType() { return type; }
     
-    public int getDmgReduction() {
-        return type.getDmgReduction();
-    }
+    public int getDmgReduction() { return type.getDmgReduction(); }
     
     public enum DragonArmorType
     {

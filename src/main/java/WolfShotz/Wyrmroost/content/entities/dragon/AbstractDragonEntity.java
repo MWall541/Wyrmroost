@@ -394,9 +394,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isInteractItem(ItemStack stack) {
         Item item = stack.getItem();
         return item == Items.NAME_TAG
-                       || item == SetupItems.dragonStaff
-                       || item == SetupItems.soulCrystal;
+                       || item == SetupItems.DRAGON_STAFF.get()
+                       || item == SetupItems.SOUL_CRYSTAL.get();
     }
+    
+    public ItemStack getStackInSlot(int slot) { return getInvCap().map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY); }
+    
+    public void setStackInSlot(int slot, ItemStack stack) { getInvCap().ifPresent(i -> i.insertItem(slot, stack, false)); }
     
     /**
      * Get all entities in a given range in front of this entity and damage all within it
@@ -722,7 +726,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ContainerBase<>(this, SetupIO.baseContainer, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return null; }
     
     /**
      * Is the passed stack considered a breeding item?

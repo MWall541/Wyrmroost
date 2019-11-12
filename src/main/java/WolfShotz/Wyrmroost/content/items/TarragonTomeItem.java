@@ -22,12 +22,9 @@ import net.minecraftforge.fml.DistExecutor;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ModBookItem extends Item
+public class TarragonTomeItem extends Item
 {
-    public ModBookItem() {
-        super(ModUtils.itemBuilder().maxStackSize(1));
-        setRegistryName("tarragon_tome");
-    }
+    public TarragonTomeItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {

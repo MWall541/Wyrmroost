@@ -4,7 +4,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.BasicSlotInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.base.BasicSlotInvContainer;
+import WolfShotz.Wyrmroost.event.SetupIO;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
@@ -252,15 +253,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) {
-        return new BasicSlotInvContainer<>(this, playerInv, windowID, 7, 83, i -> new SlotItemHandler[] {
-                new SlotItemHandler(i, 0, 127, 56) {
-                    @Override public boolean isItemValid(@Nonnull ItemStack stack) { return stack.getItem() == Items.CONDUIT; }
-                    @Override public int getSlotStackLimit() { return 1; }
-                    @Override public int getItemStackLimit(@Nonnull ItemStack stack) { return 1; }
-                }
-        });
-    }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return BasicSlotInvContainer.butterflyContainer(this, playerInv, windowID); }
     
     @Override
     public ItemStackHandler createInv() { return new ItemStackHandler(1); }

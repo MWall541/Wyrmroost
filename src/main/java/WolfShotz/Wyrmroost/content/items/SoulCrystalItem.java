@@ -33,7 +33,6 @@ public class SoulCrystalItem extends Item
 {
     public SoulCrystalItem() {
         super(ModUtils.itemBuilder().maxStackSize(1));
-        setRegistryName("soul_crystal");
     }
     
     @Override

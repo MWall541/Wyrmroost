@@ -44,10 +44,10 @@ public class DragonBreedGoal extends BreedGoal
     @Override
     protected void spawnBaby() {
         CompoundNBT tag = new CompoundNBT();
-        ItemStack eggStack = new ItemStack(SetupItems.dragonEgg);
+        ItemStack eggStack = new ItemStack(SetupItems.DRAGON_EGG.get());
     
         tag.putString("dragonType", EntityType.getKey(dragon.getType()).toString());
-        tag.putInt("hatchTime", dragon.getEggProperties().HATCH_TIME);
+        tag.putInt("hatchTime", dragon.getEggProperties().getHatchTime());
         eggStack.setTag(tag);
     
         ItemEntity eggItem = new ItemEntity(world, dragon.posX, dragon.posY, dragon.posZ, eggStack);

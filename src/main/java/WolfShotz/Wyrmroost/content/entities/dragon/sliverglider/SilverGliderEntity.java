@@ -50,7 +50,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world) {
         super(entity, world);
         
-        eggProperties = new DragonEggProperties(0.4f, 0.65f, 12000);
         SLEEP_ANIMATION = Animation.create(20);
         WAKE_ANIMATION = Animation.create(15);
     }
@@ -312,6 +311,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
     /** Array Containing all of the dragons food items */
     @Override
     public List<Item> getFoodItems() { return new ArrayList<>(ItemTags.FISHES.getAllElements()); }
+    
+    @Override
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.4f, 0.65f, 12000); }
     
     // == Entity Animation ==
     @Override

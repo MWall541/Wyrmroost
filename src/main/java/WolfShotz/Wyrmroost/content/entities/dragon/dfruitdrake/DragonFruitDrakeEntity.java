@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.BasicSlotInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.base.BasicSlotInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.event.SetupItems;
@@ -164,7 +164,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune) {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime += 12000;
-        return Lists.newArrayList(new ItemStack(SetupItems.foodDragonFruit, 1));
+        return Lists.newArrayList(new ItemStack(SetupItems.FOOD_DRAGON_FRUIT.get(), 1));
     }
     
     public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random) {
@@ -179,7 +179,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public List<Item> getFoodItems() {
         List<Item> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
-        Collections.addAll(foods, SetupItems.foodDragonFruit, Items.APPLE, Items.SWEET_BERRIES);
+        Collections.addAll(foods, SetupItems.FOOD_DRAGON_FRUIT.get(), Items.APPLE, Items.SWEET_BERRIES);
         return foods;
     }
     
@@ -188,11 +188,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) {
-        return new BasicSlotInvContainer<>(this, playerInv, windowID, 7, 83, i -> new SlotItemHandler[] {
-                ContainerBase.buildSaddleSlot(this, i, 127, 56)
-        });
-    }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return BasicSlotInvContainer.dragonFruitContainer(this, playerInv, windowID); }
     
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }

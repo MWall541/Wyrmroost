@@ -46,7 +46,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
         
         @Override
         public void render(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            ItemStack stack = stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+            ItemStack stack = stalker.getStackInSlot(1);
     
             if (!stack.isEmpty()) {
                 float i = stalker.isChild()? 1f : 0;

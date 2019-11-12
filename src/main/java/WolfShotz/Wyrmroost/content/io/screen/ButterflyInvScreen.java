@@ -1,6 +1,8 @@
 package WolfShotz.Wyrmroost.content.io.screen;
 
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.base.BasicSlotInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
@@ -8,11 +10,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public class ButterflyInvScreen extends AbstractContainerScreen<ButterflyInvContainer>
+public class ButterflyInvScreen extends AbstractContainerScreen<BasicSlotInvContainer<ButterflyLeviathanEntity>>
 {
     public static final ResourceLocation BUTTERFLY_GUI = ModUtils.location("textures/io/dragonscreen/butterflyinv.png");
     
-    public ButterflyInvScreen(ButterflyInvContainer container, PlayerInventory playerInv, ITextComponent name) {
+    public ButterflyInvScreen(BasicSlotInvContainer<ButterflyLeviathanEntity> container, PlayerInventory playerInv, ITextComponent name) {
         super(container, playerInv, name);
         background = BUTTERFLY_GUI;
         xSize = 174;

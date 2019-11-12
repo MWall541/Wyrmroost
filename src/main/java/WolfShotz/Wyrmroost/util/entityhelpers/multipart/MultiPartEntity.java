@@ -28,7 +28,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     public float radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier;
     
     public MultiPartEntity(FMLPlayMessages.SpawnEntity packet, World worldIn) {
-        super(SetupEntities.multiPartEntity, worldIn);
+        super(SetupEntities.MULTIPART.get(), worldIn);
         PacketBuffer buf = packet.getAdditionalData();
         
         this.hostID = buf.readInt();
@@ -42,7 +42,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     }
     
     public MultiPartEntity(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier) {
-        super(SetupEntities.multiPartEntity, host.world);
+        super(SetupEntities.MULTIPART.get(), host.world);
         this.host = host;
         this.radius = radius;
         this.angleYaw = (angleYaw + 90f) * (MathUtils.PI / 180f);

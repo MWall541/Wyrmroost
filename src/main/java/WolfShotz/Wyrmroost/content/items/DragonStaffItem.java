@@ -26,10 +26,7 @@ import javax.annotation.Nullable;
 
 public class DragonStaffItem extends Item
 {
-    public DragonStaffItem() {
-        super(ModUtils.itemBuilder().maxStackSize(1));
-        setRegistryName("dragon_staff");
-    }
+    public DragonStaffItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
     
     @Override
     public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity target) {

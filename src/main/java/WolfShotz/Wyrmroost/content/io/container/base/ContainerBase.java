@@ -32,11 +32,6 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
         this.dragon = dragon;
     }
     
-    public ContainerBase(T dragon, int windowID) {
-        super(SetupIO.baseContainer, windowID);
-        this.dragon = dragon;
-    }
-    
     /**
      * Determines whether supplied player can use this container
      */
