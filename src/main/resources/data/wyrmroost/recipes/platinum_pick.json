@@ -9,5 +9,5 @@
         "P": {"item": "wyrmroost:platinum_ingot"},
         "S": {"item": "minecraft:stick"}
     },
-    "result": {"item": "wyrmroost:platinum_pick"}
+    "result": {"item": "wyrmroost:platinum_pickaxe"}
 }

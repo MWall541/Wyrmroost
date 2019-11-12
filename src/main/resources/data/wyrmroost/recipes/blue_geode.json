@@ -2,7 +2,7 @@
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
         {
-            "item": "wyrmroost:geode_block"
+            "item": "wyrmroost:blue_geode_block"
         }
     ],
     "result": {

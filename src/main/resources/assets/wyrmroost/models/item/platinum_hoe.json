@@ -1,6 +1,4 @@
 {
   "parent": "item/handheld",
-  "textures": {
-    "layer0": "wyrmroost:item/tools/platinum/platinum_hoe"
-  }
+  "textures": { "layer0": "wyrmroost:item/tools/platinum/platinum_hoe" }
 }

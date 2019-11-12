@@ -1,7 +1,7 @@
 {
   "type": "minecraft:blasting",
   "ingredient": {
-    "item": "wyrmroost:geode_ore"
+    "item": "wyrmroost:blue_geode_ore"
   },
   "result": "wyrmroost:geode",
   "experience": 0.7,

@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "wyrmroost:item/tools/geode/geode_shovel_blue"
+    "layer0": "wyrmroost:item/tools/geode/blue/geode_shovel_blue"
   }
 }

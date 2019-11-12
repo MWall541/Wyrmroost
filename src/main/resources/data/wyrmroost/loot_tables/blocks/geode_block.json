@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "wyrmroost:geode_block"
+          "name": "wyrmroost:blue_geode_block"
         }
       ],
       "conditions": [
