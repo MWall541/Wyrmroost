@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.base.BasicSlotInvContainer;
-import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
+import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
+import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
@@ -38,7 +38,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -188,7 +187,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return BasicSlotInvContainer.dragonFruitContainer(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new DragonFruitDrakeContainer(this, playerInv, windowID); }
     
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }

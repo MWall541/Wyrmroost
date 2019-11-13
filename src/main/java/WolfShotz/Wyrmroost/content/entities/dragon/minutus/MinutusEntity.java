@@ -192,11 +192,11 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SetupSounds.MINUTUS_IDLE; }
+    protected SoundEvent getAmbientSound() { return SetupSounds.MINUTUS_IDLE.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.MINUTUS_SCREECH; }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.MINUTUS_SCREECH.get(); }
 
     @Override
     protected float getSoundVolume() { return 0.3f; }

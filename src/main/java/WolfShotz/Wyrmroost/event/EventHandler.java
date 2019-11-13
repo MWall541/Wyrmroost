@@ -3,17 +3,21 @@ package WolfShotz.Wyrmroost.event;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -115,6 +119,14 @@ public class EventHandler
      */
     public static class Client
     {
+        /**
+         * Can't be subscribed for some reason. Trust me, I tried >.>
+         */
+        public static void registerItemColors() {
+            ItemColors event = Minecraft.getInstance().getItemColors();
+            CustomSpawnEggItem.EGG_TYPES.forEach(e -> event.register((stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex), e));
+        }
+        
         /**
          * Handles custom keybind pressing
          */

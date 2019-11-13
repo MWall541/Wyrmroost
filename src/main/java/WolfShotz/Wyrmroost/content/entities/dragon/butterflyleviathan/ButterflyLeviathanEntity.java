@@ -4,8 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.base.BasicSlotInvContainer;
-import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
@@ -39,9 +38,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -253,7 +250,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return BasicSlotInvContainer.butterflyContainer(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ButterflyInvContainer(this, playerInv, windowID); }
     
     @Override
     public ItemStackHandler createInv() { return new ItemStackHandler(1); }

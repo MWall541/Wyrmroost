@@ -20,6 +20,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -719,7 +720,22 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Nullable
     @Override
-    public AgeableEntity createChild(AgeableEntity ageable) { return null; }
+    public AgeableEntity createChild(AgeableEntity ageable) {
+        CompoundNBT tag = new CompoundNBT();
+        ItemStack eggStack = new ItemStack(SetupItems.DRAGON_EGG.get());
+    
+        tag.putString("dragonType", EntityType.getKey(getType()).toString());
+        tag.putInt("hatchTime", getEggProperties().getHatchTime());
+        eggStack.setTag(tag);
+        
+        ItemEntity eggItem = new ItemEntity(world, posX, posY, posZ, eggStack);
+        
+        eggItem.setMotion(0, getHeight() / 2, 0);
+        world.addEntity(eggItem);
+        
+        return null;
+    }
+    
     
     /**
      * A gui created when right clicked by a {@link SetupItems.dragonStaff}

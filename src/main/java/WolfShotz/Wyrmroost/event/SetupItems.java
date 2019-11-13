@@ -32,10 +32,10 @@ public class SetupItems
     public static final RegistryObject<Item> SOUL_CRYSTAL               = register("soul_crystal", new SoulCrystalItem());
     public static final RegistryObject<Item> DRAGON_STAFF               = register("dragon_staff", new DragonStaffItem());
     
-    public static final RegistryObject<Item> GEODE_BLUE                 = register("geode", SetupItems.basicItem());
-    public static final RegistryObject<Item> GEODE_RED                  = register("geode_red", SetupItems.basicItem());
-    public static final RegistryObject<Item> GEODE_PURPLE               = register("geode_purple", SetupItems.basicItem());
-    public static final RegistryObject<Item> PLATINUM_INGOT             = register("platinum_ingot", SetupItems.basicItem());
+    public static final RegistryObject<Item> GEODE_BLUE                 = register("geode", basicItem());
+    public static final RegistryObject<Item> GEODE_RED                  = register("geode_red", basicItem());
+    public static final RegistryObject<Item> GEODE_PURPLE               = register("geode_purple", basicItem());
+    public static final RegistryObject<Item> PLATINUM_INGOT             = register("platinum_ingot", basicItem());
     
     public static final RegistryObject<Item> BLUE_GEODE_SWORD           = register("geode_sword", new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> BLUE_GEODE_PICKAXE         = register("geode_pick", new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()));
@@ -48,7 +48,7 @@ public class SetupItems
     public static final RegistryObject<Item> BLUE_GEODE_BOOTS           = register("geode_boots", new ItemArmorBase(ArmorMaterialList.GEODE, EquipmentSlotType.FEET));
     
     public static final RegistryObject<Item> RED_GEODE_SWORD            = register("geode_red_sword", new SwordItem(ToolMaterialList.GEODERED, 4, -2.4f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> RED_GEODE_PICKAXE          = register("geode_red_pick", new PickaxeItem(ToolMaterialList.GEODERED, 2, -2.8f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> RED_GEODE_PICKAXE          = register("geode_red_pickaxe", new PickaxeItem(ToolMaterialList.GEODERED, 2, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> RED_GEODE_AXE              = register("geode_red_axe", new AxeItem(ToolMaterialList.GEODERED, 2, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> RED_GEODE_SHOVEL           = register("geode_red_shovel", new ShovelItem(ToolMaterialList.GEODERED, 1.5f, -3.0f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> RED_GEODE_HOE              = register("geode_red_hoe", new HoeItem(ToolMaterialList.GEODERED, 1.5f, ModUtils.itemBuilder()));
@@ -58,7 +58,7 @@ public class SetupItems
     public static final RegistryObject<Item> RED_GEODE_BOOTS            = register("geode_red_boots", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.FEET));
     
     public static final RegistryObject<Item> PURPLE_GEODE_SWORD         = register("geode_purple_sword", new SwordItem(ToolMaterialList.GEODEPURPLE, 4, -2.4f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE       = register("geode_purple_pick", new PickaxeItem(ToolMaterialList.GEODEPURPLE, 2, -2.8f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE       = register("geode_purple_pickaxe", new PickaxeItem(ToolMaterialList.GEODEPURPLE, 2, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PURPLE_GEODE_AXE           = register("geode_purple_axe", new AxeItem(ToolMaterialList.GEODEPURPLE, 2, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PURPLE_GEODE_SHOVEL        = register("geode_purple_shovel", new ShovelItem(ToolMaterialList.GEODEPURPLE, 1.5f, -3.0f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PURPLE_GEODE_HOE           = register("geode_purple_hoe", new HoeItem(ToolMaterialList.GEODEPURPLE, 1.5f, ModUtils.itemBuilder()));
@@ -68,7 +68,7 @@ public class SetupItems
     public static final RegistryObject<Item> PURPLE_GEODE_BOOTS         = register("geode_purple_boots", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.FEET));
     
     public static final RegistryObject<Item> PLATINUM_SWORD             = register("platinum_sword", new SwordItem(ToolMaterialList.PLATINUM, 4, -2.4f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PLATINUM_PICKAXE           = register("platinum_pick", new PickaxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> PLATINUM_PICKAXE           = register("platinum_pickaxe", new PickaxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_AXE               = register("platinum_axe", new AxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_SHOVEL            = register("platinum_shovel", new ShovelItem(ToolMaterialList.PLATINUM, 1.5f, -3f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_HOE               = register("platinum_hoe", new HoeItem(ToolMaterialList.PLATINUM, 1.5f, ModUtils.itemBuilder()));
@@ -87,54 +87,35 @@ public class SetupItems
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD          = register("gold_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.GOLD));
     public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND       = register("diamond_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.DIAMOND));
     public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM      = register("platinum_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PLATINUM));
-    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE    = register("blue_geode_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.BLUE_GEODE));
-    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE     = register("red_geode_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.RED_GEODE));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PUEPLE_GEODE  = register("purple_geode_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
+    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE    = register("geode_blue_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.BLUE_GEODE));
+    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE     = register("geode_red_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.RED_GEODE));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PUEPLE_GEODE  = register("geode_purple_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
     
-    public static final RegistryObject<Item> EGG_DRAKE                  = register("drake_egg", new SpawnEggItem(SetupEntities.OVERWORLD_DRAKE.get(), 0x15ff00, 0x085e00, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> EGG_MINUTUS                = register("minutus_egg", new SpawnEggItem(SetupEntities.MINUTUS.get(), 0xfcc0ea, 0xfcd4f0, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> EGG_SILVER_GLIDER          = register("silverglider_egg", new SpawnEggItem(SetupEntities.SILVER_GLIDER.get(), 0xffffff, 0xffffff, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> EGG_ROOSTSTALKER           = register("rooststalker_egg", new SpawnEggItem(SetupEntities.ROOSTSTALKER.get(), 0xffffff, 0xffffff, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> EGG_BUTTERFLYLEVIATHAN     = register("butterflyleviathan_egg", new SpawnEggItem(SetupEntities.BUTTERFLY_LEVIATHAN.get(), 0xffffff, 0xffffff, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> EGG_DRAKE                  = register("drake_egg", new CustomSpawnEggItem(SetupEntities.OVERWORLD_DRAKE::get, 0x788716, 0x3E623E));
+    public static final RegistryObject<Item> EGG_MINUTUS                = register("minutus_egg", new CustomSpawnEggItem(SetupEntities.MINUTUS::get, 0xD6BCBC, 0xDEB6C7));
+    public static final RegistryObject<Item> EGG_SILVER_GLIDER          = register("silverglider_egg", new CustomSpawnEggItem(SetupEntities.SILVER_GLIDER::get, 0xC8C8C8, 0xC4C4C4));
+    public static final RegistryObject<Item> EGG_ROOSTSTALKER           = register("rooststalker_egg", new CustomSpawnEggItem(SetupEntities.ROOSTSTALKER::get, 0x52100D, 0x959595));
+    public static final RegistryObject<Item> EGG_BUTTERFLYLEVIATHAN     = register("butterflyleviathan_egg", new CustomSpawnEggItem(SetupEntities.BUTTERFLY_LEVIATHAN::get, 0x17283C, 0x7A6F5A));
+    public static final RegistryObject<Item> EGG_DRAGONFRUITDRAKE       = register("fruitdrake_egg", new CustomSpawnEggItem(SetupEntities.DRAGON_FRUIT_DRAKE::get, 0xe05c9a, 0x788716));
 
     //  ===========================
     //          Food List
     //  ===========================
     
-    // Jewelled Apple
-    private static Food jewelledApple = new Food.Builder()
-                                                .hunger(8)
-                                                .saturation(0.9f)
-                                                .setAlwaysEdible()
-                                                .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
-                                                .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
-                                                .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
-                                                .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
-                                                .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
-                                                .build();
-    // Dragon Fruit
-    private static Food dragonfruit = new Food.Builder()
-                                              .hunger(6)
-                                              .saturation(0.55f)
-                                              .build();
-    // Cooked Desertwyrm
-    private static Food cookedminutus = new Food.Builder()
-                                                .hunger(6)
-                                                .saturation(0.7f)
-                                                .meat()
-                                                .build();
-    // Raw Drake Meat
-    private static Food rawDrake = new Food.Builder()
-                                           .hunger(4)
-                                           .saturation(0.45f)
-                                           .meat()
-                                           .build();
-    // Cooked Drake Meat
-    private static Food cookedDrake = new Food.Builder()
-                                           .hunger(8)
-                                           .saturation(1f)
-                                           .meat()
-                                           .build();
+    private static Food dragonfruit         = new Food.Builder().hunger(6).saturation(0.55f).build();
+    private static Food cookedminutus       = new Food.Builder().hunger(6).saturation(0.7f) .meat().build();
+    private static Food rawDrake            = new Food.Builder().hunger(4).saturation(0.45f).meat().build();
+    private static Food cookedDrake         = new Food.Builder().hunger(8).saturation(1f)   .meat().build();
+    private static Food jewelledApple       = new Food.Builder()
+                                                      .hunger(8)
+                                                      .saturation(0.9f)
+                                                      .setAlwaysEdible()
+                                                      .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
+                                                      .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
+                                                      .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
+                                                      .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
+                                                      .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
+                                                      .build();
     
     
     public static RegistryObject<Item> register(String name, Item item) { return ITEMS.register(name, () -> item); }

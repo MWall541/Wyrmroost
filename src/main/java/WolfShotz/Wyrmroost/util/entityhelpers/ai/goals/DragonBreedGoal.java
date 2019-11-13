@@ -43,14 +43,7 @@ public class DragonBreedGoal extends BreedGoal
      */
     @Override
     protected void spawnBaby() {
-        CompoundNBT tag = new CompoundNBT();
-        ItemStack eggStack = new ItemStack(SetupItems.DRAGON_EGG.get());
-    
-        tag.putString("dragonType", EntityType.getKey(dragon.getType()).toString());
-        tag.putInt("hatchTime", dragon.getEggProperties().getHatchTime());
-        eggStack.setTag(tag);
-    
-        ItemEntity eggItem = new ItemEntity(world, dragon.posX, dragon.posY, dragon.posZ, eggStack);
+        dragon.createChild(null);
         ServerPlayerEntity serverplayerentity = animal.getLoveCause();
         
         if (serverplayerentity == null && field_75391_e.getLoveCause() != null) serverplayerentity = field_75391_e.getLoveCause();
@@ -61,8 +54,6 @@ public class DragonBreedGoal extends BreedGoal
         field_75391_e.setGrowingAge(6000);
         animal.resetInLove();
         field_75391_e.resetInLove();
-        eggItem.setMotion(0, animal.getHeight() / 2, 0);
-        world.addEntity(eggItem);
         if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
             world.addEntity(new ExperienceOrbEntity(world, dragon.posX, dragon.posY, dragon.posZ, dragon.getRNG().nextInt(7) + 1));
     }

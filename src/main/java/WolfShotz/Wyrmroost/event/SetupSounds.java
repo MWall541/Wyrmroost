@@ -2,58 +2,37 @@ package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import net.minecraft.client.audio.Sound;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
-@Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupSounds
 {
-    private static final String ID = Wyrmroost.MOD_ID + ":";
-    private static final String ID_E = ID + "entity.";
+    public static final DeferredRegister<SoundEvent> SOUNDS = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
     
-    @ObjectHolder(ID + "call_whistle")                     public static SoundEvent CALL_WHISTLE;
+    public static final RegistryObject<SoundEvent> MINUTUS_IDLE                 = registerEntity("minutus.idle");
+    public static final RegistryObject<SoundEvent> MINUTUS_SCREECH              = registerEntity("minutus.screech");
     
-    @ObjectHolder(ID_E + "minutus.idle")                   public static SoundEvent MINUTUS_IDLE;
-    @ObjectHolder(ID_E + "minutus.screech")                public static SoundEvent MINUTUS_SCREECH;
+    public static final RegistryObject<SoundEvent> SILVERGLIDER_IDLE            = registerEntity("silverglider.idle");
+    public static final RegistryObject<SoundEvent> SILVERGLIDER_HURT            = registerEntity("silverglider.hurt");
+    public static final RegistryObject<SoundEvent> SILVERGLIDER_DEATH           = registerEntity("silverglider.death");
     
-    @ObjectHolder(ID_E + "silverglider.idle")              public static SoundEvent SILVERGLIDER_IDLE;
-    @ObjectHolder(ID_E + "silverglider.hurt")              public static SoundEvent SILVERGLIDER_HURT;
-    @ObjectHolder(ID_E + "silverglider.death")             public static SoundEvent SILVERGLIDER_DEATH;
+    public static final RegistryObject<SoundEvent> OWDRAKE_IDLE                 = registerEntity("owdrake.idle");
+    public static final RegistryObject<SoundEvent> OWDRAKE_ROAR                 = registerEntity("owdrake.roar");
+    public static final RegistryObject<SoundEvent> OWDRAKE_HURT                 = registerEntity("owdrake.hurt");
+    public static final RegistryObject<SoundEvent> OWDRAKE_DEATH                = registerEntity("owdrake.death");
     
-    @ObjectHolder(ID_E + "owdrake.idle")                   public static SoundEvent OWDRAKE_IDLE;
-    @ObjectHolder(ID_E + "owdrake.roar")                   public static SoundEvent OWDRAKE_ROAR;
-    @ObjectHolder(ID_E + "owdrake.hurt")                   public static SoundEvent OWDRAKE_HURT;
-    @ObjectHolder(ID_E + "owdrake.death")                  public static SoundEvent OWDRAKE_DEATH;
+    public static final RegistryObject<SoundEvent> STALKER_IDLE                 = registerEntity("rooststalker.idle");
+    public static final RegistryObject<SoundEvent> STALKER_HURT                 = registerEntity("rooststalker.hurt");
+    public static final RegistryObject<SoundEvent> STALKER_DEATH                = registerEntity("rooststalker.death");
     
-    @ObjectHolder(ID_E + "rooststalker.idle")              public static SoundEvent STALKER_IDLE;
-    @ObjectHolder(ID_E + "rooststalker.hurt")              public static SoundEvent STALKER_HURT;
-    @ObjectHolder(ID_E + "rooststalker.death")             public static SoundEvent STALKER_DEATH;
     
-    @SubscribeEvent
-    public static void soundSetup(RegistryEvent.Register<SoundEvent> event) {
-        event.getRegistry().registerAll(
-                registerSound("call_whistle"), // Seperated from the parrot entity
-                
-                registerSound("entity.minutus.idle"),
-                registerSound("entity.minutus.screech"),
-                
-                registerSound("entity.silverglider.idle"),
-                registerSound("entity.silverglider.hurt"),
-                registerSound("entity.silverglider.death"),
-                
-                registerSound("entity.owdrake.idle"),
-                registerSound("entity.owdrake.roar"),
-                registerSound("entity.owdrake.hurt"),
-                registerSound("entity.owdrake.death"),
-                
-                registerSound("entity.rooststalker.idle"),
-                registerSound("entity.rooststalker.hurt"),
-                registerSound("entity.rooststalker.death")
-        );
-    }
-
-    private static SoundEvent registerSound(String name) { return new SoundEvent(ModUtils.location(name)).setRegistryName(name); }
+    private static RegistryObject<SoundEvent> register(String name) { return SOUNDS.register(name, () -> new SoundEvent(ModUtils.location(name))); }
+    private static RegistryObject<SoundEvent> registerEntity(String name) { return register("entity." + name); }
 }

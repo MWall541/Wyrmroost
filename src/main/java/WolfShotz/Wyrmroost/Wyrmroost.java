@@ -6,22 +6,15 @@ import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.network.EggHatchMessage;
 import WolfShotz.Wyrmroost.util.network.SyncInventoryMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.registries.DeferredRegister;
-
-import java.util.Collection;
 
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
@@ -42,8 +35,10 @@ public class Wyrmroost
 
     public Wyrmroost() {
         SetupEntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        SetupBlocks.BLOCKS.register(FMLJavaModLoadingContext    .get().getModEventBus());
+        SetupItems.ITEMS.register(FMLJavaModLoadingContext      .get().getModEventBus());
+        SetupIO.CONTAINERS.register(FMLJavaModLoadingContext    .get().getModEventBus());
+        SetupSounds.SOUNDS.register(FMLJavaModLoadingContext    .get().getModEventBus());
     
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
@@ -70,6 +65,7 @@ public class Wyrmroost
     private void clientSetup(final FMLClientSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(EventHandler.Client.class);
         
+        EventHandler.Client.registerItemColors();
         SetupEntities.registerEntityRenders();
         SetupKeyBinds.registerKeys();
         SetupIO.screenSetup();

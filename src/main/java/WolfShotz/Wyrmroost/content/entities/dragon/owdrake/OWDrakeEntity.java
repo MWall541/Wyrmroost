@@ -180,7 +180,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         if (getAnimation() == ROAR_ANIMATION) {
             if (getAnimationTick() == 1)
-                playSound(SetupSounds.OWDRAKE_ROAR, 2.5f, 1f);
+                playSound(SetupSounds.OWDRAKE_ROAR.get(), 2.5f, 1f);
             if (getAnimationTick() == 15) {
                 getEntitiesNearby(5).forEach(e -> { // Dont get too close now ;)
                     if (e instanceof OWDrakeEntity) return;
@@ -337,7 +337,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SetupSounds.OWDRAKE_IDLE; }
+    protected SoundEvent getAmbientSound() { return SetupSounds.OWDRAKE_IDLE.get(); }
     
     @Override
     public void playAmbientSound() {
@@ -349,7 +349,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.OWDRAKE_HURT; }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.OWDRAKE_HURT.get(); }
     
     @Override
     protected void playHurtSound(DamageSource source) {
@@ -360,7 +360,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return SetupSounds.OWDRAKE_DEATH; }
+    protected SoundEvent getDeathSound() { return SetupSounds.OWDRAKE_DEATH.get(); }
     
     @Override
     public void setSit(boolean sitting) {

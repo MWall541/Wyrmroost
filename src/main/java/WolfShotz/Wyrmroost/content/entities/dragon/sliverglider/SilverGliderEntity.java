@@ -284,16 +284,16 @@ public class SilverGliderEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SetupSounds.SILVERGLIDER_IDLE; }
+    protected SoundEvent getAmbientSound() { return SetupSounds.SILVERGLIDER_IDLE.get(); }
     
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) { return SetupSounds.SILVERGLIDER_HURT; }
+    protected SoundEvent getHurtSound(DamageSource damageSource) { return SetupSounds.SILVERGLIDER_HURT.get(); }
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return SetupSounds.SILVERGLIDER_DEATH; }
+    protected SoundEvent getDeathSound() { return SetupSounds.SILVERGLIDER_DEATH.get(); }
     
     @Override
     public void setSit(boolean sitting) {

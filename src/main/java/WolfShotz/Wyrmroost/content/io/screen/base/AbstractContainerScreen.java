@@ -18,7 +18,6 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
     public static final ResourceLocation STANDARD_GUI = ModUtils.location("textures/io/dragoninv.png");
     public static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
     public static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glitter_7.png");
-    public static final ResourceLocation SLOT = ModUtils.location("textures/io/slot.png");
     
     public T dragonInv;
     public ResourceLocation background;

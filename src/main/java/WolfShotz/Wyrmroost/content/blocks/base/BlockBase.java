@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.blocks.base;
 
-import WolfShotz.Wyrmroost.event.SetupBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +19,6 @@ public class BlockBase extends Block
     
     public BlockBase(Block.Properties properties) {
         super(properties);
-        SetupBlocks.BLOCK_ITEMS.add(this);
     }
 
     @Override

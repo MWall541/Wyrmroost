@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.io.container.base;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
@@ -17,13 +18,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
-public class ContainerBase<T extends AbstractDragonEntity> extends Container
+public abstract class ContainerBase<T extends AbstractDragonEntity> extends Container
 {
     public T dragon;
     
@@ -98,6 +102,23 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
             @Override
             public ResourceLocation getBackgroundLocation() { return ModUtils.location("textures/io/slots/armor_slot.png"); }
         };
+    }
+    
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+        ItemStack itemStack = ItemStack.EMPTY;
+        Slot slot = inventorySlots.get(index);
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemStack1 = slot.getStack();
+            itemStack = itemStack1.copy();
+            if (index < 36 && !mergeItemStack(itemStack1, 36, inventorySlots.size(), false)) return ItemStack.EMPTY;
+            else if (!mergeItemStack(itemStack1, 0, 37, true)) return ItemStack.EMPTY;
+            
+            if (itemStack1.isEmpty()) slot.putStack(ItemStack.EMPTY);
+            else slot.onSlotChanged();
+        }
+        
+        return itemStack;
     }
     
     /**

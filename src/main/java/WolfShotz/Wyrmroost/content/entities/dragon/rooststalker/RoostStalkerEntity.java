@@ -4,8 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.base.BasicSlotInvContainer;
-import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.event.SetupSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
@@ -30,7 +29,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -194,15 +192,15 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SetupSounds.STALKER_IDLE; }
+    protected SoundEvent getAmbientSound() { return SetupSounds.STALKER_IDLE.get(); }
     
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.STALKER_HURT; }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.STALKER_HURT.get(); }
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return SetupSounds.STALKER_DEATH; }
+    protected SoundEvent getDeathSound() { return SetupSounds.STALKER_DEATH.get(); }
     
     /**
      * Array Containing all of the dragons food items
@@ -214,7 +212,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return BasicSlotInvContainer.stalkerContainer(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new StalkerInvContainer(this, playerInv, windowID); }
     
     @Override
     public ItemStackHandler createInv() { return new ItemStackHandler(1); }
