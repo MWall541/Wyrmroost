@@ -15,7 +15,7 @@ import java.util.Random;
 // #blit(xPos, yPos, initialX pixel, initialY pixel, x width, y width, .png width, .png height);
 public abstract class AbstractContainerScreen<T extends ContainerBase> extends ContainerScreen<T>
 {
-    public static final ResourceLocation STANDARD_GUI = ModUtils.location("textures/io/dragoninv.png");
+    public static final ResourceLocation STANDARD_GUI = ModUtils.location("textures/io/dragonscreen/dragoninv.png");
     public static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
     public static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glitter_7.png");
     
@@ -23,7 +23,7 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
     public ResourceLocation background;
     public Random rand = new Random();
     public TextFieldWidget nameField;
-    private String prevName;
+    public String prevName;
     public int textureWidth, textureHeight;
     
     public AbstractContainerScreen(T container, PlayerInventory playerInv, ITextComponent name) {
@@ -31,13 +31,14 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
         this.dragonInv = container;
         background = STANDARD_GUI;
         textureWidth = textureHeight = 256;
+        ySize = 164;
     }
     
     @Override
     protected void init() {
         super.init();
         prevName = dragonInv.dragon.hasCustomName()? dragonInv.dragon.getCustomName().getUnformattedComponentText() : dragonInv.dragon.getDisplayName().getUnformattedComponentText();
-        nameField = new TextFieldWidget(font, guiLeft + 6, guiTop, 80, 12, prevName);
+        nameField = initNameField();
         nameField.setMaxStringLength(16);
         nameField.setTextColor(16777215);
         nameField.setEnableBackgroundDrawing(false);
@@ -57,21 +58,28 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
         renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         renderHoveredToolTip(mouseX, mouseY);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableLighting();
+        nameField.render(mouseX, mouseY, partialTicks);
+        GlStateManager.disableLighting();
+        GlStateManager.popMatrix();
     }
     
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        
+    
+        renderEntity(mouseX, mouseY);
         bindTexture(background); // Bind background layer last so we can do other rendering in subclasses
         blit(guiLeft, guiTop, 0, 0, xSize, ySize, textureWidth, textureHeight);
-        renderEntity(mouseX, mouseY);
-        nameField.render(mouseX, mouseY, partialTicks);
     }
     
     @Override
     public boolean keyPressed(int p1, int p2, int p3) {
         nameField.keyPressed(p1, p2, p3);
+        if (p1 == 257) {
+        
+        }
         return nameField.isFocused() && nameField.getVisible() && p1 != 256 || super.keyPressed(p1, p2, p3);
     }
     
@@ -97,6 +105,8 @@ public abstract class AbstractContainerScreen<T extends ContainerBase> extends C
         GlStateManager.color4f(1f, 1f, 1f, 1f);
         GlStateManager.popMatrix();
     }
+    
+    public TextFieldWidget initNameField() { return new TextFieldWidget(font, guiLeft + 6, guiTop, 80, 12, prevName); }
     
     public void bindTexture(ResourceLocation texture) {
         assert minecraft != null;

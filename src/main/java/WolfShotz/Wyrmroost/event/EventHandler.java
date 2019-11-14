@@ -9,7 +9,6 @@ import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -49,6 +47,10 @@ public class EventHandler
                 DimensionManager.registerDimension(ModUtils.location("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
         }
     
+        /**
+         * Attach our capabilities
+         * @param evt
+         */
         @SubscribeEvent
         public static void onAttachCapabilities(AttachCapabilitiesEvent<World> evt) {
             if (evt.getObject() == null) return;
@@ -66,14 +68,12 @@ public class EventHandler
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
-    
-            ModUtils.L.debug(evt.getWorld().getCapability(CapabilityOverworld.OW_CAP).map(CapabilityOverworld::isSpawnsTriggered).orElse(false));
             
-//            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
-//                evt.setCanceled(true);
-//
-//                dragon.setTamedBy(player);
-//            }
+            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
+                evt.setCanceled(true);
+
+                dragon.tame(true, player);
+            }
         }
     
         /**

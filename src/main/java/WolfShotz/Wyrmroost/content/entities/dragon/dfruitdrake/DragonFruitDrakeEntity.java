@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
-import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
@@ -13,9 +12,7 @@ import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.google.common.collect.Lists;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -38,6 +35,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -130,7 +128,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
         if (super.processInteract(player, hand, stack)) return true;
         
-        if (stack.getItem() instanceof SaddleItem && isSaddled() && !isChild()) {
+        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) {
             getInvCap().ifPresent(i -> {
                 i.insertItem(0, stack, false);
                 consumeItemFromStack(player, stack);
@@ -156,13 +154,19 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
     
     @Override
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height; }
+    
+    @Override
+    public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
+    
+    @Override
     public boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos) { return shearCooldownTime <= 0; }
     
     @Nonnull
     @Override
     public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune) {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
-        shearCooldownTime += 12000;
+        shearCooldownTime = 12000;
         return Lists.newArrayList(new ItemStack(SetupItems.FOOD_DRAGON_FRUIT.get(), 1));
     }
     
@@ -188,6 +192,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Nullable
     @Override
     public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new DragonFruitDrakeContainer(this, playerInv, windowID); }
+    
+    @Override
+    public ItemStackHandler createInv() { return new ItemStackHandler(1); }
     
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }

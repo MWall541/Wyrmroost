@@ -1,13 +1,9 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.block.BlockState;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
@@ -15,38 +11,21 @@ import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ModDimension;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-@Mod.EventBusSubscriber(modid = Wyrmroost.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupWorld
 {
     // =========
     // Dimension
     // =========
- 
+    
     @ObjectHolder(Wyrmroost.MOD_ID + ":dim_wyrmroost")
     public static final ModDimension DIM_WYRMROOST = null;
-    
-    @SubscribeEvent
-    public static void dimensionSetup(RegistryEvent.Register<ModDimension> event) {
-        event.getRegistry().register (
-                new ModDimension() { // Why.
-                    @Override
-                    public BiFunction<World, DimensionType, ? extends Dimension> getFactory() {
-                        return WyrmroostDimension::new;
-                    }
-                }.setRegistryName("dim_wyrmroost")
-        );
-    }
     
     // ==============
     // Ore Generation

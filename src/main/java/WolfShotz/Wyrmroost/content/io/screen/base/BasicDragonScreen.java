@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.io.screen.base;
 
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
@@ -22,7 +23,7 @@ public class BasicDragonScreen extends AbstractContainerScreen<ContainerBase>
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        if (singleSlot)
+        if (singleSlot) blit(guiLeft + 70, guiTop + 55, 0, 164, 18, 18, textureWidth, textureHeight);
         InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (float)(guiLeft + 40) - mouseX, (float)(guiTop + 75 - 30) - mouseY, dragonInv.dragon);
     }
     
@@ -31,4 +32,7 @@ public class BasicDragonScreen extends AbstractContainerScreen<ContainerBase>
         screen.singleSlot = true;
         return screen;
     }
+    
+    @Override
+    public TextFieldWidget initNameField() { return new TextFieldWidget(font, guiLeft + 90, guiTop + 25, 80, 12, prevName); }
 }

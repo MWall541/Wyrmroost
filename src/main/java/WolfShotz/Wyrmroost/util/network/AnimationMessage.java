@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.util.network;
 
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -11,7 +10,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class AnimationMessage
+public class AnimationMessage implements IMessage
 {
     private int entityID;
     private int animationIndex;
@@ -26,15 +25,17 @@ public class AnimationMessage
         animationIndex = buf.readInt();
     }
     
+    @Override
     public void encode(PacketBuffer buf) {
         buf.writeInt(entityID);
         buf.writeInt(animationIndex);
     }
     
+    @Override
     public void handle(Supplier<NetworkEvent.Context> context) {
         World world = DistExecutor.callWhenOn(Dist.CLIENT, () -> ModUtils::getClientWorld);
         IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(entityID);
-        
+    
         if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
         else entity.setAnimation(entity.getAnimations()[animationIndex]);
         context.get().setPacketHandled(true);

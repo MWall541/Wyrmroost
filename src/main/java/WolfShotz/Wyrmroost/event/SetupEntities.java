@@ -15,7 +15,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEnti
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
-import WolfShotz.Wyrmroost.content.items.MinutusItem;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.google.common.collect.Sets;
@@ -27,18 +26,13 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import static net.minecraftforge.common.BiomeDictionary.Type;
 
@@ -56,7 +50,7 @@ public class SetupEntities
     public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER                = register("silver_glider", buildEntity(SilverGliderEntity::new, 1.5f, 0.75f));
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER                 = register("roost_stalker", buildEntity(RoostStalkerEntity::new, 0.65f, 0.5f));
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN    = register("butterfly_leviathan", buildEntity(ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE, 4f, 3f));
-    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE       = register("dragon_fruit_drake", buildEntity(DragonFruitDrakeEntity::new, 1.5f, 1.4f));
+    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE       = register("dragon_fruit_drake", buildEntity(DragonFruitDrakeEntity::new, 1.5f, 2.5f));
     
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG                      = register("dragon_egg", EntityType.Builder.<DragonEggEntity>create(DragonEggEntity::new, EntityClassification.MISC)
                                                                                                                                      .disableSummoning()
@@ -72,7 +66,7 @@ public class SetupEntities
     /**
      * Registers World Spawning for entities
      */
-    private static void registerEntityWorldSpawns() {
+    public static void registerEntityWorldSpawns() {
         registerSpawnEntry(OVERWORLD_DRAKE.get(), getDrakeBiomes(), 8, 1, 3);
         registerSpawnEntry(MINUTUS.get(), getMinutusBiomes(), 35, 1, 1);
         registerCustomSpawnEntry(SILVER_GLIDER.get(), getSilverGliderBiomes(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);

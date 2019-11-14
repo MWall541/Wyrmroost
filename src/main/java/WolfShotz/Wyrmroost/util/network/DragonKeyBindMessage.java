@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.util.network;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -19,7 +18,7 @@ import java.util.function.Supplier;
  *      2: Special Attack end
  *      3: Call Dragon
  */
-public class DragonKeyBindMessage
+public class DragonKeyBindMessage implements IMessage
 {
     public static final int PERFORM_GENERIC_ATTACK = 0;
     public static final int START_SPECIAL_ATTACK = 1;

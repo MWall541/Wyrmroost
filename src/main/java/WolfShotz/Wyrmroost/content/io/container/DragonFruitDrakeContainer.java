@@ -12,6 +12,6 @@ public class DragonFruitDrakeContainer extends ContainerBase<DragonFruitDrakeEnt
         
         buildPlayerSlots(inv, 7, 83);
         
-        dragon.getInvCap().ifPresent(i -> addSlot(buildSaddleSlot(i, 85, 65)));
+        dragon.getInvCap().ifPresent(i -> addSlot(buildSaddleSlot(i, 71, 56)));
     }
 }

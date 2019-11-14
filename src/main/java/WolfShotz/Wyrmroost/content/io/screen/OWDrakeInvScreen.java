@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -20,6 +20,12 @@ public class OWDrakeInvScreen extends AbstractContainerScreen<OWDrakeInvContaine
         ySize = 163;
         textureWidth = 174;
         textureHeight = 236;
+    }
+    
+    @Override
+    protected void init() {
+        nameField = new TextFieldWidget(font, guiLeft + 6, guiTop, 80, 12, prevName);
+        super.init();
     }
     
     @Override

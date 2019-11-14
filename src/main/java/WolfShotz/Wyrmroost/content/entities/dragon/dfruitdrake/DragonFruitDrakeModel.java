@@ -391,29 +391,29 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
         globalSpeed = 0.5f;
         resetToDefaultPose();
     
-        if (!entity.isSleeping() && entity.isMoving())
-        globalDegree = 0.515f;
-        globalSpeed = 0.7f;
-        
-        bob(Body1, 0.6f, 0.2f, false, frame, 0.5f);
-        
-        // Front
-        walk(LegfrontR1, 0.3f, 0.6f, false, 0, 0, frame, 0.5f);
-        walk(LegfrontR2, 0.3f, 0.2f, false, 2.5f, 0, frame, 0.5f);
-        walk(frontfootR, 0.3f, 0.3f, false, 2.5f, -0.35f, frame, 0.5f);
-
-        walk(LegfrontL1, 0.3f, 0.6f, true, 0, 0, frame, 0.5f);
-        walk(LegfrontL2, 0.3f, 0.2f, true, 2.5f, 0, frame, 0.5f);
-        walk(frontfootL, 0.3f, 0.3f, true, 2.5f, 0.35f, frame, 0.5f);
-
-        // Back
-        walk(LegThighR, 0.3f, 0.6f, true, 0, 0, frame, 0.5f);
-        walk(backfootR, 0.3f, 0.6f, true, 2.5f, 0.35f, frame, 0.5f);
-
-        walk(LegThighR_1, 0.3f, 0.6f, false, 0, 0, frame, 0.5f);
-        walk(backfootR_1, 0.3f, 0.6f, false, 2.5f, -0.35f, frame, 0.5f);
-
+        if (!entity.isSleeping() && entity.isMoving()) {
+            globalDegree = 0.515f;
+            globalSpeed = 0.7f;
     
+            bob(Body1, 0.6f, 0.2f, false, limbSwing, limbSwingAmount);
+    
+            // Front
+            walk(LegfrontR1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
+            walk(LegfrontR2, 0.3f, 0.2f, false, 2.5f, 0, limbSwing, limbSwingAmount);
+            walk(frontfootR, 0.3f, 0.3f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
+    
+            walk(LegfrontL1, 0.3f, 0.6f, true, 0, 0, limbSwing, limbSwingAmount);
+            walk(LegfrontL2, 0.3f, 0.2f, true, 2.5f, 0, limbSwing, limbSwingAmount);
+            walk(frontfootL, 0.3f, 0.3f, true, 2.5f, 0.35f, limbSwing, limbSwingAmount);
+    
+            // Back
+            walk(LegThighR, 0.3f, 0.6f, true, 0, 0, limbSwing, limbSwingAmount);
+            walk(backfootR, 0.3f, 0.6f, true, 2.5f, 0.35f, limbSwing, limbSwingAmount);
+    
+            walk(LegThighR_1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
+            walk(backfootR_1, 0.3f, 0.6f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
+        }
+        
         idleAnim(frame, !entity.isMoving());
     }
     

@@ -10,7 +10,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class EggHatchMessage
+public class EggHatchMessage implements IMessage
 {
     private int entityID;
     

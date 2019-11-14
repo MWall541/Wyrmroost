@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -19,6 +20,12 @@ public class ButterflyInvScreen extends AbstractContainerScreen<ButterflyInvCont
         ySize = 164;
         textureWidth = 174;
         textureHeight = 164;
+    }
+    
+    @Override
+    protected void init() {
+        nameField = new TextFieldWidget(font, guiLeft + 6, guiTop, 80, 12, prevName);
+        super.init();
     }
     
     @Override
