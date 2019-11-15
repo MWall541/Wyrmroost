@@ -27,6 +27,7 @@ public class SleepGoal extends Goal
      */
     @Override
     public boolean shouldExecute() {
+        if (dragon.isSleeping()) return true;
         if (--sleepTimeout > 0) return false;
         if (dragon.isInWaterOrBubbleColumn() || dragon.isFlying()) return false;
         return NOCTURNAL == WORLD.isDaytime() && (!dragon.isTamed() || dragon.isSitting()) && RANDOM.nextInt(300) == 0;

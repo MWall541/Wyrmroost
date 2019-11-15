@@ -115,9 +115,7 @@ public class DragonFollowOwnerGoal extends Goal {
         } else {
             if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
                 dragon.tryTeleportToOwner();
-            else {
-                navigator.tryMoveToEntityLiving(owner, followSpeed);
-            }
+            else navigator.tryMoveToEntityLiving(owner, followSpeed);
         }
     }
 }

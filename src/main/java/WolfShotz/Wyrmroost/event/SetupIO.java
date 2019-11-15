@@ -1,15 +1,14 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
-import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
-import WolfShotz.Wyrmroost.content.io.screen.ButterflyInvScreen;
-import WolfShotz.Wyrmroost.content.io.screen.OWDrakeInvScreen;
+import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.BasicDragonScreen;
+import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.ButterflyInvScreen;
+import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.OWDrakeInvScreen;
 import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import javafx.stage.Screen;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;

@@ -1,14 +1,11 @@
 package WolfShotz.Wyrmroost.util.utils;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.network.AnimationMessage;
 import WolfShotz.Wyrmroost.util.network.IMessage;
-import WolfShotz.Wyrmroost.util.network.SyncInventoryMessage;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -31,9 +28,5 @@ public class NetworkUtils
         
         entity.setAnimation(animation);
         Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
-    }
-    
-    public static void syncInventory(AbstractDragonEntity dragon, CompoundNBT tag) {
-        Wyrmroost.network.send(PacketDistributor.ALL.noArg(), new SyncInventoryMessage(dragon.getEntityId(), tag));
     }
 }
