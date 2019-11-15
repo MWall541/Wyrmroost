@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.io.screen;
+package WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens;
 
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;

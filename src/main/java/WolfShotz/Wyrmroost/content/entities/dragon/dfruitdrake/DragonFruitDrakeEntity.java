@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.event.SetupItems;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonGroundPathNavigator;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
@@ -51,8 +50,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     
     public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world) {
         super(dragon, world);
-        
-        navigator = new DragonGroundPathNavigator(this, world);
     }
     
     @Override
@@ -60,8 +57,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(3, sitGoal = new SitGoal(this));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
-        goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 11, 3));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
         goalSelector.addGoal(7, SharedEntityGoals.wanderAvoidWater(this, 1));
         goalSelector.addGoal(8, SharedEntityGoals.lookAtNoSleeping(this, 7f));
         goalSelector.addGoal(8, SharedEntityGoals.lookRandomlyNoSleeping(this));
@@ -88,7 +85,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 return !dragon.isInWaterOrBubbleColumn() && !dragon.isFlying();
             }
         });
-        
     }
     
     @Override

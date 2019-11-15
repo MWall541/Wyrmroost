@@ -385,15 +385,13 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         this.entity = (DragonFruitDrakeEntity) entityIn;
         float frame = partialTick + entityIn.ticksExisted;
-        boolean flag;
         
         globalDegree = 0.5f;
         globalSpeed = 0.5f;
         resetToDefaultPose();
-    
-        if (!entity.isSleeping() && entity.isMoving()) {
+        
+        if (!entity.isSleeping()) {
             globalDegree = 0.515f;
-            globalSpeed = 0.7f;
     
             bob(Body1, 0.6f, 0.2f, false, limbSwing, limbSwingAmount);
     
@@ -413,12 +411,15 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
             walk(LegThighR_1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
             walk(backfootR_1, 0.3f, 0.6f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
         }
+        if (entity.isSleeping()) {
+//            globalSpeed = 0.15f;
+        }
         
-        idleAnim(frame, !entity.isMoving());
+        idleAnim(frame, limbSwingAmount > 0);
     }
     
     public void idleAnim(float frame, boolean mouth) {
-        walk(mouthbottom, globalSpeed - 0.425f, 0.1f, false, 0.5f, 0.1f, frame, 0.5f);
+        if (mouth) walk(mouthbottom, globalSpeed - 0.425f, 0.1f, false, 0.5f, 0.1f, frame, 0.5f);
         chainWave(headArray, globalSpeed - 0.425f, globalDegree - 0.47f, 2, frame, 0.5f);
         chainWave(tailArray, globalSpeed - 0.45f, globalDegree - 0.45f, 2, frame, 0.5f);
         chainSwing(tailArray, globalSpeed - 0.465f, globalDegree - 0.45f, 3d, frame, 0.5f);

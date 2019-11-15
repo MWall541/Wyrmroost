@@ -2,25 +2,15 @@ package WolfShotz.Wyrmroost.content.io.container;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
-import WolfShotz.Wyrmroost.content.io.screen.OWDrakeInvScreen;
-import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
-import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.event.SetupIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.*;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.function.Predicate;
 
 public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
 {

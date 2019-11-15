@@ -1,9 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
+import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.event.SetupIO;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.DragonLookController;
@@ -41,6 +40,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -591,6 +591,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public Vec3d getApproximateMouthPos() {
         return MathUtils.rotateYaw(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
+    }
+    
+    @Override
+    public ItemStack getPickedResult(RayTraceResult target) {
+        Optional<CustomSpawnEggItem> eggItem = CustomSpawnEggItem.EGG_TYPES.stream().filter(e -> e.type.get().equals(getType())).findFirst();
+        return eggItem.map(ItemStack::new).orElse(null);
+    
     }
     
     /**

@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class CustomSpawnEggItem extends Item
 {
     public static List<CustomSpawnEggItem> EGG_TYPES = Lists.newArrayList();
-    private final Supplier<EntityType> type;
+    public final Supplier<EntityType> type;
     private final int PRIMARY_COLOR, SECONDARY_COLOR;
     
     public CustomSpawnEggItem(Supplier<EntityType> type, int primaryColor, int secondaryColor) {
