@@ -6,7 +6,6 @@ import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import com.github.alexthe666.citadel.client.model.ModelAnimator;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.inventory.EquipmentSlotType;
 
 /**
  * Roost stalker - nova
@@ -224,7 +223,7 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, f);
         chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, f);
         
-        if (stalker.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty() || stalker.isSleeping()) {
+        if (stalker.getStackInSlot(0).isEmpty() || stalker.isSleeping()) {
             walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, f);
             chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
         }

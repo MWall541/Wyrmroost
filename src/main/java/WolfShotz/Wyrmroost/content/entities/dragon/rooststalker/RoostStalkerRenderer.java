@@ -1,12 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,7 +45,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
         
         @Override
         public void render(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-            ItemStack stack = stalker.getStackInSlot(1);
+            ItemStack stack = stalker.getStackInSlot(0);
     
             if (!stack.isEmpty()) {
                 float i = stalker.isChild()? 1f : 0;

@@ -29,6 +29,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -79,6 +80,18 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, AnimalEntity.class, false, TARGETS));
     }
     
+    @Deprecated // Data Fix
+    @Override
+    public void readAdditional(CompoundNBT nbt) {
+        super.readAdditional(nbt);
+        
+        ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        if (!stack.isEmpty()) getInvCap().ifPresent(i -> {
+            i.insertItem(0, stack, false);
+            setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
+        });
+    }
+    
     @Override
     protected void registerAttributes() {
         super.registerAttributes();
@@ -93,7 +106,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         if (getHealth() < getMaxHealth() && getRNG().nextInt(400) != 0) return;
         
-        ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+        ItemStack stack = getStackInSlot(0);
         
         if (stack.isEmpty()) return;
         if (isBreedingItem(stack)) {
@@ -106,7 +119,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
         if (super.processInteract(player, hand, stack)) return true;
         
-        ItemStack heldItem = getStackInSlot(1);
+        ItemStack heldItem = getStackInSlot(0);
         Item item = stack.getItem();
         
         if (!isTamed() && Tags.Items.EGGS.contains(item) || item == SetupItems.DRAGON_EGG.get()) { //TODO add dragon egg under EGGS tag
@@ -124,18 +137,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 return true;
             }
     
-            if (!stack.isEmpty() && canPickUpStack(stack)) {
-                if (!heldItem.isEmpty()) player.setHeldItem(hand, heldItem);
-                else player.setHeldItem(hand, ItemStack.EMPTY);
-                setStackInSlot(1, stack);
-                
-                return true;
-            }
-            
-            if (!heldItem.isEmpty()) {
-                setStackInSlot(1, ItemStack.EMPTY);
+            if (stack.isEmpty() || canPickUpStack(stack)) {
+                setStackInSlot(0, stack);
                 player.setHeldItem(hand, heldItem);
-
+                
                 return true;
             }
             
@@ -146,8 +151,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 return true;
             }
         }
-        
-        
         return false;
     }
     
