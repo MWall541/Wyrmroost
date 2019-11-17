@@ -1,8 +1,10 @@
-package WolfShotz.Wyrmroost.util.utils;
+package WolfShotz.Wyrmroost.util.network;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.network.AnimationMessage;
-import WolfShotz.Wyrmroost.util.network.IMessage;
+import WolfShotz.Wyrmroost.util.network.messages.AnimationMessage;
+import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
+import WolfShotz.Wyrmroost.util.network.messages.EggHatchMessage;
+import WolfShotz.Wyrmroost.util.network.messages.EntityRenameMessage;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.Entity;
@@ -15,6 +17,13 @@ import java.util.function.Function;
 public class NetworkUtils
 {
     private static int messageIndex;
+    
+    public static void registerMessages() {
+        registerMSG(AnimationMessage.class, AnimationMessage::new);
+        registerMSG(DragonKeyBindMessage.class, DragonKeyBindMessage::new);
+        registerMSG(EggHatchMessage.class, EggHatchMessage::new);
+        registerMSG(EntityRenameMessage.class, EntityRenameMessage::new);
+    }
     
     public static <T extends IMessage> void registerMSG(Class<T> clazz, Function<PacketBuffer, T> decoder) {
         ++messageIndex;

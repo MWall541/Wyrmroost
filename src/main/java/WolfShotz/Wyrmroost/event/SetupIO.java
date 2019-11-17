@@ -5,10 +5,10 @@ import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
-import WolfShotz.Wyrmroost.content.io.screen.base.BasicDragonScreen;
+import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
 import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.ButterflyInvScreen;
 import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.OWDrakeInvScreen;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,14 +30,16 @@ public class SetupIO
     public static final RegistryObject<ContainerType<ButterflyInvContainer>> BUTTERFLY_CONTAINER = register("butterfly_inv", createEntityContainer(ButterflyInvContainer::new));
     public static final RegistryObject<ContainerType<DragonFruitDrakeContainer>> FRUIT_DRAKE_CONTAINER = register("fruit_drake_inv", createEntityContainer(DragonFruitDrakeContainer::new));
     
+    // IScreenFactory is setup wrongly, therefor we need these DESGAUSTENG type defining. (IDEA is failing to interpret run-time inferring smh)
     @OnlyIn(Dist.CLIENT)
     public static void screenSetup() {
         ScreenManager.registerFactory(OWDRAKE_CONTAINER.get(), OWDrakeInvScreen::new);
         ScreenManager.registerFactory(BUTTERFLY_CONTAINER.get(), ButterflyInvScreen::new);
-        ScreenManager.registerFactory(FRUIT_DRAKE_CONTAINER.get(), BasicDragonScreen::singleSlotScreen);
-        ScreenManager.registerFactory(STALKER_CONTAINER.get(), BasicDragonScreen::singleSlotScreen);
+        ScreenManager.<DragonFruitDrakeContainer, ContainerScreenBase.SingleSlotScreen<DragonFruitDrakeContainer>>registerFactory(FRUIT_DRAKE_CONTAINER.get(), ContainerScreenBase.SingleSlotScreen::new);
+        ScreenManager.<StalkerInvContainer, ContainerScreenBase.SingleSlotScreen<StalkerInvContainer>>registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase.SingleSlotScreen::new);
     }
     
+    @SuppressWarnings("unchecked")
     private static <T extends Container, E extends Entity> ContainerType<T> createEntityContainer(IEntityContainerFactory<T, E> creation) {
         return IForgeContainerType.create((windowId, inv, buf) -> {
             E entity = (E) ModUtils.getClientWorld().getEntityByID(buf.readInt());
