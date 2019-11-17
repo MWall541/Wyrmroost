@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -12,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -20,7 +19,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;

@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
-import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
-import WolfShotz.Wyrmroost.util.utils.ReflectionUtils;
+import WolfShotz.Wyrmroost.util.ReflectionUtils;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

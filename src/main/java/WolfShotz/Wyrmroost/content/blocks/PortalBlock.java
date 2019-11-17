@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.blocks;
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.event.SetupWorld;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;

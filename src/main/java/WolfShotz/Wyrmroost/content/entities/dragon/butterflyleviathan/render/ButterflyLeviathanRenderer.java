@@ -2,8 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanModel;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

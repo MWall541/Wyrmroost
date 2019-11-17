@@ -1,16 +1,11 @@
 package WolfShotz.Wyrmroost.event;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import net.minecraft.client.audio.Sound;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
 
 public class SetupSounds
 {

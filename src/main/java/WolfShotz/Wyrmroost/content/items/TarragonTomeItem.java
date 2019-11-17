@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.io.screen.ScreenModBook;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;

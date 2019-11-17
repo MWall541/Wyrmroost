@@ -1,12 +1,10 @@
 package WolfShotz.Wyrmroost.content.io.container.base;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.io.screen.base.AbstractContainerScreen;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -18,9 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 

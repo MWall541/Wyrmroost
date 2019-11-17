@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
-import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 

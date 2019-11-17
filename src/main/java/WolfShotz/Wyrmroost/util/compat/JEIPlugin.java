@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.util.compat;
 
 import WolfShotz.Wyrmroost.event.SetupItems;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.TranslationUtils;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;

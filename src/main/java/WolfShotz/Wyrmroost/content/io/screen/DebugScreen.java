@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.io.screen;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
+import WolfShotz.Wyrmroost.util.TranslationUtils;
 import net.minecraft.client.gui.screen.Screen;
 
 public class DebugScreen extends Screen

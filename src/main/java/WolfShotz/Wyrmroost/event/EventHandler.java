@@ -6,9 +6,9 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEnti
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
-import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.TranslationUtils;
+import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.entity.Entity;
@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.DimensionManager;
@@ -26,7 +25,6 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -71,8 +69,6 @@ public class EventHandler
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
-            
-            System.out.println(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getCapability(CapabilityOverworld.OW_CAP).map(CapabilityOverworld::isSpawnsTriggered).orElse(false));
             
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
                 evt.setCanceled(true);
@@ -129,7 +125,7 @@ public class EventHandler
          */
         public static void registerItemColors() {
             ItemColors event = Minecraft.getInstance().getItemColors();
-            CustomSpawnEggItem.EGG_TYPES.forEach(e -> event.register((stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex), e));
+            CustomSpawnEggItem.EGG_TYPES.forEach((t, e) -> event.register((stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex), e));
         }
         
         /**

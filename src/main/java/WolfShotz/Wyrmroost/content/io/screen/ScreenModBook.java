@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.content.io.screen;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeModel;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeRenderer;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import WolfShotz.Wyrmroost.util.utils.TranslationUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.TranslationUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -45,6 +45,9 @@ public class ScreenModBook extends Screen
 
     @Override
     public void render(int param1, int param2, float param3) {
+        super.render(param1, param2, param3);
+        ModUtils.L.info(param3);
+        
         ++ticker;
         renderBackground();
         GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -60,7 +63,6 @@ public class ScreenModBook extends Screen
             default:
         }
         GL11.glPopMatrix();
-        super.render(param1, param2, param3);
     }
 
     private void renderPage1() {

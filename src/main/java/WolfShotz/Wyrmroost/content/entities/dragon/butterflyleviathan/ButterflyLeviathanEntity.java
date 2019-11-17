@@ -5,12 +5,12 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterF
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.*;

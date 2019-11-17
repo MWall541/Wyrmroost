@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.utils;
+package WolfShotz.Wyrmroost.util;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TameableEntity;

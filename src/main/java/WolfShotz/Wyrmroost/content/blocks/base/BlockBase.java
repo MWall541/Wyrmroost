@@ -16,7 +16,6 @@ public class BlockBase extends Block
     private boolean isBeaconBase;
     private Function<Random, Integer> xpAmount;
     
-    
     public BlockBase(Block.Properties properties) {
         super(properties);
     }

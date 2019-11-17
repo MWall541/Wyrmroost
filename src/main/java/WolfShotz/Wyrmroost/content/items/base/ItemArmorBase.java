@@ -1,10 +1,12 @@
 package WolfShotz.Wyrmroost.content.items.base;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.IArmorMaterial;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 

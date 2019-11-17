@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.items;
 
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import com.google.common.collect.Lists;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import com.google.common.collect.Maps;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
@@ -27,13 +27,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.spawner.AbstractSpawner;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class CustomSpawnEggItem extends Item
 {
-    public static List<CustomSpawnEggItem> EGG_TYPES = Lists.newArrayList();
+    public static Map<Supplier<EntityType>, CustomSpawnEggItem> EGG_TYPES = Maps.newHashMap();
     public final Supplier<EntityType> type;
     private final int PRIMARY_COLOR, SECONDARY_COLOR;
     
@@ -43,8 +43,7 @@ public class CustomSpawnEggItem extends Item
         this.type = type;
         this.PRIMARY_COLOR = primaryColor;
         this.SECONDARY_COLOR = secondaryColor;
-        EGG_TYPES.add(this);
-        
+        EGG_TYPES.put(type, this);
     }
     
     public ActionResultType onItemUse(ItemUseContext context) {

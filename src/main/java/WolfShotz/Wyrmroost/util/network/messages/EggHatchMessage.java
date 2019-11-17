@@ -1,7 +1,8 @@
-package WolfShotz.Wyrmroost.util.network;
+package WolfShotz.Wyrmroost.util.network.messages;
 
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.network.IMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,18 +19,15 @@ public class EggHatchMessage implements IMessage
         this.entityID = entity.getEntityId();
     }
     
-    public EggHatchMessage(PacketBuffer buf) {
-        entityID = buf.readInt();
-    }
+    public EggHatchMessage(PacketBuffer buf) { this.entityID = buf.readInt(); }
     
     public void encode(PacketBuffer buf) {
         buf.writeInt(entityID);
     }
     
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void run(Supplier<NetworkEvent.Context> context) {
         World world = DistExecutor.callWhenOn(Dist.CLIENT, () -> ModUtils::getClientWorld);
         
         ((DragonEggEntity) world.getEntityByID(entityID)).hatch();
-        context.get().setPacketHandled(true);
     }
 }

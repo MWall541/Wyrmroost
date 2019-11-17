@@ -1,11 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
-import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.entity.ai.goal.NonTamedTargetGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.math.MathHelper;
 
 public class DrakeTargetGoal extends NonTamedTargetGoal
 {

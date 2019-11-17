@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.utils;
+package WolfShotz.Wyrmroost.util;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.GoalSelector;

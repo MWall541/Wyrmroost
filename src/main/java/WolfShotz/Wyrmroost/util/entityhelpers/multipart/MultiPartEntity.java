@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.multipart;
 
 import WolfShotz.Wyrmroost.event.SetupEntities;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

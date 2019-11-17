@@ -3,23 +3,16 @@ package WolfShotz.Wyrmroost.event;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.PortalBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SetupBlocks
 {

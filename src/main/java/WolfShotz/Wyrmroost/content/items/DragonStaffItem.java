@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;

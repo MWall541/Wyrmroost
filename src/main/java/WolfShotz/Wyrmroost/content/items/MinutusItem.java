@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
 import WolfShotz.Wyrmroost.event.SetupSounds;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;

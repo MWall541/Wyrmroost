@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.minutus;
 
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;

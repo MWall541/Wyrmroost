@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.utils;
+package WolfShotz.Wyrmroost.util;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;

@@ -6,11 +6,11 @@ import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.event.SetupSounds;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;

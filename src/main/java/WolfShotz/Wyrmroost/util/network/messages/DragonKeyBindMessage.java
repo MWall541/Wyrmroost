@@ -1,7 +1,8 @@
-package WolfShotz.Wyrmroost.util.network;
+package WolfShotz.Wyrmroost.util.network.messages;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.network.IMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -42,7 +43,7 @@ public class DragonKeyBindMessage implements IMessage
         buf.writeInt(key);
     }
     
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void run(Supplier<NetworkEvent.Context> context) {
         World world = context.get().getSender().world;
         AbstractDragonEntity dragon = (AbstractDragonEntity) world.getEntityByID(dragonID);
         
@@ -52,6 +53,5 @@ public class DragonKeyBindMessage implements IMessage
             case 2: dragon.performSpecialAttack(false); break;
             default: ModUtils.L.error("Unknown KeyPress packet key... wat?");
         }
-        context.get().setPacketHandled(true);
     }
 }

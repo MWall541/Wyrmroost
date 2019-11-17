@@ -1,10 +1,8 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.items.base.ArmorMaterialList;
-import WolfShotz.Wyrmroost.event.SetupItems;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;

@@ -1,19 +1,17 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.Random;
 import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)

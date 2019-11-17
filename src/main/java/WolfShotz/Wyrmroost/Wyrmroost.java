@@ -1,12 +1,10 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.content.world.EndOrePlacement;
 import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.event.*;
-import WolfShotz.Wyrmroost.util.network.AnimationMessage;
-import WolfShotz.Wyrmroost.util.network.DragonKeyBindMessage;
-import WolfShotz.Wyrmroost.util.network.EggHatchMessage;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
-import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,6 +40,7 @@ public class Wyrmroost
         SetupIO.CONTAINERS    .register(FMLJavaModLoadingContext.get().getModEventBus());
         SetupSounds.SOUNDS    .register(FMLJavaModLoadingContext.get().getModEventBus());
         ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("dim_wyrmroost"));
+        ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
     
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
@@ -55,10 +54,7 @@ public class Wyrmroost
         
         SetupWorld.setupOreGen();
         SetupEntities.registerEntityWorldSpawns();
-        
-        NetworkUtils.registerMSG(AnimationMessage.class, AnimationMessage::new);
-        NetworkUtils.registerMSG(DragonKeyBindMessage.class, DragonKeyBindMessage::new);
-        NetworkUtils.registerMSG(EggHatchMessage.class, EggHatchMessage::new);
+        NetworkUtils.registerMessages();
     }
 
     /**

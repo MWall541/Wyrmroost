@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.render.layer;
 
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

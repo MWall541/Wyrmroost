@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

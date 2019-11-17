@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

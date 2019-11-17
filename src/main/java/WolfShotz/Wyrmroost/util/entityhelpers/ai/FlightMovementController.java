@@ -1,10 +1,7 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
-import WolfShotz.Wyrmroost.util.utils.NetworkUtils;
-import net.minecraft.entity.SharedMonsterAttributes;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;

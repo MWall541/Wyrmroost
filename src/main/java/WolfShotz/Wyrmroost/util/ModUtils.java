@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.utils;
+package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.block.Block;
@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,7 +57,7 @@ public class ModUtils
      * Block Properties builder
      */
     public static Block.Properties blockBuilder(Material material) { return Block.Properties.create(material); }
-
+    
     /**
      * Get the Client World
      */
@@ -75,10 +76,17 @@ public class ModUtils
         return set;
     }
     
+    /**
+     * Cleander way of making array's from collections
+     */
+    @SuppressWarnings("unchecked")
     public static <T> T[] toArray(Collection<T> collection) {
         return (T[]) collection.toArray();
     }
     
+    /**
+     * Get entities nearby this one (exclusing itself)
+     */
     public static List<LivingEntity> getEntitiesNearby(LivingEntity entity, double radius) {
         return entity.world.getEntitiesWithinAABB(LivingEntity.class, entity.getBoundingBox().grow(radius), found -> found != entity && entity.getPassengers().stream().noneMatch(found::equals));
     }
@@ -103,9 +111,21 @@ public class ModUtils
         return true;
     }
     
+    /**
+     * Return a "PASS" action result
+     */
     public static <T> ActionResult<T> passAction(T result) { return new ActionResult<>(ActionResultType.PASS, result); }
     
-    public static DimensionType getDimensionInstance() {
-        return DimensionType.byName(ModUtils.location("dim_wyrmroost"));
+    /**
+     * Get the instance of the wyrmroost dimension
+     */
+    public static DimensionType getDimensionInstance() { return DimensionType.byName(ModUtils.location("dim_wyrmroost")); }
+    
+    /**
+     * Iterate through all slots in this handler and check if they are all empty. if not, return false;
+     */
+    public static boolean isItemHandlerEmpty(IItemHandler handler) {
+        for (int i=0; i < handler.getSlots(); ++i) if (!handler.getStackInSlot(i).isEmpty()) return false;
+        return true;
     }
 }

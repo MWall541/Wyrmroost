@@ -5,22 +5,14 @@ import WolfShotz.Wyrmroost.content.items.*;
 import WolfShotz.Wyrmroost.content.items.base.ArmorMaterialList;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.content.items.base.ToolMaterialList;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.function.Supplier;
 
 public class SetupItems
 {

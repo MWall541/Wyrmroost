@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.util.utils.MathUtils;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.MathHelper;
