@@ -15,8 +15,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEnti
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.util.utils.ModUtils;
 import com.google.common.collect.Sets;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.*;
@@ -45,12 +45,12 @@ public class SetupEntities
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
     
-    public static final RegistryObject<EntityType<MinutusEntity>> MINUTUS                           = register("minutus", buildEntity(MinutusEntity::new, 0.6f, 0.2f));
-    public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE                   = register("overworld_drake", buildEntity(OWDrakeEntity::new, 2.376f, 2.45f));
-    public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER                = register("silver_glider", buildEntity(SilverGliderEntity::new, 1.5f, 0.75f));
-    public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER                 = register("roost_stalker", buildEntity(RoostStalkerEntity::new, 0.65f, 0.5f));
-    public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN    = register("butterfly_leviathan", buildEntity(ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE, 4f, 3f));
-    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE       = register("dragon_fruit_drake", buildEntity(DragonFruitDrakeEntity::new, 1.5f, 2.5f));
+    public static final RegistryObject<EntityType<MinutusEntity>> MINUTUS                           = register("minutus", buildCreature(MinutusEntity::new, 0.6f, 0.2f));
+    public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE                   = register("overworld_drake", buildCreature(OWDrakeEntity::new, 2.376f, 2.45f));
+    public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER                = register("silver_glider", buildCreature(SilverGliderEntity::new, 1.5f, 0.75f));
+    public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER                 = register("roost_stalker", buildCreature(RoostStalkerEntity::new, 0.65f, 0.5f));
+    public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN    = register("butterfly_leviathan", EntityType.Builder.create(ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE).size(4f, 3f));
+    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE       = register("dragon_fruit_drake", buildCreature(DragonFruitDrakeEntity::new, 1.5f, 2.5f));
     
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG                      = register("dragon_egg", EntityType.Builder.<DragonEggEntity>create(DragonEggEntity::new, EntityClassification.MISC)
                                                                                                                                      .disableSummoning()
@@ -139,15 +139,8 @@ public class SetupEntities
     // ================================
     //   SetupEntity Helper Functions
     // ================================
-
-    /**
-     * Helper Function that turns this stupidly long line into something more nicer to look at
-     */
-    private static <T extends Entity> EntityType.Builder<T> buildEntity(EntityType.IFactory<T> entity, EntityClassification classify, float width, float height) {
-        return EntityType.Builder.create(entity, classify).size(width, height);
-    }
     
-    private static <T extends Entity> EntityType.Builder<T> buildEntity(EntityType.IFactory<T> entity, float width, float height) {
+    private static <T extends Entity> EntityType.Builder<T> buildCreature(EntityType.IFactory<T> entity, float width, float height) {
         return EntityType.Builder.create(entity, EntityClassification.CREATURE).size(width, height);
     }
     
