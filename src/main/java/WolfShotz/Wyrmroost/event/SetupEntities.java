@@ -45,23 +45,16 @@ public class SetupEntities
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
     
-    public static final RegistryObject<EntityType<MinutusEntity>> MINUTUS                           = register("minutus", buildCreature(MinutusEntity::new, 0.6f, 0.2f));
-    public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE                   = register("overworld_drake", buildCreature(OWDrakeEntity::new, 2.376f, 2.45f));
-    public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER                = register("silver_glider", buildCreature(SilverGliderEntity::new, 1.5f, 0.75f));
-    public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER                 = register("roost_stalker", buildCreature(RoostStalkerEntity::new, 0.65f, 0.5f));
+    public static final RegistryObject<EntityType<MinutusEntity>> MINUTUS                           = register("minutus", buildCreatureEntity(MinutusEntity::new).size(0.6f, 0.2f));
+    public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE                   = register("overworld_drake", buildCreatureEntity(OWDrakeEntity::new).size(2.376f, 2.45f));
+    public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER                = register("silver_glider", buildCreatureEntity(SilverGliderEntity::new).size(1.5f, 0.75f));
+    public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER                 = register("roost_stalker", buildCreatureEntity(RoostStalkerEntity::new).size(0.65f, 0.5f));
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN    = register("butterfly_leviathan", EntityType.Builder.create(ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE).size(4f, 3f));
-    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE       = register("dragon_fruit_drake", buildCreature(DragonFruitDrakeEntity::new, 1.5f, 2.5f));
+    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE       = register("dragon_fruit_drake", buildCreatureEntity(DragonFruitDrakeEntity::new).size(1.5f, 2.5f));
     
-    public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG                      = register("dragon_egg", EntityType.Builder.<DragonEggEntity>create(DragonEggEntity::new, EntityClassification.MISC)
-                                                                                                                                     .disableSummoning()
-                                                                                                                                     .setCustomClientFactory(DragonEggEntity::new));
+    public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG                      = register("dragon_egg", EntityType.Builder.create(DragonEggEntity::new, EntityClassification.MISC).disableSummoning());
     
-    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART                       = register("multipart_entity", EntityType.Builder.<MultiPartEntity>create(EntityClassification.MISC)
-                                                                                                                                           .immuneToFire()
-                                                                                                                                           .disableSummoning()
-                                                                                                                                           .disableSerialization()
-                                                                                                                                           .setShouldReceiveVelocityUpdates(false)
-                                                                                                                                           .setCustomClientFactory(MultiPartEntity::new));
+    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART                       = register("multipart_entity", EntityType.Builder.<MultiPartEntity>create(EntityClassification.MISC).disableSummoning().disableSerialization().setShouldReceiveVelocityUpdates(false));
     
     /**
      * Registers World Spawning for entities
@@ -140,17 +133,13 @@ public class SetupEntities
     //   SetupEntity Helper Functions
     // ================================
     
-    private static <T extends Entity> EntityType.Builder<T> buildCreature(EntityType.IFactory<T> entity, float width, float height) {
-        return EntityType.Builder.create(entity, EntityClassification.CREATURE).size(width, height);
+    private static <T extends Entity> EntityType.Builder<T> buildCreatureEntity(EntityType.IFactory<T> entity) {
+        return EntityType.Builder.create(entity, EntityClassification.CREATURE);
     }
     
     private static <T extends MobEntity> void registerSpawnEntry(EntityType<T> entity, Set<Biome> biomes, int frequency, int minAmount, int maxAmount) {
         registerBiomeSpawnEntry(entity, frequency, minAmount, maxAmount, biomes);
         registerGenericSpawnPlacement(entity);
-    }
-    
-    private static <T extends MobEntity> void registerSpawnEntry(EntityType<T> entity, int frequency, int min, int max) {
-        registerSpawnEntry(entity, Sets.newHashSet(), frequency, min, max);
     }
     
     /**

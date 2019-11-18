@@ -2,14 +2,12 @@ package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupEntities;
 import WolfShotz.Wyrmroost.event.SetupItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.network.messages.EggHatchMessage;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -22,14 +20,12 @@ import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -42,11 +38,6 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     @OnlyIn(Dist.CLIENT) public boolean wiggleInvert, wiggleInvert2;
     
     public static final Animation WIGGLE_ANIMATION = Animation.create(10);
-    
-    public DragonEggEntity(FMLPlayMessages.SpawnEntity packet, World world) {
-        super(SetupEntities.DRAGON_EGG.get(), world);
-        containedDragon = ModUtils.<AbstractDragonEntity>getTypeByString(packet.getAdditionalData().readString()).create(world);
-    }
     
     public DragonEggEntity(EntityType<? extends DragonEggEntity> dragonEgg, World world) {
         super(dragonEgg, world);
@@ -69,6 +60,20 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         compound.putString("dragonType", getDragonKey());
         compound.putInt("hatchTime", hatchTime);
     }
+    
+    /**
+     * Called by the server when constructing the spawn packet.
+     * Data should be added to the provided stream.
+     */
+    @Override
+    public void writeSpawnData(PacketBuffer buf) { buf.writeString(getDragonKey()); }
+    
+    /**
+     * Called by the client when it receives a Entity spawn packet.
+     * Data should be read out of the stream in the same way as it was written.
+     */
+    @Override
+    public void readSpawnData(PacketBuffer buf) { containedDragon = ModUtils.<AbstractDragonEntity>getTypeByString(buf.readString()).create(world); }
     
     public String getDragonKey() { return EntityType.getKey(containedDragon.getType()).toString(); }
     
@@ -118,14 +123,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     }
     
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
-        super.updateFallState(y, onGroundIn, state, pos);
-        
-        if (onGroundIn) {
-            setAnimation(WIGGLE_ANIMATION);
-            crack(false);
-        }
-    }
+    public void fall(float distance, float damageMultiplier) { if (distance > 3) crack(false); }
     
     private void updateMotion() {
         boolean flag = getMotion().y <= 0.0D;
@@ -227,35 +225,12 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     @Override
     public boolean canBeCollidedWith() { return true; }
     
-    @Override
-    public void fall(float distance, float damageMultiplier) {
-        super.fall(distance, damageMultiplier);
-    }
-    
     // This is needed because it seems to be ignored on server world...
     @Override
     public void onKillCommand() { remove(); }
     
     @Override
     public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
-    
-    /**
-     * Called by the server when constructing the spawn packet.
-     * Data should be added to the provided stream.
-     *
-     * @param buffer The packet data stream
-     */
-    @Override
-    public void writeSpawnData(PacketBuffer buf) { buf.writeString(getDragonKey()); }
-    
-    /**
-     * Called by the client when it receives a Entity spawn packet.
-     * Data should be read out of the stream in the same way as it was written.
-     *
-     * @param additionalData The packet data stream
-     */
-    @Override
-    public void readSpawnData(PacketBuffer additionalData) { }
     
     // === Animation ===
     @Override

@@ -48,34 +48,32 @@ public class CustomSpawnEggItem extends Item
     
     public ActionResultType onItemUse(ItemUseContext context) {
         World world = context.getWorld();
-        if (world.isRemote) {
-            return ActionResultType.SUCCESS;
-        } else {
-            ItemStack itemstack = context.getItem();
-            BlockPos blockpos = context.getPos();
-            Direction direction = context.getFace();
-            BlockState blockstate = world.getBlockState(blockpos);
-            if (blockstate.getBlock() == Blocks.SPAWNER) {
-                TileEntity tileentity = world.getTileEntity(blockpos);
-                if (tileentity instanceof MobSpawnerTileEntity) {
-                    AbstractSpawner abstractspawner = ((MobSpawnerTileEntity)tileentity).getSpawnerBaseLogic();
-                    abstractspawner.setEntityType(type.get());
-                    tileentity.markDirty();
-                    world.notifyBlockUpdate(blockpos, blockstate, blockstate, 3);
-                    itemstack.shrink(1);
-                    return ActionResultType.SUCCESS;
-                }
-            }
-            
-            BlockPos blockpos1;
-            if (blockstate.getCollisionShape(world, blockpos).isEmpty()) blockpos1 = blockpos;
-            else blockpos1 = blockpos.offset(direction);
-            
-            if (type.get().spawn(world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null)
+        if (world.isRemote) return ActionResultType.SUCCESS;
+        
+        ItemStack itemstack = context.getItem();
+        BlockPos blockpos = context.getPos();
+        Direction direction = context.getFace();
+        BlockState blockstate = world.getBlockState(blockpos);
+        if (blockstate.getBlock() == Blocks.SPAWNER) {
+            TileEntity tileentity = world.getTileEntity(blockpos);
+            if (tileentity instanceof MobSpawnerTileEntity) {
+                AbstractSpawner abstractspawner = ((MobSpawnerTileEntity)tileentity).getSpawnerBaseLogic();
+                abstractspawner.setEntityType(type.get());
+                tileentity.markDirty();
+                world.notifyBlockUpdate(blockpos, blockstate, blockstate, 3);
                 itemstack.shrink(1);
-            
-            return ActionResultType.SUCCESS;
+                return ActionResultType.SUCCESS;
+            }
         }
+        
+        BlockPos blockpos1;
+        if (blockstate.getCollisionShape(world, blockpos).isEmpty()) blockpos1 = blockpos;
+        else blockpos1 = blockpos.offset(direction);
+        
+        if (type.get().spawn(world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null)
+            itemstack.shrink(1);
+        
+        return ActionResultType.SUCCESS;
     }
     
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {

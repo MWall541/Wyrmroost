@@ -94,7 +94,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         targetSelector.addGoal(3, new HurtByTargetGoal(this) {@Override public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }});
         targetSelector.addGoal(4, new DrakeTargetGoal(this));
     }
-
+    
     @Override
     protected void registerAttributes() {
         super.registerAttributes();
