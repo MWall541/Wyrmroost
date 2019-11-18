@@ -60,7 +60,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world) {
         super(blevi, world);
-        
+    
         headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
         wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
         wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
@@ -127,6 +127,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public void tick() {
         super.tick();
     
+        tickParts();
         recalculateSize();
         
         if (hasConduit()) {

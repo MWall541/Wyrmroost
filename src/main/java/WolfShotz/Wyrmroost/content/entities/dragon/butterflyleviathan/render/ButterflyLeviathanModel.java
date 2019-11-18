@@ -324,6 +324,7 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
         GlStateManager.translated(-body1.rotationPointX * f5, -body1.rotationPointY * f5, -body1.rotationPointZ * f5);
         body1.render(f5);
+        ((ButterflyLeviathanEntity) entity).dc.render(f5, dynamicTailArray);
         GlStateManager.popMatrix();
     }
     

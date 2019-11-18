@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.util.entityhelpers.multipart;
 
 import WolfShotz.Wyrmroost.event.SetupEntities;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -12,11 +11,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.List;
@@ -24,22 +21,7 @@ import java.util.List;
 public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnData
 {
     public LivingEntity host;
-    @OnlyIn(Dist.CLIENT) public int hostID;
     public float radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier;
-    
-    public MultiPartEntity(FMLPlayMessages.SpawnEntity packet, World worldIn) {
-        super(SetupEntities.MULTIPART.get(), worldIn);
-        PacketBuffer buf = packet.getAdditionalData();
-        
-        this.hostID = buf.readInt();
-        this.radius = buf.readFloat();
-        this.angleYaw = buf.readFloat();
-        this.offsetY = buf.readFloat();
-        this.damageMultiplier = buf.readFloat();
-        
-        //     sizeX,           sizeY
-        resize(buf.readFloat(), buf.readFloat());
-    }
     
     public MultiPartEntity(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier) {
         super(SetupEntities.MULTIPART.get(), host.world);
@@ -54,37 +36,21 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     
     @Override
     public void tick() {
-        if (!world.isRemote && world.getEntityByID(getEntityId()) == null && isAlive()) {
-            world.addEntity(this);
-        }
-        if (host == null) {
-            tryHostRetrieve();
-            return;
-        }
         if (!host.isAlive()) { // Our host is dead, so we shouldnt exist!
             remove();
             return;
         }
         
+        setPositionAndUpdate(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
+        if (!world.isRemote) collideWithNearbyEntities();
+    
         super.baseTick();
-        
-        collideWithNearbyEntities();
-        setPosition(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
     }
     
     @Override
     public boolean processInitialInteract(PlayerEntity player, Hand hand) {
         if (!(host instanceof AgeableEntity)) return host.processInitialInteract(player, hand);
         return ((AgeableEntity) host).processInteract(player, hand);
-    }
-    
-    public void tryHostRetrieve() {
-        if (host != null) return;
-        host = (LivingEntity) world.getEntityByID(hostID);
-        if (host == null) {
-            ModUtils.L.error("removing");
-            remove();
-        }
     }
     
     public void resizeAndPosition(float radius, float angleYaw, float offsetY, float sizeX, float sizeY) {
@@ -139,8 +105,6 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     /**
      * Called by the server when constructing the spawn packet.
      * Data should be added to the provided stream.
-     *
-     * @param buffer The packet data stream
      */
     @Override
     public void writeSpawnData(PacketBuffer buf) {
@@ -153,9 +117,15 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         buf.writeFloat(sizeY);
     }
     
-    /**
-     * Handled by the client factory constructor
-     */
     @Override
-    public void readSpawnData(PacketBuffer additionalData) {}
+    public void readSpawnData(PacketBuffer buf) {
+        this.host = (LivingEntity) world.getEntityByID(buf.readInt());
+        this.radius = buf.readFloat();
+        this.angleYaw = buf.readFloat();
+        this.offsetY = buf.readFloat();
+        this.damageMultiplier = buf.readFloat();
+        
+        //     sizeX,           sizeY
+        resize(buf.readFloat(), buf.readFloat());
+    }
 }

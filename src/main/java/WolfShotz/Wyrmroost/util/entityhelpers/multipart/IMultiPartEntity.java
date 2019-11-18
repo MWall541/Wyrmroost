@@ -1,11 +1,9 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.multipart;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.world.World;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface IMultiPartEntity
@@ -43,19 +41,10 @@ public interface IMultiPartEntity
      * @param offsetY how high the part is
      * @param sizeX the width of the part
      * @param sizeY the height of the part
-     * @param damageMultiplier the amount of damage multiplied applied to the target when this part is damaged
+     * @param damageMultiplier the amount  of damage multiplied applied to the target when this part is damaged
      */
     default MultiPartEntity createPart(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier) {
         return new MultiPartEntity(host, radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier);
-    }
-    
-    /**
-     * Method called on server to add all parts to this world.
-     * @param world the world were adding the parts in
-     */
-    default void addPartsToWorld(World world) {
-        if (world.isRemote) return;
-        iterateParts().forEach(world::addEntity);
     }
     
     default LivingEntity getHost() { return (LivingEntity) this; }
