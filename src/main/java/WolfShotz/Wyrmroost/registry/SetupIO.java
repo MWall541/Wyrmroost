@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;

@@ -1,14 +1,9 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupItems;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.BreedGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.GameRules;
 

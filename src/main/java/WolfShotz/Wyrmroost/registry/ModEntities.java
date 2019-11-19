@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
@@ -41,7 +41,7 @@ import static net.minecraftforge.common.BiomeDictionary.Type;
  *
  * Class responsible for the setup and registration of entities, and their spawning.
  */
-public class SetupEntities
+public class ModEntities
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
     

@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.io.container;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeEntity;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
-import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.registry.SetupIO;
 import net.minecraft.entity.player.PlayerInventory;
 
 public class DragonFruitDrakeContainer extends ContainerBase<DragonFruitDrakeEntity>

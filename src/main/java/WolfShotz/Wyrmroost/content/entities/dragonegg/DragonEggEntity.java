@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.event.SetupItems;
+import WolfShotz.Wyrmroost.registry.ModItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.network.messages.EggHatchMessage;
@@ -166,7 +166,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
                 double x = rand.nextGaussian() * 0.2f;
                 double y = rand.nextDouble() * 0.45f;
                 double z = rand.nextGaussian() * 0.2f;
-                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(SetupItems.DRAGON_EGG.get())), posX, posY, posZ, x, y, z);
+                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(ModItems.DRAGON_EGG.get())), posX, posY, posZ, x, y, z);
             }
         }
         world.playSound(posX, posY, posZ, SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
@@ -193,7 +193,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         
         tag.putInt("hatchTime", hatchTime);
         tag.putString("dragonType", getDragonKey());
-        ItemStack itemStack = new ItemStack(SetupItems.DRAGON_EGG.get());
+        ItemStack itemStack = new ItemStack(ModItems.DRAGON_EGG.get());
         itemStack.setTag(tag);
         InventoryHelper.spawnItemStack(world, posX, posY, posZ, itemStack);
         remove();
@@ -208,7 +208,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     
     @Override
     public ItemStack getPickedResult(RayTraceResult target) {
-        ItemStack stack = new ItemStack(SetupItems.DRAGON_EGG.get());
+        ItemStack stack = new ItemStack(ModItems.DRAGON_EGG.get());
         CompoundNBT tag = new CompoundNBT();
         tag.putString("dragonType", getDragonKey());
         tag.putInt("hatchTime", getProperties().getHatchTime());

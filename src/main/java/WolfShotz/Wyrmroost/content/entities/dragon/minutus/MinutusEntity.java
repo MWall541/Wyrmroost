@@ -3,8 +3,8 @@ package WolfShotz.Wyrmroost.content.entities.dragon.minutus;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.goals.BurrowGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.goals.RunAwayGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.goals.WalkRandom;
-import WolfShotz.Wyrmroost.event.SetupItems;
-import WolfShotz.Wyrmroost.event.SetupSounds;
+import WolfShotz.Wyrmroost.registry.ModItems;
+import WolfShotz.Wyrmroost.registry.ModSounds;
 import com.github.alexthe666.citadel.animation.Animation;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.block.material.Material;
@@ -18,7 +18,6 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -152,7 +151,7 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
         ItemStack stack = player.getHeldItem(hand);
         if (stack.isEmpty()) {
             CompoundNBT nbt = new CompoundNBT();
-            ItemStack newDrop = new ItemStack(SetupItems.MINUTUS.get());
+            ItemStack newDrop = new ItemStack(ModItems.MINUTUS.get());
 
             nbt.putBoolean("isalive", true);
             nbt.putString("entitytype", EntityType.getKey(getType()).toString());
@@ -192,11 +191,11 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedEntity
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SetupSounds.MINUTUS_IDLE.get(); }
+    protected SoundEvent getAmbientSound() { return ModSounds.MINUTUS_IDLE.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.MINUTUS_SCREECH.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return ModSounds.MINUTUS_SCREECH.get(); }
 
     @Override
     protected float getSoundVolume() { return 0.3f; }

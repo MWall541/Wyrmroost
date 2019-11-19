@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.io.container;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
-import WolfShotz.Wyrmroost.event.SetupIO;
+import WolfShotz.Wyrmroost.registry.SetupIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;

@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.world.EndOrePlacement;
 import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
-import WolfShotz.Wyrmroost.event.*;
+import WolfShotz.Wyrmroost.registry.*;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.item.ItemGroup;
@@ -22,7 +22,7 @@ public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
     public static final ItemGroup CREATIVE_TAB = new ItemGroup("wyrmroost") {
-        @Override public ItemStack createIcon() { return new ItemStack(SetupItems.GEODE_BLUE.get()); }
+        @Override public ItemStack createIcon() { return new ItemStack(ModItems.GEODE_BLUE.get()); }
     };
 
     private static final String CHANNEL_VER = "1.0";
@@ -34,11 +34,11 @@ public class Wyrmroost
             .simpleChannel();
 
     public Wyrmroost() {
-        SetupEntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupBlocks.BLOCKS    .register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupItems.ITEMS      .register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupIO.CONTAINERS    .register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupSounds.SOUNDS    .register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModEntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModBlocks.BLOCKS    .register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModItems.ITEMS      .register(FMLJavaModLoadingContext.get().getModEventBus());
+        SetupIO.CONTAINERS  .register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModSounds.SOUNDS    .register(FMLJavaModLoadingContext.get().getModEventBus());
         ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("dim_wyrmroost"));
         ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
     
@@ -53,7 +53,7 @@ public class Wyrmroost
         MinecraftForge.EVENT_BUS.register(EventHandler.Common.class);
         
         SetupWorld.setupOreGen();
-        SetupEntities.registerEntityWorldSpawns();
+        ModEntities.registerEntityWorldSpawns();
         NetworkUtils.registerMessages();
     }
 
@@ -64,8 +64,8 @@ public class Wyrmroost
         MinecraftForge.EVENT_BUS.register(EventHandler.Client.class);
         
         EventHandler.Client.registerItemColors();
-        SetupEntities.registerEntityRenders();
-        SetupKeyBinds.registerKeys();
+        ModEntities.registerEntityRenders();
+        ModKeys.registerKeys();
         SetupIO.screenSetup();
     }
 }

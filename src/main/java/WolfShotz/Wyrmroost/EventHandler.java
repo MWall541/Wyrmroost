@@ -1,11 +1,12 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
+import WolfShotz.Wyrmroost.registry.ModKeys;
+import WolfShotz.Wyrmroost.registry.SetupWorld;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TranslationUtils;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
@@ -137,7 +138,7 @@ public class EventHandler
             PlayerEntity player = Minecraft.getInstance().player;
         
             // Generic Attack
-            if (SetupKeyBinds.genericAttack.isPressed()) {
+            if (ModKeys.genericAttack.isPressed()) {
                 if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
                 AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
                 

@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.event.SetupItems;
+import WolfShotz.Wyrmroost.registry.ModItems;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.DragonBodyController;
@@ -417,8 +417,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isInteractItem(ItemStack stack) {
         Item item = stack.getItem();
         return item == Items.NAME_TAG
-                       || item == SetupItems.DRAGON_STAFF.get()
-                       || item == SetupItems.SOUL_CRYSTAL.get();
+                       || item == ModItems.DRAGON_STAFF.get()
+                       || item == ModItems.SOUL_CRYSTAL.get();
     }
     
     public ItemStack getStackInSlot(int slot) { return getInvCap().map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY); }
@@ -750,7 +750,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public AgeableEntity createChild(AgeableEntity ageable) {
         CompoundNBT tag = new CompoundNBT();
-        ItemStack eggStack = new ItemStack(SetupItems.DRAGON_EGG.get());
+        ItemStack eggStack = new ItemStack(ModItems.DRAGON_EGG.get());
     
         tag.putString("dragonType", EntityType.getKey(getType()).toString());
         tag.putInt("hatchTime", getEggProperties().getHatchTime());
@@ -768,7 +768,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
     
     /**
-     * A gui created when right clicked by a {@link SetupItems.dragonStaff}
+     * A gui created when right clicked by a {@link ModItems.dragonStaff}
      */
     @Nullable
     @Override

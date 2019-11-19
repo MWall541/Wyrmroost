@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.PortalBlock;
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class SetupBlocks
+public class ModBlocks
 {
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
     
@@ -32,7 +32,7 @@ public class SetupBlocks
     
     
     private static RegistryObject<Block> register(String name, Block block) {
-        SetupItems.register(name, new BlockItem(block, ModUtils.itemBuilder()));
+        ModItems.register(name, new BlockItem(block, ModUtils.itemBuilder()));
         return BLOCKS.register(name, () -> block);
     }
 }

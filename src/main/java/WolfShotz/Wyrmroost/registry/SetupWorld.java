@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.world.EndOrePlacement;
@@ -46,16 +46,16 @@ public class SetupWorld
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
             if (OVERWORLD_FILTER.test(biome)) { // Filter Ores so they dont gen in the nether or end
-                registerOreEntry(biome, SetupBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 8, BLUE_GEODE_CONFIG);
-                registerOreEntry(biome, SetupBlocks.PLATINUM_ORE.get().getDefaultState(), 9, PLATINUM_CONFIG);
+                registerOreEntry(biome, ModBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 8, BLUE_GEODE_CONFIG);
+                registerOreEntry(biome, ModBlocks.PLATINUM_ORE.get().getDefaultState(), 9, PLATINUM_CONFIG);
                 continue;
             }
             if (NETHER_FILTER.test(biome)) {
-                registerOreEntry(biome, OreFeatureConfig.FillerBlockType.NETHERRACK, SetupBlocks.RED_GEODE_ORE.get().getDefaultState(), 4, RED_GEODE_CONFIG);
+                registerOreEntry(biome, OreFeatureConfig.FillerBlockType.NETHERRACK, ModBlocks.RED_GEODE_ORE.get().getDefaultState(), 4, RED_GEODE_CONFIG);
                 continue;
             }
             if (END_FILTER.test(biome))
-                biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.EMERALD_ORE, new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), SetupBlocks.PURPLE_GEODE_ORE.get().getDefaultState()), EndOrePlacement.endOre, IPlacementConfig.NO_PLACEMENT_CONFIG));
+                biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(Feature.EMERALD_ORE, new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), ModBlocks.PURPLE_GEODE_ORE.get().getDefaultState()), EndOrePlacement.endOre, IPlacementConfig.NO_PLACEMENT_CONFIG));
         }
     }
 

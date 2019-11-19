@@ -5,8 +5,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGo
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
-import WolfShotz.Wyrmroost.event.SetupItems;
-import WolfShotz.Wyrmroost.event.SetupSounds;
+import WolfShotz.Wyrmroost.registry.ModItems;
+import WolfShotz.Wyrmroost.registry.ModSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -122,7 +122,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         ItemStack heldItem = getStackInSlot(0);
         Item item = stack.getItem();
         
-        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == SetupItems.DRAGON_EGG.get()) { //TODO add dragon egg under EGGS tag
+        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == ModItems.DRAGON_EGG.get()) { //TODO add dragon egg under EGGS tag
             eat(stack);
             if (tame(rand.nextInt(4) == 0, player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
@@ -195,21 +195,21 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SetupSounds.STALKER_IDLE.get(); }
+    protected SoundEvent getAmbientSound() { return ModSounds.STALKER_IDLE.get(); }
     
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SetupSounds.STALKER_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return ModSounds.STALKER_HURT.get(); }
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return SetupSounds.STALKER_DEATH.get(); }
+    protected SoundEvent getDeathSound() { return ModSounds.STALKER_DEATH.get(); }
     
     /**
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() { return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, SetupItems.FOOD_DRAKE_MEAT_RAW.get(), SetupItems.FOOD_DRAKE_MEAT_COOKED.get()); }
+    public List<Item> getFoodItems() { return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, ModItems.FOOD_DRAKE_MEAT_RAW.get(), ModItems.FOOD_DRAKE_MEAT_COOKED.get()); }
     
     public boolean canPickUpStack(ItemStack stack) { return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET; }
     

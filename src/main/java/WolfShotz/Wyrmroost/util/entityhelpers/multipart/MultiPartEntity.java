@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.util.entityhelpers.multipart;
 
-import WolfShotz.Wyrmroost.event.SetupEntities;
+import WolfShotz.Wyrmroost.registry.ModEntities;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +24,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     public float radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier;
     
     public MultiPartEntity(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier) {
-        super(SetupEntities.MULTIPART.get(), host.world);
+        super(ModEntities.MULTIPART.get(), host.world);
         this.host = host;
         this.radius = radius;
         this.angleYaw = (angleYaw + 90f) * (MathUtils.PI / 180f);

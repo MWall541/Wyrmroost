@@ -1,9 +1,9 @@
-package WolfShotz.Wyrmroost.event;
+package WolfShotz.Wyrmroost.registry;
 
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-public class SetupKeyBinds
+public class ModKeys
 {
     private static final String category = "keyCategory.wyrmroost";
     
