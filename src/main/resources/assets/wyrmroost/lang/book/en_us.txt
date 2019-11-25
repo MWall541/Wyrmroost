@@ -1,0 +1,28 @@
+// "[]===[]" = Start a new Page
+// Anything written underneath this new line will be in this page until a new one is created
+//
+// You can use formatting (colors, bold/italics/underline etc) using the "§" symbol and then the code next to it
+// Example: "§b"
+// https://minecraft.gamepedia.com/Formatting_codes
+//
+// Here are some variables you can use to define how this page should be rendered:
+// "{backgroundResource} [filename]" defines a resource location for a background image !FOR THIS PAGE! THIS IMAGE SHOULD BE 512X256. Example: "{backgroundResource} [tome.png]"
+// "{renderItem} [itemID] [posX] [posY]" defines an ItemStack to render. "{renderItem} [minecraft:stick] [12] [12]"
+// "{renderImage} [filename] [X Position in Gui] [Y Position in Gui] [Image X Dimension] [Image Y Dimension]" example: "{renderImage} [ukandan.png] [100] [25] [493] [677]"
+// These variables should only be defined on new lines
+// X positions start from the center. Pass in a negative value for left, and positive for right. Y values are top-down. higher values go down more.
+
+// Heres an example setup:
+[]===[]
+Test
+New Line Test
+§bFormatting Test
+§lFormatting Test
+§oFormatting Test
+This is a long line test and therefore should be wrapping on this page of the book
+
+// Item Rendering, this text doesnt actually appear
+{renderItem} [wyrmroost:soul_crystal] [0] [50]
+
+[]===[]
+New Line on New Page
