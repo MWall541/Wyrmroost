@@ -49,5 +49,5 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         }
     }
     
-    public static ResourceLocation resource(String png) { return ModUtils.location(DEF_LOC + "butterflyleviathan/" + png); }
+    public static ResourceLocation resource(String png) { return ModUtils.resource(DEF_LOC + "butterflyleviathan/" + png); }
 }

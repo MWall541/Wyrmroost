@@ -58,5 +58,5 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         }
     }
     
-    public static ResourceLocation resource(String png) { return ModUtils.location(DEF_LOC + "silverglider/" + png); }
+    public static ResourceLocation resource(String png) { return ModUtils.resource(DEF_LOC + "silverglider/" + png); }
 }

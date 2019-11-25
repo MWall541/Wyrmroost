@@ -27,7 +27,7 @@ public class Wyrmroost
 
     private static final String CHANNEL_VER = "1.0";
     public static SimpleChannel network = NetworkRegistry.ChannelBuilder
-            .named(ModUtils.location(MOD_ID))
+            .named(ModUtils.resource(MOD_ID))
             .clientAcceptedVersions(CHANNEL_VER::equals)
             .serverAcceptedVersions(CHANNEL_VER::equals)
             .networkProtocolVersion(() -> CHANNEL_VER)

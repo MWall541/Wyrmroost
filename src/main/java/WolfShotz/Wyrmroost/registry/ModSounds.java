@@ -28,6 +28,6 @@ public class ModSounds
     public static final RegistryObject<SoundEvent> STALKER_DEATH                = registerEntity("rooststalker.death");
     
     
-    private static RegistryObject<SoundEvent> register(String name) { return SOUNDS.register(name, () -> new SoundEvent(ModUtils.location(name))); }
+    private static RegistryObject<SoundEvent> register(String name) { return SOUNDS.register(name, () -> new SoundEvent(ModUtils.resource(name))); }
     private static RegistryObject<SoundEvent> registerEntity(String name) { return register("entity." + name); }
 }

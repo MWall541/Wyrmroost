@@ -19,5 +19,5 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
     @Override
     protected ResourceLocation getEntityTexture(DragonFruitDrakeEntity entity) { return BODY_MALE; }
     
-    public static ResourceLocation resource(String png) { return ModUtils.location(DEF_LOC + "dfruitdrake/" + png); }
+    public static ResourceLocation resource(String png) { return ModUtils.resource(DEF_LOC + "dfruitdrake/" + png); }
 }

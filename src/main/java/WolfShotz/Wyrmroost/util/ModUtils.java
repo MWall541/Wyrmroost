@@ -46,7 +46,7 @@ public class ModUtils
      * Register a new Resource Location.
      * @param path
      */
-    public static ResourceLocation location(String path) { return new ResourceLocation(Wyrmroost.MOD_ID, path); }
+    public static ResourceLocation resource(String path) { return new ResourceLocation(Wyrmroost.MOD_ID, path); }
 
     /**
      * Item Properties builder
@@ -119,7 +119,7 @@ public class ModUtils
     /**
      * Get the instance of the wyrmroost dimension
      */
-    public static DimensionType getDimensionInstance() { return DimensionType.byName(ModUtils.location("dim_wyrmroost")); }
+    public static DimensionType getDimensionInstance() { return DimensionType.byName(ModUtils.resource("dim_wyrmroost")); }
     
     /**
      * Iterate through all slots in this handler and check if they are all empty. if not, return false;

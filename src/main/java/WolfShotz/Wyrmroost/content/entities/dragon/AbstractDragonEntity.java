@@ -60,7 +60,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -617,8 +616,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     @Override
     public ItemStack getPickedResult(RayTraceResult target) {
-        Supplier<EntityType> supplier = this::getType;
-        return new ItemStack(CustomSpawnEggItem.EGG_TYPES.get(supplier));
+        Optional<CustomSpawnEggItem> egg = CustomSpawnEggItem.EGG_TYPES.stream().filter(e -> e.type.get() == getType()).findFirst();
+        return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
     
     /**

@@ -12,12 +12,15 @@ import net.minecraft.client.renderer.model.ModelBox;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
 /**
  * A slighly more optimized arrow entity render
  */
+@OnlyIn(Dist.CLIENT)
 public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M>
 {
     private final EntityRendererManager renderManager;

@@ -28,6 +28,7 @@ public class ModItems
     public static final RegistryObject<Item> GEODE_RED                  = register("geode_red", basicItem());
     public static final RegistryObject<Item> GEODE_PURPLE               = register("geode_purple", basicItem());
     public static final RegistryObject<Item> PLATINUM_INGOT             = register("platinum_ingot", basicItem());
+    public static final RegistryObject<Item> ASH_PILE                   = register("ash_pile", basicItem());
     
     public static final RegistryObject<Item> BLUE_GEODE_SWORD           = register("geode_sword", new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> BLUE_GEODE_PICKAXE         = register("geode_pick", new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()));
@@ -69,11 +70,12 @@ public class ModItems
     public static final RegistryObject<Item> PLATINUM_LEGGINGS          = register("platinum_leggings", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> PLATINUM_BOOTS             = register("platinum_boots", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET));
     
-    public static final RegistryObject<Item> FOOD_COOKED_MINUTUS        = register("cooked_minutus", new Item(ModUtils.itemBuilder().food(ModItems.cookedminutus)));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_RAW        = register("drake_meat_raw", new Item(ModUtils.itemBuilder().food(ModItems.rawDrake)));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_COOKED     = register("drake_meat_cooked", new Item(ModUtils.itemBuilder().food(ModItems.cookedDrake)));
-    public static final RegistryObject<Item> FOOD_JEWELLED_APPLE        = register("jewelled_apple", new Item(ModUtils.itemBuilder().food(ModItems.jewelledApple)));
-    public static final RegistryObject<Item> FOOD_DRAGON_FRUIT          = register("dragon_fruit", new Item(ModUtils.itemBuilder().food(ModItems.dragonfruit)));
+    public static final RegistryObject<Item> FOOD_COOKED_MINUTUS        = register("cooked_minutus", foodItem(ModItems.COOKED_MINUTUS));
+    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_RAW        = register("drake_meat_raw", foodItem(ModItems.RAW_DRAKE_MEAT));
+    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_COOKED     = register("drake_meat_cooked", foodItem(ModItems.COOKED_DRAKE_MEAT));
+    public static final RegistryObject<Item> FOOD_JEWELLED_APPLE        = register("jewelled_apple", foodItem(ModItems.JEWELLED_APPLE));
+    public static final RegistryObject<Item> FOOD_DRAGON_FRUIT          = register("dragon_fruit", foodItem(ModItems.DRAGON_FRUIT));
+    public static final RegistryObject<Item> FOOD_BLUEBERRIES           = register("blueberries", foodItem(ModItems.BLUEBERRIES));
     
     public static final RegistryObject<Item> DRAGON_ARMOR_IRON          = register("iron_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.IRON));
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD          = register("gold_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.GOLD));
@@ -94,23 +96,24 @@ public class ModItems
     //          Food List
     //  ===========================
     
-    private static Food dragonfruit         = new Food.Builder().hunger(6).saturation(0.55f).build();
-    private static Food cookedminutus       = new Food.Builder().hunger(6).saturation(0.7f) .meat().build();
-    private static Food rawDrake            = new Food.Builder().hunger(4).saturation(0.45f).meat().build();
-    private static Food cookedDrake         = new Food.Builder().hunger(8).saturation(1f)   .meat().build();
-    private static Food jewelledApple       = new Food.Builder()
-                                                      .hunger(8)
-                                                      .saturation(0.9f)
-                                                      .setAlwaysEdible()
-                                                      .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
-                                                      .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
-                                                      .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
-                                                      .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
-                                                      .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
-                                                      .build();
-    
-    
-    public static RegistryObject<Item> register(String name, Item item) { return ITEMS.register(name, () -> item); }
+    private static final Food DRAGON_FRUIT       = new Food.Builder().hunger(6).saturation(0.55f).build();
+    private static final Food BLUEBERRIES        = new Food.Builder().hunger(2).saturation(0.1f) .build();
+    private static final Food COOKED_MINUTUS     = new Food.Builder().hunger(6).saturation(0.7f) .meat().build();
+    private static final Food RAW_DRAKE_MEAT     = new Food.Builder().hunger(4).saturation(0.45f).meat().build();
+    private static final Food COOKED_DRAKE_MEAT  = new Food.Builder().hunger(8).saturation(1f)   .meat().build();
+    private static final Food JEWELLED_APPLE     = new Food.Builder()
+                                                           .hunger(8)
+                                                           .saturation(0.9f)
+                                                           .setAlwaysEdible()
+                                                           .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
+                                                           .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
+                                                           .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
+                                                           .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
+                                                           .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
+                                                           .build();
     
     private static Item basicItem() { return new Item(ModUtils.itemBuilder()); }
+    private static Item foodItem(Food food) { return new Item(ModUtils.itemBuilder().food(food)); }
+    
+    public static RegistryObject<Item> register(String name, Item item) { return ITEMS.register(name, () -> item); }
 }

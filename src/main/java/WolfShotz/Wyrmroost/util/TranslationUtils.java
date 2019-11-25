@@ -9,6 +9,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.regex.Pattern;
+
 public class TranslationUtils
 {
     /**
@@ -61,14 +63,10 @@ public class TranslationUtils
         return translation(item.getTranslationKey() + ".tooltip", formats);
     }
     
-    /**
-     * Remove any white space.
-     * @param text
-     */
-    public static String clean(String text) { return text.replace(" ", ""); }
-    
     public static boolean containsArray(String string, String... elements) {
         for (String test : elements) if (string.contains(test)) return true;
         return false;
     }
+    
+    public static String replaceFirst(String string, String replacing, String replaceWith) { return Pattern.compile(replacing, Pattern.LITERAL).matcher(string).replaceFirst(replaceWith); }
 }

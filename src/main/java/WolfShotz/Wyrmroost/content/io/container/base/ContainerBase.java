@@ -95,7 +95,7 @@ public abstract class ContainerBase<T extends AbstractDragonEntity> extends Cont
             @Override public void onSlotChanged() { dragon.setArmored(); }
             
             @Override
-            public ResourceLocation getBackgroundLocation() { return ModUtils.location("textures/io/slots/armor_slot.png"); }
+            public ResourceLocation getBackgroundLocation() { return ModUtils.resource("textures/io/slots/armor_slot.png"); }
         };
     }
     

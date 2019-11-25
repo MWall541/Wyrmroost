@@ -12,7 +12,7 @@ public class DragonEggProperties
 {
     private final float WIDTH, HEIGHT;
     private final int HATCH_TIME;
-    private ResourceLocation texture = ModUtils.location("textures/entity/dragonegg/default.png");
+    private ResourceLocation texture = ModUtils.resource("textures/entity/dragonegg/default.png");
     private Predicate<DragonEggEntity> conditions = e -> true;
     
     /**

@@ -4,6 +4,8 @@ import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
 import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
@@ -14,6 +16,7 @@ import javax.vecmath.Vector3d;
  *
  * Created by Josh on 5/8/2017.
  */
+@OnlyIn(Dist.CLIENT)
 public class SocketRendererModel extends AdvancedRendererModel
 {
     public SocketRendererModel(AdvancedEntityModel model, String name) {

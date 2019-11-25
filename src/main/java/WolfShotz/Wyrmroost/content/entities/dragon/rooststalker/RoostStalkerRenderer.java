@@ -14,7 +14,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
-@SuppressWarnings("deprecation") // This literally never works lmfao
 public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity>
 {
     public static final ResourceLocation BODY          = resource("body.png");
@@ -38,9 +37,10 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
         return entity.isSpecial()? BODY_SPE : BODY;
     }
     
-    public static ResourceLocation resource(String png) { return ModUtils.location(DEF_LOC + "rooststalker/" + png); }
+    public static ResourceLocation resource(String png) { return ModUtils.resource(DEF_LOC + "rooststalker/" + png); }
     
     // Item Stack Layer Renderer
+    @SuppressWarnings("deprecation") // This literally never works lmfao
     private final AbstractLayerRenderer ITEM_STACK_RENDERER = new AbstractLayerRenderer() {
         
         @Override

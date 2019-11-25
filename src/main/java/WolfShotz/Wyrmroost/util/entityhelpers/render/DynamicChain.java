@@ -3,12 +3,15 @@ package WolfShotz.Wyrmroost.util.entityhelpers.render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Credit to Bob Mowzie of Mowzies mobs.
  *
  * Created by Josh on 8/30/2018.
  */
+@OnlyIn(Dist.CLIENT)
 public class DynamicChain
 {
     private Vec3d[] p;

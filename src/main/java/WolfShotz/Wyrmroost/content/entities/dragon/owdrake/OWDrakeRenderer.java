@@ -74,5 +74,5 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
         }
     }
     
-    public static ResourceLocation resource(String png) { return ModUtils.location(DEF_LOC + "owdrake/" + png); }
+    public static ResourceLocation resource(String png) { return ModUtils.resource(DEF_LOC + "owdrake/" + png); }
 }

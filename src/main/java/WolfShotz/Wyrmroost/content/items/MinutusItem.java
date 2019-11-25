@@ -22,7 +22,7 @@ public class MinutusItem extends Item
     public MinutusItem() {
         super(ModUtils.itemBuilder());
 
-        addPropertyOverride(ModUtils.location("isalive"), (item, world, player) -> {
+        addPropertyOverride(ModUtils.resource("isalive"), (item, world, player) -> {
             if (item.hasTag()) if (item.getTag().getBoolean("isalive")) return 1f;
             return 0f;
         });

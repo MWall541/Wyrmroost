@@ -3,7 +3,10 @@ package WolfShotz.Wyrmroost.content.io.screen;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.TranslationUtils;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class DebugScreen extends Screen
 {
     public final AbstractDragonEntity dragon;

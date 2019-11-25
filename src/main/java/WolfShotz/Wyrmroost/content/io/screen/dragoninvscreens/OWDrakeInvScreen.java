@@ -8,10 +8,13 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class OWDrakeInvScreen extends ContainerScreenBase<OWDrakeInvContainer>
 {
-    private static final ResourceLocation DRAKE_GUI = ModUtils.location("textures/io/dragonscreen/owdrakeinv.png");
+    private static final ResourceLocation DRAKE_GUI = ModUtils.resource("textures/io/dragonscreen/owdrakeinv.png");
     
     public OWDrakeInvScreen(OWDrakeInvContainer container, PlayerInventory playerInv, ITextComponent name) {
         super(container, playerInv, name);

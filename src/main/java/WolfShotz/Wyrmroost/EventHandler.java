@@ -11,6 +11,7 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TranslationUtils;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,7 +47,7 @@ public class EventHandler
         @SubscribeEvent
         public static void registerDimension(RegisterDimensionsEvent evt) {
             if (ModUtils.getDimensionInstance() == null)
-                DimensionManager.registerDimension(ModUtils.location("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
+                DimensionManager.registerDimension(ModUtils.resource("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
         }
     
         /**
@@ -57,7 +58,7 @@ public class EventHandler
         public static void onAttachCapabilities(AttachCapabilitiesEvent<World> evt) {
             if (evt.getObject() == null) return;
             if (!evt.getObject().getCapability(CapabilityOverworld.OW_CAP).isPresent())
-                evt.addCapability(ModUtils.location("overworldproperties"), new CapabilityOverworld.PropertiesDispatcher());
+                evt.addCapability(ModUtils.resource("overworldproperties"), new CapabilityOverworld.PropertiesDispatcher());
         }
         
         /**
@@ -89,7 +90,7 @@ public class EventHandler
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
         
-            if (stack.getItem() == Items.NAME_TAG && TranslationUtils.containsArray(TranslationUtils.clean(stack.getDisplayName().getUnformattedComponentText().toLowerCase()), begoneWEEB)) {
+            if (stack.getItem() == Items.NAME_TAG && TranslationUtils.containsArray(stack.getDisplayName().getUnformattedComponentText().toLowerCase().trim(), begoneWEEB)) {
                 evt.setCanceled(true);
                 
                 stack.clearCustomName();
@@ -126,7 +127,9 @@ public class EventHandler
          */
         public static void registerItemColors() {
             ItemColors event = Minecraft.getInstance().getItemColors();
-            CustomSpawnEggItem.EGG_TYPES.forEach((t, e) -> event.register((stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex), e));
+            
+            IItemColor eggColor = (stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex);
+            CustomSpawnEggItem.EGG_TYPES.forEach(e -> event.register(eggColor, e));
         }
         
         /**

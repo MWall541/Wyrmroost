@@ -12,13 +12,16 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
 // #blit(xPos, yPos, initialX pixel, initialY pixel, x width, y width, .png width, .png height);
+@OnlyIn(Dist.CLIENT)
 public class ContainerScreenBase<T extends ContainerBase> extends ContainerScreen<T>
 {
-    public static final ResourceLocation STANDARD_GUI = ModUtils.location("textures/io/dragonscreen/dragoninv.png");
+    public static final ResourceLocation STANDARD_GUI = ModUtils.resource("textures/io/dragonscreen/dragoninv.png");
     public static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
     public static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glitter_7.png");
     

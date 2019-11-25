@@ -16,7 +16,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 public class JEIPlugin implements IModPlugin
 {
     @Override
-    public ResourceLocation getPluginUid() { return ModUtils.location("info"); }
+    public ResourceLocation getPluginUid() { return ModUtils.resource("info"); }
     
     @Override
     public void registerRecipes(IRecipeRegistration registry) {
