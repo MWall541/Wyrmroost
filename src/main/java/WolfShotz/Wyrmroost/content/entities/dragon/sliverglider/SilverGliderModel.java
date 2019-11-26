@@ -93,7 +93,7 @@ public class SilverGliderModel extends AdvancedEntityModel {
     
     private ModelAnimator animator;
     
-    private boolean isSleeping, isFlying;
+    public boolean isSleeping, isFlying;
     private float globalSpeed, frame;
     private Animation currentAnim;
     
@@ -476,10 +476,10 @@ public class SilverGliderModel extends AdvancedEntityModel {
             else if (current == WAKE_ANIMATION) wakeAnim();
         }
     
-        idleAnim();
+        idleAnim(frame);
     }
     
-    private void setPositions(boolean flight) {
+    public void setPositions(boolean flight) {
         boolean flag = (isSitting || isSleeping) && (currentAnim != SIT_ANIMATION && currentAnim != SLEEP_ANIMATION) || (currentAnim == STAND_ANIMATION || currentAnim == WAKE_ANIMATION);
     
         // Pull the legs in for sitting or sleeping
@@ -561,28 +561,8 @@ public class SilverGliderModel extends AdvancedEntityModel {
                 wingphalangetipR.rotateAngleY = 0.3f;
                 membrane2R.rotateAngleY = 0.9f;
                 membrane3R.rotateAngleY = -0.1f;
-            } else {
-                // Wing Poses for riding
-                // Left Wing
-                wingphalange1L.rotateAngleY = -1.2f;
-                wingphalange1L.rotateAngleX = 2.3f;
-                wingphalange1L.rotateAngleZ = -1f;
-                wingphalange2L.rotateAngleY = 1.7f;
-                membrane1L.rotateAngleY = 0.9f;
-                wingphalange3L.rotateAngleY = -1.6f;
-                wingphalangemiddle1L.rotateAngleY = -2f;
-                wingphalangetipL.rotateAngleY = -0.5f;
-    
-                // Right Wing
-                wingphalange1R.rotateAngleY = 1.2f;
-                wingphalange1R.rotateAngleX = 2.3f;
-                wingphalange1R.rotateAngleZ = 1f;
-                wingphalange2R.rotateAngleY = -1.7f;
-                membrane1R.rotateAngleY = -0.9f;
-                wingphalange3R.rotateAngleY = 1.6f;
-                wingphalangemiddle1R.rotateAngleY = 2f;
-                wingphalangetipR.rotateAngleY = 0.5f;
             }
+            else { defaultGroundPose(); }
             if ((currentAnim == SLEEP_ANIMATION || currentAnim == WAKE_ANIMATION) && isSitting) mainbody.offsetY = 0.25f;
             
             // Sitting Position / Sleep Position
@@ -628,8 +608,31 @@ public class SilverGliderModel extends AdvancedEntityModel {
         }
     }
     
+    public void defaultGroundPose() {
+        // Left Wing
+        wingphalange1L.rotateAngleX = 0.6f;
+        wingphalange1L.rotateAngleY = -0.1f;
+        wingphalange2L.rotateAngleY = 1.3f;
+        wingphalange3L.rotateAngleY = -1.8f;
+        wingphalangemiddle1L.rotateAngleY = -2.0f;
+        wingphalangetipL.rotateAngleY = -0.3f;
+        membrane2L.rotateAngleY = -0.9f;
+        membrane2L.rotateAngleZ = 0.06f;
+        membrane3L.rotateAngleY = 0.1f;
+    
+        // Right wing
+        wingphalange1R.rotateAngleX = 0.6f;
+        wingphalange1R.rotateAngleY = 0.1f;
+        wingphalange2R.rotateAngleY = -1.3f;
+        wingphalange3R.rotateAngleY = 1.8f;
+        wingphalangemiddle1R.rotateAngleY = 2.0f;
+        wingphalangetipR.rotateAngleY = 0.3f;
+        membrane2R.rotateAngleY = 0.9f;
+        membrane3R.rotateAngleY = -0.1f;
+    }
+    
     // animate the head and tail according to glider's state (flying or on ground)
-    private void idleAnim() {
+    public void idleAnim(float frame) {
         if (isFlying) {
             chainWave(headArray, globalSpeed + 0.05f, 0.05f, 2.8, frame, 0.5f);
             chainWave(tailArray, globalSpeed, 0.05f, 2, frame, 0.5f);

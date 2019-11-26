@@ -188,7 +188,6 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         RoostStalkerEntity stalker = (RoostStalkerEntity) entity; //TODO: Use cast until Alex re-evaluates citadel!
         Animation currentAnim = stalker.getAnimation();
         float frame = entity.ticksExisted;
-        float f = 0.5f;
         globalSpeed = 0.5f;
         
         animator.update(stalker);
@@ -220,14 +219,19 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         if (currentAnim == RoostStalkerEntity.SCAVENGE_ANIMATION)
             scavengeAnim(stalker.getAnimationTick(), frame);
         
-        chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, f);
-        chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, f);
+        boolean flag = stalker.getStackInSlot(0).isEmpty() || stalker.isSleeping();
+        idle(frame, flag);
         
-        if (stalker.getStackInSlot(0).isEmpty() || stalker.isSleeping()) {
-            walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, f);
-            chainWave(new AdvancedRendererModel[]{head, neck}, globalSpeed - 0.4f, 0.05f, 2, frame, f);
+        if (!flag) jaw.rotateAngleX = 0.15f;
+    }
+    
+    public void idle(float frame, boolean head) {
+        chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, 0.5f);
+        chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, 0.5f);
+        if (head) {
+            walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, 0.5f);
+            chainWave(new AdvancedRendererModel[]{this.head, this.neck}, globalSpeed - 0.4f, 0.05f, 2, frame, 0.5f);
         }
-        else jaw.rotateAngleX = 0.15f;
     }
     
     private void staySit() {
