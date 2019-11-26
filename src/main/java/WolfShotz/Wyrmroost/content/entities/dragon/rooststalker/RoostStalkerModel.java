@@ -158,7 +158,7 @@ public class RoostStalkerModel extends AdvancedEntityModel {
         updateDefaultPose();
     }
     
-    private float globalSpeed;
+    private float globalSpeed = 0.5f;
     
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {

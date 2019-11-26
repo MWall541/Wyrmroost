@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,7 +44,12 @@ public class Page
             for (int i = 0; i <= lines.size() - 1; ++i)
                 font.drawSplitString(lines.get(i), center - 110, (11 * i) + 15, 120, 0x000000);
         }
-        if (!items.isEmpty()) items.forEach(group -> itemRenderer.renderItemIntoGUI(group.a, center + group.b, group.c));
+        if (!items.isEmpty())
+            items.forEach(group ->  {
+                RenderHelper.enableStandardItemLighting();
+                itemRenderer.renderItemIntoGUI(group.a, center + group.b, group.c);
+                RenderHelper.disableStandardItemLighting();
+            });
     }
     
     public void addLine(String text) { lines.add(text); }
