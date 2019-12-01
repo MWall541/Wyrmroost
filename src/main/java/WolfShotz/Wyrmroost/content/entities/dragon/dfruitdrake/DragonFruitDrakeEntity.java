@@ -28,6 +28,7 @@ import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -43,6 +44,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
+
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
 {
@@ -50,6 +53,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     
     public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world) {
         super(dragon, world);
+        
+        SLEEP_ANIMATION = Animation.create(15);
+        WAKE_ANIMATION = Animation.create(15);
     }
     
     @Override
@@ -133,7 +139,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             return true;
         }
         
-        if (isSaddled() && !isChild() && !player.isSneaking()) {
+        if (/*isSaddled() && */!isChild() && !player.isSneaking()) {
             setSit(false);
             player.startRiding(this);
             
@@ -148,6 +154,36 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         
         return false;
     }
+    
+    @Override
+    public void travel(Vec3d vec3d) {
+        if (!isBeingRidden()) {
+            super.travel(vec3d);
+            return;
+        }
+        
+        // We're being ridden, follow rider controls
+        LivingEntity rider = (LivingEntity) getControllingPassenger();
+        if (canPassengerSteer()) {
+            float f = rider.moveForward, s = rider.moveStrafing;
+            float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue());
+            boolean moving = (f != 0 || s != 0);
+            Vec3d target = new Vec3d(s, vec3d.y, f);
+            
+            setAIMoveSpeed(speed / 2);
+            super.travel(target);
+            if (moving) {
+                prevRotationYaw = rotationYaw = rider.rotationYaw;
+                rotationPitch = rider.rotationPitch * 0.5f;
+                setRotation(rotationYaw, rotationPitch);
+                renderYawOffset = rotationYaw;
+                rotationYawHead = renderYawOffset;
+            }
+        }
+    }
+    
+    @Override
+    public boolean canBeSteered() { return true; }
     
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height; }

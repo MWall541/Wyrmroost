@@ -73,9 +73,10 @@ public class EventHandler
             ItemStack stack = player.getHeldItem(evt.getHand());
             
             if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
-                evt.setCanceled(true);
+                if (player.isSneaking()) dragon.tame(true, player);
+                else if (evt.getWorld().isRemote) Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
                 
-                if (evt.getWorld().isRemote) Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
+                evt.setCanceled(true);
             }
         }
     

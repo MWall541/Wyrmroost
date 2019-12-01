@@ -108,12 +108,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(2, new SleepGoal(this, nocturnal));
-        goalSelector.addGoal(3, sitGoal = new SitGoal(this) {
-            @Override public boolean isPreemptible() { // TODO hmm...
-                ModUtils.L.info("checking");
-                return true;
-            }
-        });
+        goalSelector.addGoal(3, sitGoal = new SitGoal(this));
     }
     
     /**
@@ -568,7 +563,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * else, play the failed tame effects
      */
     public boolean tame(boolean tame, @Nullable PlayerEntity tamer) {
-        if (!world.isRemote && !isTamed()) {
+        if (isTamed()) return true;
+        if (!world.isRemote) {
             if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer)) {
                 setTamedBy(tamer);
                 navigator.clearPath();

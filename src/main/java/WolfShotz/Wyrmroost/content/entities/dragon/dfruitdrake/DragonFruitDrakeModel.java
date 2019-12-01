@@ -385,13 +385,19 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
         this.entity = (DragonFruitDrakeEntity) entityIn;
         float frame = partialTick + entityIn.ticksExisted;
+        boolean moving = entity.moveForward != 0 || entity.moveStrafing != 0;
         
         globalDegree = 0.5f;
         globalSpeed = 0.5f;
         resetToDefaultPose();
         
+        if (moving) {
+            globalSpeed = 0.6f;
+            globalDegree = 0.6f;
+        }
+        
         if (!entity.isSleeping()) {
-            globalDegree = 0.515f;
+//            globalDegree = 0.515f;
     
             bob(Body1, 0.6f, 0.2f, false, limbSwing, limbSwingAmount);
     
@@ -415,7 +421,7 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
 //            globalSpeed = 0.15f;
         }
         
-        idleAnim(frame, limbSwingAmount > 0);
+        idleAnim(frame, !moving);
     }
     
     public void idleAnim(float frame, boolean mouth) {
