@@ -84,7 +84,7 @@ jar {
         attributes([
             "Specification-Title": "Wyrmroost",
             "Specification-Vendor": "WolfShotz",
-            "Specification-Version": project.version, // We are version 1 of ourselves
+            "Specification-Version": project.version,
             "Implementation-Title": project.name,
             "Implementation-Version": "${project.mod_version}",
             "Implementation-Vendor" :"WolfShotz",
