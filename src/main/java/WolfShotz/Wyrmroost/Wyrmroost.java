@@ -3,13 +3,16 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.content.world.EndOrePlacement;
 import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.registry.*;
+import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -34,16 +37,12 @@ public class Wyrmroost
             .simpleChannel();
 
     public Wyrmroost() {
-        ModEntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModBlocks.BLOCKS    .register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModItems.ITEMS      .register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupIO.CONTAINERS  .register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModSounds.SOUNDS    .register(FMLJavaModLoadingContext.get().getModEventBus());
-        ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("dim_wyrmroost"));
-        ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
-    
+        registerObjects();
+        
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+    
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.COMMON_SPEC, "wyrmroost.toml");
     }
 
     /**
@@ -67,5 +66,15 @@ public class Wyrmroost
         ModEntities.registerEntityRenders();
         ModKeys.registerKeys();
         SetupIO.screenSetup();
+    }
+    
+    private void registerObjects() {
+        ModEntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModBlocks.BLOCKS    .register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModItems.ITEMS      .register(FMLJavaModLoadingContext.get().getModEventBus());
+        SetupIO.CONTAINERS  .register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModSounds.SOUNDS    .register(FMLJavaModLoadingContext.get().getModEventBus());
+        ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("dim_wyrmroost"));
+        ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
     }
 }

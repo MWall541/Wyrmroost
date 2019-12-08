@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.registry.ModKeys;
 import WolfShotz.Wyrmroost.registry.SetupWorld;
+import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TranslationUtils;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
@@ -27,7 +28,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
+import net.minecraftforge.fml.config.ModConfig;
 
 /**
  * Class Used to hook into forge events to perform particular tasks when the event is called
@@ -55,17 +56,24 @@ public class EventHandler
          * @param evt
          */
         @SubscribeEvent
-        public static void onAttachCapabilities(AttachCapabilitiesEvent<World> evt) {
+        public static void attatchCapabilities(AttachCapabilitiesEvent<World> evt) {
             if (evt.getObject() == null) return;
             if (!evt.getObject().getCapability(CapabilityOverworld.OW_CAP).isPresent())
                 evt.addCapability(ModUtils.resource("overworldproperties"), new CapabilityOverworld.PropertiesDispatcher());
         }
         
+        public static void configLoad(ModConfig.ModConfigEvent evt) {
+            if (evt.getConfig().getSpec() == ConfigData.COMMON_SPEC)
+                ConfigData.CommonConfig.reload();
+        }
+        
         /**
          * Nuff' said
+         * Subscribed by config
          */
         @SubscribeEvent
         public static void debugStick(PlayerInteractEvent.EntityInteract evt) {
+            if (!ConfigData.debugMode) return;
             Entity entity = evt.getTarget();
             if (!(entity instanceof AbstractDragonEntity)) return;
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
@@ -153,19 +161,14 @@ public class EventHandler
             }
         }
         
-        /**
-         * Handles the camera setup for what the player is looking at
-         * @deprecated Currently not functional. See:
-         * <a href="https://github.com/MinecraftForge/MinecraftForge/issues/5911">Issue #5911</a>
-         */
         @SubscribeEvent
         public static void ridingPerspective(EntityViewRenderEvent.CameraSetup event) {
             Minecraft mc = Minecraft.getInstance();
-        
-            System.out.println("Fired");
+            Entity entity = mc.player.getRidingEntity();
+            if (!(entity instanceof AbstractDragonEntity)) return;
+            int i1 = mc.gameSettings.thirdPersonView;
             
-            if (mc.player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance))
-                if (mc.gameSettings.thirdPersonView == 1) GL11.glTranslatef(0, -0.5f, -0.5f);
+            if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
         }
     }
 }
