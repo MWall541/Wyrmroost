@@ -24,7 +24,7 @@ public class NonTamedAvoidGoal extends AvoidEntityGoal
     }
     
     public void tick() {
-        if (dragon.getDistanceSq(field_75376_d) < 49.0D) {
+        if (dragon.getDistanceSq(avoidTarget) < 49.0D) {
             if (flysAway && !dragon.isFlying()) dragon.setFlying(true);
             else dragon.getNavigator().setSpeed(nearSpeed);
         }

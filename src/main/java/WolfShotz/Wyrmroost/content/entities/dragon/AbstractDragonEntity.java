@@ -59,6 +59,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -310,14 +311,26 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Data should be added to the provided stream.
      */
     @Override
-    public void writeSpawnData(PacketBuffer buf) { invHandler.ifPresent(i -> buf.writeCompoundTag(i.serializeNBT())); }
+    public void writeSpawnData(PacketBuffer buf) {
+        invHandler.ifPresent(i -> buf.writeCompoundTag(i.serializeNBT()));
+        try { dataManager.writeEntries(buf); }
+        catch (IOException exc) { throw new RuntimeException("Could not write dataManager data"); }
+        
+    }
     
     /**
      * Called by the client when it receives a Entity spawn packet.
      * Data should be read out of the stream in the same way as it was written.
      */
     @Override
-    public void readSpawnData(PacketBuffer buf) { invHandler.ifPresent(i -> i.deserializeNBT(buf.readCompoundTag())); }
+    @SuppressWarnings("ConstantConditions")
+    public void readSpawnData(PacketBuffer buf) {
+        try {
+            invHandler.ifPresent(i -> i.deserializeNBT(buf.readCompoundTag()));
+            dataManager.setEntryValues(EntityDataManager.readEntries(buf));
+        }
+        catch (Exception exc) { throw new RuntimeException("Could not read client spawn packet"); }
+    }
     
     // ================================
     
@@ -365,16 +378,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @param stack - the itemstack used when interacted
      */
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
-        if (isInteractItem(stack)) {
-            stack.interactWithEntity(player, this, hand);
-            
-            return true;
-        }
-    
+        if (isInteractItem(stack) && stack.interactWithEntity(player, this, hand)) return true;
+        
         if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player)) {
             eat(stack);
             setInLove(player);
-        
+            
             return true;
         }
         
@@ -630,8 +639,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return world.getEntitiesInAABBexcluding(instanceExclusion, getBoundingBox().grow(radius), found -> getPassengers().stream().noneMatch(found::equals));
     }
     
+    /**
+     * Add additional motion to current velocity
+     */
     public void addMotion(Vec3d vec3d) { setMotion(getMotion().add(vec3d)); }
     
+    /**
+     * Add additional motion to current velocity
+     */
     public void addMotion(double x, double y, double z) { setMotion(getMotion().add(x, y, z)); }
     
     /**
@@ -739,7 +754,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void fall(float distance, float damageMultiplier) { if (!canFly()) super.fall(distance, damageMultiplier); }
     
     /**
-     * Children are handled through eggs, so this is a no-go
+     * Children are actually eggs. So create an egg item of this dragon type and yeet it into the air
      */
     @Nullable
     @Override
@@ -759,11 +774,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return null;
     }
     
+    /**
+     * Custom dragon spawn packet. (Bullshit, but) Needed because of inventory handling
+     */
     @Override
     public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
     
     /**
-     * A gui created when right clicked by a {@link ModItems.dragonStaff}
+     * Set the view angles of the game camera while riding this dragon in 3rd person
+     */
+    @OnlyIn(Dist.CLIENT)
+    public void setMountCameraAngles(boolean backView) {}
+    
+    /**
+     * A gui created when right clicked by a {@link ModItems.DRAGON_STAFF}
      */
     @Nullable
     @Override
@@ -781,7 +805,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isFoodItem(ItemStack stack) {
         if (getFoodItems() == null || getFoodItems().size() == 0) return false;
-        return Objects.equals(getFoodItems(), stack.getItem());
+        return getFoodItems().contains(stack.getItem());
     }
     
     /**

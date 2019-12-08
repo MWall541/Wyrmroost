@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.util.entityhelpers.ai;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.controller.LookController;
 
-//TODO
 public class DragonLookController extends LookController
 {
     private AbstractDragonEntity dragon;
@@ -27,8 +26,8 @@ public class DragonLookController extends LookController
     
         if (isLooking) {
             isLooking = false;
-            mob.rotationYawHead = func_220675_a(mob.rotationYawHead, func_220678_h(), deltaLookYaw);
-            mob.rotationPitch = func_220675_a(mob.rotationPitch, func_220677_g(), this.deltaLookPitch);
+            mob.rotationYawHead = clampedRotate(mob.rotationYawHead, getTargetYaw(), deltaLookYaw);
+            mob.rotationPitch = clampedRotate(mob.rotationPitch, getTargetPitch(), deltaLookPitch);
         }
     }
     

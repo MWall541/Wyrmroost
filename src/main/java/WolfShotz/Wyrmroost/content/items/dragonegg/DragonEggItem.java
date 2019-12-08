@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.items;
+package WolfShotz.Wyrmroost.content.items.dragonegg;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
@@ -32,7 +32,7 @@ import java.util.Optional;
 public class DragonEggItem extends Item
 {
     public DragonEggItem() {
-        super(ModUtils.itemBuilder().maxStackSize(1));
+        super(ModUtils.itemBuilder().maxStackSize(1).setTEISR(() -> DragonEggStackRenderer::new));
     }
     
     @Override

@@ -42,9 +42,9 @@ public class DragonStaffItem extends Item
     
     @Override
     public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
-        if (player.world.isRemote) return false;
         AbstractDragonEntity dragon = getDragonTarget(target, player);
         if (dragon == null) return false;
+        if (player.world.isRemote) return true;
         
         NetworkHooks.openGui((ServerPlayerEntity) player, dragon, buf -> buf.writeInt(dragon.getEntityId()));
         player.playSound(SoundEvents.UI_TOAST_IN, 1f, 1f);

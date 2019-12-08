@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.items.*;
 import WolfShotz.Wyrmroost.content.items.base.ArmorMaterialList;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.content.items.base.ToolMaterialList;
+import WolfShotz.Wyrmroost.content.items.dragonegg.DragonEggItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;

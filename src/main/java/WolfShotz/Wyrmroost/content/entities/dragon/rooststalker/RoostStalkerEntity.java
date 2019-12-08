@@ -110,7 +110,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         if (stack.isEmpty()) return;
         if (isBreedingItem(stack)) {
-            stack.shrink(1);
             eat(stack);
         }
     }

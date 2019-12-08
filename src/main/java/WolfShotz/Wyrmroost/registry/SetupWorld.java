@@ -17,7 +17,6 @@ import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
-import java.util.Set;
 import java.util.function.Predicate;
 
 public class SetupWorld
@@ -33,10 +32,8 @@ public class SetupWorld
     // Ore Generation
     // ==============
     
-    private static final Set<Biome> NETHER_BIOMES = BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER);
-    private static final Set<Biome> END_BIOMES = BiomeDictionary.getBiomes(BiomeDictionary.Type.END);
-    private static final Predicate<Biome> NETHER_FILTER = biome -> NETHER_BIOMES.stream().anyMatch(biome::equals);
-    private static final Predicate<Biome> END_FILTER = biome -> END_BIOMES.stream().anyMatch(biome::equals);
+    private static final Predicate<Biome> NETHER_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER).stream().anyMatch(biome::equals);
+    private static final Predicate<Biome> END_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.END).stream().anyMatch(biome::equals);
     private static final Predicate<Biome> OVERWORLD_FILTER = biome -> !NETHER_FILTER.test(biome) && !END_FILTER.test(biome);
     
     private static final CountRangeConfig PLATINUM_CONFIG = new CountRangeConfig(2, 0, 0, 28);

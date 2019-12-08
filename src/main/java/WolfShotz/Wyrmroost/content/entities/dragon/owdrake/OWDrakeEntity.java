@@ -12,6 +12,7 @@ import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonGrazeGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import com.github.alexthe666.citadel.animation.Animation;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -383,9 +384,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     protected int getExperiencePoints(PlayerEntity player) { return 2 + rand.nextInt(3); }
     
-    /**
-     * Array Containing all of the dragons food items
-     */
+    @Override
+    public void setMountCameraAngles(boolean backView) {
+        if (backView) GlStateManager.translated(0, -0.5d, 0.5d);
+        else GlStateManager.translated(0, 0, -3d);
+    }
+    
     @Override
     public List<Item> getFoodItems() { return new ArrayList<>(Tags.Items.CROPS_WHEAT.getAllElements()); }
     
