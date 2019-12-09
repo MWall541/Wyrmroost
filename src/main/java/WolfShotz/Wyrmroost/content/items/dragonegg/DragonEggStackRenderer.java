@@ -8,6 +8,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 
 public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
 {
@@ -28,11 +29,12 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
     }
     
     private DragonEggProperties getEggProperties(ItemStack stack) {
-        AbstractDragonEntity dragon = (AbstractDragonEntity) ModUtils.getTypeByString(stack.getTag().getString("dragonType")).create(ModUtils.getClientWorld());
-        if (dragon != null) return dragon.getEggProperties();
-        else {
-            ModUtils.L.error("Error getting stack egg properties");
-            return new DragonEggProperties(2f, 2f, 12000);
+        CompoundNBT tag = stack.getTag();
+        if (tag != null && tag.contains("dragonType")) {
+            AbstractDragonEntity dragon = (AbstractDragonEntity) ModUtils.getTypeByString(tag.getString("dragonType")).create(ModUtils.getClientWorld());
+            if (dragon != null) return dragon.getEggProperties();
         }
+        
+        return new DragonEggProperties(2f, 2f, 12000);
     }
 }

@@ -14,14 +14,20 @@ import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -61,7 +67,11 @@ public class EventHandler
             if (!evt.getObject().getCapability(CapabilityOverworld.OW_CAP).isPresent())
                 evt.addCapability(ModUtils.resource("overworldproperties"), new CapabilityOverworld.PropertiesDispatcher());
         }
-        
+    
+        /**
+         * Fire on config change
+         */
+        @SubscribeEvent
         public static void configLoad(ModConfig.ModConfigEvent evt) {
             if (evt.getConfig().getSpec() == ConfigData.COMMON_SPEC)
                 ConfigData.CommonConfig.reload();
@@ -132,13 +142,28 @@ public class EventHandler
     public static class Client
     {
         /**
-         * Can't be subscribed for some reason. Trust me, I tried >.>
+         * Registers item colors for rendering
+         * @param evt
          */
-        public static void registerItemColors() {
-            ItemColors event = Minecraft.getInstance().getItemColors();
+        @SubscribeEvent
+        public static void registerItemColors(ColorHandlerEvent.Item evt) {
+            ItemColors handler = evt.getItemColors();
             
             IItemColor eggColor = (stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex);
-            CustomSpawnEggItem.EGG_TYPES.forEach(e -> event.register(eggColor, e));
+            CustomSpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
+        }
+    
+        /**
+         * Register models for baking
+         */
+        @SubscribeEvent
+        public static void bakeModels(ModelRegistryEvent evt) {
+            ModelLoader.addSpecialModel(new ResourceLocation("item/template_spawn_egg")); //TODO figure out why tf this isnt working
+            System.out.println(ModelLoaderRegistry.loaded(new ResourceLocation("item/template_spawn_egg")));
+            
+            for (CustomSpawnEggItem e : CustomSpawnEggItem.EGG_TYPES) {
+                Minecraft.getInstance().getItemRenderer().getItemModelMesher().register(e, new ModelResourceLocation("minecraft:template_spawn_egg", "inventory"));
+            }
         }
         
         /**
@@ -160,7 +185,10 @@ public class EventHandler
                 }
             }
         }
-        
+    
+        /**
+         * Handles the perspective/position of the camera
+         */
         @SubscribeEvent
         public static void ridingPerspective(EntityViewRenderEvent.CameraSetup event) {
             Minecraft mc = Minecraft.getInstance();

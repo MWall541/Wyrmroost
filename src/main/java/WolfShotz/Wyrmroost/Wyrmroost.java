@@ -8,8 +8,8 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -38,9 +38,12 @@ public class Wyrmroost
 
     public Wyrmroost() {
         registerObjects();
-        
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+    
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modBus.addListener(this::commonSetup);
+        modBus.addListener(this::clientSetup);
+        modBus.register(EventHandler.Common.class);
+        modBus.register(EventHandler.Client.class);
     
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.COMMON_SPEC, "wyrmroost.toml");
     }
@@ -49,8 +52,6 @@ public class Wyrmroost
      * FML Common Setup Event
      */
     private void commonSetup(final FMLCommonSetupEvent event) {
-        MinecraftForge.EVENT_BUS.register(EventHandler.Common.class);
-        
         SetupWorld.setupOreGen();
         ModEntities.registerEntityWorldSpawns();
         NetworkUtils.registerMessages();
@@ -60,15 +61,12 @@ public class Wyrmroost
      * FML Client Setup Event
      */
     private void clientSetup(final FMLClientSetupEvent event) {
-        MinecraftForge.EVENT_BUS.register(EventHandler.Client.class);
-        
-        EventHandler.Client.registerItemColors();
         ModEntities.registerEntityRenders();
         ModKeys.registerKeys();
         SetupIO.screenSetup();
     }
     
-    private void registerObjects() {
+    private static void registerObjects() {
         ModEntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModBlocks.BLOCKS    .register(FMLJavaModLoadingContext.get().getModEventBus());
         ModItems.ITEMS      .register(FMLJavaModLoadingContext.get().getModEventBus());
