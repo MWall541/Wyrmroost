@@ -1,50 +1,39 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
-import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
 import WolfShotz.Wyrmroost.registry.ModKeys;
 import WolfShotz.Wyrmroost.registry.SetupWorld;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.TranslationUtils;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
 
 /**
- * Class Used to hook into forge events to perform particular tasks when the event is called
- * (e.g. player uses an anvil, cancel the normal behaviour and do something else instead)
+ * Events subscribed under the Forge EventBus
  */
-@SuppressWarnings("unused") // Theyre used damnit
+@SuppressWarnings("unused")
 public class EventHandler
 {
     /**
-     * Subscribe events on common distribution
+     * Event handlers listening on COMMON Distribution
      */
     public static class Common
     {
@@ -52,120 +41,51 @@ public class EventHandler
          * Register the Mod Dimension
          */
         @SubscribeEvent
+        @SuppressWarnings("ConstantConditions")
         public static void registerDimension(RegisterDimensionsEvent evt) {
             if (ModUtils.getDimensionInstance() == null)
                 DimensionManager.registerDimension(ModUtils.resource("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
         }
-    
+        
         /**
          * Attach our capabilities
-         * @param evt
          */
         @SubscribeEvent
-        public static void attatchCapabilities(AttachCapabilitiesEvent<World> evt) {
+        public static void attachCapabilities(AttachCapabilitiesEvent<World> evt) {
             if (evt.getObject() == null) return;
             if (!evt.getObject().getCapability(CapabilityOverworld.OW_CAP).isPresent())
                 evt.addCapability(ModUtils.resource("overworldproperties"), new CapabilityOverworld.PropertiesDispatcher());
         }
-    
-        /**
-         * Fire on config change
-         */
-        @SubscribeEvent
-        public static void configLoad(ModConfig.ModConfigEvent evt) {
-            if (evt.getConfig().getSpec() == ConfigData.COMMON_SPEC)
-                ConfigData.CommonConfig.reload();
-        }
         
         /**
          * Nuff' said
-         * Subscribed by config
          */
         @SubscribeEvent
         public static void debugStick(PlayerInteractEvent.EntityInteract evt) {
             if (!ConfigData.debugMode) return;
+            PlayerEntity player = evt.getPlayer();
+            ItemStack stack = player.getHeldItem(evt.getHand());
+            if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) return;
+        
+            System.out.println(ModelLoaderRegistry.loaded(new ResourceLocation("item/minutus_egg")));
+        
             Entity entity = evt.getTarget();
             if (!(entity instanceof AbstractDragonEntity)) return;
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-            PlayerEntity player = evt.getPlayer();
-            ItemStack stack = player.getHeldItem(evt.getHand());
-            
-            if (stack.getItem() == Items.STICK && stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) {
-                if (player.isSneaking()) dragon.tame(true, player);
-                else if (evt.getWorld().isRemote) Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
-                
-                evt.setCanceled(true);
-            }
-        }
-    
-        /**
-         * Focken yeet the little shits that try this crap
-         */
-        private static final String[] begoneWEEB = {"owo", "uwu", "owu", "uwo", "0wo", "ow0", "0w0"};
-        @SubscribeEvent
-        public static void begoneWEEB(PlayerInteractEvent.EntityInteract evt) {
-            Entity entity = evt.getTarget();
-            if (!(entity instanceof AbstractDragonEntity)) return;
-            PlayerEntity player = evt.getPlayer();
-            ItemStack stack = player.getHeldItem(evt.getHand());
         
-            if (stack.getItem() == Items.NAME_TAG && TranslationUtils.containsArray(stack.getDisplayName().getUnformattedComponentText().toLowerCase().trim(), begoneWEEB)) {
-                evt.setCanceled(true);
-                
-                stack.clearCustomName();
-                entity.world.createExplosion(entity, player.posX, player.posY + 1, player.posZ, 6f, Explosion.Mode.NONE); // WEEB GO BOOM
-            }
-        }
-    
-        /**
-         * Disable Damage when riding dragons. This makes as much sense as mojang themselves
-         */
-        @SubscribeEvent
-        public static void onEntityFall(LivingFallEvent evt) {
-            if (evt.getEntity() instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity) evt.getEntity();
-                
-                if (player.getPassengers().stream().anyMatch(SilverGliderEntity.class::isInstance)) {
-                    evt.setCanceled(true);
-                    return;
-                }
-                if (player.getRidingEntity() instanceof AbstractDragonEntity) {
-                    evt.setCanceled(true);
-                }
-            }
+            if (player.isSneaking()) dragon.tame(true, player);
+            else if (evt.getWorld().isRemote) Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
+        
+            evt.setCanceled(true);
         }
     }
     
     /**
-     * Subscribe events playing on CLIENT only distribution
+     * Event listeners running on CLIENT distribution
      */
+    @OnlyIn(Dist.CLIENT)
     public static class Client
     {
-        /**
-         * Registers item colors for rendering
-         * @param evt
-         */
-        @SubscribeEvent
-        public static void registerItemColors(ColorHandlerEvent.Item evt) {
-            ItemColors handler = evt.getItemColors();
-            
-            IItemColor eggColor = (stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex);
-            CustomSpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
-        }
-    
-        /**
-         * Register models for baking
-         */
-        @SubscribeEvent
-        public static void bakeModels(ModelRegistryEvent evt) {
-            ModelLoader.addSpecialModel(new ResourceLocation("item/template_spawn_egg")); //TODO figure out why tf this isnt working
-            System.out.println(ModelLoaderRegistry.loaded(new ResourceLocation("item/template_spawn_egg")));
-            
-            for (CustomSpawnEggItem e : CustomSpawnEggItem.EGG_TYPES) {
-                Minecraft.getInstance().getItemRenderer().getItemModelMesher().register(e, new ModelResourceLocation("minecraft:template_spawn_egg", "inventory"));
-            }
-        }
-        
         /**
          * Handles custom keybind pressing
          */
@@ -178,10 +98,10 @@ public class EventHandler
             if (ModKeys.genericAttack.isPressed()) {
                 if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
                 AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
-                
+            
                 if (dragon.noActiveAnimation()) {
                     dragon.performGenericAttack();
-                    Wyrmroost.network.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
+                    Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
                 }
             }
         }
@@ -190,12 +110,12 @@ public class EventHandler
          * Handles the perspective/position of the camera
          */
         @SubscribeEvent
-        public static void ridingPerspective(EntityViewRenderEvent.CameraSetup event) {
+        public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event) {
             Minecraft mc = Minecraft.getInstance();
             Entity entity = mc.player.getRidingEntity();
             if (!(entity instanceof AbstractDragonEntity)) return;
             int i1 = mc.gameSettings.thirdPersonView;
-            
+        
             if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
         }
     }

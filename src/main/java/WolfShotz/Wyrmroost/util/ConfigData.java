@@ -5,13 +5,18 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ConfigData
 {
-    private static final Pair<CommonConfig, ForgeConfigSpec> SPEC_PAIR = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
-    public static final CommonConfig COMMON = SPEC_PAIR.getLeft();
-    public static final ForgeConfigSpec COMMON_SPEC = SPEC_PAIR.getRight();
-    
+    // Common
     public static boolean debugMode = false;
     
-    public static class CommonConfig {
+    /**
+     * Config Spec on COMMON Dist
+     */
+    public static class CommonConfig
+    {
+        private static final Pair<CommonConfig, ForgeConfigSpec> SPEC_PAIR = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
+        public static final CommonConfig COMMON = CommonConfig.SPEC_PAIR.getLeft();
+        public static final ForgeConfigSpec COMMON_SPEC = CommonConfig.SPEC_PAIR.getRight();
+        
         public final ForgeConfigSpec.BooleanValue debugMode;
     
         CommonConfig(ForgeConfigSpec.Builder configBuilder) {
@@ -25,7 +30,6 @@ public class ConfigData
     
         public static void reload() {
             ConfigData.debugMode = COMMON.debugMode.get();
-            System.out.println("firing");
         }
     }
 }

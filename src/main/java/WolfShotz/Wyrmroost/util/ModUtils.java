@@ -8,6 +8,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
@@ -18,6 +20,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +32,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -57,6 +62,28 @@ public class ModUtils
      * Block Properties builder
      */
     public static Block.Properties blockBuilder(Material material) { return Block.Properties.create(material); }
+    
+    /**
+     * Itemgroup (creative tab.. smh) factory
+     */
+    public static ItemGroup itemGroupFactory(String name, Supplier<ItemStack> displayItem) {
+        return new ItemGroup(name) {
+            @Override
+            public ItemStack createIcon() { return displayItem.get(); }
+        };
+    }
+    
+    /**
+     * Even simpler network channel builder
+     */
+    public static SimpleChannel simplisticChannel(ResourceLocation name, String versionSync) {
+        return NetworkRegistry.ChannelBuilder
+                       .named(name)
+                       .clientAcceptedVersions(versionSync::equals)
+                       .serverAcceptedVersions(versionSync::equals)
+                       .networkProtocolVersion(() -> versionSync)
+                       .simpleChannel();
+    }
     
     /**
      * Get the Client World
