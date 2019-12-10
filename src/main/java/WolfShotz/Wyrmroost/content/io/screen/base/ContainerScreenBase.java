@@ -92,7 +92,7 @@ public class ContainerScreenBase<T extends ContainerBase> extends ContainerScree
         
         if (nameField.isFocused() && p1 == 257) {
             if (!dragonInv.dragon.getName().getUnformattedComponentText().equals(nameField.getText()))
-                Wyrmroost.network.sendToServer(new EntityRenameMessage(dragonInv.dragon, TranslationUtils.stringTranslation(nameField.getText())));
+                Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(dragonInv.dragon, TranslationUtils.stringTranslation(nameField.getText())));
             nameField.setFocused2(false);
         }
         

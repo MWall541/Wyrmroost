@@ -27,7 +27,7 @@ public class NetworkUtils
     
     public static <T extends IMessage> void registerMSG(Class<T> clazz, Function<PacketBuffer, T> decoder) {
         ++messageIndex;
-        Wyrmroost.network.registerMessage(messageIndex, clazz, T::encode, decoder, T::handle);
+        Wyrmroost.NETWORK.registerMessage(messageIndex, clazz, IMessage::encode, decoder, IMessage::handle);
     }
     
     public static <T extends Entity & IAnimatedEntity> void sendAnimationPacket(T entity, Animation animation) {
@@ -36,6 +36,6 @@ public class NetworkUtils
         AnimationMessage message = new AnimationMessage(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation));
         
         entity.setAnimation(animation);
-        Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
+        Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
     }
 }

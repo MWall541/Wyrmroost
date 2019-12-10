@@ -295,7 +295,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 ((LivingEntity) passenger).addPotionEffect(new EffectInstance(Effects.LEVITATION, 2, 100, false, false));
 //                passenger.setMotion(1, 1, 1);
 //                if (passenger instanceof PlayerEntity)
-//                    Wyrmroost.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) passenger), new EntityMoveMessage(passenger));
+//                    Wyrmroost.NETWORK.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) passenger), new EntityMoveMessage(passenger));
             }
         }
     }

@@ -102,7 +102,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
                 if (hatchTime > 0) --hatchTime;
                 else {
                     hatch();
-                    Wyrmroost.network.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
+                    Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
                     return;
                 }
     

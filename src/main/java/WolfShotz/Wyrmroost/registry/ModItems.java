@@ -25,11 +25,11 @@ public class ModItems
     public static final RegistryObject<Item> SOUL_CRYSTAL               = register("soul_crystal", new SoulCrystalItem());
     public static final RegistryObject<Item> DRAGON_STAFF               = register("dragon_staff", new DragonStaffItem());
     
-    public static final RegistryObject<Item> GEODE_BLUE                 = register("geode", basicItem());
-    public static final RegistryObject<Item> GEODE_RED                  = register("geode_red", basicItem());
-    public static final RegistryObject<Item> GEODE_PURPLE               = register("geode_purple", basicItem());
-    public static final RegistryObject<Item> PLATINUM_INGOT             = register("platinum_ingot", basicItem());
-    public static final RegistryObject<Item> ASH_PILE                   = register("ash_pile", basicItem());
+    public static final RegistryObject<Item> GEODE_BLUE                 = register("geode");
+    public static final RegistryObject<Item> GEODE_RED                  = register("geode_red");
+    public static final RegistryObject<Item> GEODE_PURPLE               = register("geode_purple");
+    public static final RegistryObject<Item> PLATINUM_INGOT             = register("platinum_ingot");
+    public static final RegistryObject<Item> ASH_PILE                   = register("ash_pile");
     
     public static final RegistryObject<Item> BLUE_GEODE_SWORD           = register("geode_sword", new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> BLUE_GEODE_PICKAXE         = register("geode_pick", new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()));
@@ -71,12 +71,12 @@ public class ModItems
     public static final RegistryObject<Item> PLATINUM_LEGGINGS          = register("platinum_leggings", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> PLATINUM_BOOTS             = register("platinum_boots", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET));
     
-    public static final RegistryObject<Item> FOOD_COOKED_MINUTUS        = register("cooked_minutus", foodItem(ModItems.COOKED_MINUTUS));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_RAW        = register("drake_meat_raw", foodItem(ModItems.RAW_DRAKE_MEAT));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_COOKED     = register("drake_meat_cooked", foodItem(ModItems.COOKED_DRAKE_MEAT));
-    public static final RegistryObject<Item> FOOD_JEWELLED_APPLE        = register("jewelled_apple", foodItem(ModItems.JEWELLED_APPLE));
-    public static final RegistryObject<Item> FOOD_DRAGON_FRUIT          = register("dragon_fruit", foodItem(ModItems.DRAGON_FRUIT));
-    public static final RegistryObject<Item> FOOD_BLUEBERRIES           = register("blueberries", foodItem(ModItems.BLUEBERRIES));
+    public static final RegistryObject<Item> FOOD_COOKED_MINUTUS        = register("cooked_minutus", new Item(ModUtils.itemBuilder().food(ModItems.COOKED_MINUTUS)));
+    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_RAW        = register("drake_meat_raw", new Item(ModUtils.itemBuilder().food(ModItems.RAW_DRAKE_MEAT)));
+    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_COOKED     = register("drake_meat_cooked", new Item(ModUtils.itemBuilder().food(ModItems.COOKED_DRAKE_MEAT)));
+    public static final RegistryObject<Item> FOOD_JEWELLED_APPLE        = register("jewelled_apple", new Item(ModUtils.itemBuilder().food(ModItems.JEWELLED_APPLE)));
+    public static final RegistryObject<Item> FOOD_DRAGON_FRUIT          = register("dragon_fruit", new Item(ModUtils.itemBuilder().food(ModItems.DRAGON_FRUIT)));
+    public static final RegistryObject<Item> FOOD_BLUEBERRIES           = register("blueberries", new Item(ModUtils.itemBuilder().food(ModItems.BLUEBERRIES)));
     
     public static final RegistryObject<Item> DRAGON_ARMOR_IRON          = register("iron_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.IRON));
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD          = register("gold_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.GOLD));
@@ -113,8 +113,6 @@ public class ModItems
                                                            .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
                                                            .build();
     
-    private static Item basicItem() { return new Item(ModUtils.itemBuilder()); }
-    private static Item foodItem(Food food) { return new Item(ModUtils.itemBuilder().food(food)); }
-    
     public static RegistryObject<Item> register(String name, Item item) { return ITEMS.register(name, () -> item); }
+    public static RegistryObject<Item> register(String name) { return ITEMS.register(name, () -> new Item(ModUtils.itemBuilder())); }
 }
