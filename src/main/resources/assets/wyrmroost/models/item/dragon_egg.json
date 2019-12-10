@@ -2,29 +2,29 @@
     "parent": "builtin/entity",
     "display": {
         "gui": {
-            "rotation": [ -5, 0, 0 ],
-            "translation": [ 8, 38, 0 ],
-            "scale": [ 1, 1, 1 ]
+            "rotation": [ 160, 8, 30 ],
+            "translation": [ 21, 6, 0 ],
+            "scale": [ 1.5, 1.5, 1.5 ]
         },
         "thirdperson_lefthand": {
-            "rotation": [ 30, 0, 0 ],
-            "translation": [ -3, 10, 8 ],
-            "scale": [ 0.35, 0.35, 0.35 ]
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.75, 0.75, 0.75 ]
         },
         "thirdperson_righthand": {
-            "rotation": [ 30, 0, 0 ],
-            "translation": [ 3, 10, 8 ],
-            "scale": [ 0.35, 0.35, 0.35 ]
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.75, 0.75, 0.75 ]
         },
         "firstperson_righthand": {
-            "rotation": [ 0, 0, 0 ],
-            "translation": [ 0, 10, 20 ],
-            "scale": [ 1, 1, 1 ]
+            "rotation": [ 180, 10, 4 ],
+            "translation": [ 14, 15, -10 ],
+            "scale": [ 1.25, 1.25, 1.25 ]
         },
         "firstperson_lefthand": {
-            "rotation": [ 0, 0, 0 ],
-            "translation": [ 3, 13, 20 ],
-            "scale": [ 1, 1, 1 ]
+            "rotation": [ 180, 10, 4 ],
+            "translation": [ -7, 17, -13 ],
+            "scale": [ 1.25, 1.25, 1.25 ]
         }
     }
 }
