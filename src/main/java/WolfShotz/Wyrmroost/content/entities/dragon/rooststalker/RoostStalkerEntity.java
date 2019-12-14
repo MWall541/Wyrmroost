@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
 import WolfShotz.Wyrmroost.registry.ModItems;
 import WolfShotz.Wyrmroost.registry.ModSounds;
+import WolfShotz.Wyrmroost.util.entityhelpers.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -43,7 +44,7 @@ import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class RoostStalkerEntity extends AbstractDragonEntity
+public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
 {
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
     
@@ -65,8 +66,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected void registerGoals() {
         super.registerGoals();
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
-        goalSelector.addGoal(5, new FollowOwnerGoal(this, 1.2f, 8, 2));
-        goalSelector.addGoal(8, new MeleeAttackGoal(this, 1d, true));
+        goalSelector.addGoal(5, new MeleeAttackGoal(this, 1d, true));
+        goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 8, 2));
         goalSelector.addGoal(9, new StoleItemFlee(this));
         goalSelector.addGoal(10, new DragonBreedGoal(this, false, false));
         goalSelector.addGoal(11, new ScavengeGoal(this, 1.1d, SCAVENGE_ANIMATION));
@@ -136,17 +137,17 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 return true;
             }
     
+            if (stack.isEmpty() && heldItem.isEmpty() && !PlayerMount.hasHeadOccupant(player)) {
+                setSit(false);
+                startRiding(player, true);
+    
+                return true;
+            }
+            
             if (stack.isEmpty() || canPickUpStack(stack)) {
                 setStackInSlot(0, stack);
                 player.setHeldItem(hand, heldItem);
                 
-                return true;
-            }
-            
-            if (player.getPassengers().isEmpty()) {
-                setSit(false);
-                startRiding(player, true);
-
                 return true;
             }
         }

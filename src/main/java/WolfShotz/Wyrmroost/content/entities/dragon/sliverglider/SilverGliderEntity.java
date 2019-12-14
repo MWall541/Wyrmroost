@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.ModSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ReflectionUtils;
+import WolfShotz.Wyrmroost.util.entityhelpers.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.*;
 import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
@@ -39,7 +40,7 @@ import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class SilverGliderEntity extends AbstractDragonEntity
+public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
 {
     // Dragon Animation
     public static final Animation SIT_ANIMATION = Animation.create(10);
@@ -196,7 +197,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
                 setRotation(player.rotationYawHead, rotationPitch);
                 
-                Vec3d rotationOffset = MathUtils.rotateYaw(player.renderYawOffset, 0, 0.5d);
+                Vec3d rotationOffset = MathUtils.calculateYawAngle(player.renderYawOffset, 0, 0.5d);
                 double offsetX = rotationOffset.x;
                 double offsetZ = rotationOffset.z;
                 if (player.isElytraFlying()) {
@@ -225,7 +226,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         }
 
         // if tamed, then start riding the player
-        if (isTamed() && stack.isEmpty() && !player.isSneaking() && player.getPassengers().isEmpty() && isOwner(player)) {
+        if (isTamed() && stack.isEmpty() && !player.isSneaking() && !PlayerMount.hasHeadOccupant(player) && isOwner(player)) {
             startRiding(player, true);
             setSit(false);
             getNavigator().clearPath();
