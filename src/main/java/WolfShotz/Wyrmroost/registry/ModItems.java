@@ -92,6 +92,7 @@ public class ModItems
     public static final RegistryObject<Item> EGG_ROOSTSTALKER           = register("rooststalker_egg", new CustomSpawnEggItem(ModEntities.ROOSTSTALKER::get, 0x52100D, 0x959595));
     public static final RegistryObject<Item> EGG_BUTTERFLYLEVIATHAN     = register("butterflyleviathan_egg", new CustomSpawnEggItem(ModEntities.BUTTERFLY_LEVIATHAN::get, 0x17283C, 0x7A6F5A));
     public static final RegistryObject<Item> EGG_DRAGONFRUITDRAKE       = register("fruitdrake_egg", new CustomSpawnEggItem(ModEntities.DRAGON_FRUIT_DRAKE::get, 0xe05c9a, 0x788716));
+    public static final RegistryObject<Item> EGG_CANARIWYVERN           = register("canariwyvern_egg", new CustomSpawnEggItem(ModEntities.CANARI_WYVERN::get, 0xffffff, 0xffffff));
 
     //  ===========================
     //          Food List
