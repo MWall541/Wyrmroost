@@ -3,6 +3,8 @@ package WolfShotz.Wyrmroost.registry;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render.ButterflyLeviathanRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.CanariWyvernEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.CanariWyvernRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
@@ -27,7 +29,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -35,6 +36,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static net.minecraftforge.common.BiomeDictionary.Type;
+import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
@@ -51,6 +53,7 @@ public class ModEntities
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER                 = register("roost_stalker", buildCreatureEntity(RoostStalkerEntity::new).size(0.65f, 0.5f));
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN    = register("butterfly_leviathan", EntityType.Builder.create(ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE).size(4f, 3f));
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE       = register("dragon_fruit_drake", buildCreatureEntity(DragonFruitDrakeEntity::new).size(1.5f, 2.5f));
+    public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN                = register("canari_wyvern", buildCreatureEntity(CanariWyvernEntity::new));
     
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG                      = register("dragon_egg", EntityType.Builder.create(DragonEggEntity::new, EntityClassification.MISC).disableSummoning());
     
@@ -72,16 +75,17 @@ public class ModEntities
      */
     @OnlyIn(Dist.CLIENT)
     public static void registerEntityRenders() {
-        RenderingRegistry.registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(RoostStalkerEntity.class, RoostStalkerRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(ButterflyLeviathanEntity.class, ButterflyLeviathanRenderer::new);
-        RenderingRegistry.registerEntityRenderingHandler(DragonFruitDrakeEntity.class, DragonFruitDrakeRenderer::new);
+        registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
+        registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
+        registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
+        registerEntityRenderingHandler(RoostStalkerEntity.class, RoostStalkerRenderer::new);
+        registerEntityRenderingHandler(ButterflyLeviathanEntity.class, ButterflyLeviathanRenderer::new);
+        registerEntityRenderingHandler(DragonFruitDrakeEntity.class, DragonFruitDrakeRenderer::new);
+        registerEntityRenderingHandler(CanariWyvernEntity.class, CanariWyvernRenderer::new);
     
-        RenderingRegistry.registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
+        registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
     
-        RenderingRegistry.registerEntityRenderingHandler(MultiPartEntity.class, mgr -> new EntityRenderer<MultiPartEntity>(mgr) {protected ResourceLocation getEntityTexture(MultiPartEntity entity) {return null;}});
+        registerEntityRenderingHandler(MultiPartEntity.class, mgr -> new EntityRenderer<MultiPartEntity>(mgr) {protected ResourceLocation getEntityTexture(MultiPartEntity entity) {return null;}});
     }
 
     // ================================

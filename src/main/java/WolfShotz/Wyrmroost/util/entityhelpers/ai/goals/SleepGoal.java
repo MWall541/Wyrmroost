@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 
 import java.util.EnumSet;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public class SleepGoal extends Goal
 {
@@ -14,10 +15,16 @@ public class SleepGoal extends Goal
     public final boolean NOCTURNAL;
     public final Random RANDOM = new Random();
     public final World WORLD;
+    private static final Predicate<AbstractDragonEntity> SHOULD_SLEEP = dragon -> dragon.isBeingRidden()
+                   || dragon.getAttackTarget() != null
+                   || !dragon.getNavigator().noPath()
+                   || dragon.isAngry()
+                   || dragon.isInWaterOrBubbleColumn()
+                   || dragon.isFlying();
     
     public SleepGoal(AbstractDragonEntity dragon, boolean nocturnal) {
-        this.dragon = dragon;
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP, Flag.TARGET));
+        this.dragon = dragon;
         this.NOCTURNAL = nocturnal;
         this.WORLD = dragon.world;
     }
@@ -27,18 +34,15 @@ public class SleepGoal extends Goal
      */
     @Override
     public boolean shouldExecute() {
-        if (dragon.isSleeping()) return true;
-        if (--sleepTimeout > 0) return false;
-        if (dragon.isInWaterOrBubbleColumn() || dragon.isFlying()) return false;
+        if (dragon.isSleeping() && --sleepTimeout <= 0) return true;
+        if (SHOULD_SLEEP.test(dragon)) return false;
         return NOCTURNAL == WORLD.isDaytime() && (!dragon.isTamed() || dragon.isSitting()) && RANDOM.nextInt(300) == 0;
     }
     
     @Override
     public boolean shouldContinueExecuting() {
-        if (WORLD.isDaytime() && dragon.isSleeping() && RANDOM.nextInt(150) != 0) return false; // Stop sleeping at daytime
-        if ((dragon.isTamed() && !dragon.isSitting()) || dragon.isBeingRidden()) return false; // lol sleep while being ridden. Snorlax intensifies
-        if (dragon.getAttackTarget() != null || !dragon.getNavigator().noPath() || dragon.isAngry()) return false; // Check ai shtuffs. Shouldnt sleep when were angry
-        return !dragon.isInWaterOrBubbleColumn() && !dragon.isFlying(); // Check actually reasonable things (imagine sleeping while flying)
+        if (!dragon.isSleeping() || SHOULD_SLEEP.test(dragon)) return false;
+        return NOCTURNAL != WORLD.isDaytime() && RANDOM.nextInt(150) == 0;
     }
     
     @Override

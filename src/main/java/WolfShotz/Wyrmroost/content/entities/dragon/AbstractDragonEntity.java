@@ -109,7 +109,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerGoals() {
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(2, new SleepGoal(this, nocturnal));
-        goalSelector.addGoal(3, sitGoal = new SitGoal(this));
+        goalSelector.addGoal(2, sitGoal = new SitGoal(this));
     }
     
     /**
@@ -821,6 +821,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return eggProperties;
     }
     
+    /**
+     * The egg properties this dragon's eggs have
+     */
     public abstract DragonEggProperties createEggProperties();
     
     // ================================
