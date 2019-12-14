@@ -25,6 +25,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     public static final ResourceLocation CHILD_SPE          = resource("child_spe.png");
     // Easter Egg
     public static final ResourceLocation DAISY              = resource("dasy.png");
+    public static final ResourceLocation JEB_               = resource("jeb.png");
     // Saddle
     public static final ResourceLocation SADDLE_LAYER       = resource("accessories/saddle.png");
     // Armor
@@ -45,8 +46,11 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     @Nullable
     @Override
     protected ResourceLocation getEntityTexture(OWDrakeEntity drake) {
-        if (drake.hasCustomName() && drake.getCustomName().getUnformattedComponentText().equals("Daisy"))
-            return DAISY;
+        if (drake.hasCustomName()) {
+            String name = drake.getCustomName().getUnformattedComponentText();
+            if (name.equals("Daisy")) return DAISY;
+            if (name.equalsIgnoreCase("Jeb_")) return JEB_;
+        }
         boolean isSavannah = drake.getDrakeVariant();
         boolean isSpecial = drake.isSpecial();
         boolean gender = drake.getGender();

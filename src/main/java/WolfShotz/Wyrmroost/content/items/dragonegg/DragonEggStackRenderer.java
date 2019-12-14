@@ -2,39 +2,39 @@ package WolfShotz.Wyrmroost.content.items.dragonegg;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggModel;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 
 public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
 {
     private static final DragonEggModel EGG_MODEL = new DragonEggModel();
-    private static DragonEggProperties PROPERTIES;
+    private ResourceLocation texture;
     
     @Override
     public void renderByItem(ItemStack itemStackIn) {
-        if (PROPERTIES == null) PROPERTIES = getEggProperties(itemStackIn);
+        if (texture == null) texture = getEggTexture(itemStackIn);
         
         GlStateManager.pushMatrix();
         GlStateManager.scalef(1f, 1f, 1f);
         GlStateManager.color4f(1.5f, 1.5f, 1.5f, 1f);
         
-        Minecraft.getInstance().getTextureManager().bindTexture(PROPERTIES.getEggTexture());
+        Minecraft.getInstance().getTextureManager().bindTexture(texture);
         EGG_MODEL.base.render(0.0625f);
         GlStateManager.popMatrix();
     }
     
-    private DragonEggProperties getEggProperties(ItemStack stack) {
+    private ResourceLocation getEggTexture(ItemStack stack) {
         CompoundNBT tag = stack.getTag();
         if (tag != null && tag.contains("dragonType")) {
             AbstractDragonEntity dragon = (AbstractDragonEntity) ModUtils.getTypeByString(tag.getString("dragonType")).create(ModUtils.getClientWorld());
-            if (dragon != null) return dragon.getEggProperties();
+            if (dragon != null) return dragon.getEggProperties().getEggTexture();
         }
         
-        return new DragonEggProperties(2f, 2f, 12000);
+        return ModUtils.resource("textures/entity/dragonegg/default.png");
     }
 }
