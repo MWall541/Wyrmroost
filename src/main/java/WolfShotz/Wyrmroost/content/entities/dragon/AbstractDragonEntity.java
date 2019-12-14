@@ -315,7 +315,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         invHandler.ifPresent(i -> buf.writeCompoundTag(i.serializeNBT()));
         try { dataManager.writeEntries(buf); }
         catch (IOException exc) { throw new RuntimeException("Could not write dataManager data"); }
-        
     }
     
     /**
@@ -339,12 +338,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public void livingTick() {
-        if (canFly()) {
-            boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold);
-            if (shouldFly != isFlying()) setFlying(shouldFly);
-            
-            if (!isFlying() && syncRand.nextInt(randomFlyChance) == 0 && !isSleeping() && !isSitting()) setFlying(true);
-        }
+//        if (canFly()) {
+//            boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold);
+//            if (shouldFly != isFlying()) setFlying(shouldFly);
+//
+//            if (!isFlying() && syncRand.nextInt(randomFlyChance) == 0 && !isSleeping() && !isSitting()) setFlying(true);
+//        }
         
         if (world.isRemote) { // Client Only Stuffs
             if (isSpecial()) doSpecialEffects();
@@ -616,7 +615,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @return An approximate position of the mouth of the dragon
      */
     public Vec3d getApproximateMouthPos() {
-        return MathUtils.rotateYaw(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
+        return MathUtils.calculateYawAngle(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
     }
     
     @Override

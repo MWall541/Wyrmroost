@@ -120,8 +120,6 @@ public class ModUtils
     
     /**
      * Get an entity type by a string "key"
-     * @param key
-     * @return
      */
     @Nullable
     public static <T extends Entity> EntityType<T> getTypeByString(@Nonnull String key) { return (EntityType<T>) EntityType.byKey(key).orElse(null); }
@@ -155,4 +153,6 @@ public class ModUtils
         for (int i=0; i < handler.getSlots(); ++i) if (!handler.getStackInSlot(i).isEmpty()) return false;
         return true;
     }
+    
+    
 }

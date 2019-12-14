@@ -44,7 +44,7 @@ public class MathUtils
         return f1;
     }
     
-    public static Vec3d rotateYaw(float amount, double xOffset, double zOffset) {
+    public static Vec3d calculateYawAngle(float amount, double xOffset, double zOffset) {
         return new Vec3d(xOffset, 0, zOffset).rotateYaw(-amount * (PI / 180f));
     }
     

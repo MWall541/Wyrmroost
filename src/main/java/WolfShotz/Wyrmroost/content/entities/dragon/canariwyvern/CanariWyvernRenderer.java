@@ -33,7 +33,7 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
         if (canari.hasCustomName()) {
             String name = canari.getCustomName().getUnformattedComponentText();
             if (name.equalsIgnoreCase("rudy")) return RUDY;
-//            if (name.equalsIgnoreCase("???") && !canari.getGender()) return FEMALE_LADY; TODO Shans birb name?
+            if (name.equalsIgnoreCase("Lady Everlyn Winklestein") && !canari.getGender()) return FEMALE_LADY;
         }
         
         boolean male = canari.getGender();
