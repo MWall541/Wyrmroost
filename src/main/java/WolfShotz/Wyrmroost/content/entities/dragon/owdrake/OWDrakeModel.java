@@ -389,6 +389,8 @@ public class OWDrakeModel extends AdvancedEntityModel
     @Override
     public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         OWDrakeEntity drake = (OWDrakeEntity) entityIn; //TODO: Use cast until Alex re-evaluates citadel!
+        if(netHeadYaw < -180) netHeadYaw += 360;
+        else if(netHeadYaw > 180) netHeadYaw -= 360;
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     

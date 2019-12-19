@@ -153,6 +153,4 @@ public class ModUtils
         for (int i=0; i < handler.getSlots(); ++i) if (!handler.getStackInSlot(i).isEmpty()) return false;
         return true;
     }
-    
-    
 }

@@ -11,6 +11,8 @@ import net.minecraft.entity.Entity;
  */
 public class CanariWyvernModel extends AdvancedEntityModel
 {
+    public CanariWyvernEntity canari;
+    
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
     public AdvancedRendererModel neck1;
@@ -373,5 +375,21 @@ public class CanariWyvernModel extends AdvancedEntityModel
         GlStateManager.translated(-body1.rotationPointX * scale, -body1.rotationPointY * scale, -body1.rotationPointZ * scale);
         body1.render(scale);
         GlStateManager.popMatrix();
+    }
+    
+    @Override
+    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+        canari = (CanariWyvernEntity) entityIn;
+        
+        setInitialPositions();
+    }
+    
+    public void setInitialPositions() {
+        wing1L.rotateAngleY = -1f;
+        wing2L.rotateAngleY = 1f;
+    }
+    
+    public void idle() {
+    
     }
 }

@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
-import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
+import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.registry.ModItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
@@ -84,11 +84,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             @Override
             public boolean shouldContinueExecuting() {
                 if (!isSleeping()) return false;
-                int bounds = world.isDaytime()? 600 : 150;
-                if (rand.nextInt(bounds) == 0) return false;
-                if ((dragon.isTamed() && !dragon.isSitting()) || dragon.isBeingRidden()) return false;
-                if (dragon.getAttackTarget() != null || !dragon.getNavigator().noPath() || dragon.isAngry()) return false;
-                return !dragon.isInWaterOrBubbleColumn() && !dragon.isFlying();
+                int bounds = world.isDaytime()? 300 : 600;
+                return shouldSleep(dragon) && rand.nextInt(bounds) == 0;
             }
         });
     }
@@ -205,7 +202,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random) {
         World world = worldIn.getWorld();
         
-        return world.getDimension() instanceof OverworldDimension && world.getCapability(CapabilityOverworld.OW_CAP).map(CapabilityOverworld::isSpawnsTriggered).orElse(false);
+        System.out.println("trying!");
+        
+        return world.getDimension() instanceof OverworldDimension && world.getCapability(CapabilityWorld.OW_CAP).map(CapabilityWorld::isPortalTriggered).orElse(false);
     }
     
     @Override
@@ -229,5 +228,5 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public ItemStackHandler createInv() { return new ItemStackHandler(1); }
     
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION}; }
 }

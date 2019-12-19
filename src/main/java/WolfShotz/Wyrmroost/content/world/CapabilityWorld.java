@@ -10,30 +10,19 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CapabilityOverworld
+public class CapabilityWorld
 {
-    @CapabilityInject(CapabilityOverworld.class)
-    public static Capability<CapabilityOverworld> OW_CAP;
+    @CapabilityInject(CapabilityWorld.class)
+    public static Capability<CapabilityWorld> OW_CAP;
     
-    private boolean isSpawnsTriggered;
-    
-    public boolean isSpawnsTriggered() { return isSpawnsTriggered; }
-    
-    public void setSpawnsTriggered(boolean flag) { this.isSpawnsTriggered = flag; }
+    private boolean portalTriggered;
+    public boolean isPortalTriggered() { return portalTriggered; }
+    public void setPortalTriggered(boolean flag) { this.portalTriggered = flag; }
     
     public static class PropertiesDispatcher implements ICapabilitySerializable<CompoundNBT>
     {
-        private CapabilityOverworld worldData = new CapabilityOverworld();
+        private final CapabilityWorld worldData = new CapabilityWorld();
     
-        @Override
-        public CompoundNBT serializeNBT() {
-            CompoundNBT nbt = new CompoundNBT();
-            nbt.putBoolean("triggerowspawns", worldData.isSpawnsTriggered());
-            return nbt;
-        }
-    
-        @Override
-        public void deserializeNBT(CompoundNBT nbt) { worldData.setSpawnsTriggered(nbt.getBoolean("triggerowspawns")); }
     
         /**
          * Retrieves the Optional handler for the capability requested on the specific side.
@@ -41,14 +30,20 @@ public class CapabilityOverworld
          * Modders are encouraged to cache this value, using the listener capabilities of the Optional to
          * be notified if the requested capability get lost.
          *
-         * @param cap
-         * @param side
          * @return The requested an optional holding the requested capability.
          */
         @Nonnull
         @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-            return cap == OW_CAP? LazyOptional.of(() -> (T) worldData) : LazyOptional.empty();
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) { return OW_CAP.orEmpty(cap, LazyOptional.of(() -> worldData)); }
+        
+        @Override
+        public CompoundNBT serializeNBT() {
+            CompoundNBT nbt = new CompoundNBT();
+            nbt.putBoolean("triggerowspawns", worldData.isPortalTriggered());
+            return nbt;
         }
+    
+        @Override
+        public void deserializeNBT(CompoundNBT nbt) { worldData.setPortalTriggered(nbt.getBoolean("triggerowspawns")); }
     }
 }

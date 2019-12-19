@@ -129,9 +129,7 @@ public class ModEntities
         return biomes;
     }
     
-    private static Set<Biome> getDFDBiomes() {
-        return BiomeDictionary.getBiomes(Type.JUNGLE);
-    }
+    private static Set<Biome> getDFDBiomes() { return BiomeDictionary.getBiomes(Type.JUNGLE); }
 
     // ================================
     //   SetupEntity Helper Functions

@@ -53,7 +53,7 @@ public class ScavengeGoal extends MoveToBlockGoal
     }
     
     @Override
-    public boolean shouldContinueExecuting() { return super.shouldContinueExecuting() && isHandEmpty(dragon) && chest != null && !chest.isEmpty(); }
+    public boolean shouldContinueExecuting() { return super.shouldContinueExecuting() && dragon.invHandler.map(e -> e.getStackInSlot(0) == ItemStack.EMPTY).orElse(false) && chest != null && !chest.isEmpty(); }
     
     @Override
     public void tick() {
@@ -73,7 +73,7 @@ public class ScavengeGoal extends MoveToBlockGoal
     
                 if (!stack.isEmpty() && dragon.canPickUpStack(stack)) {
                     chest.removeStackFromSlot(index);
-                    dragon.setItemStackToSlot(EquipmentSlotType.MAINHAND, stack);
+                    dragon.invHandler.ifPresent(i -> i.setStackInSlot(0, stack));
                 }
             }
         }

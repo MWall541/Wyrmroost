@@ -406,11 +406,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand) {
-        if (processInteract(player, hand, player.getHeldItem(hand))) {
-            setSleeping(false);
-            return true;
-        }
-        return false;
+        if (!processInteract(player, hand, player.getHeldItem(hand))) return false;
+    
+        setSleeping(false);
+        return true;
     }
     
     /**

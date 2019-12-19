@@ -31,7 +31,7 @@ public class BlockBase extends Block
     
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
-        return silktouch == 0? xpAmount.apply(RANDOM) : 0;
+        return xpAmount != null && silktouch == 0? xpAmount.apply(RANDOM) : 0;
     }
     
     public BlockBase setXPDrops(Function<Random, Integer> function) {

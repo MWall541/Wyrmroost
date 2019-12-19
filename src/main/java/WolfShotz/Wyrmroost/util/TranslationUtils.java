@@ -16,7 +16,6 @@ public class TranslationUtils
     /**
      * Translate the passed string into an ITextComponent.
      * Basically just jam whatevers passed into the lang file.
-     * @param text
      * @param formats OPTIONAL
      * @return Translated Text Component
      */
@@ -28,9 +27,6 @@ public class TranslationUtils
     
     /**
      * Equivalent to {@link #translation} but instead uses {@link StringTextComponent}
-     * @param text
-     * @param formats
-     * @return
      */
     public static ITextComponent stringTranslation(String text, TextFormatting... formats) {
         StringTextComponent stringComponent = new StringTextComponent(text);
@@ -47,7 +43,6 @@ public class TranslationUtils
     /**
      * Minecrafts version of internationalization. Can be used as an alternative to:
      * <p> <code>ModUtils.translation()</code>
-     * @param text
      */
     @OnlyIn(Dist.CLIENT)
     public static String format(String text) { return I18n.format(text); }
@@ -68,5 +63,11 @@ public class TranslationUtils
         return false;
     }
     
+    /**
+     * Find the first occurrence of a given string and replace it.
+     * @param string The string
+     * @param replacing The first occurence were replacing
+     * @param replaceWith What were replacing that first occurence with
+     */
     public static String replaceFirst(String string, String replacing, String replaceWith) { return Pattern.compile(replacing, Pattern.LITERAL).matcher(string).replaceFirst(replaceWith); }
 }

@@ -27,6 +27,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     public static final ResourceLocation DAISY              = resource("dasy.png");
     public static final ResourceLocation JEB_               = resource("jeb.png");
     // Saddle
+    // Saddle
     public static final ResourceLocation SADDLE_LAYER       = resource("accessories/saddle.png");
     // Armor
     public static final ResourceLocation ARMOR_IRON         = resource("accessories/armor_iron.png");

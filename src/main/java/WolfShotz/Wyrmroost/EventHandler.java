@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
-import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
+import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.registry.ModKeys;
 import WolfShotz.Wyrmroost.registry.SetupWorld;
 import WolfShotz.Wyrmroost.util.ConfigData;
@@ -13,13 +13,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -51,10 +49,11 @@ public class EventHandler
          * Attach our capabilities
          */
         @SubscribeEvent
-        public static void attachCapabilities(AttachCapabilitiesEvent<World> evt) {
-            if (evt.getObject() == null) return;
-            if (!evt.getObject().getCapability(CapabilityOverworld.OW_CAP).isPresent())
-                evt.addCapability(ModUtils.resource("overworldproperties"), new CapabilityOverworld.PropertiesDispatcher());
+        public static void attatchWorldCaps(AttachCapabilitiesEvent<World> evt) {
+            if (evt.getObject() == null || evt.getObject().isRemote) return;
+            
+            if (!evt.getObject().getCapability(CapabilityWorld.OW_CAP).isPresent())
+                evt.addCapability(ModUtils.resource("overworldproperties"), new CapabilityWorld.PropertiesDispatcher());
         }
         
         /**
@@ -66,22 +65,20 @@ public class EventHandler
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
             if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) return;
-        
-            System.out.println(ModelLoaderRegistry.loaded(new ResourceLocation("item/minutus_egg")));
-        
+            
+            evt.setCanceled(true);
+            
             Entity entity = evt.getTarget();
             if (!(entity instanceof AbstractDragonEntity)) return;
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-        
+            
             if (player.isSneaking()) dragon.tame(true, player);
             else if (evt.getWorld().isRemote) Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
-        
-            evt.setCanceled(true);
         }
     }
     
     /**
-     * Event listeners running on CLIENT distribution
+     * Event listeners listening on CLIENT distribution
      */
     @OnlyIn(Dist.CLIENT)
     public static class Client

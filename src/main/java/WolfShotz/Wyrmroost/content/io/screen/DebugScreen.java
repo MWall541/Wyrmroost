@@ -2,7 +2,9 @@ package WolfShotz.Wyrmroost.content.io.screen;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.TranslationUtils;
+import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -18,9 +20,21 @@ public class DebugScreen extends Screen
     }
     
     @Override
+    protected void init() {
+        if (dragon.getAnimations() != null && dragon.getAnimations().length > 0)
+            for (int i=0; i < dragon.getAnimations().length; i++) {
+                Animation anim = dragon.getAnimations()[i];
+                addButton(new Button((i * 50) + (width / 2) - (dragon.getAnimations().length * 25), 225, 50, 12, "Anim: " + i, b -> {
+                    dragon.setAnimation(anim);
+                    onClose();
+                }));
+            }
+    }
+    
+    @Override
     public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
-        super.render(p_render_1_, p_render_2_, p_render_3_);
         renderBackground();
+        super.render(p_render_1_, p_render_2_, p_render_3_);
         String gender = dragon.getGender()? "male" : "female";
         
         drawCenteredString(font, dragon.getDisplayName().getUnformattedComponentText(), (width / 2), 15, 0xffffff);

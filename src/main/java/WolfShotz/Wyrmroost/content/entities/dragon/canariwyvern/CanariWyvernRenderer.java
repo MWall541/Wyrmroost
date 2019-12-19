@@ -9,19 +9,22 @@ import javax.annotation.Nullable;
 
 public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEntity>
 {
-    private static final ResourceLocation FEMALE_BLUE   = resource("body_fb.png");
-    private static final ResourceLocation FEMALE_GREEN  = resource("body_fg.png");
-    private static final ResourceLocation FEMALE_PURPLE = resource( "body_fp.png");
-    private static final ResourceLocation FEMALE_RED    = resource("body_fr.png");
-    private static final ResourceLocation FEMALE_YELLOW = resource("body_fy.png");
-    private static final ResourceLocation MALE_BLUE     = resource("body_mb.png");
-    private static final ResourceLocation MALE_GREEN    = resource("body_mg.png");
-    private static final ResourceLocation MALE_PURPLE   = resource("body_mp.png");
-    private static final ResourceLocation MALE_RED      = resource("body_mr.png");
-    private static final ResourceLocation MALE_YELLOW   = resource("body_my.png");
+    public static final ResourceLocation FEMALE_BLUE   = resource("body_fb.png");
+    public static final ResourceLocation FEMALE_GREEN  = resource("body_fg.png");
+    public static final ResourceLocation FEMALE_PURPLE = resource("body_fp.png");
+    public static final ResourceLocation FEMALE_RED    = resource("body_fr.png");
+    public static final ResourceLocation FEMALE_YELLOW = resource("body_fy.png");
+    public static final ResourceLocation MALE_BLUE     = resource("body_mb.png");
+    public static final ResourceLocation MALE_GREEN    = resource("body_mg.png");
+    public static final ResourceLocation MALE_PURPLE   = resource("body_mp.png");
+    public static final ResourceLocation MALE_RED      = resource("body_mr.png");
+    public static final ResourceLocation MALE_YELLOW   = resource("body_my.png");
     // Easter egg
     private static final ResourceLocation FEMALE_LADY   = resource("lady.png");
     private static final ResourceLocation RUDY          = resource("rudy.png");
+    
+    private static final ResourceLocation[] MALE_VARS = new ResourceLocation[] {MALE_BLUE, MALE_GREEN, MALE_YELLOW, MALE_RED, MALE_PURPLE};
+    private static final ResourceLocation[] FEMALE_VARS = new ResourceLocation[] {FEMALE_YELLOW, FEMALE_PURPLE, FEMALE_GREEN, FEMALE_BLUE, FEMALE_RED};
     
     public CanariWyvernRenderer(EntityRendererManager manager) {
         super(manager, new CanariWyvernModel(), 1);
@@ -36,15 +39,8 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
             if (name.equalsIgnoreCase("Lady Everlyn Winklestein") && !canari.getGender()) return FEMALE_LADY;
         }
         
-        boolean male = canari.getGender();
-        switch (canari.getVariant()) {
-            case 0: return male? MALE_BLUE   : FEMALE_BLUE;
-            case 1: return male? MALE_GREEN  : FEMALE_GREEN;
-            case 2: return male? MALE_PURPLE : FEMALE_PURPLE;
-            case 3: return male? MALE_RED    : FEMALE_RED;
-            case 4: return male? MALE_YELLOW : FEMALE_YELLOW;
-        }
-        return MALE_BLUE; // Fallback but HOW THE FUCK?!
+        if (canari.getGender()) return MALE_VARS[canari.getVariant()];
+        else return FEMALE_VARS[canari.getVariant()];
     }
     
     private static ResourceLocation resource(String png) {

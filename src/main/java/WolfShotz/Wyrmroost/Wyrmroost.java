@@ -49,6 +49,7 @@ public class Wyrmroost
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.CommonConfig.COMMON_SPEC);
     }
     
+    
     // Mod Specific SubscribeEvents
     
     /**
@@ -57,7 +58,7 @@ public class Wyrmroost
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(EventHandler.Common.class);
-        
+    
         SetupWorld.setupOreGen();
         ModEntities.registerEntityWorldSpawns();
         NetworkUtils.registerMessages();

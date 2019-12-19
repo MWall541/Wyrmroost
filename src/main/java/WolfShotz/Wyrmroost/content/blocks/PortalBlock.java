@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
-import WolfShotz.Wyrmroost.content.world.CapabilityOverworld;
+import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.registry.SetupWorld;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
@@ -43,7 +43,7 @@ public class PortalBlock extends BlockBase
         z = MathHelper.clamp(z, d4, d6);
         double y = world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) x, (int) z); // doesnt work, cant get chunk surface when it isnt loaded yet...
         
-        ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getCapability(CapabilityOverworld.OW_CAP).ifPresent(cap -> cap.setSpawnsTriggered(true));
+        ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getCapability(CapabilityWorld.OW_CAP).ifPresent(cap -> cap.setPortalTriggered(true));
         ((ServerPlayerEntity) entityIn).teleport(world, x, y, z, player.rotationYaw, player.rotationPitch);
     }
 }

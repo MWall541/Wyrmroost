@@ -6,7 +6,6 @@ import net.minecraft.world.World;
 
 import java.util.EnumSet;
 import java.util.Random;
-import java.util.function.Predicate;
 
 public class SleepGoal extends Goal
 {
@@ -15,12 +14,6 @@ public class SleepGoal extends Goal
     public final boolean NOCTURNAL;
     public final Random RANDOM = new Random();
     public final World WORLD;
-    private static final Predicate<AbstractDragonEntity> SHOULD_SLEEP = dragon -> dragon.isBeingRidden()
-                   || dragon.getAttackTarget() != null
-                   || !dragon.getNavigator().noPath()
-                   || dragon.isAngry()
-                   || dragon.isInWaterOrBubbleColumn()
-                   || dragon.isFlying();
     
     public SleepGoal(AbstractDragonEntity dragon, boolean nocturnal) {
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP, Flag.TARGET));
@@ -35,13 +28,12 @@ public class SleepGoal extends Goal
     @Override
     public boolean shouldExecute() {
         if (dragon.isSleeping() && --sleepTimeout <= 0) return true;
-        if (SHOULD_SLEEP.test(dragon)) return false;
-        return NOCTURNAL == WORLD.isDaytime() && (!dragon.isTamed() || dragon.isSitting()) && RANDOM.nextInt(300) == 0;
+        return NOCTURNAL == WORLD.isDaytime() && shouldSleep(dragon) && RANDOM.nextInt(300) == 0;
     }
     
     @Override
     public boolean shouldContinueExecuting() {
-        if (!dragon.isSleeping() || SHOULD_SLEEP.test(dragon)) return false;
+        if (!dragon.isSleeping() || !shouldSleep(dragon)) return false;
         return NOCTURNAL != WORLD.isDaytime() && RANDOM.nextInt(150) == 0;
     }
     
@@ -52,5 +44,15 @@ public class SleepGoal extends Goal
     public void resetTask() {
         sleepTimeout = 350;
         dragon.setSleeping(false);
+    }
+    
+    public static boolean shouldSleep(AbstractDragonEntity dragon) {
+        return (!dragon.isTamed() || dragon.isSitting()) &&
+                       !dragon.isBeingRidden()
+                       && dragon.getAttackTarget() == null
+                       && dragon.getNavigator().noPath()
+                       && !dragon.isAngry()
+                       && !dragon.isInWaterOrBubbleColumn()
+                       && !dragon.isFlying();
     }
 }

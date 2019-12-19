@@ -16,10 +16,21 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+import static net.minecraft.entity.SharedMonsterAttributes.*;
+
 public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMount.IShoulderMount
 {
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
         super(dragon, world);
+    }
+    
+    @Override
+    protected void registerAttributes() {
+        super.registerAttributes();
+        
+        getAttribute(MAX_HEALTH).setBaseValue(16d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.2d);
+        getAttribute(ATTACK_DAMAGE).setBaseValue(5.5d);
     }
     
     @Override
@@ -89,14 +100,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() {
-        return null;
-    }
+    public List<Item> getFoodItems() { return null; }
     
     @Override
-    public DragonEggProperties createEggProperties() {
-        return null;
-    }
+    public DragonEggProperties createEggProperties() { return null; }
     
     @Override
     public Animation[] getAnimations() {

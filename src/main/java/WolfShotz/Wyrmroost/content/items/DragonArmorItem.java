@@ -31,7 +31,7 @@ public class DragonArmorItem extends Item
     
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment == Enchantments.PROTECTION && enchantment.getMaxLevel() == 2;
+        return enchantment == Enchantments.PROTECTION;
     }
     
     @Override
