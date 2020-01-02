@@ -1,10 +1,10 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
-import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
-import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
 import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.ButterflyInvScreen;
 import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.OWDrakeInvScreen;
@@ -26,17 +26,14 @@ public class SetupIO
     public static final DeferredRegister<ContainerType<?>> CONTAINERS = new DeferredRegister<>(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
     
     public static final RegistryObject<ContainerType<OWDrakeInvContainer>> OWDRAKE_CONTAINER = register("owdrake_inv", createEntityContainer(OWDrakeInvContainer::new));
-    public static final RegistryObject<ContainerType<StalkerInvContainer>> STALKER_CONTAINER = register("stalker_inv", createEntityContainer(StalkerInvContainer::new));
-    public static final RegistryObject<ContainerType<ButterflyInvContainer>> BUTTERFLY_CONTAINER = register("butterfly_inv", createEntityContainer(ButterflyInvContainer::new));
-    public static final RegistryObject<ContainerType<DragonFruitDrakeContainer>> FRUIT_DRAKE_CONTAINER = register("fruit_drake_inv", createEntityContainer(DragonFruitDrakeContainer::new));
+    public static final RegistryObject<ContainerType<ContainerBase<RoostStalkerEntity>>> STALKER_CONTAINER = register("stalker_inv", createEntityContainer(ContainerBase::stalkerInv));
+    public static final RegistryObject<ContainerType<ContainerBase<ButterflyLeviathanEntity>>> BUTTERFLY_CONTAINER = register("butterfly_inv", createEntityContainer(ContainerBase::butterflyInv));
     
-    // IScreenFactory is setup wrongly, therefor we need these DESGAUSTENG type defining. (IDEA is failing to interpret run-time inferring smh)
     @OnlyIn(Dist.CLIENT)
     public static void screenSetup() {
         ScreenManager.registerFactory(OWDRAKE_CONTAINER.get(), OWDrakeInvScreen::new);
         ScreenManager.registerFactory(BUTTERFLY_CONTAINER.get(), ButterflyInvScreen::new);
-        ScreenManager.<DragonFruitDrakeContainer, ContainerScreenBase.SingleSlotScreen<DragonFruitDrakeContainer>>registerFactory(FRUIT_DRAKE_CONTAINER.get(), ContainerScreenBase.SingleSlotScreen::new);
-        ScreenManager.<StalkerInvContainer, ContainerScreenBase.SingleSlotScreen<StalkerInvContainer>>registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase.SingleSlotScreen::new);
+        ScreenManager.<ContainerBase<RoostStalkerEntity>, ContainerScreenBase<ContainerBase<RoostStalkerEntity>>>registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase::singleSlotScreen);
     }
     
     @SuppressWarnings("unchecked")

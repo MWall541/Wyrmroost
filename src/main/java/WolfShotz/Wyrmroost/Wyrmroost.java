@@ -67,7 +67,7 @@ public class Wyrmroost
     @SubscribeEvent
     public static void clientSetup(final FMLClientSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(EventHandler.Client.class);
-        
+    
         ModEntities.registerEntityRenders();
         ModKeys.registerKeys();
         SetupIO.screenSetup();

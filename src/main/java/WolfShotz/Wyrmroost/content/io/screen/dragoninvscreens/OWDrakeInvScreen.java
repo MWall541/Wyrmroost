@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens;
 
+import WolfShotz.Wyrmroost.content.io.NameFieldWidget;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -26,10 +27,7 @@ public class OWDrakeInvScreen extends ContainerScreenBase<OWDrakeInvContainer>
     }
     
     @Override
-    protected void init() {
-        nameField = new TextFieldWidget(font, guiLeft + 6, guiTop, 80, 12, prevName);
-        super.init();
-    }
+    public NameFieldWidget createNameField() { return new NameFieldWidget(font, guiLeft + 6, guiTop + 1, 70, 12, this); }
     
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {

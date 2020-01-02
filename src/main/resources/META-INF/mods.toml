@@ -50,6 +50,6 @@ authors="WolfShotz, Kingdomall, Shannieann, Toucan, Moon" #optional
 [[dependencies.wyrmroost]] #optional
     modId="citadel" #mandatory
     mandatory=true #mandatory
-    versionRange="[1.0.0]" #mandatory
+    versionRange="[1.0.1]" #mandatory
     ordering="NONE"
     side="BOTH"

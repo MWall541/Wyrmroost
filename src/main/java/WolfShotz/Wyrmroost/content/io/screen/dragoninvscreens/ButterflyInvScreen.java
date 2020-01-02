@@ -1,6 +1,8 @@
 package WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens;
 
-import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.io.NameFieldWidget;
+import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
@@ -12,11 +14,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ButterflyInvScreen extends ContainerScreenBase<ButterflyInvContainer>
+public class ButterflyInvScreen extends ContainerScreenBase<ContainerBase<ButterflyLeviathanEntity>>
 {
     public static final ResourceLocation BUTTERFLY_GUI = ModUtils.resource("textures/io/dragonscreen/butterflyinv.png");
     
-    public ButterflyInvScreen(ButterflyInvContainer container, PlayerInventory playerInv, ITextComponent name) {
+    public ButterflyInvScreen(ContainerBase<ButterflyLeviathanEntity> container, PlayerInventory playerInv, ITextComponent name) {
         super(container, playerInv, name);
         background = BUTTERFLY_GUI;
         xSize = 174;
@@ -35,5 +37,5 @@ public class ButterflyInvScreen extends ContainerScreenBase<ButterflyInvContaine
     public void renderEntity(int mouseX, int mouseY) { InventoryScreen.drawEntityOnScreen(guiLeft + 65, guiTop + 53, 9, (guiLeft + 65) - mouseX, (guiTop + 53) - mouseY, dragonInv.dragon); }
     
     @Override
-    public TextFieldWidget createNameField() { return new TextFieldWidget(font, guiLeft + 6, guiTop, 80, 12, prevName); }
+    public NameFieldWidget createNameField() { return new NameFieldWidget(font, guiLeft + 6, guiTop, 80, 12, this); }
 }

@@ -103,10 +103,7 @@ public class ModItems
     private static final Food COOKED_MINUTUS     = new Food.Builder().hunger(6).saturation(0.7f) .meat().build();
     private static final Food RAW_DRAKE_MEAT     = new Food.Builder().hunger(4).saturation(0.45f).meat().build();
     private static final Food COOKED_DRAKE_MEAT  = new Food.Builder().hunger(8).saturation(1f)   .meat().build();
-    private static final Food JEWELLED_APPLE     = new Food.Builder()
-                                                           .hunger(8)
-                                                           .saturation(0.9f)
-                                                           .setAlwaysEdible()
+    private static final Food JEWELLED_APPLE     = new Food.Builder().hunger(8).saturation(0.9f).setAlwaysEdible()
                                                            .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
                                                            .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
                                                            .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)

@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 public class CapabilityWorld
 {
     @CapabilityInject(CapabilityWorld.class)
-    public static Capability<CapabilityWorld> OW_CAP;
+    public static final Capability<CapabilityWorld> OW_CAP = null;
     
     private boolean portalTriggered;
     public boolean isPortalTriggered() { return portalTriggered; }
@@ -22,8 +22,7 @@ public class CapabilityWorld
     public static class PropertiesDispatcher implements ICapabilitySerializable<CompoundNBT>
     {
         private final CapabilityWorld worldData = new CapabilityWorld();
-    
-    
+        
         /**
          * Retrieves the Optional handler for the capability requested on the specific side.
          * The return value <strong>CAN</strong> be the same for multiple faces.

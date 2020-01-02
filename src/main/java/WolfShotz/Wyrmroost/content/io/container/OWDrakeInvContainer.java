@@ -19,7 +19,7 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         
         buildPlayerSlots(playerInv, 7, 83);
         
-        dragon.getInvCap().ifPresent(h -> {
+        dragon.getInvHandler().ifPresent(h -> {
             addSlot(buildSaddleSlot(h, 73, 16));
     
             addSlot(buildArmorSlot(h, 73, 34));
