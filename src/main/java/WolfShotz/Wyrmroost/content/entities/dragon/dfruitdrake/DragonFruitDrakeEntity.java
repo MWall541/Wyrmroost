@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.DragonFruitDrakeContainer;
 import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.registry.ModItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
@@ -17,8 +16,6 @@ import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -35,10 +32,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -128,7 +123,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         if (super.processInteract(player, hand, stack)) return true;
         
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) {
-            getInvCap().ifPresent(i -> {
+            getInvHandler().ifPresent(i -> {
                 i.insertItem(0, stack, false);
                 consumeItemFromStack(player, stack);
             });
@@ -219,13 +214,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.45f, 0.75f, 9600); }
-    
-    @Nullable
-    @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new DragonFruitDrakeContainer(this, playerInv, windowID); }
-    
-    @Override
-    public ItemStackHandler createInv() { return new ItemStackHandler(1); }
     
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION}; }

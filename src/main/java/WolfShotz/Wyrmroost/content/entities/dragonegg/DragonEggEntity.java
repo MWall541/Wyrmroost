@@ -99,8 +99,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
                     world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
                 }
             } else {
-                if (hatchTime > 0) --hatchTime;
-                else {
+                if (--hatchTime <= 0) {
                     hatch();
                     Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
                     return;

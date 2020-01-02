@@ -12,7 +12,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * Created using Tabula 7.0.1
  */
 @OnlyIn(Dist.CLIENT)
-public class MinutusModel extends AdvancedEntityModel {
+public class MinutusModel extends AdvancedEntityModel<MinutusEntity>
+{
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
     public AdvancedRendererModel neck;
@@ -114,22 +115,21 @@ public class MinutusModel extends AdvancedEntityModel {
     private float f = 0.5f;
 
     @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         body1.render(scale);
     }
 
     @Override
-    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    public void setRotationAngles(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
         
         faceTarget(netHeadYaw, headPitch, 1, head);
     }
 
     @Override
-    public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
-        float frame = entity.ticksExisted;
-        MinutusEntity minutus = (MinutusEntity) entity;
-    
+    public void setLivingAnimations(MinutusEntity minutus, float limbSwing, float limbSwingAmount, float partialTick) {
+        float frame = minutus.ticksExisted;
+        
         animator.update(minutus);
         resetToDefaultPose();
         

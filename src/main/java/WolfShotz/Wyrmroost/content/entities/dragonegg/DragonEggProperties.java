@@ -45,7 +45,6 @@ public class DragonEggProperties
         return this;
     }
     
-    
     /**
      * Get the size of the egg
      */

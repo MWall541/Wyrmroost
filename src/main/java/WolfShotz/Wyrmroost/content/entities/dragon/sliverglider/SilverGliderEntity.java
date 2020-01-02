@@ -214,7 +214,6 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
         if (super.processInteract(player, hand, stack)) return true;
-        if (hand != Hand.MAIN_HAND) return false; // only fire on the main hand
         
         // If holding this dragons favorite food, and not tamed, then tame it!
         if (!isTamed() && isBreedingItem(stack)) {

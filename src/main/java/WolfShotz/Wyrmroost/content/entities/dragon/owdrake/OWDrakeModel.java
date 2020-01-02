@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * Created using Tabula 7.0.1
  */
 @OnlyIn(Dist.CLIENT)
-public class OWDrakeModel extends AdvancedEntityModel
+public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
 {
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
@@ -371,11 +371,9 @@ public class OWDrakeModel extends AdvancedEntityModel
     private float f = 0.5f;
 
     @Override
-    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        OWDrakeEntity dragon = (OWDrakeEntity) entity;
-        
+    public void render(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.pushMatrix();
-        if (dragon.isChild()) {
+        if (drake.isChild()) {
             GlStateManager.scaled(1, 1, 1);
             GlStateManager.translated(0, 0.7, 0);
         }
@@ -387,17 +385,15 @@ public class OWDrakeModel extends AdvancedEntityModel
     }
     
     @Override
-    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        OWDrakeEntity drake = (OWDrakeEntity) entityIn; //TODO: Use cast until Alex re-evaluates citadel!
+    public void setRotationAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         if(netHeadYaw < -180) netHeadYaw += 360;
         else if(netHeadYaw > 180) netHeadYaw -= 360;
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     
     @Override
-    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-        float frame = entityIn.ticksExisted;
-        OWDrakeEntity drake = (OWDrakeEntity) entityIn;
+    public void setLivingAnimations(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick) {
+        float frame = drake.ticksExisted;
         Animation currentAnim = drake.getAnimation();
 
         resetToDefaultPose();

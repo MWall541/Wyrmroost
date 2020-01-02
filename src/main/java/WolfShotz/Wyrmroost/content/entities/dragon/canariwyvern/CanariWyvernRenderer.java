@@ -35,8 +35,8 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
     protected ResourceLocation getEntityTexture(CanariWyvernEntity canari) {
         if (canari.hasCustomName()) {
             String name = canari.getCustomName().getUnformattedComponentText();
-            if (name.equalsIgnoreCase("rudy")) return RUDY;
-            if (name.equalsIgnoreCase("Lady Everlyn Winklestein") && !canari.getGender()) return FEMALE_LADY;
+            if (name.equals("Rudy")) return RUDY;
+            if (name.equals("Lady Everlyn Winklestein") && !canari.getGender()) return FEMALE_LADY;
         }
         
         if (canari.getGender()) return MALE_VARS[canari.getVariant()];

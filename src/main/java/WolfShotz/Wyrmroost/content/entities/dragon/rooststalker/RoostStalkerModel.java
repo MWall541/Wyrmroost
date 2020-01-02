@@ -11,7 +11,7 @@ import net.minecraft.entity.Entity;
  * Roost stalker - nova
  * Created using Tabula 7.0.1
  */
-public class RoostStalkerModel extends AdvancedEntityModel {
+public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
     public AdvancedRendererModel torso;
     public AdvancedRendererModel tail1;
     public AdvancedRendererModel legl1;
@@ -161,12 +161,10 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     private float globalSpeed = 0.5f;
     
     @Override
-    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        RoostStalkerEntity stalker = (RoostStalkerEntity) entity;
-        
+    public void render(RoostStalkerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.pushMatrix();
         
-        if (stalker.isChild()) {
+        if (entity.isChild()) {
             GlStateManager.translatef(0, 0.78f, 0);
             GlStateManager.scaled(0.3d, 0.3d, 0.3d);
         }
@@ -177,17 +175,15 @@ public class RoostStalkerModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        RoostStalkerEntity stalker = (RoostStalkerEntity) entityIn; //TODO: Use cast until Alex re-evaluates citadel!
+    public void setRotationAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         if (stalker.getAnimation() != RoostStalkerEntity.SCAVENGE_ANIMATION)
             faceTarget(netHeadYaw, headPitch, 2, head);
     }
     
     @Override
-    public void setLivingAnimations(Entity entity, float limbSwing, float limbSwingAmount, float partialTick) {
-        RoostStalkerEntity stalker = (RoostStalkerEntity) entity; //TODO: Use cast until Alex re-evaluates citadel!
+    public void setLivingAnimations(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTick) {
         Animation currentAnim = stalker.getAnimation();
-        float frame = entity.ticksExisted;
+        float frame = stalker.ticksExisted;
         globalSpeed = 0.5f;
         
         animator.update(stalker);

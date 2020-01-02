@@ -52,8 +52,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
@@ -75,8 +73,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isSpecialAttacking = false;
     public boolean nocturnal = false;
     public List<String> immunes = new ArrayList<>();
-    public Random syncRand = new Random(6045323340150860495L); // Use a seed to sync between server and client
-    public LazyOptional<ItemStackHandler> invHandler = createInv() == null ? LazyOptional.empty() : LazyOptional.of(this::createInv);
+    public LazyOptional<ItemStackHandler> invHandler = createInv();
     public DragonEggProperties eggProperties = createEggProperties();
     
     // Dragon Entity Animations
@@ -200,7 +197,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Whether or not the dragon is saddled
      */
-    public boolean isSaddled() { return getInvCap().map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false); }
+    public boolean isSaddled() { return getInvHandler().map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false); }
     
     /**
      * Get the variant of the dragon (if it has them)
@@ -216,7 +213,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     public boolean hasArmor() { return getArmor() != null; }
     public DragonArmorItem getArmor() {
-        try { return getInvCap().map(i -> (DragonArmorItem) i.getStackInSlot(1).getItem()).orElseThrow(() -> new IllegalArgumentException("Item in slot is not instanceof DragonArmorItem!")); }
+        try { return getInvHandler().map(i -> (DragonArmorItem) i.getStackInSlot(1).getItem()).orElseThrow(() -> new IllegalArgumentException("Item in slot is not instanceof DragonArmorItem!")); }
         catch (Exception ignore) { return null; }
     }
     public void setArmored() {
@@ -225,7 +222,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             
             if (hasArmor()) {
                 armor.removeModifier(ARMOR_UUID);
-                armor.applyModifier(new AttributeModifier("Armor Modifier", getArmor().getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(false));
+                armor.applyModifier(new AttributeModifier("Armor Modifier", getArmor().getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(true));
                 playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
             }
             else armor.removeModifier(ARMOR_UUID);
@@ -287,12 +284,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Get the inventory (IItemHandler) Capability of this dragon (if it has one)
      */
-    public LazyOptional<IItemHandler> getInvCap() {
-        if (isAlive() && invHandler != null) return invHandler.cast();
-        return super.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-    }
+    public LazyOptional<ItemStackHandler> getInvHandler() { return invHandler.cast(); }
     
-    public ItemStackHandler createInv() { return null; }
+    /**
+     * Create an inventory (ItemStackHandler)
+     * @return
+     */
+    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.empty(); }
     
     /**
      * Remove and invalidate the Inventory handler capability
@@ -324,7 +322,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     @SuppressWarnings("ConstantConditions")
     public void readSpawnData(PacketBuffer buf) {
-        try {
+        try
+        {
             invHandler.ifPresent(i -> i.deserializeNBT(buf.readCompoundTag()));
             dataManager.setEntryValues(EntityDataManager.readEntries(buf));
         }
@@ -422,9 +421,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                        || item == ModItems.SOUL_CRYSTAL.get();
     }
     
-    public ItemStack getStackInSlot(int slot) { return getInvCap().map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY); }
+    public ItemStack getStackInSlot(int slot) { return getInvHandler().map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY); }
     
-    public void setStackInSlot(int slot, ItemStack stack) { getInvCap().map(IItemHandlerModifiable.class::cast).ifPresent(i -> i.setStackInSlot(slot, stack)); }
+    public void setStackInSlot(int slot, ItemStack stack) { getInvHandler().ifPresent(i -> i.setStackInSlot(slot, stack)); }
     
     /**
      * Get all entities in a given range in front of this entity and damage all within it
@@ -466,8 +465,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (isSleeping()) setSleeping(false);
-        if (isSitting()) setSit(false);
+        setSleeping(false);
+        setSit(false);
     
         return super.attackEntityFrom(source, amount);
     }
@@ -492,7 +491,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     @Override
     protected void spawnDrops(DamageSource src) {
-        getInvCap().ifPresent(i -> { for (int index=0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index)); });
+        getInvHandler().ifPresent(i -> { for (int index = 0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index)); });
         super.spawnDrops(src);
     }
     

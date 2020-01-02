@@ -43,6 +43,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -134,8 +135,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         setGender(nbt.getBoolean("gender"));
         setDrakeVariant(nbt.getBoolean("variant"));
     
-        setHasChest(invHandler.map(h -> !h.getStackInSlot(0).isEmpty()).orElse(false));
-        if (nbt.getBoolean("saddled")) invHandler.ifPresent(h -> h.setStackInSlot(1, new ItemStack(Items.SADDLE, 1))); // Datafix
+        setHasChest(getInvHandler().map(h -> !h.getStackInSlot(0).isEmpty()).orElse(false));
+        if (nbt.getBoolean("saddled")) getInvHandler().ifPresent(h -> h.setStackInSlot(1, new ItemStack(Items.SADDLE, 1))); // Datafix
         
         super.readAdditional(nbt);
     }
@@ -168,7 +169,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public int getSpecialChances() { return 100; }
     
     @Override
-    public ItemStackHandler createInv() { return new ItemStackHandler(19); }
+    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.of(() -> new ItemStackHandler(19)); }
     
     // ================================
 
@@ -215,7 +216,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) { // instaceof: for custom saddles (if any)
-            getInvCap().ifPresent(s -> {
+            getInvHandler().ifPresent(s -> {
                 s.insertItem(0, stack, false);
                 consumeItemFromStack(player, stack);
             });

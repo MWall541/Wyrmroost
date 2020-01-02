@@ -9,10 +9,8 @@ import net.minecraft.entity.Entity;
  * WRCanariWyvern - Ukan
  * Created using Tabula 7.0.1
  */
-public class CanariWyvernModel extends AdvancedEntityModel
+public class CanariWyvernModel extends AdvancedEntityModel<CanariWyvernEntity>
 {
-    public CanariWyvernEntity canari;
-    
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
     public AdvancedRendererModel neck1;
@@ -366,7 +364,7 @@ public class CanariWyvernModel extends AdvancedEntityModel
     }
     
     @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.pushMatrix();
         GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
         GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
@@ -378,15 +376,12 @@ public class CanariWyvernModel extends AdvancedEntityModel
     }
     
     @Override
-    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-        canari = (CanariWyvernEntity) entityIn;
-        
+    public void setLivingAnimations(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float partialTick) {
         setInitialPositions();
     }
     
     public void setInitialPositions() {
-        wing1L.rotateAngleY = -1f;
-        wing2L.rotateAngleY = 1f;
+    
     }
     
     public void idle() {

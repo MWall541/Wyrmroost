@@ -21,7 +21,7 @@ import static WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGli
  * Created using Tabula 7.0.1
  */
 @OnlyIn(Dist.CLIENT)
-public class SilverGliderModel extends AdvancedEntityModel {
+public class SilverGliderModel extends AdvancedEntityModel<SilverGliderEntity> {
     private SilverGliderEntity glider;
     
     public AdvancedRendererModel mainbody;
@@ -393,11 +393,9 @@ public class SilverGliderModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        SilverGliderEntity gliderEntity = (SilverGliderEntity) entity;
-    
+    public void render(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.pushMatrix();
-        if (gliderEntity.isChild()) {
+        if (entity.isChild()) {
             GlStateManager.scaled(0.35d, 0.35d, 0.35d);
             GlStateManager.translated(0, 2.75d, 0);
         }
@@ -408,13 +406,13 @@ public class SilverGliderModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void setRotationAngles(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    public void setRotationAngles(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         if (!isSleeping) faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
     
     @Override
-    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-        this.glider = (SilverGliderEntity) entityIn;
+    public void setLivingAnimations(SilverGliderEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+        this.glider = entityIn;
         this.isSitting = glider.isSitting();
         this.isSleeping = glider.isSleeping();
         this.isFlying = glider.isFlying();

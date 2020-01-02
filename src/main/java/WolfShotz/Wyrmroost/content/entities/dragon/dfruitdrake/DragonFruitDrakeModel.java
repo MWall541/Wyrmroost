@@ -9,9 +9,8 @@ import net.minecraft.entity.Entity;
  * DragonFruitDrakeModel - Kingdomall
  * Created using Tabula 7.0.1
  */
-public class DragonFruitDrakeModel extends AdvancedEntityModel {
-    public DragonFruitDrakeEntity entity;
-    
+public class DragonFruitDrakeModel extends AdvancedEntityModel<DragonFruitDrakeEntity>
+{
     public AdvancedRendererModel Body1;
     public AdvancedRendererModel Body2;
     public AdvancedRendererModel neck2;
@@ -366,7 +365,7 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
         GlStateManager.pushMatrix();
         GlStateManager.scaled(2, 2, 2);
         Body1.render(scale);
@@ -374,7 +373,7 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     }
     
     @Override
-    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    public void setRotationAngles(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
     
@@ -382,15 +381,14 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
     private float globalDegree = 0.5f;
     
     @Override
-    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-        this.entity = (DragonFruitDrakeEntity) entityIn;
-        float frame = partialTick + entityIn.ticksExisted;
+    public void setLivingAnimations(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float partialTick) {
+        float frame = partialTick + fruitDrake.ticksExisted;
         
         globalDegree = 0.5f;
         globalSpeed = 0.5f;
         resetToDefaultPose();
         
-        if (!entity.isSleeping()) {
+        if (!fruitDrake.isSleeping()) {
 //            globalDegree = 0.515f;
     
             bob(Body1, 0.6f, 0.2f, false, limbSwing, limbSwingAmount);
@@ -411,7 +409,7 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel {
             walk(LegThighR_1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
             walk(backfootR_1, 0.3f, 0.6f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
         }
-        if (entity.isSleeping()) {
+        if (fruitDrake.isSleeping()) {
 //            globalSpeed = 0.15f;
         }
         

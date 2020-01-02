@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.StalkerInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.registry.ModItems;
 import WolfShotz.Wyrmroost.registry.ModSounds;
 import WolfShotz.Wyrmroost.util.entityhelpers.PlayerMount;
@@ -36,6 +36,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -87,7 +88,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         super.readAdditional(nbt);
         
         ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-        if (!stack.isEmpty()) getInvCap().ifPresent(i -> {
+        if (!stack.isEmpty()) getInvHandler().ifPresent(i -> {
             i.insertItem(0, stack, false);
             setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
         });
@@ -215,16 +216,14 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new StalkerInvContainer(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return ContainerBase.stalkerInv(this, playerInv, windowID); }
     
     @Override
-    public ItemStackHandler createInv() { return new ItemStackHandler(1); }
+    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.of(() -> new ItemStackHandler(1)); }
     
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
     
-    // == Animation ==
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, SCAVENGE_ANIMATION}; }
-    // ==
 }

@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.ButterflyInvContainer;
+import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
@@ -37,6 +37,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -199,7 +200,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         return false;
     }
     
-    public boolean hasConduit() { return getInvCap().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false); }
+    public boolean hasConduit() { return getInvHandler().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false); }
     
     public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER); }
     
@@ -251,10 +252,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return new ButterflyInvContainer(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return ContainerBase.butterflyInv(this, playerInv, windowID); }
     
     @Override
-    public ItemStackHandler createInv() { return new ItemStackHandler(1); }
+    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.of(() -> new ItemStackHandler(1)); }
     
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(1.5f, 2.5f, 40000).setConditions(Entity::isInWater); }
