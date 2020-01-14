@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
-import WolfShotz.Wyrmroost.registry.ModItems;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
@@ -191,7 +191,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune) {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
-        return Lists.newArrayList(new ItemStack(ModItems.FOOD_DRAGON_FRUIT.get(), 1));
+        return Lists.newArrayList(new ItemStack(WRItems.FOOD_DRAGON_FRUIT.get(), 1));
     }
     
     public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random) {
@@ -208,7 +208,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public List<Item> getFoodItems() {
         List<Item> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
-        Collections.addAll(foods, ModItems.FOOD_DRAGON_FRUIT.get(), Items.APPLE, Items.SWEET_BERRIES);
+        Collections.addAll(foods, WRItems.FOOD_DRAGON_FRUIT.get(), Items.APPLE, Items.SWEET_BERRIES);
         return foods;
     }
     

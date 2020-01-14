@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
-import WolfShotz.Wyrmroost.registry.ModSounds;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
@@ -182,7 +182,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         if (getAnimation() == ROAR_ANIMATION) {
             if (getAnimationTick() == 1)
-                playSound(ModSounds.OWDRAKE_ROAR.get(), 2.5f, 1f);
+                playSound(WRSounds.OWDRAKE_ROAR.get(), 2.5f, 1f);
             if (getAnimationTick() == 15) {
                 getEntitiesNearby(5).forEach(e -> { // Dont get too close now ;)
                     if (e instanceof OWDrakeEntity) return;
@@ -339,7 +339,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return ModSounds.OWDRAKE_IDLE.get(); }
+    protected SoundEvent getAmbientSound() { return WRSounds.OWDRAKE_IDLE.get(); }
     
     @Override
     public void playAmbientSound() {
@@ -351,7 +351,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return ModSounds.OWDRAKE_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.OWDRAKE_HURT.get(); }
     
     @Override
     protected void playHurtSound(DamageSource source) {
@@ -362,7 +362,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return ModSounds.OWDRAKE_DEATH.get(); }
+    protected SoundEvent getDeathSound() { return WRSounds.OWDRAKE_DEATH.get(); }
     
     @Override
     public void setSit(boolean sitting) {

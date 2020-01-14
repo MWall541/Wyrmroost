@@ -43,7 +43,7 @@ import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerE
  *
  * Class responsible for the setup and registration of entities, and their spawning.
  */
-public class ModEntities
+public class WREntities
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
     

@@ -1,16 +1,16 @@
 package WolfShotz.Wyrmroost.content.items.base;
 
-import WolfShotz.Wyrmroost.registry.ModItems;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.item.IItemTier;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 
 public enum ToolMaterialList implements IItemTier
 {
-    GEODE(9.3f, 4f, 2164, 4, 25, ModItems.GEODE_BLUE.get()),
-    GEODERED(10f, 5.5f, 3264, 5, 25, ModItems.GEODE_RED.get()),
-    GEODEPURPLE(15f, 5.5f, 4214, 6, 28, ModItems.GEODE_PURPLE.get()),
-    PLATINUM(5.5f, 2.5f, 645, 3, 20, ModItems.PLATINUM_INGOT.get());
+    GEODE(9.3f, 4f, 2164, 4, 25, WRItems.GEODE_BLUE.get()),
+    GEODERED(10f, 5.5f, 3264, 5, 25, WRItems.GEODE_RED.get()),
+    GEODEPURPLE(15f, 5.5f, 4214, 6, 28, WRItems.GEODE_PURPLE.get()),
+    PLATINUM(5.5f, 2.5f, 645, 3, 20, WRItems.PLATINUM_INGOT.get());
     
     private float efficiency, attackDamage;
     private int durability, harvestLevel, enchantibility;

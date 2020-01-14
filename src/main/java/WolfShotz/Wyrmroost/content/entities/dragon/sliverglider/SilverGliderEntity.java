@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.registry.ModSounds;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.PlayerMount;
@@ -284,16 +284,16 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return ModSounds.SILVERGLIDER_IDLE.get(); }
+    protected SoundEvent getAmbientSound() { return WRSounds.SILVERGLIDER_IDLE.get(); }
     
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) { return ModSounds.SILVERGLIDER_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSource) { return WRSounds.SILVERGLIDER_HURT.get(); }
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return ModSounds.SILVERGLIDER_DEATH.get(); }
+    protected SoundEvent getDeathSound() { return WRSounds.SILVERGLIDER_DEATH.get(); }
     
     @Override
     public void setSit(boolean sitting) {

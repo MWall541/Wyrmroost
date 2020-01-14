@@ -39,14 +39,14 @@ public class SetupWorld
     public static void setupOreGen() {
         for (Biome biome : ForgeRegistries.BIOMES) {
             if (OVERWORLD_FILTER.test(biome)) { // Filter Ores so they dont gen in the nether or end
-                registerOreEntry(biome, ModBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 8, new CountRangeConfig(1, 0, 0, 20));
-                registerOreEntry(biome, ModBlocks.PLATINUM_ORE.get().getDefaultState(), 9, new CountRangeConfig(2, 0, 0, 28));
+                registerOreEntry(biome, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 8, new CountRangeConfig(1, 0, 0, 20));
+                registerOreEntry(biome, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9, new CountRangeConfig(2, 0, 0, 28));
                 continue;
             }
             if (NETHER_FILTER.test(biome)) {
                 biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature (
                         Feature.ORE,
-                        new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, ModBlocks.RED_GEODE_ORE.get().getDefaultState(), 4),
+                        new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4),
                         Placement.COUNT_RANGE,
                         new CountRangeConfig(16, 0, 0, 128)
                 ));
@@ -55,7 +55,7 @@ public class SetupWorld
             if (END_FILTER.test(biome))
                 biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(
                         Feature.EMERALD_ORE,
-                        new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), ModBlocks.PURPLE_GEODE_ORE.get().getDefaultState()),
+                        new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState()),
                         EndOrePlacement.endOre,
                         IPlacementConfig.NO_PLACEMENT_CONFIG));
         }

@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.items.dragonegg;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
-import WolfShotz.Wyrmroost.registry.ModEntities;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TranslationUtils;
 import net.minecraft.block.BlockState;
@@ -45,7 +45,7 @@ public class DragonEggItem extends Item
         CompoundNBT tag = ctx.getItem().getTag();
         if (tag == null || !tag.contains("dragonType")) return super.onItemUse(ctx);
     
-        DragonEggEntity eggEntity = new DragonEggEntity(ModEntities.DRAGON_EGG.get(), world);
+        DragonEggEntity eggEntity = new DragonEggEntity(WREntities.DRAGON_EGG.get(), world);
         BlockPos pos = ctx.getPos();
         BlockPos offsetPos;
         BlockState state = world.getBlockState(pos);

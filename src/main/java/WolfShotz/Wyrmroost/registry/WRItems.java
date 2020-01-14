@@ -15,7 +15,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class ModItems
+public class WRItems
 {
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
     
@@ -71,12 +71,12 @@ public class ModItems
     public static final RegistryObject<Item> PLATINUM_LEGGINGS          = register("platinum_leggings", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> PLATINUM_BOOTS             = register("platinum_boots", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET));
     
-    public static final RegistryObject<Item> FOOD_COOKED_MINUTUS        = register("cooked_minutus", new Item(ModUtils.itemBuilder().food(ModItems.COOKED_MINUTUS)));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_RAW        = register("drake_meat_raw", new Item(ModUtils.itemBuilder().food(ModItems.RAW_DRAKE_MEAT)));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_COOKED     = register("drake_meat_cooked", new Item(ModUtils.itemBuilder().food(ModItems.COOKED_DRAKE_MEAT)));
-    public static final RegistryObject<Item> FOOD_JEWELLED_APPLE        = register("jewelled_apple", new Item(ModUtils.itemBuilder().food(ModItems.JEWELLED_APPLE)));
-    public static final RegistryObject<Item> FOOD_DRAGON_FRUIT          = register("dragon_fruit", new Item(ModUtils.itemBuilder().food(ModItems.DRAGON_FRUIT)));
-    public static final RegistryObject<Item> FOOD_BLUEBERRIES           = register("blueberries", new Item(ModUtils.itemBuilder().food(ModItems.BLUEBERRIES)));
+    public static final RegistryObject<Item> FOOD_COOKED_MINUTUS        = register("cooked_minutus", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_MINUTUS)));
+    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_RAW        = register("drake_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_DRAKE_MEAT)));
+    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_COOKED     = register("drake_meat_cooked", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_DRAKE_MEAT)));
+    public static final RegistryObject<Item> FOOD_JEWELLED_APPLE        = register("jewelled_apple", new Item(ModUtils.itemBuilder().food(WRItems.JEWELLED_APPLE)));
+    public static final RegistryObject<Item> FOOD_DRAGON_FRUIT          = register("dragon_fruit", new Item(ModUtils.itemBuilder().food(WRItems.DRAGON_FRUIT)));
+    public static final RegistryObject<Item> FOOD_BLUEBERRIES           = register("blueberries", new Item(ModUtils.itemBuilder().food(WRItems.BLUEBERRIES)));
     
     public static final RegistryObject<Item> DRAGON_ARMOR_IRON          = register("iron_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.IRON));
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD          = register("gold_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.GOLD));
@@ -86,13 +86,13 @@ public class ModItems
     public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE     = register("geode_red_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.RED_GEODE));
     public static final RegistryObject<Item> DRAGON_ARMOR_PUEPLE_GEODE  = register("geode_purple_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
     
-    public static final RegistryObject<Item> EGG_DRAKE                  = register("drake_egg", new CustomSpawnEggItem(ModEntities.OVERWORLD_DRAKE::get, 0x788716, 0x3E623E));
-    public static final RegistryObject<Item> EGG_MINUTUS                = register("minutus_egg", new CustomSpawnEggItem(ModEntities.MINUTUS::get, 0xD6BCBC, 0xDEB6C7));
-    public static final RegistryObject<Item> EGG_SILVER_GLIDER          = register("silverglider_egg", new CustomSpawnEggItem(ModEntities.SILVER_GLIDER::get, 0xC8C8C8, 0xC4C4C4));
-    public static final RegistryObject<Item> EGG_ROOSTSTALKER           = register("rooststalker_egg", new CustomSpawnEggItem(ModEntities.ROOSTSTALKER::get, 0x52100D, 0x959595));
-    public static final RegistryObject<Item> EGG_BUTTERFLYLEVIATHAN     = register("butterflyleviathan_egg", new CustomSpawnEggItem(ModEntities.BUTTERFLY_LEVIATHAN::get, 0x17283C, 0x7A6F5A));
-    public static final RegistryObject<Item> EGG_DRAGONFRUITDRAKE       = register("fruitdrake_egg", new CustomSpawnEggItem(ModEntities.DRAGON_FRUIT_DRAKE::get, 0xe05c9a, 0x788716));
-    public static final RegistryObject<Item> EGG_CANARIWYVERN           = register("canariwyvern_egg", new CustomSpawnEggItem(ModEntities.CANARI_WYVERN::get, 0xffffff, 0xffffff));
+    public static final RegistryObject<Item> EGG_DRAKE                  = register("drake_egg", new CustomSpawnEggItem(WREntities.OVERWORLD_DRAKE::get, 0x788716, 0x3E623E));
+    public static final RegistryObject<Item> EGG_MINUTUS                = register("minutus_egg", new CustomSpawnEggItem(WREntities.MINUTUS::get, 0xD6BCBC, 0xDEB6C7));
+    public static final RegistryObject<Item> EGG_SILVER_GLIDER          = register("silverglider_egg", new CustomSpawnEggItem(WREntities.SILVER_GLIDER::get, 0xC8C8C8, 0xC4C4C4));
+    public static final RegistryObject<Item> EGG_ROOSTSTALKER           = register("rooststalker_egg", new CustomSpawnEggItem(WREntities.ROOSTSTALKER::get, 0x52100D, 0x959595));
+    public static final RegistryObject<Item> EGG_BUTTERFLYLEVIATHAN     = register("butterflyleviathan_egg", new CustomSpawnEggItem(WREntities.BUTTERFLY_LEVIATHAN::get, 0x17283C, 0x7A6F5A));
+    public static final RegistryObject<Item> EGG_DRAGONFRUITDRAKE       = register("fruitdrake_egg", new CustomSpawnEggItem(WREntities.DRAGON_FRUIT_DRAKE::get, 0xe05c9a, 0x788716));
+    public static final RegistryObject<Item> EGG_CANARIWYVERN           = register("canariwyvern_egg", new CustomSpawnEggItem(WREntities.CANARI_WYVERN::get, 0xffffff, 0xffffff));
 
     //  ===========================
     //          Food List
