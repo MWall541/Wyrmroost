@@ -5,6 +5,8 @@ import WolfShotz.Wyrmroost.content.blocks.PortalBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
@@ -14,7 +16,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class ModBlocks
+public class WRBlocks
 {
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
     
@@ -30,9 +32,13 @@ public class ModBlocks
     public static final RegistryObject<Block> PURPLE_GEODE_ORE  = register("purple_geode_ore", new BlockBase(ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(5).hardnessAndResistance(5).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 8, 11)));
     public static final RegistryObject<Block> PURPLE_GEODE_BLOCK= register("purple_geode_block", new BlockBase(ModUtils.blockBuilder(Material.ROCK).harvestTool(ToolType.PICKAXE).harvestLevel(5).hardnessAndResistance(5).sound(SoundType.METAL)).setBeaconBase());
     
+    public static final RegistryObject<Block> CANARI_LEAVES     = register("canari_leaves", new LeavesBlock(ModUtils.blockBuilder(Material.LEAVES).hardnessAndResistance(0.2f).sound(SoundType.PLANT).tickRandomly()));
+    public static final RegistryObject<Block> CANARI_WOOD       = register("canari_wood", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD).hardnessAndResistance(0.2f).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> STRIPPED_CANARI   = register("stripped_canari_wood", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD).hardnessAndResistance(0.2f).sound(SoundType.WOOD)));
     
-    private static RegistryObject<Block> register(String name, Block block) {
-        ModItems.register(name, new BlockItem(block, ModUtils.itemBuilder()));
+    private static RegistryObject<Block> register(String name, Block block)
+    {
+        WRItems.register(name, new BlockItem(block, ModUtils.itemBuilder()));
         return BLOCKS.register(name, () -> block);
     }
 }

@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.entityhelpers.PlayerMount;
 import com.github.alexthe666.citadel.animation.Animation;
@@ -20,12 +21,14 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMount.IShoulderMount
 {
-    public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world) {
+    public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
+    {
         super(dragon, world);
     }
     
     @Override
-    protected void registerAttributes() {
+    protected void registerAttributes()
+    {
         super.registerAttributes();
         
         getAttribute(MAX_HEALTH).setBaseValue(16d);
@@ -34,7 +37,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    protected void registerData() {
+    protected void registerData()
+    {
         super.registerData();
         
         dataManager.register(VARIANT, getRNG().nextInt(5));
@@ -44,17 +48,21 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     public int getSpecialChances() { return 0; }
     
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    {
         if (super.processInteract(player, hand, stack)) return true;
         
-        if (isOwner(player)) {
-            if (player.isSneaking()) {
+        if (isOwner(player))
+        {
+            if (player.isSneaking())
+            {
                 setSit(!isSitting());
                 
                 return true;
             }
             
-            if (PlayerMount.getShoulderEntityCount(player) < 2) {
+            if (PlayerMount.getShoulderEntityCount(player) < 2)
+            {
                 setSit(true);
                 startRiding(player, true);
                 
@@ -65,12 +73,14 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    public void updateRidden() {
+    public void updateRidden()
+    {
         super.updateRidden();
         
         Entity entity = getRidingEntity();
         
-        if (!entity.isAlive()) {
+        if (!entity.isAlive())
+        {
             stopRiding();
             return;
         }
@@ -79,7 +89,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         
         PlayerEntity player = (PlayerEntity) entity;
         
-        if (player.isSneaking() && !player.abilities.isFlying) {
+        if (player.isSneaking() && !player.abilities.isFlying)
+        {
             stopRiding();
             return;
         }
@@ -103,7 +114,11 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     public List<Item> getFoodItems() { return null; }
     
     @Override
-    public DragonEggProperties createEggProperties() { return null; }
+    public DragonEggProperties createEggProperties()
+    {
+        return new DragonEggProperties(0.35f, 0.5f, 6000)
+                       .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == WRBlocks.CANARI_LEAVES.get());
+    }
     
     @Override
     public Animation[] getAnimations() {
