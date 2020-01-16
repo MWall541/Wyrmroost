@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.DynamicChain;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
@@ -79,7 +78,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     protected void registerGoals()
     {
-        goalSelector.addGoal(2, new SleepGoal(this, false));
         goalSelector.addGoal(4, moveGoal = new RandomWalkingGoal(this, 1d, 10));
         goalSelector.addGoal(5, SharedEntityGoals.lookAtNoSleeping(this, 10f));
         goalSelector.addGoal(6, SharedEntityGoals.lookRandomlyNoSleeping(this));

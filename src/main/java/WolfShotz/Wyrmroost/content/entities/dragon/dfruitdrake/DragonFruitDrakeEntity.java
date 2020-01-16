@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
@@ -68,26 +67,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, SharedEntityGoals.nonTamedTargetGoal(this, PlayerEntity.class, 2, true, true, EntityPredicates.CAN_AI_TARGET));
-        
-        goalSelector.addGoal(2, new SleepGoal(this, false)
-        {
-            @Override
-            public boolean shouldExecute()
-            {
-                if (--sleepTimeout > 0) return false;
-                if (isInWaterOrBubbleColumn() || isFlying()) return false;
-                int bounds = world.isDaytime()? 1200 : 300;
-                return (!isTamed() || isSitting()) && rand.nextInt(bounds) == 0;
-            }
-            
-            @Override
-            public boolean shouldContinueExecuting()
-            {
-                if (!isSleeping()) return false;
-                int bounds = world.isDaytime()? 300 : 600;
-                return shouldSleep(dragon) && rand.nextInt(bounds) == 0;
-            }
-        });
     }
     
     @Override

@@ -9,7 +9,6 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlightMovementController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SleepGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -70,10 +69,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 {
     public static final UUID ARMOR_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     public int shouldFlyThreshold = 3;
-    @OnlyIn(Dist.CLIENT)
-    public int flashTicks;
-    public final int randomFlyChance = 1000; // Default to random chance
-    public boolean isSpecialAttacking = false;
+    public int sleepCooldown;
     public boolean nocturnal = false;
     public List<String> immunes = new ArrayList<>();
     public LazyOptional<ItemStackHandler> invHandler = createInv();
@@ -110,7 +106,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerGoals()
     {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, new SleepGoal(this, nocturnal));
         goalSelector.addGoal(2, sitGoal = new SitGoal(this));
     }
     
@@ -123,7 +118,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         try
         {
             return (FlightMovementController) moveController;
-        } catch (ClassCastException e)
+        }
+        catch (ClassCastException e)
         {
             throw new ClassCastException("moveController is not a Flight Movement Controller!");
         }
@@ -307,14 +303,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     public void setSleeping(boolean sleep)
     { // If we have a sleep animation, then play it.
-        if (isSleeping() == sleep) return;
+        if (isSleeping() == sleep || world.isRemote) return;
         
         dataManager.set(SLEEPING, sleep);
-        
         isJumping = false;
         navigator.clearPath();
         setAttackTarget(null);
-        
+        if (!sleep) sleepCooldown = 350;
         if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null && noActiveAnimation())
             NetworkUtils.sendAnimationPacket(this, sleep? SLEEP_ANIMATION : WAKE_ANIMATION);
         
@@ -361,7 +356,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * Get the inventory (IItemHandler) Capability of this dragon (if it has one)
+     * Get the inventory (IItemHandler) if it exists
      */
     public LazyOptional<ItemStackHandler> getInvHandler()
     {
@@ -370,26 +365,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     /**
      * Create an inventory (ItemStackHandler)
-     *
-     * @return
      */
     public LazyOptional<ItemStackHandler> createInv()
     {
         return LazyOptional.empty();
-    }
-    
-    /**
-     * Remove and invalidate the Inventory handler capability
-     */
-    @Override
-    public void remove(boolean keepData)
-    {
-        super.remove(keepData);
-        if (!keepData && invHandler != null)
-        {
-            invHandler.invalidate();
-            invHandler = null;
-        }
     }
     
     /**
@@ -403,7 +382,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         try
         {
             dataManager.writeEntries(buf);
-        } catch (IOException exc)
+        }
+        catch (IOException exc)
         {
             throw new RuntimeException("Could not write dataManager data");
         }
@@ -421,7 +401,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         {
             invHandler.ifPresent(i -> i.deserializeNBT(buf.readCompoundTag()));
             dataManager.setEntryValues(EntityDataManager.readEntries(buf));
-        } catch (Exception exc)
+        }
+        catch (Exception exc)
         {
             throw new RuntimeException("Could not read client spawn packet");
         }
@@ -435,25 +416,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void livingTick()
     {
-//        if (canFly()) {
-//            boolean shouldFly = (MathUtils.getAltitude(this) > shouldFlyThreshold);
-//            if (shouldFly != isFlying()) setFlying(shouldFly);
-//
-//            if (!isFlying() && syncRand.nextInt(randomFlyChance) == 0 && !isSleeping() && !isSitting()) setFlying(true);
-//        }
-        
-        if (world.isRemote)
-        { // Client Only Stuffs
-            if (isSpecial()) doSpecialEffects();
-            
-            if (flashTicks > 0)
-            {
-                setGlowing(flashTicks % 4 == 0);
-                --flashTicks;
-            }
-        }
-        
         super.livingTick();
+        
+        if (isServerWorld())
+        {
+            if (!isSleeping() && --sleepCooldown <= 0 && shouldSleep()) setSleeping(true);
+            else if (isSleeping() && nocturnal != world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
+        }
+        else
+        {
+            if (isSpecial()) doSpecialEffects();
+        }
     }
     
     /**
@@ -684,9 +657,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     List<Pair<EffectInstance, Float>> effects = stack.getItem().getFood().getEffects();
                     if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
                         effects.forEach(e -> addPotionEffect(e.getLeft()));
-                } catch (Exception ignore)
-                {
-                }
+                } catch (Exception ignore) {}
             }
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
             if (world.isRemote)
@@ -723,7 +694,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 world.setEntityState(this, (byte) 7);
                 
                 return true;
-            } else
+            }
+            else
             {
                 playTameEffect(false);
                 world.setEntityState(this, (byte) 6);
@@ -905,6 +877,22 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public Vec3d getPrevPositionVector()
     {
         return new Vec3d(prevPosX, prevPosY, prevPosZ);
+    }
+    
+    /**
+     * Should this dragon be able to sleep?
+     */
+    public boolean shouldSleep()
+    {
+        return (!isTamed() || isSitting())
+                       && nocturnal == world.isDaytime()
+                       && !isBeingRidden()
+                       && getAttackTarget() == null
+                       && getNavigator().noPath()
+                       && !isAngry()
+                       && !isInWaterOrBubbleColumn()
+                       && !isFlying()
+                       && getRNG().nextInt(300) == 0;
     }
     
     /**
