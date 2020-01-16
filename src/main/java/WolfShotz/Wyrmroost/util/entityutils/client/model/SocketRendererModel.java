@@ -1,7 +1,5 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.render;
+package WolfShotz.Wyrmroost.util.entityutils.client.model;
 
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,26 +11,30 @@ import javax.vecmath.Vector3d;
 
 /**
  * Credit to Bob Mowzie of Mowzies mobs.
- *
+ * <p>
  * Created by Josh on 5/8/2017.
  */
 @OnlyIn(Dist.CLIENT)
-public class SocketRendererModel extends AdvancedRendererModel
+public class SocketRendererModel<T extends Entity> extends AdvancedRendererModel<T>
 {
-    public SocketRendererModel(AdvancedEntityModel model, String name) {
+    public SocketRendererModel(AdvancedLivingEntityModel<T> model, String name)
+    {
         super(model, name);
     }
     
-    public SocketRendererModel(AdvancedEntityModel model) {
+    public SocketRendererModel(AdvancedLivingEntityModel<T> model)
+    {
         this(model, null);
     }
     
-    public SocketRendererModel(AdvancedEntityModel model, int textureOffsetX, int textureOffsetY) {
+    public SocketRendererModel(AdvancedLivingEntityModel<T> model, int textureOffsetX, int textureOffsetY)
+    {
         this(model);
         this.setTextureOffset(textureOffsetX, textureOffsetY);
     }
     
-    public SocketRendererModel(SocketRendererModel modelRenderer) {
+    public SocketRendererModel(SocketRendererModel<T> modelRenderer)
+    {
         super(modelRenderer.getModel(), modelRenderer.textureOffsetX, modelRenderer.textureOffsetY);
         this.rotationPointX = modelRenderer.rotationPointX;
         this.rotationPointY = modelRenderer.rotationPointY;
@@ -63,8 +65,9 @@ public class SocketRendererModel extends AdvancedRendererModel
         this.childModels = modelRenderer.childModels;
     }
     
-    public Vec3d getWorldPos(Entity entity, float delta) {
-        Vec3d modelPos = getModelPos(this, new Vec3d(rotationPointX/16, -rotationPointY/16, -rotationPointZ/16));
+    public Vec3d getWorldPos(Entity entity, float delta)
+    {
+        Vec3d modelPos = getModelPos(this, new Vec3d(rotationPointX / 16, -rotationPointY / 16, -rotationPointZ / 16));
         double x = modelPos.x;
         double y = modelPos.y + 1.5f;
         double z = modelPos.z;
@@ -81,16 +84,21 @@ public class SocketRendererModel extends AdvancedRendererModel
         return new Vec3d(rendererPos.getX(), rendererPos.getY(), rendererPos.getZ());
     }
     
-    public Vec3d getWorldPos(Entity entity) { return getWorldPos(entity, 0); }
+    public Vec3d getWorldPos(Entity entity)
+    {
+        return getWorldPos(entity, 0);
+    }
     
-    public Vec3d getModelPos(AdvancedRendererModel modelRenderer, Vec3d recurseValue) {
+    public Vec3d getModelPos(AdvancedRendererModel modelRenderer, Vec3d recurseValue)
+    {
         double x = recurseValue.x;
         double y = recurseValue.y;
         double z = recurseValue.z;
         Point3d rendererPos = new Point3d(x, y, z);
         
         AdvancedRendererModel parent = modelRenderer.getParent();
-        if (parent != null) {
+        if (parent != null)
+        {
             Matrix4d boxTranslate = new Matrix4d();
             Matrix4d boxRotateX = new Matrix4d();
             Matrix4d boxRotateY = new Matrix4d();
@@ -110,7 +118,8 @@ public class SocketRendererModel extends AdvancedRendererModel
         return new Vec3d(rendererPos.getX(), rendererPos.getY(), rendererPos.getZ());
     }
     
-    public void setWorldPos(Entity entity, Vec3d pos, float delta) {
+    public void setWorldPos(Entity entity, Vec3d pos, float delta)
+    {
         Matrix4d entityTranslate = new Matrix4d();
         Matrix4d entityRotate = new Matrix4d();
         float dx = (float) (entity.prevPosX + (entity.posX - entity.prevPosX) * delta);
@@ -125,6 +134,6 @@ public class SocketRendererModel extends AdvancedRendererModel
         entityRotate.transform(rendererPos);
         rendererPos.y -= 1.5f;
         rendererPos.scale(16);
-        setRotationPoint((float)rendererPos.x, -(float)rendererPos.y, -(float)rendererPos.z);
+        setRotationPoint((float) rendererPos.x, -(float) rendererPos.y, -(float) rendererPos.z);
     }
 }

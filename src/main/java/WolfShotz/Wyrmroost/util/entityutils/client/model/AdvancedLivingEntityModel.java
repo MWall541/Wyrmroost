@@ -1,20 +1,20 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.render;
+package WolfShotz.Wyrmroost.util.entityutils.client.model;
 
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
-import com.github.alexthe666.citadel.client.model.container.TextureOffset;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
 import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Map;
 
 public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
 {
+    public T entity;
     public float globalSpeed = 0.5f;
     private float movementScale = 1.0F;
-    private final Map<String, TextureOffset> modelTextureMap = Maps.newHashMap();
+    private final Map<String, Pair<Integer, Integer>> modelTextureMap = Maps.newHashMap();
     
     public AdvancedLivingEntityModel() {}
     
@@ -25,9 +25,15 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
                 .forEach((model) -> ((AdvancedRendererModel) model).updateDefaultPose());
     }
     
-    protected void setTextureOffset(String partName, int x, int y) { modelTextureMap.put(partName, new TextureOffset(x, y)); }
+    protected void setTextureOffset(String partName, int x, int y)
+    {
+        modelTextureMap.put(partName, Pair.of(x, y));
+    }
     
-    public TextureOffset getTextureOffset(String partName) { return modelTextureMap.get(partName); }
+    public Pair<Integer, Integer> getTextureOffset(String partName)
+    {
+        return modelTextureMap.get(partName);
+    }
     
     public void resetToDefaultPose()
     {
@@ -38,13 +44,13 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     
     public void faceTarget(float yaw, float pitch, float rotationDivisor, AdvancedRendererModel... boxes)
     {
-        float actualRotationDivisor = rotationDivisor * (float)boxes.length;
+        float actualRotationDivisor = rotationDivisor * (float) boxes.length;
         float yawAmount = yaw / 57.295776F / actualRotationDivisor;
         float pitchAmount = pitch / 57.295776F / actualRotationDivisor;
         AdvancedRendererModel[] var8 = boxes;
         int var9 = boxes.length;
         
-        for(int var10 = 0; var10 < var9; ++var10)
+        for (int var10 = 0; var10 < var9; ++var10)
         {
             AdvancedRendererModel box = var8[var10];
             box.rotateAngleY += yawAmount;
@@ -56,7 +62,7 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = this.calculateChainOffset(rootOffset, boxes);
         
-        for(int index = 0; index < boxes.length; ++index)
+        for (int index = 0; index < boxes.length; ++index)
             boxes[index].rotateAngleY += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
     
@@ -64,7 +70,7 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = this.calculateChainOffset(rootOffset, boxes);
         
-        for(int index = 0; index < boxes.length; ++index)
+        for (int index = 0; index < boxes.length; ++index)
             boxes[index].rotateAngleX += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
         
     }
@@ -73,7 +79,8 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = this.calculateChainOffset(rootOffset, boxes);
         
-        for(int index = 0; index < boxes.length; ++index) {
+        for (int index = 0; index < boxes.length; ++index)
+        {
             boxes[index].rotateAngleZ += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
         }
         
@@ -81,17 +88,23 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     
     private float calculateChainRotation(float speed, float degree, float swing, float swingAmount, float offset, int boxIndex)
     {
-        return MathHelper.cos(swing * speed * this.movementScale + offset * (float)boxIndex) * swingAmount * degree * this.movementScale;
+        return MathHelper.cos(swing * speed * this.movementScale + offset * (float) boxIndex) * swingAmount * degree * this.movementScale;
     }
     
     private float calculateChainOffset(double rootOffset, AdvancedRendererModel... boxes)
     {
-        return (float)(rootOffset * 3.141592653589793D / (double)(2 * boxes.length));
+        return (float) (rootOffset * 3.141592653589793D / (double) (2 * boxes.length));
     }
     
-    public float getMovementScale() { return this.movementScale; }
+    public float getMovementScale()
+    {
+        return this.movementScale;
+    }
     
-    public void setMovementScale(float movementScale) { this.movementScale = movementScale; }
+    public void setMovementScale(float movementScale)
+    {
+        this.movementScale = movementScale;
+    }
     
     public void walk(AdvancedRendererModel box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount)
     {
@@ -115,7 +128,7 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     
     public float moveBox(float speed, float degree, boolean bounce, float f, float f1)
     {
-        return bounce ? -MathHelper.abs(MathHelper.sin(f * speed) * f1 * degree) : MathHelper.sin(f * speed) * f1 * degree - f1 * degree;
+        return bounce? -MathHelper.abs(MathHelper.sin(f * speed) * f1 * degree) : MathHelper.sin(f * speed) * f1 * degree - f1 * degree;
     }
     
     public void setRotateAngle(AdvancedRendererModel model, float x, float y, float z)
@@ -127,13 +140,15 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     
     public void rotate(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z)
     {
-        animator.rotate(model, (float)Math.toRadians((double)x), (float)Math.toRadians((double)y), (float)Math.toRadians((double)z));
+        animator.rotate(model, (float) Math.toRadians((double) x), (float) Math.toRadians((double) y), (float) Math.toRadians((double) z));
     }
     
     public void rotateMinus(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z)
     {
-        animator.rotate(model, (float)Math.toRadians((double)x) - model.defaultRotationX, (float)Math.toRadians((double)y) - model.defaultRotationY, (float)Math.toRadians((double)z) - model.defaultRotationZ);
+        animator.rotate(model, (float) Math.toRadians((double) x) - model.defaultRotationX, (float) Math.toRadians((double) y) - model.defaultRotationY, (float) Math.toRadians((double) z) - model.defaultRotationZ);
     }
     
-    public void idleAnim(float frame) {}
+    public void idleAnim(float frame)
+    {
+    }
 }
