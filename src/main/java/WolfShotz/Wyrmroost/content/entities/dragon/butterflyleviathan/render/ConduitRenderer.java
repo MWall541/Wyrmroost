@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
@@ -25,9 +24,9 @@ public class ConduitRenderer
     private static final EyeModel EYE = new EyeModel();
     private static final WindModel WIND = new WindModel();
     
-    public static void render(ButterflyLeviathanEntity entity, Consumer<ResourceLocation> textureBinder, double x, double y, double z, float partialTicks)
+    public static void render(float ticks, Consumer<ResourceLocation> textureBinder, double x, double y, double z, float partialTicks)
     {
-        float f = (float) entity.ticksExisted + partialTicks;
+        float f = ticks + partialTicks;
         float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
         f2 += f2 * f2;
         
@@ -39,9 +38,9 @@ public class ConduitRenderer
         GlStateManager.rotatef((f * -0.0375f) * (180 / MathUtils.PI), 0.5F, 1.0F, 0.5F);
         CAGE.render();
         GlStateManager.popMatrix();
-        int j = entity.ticksExisted / 3 % 22;
+        int j = (int) ticks / 3 % 22;
         WIND.setBoxIndex(j);
-        int k = entity.ticksExisted / 66 % 3;
+        int k = (int) ticks / 66 % 3;
         
         // Render Wind Model
         if (k == 1) textureBinder.accept(VERTICAL_WIND_TEXTURE);

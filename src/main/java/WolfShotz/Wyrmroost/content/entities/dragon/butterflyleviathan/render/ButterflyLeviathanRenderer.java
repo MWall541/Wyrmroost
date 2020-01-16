@@ -37,7 +37,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             double offsetX = x + 4.2d * Math.cos(angle);
             double offsetY = y - (entity.rotationPitch / 20) + 4;
             double offsetZ = z + 4.2d * Math.sin(angle);
-            ConduitRenderer.render(entity, this::bindTexture, offsetX, offsetY, offsetZ, partialTicks);
+            ConduitRenderer.render(entity.ticksExisted, this::bindTexture, offsetX, offsetY, offsetZ, partialTicks);
         }
     }
     
