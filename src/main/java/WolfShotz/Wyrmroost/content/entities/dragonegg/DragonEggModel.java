@@ -1,20 +1,14 @@
 package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.model.RendererModel;
-import net.minecraft.client.renderer.model.Model;
-import net.minecraft.entity.Entity;
-
-import java.util.Random;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 
 /**
  * WREggTemplate - Ukan
  * Created using Tabula 7.0.1
  */
-public class DragonEggModel extends AdvancedEntityModel
+public class DragonEggModel extends AdvancedLivingEntityModel<DragonEggEntity>
 {
     private ModelAnimator animator;
     public AdvancedRendererModel base;
@@ -22,7 +16,8 @@ public class DragonEggModel extends AdvancedEntityModel
     public AdvancedRendererModel three;
     public AdvancedRendererModel four;
     
-    public DragonEggModel() {
+    public DragonEggModel()
+    {
         textureWidth = 64;
         textureHeight = 32;
         four = new AdvancedRendererModel(this, 0, 19);
@@ -45,13 +40,15 @@ public class DragonEggModel extends AdvancedEntityModel
         animator = ModelAnimator.create();
     }
     
-    public void render(DragonEggEntity entity) {
+    public void render(DragonEggEntity entity)
+    {
         base.render(0.0625f);
         
         resetToDefaultPose();
         animator.update(entity);
         
-        if (entity.getAnimation() == DragonEggEntity.WIGGLE_ANIMATION) {
+        if (entity.getAnimation() == DragonEggEntity.WIGGLE_ANIMATION)
+        {
             
             animator.setAnimation(DragonEggEntity.WIGGLE_ANIMATION);
             float angle = entity.wiggleInvert? -0.55f : 0.55f;

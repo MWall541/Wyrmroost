@@ -7,10 +7,10 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.entityhelpers.PlayerMount;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
-import com.github.alexthe666.citadel.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -49,22 +49,24 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
 {
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
     
-    public static final Animation SCAVENGE_ANIMATION = Animation.create(35);
+    public static final Animation SCAVENGE_ANIMATION = new Animation(35);
     
-    public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world) {
+    public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world)
+    {
         super(stalker, world);
         
         moveController = new MovementController(this);
         stepHeight = 0;
         
-        SLEEP_ANIMATION = Animation.create(15);
-        WAKE_ANIMATION = Animation.create(15);
+        SLEEP_ANIMATION = new Animation(15);
+        WAKE_ANIMATION = new Animation(15);
         
         setImmune(DamageSource.DROWN);
     }
     
     @Override
-    protected void registerGoals() {
+    protected void registerGoals()
+    {
         super.registerGoals();
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1d, true));
@@ -75,7 +77,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(12, SharedEntityGoals.wanderAvoidWater(this, 1d));
         goalSelector.addGoal(13, SharedEntityGoals.lookAtNoSleeping(this, 5f));
         goalSelector.addGoal(14, SharedEntityGoals.lookRandomlyNoSleeping(this));
-    
+        
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new HurtByTargetGoal(this).setCallsForHelp());
@@ -84,7 +86,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     
     @Deprecated // Data Fix
     @Override
-    public void readAdditional(CompoundNBT nbt) {
+    public void readAdditional(CompoundNBT nbt)
+    {
         super.readAdditional(nbt);
         
         ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
@@ -95,7 +98,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    protected void registerAttributes() {
+    protected void registerAttributes()
+    {
         super.registerAttributes();
         getAttribute(MAX_HEALTH).setBaseValue(10d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.3d);
@@ -103,7 +107,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    public void livingTick() {
+    public void livingTick()
+    {
         super.livingTick();
         
         if (getHealth() < getMaxHealth() && getRNG().nextInt(400) != 0) return;
@@ -111,19 +116,22 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         ItemStack stack = getStackInSlot(0);
         
         if (stack.isEmpty()) return;
-        if (isBreedingItem(stack)) {
+        if (isBreedingItem(stack))
+        {
             eat(stack);
         }
     }
     
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    {
         if (super.processInteract(player, hand, stack)) return true;
         
         ItemStack heldItem = getStackInSlot(0);
         Item item = stack.getItem();
         
-        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == WRItems.DRAGON_EGG.get()) { //TODO add dragon egg under EGGS tag
+        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == WRItems.DRAGON_EGG.get())
+        { //TODO add dragon egg under EGGS tag
             eat(stack);
             if (tame(rand.nextInt(4) == 0, player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
@@ -131,21 +139,25 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
             return true;
         }
         
-        if (isTamed() && isOwner(player)) {
-            if (player.isSneaking()) {
+        if (isTamed() && isOwner(player))
+        {
+            if (player.isSneaking())
+            {
                 setSit(!isSitting());
                 
                 return true;
             }
-    
-            if (stack.isEmpty() && heldItem.isEmpty() && !PlayerMount.hasHeadOccupant(player)) {
+            
+            if (stack.isEmpty() && heldItem.isEmpty() && !PlayerMount.hasHeadOccupant(player))
+            {
                 setSit(false);
                 startRiding(player, true);
-    
+                
                 return true;
             }
             
-            if (stack.isEmpty() || canPickUpStack(stack)) {
+            if (stack.isEmpty() || canPickUpStack(stack))
+            {
                 setStackInSlot(0, stack);
                 player.setHeldItem(hand, heldItem);
                 
@@ -156,15 +168,20 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.GOLD_NUGGET; }
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return stack.getItem() == Items.GOLD_NUGGET;
+    }
     
     @Override
-    public void updateRidden() {
+    public void updateRidden()
+    {
         super.updateRidden();
         
         Entity entity = getRidingEntity();
         
-        if (!entity.isAlive()) {
+        if (!entity.isAlive())
+        {
             stopRiding();
             return;
         }
@@ -172,7 +189,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         
         PlayerEntity player = (PlayerEntity) entity;
         
-        if (player.isSneaking() && !player.abilities.isFlying) {
+        if (player.isSneaking() && !player.abilities.isFlying)
+        {
             stopRiding();
             return;
         }
@@ -186,44 +204,81 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    public int getSpecialChances() { return 185; }
-    
-    @Override // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P
-    protected BodyController createBodyController() { return new BodyController(this); }
+    public int getSpecialChances()
+    {
+        return 185;
+    }
     
     @Override
-    public boolean canFly() { return false; }
+    // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P
+    protected BodyController createBodyController()
+    {
+        return new BodyController(this);
+    }
+    
+    @Override
+    public boolean canFly()
+    {
+        return false;
+    }
     
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.STALKER_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.STALKER_IDLE.get();
+    }
     
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.STALKER_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.STALKER_HURT.get();
+    }
     
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.STALKER_DEATH.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.STALKER_DEATH.get();
+    }
     
     /**
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() { return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, WRItems.FOOD_DRAKE_MEAT_RAW.get(), WRItems.FOOD_DRAKE_MEAT_COOKED.get()); }
+    public List<Item> getFoodItems()
+    {
+        return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, WRItems.FOOD_DRAKE_MEAT_RAW.get(), WRItems.FOOD_DRAKE_MEAT_COOKED.get());
+    }
     
-    public boolean canPickUpStack(ItemStack stack) { return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET; }
+    public boolean canPickUpStack(ItemStack stack)
+    {
+        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
+    }
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return ContainerBase.stalkerInv(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
+    {
+        return ContainerBase.stalkerInv(this, playerInv, windowID);
+    }
     
     @Override
-    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.of(() -> new ItemStackHandler(1)); }
+    public LazyOptional<ItemStackHandler> createInv()
+    {
+        return LazyOptional.of(() -> new ItemStackHandler(1));
+    }
     
     @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
+    public DragonEggProperties createEggProperties()
+    {
+        return new DragonEggProperties(0.25f, 0.35f, 6000);
+    }
     
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, SCAVENGE_ANIMATION}; }
+    public Animation[] getAnimations()
+    {
+        return new Animation[]{NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, SCAVENGE_ANIMATION};
+    }
 }

@@ -10,19 +10,25 @@ public class DrakeTargetGoal extends NonTamedTargetGoal
 {
     private final OWDrakeEntity drake;
     
-    public DrakeTargetGoal(OWDrakeEntity drake) {
+    public DrakeTargetGoal(OWDrakeEntity drake)
+    {
         super(drake, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET);
         this.drake = drake;
     }
     
     @Override
-    public boolean shouldExecute() { return super.shouldExecute() && !drake.isSleeping() && !drake.isChild(); }
+    public boolean shouldExecute()
+    {
+        return super.shouldExecute() && !drake.isSleeping() && !drake.isChild();
+    }
     
     @Override
-    public void startExecuting() {
-        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION) NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.ROAR_ANIMATION);
+    public void startExecuting()
+    {
+        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION)
+            NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.ROAR_ANIMATION);
         drake.getLookController().setLookPositionWithEntity(nearestTarget, 180, 30);
-    
+
         super.startExecuting();
     }
 }

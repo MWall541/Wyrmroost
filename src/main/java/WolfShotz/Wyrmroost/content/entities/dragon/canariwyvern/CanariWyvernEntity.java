@@ -4,8 +4,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.entityhelpers.PlayerMount;
-import com.github.alexthe666.citadel.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,7 +45,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    public int getSpecialChances() { return 0; }
+    public int getSpecialChances()
+    {
+        return 0;
+    }
     
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
@@ -111,7 +114,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() { return null; }
+    public List<Item> getFoodItems()
+    {
+        return null;
+    }
     
     @Override
     public DragonEggProperties createEggProperties()
@@ -121,7 +127,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    public Animation[] getAnimations() {
+    public WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation[] getAnimations()
+    {
         return new Animation[0];
     }
 }

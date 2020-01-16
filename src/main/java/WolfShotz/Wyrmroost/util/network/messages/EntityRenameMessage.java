@@ -14,24 +14,28 @@ public class EntityRenameMessage implements IMessage
     private final UUID entity;
     private final ITextComponent text;
     
-    public EntityRenameMessage(Entity entity, ITextComponent text) {
+    public EntityRenameMessage(Entity entity, ITextComponent text)
+    {
         this.entity = entity.getUniqueID();
         this.text = text;
     }
     
-    public EntityRenameMessage(PacketBuffer buf) {
+    public EntityRenameMessage(PacketBuffer buf)
+    {
         this.entity = buf.readUniqueId();
         this.text = buf.readTextComponent();
     }
     
     @Override
-    public void encode(PacketBuffer buf) {
+    public void encode(PacketBuffer buf)
+    {
         buf.writeUniqueId(entity);
         buf.writeTextComponent(text);
     }
     
     @Override
-    public void run(Supplier<NetworkEvent.Context> context) {
+    public void run(Supplier<NetworkEvent.Context> context)
+    {
         context.get().getSender().getServerWorld().getEntityByUuid(entity).setCustomName(text);
     }
 }

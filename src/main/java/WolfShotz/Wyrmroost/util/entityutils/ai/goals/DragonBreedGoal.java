@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
+package WolfShotz.Wyrmroost.util.entityutils.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.goal.BreedGoal;
@@ -15,7 +15,8 @@ public class DragonBreedGoal extends BreedGoal
     /**
      * @param canInAir - Setter to have dragons "get it on" in the air! Yeah idfk I blame the community.
      */
-    public DragonBreedGoal(AbstractDragonEntity dragon, boolean canInAir, boolean straight) {
+    public DragonBreedGoal(AbstractDragonEntity dragon, boolean canInAir, boolean straight)
+    {
         super(dragon, 1.0d);
         
         this.dragon = dragon;
@@ -24,7 +25,8 @@ public class DragonBreedGoal extends BreedGoal
     }
     
     @Override
-    public boolean shouldExecute() {
+    public boolean shouldExecute()
+    {
 //        if (!canInAir) return false; TODO
         if (straight)
             return super.shouldExecute() && ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
@@ -37,14 +39,16 @@ public class DragonBreedGoal extends BreedGoal
      * Mod Makers: Feel free to PR a workaround if you need this!
      */
     @Override
-    protected void spawnBaby() {
+    protected void spawnBaby()
+    {
         dragon.createChild(null);
         ServerPlayerEntity serverplayerentity = animal.getLoveCause();
         
-        if (serverplayerentity == null && field_75391_e.getLoveCause() != null) serverplayerentity = field_75391_e.getLoveCause();
-    
+        if (serverplayerentity == null && field_75391_e.getLoveCause() != null)
+            serverplayerentity = field_75391_e.getLoveCause();
+        
         if (serverplayerentity != null) serverplayerentity.addStat(Stats.ANIMALS_BRED);
-    
+        
         animal.setGrowingAge(6000);
         field_75391_e.setGrowingAge(6000);
         animal.resetInLove();

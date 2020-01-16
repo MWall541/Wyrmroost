@@ -25,7 +25,8 @@ public abstract class DragonIndexButton extends AbstractButton
     public final boolean UNLOCKED;
     private float ticker;
     
-    public DragonIndexButton(int x, int y, TarragonTomeScreen screen, int pageToSet, String name, boolean unlocked) {
+    public DragonIndexButton(int x, int y, TarragonTomeScreen screen, int pageToSet, String name, boolean unlocked)
+    {
         super(x, y, 25, 25, "");
         this.SCREEN = screen;
         this.PAGE_TO_SET = pageToSet;
@@ -35,41 +36,51 @@ public abstract class DragonIndexButton extends AbstractButton
     }
     
     @Override
-    public void onPress() { if (UNLOCKED) SCREEN.updatePages(PAGE_TO_SET); }
+    public void onPress()
+    {
+        if (UNLOCKED) SCREEN.updatePages(PAGE_TO_SET);
+    }
     
     @Override
-    public void renderButton(int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(int mouseX, int mouseY, float partialTicks)
+    {
         final float tick = ++ticker + partialTicks;
         
         GlStateManager.pushMatrix();
-    
-        if (isHovered && UNLOCKED) GuiUtils.drawHoveringText(NAME, mouseX, mouseY, width, height, -1, Minecraft.getInstance().fontRenderer);
+
+        if (isHovered && UNLOCKED)
+            GuiUtils.drawHoveringText(NAME, mouseX, mouseY, width, height, -1, Minecraft.getInstance().fontRenderer);
 //        GlStateManager.disableLighting();
-    
+
         if (!UNLOCKED) GlStateManager.color4f(0, 0, 0, 1f);
         GlStateManager.translated(x + 15, y + 7, 50d);
         renderModel(tick / 2);
         
         GlStateManager.disableLighting();
-    
+
         GlStateManager.popMatrix();
-    
+
     }
     
-    public void playDownSound(SoundHandler soundHandler) { if (UNLOCKED) soundHandler.play(SimpleSound.master(SoundEvents.ITEM_BOOK_PAGE_TURN, 1f)); }
+    public void playDownSound(SoundHandler soundHandler)
+    {
+        if (UNLOCKED) soundHandler.play(SimpleSound.master(SoundEvents.ITEM_BOOK_PAGE_TURN, 1f));
+    }
     
     public abstract void renderModel(float tick);
     
     
-    
-    public static DragonIndexButton owDrakeButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked) {
+    public static DragonIndexButton owDrakeButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked)
+    {
         final OWDrakeModel MODEL = new OWDrakeModel();
         final ResourceLocation TEXTURE = ModUtils.resource("textures/entity/dragon/owdrake/male_com.png");
         
-        return new DragonIndexButton(x, y, screen, pageToSet, "Overworld Drake", unlocked) {
+        return new DragonIndexButton(x, y, screen, pageToSet, "Overworld Drake", unlocked)
+        {
             
             @Override
-            public void renderModel(float tick) {
+            public void renderModel(float tick)
+            {
                 GlStateManager.scalef(-20, 20, 20);
                 GlStateManager.rotatef(160f, 0, 1, 0);
                 SCREEN.bindTexture(TEXTURE);
@@ -80,13 +91,16 @@ public abstract class DragonIndexButton extends AbstractButton
         };
     }
     
-    public static DragonIndexButton silverGliderButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked) {
+    public static DragonIndexButton silverGliderButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked)
+    {
         final SilverGliderModel MODEL = new SilverGliderModel();
         final ResourceLocation TEXTURE = ModUtils.resource("textures/entity/dragon/silverglider/female.png");
         
-        return new DragonIndexButton(x, y, screen, pageToSet, "SilverGlider", unlocked) {
+        return new DragonIndexButton(x, y, screen, pageToSet, "SilverGlider", unlocked)
+        {
             @Override
-            public void renderModel(float tick) {
+            public void renderModel(float tick)
+            {
                 GlStateManager.translated(0, 10, 0);
                 GlStateManager.scalef(-10, 10, 10);
                 GlStateManager.rotatef(160f, 0, 1, 0);
@@ -100,14 +114,17 @@ public abstract class DragonIndexButton extends AbstractButton
         };
     }
     
-    public static DragonIndexButton roostStalkerButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked) {
+    public static DragonIndexButton roostStalkerButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked)
+    {
         final RoostStalkerModel MODEL = new RoostStalkerModel();
         final ResourceLocation TEXTURE = ModUtils.resource("textures/entity/dragon/rooststalker/body.png");
         
-        return new DragonIndexButton(x, y, screen, pageToSet, "Roost Stalker", unlocked) {
+        return new DragonIndexButton(x, y, screen, pageToSet, "Roost Stalker", unlocked)
+        {
             
             @Override
-            public void renderModel(float tick) {
+            public void renderModel(float tick)
+            {
                 GlStateManager.scalef(-15, 15, 15);
                 GlStateManager.rotatef(160f, 0, 1, 0);
                 SCREEN.bindTexture(TEXTURE);

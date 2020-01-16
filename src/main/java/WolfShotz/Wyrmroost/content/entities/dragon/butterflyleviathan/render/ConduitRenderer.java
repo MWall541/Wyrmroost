@@ -15,7 +15,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
-public class ConduitRenderer {
+public class ConduitRenderer
+{
     private static final ResourceLocation CAGE_TEXTURE = new ResourceLocation("textures/entity/conduit/cage.png");
     private static final ResourceLocation WIND_TEXTURE = new ResourceLocation("textures/entity/conduit/wind.png");
     private static final ResourceLocation VERTICAL_WIND_TEXTURE = new ResourceLocation("textures/entity/conduit/wind_vertical.png");
@@ -24,7 +25,8 @@ public class ConduitRenderer {
     private static final EyeModel EYE = new EyeModel();
     private static final WindModel WIND = new WindModel();
     
-    public static void render(ButterflyLeviathanEntity entity, Consumer<ResourceLocation> textureBinder, double x, double y, double z, float partialTicks) {
+    public static void render(ButterflyLeviathanEntity entity, Consumer<ResourceLocation> textureBinder, double x, double y, double z, float partialTicks)
+    {
         float f = (float) entity.ticksExisted + partialTicks;
         float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
         f2 += f2 * f2;
@@ -72,53 +74,70 @@ public class ConduitRenderer {
     }
     
     @OnlyIn(Dist.CLIENT)
-    static class CageModel extends Model {
+    static class CageModel extends Model
+    {
         private final RendererModel cageBox;
         
-        public CageModel() {
+        public CageModel()
+        {
             this.textureWidth = 32;
             this.textureHeight = 16;
             this.cageBox = new RendererModel(this, 0, 0);
             this.cageBox.addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8);
         }
         
-        public void render() { this.cageBox.render(0.0625f); }
+        public void render()
+        {
+            this.cageBox.render(0.0625f);
+        }
     }
     
     @OnlyIn(Dist.CLIENT)
-    static class EyeModel extends Model {
+    static class EyeModel extends Model
+    {
         private final RendererModel eyeBox;
         
-        public EyeModel() {
+        public EyeModel()
+        {
             this.textureWidth = 8;
             this.textureHeight = 8;
             this.eyeBox = new RendererModel(this, 0, 0);
             this.eyeBox.addBox(-4.0F, -4.0F, 0.0F, 8, 8, 0, 0.01F);
         }
         
-        public void render() { this.eyeBox.render(0.083333336f); }
+        public void render()
+        {
+            this.eyeBox.render(0.083333336f);
+        }
     }
     
     @OnlyIn(Dist.CLIENT)
-    static class WindModel extends Model {
+    static class WindModel extends Model
+    {
         private final RendererModel[] windBoxes = new RendererModel[22];
         private int boxIndex;
         
-        public WindModel() {
+        public WindModel()
+        {
             this.textureWidth = 64;
             this.textureHeight = 1024;
             
-            for (int i = 0; i < 22; ++i) {
+            for (int i = 0; i < 22; ++i)
+            {
                 windBoxes[i] = new RendererModel(this, 0, 32 * i);
                 windBoxes[i].addBox(-8.0F, -8.0F, -8.0F, 16, 16, 16);
             }
             
         }
         
-        public void setBoxIndex(int index) {
+        public void setBoxIndex(int index)
+        {
             this.boxIndex = index;
         }
         
-        public void render() { windBoxes[boxIndex].render(0.0625f); }
+        public void render()
+        {
+            windBoxes[boxIndex].render(0.0625f);
+        }
     }
 }

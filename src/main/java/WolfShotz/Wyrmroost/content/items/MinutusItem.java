@@ -19,7 +19,8 @@ import java.util.Random;
 
 public class MinutusItem extends Item
 {
-    public MinutusItem() {
+    public MinutusItem()
+    {
         super(ModUtils.itemBuilder());
 
         addPropertyOverride(ModUtils.resource("isalive"), (item, world, player) -> {
@@ -29,16 +30,19 @@ public class MinutusItem extends Item
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World worldIn, Entity player, int itemSlot, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, World worldIn, Entity player, int itemSlot, boolean isSelected)
+    {
         if (stack.hasTag() && stack.getTag().getBoolean("isalive") && new Random().nextInt(60) == 0 && isSelected)
             worldIn.playSound(player.posX, player.posY, player.posZ, WRSounds.MINUTUS_SCREECH.get(), SoundCategory.NEUTRAL, 1f, 1f, false);
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
+    public ActionResultType onItemUse(ItemUseContext context)
+    {
         ItemStack stack = context.getItem();
         CompoundNBT tag = stack.getTag();
-        if (stack.hasTag() && tag.getBoolean("isalive")) {
+        if (stack.hasTag() && tag.getBoolean("isalive"))
+        {
             Hand hand = context.getHand();
             context.getPlayer().setHeldItem(hand, ItemStack.EMPTY);
 

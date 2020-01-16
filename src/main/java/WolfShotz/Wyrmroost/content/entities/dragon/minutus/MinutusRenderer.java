@@ -14,10 +14,16 @@ import javax.annotation.Nullable;
 public class MinutusRenderer extends MobRenderer<MinutusEntity, EntityModel<MinutusEntity>>
 {
     private ResourceLocation minutus = ModUtils.resource("textures/entity/dragon/minutus/body.png");
-
-    public MinutusRenderer(EntityRendererManager manager) { super(manager, new MinutusModel(), 0); }
-
+    
+    public MinutusRenderer(EntityRendererManager manager)
+    {
+        super(manager, new MinutusModel(), 0);
+    }
+    
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(MinutusEntity entity) { return minutus; }
+    protected ResourceLocation getEntityTexture(MinutusEntity entity)
+    {
+        return minutus;
+    }
 }

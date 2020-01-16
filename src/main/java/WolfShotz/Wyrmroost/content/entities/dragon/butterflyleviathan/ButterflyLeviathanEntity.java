@@ -6,12 +6,12 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.Butterf
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.util.entityhelpers.render.DynamicChain;
-import com.github.alexthe666.citadel.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SleepGoal;
+import WolfShotz.Wyrmroost.util.entityutils.client.DynamicChain;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
+import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
@@ -49,7 +49,8 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
     public RandomWalkingGoal moveGoal;
-    @OnlyIn(Dist.CLIENT) public DynamicChain dc;
+    @OnlyIn(Dist.CLIENT)
+    public DynamicChain dc;
     
     // Multipart
     public MultiPartEntity headPart;
@@ -59,9 +60,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public MultiPartEntity tail2Part;
     public MultiPartEntity tail3Part;
     
-    public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world) {
+    public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world)
+    {
         super(blevi, world);
-    
+        
         headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
         wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
         wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
@@ -75,7 +77,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    protected void registerGoals() {
+    protected void registerGoals()
+    {
         goalSelector.addGoal(2, new SleepGoal(this, false));
         goalSelector.addGoal(4, moveGoal = new RandomWalkingGoal(this, 1d, 10));
         goalSelector.addGoal(5, SharedEntityGoals.lookAtNoSleeping(this, 10f));
@@ -83,7 +86,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    protected void registerAttributes() {
+    protected void registerAttributes()
+    {
         super.registerAttributes();
         
         getAttribute(MAX_HEALTH).setBaseValue(70d);
@@ -92,31 +96,40 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    protected PathNavigator createNavigator(World worldIn) { return new ButterflyNavigator(this, worldIn); }
+    protected PathNavigator createNavigator(World worldIn)
+    {
+        return new ButterflyNavigator(this, worldIn);
+    }
     
     @Override
-    public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
+    public CreatureAttribute getCreatureAttribute()
+    {
+        return CreatureAttribute.WATER;
+    }
     
     // ================================
     //           Entity NBT
     // ================================
     
     @Override
-    protected void registerData() {
+    protected void registerData()
+    {
         super.registerData();
         
         dataManager.register(VARIANT, rand.nextInt(2));
     }
     
     @Override
-    public void writeAdditional(CompoundNBT nbt) {
+    public void writeAdditional(CompoundNBT nbt)
+    {
         super.writeAdditional(nbt);
-    
+        
         nbt.putInt("variant", getVariant());
     }
     
     @Override
-    public void readAdditional(CompoundNBT nbt) {
+    public void readAdditional(CompoundNBT nbt)
+    {
         super.readAdditional(nbt);
         
         setVariant(nbt.getInt("variant"));
@@ -125,17 +138,20 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     // =================================
     
     @Override
-    public void tick() {
+    public void tick()
+    {
         super.tick();
-    
+        
         tickParts();
         recalculateSize();
         
-        if (hasConduit()) {
+        if (hasConduit())
+        {
             long i = world.getGameTime();
             if (world.isRemote) spawnConduitParticles();
             if (i % 40L == 0L) applyEffects();
-            if (i % 80L == 0L) {
+            if (i % 80L == 0L)
+            {
                 if (rand.nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 2f, 1f);
                 else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 2f, 1f);
             }
@@ -143,28 +159,33 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    protected void updateAITasks() {
+    protected void updateAITasks()
+    {
         super.updateAITasks();
         
-        if (isInWater()) {
+        if (isInWater())
+        {
             moveGoal.setExecutionChance(10);
-        }
-        else {
+        } else
+        {
             moveGoal.setExecutionChance(120);
         }
     }
     
     @Override
-    public float getEyeHeight(Pose pose) {
+    public float getEyeHeight(Pose pose)
+    {
         if (isUnderWater()) return 2f;
         return 2.55f;
     }
     
     @Override
-    public void travel(Vec3d vec3d) {
+    public void travel(Vec3d vec3d)
+    {
         float f1 = (float) (getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
         float speed = isInWater()? f1 * 0.02f : f1 * 0.1f;
-        if (isBeingRidden() && canPassengerSteer()) {
+        if (isBeingRidden() && canPassengerSteer())
+        {
             LivingEntity rider = (LivingEntity) getControllingPassenger();
             
             prevRotationYaw = rotationYaw = rider.rotationYaw;
@@ -172,7 +193,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             setRotation(rotationYaw, rotationPitch);
             renderYawOffset = rotationYaw;
             rotationYawHead = renderYawOffset;
-            if (isInWater()) {
+            if (isInWater())
+            {
                 float f4 = MathHelper.sin(rotationPitch * (MathUtils.PI / 180f));
                 setMotion(getMotion().x, -f4 * f1, getMotion().z);
             }
@@ -180,19 +202,21 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             vec3d = new Vec3d(rider.moveStrafing, vec3d.y, rider.moveForward);
         }
         
-        if (isServerWorld() && isInWater()) {
+        if (isServerWorld() && isInWater())
+        {
             moveRelative(getAIMoveSpeed(), vec3d);
             move(MoverType.SELF, getMotion());
             setMotion(getMotion().scale(0.9d));
-        }
-        else super.travel(vec3d);
+        } else super.travel(vec3d);
     }
     
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    {
         if (super.processInteract(player, hand, stack)) return true;
         
-        if (isTamed()) {
+        if (isTamed())
+        {
             player.startRiding(this);
             return true;
         }
@@ -200,22 +224,31 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         return false;
     }
     
-    public boolean hasConduit() { return getInvHandler().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false); }
+    public boolean hasConduit()
+    {
+        return getInvHandler().map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false);
+    }
     
-    public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER); }
+    public boolean isUnderWater()
+    {
+        return areEyesInFluid(FluidTags.WATER);
+    }
     
-    public void applyEffects() {
+    public void applyEffects()
+    {
         AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(18d).expand(0, world.getHeight(), 0);
         List<PlayerEntity> list = world.getEntitiesWithinAABB(PlayerEntity.class, axisalignedbb);
         if (list.isEmpty()) return;
-        for(PlayerEntity player : list)
+        for (PlayerEntity player : list)
             if (player.isWet() && getPosition().withinDistance(new BlockPos(player), 18d))
                 player.addPotionEffect(new EffectInstance(Effects.CONDUIT_POWER, 260, 0, true, true));
     }
     
-    private void spawnConduitParticles() {
+    private void spawnConduitParticles()
+    {
         if (rand.nextInt(35) != 0) return;
-        for (int i=0; i < 16; ++i) {
+        for (int i = 0; i < 16; ++i)
+        {
             double motionX = MathUtils.nextPseudoDouble(rand) * 1.5f;
             double motionY = MathUtils.nextPseudoDouble(rand);
             double motionZ = MathUtils.nextPseudoDouble(rand) * 1.5f;
@@ -224,42 +257,78 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
     
     @Override
-    public MultiPartEntity[] getParts() { return new MultiPartEntity[] {headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part}; }
+    public MultiPartEntity[] getParts()
+    {
+        return new MultiPartEntity[]{headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part};
+    }
     
     @Override
-    public boolean canFly() { return false; }
+    public boolean canFly()
+    {
+        return false;
+    }
     
     @Override
-    public boolean canBeSteered() { return true; }
+    public boolean canBeSteered()
+    {
+        return true;
+    }
     
     @Override
-    public boolean canBeRiddenInWater(Entity rider) { return true; }
+    public boolean canBeRiddenInWater(Entity rider)
+    {
+        return true;
+    }
     
     @Override
-    public boolean isNotColliding(IWorldReader worldIn) { return worldIn.checkNoEntityCollision(this); }
+    public boolean isNotColliding(IWorldReader worldIn)
+    {
+        return worldIn.checkNoEntityCollision(this);
+    }
     
     @Override
-    public boolean canBreatheUnderwater() { return true; }
+    public boolean canBreatheUnderwater()
+    {
+        return true;
+    }
     
     @Override
-    public boolean isPushedByWater() { return false; }
+    public boolean isPushedByWater()
+    {
+        return false;
+    }
     
     /**
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() { return Lists.newArrayList(Items.SEAGRASS, Items.KELP); }
+    public List<Item> getFoodItems()
+    {
+        return Lists.newArrayList(Items.SEAGRASS, Items.KELP);
+    }
     
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return ContainerBase.butterflyInv(this, playerInv, windowID); }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
+    {
+        return ContainerBase.butterflyInv(this, playerInv, windowID);
+    }
     
     @Override
-    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.of(() -> new ItemStackHandler(1)); }
+    public LazyOptional<ItemStackHandler> createInv()
+    {
+        return LazyOptional.of(() -> new ItemStackHandler(1));
+    }
     
     @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(1.5f, 2.5f, 40000).setConditions(Entity::isInWater); }
+    public DragonEggProperties createEggProperties()
+    {
+        return new DragonEggProperties(1.5f, 2.5f, 40000).setConditions(Entity::isInWater);
+    }
     
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION}; }
+    public Animation[] getAnimations()
+    {
+        return new Animation[]{NO_ANIMATION};
+    }
 }

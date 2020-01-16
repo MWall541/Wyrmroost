@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
+package WolfShotz.Wyrmroost.util.entityutils.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.LivingEntity;
@@ -10,7 +10,8 @@ import net.minecraft.world.IWorldReader;
 
 import java.util.EnumSet;
 
-public class DragonFollowOwnerGoal extends Goal {
+public class DragonFollowOwnerGoal extends Goal
+{
     protected final AbstractDragonEntity dragon;
     private LivingEntity owner;
     protected final IWorldReader world;
@@ -20,7 +21,8 @@ public class DragonFollowOwnerGoal extends Goal {
     private final double maxDist, minDist, maxHeight;
     private float oldWaterCost;
     
-    public DragonFollowOwnerGoal(AbstractDragonEntity dragonIn, double followSpeedIn, double minDistIn, double maxDistIn, double maxHeightIn) {
+    public DragonFollowOwnerGoal(AbstractDragonEntity dragonIn, double followSpeedIn, double minDistIn, double maxDistIn, double maxHeightIn)
+    {
         this.dragon = dragonIn;
         this.world = dragonIn.world;
         this.followSpeed = followSpeedIn;
@@ -31,7 +33,8 @@ public class DragonFollowOwnerGoal extends Goal {
         setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
     
-    public DragonFollowOwnerGoal(AbstractDragonEntity dragonIn, double followSpeedIn, double minDistIn, double maxDistIn) {
+    public DragonFollowOwnerGoal(AbstractDragonEntity dragonIn, double followSpeedIn, double minDistIn, double maxDistIn)
+    {
         this.dragon = dragonIn;
         this.world = dragonIn.world;
         this.followSpeed = followSpeedIn;
@@ -45,19 +48,21 @@ public class DragonFollowOwnerGoal extends Goal {
     /**
      * Returns whether the EntityAIBase should begin execution.
      */
-    public boolean shouldExecute() {
+    public boolean shouldExecute()
+    {
         if (dragon.isSleeping()) return false;
         
         LivingEntity preOwner = dragon.getOwner();
         
         if (dragon.isSitting() || preOwner == null || (preOwner instanceof PlayerEntity && preOwner.isSpectator()))
             return false;
-    
+        
         double minDistSq = (minDist * minDist);
         boolean tooClose = dragon.isFlying()? (dragon.getDistanceSq(preOwner.getPositionVec().add(0, maxHeight, 0)) < minDistSq) : (dragon.getDistanceSq(preOwner) < minDistSq);
         
         if (tooClose) return false;
-        else {
+        else
+        {
             owner = preOwner;
             return true;
         }
@@ -66,7 +71,8 @@ public class DragonFollowOwnerGoal extends Goal {
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
-    public boolean shouldContinueExecuting() {
+    public boolean shouldContinueExecuting()
+    {
         if (dragon.isSitting() || owner == null) return false;
         
         double maxDistSq = (maxDist * maxDist);
@@ -79,7 +85,8 @@ public class DragonFollowOwnerGoal extends Goal {
     /**
      * Execute a one shot task or start executing a continuous task
      */
-    public void startExecuting() {
+    public void startExecuting()
+    {
         this.timeToRecalcPath = 0;
         this.oldWaterCost = this.dragon.getPathPriority(PathNodeType.WATER);
         this.dragon.setPathPriority(PathNodeType.WATER, 0.0F);
@@ -88,7 +95,8 @@ public class DragonFollowOwnerGoal extends Goal {
     /**
      * Reset the task's internal state. Called when this task is interrupted by another one
      */
-    public void resetTask() {
+    public void resetTask()
+    {
         this.owner = null;
         this.navigator.clearPath();
         this.dragon.setPathPriority(PathNodeType.WATER, oldWaterCost);
@@ -97,22 +105,26 @@ public class DragonFollowOwnerGoal extends Goal {
     /**
      * Keep ticking a continuous task that has already been started
      */
-    public void tick() {
+    public void tick()
+    {
         if (dragon.isSitting()) return;
         if (--this.timeToRecalcPath > 0) return;
         timeToRecalcPath = 10;
         if (dragon.getLeashed() || dragon.isPassenger()) return;
         
-        if (dragon.isFlying()) {
+        if (dragon.isFlying())
+        {
             if (dragon.getDistanceSq(owner.getPositionVec().add(0, maxHeight, 0)) > (3d * (minDist * minDist)))
                 dragon.tryTeleportToPos(owner.getPosition().add(-2, maxHeight, -2));
-            else {
+            else
+            {
                 double x = owner.posX + 0.5d;
                 double y = owner.posY + maxHeight;
                 double z = owner.posZ + 0.5d;
                 dragon.getMoveHelper().setMoveTo(x, y, z, followSpeed);
             }
-        } else {
+        } else
+        {
             if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
                 dragon.tryTeleportToOwner();
             else navigator.tryMoveToEntityLiving(owner, followSpeed);

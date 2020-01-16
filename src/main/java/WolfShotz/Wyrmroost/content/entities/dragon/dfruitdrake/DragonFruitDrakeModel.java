@@ -1,15 +1,14 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.entity.Entity;
 
 /**
  * DragonFruitDrakeModel - Kingdomall
  * Created using Tabula 7.0.1
  */
-public class DragonFruitDrakeModel extends AdvancedEntityModel<DragonFruitDrakeEntity>
+public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruitDrakeEntity>
 {
     public AdvancedRendererModel Body1;
     public AdvancedRendererModel Body2;
@@ -70,8 +69,9 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel<DragonFruitDrakeE
     
     private final AdvancedRendererModel[] headArray;
     private final AdvancedRendererModel[] tailArray;
-
-    public DragonFruitDrakeModel() {
+    
+    public DragonFruitDrakeModel()
+    {
         textureWidth = 100;
         textureHeight = 70;
         Tail1 = new AdvancedRendererModel(this, 80, 13);
@@ -358,14 +358,15 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel<DragonFruitDrakeE
         Head.addChild(shape71);
         Body1.addChild(BackLeafR);
         
-        headArray = new AdvancedRendererModel[] {neck2, neck3, neck4, Head};
-        tailArray = new AdvancedRendererModel[] {Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7};
+        headArray = new AdvancedRendererModel[]{neck2, neck3, neck4, Head};
+        tailArray = new AdvancedRendererModel[]{Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7};
         
         updateDefaultPose();
     }
     
     @Override
-    public void render(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    {
         GlStateManager.pushMatrix();
         GlStateManager.scaled(2, 2, 2);
         Body1.render(scale);
@@ -373,7 +374,8 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel<DragonFruitDrakeE
     }
     
     @Override
-    public void setRotationAngles(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    public void setRotationAngles(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    {
         faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
     
@@ -381,42 +383,46 @@ public class DragonFruitDrakeModel extends AdvancedEntityModel<DragonFruitDrakeE
     private float globalDegree = 0.5f;
     
     @Override
-    public void setLivingAnimations(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float partialTick) {
+    public void setLivingAnimations(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float partialTick)
+    {
         float frame = partialTick + fruitDrake.ticksExisted;
         
         globalDegree = 0.5f;
         globalSpeed = 0.5f;
         resetToDefaultPose();
         
-        if (!fruitDrake.isSleeping()) {
+        if (!fruitDrake.isSleeping())
+        {
 //            globalDegree = 0.515f;
-    
+            
             bob(Body1, 0.6f, 0.2f, false, limbSwing, limbSwingAmount);
-    
+            
             // Front
             walk(LegfrontR1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
             walk(LegfrontR2, 0.3f, 0.2f, false, 2.5f, 0, limbSwing, limbSwingAmount);
             walk(frontfootR, 0.3f, 0.3f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
-    
+            
             walk(LegfrontL1, 0.3f, 0.6f, true, 0, 0, limbSwing, limbSwingAmount);
             walk(LegfrontL2, 0.3f, 0.2f, true, 2.5f, 0, limbSwing, limbSwingAmount);
             walk(frontfootL, 0.3f, 0.3f, true, 2.5f, 0.35f, limbSwing, limbSwingAmount);
-    
+            
             // Back
             walk(LegThighR, 0.3f, 0.6f, true, 0, 0, limbSwing, limbSwingAmount);
             walk(backfootR, 0.3f, 0.6f, true, 2.5f, 0.35f, limbSwing, limbSwingAmount);
-    
+            
             walk(LegThighR_1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
             walk(backfootR_1, 0.3f, 0.6f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
         }
-        if (fruitDrake.isSleeping()) {
+        if (fruitDrake.isSleeping())
+        {
 //            globalSpeed = 0.15f;
         }
         
         idleAnim(frame, false);
     }
     
-    public void idleAnim(float frame, boolean mouth) {
+    public void idleAnim(float frame, boolean mouth)
+    {
         if (mouth) walk(mouthbottom, globalSpeed - 0.425f, 0.1f, false, 0.5f, 0.1f, frame, 0.5f);
         chainWave(headArray, globalSpeed - 0.425f, globalDegree - 0.47f, 2, frame, 0.5f);
         chainWave(tailArray, globalSpeed - 0.45f, globalDegree - 0.45f, 2, frame, 0.5f);

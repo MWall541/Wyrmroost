@@ -18,8 +18,9 @@ public class ConfigData
         public static final ForgeConfigSpec COMMON_SPEC = CommonConfig.SPEC_PAIR.getRight();
         
         public final ForgeConfigSpec.BooleanValue debugMode;
-    
-        CommonConfig(ForgeConfigSpec.Builder configBuilder) {
+        
+        CommonConfig(ForgeConfigSpec.Builder configBuilder)
+        {
             configBuilder.comment("Wyrmroost General Options").push("general");
             debugMode = configBuilder
                                 .comment("Do not enable this unless you are told to!")
@@ -27,8 +28,9 @@ public class ConfigData
                                 .define("debugMode", false);
             configBuilder.pop();
         }
-    
-        public static void reload() {
+        
+        public static void reload()
+        {
             ConfigData.debugMode = COMMON.debugMode.get();
         }
     }

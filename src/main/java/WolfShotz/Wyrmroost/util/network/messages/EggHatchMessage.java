@@ -15,17 +15,23 @@ public class EggHatchMessage implements IMessage
 {
     private int entityID;
     
-    public EggHatchMessage(DragonEggEntity entity) {
+    public EggHatchMessage(DragonEggEntity entity)
+    {
         this.entityID = entity.getEntityId();
     }
     
-    public EggHatchMessage(PacketBuffer buf) { this.entityID = buf.readInt(); }
+    public EggHatchMessage(PacketBuffer buf)
+    {
+        this.entityID = buf.readInt();
+    }
     
-    public void encode(PacketBuffer buf) {
+    public void encode(PacketBuffer buf)
+    {
         buf.writeInt(entityID);
     }
     
-    public void run(Supplier<NetworkEvent.Context> context) {
+    public void run(Supplier<NetworkEvent.Context> context)
+    {
         World world = DistExecutor.callWhenOn(Dist.CLIENT, () -> ModUtils::getClientWorld);
         
         ((DragonEggEntity) world.getEntityByID(entityID)).hatch();

@@ -4,11 +4,11 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.registry.WRItems;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.DragonFollowOwnerGoal;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SharedEntityGoals;
-import WolfShotz.Wyrmroost.util.entityhelpers.ai.goals.SleepGoal;
-import com.github.alexthe666.citadel.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SleepGoal;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
@@ -46,15 +46,17 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 {
     private int shearCooldownTime;
     
-    public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world) {
+    public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world)
+    {
         super(dragon, world);
         
-        SLEEP_ANIMATION = Animation.create(15);
-        WAKE_ANIMATION = Animation.create(15);
+        SLEEP_ANIMATION = new Animation(15);
+        WAKE_ANIMATION = new Animation(15);
     }
     
     @Override
-    protected void registerGoals() {
+    protected void registerGoals()
+    {
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(3, sitGoal = new SitGoal(this));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
@@ -67,17 +69,20 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, SharedEntityGoals.nonTamedTargetGoal(this, PlayerEntity.class, 2, true, true, EntityPredicates.CAN_AI_TARGET));
         
-        goalSelector.addGoal(2, new SleepGoal(this, false) {
+        goalSelector.addGoal(2, new SleepGoal(this, false)
+        {
             @Override
-            public boolean shouldExecute() {
+            public boolean shouldExecute()
+            {
                 if (--sleepTimeout > 0) return false;
                 if (isInWaterOrBubbleColumn() || isFlying()) return false;
                 int bounds = world.isDaytime()? 1200 : 300;
                 return (!isTamed() || isSitting()) && rand.nextInt(bounds) == 0;
             }
-    
+            
             @Override
-            public boolean shouldContinueExecuting() {
+            public boolean shouldContinueExecuting()
+            {
                 if (!isSleeping()) return false;
                 int bounds = world.isDaytime()? 300 : 600;
                 return shouldSleep(dragon) && rand.nextInt(bounds) == 0;
@@ -86,7 +91,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
     
     @Override
-    protected void registerAttributes() {
+    protected void registerAttributes()
+    {
         super.registerAttributes();
         getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.232524f);
         getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
@@ -97,14 +103,16 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     //           Entity NBT
     // ================================
     @Override
-    public void writeAdditional(CompoundNBT nbt) {
+    public void writeAdditional(CompoundNBT nbt)
+    {
         super.writeAdditional(nbt);
         
         nbt.putInt("shearcooldown", shearCooldownTime);
     }
     
     @Override
-    public void readAdditional(CompoundNBT nbt) {
+    public void readAdditional(CompoundNBT nbt)
+    {
         super.readAdditional(nbt);
         
         this.shearCooldownTime = nbt.getInt("shearcooldown");
@@ -112,17 +120,20 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     // ================================
     
     @Override
-    public void tick() {
+    public void tick()
+    {
         super.tick();
         
         if (shearCooldownTime > 0) --shearCooldownTime;
     }
     
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack) {
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    {
         if (super.processInteract(player, hand, stack)) return true;
         
-        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) {
+        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild())
+        {
             getInvHandler().ifPresent(i -> {
                 i.insertItem(0, stack, false);
                 consumeItemFromStack(player, stack);
@@ -131,14 +142,16 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             return true;
         }
         
-        if (/*isSaddled() && */!isChild() && !player.isSneaking()) {
+        if (/*isSaddled() && */!isChild() && !player.isSneaking())
+        {
             setSit(false);
             player.startRiding(this);
             
             return true;
         }
         
-        if (isOwner(player) && player.isSneaking()) {
+        if (isOwner(player) && player.isSneaking())
+        {
             setSit(true);
             
             return true;
@@ -148,15 +161,18 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
     
     @Override
-    public void travel(Vec3d vec3d) {
-        if (!isBeingRidden()) {
+    public void travel(Vec3d vec3d)
+    {
+        if (!isBeingRidden())
+        {
             super.travel(vec3d);
             return;
         }
         
         // We're being ridden, follow rider controls
         LivingEntity rider = (LivingEntity) getControllingPassenger();
-        if (canPassengerSteer()) {
+        if (canPassengerSteer())
+        {
             float f = rider.moveForward, s = rider.moveStrafing;
             float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue());
             boolean moving = (f != 0 || s != 0);
@@ -164,7 +180,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             
             setAIMoveSpeed(speed / 2);
             super.travel(target);
-            if (moving) {
+            if (moving)
+            {
                 prevRotationYaw = rotationYaw = rider.rotationYaw;
                 rotationPitch = rider.rotationPitch * 0.5f;
                 setRotation(rotationYaw, rotationPitch);
@@ -175,26 +192,40 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
     
     @Override
-    public boolean canBeSteered() { return true; }
+    public boolean canBeSteered()
+    {
+        return true;
+    }
     
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height; }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    {
+        return sizeIn.height;
+    }
     
     @Override
-    public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
+    public double getMountedYOffset()
+    {
+        return super.getMountedYOffset() + 0.1d;
+    }
     
     @Override
-    public boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos) { return shearCooldownTime <= 0; }
+    public boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos)
+    {
+        return shearCooldownTime <= 0;
+    }
     
     @Nonnull
     @Override
-    public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune) {
+    public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune)
+    {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
         return Lists.newArrayList(new ItemStack(WRItems.FOOD_DRAGON_FRUIT.get(), 1));
     }
     
-    public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random) {
+    public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
+    {
         World world = worldIn.getWorld();
         
         System.out.println("trying!");
@@ -203,18 +234,28 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
     
     @Override
-    public boolean canFly() { return false; }
+    public boolean canFly()
+    {
+        return false;
+    }
     
     @Override
-    public List<Item> getFoodItems() {
+    public List<Item> getFoodItems()
+    {
         List<Item> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
         Collections.addAll(foods, WRItems.FOOD_DRAGON_FRUIT.get(), Items.APPLE, Items.SWEET_BERRIES);
         return foods;
     }
     
     @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.45f, 0.75f, 9600); }
+    public DragonEggProperties createEggProperties()
+    {
+        return new DragonEggProperties(0.45f, 0.75f, 9600);
+    }
     
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION}; }
+    public Animation[] getAnimations()
+    {
+        return new Animation[]{NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION};
+    }
 }

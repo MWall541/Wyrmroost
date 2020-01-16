@@ -11,7 +11,8 @@ public class BurrowGoal extends Goal
     private MinutusEntity minutus;
     private int burrowTicks = 30;
 
-    public BurrowGoal(MinutusEntity minutusIn) {
+    public BurrowGoal(MinutusEntity minutusIn)
+    {
         this.minutus = minutusIn;
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
@@ -20,23 +21,40 @@ public class BurrowGoal extends Goal
      * Returns whether the EntityAIBase should begin execution.
      */
     @Override
-    public boolean shouldExecute() { return !minutus.isBurrowed() && belowIsSand(); }
+    public boolean shouldExecute()
+    {
+        return !minutus.isBurrowed() && belowIsSand();
+    }
 
     @Override
-    public boolean shouldContinueExecuting() { return shouldExecute(); }
+    public boolean shouldContinueExecuting()
+    {
+        return shouldExecute();
+    }
 
     @Override
-    public void resetTask() { burrowTicks = 30; }
+    public void resetTask()
+    {
+        burrowTicks = 30;
+    }
 
     @Override
-    public void tick() {
-        if (--burrowTicks <= 0) {
+    public void tick()
+    {
+        if (--burrowTicks <= 0)
+        {
             minutus.setBurrowed(true);
             burrowTicks = 30;
         }
     }
 
-    private boolean belowIsSand() { return minutus.world.getBlockState(minutus.getPosition().down(1)).getMaterial() == Material.SAND; }
+    private boolean belowIsSand()
+    {
+        return minutus.world.getBlockState(minutus.getPosition().down(1)).getMaterial() == Material.SAND;
+    }
 
-    public int getBurrowTicks() { return burrowTicks; }
+    public int getBurrowTicks()
+    {
+        return burrowTicks;
+    }
 }

@@ -16,7 +16,8 @@ public enum ToolMaterialList implements IItemTier
     private int durability, harvestLevel, enchantibility;
     private Item repairMaterial;
     
-    ToolMaterialList(float efficiency, float attackDamage, int durability, int harvestLevel, int enchantibility, Item repairMaterial) {
+    ToolMaterialList(float efficiency, float attackDamage, int durability, int harvestLevel, int enchantibility, Item repairMaterial)
+    {
         this.efficiency = efficiency;
         this.attackDamage = attackDamage;
         this.durability = durability;
@@ -25,10 +26,39 @@ public enum ToolMaterialList implements IItemTier
         this.repairMaterial = repairMaterial;
     }
     
-    @Override public int getMaxUses() { return durability; }
-    @Override public float getEfficiency() { return efficiency; }
-    @Override public float getAttackDamage() { return attackDamage; }
-    @Override public int getHarvestLevel() { return harvestLevel; }
-    @Override public int getEnchantability() { return enchantibility; }
-    @Override public Ingredient getRepairMaterial() { return Ingredient.fromItems(repairMaterial); }
+    @Override
+    public int getMaxUses()
+    {
+        return durability;
+    }
+    
+    @Override
+    public float getEfficiency()
+    {
+        return efficiency;
+    }
+    
+    @Override
+    public float getAttackDamage()
+    {
+        return attackDamage;
+    }
+    
+    @Override
+    public int getHarvestLevel()
+    {
+        return harvestLevel;
+    }
+    
+    @Override
+    public int getEnchantability()
+    {
+        return enchantibility;
+    }
+    
+    @Override
+    public Ingredient getRepairMaterial()
+    {
+        return Ingredient.fromItems(repairMaterial);
+    }
 }

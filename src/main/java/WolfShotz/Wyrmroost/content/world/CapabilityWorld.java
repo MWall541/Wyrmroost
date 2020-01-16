@@ -16,8 +16,16 @@ public class CapabilityWorld
     public static final Capability<CapabilityWorld> OW_CAP = null;
     
     private boolean portalTriggered;
-    public boolean isPortalTriggered() { return portalTriggered; }
-    public void setPortalTriggered(boolean flag) { this.portalTriggered = flag; }
+    
+    public boolean isPortalTriggered()
+    {
+        return portalTriggered;
+    }
+    
+    public void setPortalTriggered(boolean flag)
+    {
+        this.portalTriggered = flag;
+    }
     
     public static class PropertiesDispatcher implements ICapabilitySerializable<CompoundNBT>
     {
@@ -33,16 +41,23 @@ public class CapabilityWorld
          */
         @Nonnull
         @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) { return OW_CAP.orEmpty(cap, LazyOptional.of(() -> worldData)); }
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
+        {
+            return OW_CAP.orEmpty(cap, LazyOptional.of(() -> worldData));
+        }
         
         @Override
-        public CompoundNBT serializeNBT() {
+        public CompoundNBT serializeNBT()
+        {
             CompoundNBT nbt = new CompoundNBT();
             nbt.putBoolean("triggerowspawns", worldData.isPortalTriggered());
             return nbt;
         }
-    
+        
         @Override
-        public void deserializeNBT(CompoundNBT nbt) { worldData.setPortalTriggered(nbt.getBoolean("triggerowspawns")); }
+        public void deserializeNBT(CompoundNBT nbt)
+        {
+            worldData.setPortalTriggered(nbt.getBoolean("triggerowspawns"));
+        }
     }
 }

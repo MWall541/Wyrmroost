@@ -54,10 +54,10 @@ public class Wyrmroost
         FMLJavaModLoadingContext.get().getModEventBus().register(Wyrmroost.class);
         
         WREntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        WRBlocks.BLOCKS    .register(FMLJavaModLoadingContext.get().getModEventBus());
-        WRItems.ITEMS      .register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupIO.CONTAINERS  .register(FMLJavaModLoadingContext.get().getModEventBus());
-        WRSounds.SOUNDS    .register(FMLJavaModLoadingContext.get().getModEventBus());
+        WRBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        WRItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        SetupIO.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        WRSounds.SOUNDS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("dim_wyrmroost"));
         ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
         
@@ -70,7 +70,7 @@ public class Wyrmroost
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(CommonEvents.class);
-    
+        
         SetupWorld.setupOreGen();
         WREntities.registerEntityWorldSpawns();
         NetworkUtils.registerMessages();
@@ -80,7 +80,7 @@ public class Wyrmroost
     public static void clientSetup(final FMLClientSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(ClientEvents.class);
-    
+        
         WREntities.registerEntityRenders();
         KeyBinds.registerKeys();
         SetupIO.screenSetup();
@@ -146,7 +146,8 @@ public class Wyrmroost
             if (!ConfigData.debugMode) return;
             PlayerEntity player = evt.getPlayer();
             ItemStack stack = player.getHeldItem(evt.getHand());
-            if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick")) return;
+            if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick"))
+                return;
             
             evt.setCanceled(true);
             

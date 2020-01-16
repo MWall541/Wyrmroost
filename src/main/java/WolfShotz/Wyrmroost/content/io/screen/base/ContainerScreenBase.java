@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.io.NameFieldWidget;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.TranslationUtils;
 import WolfShotz.Wyrmroost.util.network.messages.EntityRenameMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.IGuiEventListener;
@@ -14,6 +13,7 @@ import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -36,7 +36,8 @@ public class ContainerScreenBase<T extends ContainerBase> extends ContainerScree
     public String prevName;
     public int textureWidth, textureHeight;
     
-    public ContainerScreenBase(T container, PlayerInventory playerInv, ITextComponent name) {
+    public ContainerScreenBase(T container, PlayerInventory playerInv, ITextComponent name)
+    {
         super(container, playerInv, name);
         this.dragonInv = container;
         background = STANDARD_GUI;
@@ -45,20 +46,23 @@ public class ContainerScreenBase<T extends ContainerBase> extends ContainerScree
     }
     
     @Override
-    protected void init() {
+    protected void init()
+    {
         super.init();
         prevName = dragonInv.dragon.hasCustomName()? dragonInv.dragon.getCustomName().getUnformattedComponentText() : dragonInv.dragon.getDisplayName().getUnformattedComponentText();
         nameField = createNameField();
     }
     
     @Override
-    public void tick() {
+    public void tick()
+    {
         super.tick();
         nameField.tick();
     }
     
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(int mouseX, int mouseY, float partialTicks)
+    {
         renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         renderHoveredToolTip(mouseX, mouseY);
@@ -66,34 +70,39 @@ public class ContainerScreenBase<T extends ContainerBase> extends ContainerScree
     }
     
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    {
         drawHealth(115, 5);
         if (dragonInv.dragon.isSpecial()) drawSpecialIcon(6, 11);
     }
     
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-    
+        
         renderEntity(mouseX, mouseY);
         bindTexture(background); // Bind background layer last so we can do other rendering in subclasses
         blit(guiLeft, guiTop, 0, 0, xSize, ySize, textureWidth, textureHeight);
     }
     
     @Override
-    public boolean keyPressed(int p1, int p2, int p3) {
+    public boolean keyPressed(int p1, int p2, int p3)
+    {
         nameField.keyPressed(p1, p2, p3);
         
-        if (nameField.isFocused() && p1 == 257) {
+        if (nameField.isFocused() && p1 == 257)
+        {
             if (!dragonInv.dragon.getName().getUnformattedComponentText().equals(nameField.getText()))
-                Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(dragonInv.dragon, TranslationUtils.stringTranslation(nameField.getText())));
+                Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(dragonInv.dragon, new StringTextComponent(nameField.getText())));
             nameField.setFocused2(false);
         }
         
         return nameField.isFocused() && nameField.getVisible() && p1 != 256 || super.keyPressed(p1, p2, p3);
     }
     
-    public void drawHealth(int x, int y) {
+    public void drawHealth(int x, int y)
+    {
         int health = (int) Math.floor(dragonInv.dragon.getHealth() / 2);
         boolean shake = health < dragonInv.dragon.getMaxHealth() / 5;
         
@@ -105,7 +114,8 @@ public class ContainerScreenBase<T extends ContainerBase> extends ContainerScree
         GlStateManager.popMatrix();
     }
     
-    public void drawSpecialIcon(int x, int y) {
+    public void drawSpecialIcon(int x, int y)
+    {
         GlStateManager.pushMatrix();
         GlStateManager.color4f(1f, 0.65f, 0, 1);
         bindTexture(SPECIAL);
@@ -118,25 +128,44 @@ public class ContainerScreenBase<T extends ContainerBase> extends ContainerScree
      * Public access version of {@link Screen#addButton}
      */
     @Override
-    public <T extends Widget> T addButton(T widget) { return super.addButton(widget); }
+    public <T extends Widget> T addButton(T widget)
+    {
+        return super.addButton(widget);
+    }
     
-    public List<IGuiEventListener> getChildren() { return children; }
+    public List<IGuiEventListener> getChildren()
+    {
+        return children;
+    }
     
-    public List<Widget> getWidgets() { return buttons; }
+    public List<Widget> getWidgets()
+    {
+        return buttons;
+    }
     
-    public void renderEntity(int mouseX, int mouseY) { InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (guiLeft + 40) - mouseX, (guiTop + 75 - 30) - mouseY, dragonInv.dragon); }
+    public void renderEntity(int mouseX, int mouseY)
+    {
+        InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (guiLeft + 40) - mouseX, (guiTop + 75 - 30) - mouseY, dragonInv.dragon);
+    }
     
-    public NameFieldWidget createNameField() { return new NameFieldWidget(font, guiLeft + 72, guiTop + 22, 100, 12, this); }
+    public NameFieldWidget createNameField()
+    {
+        return new NameFieldWidget(font, guiLeft + 72, guiTop + 22, 100, 12, this);
+    }
     
-    public void bindTexture(ResourceLocation texture) {
+    public void bindTexture(ResourceLocation texture)
+    {
         assert minecraft != null;
         minecraft.getTextureManager().bindTexture(texture);
     }
     
-    public static <T extends ContainerBase> ContainerScreenBase<T> singleSlotScreen(T container, PlayerInventory playerInv, ITextComponent name) {
-        return new ContainerScreenBase<T>(container, playerInv, name) {
+    public static <T extends ContainerBase> ContainerScreenBase<T> singleSlotScreen(T container, PlayerInventory playerInv, ITextComponent name)
+    {
+        return new ContainerScreenBase<T>(container, playerInv, name)
+        {
             @Override
-            protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+            protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+            {
                 super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
                 blit(guiLeft + 70, guiTop + 55, 0, 164, 18, 18, textureWidth, textureHeight);
             }

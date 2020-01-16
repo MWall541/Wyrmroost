@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
+package WolfShotz.Wyrmroost.util.entityutils.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.MathUtils;
@@ -14,13 +14,15 @@ public class FlightWanderGoal extends Goal
     public AbstractDragonEntity dragon;
     boolean nightTempted;
     
-    public FlightWanderGoal(AbstractDragonEntity dragon) {
+    public FlightWanderGoal(AbstractDragonEntity dragon)
+    {
         this.dragon = dragon;
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
     }
     
     @Override
-    public boolean shouldExecute() {
+    public boolean shouldExecute()
+    {
         if (dragon.isSleeping()) return false;
         if (!dragon.getPassengers().isEmpty()) return false;
         if (!dragon.isFlying()) return false;
@@ -35,7 +37,8 @@ public class FlightWanderGoal extends Goal
     }
     
     @Override
-    public void startExecuting() {
+    public void startExecuting()
+    {
         Random rand = dragon.getRNG();
         
         double x = dragon.posX + MathUtils.nextPseudoDouble(rand) * 24d;
@@ -45,5 +48,8 @@ public class FlightWanderGoal extends Goal
     }
     
     @Override
-    public boolean shouldContinueExecuting() { return false; }
+    public boolean shouldContinueExecuting()
+    {
+        return false;
+    }
 }

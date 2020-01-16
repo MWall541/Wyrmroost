@@ -27,17 +27,22 @@ import java.util.List;
 
 public class TarragonTomeItem extends Item
 {
-    public TarragonTomeItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
-
+    public TarragonTomeItem()
+    {
+        super(ModUtils.itemBuilder().maxStackSize(1));
+    }
+    
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
+    {
         if (world.isRemote) DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> openGUI(player.getHeldItem(hand)));
-
+        
         return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
     }
     
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
+    {
         if (!(entity instanceof AbstractDragonEntity)) return false;
         if (stack.getTag() == null) stack.setTag(new CompoundNBT());
         CompoundNBT tag = stack.getTag();
@@ -47,17 +52,21 @@ public class TarragonTomeItem extends Item
     
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    {
         tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip")
                             .appendSibling(new StringTextComponent("sgdshdf")
-                                .applyTextStyle(TextFormatting.OBFUSCATED))
+                                                   .applyTextStyle(TextFormatting.OBFUSCATED))
                             .applyTextStyle(TextFormatting.GRAY));
     }
-
+    
     /**
      * Opens the GUI on the Client Side
      * This is needed otherwise a sided exception is thrown
      */
     @OnlyIn(Dist.CLIENT)
-    private void openGUI(ItemStack stack) { Minecraft.getInstance().displayGuiScreen(new TarragonTomeScreen(stack)); }
+    private void openGUI(ItemStack stack)
+    {
+        Minecraft.getInstance().displayGuiScreen(new TarragonTomeScreen(stack));
+    }
 }

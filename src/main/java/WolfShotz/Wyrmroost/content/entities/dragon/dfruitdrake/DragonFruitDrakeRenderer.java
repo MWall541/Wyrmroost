@@ -11,13 +11,20 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
 {
     public static final ResourceLocation BODY_MALE = resource("body_m.png");
     
-    public DragonFruitDrakeRenderer(EntityRendererManager manager) {
+    public DragonFruitDrakeRenderer(EntityRendererManager manager)
+    {
         super(manager, new DragonFruitDrakeModel(), 1.5f);
     }
     
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(DragonFruitDrakeEntity entity) { return BODY_MALE; }
+    protected ResourceLocation getEntityTexture(DragonFruitDrakeEntity entity)
+    {
+        return BODY_MALE;
+    }
     
-    public static ResourceLocation resource(String png) { return ModUtils.resource(DEF_LOC + "dfruitdrake/" + png); }
+    public static ResourceLocation resource(String png)
+    {
+        return ModUtils.resource(DEF_LOC + "dfruitdrake/" + png);
+    }
 }

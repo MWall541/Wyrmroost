@@ -16,11 +16,12 @@ public class DragonEggProperties
     private Predicate<DragonEggEntity> conditions = e -> true;
     
     /**
-     * @param width Width of the egg (x size)
-     * @param height Height of the egg (y size)
+     * @param width     Width of the egg (x size)
+     * @param height    Height of the egg (y size)
      * @param hatchTime the hatch time, in game ticks
      */
-    public DragonEggProperties(float width, float height, int hatchTime) {
+    public DragonEggProperties(float width, float height, int hatchTime)
+    {
         this.WIDTH = width;
         this.HEIGHT = height;
         this.HATCH_TIME = hatchTime;
@@ -29,7 +30,8 @@ public class DragonEggProperties
     /**
      * Set a custom egg texture as opposed to the default
      */
-    public DragonEggProperties setCustomTexture(ResourceLocation customTexture) {
+    public DragonEggProperties setCustomTexture(ResourceLocation customTexture)
+    {
         this.texture = customTexture;
         
         return this;
@@ -39,7 +41,8 @@ public class DragonEggProperties
      * Set custom conditions this egg has to be under to hatch
      * Default: none. always return true.
      */
-    public DragonEggProperties setConditions(Predicate<DragonEggEntity> conditions) {
+    public DragonEggProperties setConditions(Predicate<DragonEggEntity> conditions)
+    {
         this.conditions = conditions;
         
         return this;
@@ -48,22 +51,34 @@ public class DragonEggProperties
     /**
      * Get the size of the egg
      */
-    public EntitySize getSize() { return EntitySize.flexible(WIDTH, HEIGHT); }
+    public EntitySize getSize()
+    {
+        return EntitySize.flexible(WIDTH, HEIGHT);
+    }
     
     /**
      * Get the hatch time of the egg
      */
-    public int getHatchTime() { return HATCH_TIME; }
+    public int getHatchTime()
+    {
+        return HATCH_TIME;
+    }
     
     /**
      * Get the conditions the egg has to be under to continue hatching
      */
-    public Predicate<DragonEggEntity> getConditions() { return conditions; }
+    public Predicate<DragonEggEntity> getConditions()
+    {
+        return conditions;
+    }
     
     /**
      * Get the texture this egg renders
      * Default: "textures/entity/dragonegg/default.png"
      */
     @OnlyIn(Dist.CLIENT)
-    public ResourceLocation getEggTexture() { return texture; }
+    public ResourceLocation getEggTexture()
+    {
+        return texture;
+    }
 }

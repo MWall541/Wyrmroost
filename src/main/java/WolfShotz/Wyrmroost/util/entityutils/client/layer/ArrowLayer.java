@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.render.layer;
+package WolfShotz.Wyrmroost.util.entityutils.client.layer;
 
 import WolfShotz.Wyrmroost.util.MathUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -18,7 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.Random;
 
 /**
- * A slighly more optimized arrow entity render
+ * A slighly more optimized arrow entity client
  */
 @OnlyIn(Dist.CLIENT)
 public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extends LayerRenderer<T, M>
@@ -26,21 +26,24 @@ public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extend
     private final EntityRendererManager renderManager;
     private ArrowEntity arrow;
     
-    public ArrowLayer(LivingRenderer<T, M> rendererIn) {
+    public ArrowLayer(LivingRenderer<T, M> rendererIn)
+    {
         super(rendererIn);
         this.renderManager = rendererIn.getRenderManager();
     }
     
-    public void render(T entityIn, float p_212842_2_, float p_212842_3_, float partialTicks, float p_212842_5_, float p_212842_6_, float p_212842_7_, float p_212842_8_) {
+    public void render(T entityIn, float p_212842_2_, float p_212842_3_, float partialTicks, float p_212842_5_, float p_212842_6_, float p_212842_7_, float p_212842_8_)
+    {
         int i = entityIn.getArrowCountInEntity();
         if (i <= 0) return;
-    
+        
         if (arrow == null) arrow = new ArrowEntity(entityIn.world, entityIn.posX, entityIn.posY, entityIn.posZ);
         Random random = new Random((long) entityIn.getEntityId());
         
         RenderHelper.disableStandardItemLighting();
-    
-        for(int j = 0; j < i; ++j) {
+        
+        for (int j = 0; j < i; ++j)
+        {
             GlStateManager.pushMatrix();
             
             float f = random.nextFloat();
@@ -57,8 +60,8 @@ public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extend
             f1 = -1f * (f1 * 2f - 1f);
             f2 = -1f * (f2 * 2f - 1f);
             float f6 = MathHelper.sqrt(f * f + f2 * f2);
-            arrow.prevRotationYaw = arrow.rotationYaw = (float)(Math.atan2((double) f, (double) f2) * (180f / MathUtils.PI));
-            arrow.prevRotationPitch = arrow.rotationPitch = (float)(Math.atan2((double) f1, (double) f6) * (180f / MathUtils.PI));
+            arrow.prevRotationYaw = arrow.rotationYaw = (float) (Math.atan2((double) f, (double) f2) * (180f / MathUtils.PI));
+            arrow.prevRotationPitch = arrow.rotationPitch = (float) (Math.atan2((double) f1, (double) f6) * (180f / MathUtils.PI));
             renderManager.renderEntity(arrow, 0, 0, 0, 0, partialTicks, false);
             
             GlStateManager.popMatrix();
@@ -67,5 +70,8 @@ public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extend
         RenderHelper.enableStandardItemLighting();
     }
     
-    public boolean shouldCombineTextures() { return false; }
+    public boolean shouldCombineTextures()
+    {
+        return false;
+    }
 }

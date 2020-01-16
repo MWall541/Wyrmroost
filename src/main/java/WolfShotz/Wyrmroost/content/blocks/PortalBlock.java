@@ -20,19 +20,21 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 public class PortalBlock extends BlockBase
 {
-    public PortalBlock() {
+    public PortalBlock()
+    {
         super(ModUtils.blockBuilder(Material.PORTAL).doesNotBlockMovement().lightValue(15).hardnessAndResistance(-1f, Float.MAX_VALUE).noDrops());
     }
     
     @Override
     @SuppressWarnings("deprecation")
-    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
+    {
         if (entityIn.dimension.getModType() == SetupWorld.DIM_WYRMROOST) return;
         if (!(entityIn instanceof ServerPlayerEntity)) return;
         ServerPlayerEntity player = ((ServerPlayerEntity) entityIn);
         ServerWorld world = DimensionManager.getWorld(player.getServer(), ModUtils.getDimensionInstance(), false, true);
         WorldBorder border = world.getWorldBorder();
-    
+        
         double x = player.posX;
         double z = player.posZ;
         double d3 = Math.min(-2.9999872E7D, border.minX() + 16d);

@@ -15,10 +15,14 @@ public class EndOrePlacement extends SimplePlacement<NoPlacementConfig>
     @ObjectHolder("wyrmroost:end_ore")
     public static Placement<NoPlacementConfig> endOre;
     
-    public EndOrePlacement() { super(NoPlacementConfig::deserialize); }
+    public EndOrePlacement()
+    {
+        super(NoPlacementConfig::deserialize);
+    }
     
     @Override
-    protected Stream<BlockPos> getPositions(Random random, NoPlacementConfig config, BlockPos pos) {
+    protected Stream<BlockPos> getPositions(Random random, NoPlacementConfig config, BlockPos pos)
+    {
         int i = 3 + random.nextInt(6);
         return IntStream.range(0, i).mapToObj((p_215060_2_) -> {
             int j = random.nextInt(16);

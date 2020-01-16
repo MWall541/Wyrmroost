@@ -12,34 +12,52 @@ public class DragonArmorItem extends Item
 {
     private DragonArmorType type;
     
-    public DragonArmorItem(DragonArmorType type) {
+    public DragonArmorItem(DragonArmorType type)
+    {
         super(ModUtils.itemBuilder().maxStackSize(1));
         this.type = type;
     }
     
     @Override
-    public int getItemEnchantability() {
-        switch(type) {
+    public int getItemEnchantability()
+    {
+        switch (type)
+        {
             default:
-            case IRON: return ArmorMaterial.IRON.getEnchantability();
-            case GOLD: return ArmorMaterial.GOLD.getEnchantability();
-            case DIAMOND: return ArmorMaterial.DIAMOND.getEnchantability();
-            case PLATINUM: return ArmorMaterialList.PLATINUM.getEnchantability();
-            case BLUE_GEODE: return ArmorMaterialList.GEODE.getEnchantability();
+            case IRON:
+                return ArmorMaterial.IRON.getEnchantability();
+            case GOLD:
+                return ArmorMaterial.GOLD.getEnchantability();
+            case DIAMOND:
+                return ArmorMaterial.DIAMOND.getEnchantability();
+            case PLATINUM:
+                return ArmorMaterialList.PLATINUM.getEnchantability();
+            case BLUE_GEODE:
+                return ArmorMaterialList.GEODE.getEnchantability();
         }
     }
     
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
+    {
         return enchantment == Enchantments.PROTECTION;
     }
     
     @Override
-    public boolean isEnchantable(ItemStack stack) { return true; }
+    public boolean isEnchantable(ItemStack stack)
+    {
+        return true;
+    }
     
-    public DragonArmorType getType() { return type; }
+    public DragonArmorType getType()
+    {
+        return type;
+    }
     
-    public int getDmgReduction() { return type.getDmgReduction(); }
+    public int getDmgReduction()
+    {
+        return type.getDmgReduction();
+    }
     
     public enum DragonArmorType
     {
@@ -53,10 +71,14 @@ public class DragonArmorItem extends Item
         
         private int dmgReduction;
         
-        DragonArmorType(int dmgReduction) {
+        DragonArmorType(int dmgReduction)
+        {
             this.dmgReduction = dmgReduction;
         }
-    
-        public int getDmgReduction() { return dmgReduction; }
+
+        public int getDmgReduction()
+        {
+            return dmgReduction;
+        }
     }
 }

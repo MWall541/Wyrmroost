@@ -15,10 +15,11 @@ public class NameFieldWidget extends TextFieldWidget
     private Entity entity;
     private ResetNameButton button;
     
-    public NameFieldWidget(FontRenderer font, int posX, int posY, int sizeX, int sizeY, ContainerScreenBase screen) {
+    public NameFieldWidget(FontRenderer font, int posX, int posY, int sizeX, int sizeY, ContainerScreenBase screen)
+    {
         super(font, posX, posY, sizeX, sizeY, screen.prevName);
         this.entity = screen.dragonInv.dragon;
-    
+
         setEnableBackgroundDrawing(false);
         setMaxStringLength(16);
         setTextColor(16777215);
@@ -28,7 +29,8 @@ public class NameFieldWidget extends TextFieldWidget
     }
     
     @Override
-    public void tick() {
+    public void tick()
+    {
         super.tick();
         setEnableBackgroundDrawing(isFocused());
         
@@ -39,8 +41,10 @@ public class NameFieldWidget extends TextFieldWidget
     }
     
     @Override
-    public boolean keyPressed(int p1, int p2, int p3) {
-        if (isFocused() && p1 == 257) {
+    public boolean keyPressed(int p1, int p2, int p3)
+    {
+        if (isFocused() && p1 == 257)
+        {
             if (!entity.getName().getUnformattedComponentText().equals(getText()))
                 Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(entity, new StringTextComponent(getText())));
             setFocused2(false);
@@ -51,12 +55,14 @@ public class NameFieldWidget extends TextFieldWidget
     
     public static class ResetNameButton extends Button
     {
-        public ResetNameButton(int widthIn, int heightIn, int width, int height, Entity entity) {
+        public ResetNameButton(int widthIn, int heightIn, int width, int height, Entity entity)
+        {
             super(widthIn, heightIn, width, height, "", b -> Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(entity, null)));
         }
         
         @Override
-        public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+        public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_)
+        {
             Minecraft.getInstance().getTextureManager().bindTexture(ContainerScreenBase.WIDGETS);
             if (isHovered) blit(x - 1, y, 15, 1, 13, 12, 30, 15);
             else blit(x, y, 1, 1, 11, 12, 30, 15);

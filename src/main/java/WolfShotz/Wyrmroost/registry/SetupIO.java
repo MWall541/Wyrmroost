@@ -30,21 +30,24 @@ public class SetupIO
     public static final RegistryObject<ContainerType<ContainerBase<ButterflyLeviathanEntity>>> BUTTERFLY_CONTAINER = register("butterfly_inv", createEntityContainer(ContainerBase::butterflyInv));
     
     @OnlyIn(Dist.CLIENT)
-    public static void screenSetup() {
+    public static void screenSetup()
+    {
         ScreenManager.registerFactory(OWDRAKE_CONTAINER.get(), OWDrakeInvScreen::new);
         ScreenManager.registerFactory(BUTTERFLY_CONTAINER.get(), ButterflyInvScreen::new);
         ScreenManager.<ContainerBase<RoostStalkerEntity>, ContainerScreenBase<ContainerBase<RoostStalkerEntity>>>registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase::singleSlotScreen);
     }
     
     @SuppressWarnings("unchecked")
-    private static <T extends Container, E extends Entity> ContainerType<T> createEntityContainer(IEntityContainerFactory<T, E> creation) {
+    private static <T extends Container, E extends Entity> ContainerType<T> createEntityContainer(IEntityContainerFactory<T, E> creation)
+    {
         return IForgeContainerType.create((windowId, inv, buf) -> {
             E entity = (E) ModUtils.getClientWorld().getEntityByID(buf.readInt());
             return creation.get(entity, inv, windowId);
         });
     }
     
-    public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, ContainerType<T> type) {
+    public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, ContainerType<T> type)
+    {
         return CONTAINERS.register(name, () -> type);
     }
     

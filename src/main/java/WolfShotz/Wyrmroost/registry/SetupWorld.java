@@ -36,15 +36,19 @@ public class SetupWorld
     private static final Predicate<Biome> END_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.END).stream().anyMatch(biome::equals);
     private static final Predicate<Biome> OVERWORLD_FILTER = biome -> !NETHER_FILTER.test(biome) && !END_FILTER.test(biome);
     
-    public static void setupOreGen() {
-        for (Biome biome : ForgeRegistries.BIOMES) {
-            if (OVERWORLD_FILTER.test(biome)) { // Filter Ores so they dont gen in the nether or end
+    public static void setupOreGen()
+    {
+        for (Biome biome : ForgeRegistries.BIOMES)
+        {
+            if (OVERWORLD_FILTER.test(biome))
+            { // Filter Ores so they dont gen in the nether or end
                 registerOreEntry(biome, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 8, new CountRangeConfig(1, 0, 0, 20));
                 registerOreEntry(biome, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9, new CountRangeConfig(2, 0, 0, 28));
                 continue;
             }
-            if (NETHER_FILTER.test(biome)) {
-                biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature (
+            if (NETHER_FILTER.test(biome))
+            {
+                biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(
                         Feature.ORE,
                         new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4),
                         Placement.COUNT_RANGE,
@@ -60,17 +64,18 @@ public class SetupWorld
                         IPlacementConfig.NO_PLACEMENT_CONFIG));
         }
     }
-
+    
     /**
      * Helper method that turns this rediculously long line into something more convenient and readable...
      * Takes in the biome, ore blockstate, ore size and the chance configuration as params.
      */
-    private static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config) {
+    private static void registerOreEntry(Biome biome, BlockState state, int size, CountRangeConfig config)
+    {
         biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(
-                        Feature.ORE,
-                        new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size),
-                        Placement.COUNT_RANGE,
-                        config
-                ));
+                Feature.ORE,
+                new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size),
+                Placement.COUNT_RANGE,
+                config
+        ));
     }
 }

@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.ai;
+package WolfShotz.Wyrmroost.util.entityutils.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.pathfinding.GroundPathNavigator;
@@ -7,21 +7,23 @@ import net.minecraft.world.World;
 
 /**
  * Created by WolfShotz - 8/26/19 - 16:21
- *
+ * <p>
  * Fix issues where entities with large hitboxes would "spin" at the end of their path or ontop of certain blocks.
  */
 public class DragonGroundPathNavigator extends GroundPathNavigator
 {
-    public DragonGroundPathNavigator(AbstractDragonEntity dragon, World world) {
+    public DragonGroundPathNavigator(AbstractDragonEntity dragon, World world)
+    {
         super(dragon, world);
     }
     
     @Override
-    protected void pathFollow() {
+    protected void pathFollow()
+    {
         Vec3d vec3d = getEntityPosition();
         Vec3d vec3d1 = currentPath.getCurrentPos();
         double entityNavOffset = (entity.getWidth() + 1) / 2d;
-        maxDistanceToWaypoint = entity.getWidth() > 0.75f ? entity.getWidth() / 2.0f : 0.75f - entity.getWidth() / 2.0f;
+        maxDistanceToWaypoint = entity.getWidth() > 0.75f? entity.getWidth() / 2.0f : 0.75f - entity.getWidth() / 2.0f;
         
         if (Math.abs(entity.posX - (vec3d1.x + entityNavOffset)) < (double) maxDistanceToWaypoint && Math.abs(entity.posZ - (vec3d1.z + entityNavOffset)) < (double) maxDistanceToWaypoint && Math.abs(entity.posY - vec3d1.y) < 1.0D)
             currentPath.setCurrentPathIndex(currentPath.getCurrentPathIndex() + 1);

@@ -1,15 +1,14 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.entity.Entity;
 
 /**
  * WRCanariWyvern - Ukan
  * Created using Tabula 7.0.1
  */
-public class CanariWyvernModel extends AdvancedEntityModel<CanariWyvernEntity>
+public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEntity>
 {
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
@@ -73,8 +72,9 @@ public class CanariWyvernModel extends AdvancedEntityModel<CanariWyvernEntity>
     public AdvancedRendererModel feathers3R;
     public AdvancedRendererModel membrane2R;
     public AdvancedRendererModel membrane3R_1;
-
-    public CanariWyvernModel() {
+    
+    public CanariWyvernModel()
+    {
         textureWidth = 150;
         textureHeight = 150;
         feathers3L = new AdvancedRendererModel(this, 87, 85);
@@ -364,7 +364,8 @@ public class CanariWyvernModel extends AdvancedEntityModel<CanariWyvernEntity>
     }
     
     @Override
-    public void render(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    {
         GlStateManager.pushMatrix();
         GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
         GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
@@ -376,15 +377,18 @@ public class CanariWyvernModel extends AdvancedEntityModel<CanariWyvernEntity>
     }
     
     @Override
-    public void setLivingAnimations(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float partialTick) {
+    public void setLivingAnimations(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float partialTick)
+    {
         setInitialPositions();
     }
     
-    public void setInitialPositions() {
+    public void setInitialPositions()
+    {
     
     }
     
-    public void idle() {
-    
+    @Override
+    public void idleAnim(float frame)
+    {
     }
 }

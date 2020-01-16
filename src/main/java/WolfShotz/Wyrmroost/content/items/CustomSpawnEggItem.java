@@ -37,7 +37,8 @@ public class CustomSpawnEggItem extends Item
     public final Supplier<EntityType> type;
     private final int PRIMARY_COLOR, SECONDARY_COLOR;
     
-    public CustomSpawnEggItem(Supplier<EntityType> type, int primaryColor, int secondaryColor) {
+    public CustomSpawnEggItem(Supplier<EntityType> type, int primaryColor, int secondaryColor)
+    {
         super(ModUtils.itemBuilder());
         
         this.type = type;
@@ -46,7 +47,8 @@ public class CustomSpawnEggItem extends Item
         EGG_TYPES.add(this);
     }
     
-    public ActionResultType onItemUse(ItemUseContext context) {
+    public ActionResultType onItemUse(ItemUseContext context)
+    {
         World world = context.getWorld();
         if (world.isRemote) return ActionResultType.SUCCESS;
         
@@ -54,10 +56,12 @@ public class CustomSpawnEggItem extends Item
         BlockPos blockpos = context.getPos();
         Direction direction = context.getFace();
         BlockState blockstate = world.getBlockState(blockpos);
-        if (blockstate.getBlock() == Blocks.SPAWNER) {
+        if (blockstate.getBlock() == Blocks.SPAWNER)
+        {
             TileEntity tileentity = world.getTileEntity(blockpos);
-            if (tileentity instanceof MobSpawnerTileEntity) {
-                AbstractSpawner abstractspawner = ((MobSpawnerTileEntity)tileentity).getSpawnerBaseLogic();
+            if (tileentity instanceof MobSpawnerTileEntity)
+            {
+                AbstractSpawner abstractspawner = ((MobSpawnerTileEntity) tileentity).getSpawnerBaseLogic();
                 abstractspawner.setEntityType(type.get());
                 tileentity.markDirty();
                 world.notifyBlockUpdate(blockpos, blockstate, blockstate, 3);
@@ -76,7 +80,8 @@ public class CustomSpawnEggItem extends Item
         return ActionResultType.SUCCESS;
     }
     
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
+    {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
         
         if (worldIn.isRemote) return new ActionResult<>(ActionResultType.PASS, itemstack);
@@ -86,13 +91,14 @@ public class CustomSpawnEggItem extends Item
         if (raytraceresult.getType() != RayTraceResult.Type.BLOCK)
             return new ActionResult<>(ActionResultType.PASS, itemstack);
         
-        BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)raytraceresult;
+        BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult) raytraceresult;
         BlockPos blockpos = blockraytraceresult.getPos();
         
         if (!(worldIn.getBlockState(blockpos).getBlock() instanceof FlowingFluidBlock))
             return new ActionResult<>(ActionResultType.PASS, itemstack);
         
-        if (worldIn.isBlockModifiable(playerIn, blockpos) && playerIn.canPlayerEdit(blockpos, blockraytraceresult.getFace(), itemstack)) {
+        if (worldIn.isBlockModifiable(playerIn, blockpos) && playerIn.canPlayerEdit(blockpos, blockraytraceresult.getFace(), itemstack))
+        {
             if (type.get().spawn(worldIn, itemstack, playerIn, blockpos, SpawnReason.SPAWN_EGG, false, false) == null)
                 return new ActionResult<>(ActionResultType.PASS, itemstack);
             if (!playerIn.abilities.isCreativeMode) itemstack.shrink(1);
@@ -105,7 +111,8 @@ public class CustomSpawnEggItem extends Item
     }
     
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand) {
+    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
+    {
         if (target == null || !target.isAlive()) return false;
         if (!(target instanceof AgeableEntity)) return false;
         if (target.getType() != type.get()) return false;
@@ -115,5 +122,8 @@ public class CustomSpawnEggItem extends Item
         return true;
     }
     
-    public int getColors(int index) { return index == 0? PRIMARY_COLOR : SECONDARY_COLOR; }
+    public int getColors(int index)
+    {
+        return index == 0? PRIMARY_COLOR : SECONDARY_COLOR;
+    }
 }

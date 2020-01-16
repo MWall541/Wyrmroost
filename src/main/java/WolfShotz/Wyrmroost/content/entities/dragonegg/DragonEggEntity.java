@@ -4,10 +4,10 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.network.messages.EggHatchMessage;
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import net.minecraft.entity.*;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -29,17 +29,19 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityAdditionalSpawnData
+public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityAdditionalSpawnData
 {
     private int animationTick;
     private Animation animation = NO_ANIMATION;
     public AbstractDragonEntity containedDragon;
     public int hatchTime;
-    @OnlyIn(Dist.CLIENT) public boolean wiggleInvert, wiggleInvert2;
+    @OnlyIn(Dist.CLIENT)
+    public boolean wiggleInvert, wiggleInvert2;
     
-    public static final Animation WIGGLE_ANIMATION = Animation.create(10);
+    public static final Animation WIGGLE_ANIMATION = new Animation(10);
     
-    public DragonEggEntity(EntityType<? extends DragonEggEntity> dragonEgg, World world) {
+    public DragonEggEntity(EntityType<? extends DragonEggEntity> dragonEgg, World world)
+    {
         super(dragonEgg, world);
     }
     
@@ -47,16 +49,20 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     //           Entity NBT
     // ================================
     @Override
-    protected void registerData() {}
+    protected void registerData()
+    {
+    }
     
     @Override
-    public void readAdditional(CompoundNBT compound) {
+    public void readAdditional(CompoundNBT compound)
+    {
         containedDragon = ModUtils.<AbstractDragonEntity>getTypeByString(compound.getString("dragonType")).create(world);
         hatchTime = compound.getInt("hatchTime");
     }
     
     @Override
-    public void writeAdditional(CompoundNBT compound) {
+    public void writeAdditional(CompoundNBT compound)
+    {
         compound.putString("dragonType", getDragonKey());
         compound.putInt("hatchTime", hatchTime);
     }
@@ -66,22 +72,33 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
      * Data should be added to the provided stream.
      */
     @Override
-    public void writeSpawnData(PacketBuffer buf) { buf.writeString(getDragonKey()); }
+    public void writeSpawnData(PacketBuffer buf)
+    {
+        buf.writeString(getDragonKey());
+    }
     
     /**
      * Called by the client when it receives a Entity spawn packet.
      * Data should be read out of the stream in the same way as it was written.
      */
     @Override
-    public void readSpawnData(PacketBuffer buf) { containedDragon = ModUtils.<AbstractDragonEntity>getTypeByString(buf.readString()).create(world); }
+    public void readSpawnData(PacketBuffer buf)
+    {
+        containedDragon = ModUtils.<AbstractDragonEntity>getTypeByString(buf.readString()).create(world);
+    }
     
-    public String getDragonKey() { return EntityType.getKey(containedDragon.getType()).toString(); }
+    public String getDragonKey()
+    {
+        return EntityType.getKey(containedDragon.getType()).toString();
+    }
     
     // ================================
     
     @Override
-    public void tick() {
-        if (containedDragon == null) {
+    public void tick()
+    {
+        if (containedDragon == null)
+        {
             safeError();
             return;
         }
@@ -90,78 +107,94 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         
         updateMotion();
         
-        if (getProperties().getConditions().test(this)) {
-            if (world.isRemote) {
-                if (ticksExisted % 3 == 0) {
+        if (getProperties().getConditions().test(this))
+        {
+            if (world.isRemote)
+            {
+                if (ticksExisted % 3 == 0)
+                {
                     double x = posX + rand.nextGaussian() * 0.2d;
                     double y = posY + rand.nextDouble() + getHeight() / 2;
                     double z = posZ + rand.nextGaussian() * 0.2d;
                     world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
                 }
-            } else {
-                if (--hatchTime <= 0) {
+            } else
+            {
+                if (--hatchTime <= 0)
+                {
                     hatch();
                     Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
                     return;
                 }
-    
+                
                 int bounds = Math.max(hatchTime / 2, 3);
                 
                 if (hatchTime < getProperties().getHatchTime() / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION)
                     crack(true);
             }
         }
-    
+        
         EntitySize size = getProperties().getSize();
         if (getWidth() != size.width || getHeight() != size.height) recalculateSize();
         
-        if (getAnimation() != NO_ANIMATION) {
+        if (getAnimation() != NO_ANIMATION)
+        {
             ++animationTick;
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
     }
     
     @Override
-    public void fall(float distance, float damageMultiplier) { if (distance > 3) crack(false); }
+    public void fall(float distance, float damageMultiplier)
+    {
+        if (distance > 3) crack(false);
+    }
     
-    private void updateMotion() {
+    private void updateMotion()
+    {
         boolean flag = getMotion().y <= 0.0D;
         double d1 = posY;
         double d0 = 0.5d;
-    
+        
         move(MoverType.SELF, getMotion());
-        if (!hasNoGravity() && !isSprinting()) {
+        if (!hasNoGravity() && !isSprinting())
+        {
             Vec3d vec3d2 = getMotion();
             double d2;
             if (flag && Math.abs(vec3d2.y - 0.005D) >= 0.003D && Math.abs(vec3d2.y - d0 / 16.0D) < 0.003D) d2 = -0.003D;
             else d2 = vec3d2.y - d0 / 16.0D;
-        
+            
             setMotion(vec3d2.x, d2, vec3d2.z);
         }
-    
+        
         Vec3d vec3d6 = getMotion();
-        if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double)0.6F - posY + d1, vec3d6.z)) {
-            setMotion(vec3d6.x, (double)0.3F, vec3d6.z);
+        if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - posY + d1, vec3d6.z))
+        {
+            setMotion(vec3d6.x, (double) 0.3F, vec3d6.z);
         }
     }
     
     /**
      * Called to hatch the dragon egg
      * Usage: <P>
-     *  - Get the dragon EntityType (If its something it shouldnt, safely fail) <P>
-     *  - Set the dragons growing age to a baby <P>
-     *  - Set the position of that dragon to the position of this egg <P>
-     *  - Remove this entity (the egg) and play any effects
+     * - Get the dragon EntityType (If its something it shouldnt, safely fail) <P>
+     * - Set the dragons growing age to a baby <P>
+     * - Set the position of that dragon to the position of this egg <P>
+     * - Remove this entity (the egg) and play any effects
      */
-    public void hatch() {
+    public void hatch()
+    {
         AbstractDragonEntity newDragon = (AbstractDragonEntity) containedDragon.getType().create(world); // May not be necessary, not sure, do it anyway tho.
-        if (!world.isRemote) {
+        if (!world.isRemote)
+        {
             newDragon.setPosition(posX, posY, posZ);
             newDragon.setGrowingAge(-(newDragon.getEggProperties().getHatchTime() * 2));
             newDragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
             world.addEntity(newDragon);
-        } else {
-            for (int i = 0; i < getWidth() * 25; ++i) {
+        } else
+        {
+            for (int i = 0; i < getWidth() * 25; ++i)
+            {
                 double x = rand.nextGaussian() * 0.2f;
                 double y = rand.nextDouble() * 0.45f;
                 double z = rand.nextGaussian() * 0.2f;
@@ -172,7 +205,8 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         remove();
     }
     
-    public void crack(boolean sendPacket) {
+    public void crack(boolean sendPacket)
+    {
         playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1f, 1f);
         if (sendPacket) NetworkUtils.sendAnimationPacket(this, WIGGLE_ANIMATION);
         else setAnimation(WIGGLE_ANIMATION);
@@ -181,13 +215,15 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     /**
      * Called When the dragon type of the egg is not what it should be.
      */
-    private void safeError() {
+    private void safeError()
+    {
         ModUtils.L.error("THIS ISNT A DRAGON WTF KIND OF ABOMINATION IS THIS HATCHING?!?! Unknown Entity Type for Dragon Egg @ {}", getPosition());
         remove();
     }
     
     @Override
-    public boolean attackEntityFrom(DamageSource source, float amount) {
+    public boolean attackEntityFrom(DamageSource source, float amount)
+    {
         CompoundNBT tag = new CompoundNBT();
         
         tag.putInt("hatchTime", hatchTime);
@@ -200,13 +236,20 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         return true;
     }
     
-    public DragonEggProperties getProperties() {
-        try { return containedDragon.getEggProperties(); }
-        catch (NullPointerException e) { return new DragonEggProperties(0.65f, 1f, 12000); }
+    public DragonEggProperties getProperties()
+    {
+        try
+        {
+            return containedDragon.getEggProperties();
+        } catch (NullPointerException e)
+        {
+            return new DragonEggProperties(0.65f, 1f, 12000);
+        }
     }
     
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) {
+    public ItemStack getPickedResult(RayTraceResult target)
+    {
         ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
         CompoundNBT tag = new CompoundNBT();
         tag.putString("dragonType", getDragonKey());
@@ -216,45 +259,74 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     }
     
     @Override
-    public EntitySize getSize(Pose poseIn) { return getProperties().getSize(); }
+    public EntitySize getSize(Pose poseIn)
+    {
+        return getProperties().getSize();
+    }
     
     @Override
-    public boolean canBePushed() { return false; }
+    public boolean canBePushed()
+    {
+        return false;
+    }
     
     @Override
-    public boolean canBeCollidedWith() { return true; }
+    public boolean canBeCollidedWith()
+    {
+        return true;
+    }
     
     // This is needed because it seems to be ignored on server world...
     @Override
-    public void onKillCommand() { remove(); }
+    public void onKillCommand()
+    {
+        remove();
+    }
     
     @Override
-    public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+    public IPacket<?> createSpawnPacket()
+    {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
     
     // === Animation ===
     @Override
-    public int getAnimationTick() { return animationTick; }
+    public int getAnimationTick()
+    {
+        return animationTick;
+    }
     
     @Override
-    public void setAnimationTick(int i) { animationTick = i; }
+    public void setAnimationTick(int i)
+    {
+        animationTick = i;
+    }
     
     @Override
-    public Animation getAnimation() { return animation; }
+    public Animation getAnimation()
+    {
+        return animation;
+    }
     
     @Override
-    public void setAnimation(Animation animation) {
+    public void setAnimation(Animation animation)
+    {
         this.animation = animation;
         setAnimationTick(0);
         
         
-        if (world.isRemote && animation == WIGGLE_ANIMATION) {
+        if (world.isRemote && animation == WIGGLE_ANIMATION)
+        {
             wiggleInvert = rand.nextBoolean();
             wiggleInvert2 = rand.nextBoolean();
         }
     }
     
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, WIGGLE_ANIMATION}; }
+    public Animation[] getAnimations()
+    {
+        return new Animation[]{NO_ANIMATION, WIGGLE_ANIMATION};
+    }
     
     // ================
 }

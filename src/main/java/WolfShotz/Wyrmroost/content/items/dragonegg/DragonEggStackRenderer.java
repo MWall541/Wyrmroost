@@ -16,7 +16,8 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
     private ResourceLocation texture;
     
     @Override
-    public void renderByItem(ItemStack itemStackIn) {
+    public void renderByItem(ItemStack itemStackIn)
+    {
         if (texture == null) texture = getEggTexture(itemStackIn);
         
         GlStateManager.pushMatrix();
@@ -28,9 +29,11 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
         GlStateManager.popMatrix();
     }
     
-    private ResourceLocation getEggTexture(ItemStack stack) {
+    private ResourceLocation getEggTexture(ItemStack stack)
+    {
         CompoundNBT tag = stack.getTag();
-        if (tag != null && tag.contains("dragonType")) {
+        if (tag != null && tag.contains("dragonType"))
+        {
             AbstractDragonEntity dragon = (AbstractDragonEntity) ModUtils.getTypeByString(tag.getString("dragonType")).create(ModUtils.getClientWorld());
             if (dragon != null) return dragon.getEggProperties().getEggTexture();
         }

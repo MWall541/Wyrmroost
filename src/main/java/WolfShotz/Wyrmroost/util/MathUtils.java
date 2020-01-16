@@ -13,7 +13,7 @@ import java.util.Random;
 
 /**
  * Math utility class to make my life like way easier.
- *
+ * <p>
  * Half of this shit is just me throwing numbers in and hoping it works,
  * seems to be going well so far!
  */
@@ -24,27 +24,32 @@ public class MathUtils
     /**
      * Returns a new pseudo random double value constrained to the values of {@code (-1.0d)} and {@code (1.0d)}
      */
-    public static double nextPseudoDouble(Random rand) { return 2 * rand.nextDouble() - 1; }
+    public static double nextPseudoDouble(Random rand)
+    {
+        return 2 * rand.nextDouble() - 1;
+    }
     
     /**
      * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max be
      * third parameter
      */
-    public static float limitAngle(float sourceAngle, float targetAngle, float maximumChange) {
+    public static float limitAngle(float sourceAngle, float targetAngle, float maximumChange)
+    {
         float f = MathHelper.wrapDegrees(targetAngle - sourceAngle);
-
+        
         if (f > maximumChange) f = maximumChange;
         if (f < -maximumChange) f = -maximumChange;
-
+        
         float f1 = sourceAngle + f;
-
+        
         if (f1 < 0.0F) f1 += 360.0F;
         else if (f1 > 360.0F) f1 -= 360.0F;
-
+        
         return f1;
     }
     
-    public static Vec3d calculateYawAngle(float amount, double xOffset, double zOffset) {
+    public static Vec3d calculateYawAngle(float amount, double xOffset, double zOffset)
+    {
         return new Vec3d(xOffset, 0, zOffset).rotateYaw(-amount * (PI / 180f));
     }
     
@@ -52,7 +57,8 @@ public class MathUtils
      * Get the Altitude of an entity from the world surface
      * Subtract 1 from plane pose's as a workaround for a vanilla bug using the wrong pos when plane pose's are negative...
      */
-    public static double getAltitude(Entity entity) {
+    public static double getAltitude(Entity entity)
+    {
         return entity.posY - entity.world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) entity.posX - (entity.posX < 0? 1 : 0), (int) entity.posZ - (entity.posZ < 0? 1 : 0));
     }
     
@@ -60,7 +66,8 @@ public class MathUtils
      * Get the altitude of a world position from the world surface
      * Subtract 1 from plane pose's as a workaround for a vanilla bug using the wrong pos when plane pose's are negative...
      */
-    public static double getAltitude(World world, int x, double y, int z) {
+    public static double getAltitude(World world, int x, double y, int z)
+    {
         return y - world.getHeight(Heightmap.Type.WORLD_SURFACE, x - (x < 0? 1 : 0), z - (z < 0? 1 : 0));
     }
     
@@ -68,7 +75,8 @@ public class MathUtils
      * Calculate the euclidean plane distance of two points.
      * Double
      */
-    public static double getPlaneDistSq(double sourceX, double targetX, double sourceZ, double targetZ) {
+    public static double getPlaneDistSq(double sourceX, double targetX, double sourceZ, double targetZ)
+    {
         double x = targetX - sourceX;
         double z = targetZ - sourceZ;
         return x * x + z * z;
@@ -78,7 +86,8 @@ public class MathUtils
      * Calculate the euclidean plane distance of two entities.
      * Double
      */
-    public static double getPlaneDistSq(Entity source, Entity target) {
+    public static double getPlaneDistSq(Entity source, Entity target)
+    {
         double x = target.posX - source.posX;
         double z = target.posZ - source.posZ;
         return x * x + z * z;
@@ -88,7 +97,8 @@ public class MathUtils
      * Calculate the euclidean plane distance between two points.
      * Float
      */
-    public static float getPlaneDistSq(float sourceX, float targetX, float sourceZ, float targetZ) {
+    public static float getPlaneDistSq(float sourceX, float targetX, float sourceZ, float targetZ)
+    {
         float x = targetX - sourceX;
         float z = targetZ - sourceZ;
         return x * x + z * z;
@@ -98,7 +108,8 @@ public class MathUtils
      * Calculate euclidean space distance
      * Double
      */
-    public static double getSpaceDistSq(double sourceX, double targetX, double sourceY, double targetY, double sourceZ, double targetZ) {
+    public static double getSpaceDistSq(double sourceX, double targetX, double sourceY, double targetY, double sourceZ, double targetZ)
+    {
         double x = targetX - sourceX;
         double y = targetY - sourceY;
         double z = targetZ - sourceZ;
@@ -109,7 +120,8 @@ public class MathUtils
      * Calculate euclidean space distance
      * Float
      */
-    public static float getSpaceDistSq(float sourceX, float targetX, float sourceY, float targetY, float sourceZ, float targetZ) {
+    public static float getSpaceDistSq(float sourceX, float targetX, float sourceY, float targetY, float sourceZ, float targetZ)
+    {
         float x = targetX - sourceX;
         float y = targetY - sourceY;
         float z = targetZ - sourceZ;
@@ -120,18 +132,25 @@ public class MathUtils
      * Angle measurement converted to radians as a float value <P>
      * <code>angle / 180.0 * PI</code>
      */
-    public static float toRadians(float angle) { return (float) Math.toRadians(angle); }
+    public static float toRadians(float angle)
+    {
+        return (float) Math.toRadians(angle);
+    }
     
     /**
      * Angle measurement converted to degrees as a float value <P>
      * <code>angle * 180.0 / PI</code>
      */
-    public static float toDegrees(float angle) { return (float) Math.toDegrees(angle); }
+    public static float toDegrees(float angle)
+    {
+        return (float) Math.toDegrees(angle);
+    }
     
     /**
      * Get the angle between 2 sources
      */
-    public static double getAngle(double x1, double x2, double z1, double z2) {
+    public static double getAngle(double x1, double x2, double z1, double z2)
+    {
         return Math.atan2(z2 - z1, x2 - x1) * (180 / Math.PI) + 90;
     }
     
@@ -139,7 +158,7 @@ public class MathUtils
      * Created by TGG on 8/07/2015. Modified by WolfShotz on 9/16/2019 <P>
      * Performs a ray trace of the player's line of sight to see what the player is looking at.
      * Similar to the vanilla getMouseOver, which is client side only.
-     *
+     * <p>
      * Find what the player is looking at (block or entity), up to a maximum range
      * based on code from EntityRenderer.getMouseOver. <P>
      * <STRIKE>Will not target entities which are tamed by the player</STRIKE> <P>
@@ -150,7 +169,8 @@ public class MathUtils
      *
      * @return the block or entity that the player is looking at / targeting with their cursor.  null if no collision
      */
-    public static RayTraceResult rayTrace(World world, PlayerEntity player, double range, boolean targetTamed) {
+    public static RayTraceResult rayTrace(World world, PlayerEntity player, double range, boolean targetTamed)
+    {
         final RayTraceContext.FluidMode FLUID_MODE = RayTraceContext.FluidMode.NONE;
         final RayTraceContext.BlockMode BLOCK_MODE = RayTraceContext.BlockMode.COLLIDER;
         final Vec3d EYES_POSITION = player.getEyePosition(1f);
@@ -159,7 +179,8 @@ public class MathUtils
         RayTraceResult targetedBlock = world.rayTraceBlocks(new RayTraceContext(EYES_POSITION, endOfLook, BLOCK_MODE, FLUID_MODE, player));
         double collisionDistanceSQ = range * range;
         
-        if (targetedBlock.getType() == RayTraceResult.Type.BLOCK) {
+        if (targetedBlock.getType() == RayTraceResult.Type.BLOCK)
+        {
             collisionDistanceSQ = targetedBlock.getHitVec().squareDistanceTo(EYES_POSITION);
             endOfLook = targetedBlock.getHitVec();
         }
@@ -170,10 +191,12 @@ public class MathUtils
         Entity closestEntityHit = null;
         double closestEntityDistanceSQ = Double.MAX_VALUE;
         
-        for (Entity entity : nearbyEntities) {
+        for (Entity entity : nearbyEntities)
+        {
             if (!entity.canBeCollidedWith() || entity == player.getRidingEntity())
                 continue;
-            if (!targetTamed && entity instanceof TameableEntity) {
+            if (!targetTamed && entity instanceof TameableEntity)
+            {
                 TameableEntity tamedEntity = (TameableEntity) entity;
                 if (tamedEntity.isOwner(player))
                     continue;
@@ -183,15 +206,19 @@ public class MathUtils
             AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(collisionBorderSize);
             Optional<Vec3d> movingobjectposition = axisalignedbb.rayTrace(EYES_POSITION, endOfLook);
             
-            if (axisalignedbb.contains(endOfLook)) {
-                double distanceSQ = (!movingobjectposition.isPresent()) ? EYES_POSITION.squareDistanceTo(endOfLook) : EYES_POSITION.squareDistanceTo(movingobjectposition.get());
-                if (distanceSQ <= closestEntityDistanceSQ) {
+            if (axisalignedbb.contains(endOfLook))
+            {
+                double distanceSQ = (!movingobjectposition.isPresent())? EYES_POSITION.squareDistanceTo(endOfLook) : EYES_POSITION.squareDistanceTo(movingobjectposition.get());
+                if (distanceSQ <= closestEntityDistanceSQ)
+                {
                     closestEntityDistanceSQ = distanceSQ;
                     closestEntityHit = entity;
                 }
-            } else if (movingobjectposition.isPresent()) {
+            } else if (movingobjectposition.isPresent())
+            {
                 double distanceSQ = EYES_POSITION.squareDistanceTo(movingobjectposition.get());
-                if (distanceSQ <= closestEntityDistanceSQ) {
+                if (distanceSQ <= closestEntityDistanceSQ)
+                {
                     closestEntityDistanceSQ = distanceSQ;
                     closestEntityHit = entity;
                 }

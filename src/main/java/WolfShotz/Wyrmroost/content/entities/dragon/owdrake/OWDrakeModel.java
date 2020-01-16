@@ -1,11 +1,10 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -14,7 +13,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * Created using Tabula 7.0.1
  */
 @OnlyIn(Dist.CLIENT)
-public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
+public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
 {
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
@@ -71,12 +70,13 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
     public AdvancedRendererModel claw11R;
     public AdvancedRendererModel claw22R;
     public AdvancedRendererModel claw12R;
-
+    
     private AdvancedRendererModel[] headArray, tailArray, toeArray;
-
+    
     private ModelAnimator animator;
-
-    public OWDrakeModel() {
+    
+    public OWDrakeModel()
+    {
         textureWidth = 200;
         textureHeight = 200;
         claw12L = new AdvancedRendererModel(this, 129, 79);
@@ -357,27 +357,27 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         body2.addChild(tail1);
         horn52.addChild(horn53);
         palmL.addChild(claw11L);
-
+        
         updateDefaultPose();
-
-        headArray = new AdvancedRendererModel[] {neck1, neck2, head};
-        tailArray = new AdvancedRendererModel[] {tail1, tail2, tail3, tail4, tail5};
-        toeArray = new AdvancedRendererModel[] {toe1L, toe1L_1, toe1R, toe1R_1, toe2L, toe2R};
-
+        
+        headArray = new AdvancedRendererModel[]{neck1, neck2, head};
+        tailArray = new AdvancedRendererModel[]{tail1, tail2, tail3, tail4, tail5};
+        toeArray = new AdvancedRendererModel[]{toe1L, toe1L_1, toe1R, toe1R_1, toe2L, toe2R};
+        
         animator = ModelAnimator.create();
     }
-
-    private float globalSpeed = 0.5f;
-    private float f = 0.5f;
-
+    
+    private final float f = 0.5f;
+    
     @Override
-    public void render(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    {
         GlStateManager.pushMatrix();
-        if (drake.isChild()) {
+        if (drake.isChild())
+        {
             GlStateManager.scaled(1, 1, 1);
             GlStateManager.translated(0, 0.7, 0);
-        }
-        else GlStateManager.scaled(2, 2, 2);
+        } else GlStateManager.scaled(2, 2, 2);
         
         body1.render(scale);
         
@@ -385,37 +385,41 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
     }
     
     @Override
-    public void setRotationAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
-        if(netHeadYaw < -180) netHeadYaw += 360;
-        else if(netHeadYaw > 180) netHeadYaw -= 360;
-        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, neck1, head);
+    public void setRotationAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    {
+        if (netHeadYaw < -180) netHeadYaw += 360;
+        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
+            faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
     
     @Override
-    public void setLivingAnimations(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick) {
+    public void setLivingAnimations(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
+    {
         float frame = drake.ticksExisted;
         Animation currentAnim = drake.getAnimation();
-
+        
         resetToDefaultPose();
         animator.update(drake);
         
-        if (!drake.isSitting() && !drake.isSleeping()) {
-        
+        if (!drake.isSitting() && !drake.isSleeping())
+        {
+            
             // Body bob
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, 0.5f);
             
             // Left Arm
             arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
             palmL.walk(globalSpeed, f, true, 2.5f, 0, limbSwing, limbSwingAmount);
-        
+            
             // Right Arm
             arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
             palmR.walk(globalSpeed, f, false, 2.5f, 0, limbSwing, limbSwingAmount);
-        
+            
             // Left Leg
             leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
             footL.walk(globalSpeed, 0.2f, false, 2f, 0, limbSwing, limbSwingAmount);
-        
+            
             // Right Leg
             leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
             footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
@@ -423,29 +427,31 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         
         if (drake.isSitting() && currentAnim != OWDrakeEntity.SIT_ANIMATION)
             staySitting();
-    
+        
         if (drake.isSleeping() && currentAnim != OWDrakeEntity.SLEEP_ANIMATION)
             staySleeping();
-    
+        
         if (currentAnim == OWDrakeEntity.TALK_ANIMATION) talkAnim();
         
         if (currentAnim == OWDrakeEntity.SIT_ANIMATION) sitAnim();
-    
+        
         if (currentAnim == OWDrakeEntity.STAND_ANIMATION) standAnim();
-    
+        
         if (currentAnim == OWDrakeEntity.SLEEP_ANIMATION) sleepAnim(drake.isSitting());
-    
+        
         if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim(drake.isSitting());
-    
+        
         if (currentAnim == OWDrakeEntity.GRAZE_ANIMATION) grazeAnim(drake.getAnimationTick(), frame);
-
-        if (currentAnim == OWDrakeEntity.HORN_ATTACK_ANIMATION) {
+        
+        if (currentAnim == OWDrakeEntity.HORN_ATTACK_ANIMATION)
+        {
             hornAttackAnim();
             
             return;
         }
         
-        if (currentAnim == OWDrakeEntity.ROAR_ANIMATION) {
+        if (currentAnim == OWDrakeEntity.ROAR_ANIMATION)
+        {
             roarAnim(drake, frame);
             
             return;
@@ -454,10 +460,11 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         animatieIdle(frame);
     }
     
-    public void animatieIdle(float frame) {
+    public void animatieIdle(float frame)
+    {
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
-    
+        
         walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
         chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
@@ -469,34 +476,35 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
      * Called every tick when drake is sitting and no other animation is playing.
      * Called in {@link #standAnim()} for the initial position
      */
-    private void staySitting() {
+    private void staySitting()
+    {
         body1.offsetY = 0.35f;
-
+        
         // Front Right
         arm2R.rotateAngleX = -1.5f;
         palmR.rotateAngleX = 1.4f;
-
+        
         // Front Left
         arm2L.rotateAngleX = -1.5f;
         palmL.rotateAngleX = 1.4f;
-
+        
         // Back Right
         leg2R.rotateAngleX = 1f;
         leg2R.rotateAngleY = 0.4f;
         leg3R.setRotationPoint(-0.05F, 4.0F, -1.8F);
         leg3R.rotateAngleX = -2.6f;
         footR.rotateAngleX = 1.6f;
-
+        
         // Back Left
         leg2L.rotateAngleX = 1f;
         leg2L.rotateAngleY = -0.4f;
         leg3L.setRotationPoint(-0.05F, 4.0F, -1.8F);
         leg3L.rotateAngleX = -2.6f;
         footL.rotateAngleX = 1.6f;
-
+        
         //Toes
         for (AdvancedRendererModel toeSegment : toeArray) toeSegment.rotateAngleX = -0.1f;
-
+        
         //Tail
         for (AdvancedRendererModel tailSegment : tailArray) tailSegment.rotateAngleY = -0.6f;
         tail1.rotateAngleX = -0.2f;
@@ -505,13 +513,14 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         tail5.rotateAngleZ = -0.3f;
         tail5.rotateAngleY += 0.1f;
     }
-
+    
     /**
      * Sitting Animation
      */
-    private void sitAnim() {
+    private void sitAnim()
+    {
         animator.setAnimation(OWDrakeEntity.SIT_ANIMATION);
-
+        
         animator.startKeyframe(15);
         animator.move(body1, 0, 5.5f, 0);
         //Front Right
@@ -541,16 +550,17 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         tail5.rotateAngleY += 0.1f;
         animator.endKeyframe();
     }
-
+    
     /**
      * Standing up anim for "un-sitting".
      * Call {@link #staySitting()} for initial position
      */
-    private void standAnim() {
+    private void standAnim()
+    {
         staySitting();
-
+        
         animator.setAnimation(OWDrakeEntity.STAND_ANIMATION);
-
+        
         animator.startKeyframe(15);
         animator.move(body1, 0, -5.5f, 0);
         //Front Right
@@ -574,7 +584,7 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         //Tail
         for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
         animator.endKeyframe();
-
+        
         tail1.rotateAngleX = tail1.defaultRotationX;
         tail3.rotateAngleZ = tail3.defaultRotationZ;
         tail4.rotateAngleZ = tail4.defaultRotationZ;
@@ -582,7 +592,8 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         tail5.rotateAngleY = tail5.defaultRotationY;
     }
     
-    private void staySleeping() {
+    private void staySleeping()
+    {
         staySitting();
         
         neck1.rotateAngleX = 0.4f;
@@ -596,12 +607,14 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         eyeR.rotateAngleY = -1f;
     }
     
-    private void sleepAnim(boolean isSitting) {
+    private void sleepAnim(boolean isSitting)
+    {
         animator.setAnimation(OWDrakeEntity.SLEEP_ANIMATION);
         
         animator.startKeyframe(20);
         
-        if (!isSitting) {
+        if (!isSitting)
+        {
             animator.move(body1, 0, 5.5f, 0);
             //Front Right
             animator.rotate(arm2R, -1.1f, 0, 0);
@@ -638,14 +651,16 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         
     }
     
-    private void wakeAnim(boolean isSitting) {
+    private void wakeAnim(boolean isSitting)
+    {
         animator.setAnimation(OWDrakeEntity.WAKE_ANIMATION);
-    
+        
         staySleeping();
         
         animator.startKeyframe(15);
-    
-        if (!isSitting) {
+        
+        if (!isSitting)
+        {
             animator.move(body1, 0, -5.5f, 0);
             //Front Right
             animator.rotate(arm2R, 1.1f, 0, 0);
@@ -667,7 +682,7 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
             for (AdvancedRendererModel toeSegment : toeArray) animator.rotate(toeSegment, -0.8f, 0, 0);
             //Tail
             for (AdvancedRendererModel tailSegment : tailArray) animator.rotate(tailSegment, 0, 0.6f, 0);
-    
+            
             tail1.rotateAngleX = tail1.defaultRotationX;
             tail3.rotateAngleZ = tail3.defaultRotationZ;
             tail4.rotateAngleZ = tail4.defaultRotationZ;
@@ -676,7 +691,7 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         }
         eyeL.rotateAngleY = eyeL.defaultRotationY;
         eyeR.rotateAngleY = eyeR.defaultRotationY;
-    
+        
         animator.rotate(neck1, -1.2f, -0.4f, 0);
         animator.rotate(neck2, 0.5f, -0.6f, 0);
         animator.rotate(head, 0.52f, -0.4f, 0.4f);
@@ -687,9 +702,10 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
     /**
      * Horn Attack Anim
      */
-    private void hornAttackAnim() {
+    private void hornAttackAnim()
+    {
         animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION);
-
+        
         animator.startKeyframe(5);
         animator.move(body1, 0, 2f, 1);
         animator.rotate(body1, 0.3f, 0, 0);
@@ -708,7 +724,7 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         animator.rotate(leg3R, -0.25f, 0, 0);
         for (AdvancedRendererModel segment : tailArray) animator.rotate(segment, -0.05f, 0, 0);
         animator.endKeyframe();
-        
+
 //        animator.setStaticKeyframe(1);
         
         animator.startKeyframe(3);
@@ -736,21 +752,23 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         
         animator.resetKeyframe(5);
     }
-
+    
     /**
      * Grass Eating Animation
      * Rotate neck down and then rotate the mouth "eat"
      */
-    private void grazeAnim(int animationTick, float frame) {
+    private void grazeAnim(int animationTick, float frame)
+    {
         animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
-
+        
         animator.startKeyframe(12);
         animator.rotate(neck1, 1, 0, 0);
         animator.endKeyframe();
         animator.setStaticKeyframe(15);
         animator.resetKeyframe(8);
-
-        if (animationTick >= 8 && animationTick <= 27) {
+        
+        if (animationTick >= 8 && animationTick <= 27)
+        {
             jaw.rotateAngleX -= (6 + Math.sin(frame / 2) * 0.25);
         }
     }
@@ -759,7 +777,8 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
      * Roar Animation
      * played before dashing at the player to attack
      */
-    private void roarAnim(OWDrakeEntity entity, float frame) {
+    private void roarAnim(OWDrakeEntity entity, float frame)
+    {
         animator.setAnimation(OWDrakeEntity.ROAR_ANIMATION);
         
         animator.startKeyframe(14);
@@ -788,7 +807,8 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         
         animator.resetKeyframe(4);
         
-        if (entity.getAnimationTick() > 10) {
+        if (entity.getAnimationTick() > 10)
+        {
             walk(jaw, globalSpeed + 1.5f, 0.02f, false, 0, 0, frame, f);
             swing(head, globalSpeed + 1.5f, 0.02f, false, 0, 0, frame, f);
             
@@ -796,7 +816,8 @@ public class OWDrakeModel extends AdvancedEntityModel<OWDrakeEntity>
         }
     }
     
-    private void talkAnim() {
+    private void talkAnim()
+    {
         animator.setAnimation(OWDrakeEntity.TALK_ANIMATION);
         
         animator.startKeyframe(4);

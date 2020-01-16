@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.items;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.entityhelpers.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -26,10 +26,14 @@ import javax.annotation.Nullable;
 
 public class DragonStaffItem extends Item
 {
-    public DragonStaffItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
+    public DragonStaffItem()
+    {
+        super(ModUtils.itemBuilder().maxStackSize(1));
+    }
     
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity target) {
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity target)
+    {
         AbstractDragonEntity dragon = getDragonTarget(target, player);
         if (dragon == null) return false;
         
@@ -41,7 +45,8 @@ public class DragonStaffItem extends Item
     }
     
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
+    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
+    {
         AbstractDragonEntity dragon = getDragonTarget(target, player);
         if (dragon == null) return false;
         if (player.world.isRemote) return true;
@@ -52,48 +57,59 @@ public class DragonStaffItem extends Item
     }
     
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
+    {
         ItemStack stack = player.getHeldItem(hand);
         
-        if (player.isSneaking() && isBound(stack)) { // Clear Bounded dragon
+        if (player.isSneaking() && isBound(stack))
+        { // Clear Bounded dragon
             stack.getTag().remove("boundID");
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
+        
         if (world.isRemote) return new ActionResult<>(ActionResultType.SUCCESS, stack);
         
         // Get entities at crosshair by ratrace, have bounded dragon attack that entity.
         RayTraceResult rtr = MathUtils.rayTrace(world, player, 50, true);
-        if (rtr.getType() != RayTraceResult.Type.ENTITY) return ModUtils.passAction(stack);
+        if (rtr.getType() != RayTraceResult.Type.ENTITY) return new ActionResult<>(ActionResultType.PASS, stack);
         EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
-        if (!(ertr.getEntity() instanceof LivingEntity)) return ModUtils.passAction(stack);
+        if (!(ertr.getEntity() instanceof LivingEntity)) return new ActionResult<>(ActionResultType.PASS, stack);
         LivingEntity entity = (LivingEntity) ertr.getEntity();
         AbstractDragonEntity dragon = getDragon(stack, (ServerWorld) world);
-    
-        if (entity instanceof AbstractDragonEntity && ((AbstractDragonEntity) entity).getOwner() == player) {
+
+        if (entity instanceof AbstractDragonEntity && ((AbstractDragonEntity) entity).getOwner() == player)
+        {
             if (dragon.isFlying())
                 dragon.getFlightMoveController().resetCourse().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
             else if (dragon.isSitting()) dragon.setSit(false);
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
-        if (dragon.shouldAttackEntity(entity, dragon.getOwner())) {
+        
+        if (dragon.shouldAttackEntity(entity, dragon.getOwner()))
+        {
             dragon.setSit(false);
             dragon.setAttackTarget(entity);
             player.playSound(SoundEvents.ENTITY_BLAZE_SHOOT, 1f, 0.2f);
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
-    
-        return ModUtils.passAction(stack);
+
+        return new ActionResult<>(ActionResultType.PASS, stack);
     }
     
     @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-    
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected)
+    {
+
     }
     
     @Override
-    public boolean hasEffect(ItemStack stack) { return isBound(stack); }
+    public boolean hasEffect(ItemStack stack)
+    {
+        return isBound(stack);
+    }
     
-    public boolean isBound(ItemStack stack) {
+    public boolean isBound(ItemStack stack)
+    {
         CompoundNBT tag = stack.getTag();
         if (tag == null) return false;
         return tag.hasUniqueId("boundID");
@@ -102,7 +118,8 @@ public class DragonStaffItem extends Item
     /**
      * run a check using {@link #isBound} first
      */
-    public AbstractDragonEntity getDragon(ItemStack stack, ServerWorld world) {
+    public AbstractDragonEntity getDragon(ItemStack stack, ServerWorld world)
+    {
         assert (isBound(stack));
         CompoundNBT tag = stack.getTag();
         return (AbstractDragonEntity) world.getEntityByUuid(tag.getUniqueId("boundID"));
@@ -113,14 +130,15 @@ public class DragonStaffItem extends Item
      * @nullable Can return null if this isnt a dragon, or isnt tamed.
      */
     @Nullable
-    public AbstractDragonEntity getDragonTarget(Entity target, PlayerEntity player) {
+    public AbstractDragonEntity getDragonTarget(Entity target, PlayerEntity player)
+    {
         if (!target.isAlive()) return null;
         AbstractDragonEntity dragon;
         if (target instanceof AbstractDragonEntity) dragon = (AbstractDragonEntity) target;
         else if (target instanceof MultiPartEntity) dragon = (AbstractDragonEntity) ((MultiPartEntity) target).host;
         else return null;
         if (dragon.getOwner() != player) return null;
-    
+
         return dragon;
     }
 }

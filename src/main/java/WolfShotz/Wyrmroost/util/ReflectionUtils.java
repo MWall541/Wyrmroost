@@ -17,21 +17,24 @@ public class ReflectionUtils
     /**
      * @return the protected boolean value of "isJumping" of LivingEntity Class
      */
-    public static boolean isEntityJumping(@Nonnull LivingEntity entity) {
+    public static boolean isEntityJumping(@Nonnull LivingEntity entity)
+    {
         return getPrivateValue(LivingEntity.class, entity, "field_70703_bu");
     }
     
     /**
      * Get the amount of players using a chest
      */
-    public static int getChestPlayersUsing(@Nonnull ChestTileEntity instance) {
+    public static int getChestPlayersUsing(@Nonnull ChestTileEntity instance)
+    {
         return getPrivateValue(ChestTileEntity.class, instance, "field_145987_o");
     }
     
     /**
      * Set the amount of players using a chest.
      */
-    public static void setChestPlayersUsing(@Nonnull ChestTileEntity instance, int amount, boolean add) {
+    public static void setChestPlayersUsing(@Nonnull ChestTileEntity instance, int amount, boolean add)
+    {
         if (add) amount += getChestPlayersUsing(instance);
         if (amount < 0) amount = 0;
         setPrivateValue(ChestTileEntity.class, instance, amount, "field_145987_o");

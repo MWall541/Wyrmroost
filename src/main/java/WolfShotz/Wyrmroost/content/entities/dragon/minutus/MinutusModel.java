@@ -1,9 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.minutus;
 
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
-import net.minecraft.entity.Entity;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -12,7 +11,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * Created using Tabula 7.0.1
  */
 @OnlyIn(Dist.CLIENT)
-public class MinutusModel extends AdvancedEntityModel<MinutusEntity>
+public class MinutusModel extends AdvancedLivingEntityModel<MinutusEntity>
 {
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
@@ -29,12 +28,13 @@ public class MinutusModel extends AdvancedEntityModel<MinutusEntity>
     public AdvancedRendererModel tail3;
     public AdvancedRendererModel jaw;
     public AdvancedRendererModel head;
-
+    
     private AdvancedRendererModel[] body;
-
+    
     private ModelAnimator animator;
-
-    public MinutusModel() {
+    
+    public MinutusModel()
+    {
         this.textureWidth = 30;
         this.textureHeight = 30;
         this.wingL = new AdvancedRendererModel(this, 0, 22);
@@ -103,60 +103,66 @@ public class MinutusModel extends AdvancedEntityModel<MinutusEntity>
         this.body1.addChild(this.body2);
         this.tail1.addChild(this.tail2);
         this.neck.addChild(this.jaw);
-
+        
         updateDefaultPose();
-
-        body = new AdvancedRendererModel[] {body1, body2, body3, body4, body5, tail1, tail2, tail3};
-
+        
+        body = new AdvancedRendererModel[]{body1, body2, body3, body4, body5, tail1, tail2, tail3};
+        
         animator = ModelAnimator.create();
     }
-
+    
     private float globalSpeed = 0.5f;
     private float f = 0.5f;
-
+    
     @Override
-    public void render(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    {
         body1.render(scale);
     }
-
+    
     @Override
-    public void setRotationAngles(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    public void setRotationAngles(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    {
         chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
         
         faceTarget(netHeadYaw, headPitch, 1, head);
     }
-
+    
     @Override
-    public void setLivingAnimations(MinutusEntity minutus, float limbSwing, float limbSwingAmount, float partialTick) {
+    public void setLivingAnimations(MinutusEntity minutus, float limbSwing, float limbSwingAmount, float partialTick)
+    {
         float frame = minutus.ticksExisted;
         
         animator.update(minutus);
         resetToDefaultPose();
         
-        if (minutus.isBurrowed()) {
+        if (minutus.isBurrowed())
+        {
             body1.rotateAngleX = -0.8f;
             body1.offsetY = 0.2f;
             body2.rotateAngleX = 0.8f;
             neck.rotateAngleX = -0.8f;
             jaw.rotateAngleX = 1f;
             head.rotateAngleX = -1f;
-
+            
             bob(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
         }
-
-        if (minutus.getAnimation() != MinutusEntity.BITE_ANIMATION) {
+        
+        if (minutus.getAnimation() != MinutusEntity.BITE_ANIMATION)
+        {
             walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
-            walk(head, 0.45f - globalSpeed, 0.1f, true, 0, (minutus.isBurrowed() ? 0f : 0.5f), frame, f);
+            walk(head, 0.45f - globalSpeed, 0.1f, true, 0, (minutus.isBurrowed()? 0f : 0.5f), frame, f);
         }
         flap(wingL, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
         flap(wingR, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
         flap(leg1, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
         flap(leg1_1, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
-    
+        
         if (minutus.getAnimation() == MinutusEntity.BITE_ANIMATION) bite();
     }
-
-    private void bite() {
+    
+    private void bite()
+    {
         animator.setAnimation(MinutusEntity.BITE_ANIMATION);
         
         animator.startKeyframe(4);

@@ -1,8 +1,8 @@
-package WolfShotz.Wyrmroost.util.entityhelpers.ai.goals;
+package WolfShotz.Wyrmroost.util.entityutils.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
-import com.github.alexthe666.citadel.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
-import static com.github.alexthe666.citadel.animation.IAnimatedEntity.NO_ANIMATION;
+import static WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject.NO_ANIMATION;
 
 /**
  * Class Responsible for eating grass at a positional offset rather than directly below the entity. (Useful for larger mobs)
@@ -28,7 +28,8 @@ public class DragonGrazeGoal extends Goal
     private int eatingGrassTimer, blockPosOffset;
     private Animation animation;
 
-    public DragonGrazeGoal(AbstractDragonEntity herbivoreIn, int blockPosOffset, Animation animation) {
+    public DragonGrazeGoal(AbstractDragonEntity herbivoreIn, int blockPosOffset, Animation animation)
+    {
         this.herbivore = herbivoreIn;
         this.entityWorld = herbivoreIn.world;
         this.blockPosOffset = blockPosOffset;
@@ -36,17 +37,24 @@ public class DragonGrazeGoal extends Goal
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
     
-    public DragonGrazeGoal(AbstractDragonEntity herbivoreIn, Animation animation) { this(herbivoreIn, 0, animation); }
+    public DragonGrazeGoal(AbstractDragonEntity herbivoreIn, Animation animation)
+    {
+        this(herbivoreIn, 0, animation);
+    }
     
-    public DragonGrazeGoal(AbstractDragonEntity herbivoreIn) { this(herbivoreIn, 0, NO_ANIMATION); }
+    public DragonGrazeGoal(AbstractDragonEntity herbivoreIn)
+    {
+        this(herbivoreIn, 0, NO_ANIMATION);
+    }
 
     /**
      * Returns whether the EntityAIBase should begin execution.
      */
-    public boolean shouldExecute() {
+    public boolean shouldExecute()
+    {
         if (herbivore.getAttackTarget() != null) return false;
         if (herbivore.isBeingRidden()) return false;
-        if (herbivore.getRNG().nextInt(herbivore.isChild() ? 50 : 1000) != 0) return false;
+        if (herbivore.getRNG().nextInt(herbivore.isChild()? 50 : 1000) != 0) return false;
         
         BlockPos blockpos = new BlockPos(herbivore);
         int blockPosOffset = herbivore.isChild()? this.blockPosOffset / 2 : this.blockPosOffset;
@@ -58,42 +66,53 @@ public class DragonGrazeGoal extends Goal
     /**
      * Execute a base shot task or start executing a continuous task
      */
-    public void startExecuting() {
+    public void startExecuting()
+    {
         eatingGrassTimer = 40;
-        entityWorld.setEntityState(herbivore, (byte)10);
+        entityWorld.setEntityState(herbivore, (byte) 10);
         herbivore.getNavigator().clearPath();
     }
 
     /**
      * Reset the task's internal state. Called when this task is interrupted by another base
      */
-    public void resetTask() {
+    public void resetTask()
+    {
         eatingGrassTimer = 0;
     }
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
-    public boolean shouldContinueExecuting() { return eatingGrassTimer > 0; }
+    public boolean shouldContinueExecuting()
+    {
+        return eatingGrassTimer > 0;
+    }
 
     /**
      * Keep ticking a continuous task that has already been started
      */
-    public void tick() {
+    public void tick()
+    {
         eatingGrassTimer = Math.max(0, eatingGrassTimer - 1);
-        if (eatingGrassTimer == 4) {
+        if (eatingGrassTimer == 4)
+        {
             BlockPos blockpos = new BlockPos(herbivore).offset(herbivore.getHorizontalFacing(), blockPosOffset);
-            if (IS_GRASS.test(entityWorld.getBlockState(blockpos))) {
+            if (IS_GRASS.test(entityWorld.getBlockState(blockpos)))
+            {
                 if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(entityWorld, herbivore))
                     entityWorld.destroyBlock(blockpos, false);
 
                 herbivore.eatGrassBonus();
                 NetworkUtils.sendAnimationPacket(herbivore, animation);
-    
-            } else {
+
+            } else
+            {
                 BlockPos blockpos1 = blockpos.down();
-                if (entityWorld.getBlockState(blockpos1).getBlock() == Blocks.GRASS_BLOCK) {
-                    if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(entityWorld, herbivore)) {
+                if (entityWorld.getBlockState(blockpos1).getBlock() == Blocks.GRASS_BLOCK)
+                {
+                    if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(entityWorld, herbivore))
+                    {
                         entityWorld.playEvent(2001, blockpos1, Block.getStateId(Blocks.GRASS_BLOCK.getDefaultState()));
                         entityWorld.setBlockState(blockpos1, Blocks.DIRT.getDefaultState(), 2);
                     }

@@ -1,17 +1,17 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
-import com.github.alexthe666.citadel.animation.Animation;
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.entity.Entity;
 
 /**
  * Roost stalker - nova
  * Created using Tabula 7.0.1
  */
-public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
+public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEntity>
+{
     public AdvancedRendererModel torso;
     public AdvancedRendererModel tail1;
     public AdvancedRendererModel legl1;
@@ -38,7 +38,8 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
     
     public ModelAnimator animator;
     
-    public RoostStalkerModel() {
+    public RoostStalkerModel()
+    {
         this.textureWidth = 80;
         this.textureHeight = 90;
         this.legl1 = new AdvancedRendererModel(this, 20, 72);
@@ -151,7 +152,7 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
         this.torso.addChild(legr3);
         this.torso.addChild(legr1);
         
-        tailSegments = new AdvancedRendererModel[] {tail1, tail2, tail3};
+        tailSegments = new AdvancedRendererModel[]{tail1, tail2, tail3};
         
         animator = ModelAnimator.create();
         
@@ -161,27 +162,30 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
     private float globalSpeed = 0.5f;
     
     @Override
-    public void render(RoostStalkerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+    public void render(RoostStalkerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    {
         GlStateManager.pushMatrix();
         
-        if (entity.isChild()) {
+        if (entity.isChild())
+        {
             GlStateManager.translatef(0, 0.78f, 0);
             GlStateManager.scaled(0.3d, 0.3d, 0.3d);
-        }
-        else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
+        } else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
         
         torso.render(scale);
         GlStateManager.popMatrix();
     }
     
     @Override
-    public void setRotationAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    public void setRotationAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    {
         if (stalker.getAnimation() != RoostStalkerEntity.SCAVENGE_ANIMATION)
             faceTarget(netHeadYaw, headPitch, 2, head);
     }
     
     @Override
-    public void setLivingAnimations(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTick) {
+    public void setLivingAnimations(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTick)
+    {
         Animation currentAnim = stalker.getAnimation();
         float frame = stalker.ticksExisted;
         globalSpeed = 0.5f;
@@ -189,11 +193,12 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
         animator.update(stalker);
         resetToDefaultPose();
         
-        if (!stalker.isSitting()) {
+        if (!stalker.isSitting())
+        {
             swing(legl1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
             swing(legl2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
             swing(legl3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
-    
+            
             swing(legr1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
             swing(legr2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
             swing(legr3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
@@ -207,7 +212,8 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
         
         if (currentAnim == RoostStalkerEntity.SLEEP_ANIMATION) sleepAnim();
         
-        if (currentAnim == RoostStalkerEntity.WAKE_ANIMATION) {
+        if (currentAnim == RoostStalkerEntity.WAKE_ANIMATION)
+        {
             staySleep();
             wakeAnim();
         }
@@ -221,16 +227,19 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
         if (!flag) jaw.rotateAngleX = 0.15f;
     }
     
-    public void idle(float frame, boolean head) {
+    public void idle(float frame, boolean head)
+    {
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, 0.5f);
         chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, 0.5f);
-        if (head) {
+        if (head)
+        {
             walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, 0.5f);
             chainWave(new AdvancedRendererModel[]{this.head, this.neck}, globalSpeed - 0.4f, 0.05f, 2, frame, 0.5f);
         }
     }
     
-    private void staySit() {
+    private void staySit()
+    {
         torso.offsetY = 0.21f;
         
         tail1.rotateAngleX = 0.01f;
@@ -245,13 +254,15 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
         footl3_1.rotateAngleZ = -legAngle;
     }
     
-    private void staySleep() {
+    private void staySleep()
+    {
         torso.offsetY = 0.21f;
         torso.rotateAngleZ = 1.7f;
         head.rotateAngleX = 1.3f;
         head.rotateAngleY = -0.2f;
         
-        for (AdvancedRendererModel segment : tailSegments) {
+        for (AdvancedRendererModel segment : tailSegments)
+        {
             segment.rotateAngleX = -0.7f;
             segment.rotateAngleZ = -0.1f;
         }
@@ -272,7 +283,8 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
         footl3.rotateAngleZ = legAngle - 1f;
     }
     
-    private void sleepAnim() {
+    private void sleepAnim()
+    {
         animator.setAnimation(RoostStalkerEntity.SLEEP_ANIMATION);
         
         animator.startKeyframe(20);
@@ -298,28 +310,29 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
         animator.endKeyframe();
     }
     
-    private void wakeAnim() {
+    private void wakeAnim()
+    {
         animator.setAnimation(RoostStalkerEntity.WAKE_ANIMATION);
-    
+        
         animator.startKeyframe(15);
         animator.rotate(torso, 0, 0, -1.7f);
         animator.move(torso, 0, -3.4f, 0);
         animator.rotate(head, -1f, 0.2f, 0);
-    
+        
         animator.rotate(legl1, 0, 0, 0.35f);
         animator.rotate(footl1, 0, 0, 0.61f);
         animator.rotate(legl2, 0, 0, 0.37f);
         animator.rotate(footl2, 0, 0, 0.62f);
         animator.rotate(legl3, 0, 0, 0.37f);
         animator.rotate(footl3, 0, 0, 0.61f);
-    
+        
         animator.rotate(legr1, 0, 0, -0.37f);
         animator.rotate(footl1_1, 0, 0, 0.35f);
         animator.rotate(legr2, 0, 0, -0.48f);
         animator.rotate(footl2_1, 0, 0, -0.38f);
         animator.rotate(legr3, 0, 0, -0.4f);
         animator.rotate(footl3_1, 0, 0, 0.38f);
-    
+        
         for (AdvancedRendererModel segment : tailSegments) animator.rotate(segment, 0.7f, 0, 0.1f);
         animator.endKeyframe();
     }
@@ -327,7 +340,8 @@ public class RoostStalkerModel extends AdvancedEntityModel<RoostStalkerEntity> {
     /**
      * Bob the head up and down: makes it look like its "ruffling through a chest"
      */
-    private void scavengeAnim(int animationTick, float frame) {
+    private void scavengeAnim(int animationTick, float frame)
+    {
         animator.setAnimation(RoostStalkerEntity.SCAVENGE_ANIMATION);
         
         animator.startKeyframe(5);

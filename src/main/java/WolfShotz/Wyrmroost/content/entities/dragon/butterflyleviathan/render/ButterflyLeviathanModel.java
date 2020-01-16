@@ -1,12 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.util.entityhelpers.render.SocketRendererModel;
-import com.github.alexthe666.citadel.client.model.AdvancedEntityModel;
-import com.github.alexthe666.citadel.client.model.AdvancedRendererModel;
-import com.github.alexthe666.citadel.client.model.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.util.entityutils.client.model.SocketRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.ArrayUtils;
@@ -16,9 +15,8 @@ import org.apache.commons.lang3.ArrayUtils;
  * Created using Tabula 7.0.1
  */
 @OnlyIn(Dist.CLIENT)
-public class ButterflyLeviathanModel extends AdvancedEntityModel {
-    public ButterflyLeviathanEntity entity;
-    
+public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<ButterflyLeviathanEntity>
+{
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
     public AdvancedRendererModel neck1;
@@ -74,9 +72,11 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
     public SocketRendererModel[] dynamicTailArray;
     private final AdvancedRendererModel[] neckArray;
     private final AdvancedRendererModel[] headArray;
+    
     public ModelAnimator animator;
-
-    public ButterflyLeviathanModel() {
+    
+    public ButterflyLeviathanModel()
+    {
         textureWidth = 150;
         textureHeight = 250;
         tail4 = new SocketRendererModel(this, 82, 129);
@@ -306,17 +306,18 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         head.addChild(mouthBottom);
         bottomWingFinPhalangeL1.addChild(bottomWingFinMembraneL1);
         body1.addChild(bottomWingFinPhalangeL1);
-    
+        
         animator = ModelAnimator.create();
-        tailArray = new SocketRendererModel[] {tail1, tail2, tail3, tail4, tail5, tail6};
+        tailArray = new SocketRendererModel[]{tail1, tail2, tail3, tail4, tail5, tail6};
         dynamicTailArray = new SocketRendererModel[tailArray.length];
-        neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3};
+        neckArray = new AdvancedRendererModel[]{neck1, neck2, neck3};
         headArray = ArrayUtils.add(neckArray, head);
         updateDefaultPose();
     }
-
+    
     @Override
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) { 
+    public void render(ButterflyLeviathanEntity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    {
         GlStateManager.pushMatrix();
         GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
         GlStateManager.translated(body1.rotationPointX * f5, body1.rotationPointY * f5, body1.rotationPointZ * f5);
@@ -324,12 +325,13 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
         GlStateManager.translated(-body1.rotationPointX * f5, -body1.rotationPointY * f5, -body1.rotationPointZ * f5);
         body1.render(f5);
-        ((ButterflyLeviathanEntity) entity).dc.render(f5, dynamicTailArray);
+        entity.dc.render(f5, dynamicTailArray);
         GlStateManager.popMatrix();
     }
     
     @Override
-    public void setRotationAngles(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    {
         faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, neck3);
     }
     
@@ -337,8 +339,9 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
     private float globalDegree = 0.5f;
     
     @Override
-    public void setLivingAnimations(Entity entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-        entity = (ButterflyLeviathanEntity) entityIn;
+    public void setLivingAnimations(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
+    {
+        entity = entityIn;
         float frame = entity.ticksExisted + partialTick;
         
         resetToDefaultPose();
@@ -353,13 +356,16 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         swing(bottomWingFinPhalangeL2, 0.2f, -0.6f, false, 1.5f, 0, frame, 0.5f);
         flap(bottomWingFinPhalangeL2, 0.2f, -0.5f, false, 0, 0, frame, 0.5f);
 
-//        idle(frame);
+//        idleAnim(frame);
     }
     
-    private void setInitialPositions() {
-        if (entity.isUnderWater()) {
+    private void setInitialPositions()
+    {
+        if (entity.isUnderWater())
+        {
         
-        } else {
+        } else
+        {
             neck1.rotateAngleX = -0.6f;
             neck2.rotateAngleX = 0.15f;
             neck3.rotateAngleX = 0.2f;
@@ -396,9 +402,12 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         }
     }
     
-    public void idle(float frame) {
+    @Override
+    public void idleAnim(float frame)
+    {
         double i = -3;
-        if (entity.isUnderWater()) {
+        if (entity.isUnderWater())
+        {
             i = 3;
             globalSpeed = 0.55f;
             globalDegree = 0.51f;
@@ -415,7 +424,5 @@ public class ButterflyLeviathanModel extends AdvancedEntityModel {
         flap(topWingFinPhalangeR1, 0.05f, 0.1f, true, 0, 0, frame, 0.5f);
         swing(topWingFinPhalangeR1, 0.045f, 0.025f, true, 0.5f, 0, frame, 0.5f);
         swing(topWingFinPhalangeR2, 0.045f, 0.05f, true, 0.75f, 0, frame, 0.5f);
-        
     }
-    
 }

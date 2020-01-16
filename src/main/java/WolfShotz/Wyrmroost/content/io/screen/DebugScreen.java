@@ -1,10 +1,10 @@
 package WolfShotz.Wyrmroost.content.io.screen;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.TranslationUtils;
-import com.github.alexthe666.citadel.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -13,16 +13,19 @@ public class DebugScreen extends Screen
 {
     public final AbstractDragonEntity dragon;
     
-    public DebugScreen(AbstractDragonEntity dragon) {
-        super(TranslationUtils.stringTranslation("debug_screen"));
+    public DebugScreen(AbstractDragonEntity dragon)
+    {
+        super(new StringTextComponent("debug_screen"));
         
         this.dragon = dragon;
     }
     
     @Override
-    protected void init() {
+    protected void init()
+    {
         if (dragon.getAnimations() != null && dragon.getAnimations().length > 0)
-            for (int i=0; i < dragon.getAnimations().length; i++) {
+            for (int i = 0; i < dragon.getAnimations().length; i++)
+            {
                 Animation anim = dragon.getAnimations()[i];
                 addButton(new Button((i * 50) + (width / 2) - (dragon.getAnimations().length * 25), 225, 50, 12, "Anim: " + i, b -> {
                     dragon.setAnimation(anim);
@@ -32,7 +35,8 @@ public class DebugScreen extends Screen
     }
     
     @Override
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+    public void render(int p_render_1_, int p_render_2_, float p_render_3_)
+    {
         renderBackground();
         super.render(p_render_1_, p_render_2_, p_render_3_);
         String gender = dragon.getGender()? "male" : "female";
@@ -51,5 +55,8 @@ public class DebugScreen extends Screen
     }
     
     @Override
-    public boolean isPauseScreen() { return true; }
+    public boolean isPauseScreen()
+    {
+        return true;
+    }
 }

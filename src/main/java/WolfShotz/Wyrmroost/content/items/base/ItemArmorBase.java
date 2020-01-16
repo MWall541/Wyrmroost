@@ -15,12 +15,16 @@ import javax.annotation.Nullable;
  */
 public class ItemArmorBase extends ArmorItem
 {
-    public ItemArmorBase(IArmorMaterial material, EquipmentSlotType equipType) { super(material, equipType, ModUtils.itemBuilder()); }
+    public ItemArmorBase(IArmorMaterial material, EquipmentSlotType equipType)
+    {
+        super(material, equipType, ModUtils.itemBuilder());
+    }
 
     @Nullable
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
-        int layer = slot == EquipmentSlotType.LEGS ? 2 : 1;
+    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type)
+    {
+        int layer = slot == EquipmentSlotType.LEGS? 2 : 1;
         return Wyrmroost.MOD_ID + ":textures/models/armor/" + material.getName() + "_layer_" + layer + ".png";
     }
 }

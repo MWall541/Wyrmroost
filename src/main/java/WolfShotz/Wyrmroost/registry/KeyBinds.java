@@ -9,11 +9,13 @@ public class KeyBinds
     
     public static KeyBinding genericAttack;
     
-    public static void registerKeys() {
+    public static void registerKeys()
+    {
         genericAttack = registerKey("key.genericAttack", 86, CATEGORY);
     }
     
-    public static KeyBinding registerKey(String description, int keyCode, String category) {
+    public static KeyBinding registerKey(String description, int keyCode, String category)
+    {
         KeyBinding key = new KeyBinding(description, keyCode, category);
         ClientRegistry.registerKeyBinding(key);
         

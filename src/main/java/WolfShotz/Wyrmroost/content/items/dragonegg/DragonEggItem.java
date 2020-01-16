@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.TranslationUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,12 +30,14 @@ import java.util.Optional;
 
 public class DragonEggItem extends Item
 {
-    public DragonEggItem() {
+    public DragonEggItem()
+    {
         super(ModUtils.itemBuilder().maxStackSize(1).setTEISR(() -> DragonEggStackRenderer::new));
     }
     
     @Override
-    public ActionResultType onItemUse(ItemUseContext ctx) {
+    public ActionResultType onItemUse(ItemUseContext ctx)
+    {
         PlayerEntity player = ctx.getPlayer();
         if (player.isSneaking()) return super.onItemUse(ctx);
         
@@ -44,16 +45,17 @@ public class DragonEggItem extends Item
         
         CompoundNBT tag = ctx.getItem().getTag();
         if (tag == null || !tag.contains("dragonType")) return super.onItemUse(ctx);
-    
+
         DragonEggEntity eggEntity = new DragonEggEntity(WREntities.DRAGON_EGG.get(), world);
         BlockPos pos = ctx.getPos();
         BlockPos offsetPos;
         BlockState state = world.getBlockState(pos);
-    
+
         if (state.getCollisionShape(world, pos).isEmpty()) offsetPos = pos;
         else offsetPos = pos.offset(ctx.getFace());
         
-        if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(offsetPos)).isEmpty()) return ActionResultType.FAIL;
+        if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(offsetPos)).isEmpty())
+            return ActionResultType.FAIL;
         
         eggEntity.readAdditional(tag);
         eggEntity.setPosition(offsetPos.getX() + 0.5d, offsetPos.getY() + 0.5d, offsetPos.getZ() + 0.5d);
@@ -64,7 +66,8 @@ public class DragonEggItem extends Item
     }
     
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
+    {
         if (!player.isCreative()) return false;
         if (!entity.isAlive()) return false;
         if (!(entity instanceof AbstractDragonEntity)) return false;
@@ -80,15 +83,17 @@ public class DragonEggItem extends Item
     }
     
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
+    public ITextComponent getDisplayName(ItemStack stack)
+    {
         CompoundNBT tag = stack.getTag();
         if (tag == null || tag.isEmpty()) return super.getDisplayName(stack);
         Optional<EntityType<?>> type = EntityType.byKey(tag.getString("dragonType"));
         
-        if (type.isPresent()) {
+        if (type.isPresent())
+        {
             String dragonTranslation = type.get().getName().getUnformattedComponentText();
             
-            return TranslationUtils.appendableTranslation(dragonTranslation + " ", getTranslationKey());
+            return ModUtils.appendableTextTranslation(dragonTranslation + " ", getTranslationKey());
         }
         
         return super.getDisplayName(stack);
@@ -96,7 +101,8 @@ public class DragonEggItem extends Item
     
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    {
         CompoundNBT tag = stack.getTag();
         
         if (tag != null && tag.contains("hatchTime"))
