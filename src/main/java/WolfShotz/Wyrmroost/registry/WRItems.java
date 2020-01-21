@@ -11,6 +11,8 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -111,13 +113,13 @@ public class WRItems
                                                        .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
                                                        .build();
     
-    public static RegistryObject<Item> register(String name, Item item)
-    {
-        return ITEMS.register(name, () -> item);
-    }
+    public static RegistryObject<Item> register(String name, Item item) { return ITEMS.register(name, () -> item); }
+    public static RegistryObject<Item> register(String name) { return ITEMS.register(name, () -> new Item(ModUtils.itemBuilder())); }
     
-    public static RegistryObject<Item> register(String name)
+    public static class Tags
     {
-        return ITEMS.register(name, () -> new Item(ModUtils.itemBuilder()));
+        public static final Tag<Item> GEODES = tag("geodes");
+    
+        public static Tag<Item> tag(String name) { return new ItemTags.Wrapper(ModUtils.resource(name)); }
     }
 }

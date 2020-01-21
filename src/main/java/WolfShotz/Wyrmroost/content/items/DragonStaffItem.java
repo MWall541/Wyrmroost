@@ -64,16 +64,16 @@ public class DragonStaffItem extends Item
         if (player.isSneaking() && isBound(stack))
         { // Clear Bounded dragon
             stack.getTag().remove("boundID");
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            return ActionResult.newResult(ActionResultType.SUCCESS, stack);
         }
         
-        if (world.isRemote) return new ActionResult<>(ActionResultType.SUCCESS, stack);
+        if (world.isRemote) return ActionResult.newResult(ActionResultType.SUCCESS, stack);
         
         // Get entities at crosshair by ratrace, have bounded dragon attack that entity.
         RayTraceResult rtr = MathUtils.rayTrace(world, player, 50, true);
-        if (rtr.getType() != RayTraceResult.Type.ENTITY) return new ActionResult<>(ActionResultType.PASS, stack);
+        if (rtr.getType() != RayTraceResult.Type.ENTITY) return ActionResult.newResult(ActionResultType.PASS, stack);
         EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
-        if (!(ertr.getEntity() instanceof LivingEntity)) return new ActionResult<>(ActionResultType.PASS, stack);
+        if (!(ertr.getEntity() instanceof LivingEntity)) return ActionResult.newResult(ActionResultType.PASS, stack);
         LivingEntity entity = (LivingEntity) ertr.getEntity();
         AbstractDragonEntity dragon = getDragon(stack, (ServerWorld) world);
 
@@ -82,7 +82,7 @@ public class DragonStaffItem extends Item
             if (dragon.isFlying())
                 dragon.getFlightMoveController().resetCourse().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
             else if (dragon.isSitting()) dragon.setSit(false);
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            return ActionResult.newResult(ActionResultType.SUCCESS, stack);
         }
         
         if (dragon.shouldAttackEntity(entity, dragon.getOwner()))
@@ -90,10 +90,10 @@ public class DragonStaffItem extends Item
             dragon.setSit(false);
             dragon.setAttackTarget(entity);
             player.playSound(SoundEvents.ENTITY_BLAZE_SHOOT, 1f, 0.2f);
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            return ActionResult.newResult(ActionResultType.SUCCESS, stack);
         }
 
-        return new ActionResult<>(ActionResultType.PASS, stack);
+        return ActionResult.newResult(ActionResultType.PASS, stack);
     }
     
     @Override
