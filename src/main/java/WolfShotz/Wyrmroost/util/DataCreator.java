@@ -39,6 +39,7 @@ public class DataCreator
         }
     
         @Override
+        @SuppressWarnings("ConstantConditions")
         protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
         {
             // Misc Tools
