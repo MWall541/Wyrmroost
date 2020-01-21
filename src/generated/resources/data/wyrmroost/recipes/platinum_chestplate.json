@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G G",
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "wyrmroost:platinum_ingot"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:platinum_chestplate"
+  }
+}

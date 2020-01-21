@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G",
+    "B"
+  ],
+  "key": {
+    "G": {
+      "item": "wyrmroost:geode_red"
+    },
+    "B": {
+      "item": "minecraft:blaze_rod"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:dragon_staff"
+  }
+}

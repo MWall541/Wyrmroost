@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:platinum_block"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:platinum_ingot"
+  }
+}
