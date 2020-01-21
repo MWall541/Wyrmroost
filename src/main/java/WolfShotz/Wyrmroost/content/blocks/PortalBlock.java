@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
-import WolfShotz.Wyrmroost.content.blocks.base.BlockBase;
 import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.registry.SetupWorld;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -18,7 +18,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-public class PortalBlock extends BlockBase
+public class PortalBlock extends Block
 {
     public PortalBlock()
     {
