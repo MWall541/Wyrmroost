@@ -27,9 +27,9 @@ public class WRItems
     public static final RegistryObject<Item> SOUL_CRYSTAL = register("soul_crystal", new SoulCrystalItem());
     public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", new DragonStaffItem());
     
-    public static final RegistryObject<Item> GEODE_BLUE = register("geode");
-    public static final RegistryObject<Item> GEODE_RED = register("geode_red");
-    public static final RegistryObject<Item> GEODE_PURPLE = register("geode_purple");
+    public static final RegistryObject<Item> BLUE_GEODE = register("geode");
+    public static final RegistryObject<Item> RED_GEODE = register("geode_red");
+    public static final RegistryObject<Item> PURPLE_GEODE = register("geode_purple");
     public static final RegistryObject<Item> PLATINUM_INGOT = register("platinum_ingot");
     public static final RegistryObject<Item> ASH_PILE = register("ash_pile");
     
@@ -72,10 +72,16 @@ public class WRItems
     public static final RegistryObject<Item> PLATINUM_CHESTPLATE = register("platinum_chestplate", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> PLATINUM_LEGGINGS = register("platinum_leggings", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> PLATINUM_BOOTS = register("platinum_boots", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET));
-    
+
+    public static final RegistryObject<Item> FOOD_LOWTIER_MEAT_RAW = register("lowtier_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_LOWTIER_MEAT)));
+    public static final RegistryObject<Item> FOOD_COMMON_MEAT_RAW = register("common_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_COMMON_MEAT)));
+    public static final RegistryObject<Item> FOOD_APEX_MEAT_RAW = register("apex_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_APEX_MEAT)));
+    public static final RegistryObject<Item> FOOD_BEHEMOTH_MEAT_RAW = register("behemoth_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_BEHEMOTH_MEAT)));
+    public static final RegistryObject<Item> FOOD_LOWTIER_MEAT_COOKED = register("lowtier_meat_cooked", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_LOWTIER_MEAT)));
+    public static final RegistryObject<Item> FOOD_COMMON_MEAT_COOKED = register("common_meat_cooked", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_COMMON_MEAT)));
+    public static final RegistryObject<Item> FOOD_APEX_MEAT_COOKED = register("apex_meat_cooked", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_APEX_MEAT)));
+    public static final RegistryObject<Item> FOOD_BEHEMOTH_MEAT_COOKED = register("behemoth_meat_cooked", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_BEHEMOTH_MEAT)));
     public static final RegistryObject<Item> FOOD_COOKED_MINUTUS = register("cooked_minutus", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_MINUTUS)));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_RAW = register("drake_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_DRAKE_MEAT)));
-    public static final RegistryObject<Item> FOOD_DRAKE_MEAT_COOKED = register("drake_meat_cooked", new Item(ModUtils.itemBuilder().food(WRItems.COOKED_DRAKE_MEAT)));
     public static final RegistryObject<Item> FOOD_JEWELLED_APPLE = register("jewelled_apple", new Item(ModUtils.itemBuilder().food(WRItems.JEWELLED_APPLE)));
     public static final RegistryObject<Item> FOOD_DRAGON_FRUIT = register("dragon_fruit", new Item(ModUtils.itemBuilder().food(WRItems.DRAGON_FRUIT)));
     public static final RegistryObject<Item> FOOD_BLUEBERRIES = register("blueberries", new Item(ModUtils.itemBuilder().food(WRItems.BLUEBERRIES)));
@@ -86,7 +92,7 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PLATINUM));
     public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("geode_blue_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.BLUE_GEODE));
     public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("geode_red_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.RED_GEODE));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PUEPLE_GEODE = register("geode_purple_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("geode_purple_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
     
     public static final RegistryObject<Item> EGG_DRAKE = register("drake_egg", new CustomSpawnEggItem(WREntities.OVERWORLD_DRAKE::get, 0x788716, 0x3E623E));
     public static final RegistryObject<Item> EGG_MINUTUS = register("minutus_egg", new CustomSpawnEggItem(WREntities.MINUTUS::get, 0xD6BCBC, 0xDEB6C7));
@@ -95,16 +101,25 @@ public class WRItems
     public static final RegistryObject<Item> EGG_BUTTERFLYLEVIATHAN = register("butterflyleviathan_egg", new CustomSpawnEggItem(WREntities.BUTTERFLY_LEVIATHAN::get, 0x17283C, 0x7A6F5A));
     public static final RegistryObject<Item> EGG_DRAGONFRUITDRAKE = register("fruitdrake_egg", new CustomSpawnEggItem(WREntities.DRAGON_FRUIT_DRAKE::get, 0xe05c9a, 0x788716));
     public static final RegistryObject<Item> EGG_CANARIWYVERN = register("canariwyvern_egg", new CustomSpawnEggItem(WREntities.CANARI_WYVERN::get, 0xffffff, 0xffffff));
-    
+
+    static RegistryObject<Item> register(String name, Item item) { return ITEMS.register(name, () -> item); }
+    static RegistryObject<Item> register(String name) { return ITEMS.register(name, () -> new Item(ModUtils.itemBuilder())); }
+
     //  ===========================
     //          Food List
     //  ===========================
-    
+
+    private static final Food RAW_LOWTIER_MEAT = new Food.Builder().hunger(2).saturation(0.25f).meat().build();
+    private static final Food RAW_COMMON_MEAT = new Food.Builder().hunger(3).saturation(0.35f).meat().build();
+    private static final Food RAW_APEX_MEAT = new Food.Builder().hunger(5).saturation(0.45f).meat().build();
+    private static final Food RAW_BEHEMOTH_MEAT = new Food.Builder().hunger(7).saturation(0.7f).meat().build();
+    private static final Food COOKED_LOWTIER_MEAT = new Food.Builder().hunger(5).saturation(0.7f).meat().build();
+    private static final Food COOKED_COMMON_MEAT = new Food.Builder().hunger(8).saturation(0.8f).meat().build();
+    private static final Food COOKED_APEX_MEAT = new Food.Builder().hunger(12).saturation(1f).meat().build();
+    private static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().hunger(16).saturation(1.4f).meat().build();
     private static final Food DRAGON_FRUIT = new Food.Builder().hunger(6).saturation(0.55f).build();
     private static final Food BLUEBERRIES = new Food.Builder().hunger(2).saturation(0.1f).build();
     private static final Food COOKED_MINUTUS = new Food.Builder().hunger(6).saturation(0.7f).meat().build();
-    private static final Food RAW_DRAKE_MEAT = new Food.Builder().hunger(4).saturation(0.45f).meat().build();
-    private static final Food COOKED_DRAKE_MEAT = new Food.Builder().hunger(8).saturation(1f).meat().build();
     private static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturation(0.9f).setAlwaysEdible()
                                                        .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
                                                        .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
@@ -113,13 +128,10 @@ public class WRItems
                                                        .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
                                                        .build();
     
-    public static RegistryObject<Item> register(String name, Item item) { return ITEMS.register(name, () -> item); }
-    public static RegistryObject<Item> register(String name) { return ITEMS.register(name, () -> new Item(ModUtils.itemBuilder())); }
-    
     public static class Tags
     {
         public static final Tag<Item> GEODES = tag("geodes");
     
-        public static Tag<Item> tag(String name) { return new ItemTags.Wrapper(ModUtils.resource(name)); }
+        private static Tag<Item> tag(String name) { return new ItemTags.Wrapper(ModUtils.resource(name)); }
     }
 }

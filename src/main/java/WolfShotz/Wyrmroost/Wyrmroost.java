@@ -46,7 +46,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
-    public static final ItemGroup CREATIVE_TAB = ModUtils.itemGroupFactory("wyrmroost", () -> new ItemStack(WRItems.GEODE_BLUE.get()));
+    public static final ItemGroup CREATIVE_TAB = ModUtils.itemGroupFactory("wyrmroost", () -> new ItemStack(WRItems.BLUE_GEODE.get()));
     public static final SimpleChannel NETWORK = ModUtils.simplisticChannel(ModUtils.resource(MOD_ID), "1.0");
     
     public Wyrmroost()

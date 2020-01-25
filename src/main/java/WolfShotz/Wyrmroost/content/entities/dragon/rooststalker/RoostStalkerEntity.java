@@ -249,7 +249,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public List<Item> getFoodItems()
     {
-        return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, WRItems.FOOD_DRAKE_MEAT_RAW.get(), WRItems.FOOD_DRAKE_MEAT_COOKED.get());
+        return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, WRItems.FOOD_COMMON_MEAT_RAW.get(), WRItems.FOOD_COMMON_MEAT_COOKED.get());
     }
     
     public boolean canPickUpStack(ItemStack stack)

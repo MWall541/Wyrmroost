@@ -7,9 +7,9 @@ import net.minecraft.item.crafting.Ingredient;
 
 public enum ToolMaterialList implements IItemTier
 {
-    GEODE(9.3f, 4f, 2164, 4, 25, WRItems.GEODE_BLUE.get()),
-    GEODERED(10f, 5.5f, 3264, 5, 25, WRItems.GEODE_RED.get()),
-    GEODEPURPLE(15f, 5.5f, 4214, 6, 28, WRItems.GEODE_PURPLE.get()),
+    GEODE(9.3f, 4f, 2164, 4, 25, WRItems.BLUE_GEODE.get()),
+    GEODERED(10f, 5.5f, 3264, 5, 25, WRItems.RED_GEODE.get()),
+    GEODEPURPLE(15f, 5.5f, 4214, 6, 28, WRItems.PURPLE_GEODE.get()),
     PLATINUM(5.5f, 2.5f, 645, 3, 20, WRItems.PLATINUM_INGOT.get());
     
     private float efficiency, attackDamage;

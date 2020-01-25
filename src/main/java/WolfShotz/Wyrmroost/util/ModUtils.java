@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -17,6 +18,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
@@ -66,7 +68,11 @@ public class ModUtils
      */
     public static Block.Properties blockBuilder(Material material)
     {
-        return Block.Properties.create(material);
+        Block.Properties properties = Block.Properties.create(material);
+        if (material == Material.WOOD) properties.harvestTool(ToolType.AXE).hardnessAndResistance(2).sound(SoundType.WOOD);
+        if (material == Material.ROCK) properties.harvestTool(ToolType.PICKAXE);
+        if (material == Material.SAND) properties.harvestTool(ToolType.SHOVEL).sound(SoundType.SAND);
+        return properties;
     }
     
     /**
