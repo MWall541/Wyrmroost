@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "side": "wyrmroost:block/teal_corin_log",
+    "end": "wyrmroost:block/teal_corin_log_top"
+  }
+}

@@ -36,6 +36,6 @@ public class EntityRenameMessage implements IMessage
     @Override
     public void run(Supplier<NetworkEvent.Context> context)
     {
-        context.get().getSender().getServerWorld().getEntityByUuid(entity).setCustomName(text);
+        context.get().getSender().func_71121_q().getEntityByUuid(entity).setCustomName(text);
     }
 }

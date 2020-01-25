@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.registry;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.PortalBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.EXPBlock;
+import WolfShotz.Wyrmroost.content.blocks.base.LogBlockBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -36,20 +37,25 @@ public class WRBlocks
     public static final RegistryObject<Block> ASH = register("ash", new SandBlock(0x575757, ModUtils.blockBuilder(Material.SAND).hardnessAndResistance(0.5f)));
     public static final RegistryObject<Block> ASH_BLOCK = register("ash_block", new Block(ModUtils.blockBuilder(Material.MISCELLANEOUS).hardnessAndResistance(1).sound(SoundType.SAND)));
     public static final RegistryObject<Block> ASH_LOG = register("ash_log", new LogBlock(MaterialColor.BROWN, ModUtils.blockBuilder(Material.WOOD)));
-    public static final RegistryObject<Block> CANARI_LEAVES = register("canari_leaves", new LeavesBlock(ModUtils.blockBuilder(Material.LEAVES).hardnessAndResistance(0.2f).sound(SoundType.PLANT).tickRandomly()));
-    public static final RegistryObject<Block> CANARI_LOG = register("canari_log", new LogBlock(MaterialColor.BROWN, ModUtils.blockBuilder(Material.WOOD)));
+
     public static final RegistryObject<Block> STRIPPED_CANARI = register("stripped_canari_log", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD)));
+    public static final RegistryObject<Block> CANARI_LOG = register("canari_log", new LogBlockBase(MaterialColor.BROWN, WRBlocks.STRIPPED_CANARI.get(), ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> CANARI_WOOD = register("canari_wood", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD)));
-    public static final RegistryObject<Block> BLUE_CORIN_LOG = register("blue_corin_log", new LogBlock(MaterialColor.BLUE, ModUtils.blockBuilder(Material.WOOD)));
+    public static final RegistryObject<Block> CANARI_PLANKS = register("canari_planks", new Block(ModUtils.blockBuilder(Material.WOOD).hardnessAndResistance(2, 3)));
+    public static final RegistryObject<Block> CANARI_LEAVES = register("canari_leaves", new LeavesBlock(ModUtils.blockBuilder(Material.LEAVES).hardnessAndResistance(0.2f).sound(SoundType.PLANT).tickRandomly()));
+
     public static final RegistryObject<Block> STRIPPED_BLUE_CORIN_LOG = register("stripped_blue_corin_log", new LogBlock(MaterialColor.BLUE, ModUtils.blockBuilder(Material.WOOD)));
+    public static final RegistryObject<Block> BLUE_CORIN_LOG = register("blue_corin_log", new LogBlockBase(MaterialColor.BLUE, WRBlocks.STRIPPED_BLUE_CORIN_LOG.get(), ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> BLUE_CORIN_WOOD = register("blue_corin_wood", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> BLUE_CORIN_PLANKS = register("blue_corin_planks", new Block(ModUtils.blockBuilder(Material.WOOD).hardnessAndResistance(2, 3)));
-    public static final RegistryObject<Block> TEAL_CORIN_LOG = register("teal_corin_log", new LogBlock(MaterialColor.BLUE, ModUtils.blockBuilder(Material.WOOD)));
+
     public static final RegistryObject<Block> STRIPPED_TEAL_CORIN_LOG = register("stripped_teal_corin_log", new LogBlock(MaterialColor.BLUE, ModUtils.blockBuilder(Material.WOOD)));
+    public static final RegistryObject<Block> TEAL_CORIN_LOG = register("teal_corin_log", new LogBlockBase(MaterialColor.BLUE, WRBlocks.STRIPPED_TEAL_CORIN_LOG.get(), ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> TEAL_CORIN_WOOD = register("teal_corin_wood", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> TEAL_CORIN_PLANKS = register("teal_corin_planks", new Block(ModUtils.blockBuilder(Material.WOOD).hardnessAndResistance(2, 3)));
-    public static final RegistryObject<Block> RED_CORIN_LOG = register("red_corin_log", new LogBlock(MaterialColor.BLUE, ModUtils.blockBuilder(Material.WOOD)));
+
     public static final RegistryObject<Block> STRIPPED_RED_CORIN_LOG = register("stripped_red_corin_log", new LogBlock(MaterialColor.BLUE, ModUtils.blockBuilder(Material.WOOD)));
+    public static final RegistryObject<Block> RED_CORIN_LOG = register("red_corin_log", new LogBlockBase(MaterialColor.BLUE, WRBlocks.STRIPPED_RED_CORIN_LOG.get(), ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> RED_CORIN_WOOD = register("red_corin_wood", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> RED_CORIN_PLANKS = register("red_corin_planks", new Block(ModUtils.blockBuilder(Material.WOOD).hardnessAndResistance(2, 3)));
 

@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
@@ -295,7 +294,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     
     public boolean shouldGlide(PlayerEntity player)
     {
-        return (ReflectionUtils.isEntityJumping(player) && MathUtils.getAltitude(player) > shouldFlyThreshold) &&
+        return (player.isJumping && MathUtils.getAltitude(player) > shouldFlyThreshold) &&
                        player.getRidingEntity() == null &&
                        !player.abilities.isFlying &&
                        !player.isInWater() &&

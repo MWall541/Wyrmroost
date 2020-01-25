@@ -45,7 +45,7 @@ public class PortalBlock extends Block
         z = MathHelper.clamp(z, d4, d6);
         double y = world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) x, (int) z); // doesnt work, cant get chunk surface when it isnt loaded yet...
         
-        ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getCapability(CapabilityWorld.OW_CAP).ifPresent(cap -> cap.setPortalTriggered(true));
-        ((ServerPlayerEntity) entityIn).teleport(world, x, y, z, player.rotationYaw, player.rotationPitch);
+        ServerLifecycleHooks.getCurrentServer().func_71218_a(DimensionType.OVERWORLD).getCapability(CapabilityWorld.OW_CAP).ifPresent(cap -> cap.setPortalTriggered(true));
+        ((ServerPlayerEntity) entityIn).func_200619_a(world, x, y, z, player.rotationYaw, player.rotationPitch);
     }
 }

@@ -24,6 +24,7 @@ public class DataCreator
         if (event.includeClient())
         {
             gen.addProvider(new Models.BlockModels(gen, event.getExistingFileHelper()));
+            gen.addProvider(new Models.ItemModels(gen, event.getExistingFileHelper()));
         }
     }
 }

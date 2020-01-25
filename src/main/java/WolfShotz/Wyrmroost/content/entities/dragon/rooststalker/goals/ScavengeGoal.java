@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
-import WolfShotz.Wyrmroost.util.ReflectionUtils;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.block.Block;
@@ -78,7 +77,7 @@ public class ScavengeGoal extends MoveToBlockGoal
             if (dragon.getAnimation() != animation) NetworkUtils.sendAnimationPacket(dragon, animation);
             
             if (chest == null) return;
-            if (chest instanceof ChestTileEntity && ReflectionUtils.getChestPlayersUsing((ChestTileEntity) chest) == 0)
+            if (chest instanceof ChestTileEntity && ((ChestTileEntity) chest).numPlayersUsing == 0)
                 interactChest(chest, true);
             if (!chest.isEmpty() && --searchDelay <= 0)
             {
@@ -144,8 +143,8 @@ public class ScavengeGoal extends MoveToBlockGoal
         if (!(intentory instanceof ChestTileEntity)) return; // not a chest, ignore it
         ChestTileEntity chest = (ChestTileEntity) intentory;
         
-        ReflectionUtils.setChestPlayersUsing(chest, open? 1 : -1, true);
-        chest.getWorld().addBlockEvent(chest.getPos(), chest.getBlockState().getBlock(), 1, ReflectionUtils.getChestPlayersUsing(chest));
+        chest.numPlayersUsing = open? 1 : -1;
+        chest.getWorld().addBlockEvent(chest.getPos(), chest.getBlockState().getBlock(), 1, chest.numPlayersUsing);
     }
     
     private boolean isHandEmpty(LivingEntity entity)
