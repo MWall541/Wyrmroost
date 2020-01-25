@@ -70,8 +70,8 @@ public class ModUtils
     {
         Block.Properties properties = Block.Properties.create(material);
         if (material == Material.WOOD) properties.harvestTool(ToolType.AXE).hardnessAndResistance(2).sound(SoundType.WOOD);
-        if (material == Material.ROCK) properties.harvestTool(ToolType.PICKAXE);
-        if (material == Material.SAND) properties.harvestTool(ToolType.SHOVEL).sound(SoundType.SAND);
+        else if (material == Material.ROCK) properties.harvestTool(ToolType.PICKAXE);
+        else if (material == Material.SAND) properties.harvestTool(ToolType.SHOVEL).sound(SoundType.SAND);
         return properties;
     }
     
