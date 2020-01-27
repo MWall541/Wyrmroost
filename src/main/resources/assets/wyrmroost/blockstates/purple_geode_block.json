@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "wyrmroost:block/purple_geode_block" }
+    "": {
+      "model": "wyrmroost:block/purple_geode_block"
+    }
   }
 }

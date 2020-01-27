@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:orange_crystal_block"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:orange_shard",
+    "count": 9
+  }
+}

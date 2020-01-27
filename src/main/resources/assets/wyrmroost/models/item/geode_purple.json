@@ -1,4 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": {"layer0": "wyrmroost:item/materials/geode_purple"}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wyrmroost:item/materials/purple_geode"
+  }
 }

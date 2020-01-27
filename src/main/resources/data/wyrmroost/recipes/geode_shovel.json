@@ -1,13 +1,19 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "G",
-        "S",
-        "S"
-    ],
-    "key": {
-        "G": {"item": "wyrmroost:geode"},
-        "S": {"item": "minecraft:stick"}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G",
+    "S",
+    "S"
+  ],
+  "key": {
+    "G": {
+      "item": "wyrmroost:geode"
     },
-    "result": {"item": "wyrmroost:geode_shovel"}
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:geode_shovel"
+  }
 }

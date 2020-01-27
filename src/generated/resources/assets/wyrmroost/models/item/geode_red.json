@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wyrmroost:item/materials/geode_red"
+    "layer0": "wyrmroost:item/materials/red_geode"
   }
 }

@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    },
+    {
+      "item": "wyrmroost:yellow_shard"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:yellow_crystal_block"
+  }
+}

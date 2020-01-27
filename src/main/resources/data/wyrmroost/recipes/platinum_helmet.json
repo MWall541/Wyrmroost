@@ -1,11 +1,15 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "PPP",
-        "P P"
-    ],
-    "key": {
-        "P": { "item": "wyrmroost:platinum_ingot" }
-    },
-    "result": {"item": "wyrmroost:platinum_helmet"}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "G G"
+  ],
+  "key": {
+    "G": {
+      "item": "wyrmroost:platinum_ingot"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:platinum_helmet"
+  }
 }

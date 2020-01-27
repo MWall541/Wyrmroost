@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "wyrmroost:red_geode_ore"
+  },
+  "result": "wyrmroost:geode_red",
+  "experience": 1.0,
+  "cookingtime": 100
+}

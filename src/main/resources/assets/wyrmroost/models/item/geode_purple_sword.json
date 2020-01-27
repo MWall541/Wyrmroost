@@ -1,4 +1,6 @@
 {
   "parent": "item/handheld",
-  "textures": {"layer0": "wyrmroost:item/tools/geode/purple/geode_purple_sword"}
+  "textures": {
+    "layer0": "wyrmroost:item/tools/geode/purple/purple_geode_sword"
+  }
 }

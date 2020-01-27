@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G G",
+    "GGG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "wyrmroost:geode_red"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:geode_red_chestplate"
+  }
+}

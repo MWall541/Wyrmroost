@@ -1,13 +1,19 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "P",
-        "P",
-        "S"
-    ],
-    "key": {
-        "P": {"item": "wyrmroost:platinum_ingot"},
-        "S": {"item": "minecraft:stick"}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G",
+    "G",
+    "S"
+  ],
+  "key": {
+    "G": {
+      "item": "wyrmroost:platinum_ingot"
     },
-    "result": {"item": "wyrmroost:platinum_sword"}
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:platinum_sword"
+  }
 }

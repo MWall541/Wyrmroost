@@ -1,4 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": { "layer0": "wyrmroost:item/tools/geode/purple/geode_purple_boots" }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wyrmroost:item/tools/geode/purple/purple_geode_boots"
+  }
 }

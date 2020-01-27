@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "wyrmroost:ash"
+    ]
+  },
+  "criteria": {
+    "has_ash": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "wyrmroost:ash"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "wyrmroost:ash"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ash",
+      "has_the_recipe"
+    ]
+  ]
+}

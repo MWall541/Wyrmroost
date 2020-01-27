@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    },
+    {
+      "item": "wyrmroost:geode_purple"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:purple_geode_block"
+  }
+}

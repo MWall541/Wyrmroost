@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GG",
+    " S",
+    " S"
+  ],
+  "key": {
+    "G": {
+      "item": "wyrmroost:geode_purple"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:geode_purple_hoe"
+  }
+}

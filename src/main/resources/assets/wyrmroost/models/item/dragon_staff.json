@@ -1,4 +1,6 @@
 {
-    "parent": "item/handheld",
-    "textures": { "layer0": "wyrmroost:item/tools/dragon_staff" }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wyrmroost:item/tools/dragon_staff"
+  }
 }

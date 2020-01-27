@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    },
+    {
+      "item": "wyrmroost:blue_shard"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:blue_crystal_block"
+  }
+}

@@ -31,6 +31,10 @@ public class WRItems
     public static final RegistryObject<Item> RED_GEODE = register("geode_red");
     public static final RegistryObject<Item> PURPLE_GEODE = register("geode_purple");
     public static final RegistryObject<Item> PLATINUM_INGOT = register("platinum_ingot");
+    public static final RegistryObject<Item> BLUE_SHARD = register("blue_shard");
+    public static final RegistryObject<Item> GREEN_SHARD = register("green_shard");
+    public static final RegistryObject<Item> ORANGE_SHARD = register("orange_shard");
+    public static final RegistryObject<Item> YELLOW_SHARD = register("yellow_shard");
     public static final RegistryObject<Item> ASH_PILE = register("ash_pile");
     
     public static final RegistryObject<Item> BLUE_GEODE_SWORD = register("geode_sword", new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()));

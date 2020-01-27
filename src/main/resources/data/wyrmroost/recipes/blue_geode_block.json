@@ -1,12 +1,35 @@
 {
-    "type": "minecraft:crafting_shaped",
-    "pattern": [
-        "GGG",
-        "GGG",
-        "GGG"
-    ],
-    "key": {
-        "G": {"item": "wyrmroost:geode"}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:geode"
     },
-    "result": {"item": "wyrmroost:blue_geode_block"}
+    {
+      "item": "wyrmroost:geode"
+    },
+    {
+      "item": "wyrmroost:geode"
+    },
+    {
+      "item": "wyrmroost:geode"
+    },
+    {
+      "item": "wyrmroost:geode"
+    },
+    {
+      "item": "wyrmroost:geode"
+    },
+    {
+      "item": "wyrmroost:geode"
+    },
+    {
+      "item": "wyrmroost:geode"
+    },
+    {
+      "item": "wyrmroost:geode"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:blue_geode_block"
+  }
 }
