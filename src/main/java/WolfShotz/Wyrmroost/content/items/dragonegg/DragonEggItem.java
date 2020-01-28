@@ -42,23 +42,19 @@ public class DragonEggItem extends Item
         if (player.isSneaking()) return super.onItemUse(ctx);
         
         World world = ctx.getWorld();
-        
         CompoundNBT tag = ctx.getItem().getTag();
-        if (tag == null || !tag.contains("dragonType")) return super.onItemUse(ctx);
-
-        DragonEggEntity eggEntity = new DragonEggEntity(WREntities.DRAGON_EGG.get(), world);
         BlockPos pos = ctx.getPos();
-        BlockPos offsetPos;
         BlockState state = world.getBlockState(pos);
+        DragonEggEntity eggEntity = WREntities.DRAGON_EGG.get().create(world);
 
-        if (state.getCollisionShape(world, pos).isEmpty()) offsetPos = pos;
-        else offsetPos = pos.offset(ctx.getFace());
-        
-        if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(offsetPos)).isEmpty())
+        if (tag == null || !tag.contains("dragonType")) return ActionResultType.PASS;
+        if (!state.getCollisionShape(world, pos).isEmpty()) pos = pos.offset(ctx.getFace());
+        if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(pos)).isEmpty())
             return ActionResultType.FAIL;
-        
+
         eggEntity.readAdditional(tag);
-        eggEntity.setPosition(offsetPos.getX() + 0.5d, offsetPos.getY() + 0.5d, offsetPos.getZ() + 0.5d);
+        eggEntity.setPosition(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d);
+
         if (!world.isRemote) world.addEntity(eggEntity);
         if (!player.isCreative()) player.setHeldItem(ctx.getHand(), ItemStack.EMPTY);
         
