@@ -23,7 +23,10 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     public static final ResourceLocation MALE_0_GLOW = resource("male_0_glow.png");
     public static final ResourceLocation MALE_1_GLOW = resource("male_1_glow.png");
     public static final ResourceLocation MALE_2_GLOW = resource("male_2_glow.png");
-    
+
+    public static final ResourceLocation[] MALE_TEXTURES = new ResourceLocation[] {MALE_0, MALE_1, MALE_2};
+    public static final ResourceLocation[] MALE_GLOW = new ResourceLocation[] {MALE_0_GLOW, MALE_1_GLOW, MALE_2_GLOW};
+
     public SilverGliderRenderer(EntityRendererManager manager)
     {
         super(manager, new SilverGliderModel(), 1f);
@@ -40,34 +43,14 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     {
         if (sg.isSpecial()) return BODY_SPE;
         if (!sg.getGender()) return FEMALE;
-        switch (sg.getVariant())
-        {
-            case 0:
-                return MALE_0;
-            case 1:
-                return MALE_1;
-            case 2:
-                return MALE_2;
-            default:
-                return FEMALE; // AW GOD WTF IS THIS
-        }
+        return MALE_TEXTURES[sg.getVariant()];
     }
     
     private ResourceLocation getGlowTexture(SilverGliderEntity sg)
     {
         if (sg.isSpecial()) return BODY_SPE_GLOW;
         if (!sg.getGender()) return FEMALE_GLOW;
-        
-        switch (sg.getVariant())
-        {
-            default:
-            case 0:
-                return MALE_0_GLOW;
-            case 1:
-                return MALE_1_GLOW;
-            case 2:
-                return MALE_2_GLOW;
-        }
+        return MALE_GLOW[sg.getVariant()];
     }
     
     public static ResourceLocation resource(String png)

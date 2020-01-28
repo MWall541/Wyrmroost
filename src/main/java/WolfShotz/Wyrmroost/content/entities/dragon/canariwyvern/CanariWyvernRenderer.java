@@ -42,8 +42,7 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
             if (name.equals("Lady Everlyn Winklestein") && !canari.getGender()) return FEMALE_LADY;
         }
         
-        if (canari.getGender()) return MALE_VARS[canari.getVariant()];
-        else return FEMALE_VARS[canari.getVariant()];
+        return canari.getGender()? MALE_VARS[canari.getVariant()] : FEMALE_VARS[canari.getVariant()];
     }
     
     private static ResourceLocation resource(String png)
