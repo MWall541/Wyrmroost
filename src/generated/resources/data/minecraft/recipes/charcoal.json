@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:ash_log"
+    }
+  ],
+  "result": {
+    "item": "minecraft:charcoal",
+    "count": 4
+  }
+}

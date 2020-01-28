@@ -7,15 +7,20 @@ import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.content.items.base.ToolMaterialList;
 import WolfShotz.Wyrmroost.content.items.dragonegg.DragonEggItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import net.minecraft.block.Block;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class WRItems
 {
@@ -135,7 +140,22 @@ public class WRItems
     public static class Tags
     {
         public static final Tag<Item> GEODES = tag("geodes");
+
+        public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCKS = new HashMap<>();
+
+        public static final Tag<Item> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
+        public static final Tag<Item> BLUE_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/blue_corin_logs"), WRBlocks.Tags.BLUE_CORIN_LOGS);
+        public static final Tag<Item> TEAL_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/teal_corin_logs"), WRBlocks.Tags.TEAL_CORIN_LOGS);
+        public static final Tag<Item> RED_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/red_corin_logs"), WRBlocks.Tags.RED_CORIN_LOGS);
     
         private static Tag<Item> tag(String name) { return new ItemTags.Wrapper(ModUtils.resource(name)); }
+        private static Tag<Item> tag(ResourceLocation name) { return new ItemTags.Wrapper(name); }
+
+        private static Tag<Item> itemBlockTag(ResourceLocation name, Tag<Block> copy)
+        {
+            ItemTags.Wrapper tag = new ItemTags.Wrapper(name);
+            ITEM_BLOCKS.put(copy, tag);
+            return tag;
+        }
     }
 }

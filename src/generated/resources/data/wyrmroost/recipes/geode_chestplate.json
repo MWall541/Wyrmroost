@@ -1,12 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "G G",
-    "GGG",
-    "GGG"
+    "M M",
+    "MMM",
+    "MMM"
   ],
   "key": {
-    "G": {
+    "M": {
       "item": "wyrmroost:geode"
     }
   },

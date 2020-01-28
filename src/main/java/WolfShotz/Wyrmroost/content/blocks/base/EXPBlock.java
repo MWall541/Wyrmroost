@@ -13,23 +13,17 @@ import java.util.function.Function;
  */
 public class EXPBlock extends Block
 {
-    private Function<Random, Integer> xpAmount;
+    private final Function<Random, Integer> xpAmount;
     
-    public EXPBlock(Block.Properties properties)
+    public EXPBlock(Function<Random, Integer> xpAmount, Block.Properties properties)
     {
         super(properties);
+        this.xpAmount = xpAmount;
     }
     
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch)
     {
         return xpAmount != null && silktouch == 0? xpAmount.apply(RANDOM) : 0;
-    }
-    
-    public EXPBlock setXPDrops(Function<Random, Integer> function)
-    {
-        this.xpAmount = function;
-        
-        return this;
     }
 }

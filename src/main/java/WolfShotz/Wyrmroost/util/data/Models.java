@@ -35,6 +35,19 @@ public class Models
             simpleBlock(WRBlocks.PLATINUM_BLOCK.get());
             simpleBlock(WRBlocks.PLATINUM_ORE.get());
 
+            simpleBlock(WRBlocks.BLUE_CRYSTAL_BLOCK.get());
+            simpleBlock(WRBlocks.BLUE_CRYSTAL.get());
+            simpleBlock(WRBlocks.BLUE_CRYSTAL_ORE.get());
+            simpleBlock(WRBlocks.GREEN_CRYSTAL_BLOCK.get());
+            simpleBlock(WRBlocks.GREEN_CRYSTAL.get());
+            simpleBlock(WRBlocks.GREEN_CRYSTAL_ORE.get());
+            simpleBlock(WRBlocks.ORANGE_CRYSTAL_BLOCK.get());
+            simpleBlock(WRBlocks.ORANGE_CRYSTAL.get());
+            simpleBlock(WRBlocks.ORANGE_CRYSTAL_ORE.get());
+            simpleBlock(WRBlocks.YELLOW_CRYSTAL_BLOCK.get());
+            simpleBlock(WRBlocks.YELLOW_CRYSTAL.get());
+            simpleBlock(WRBlocks.YELLOW_CRYSTAL_ORE.get());
+
             simpleBlock(WRBlocks.ASH.get());
             simpleBlock(WRBlocks.ASH_BLOCK.get());
             logBlock((LogBlock) WRBlocks.ASH_LOG.get());
@@ -58,6 +71,8 @@ public class Models
             simpleBlock(WRBlocks.RED_CORIN_WOOD.get(), "red_corin_log");
             axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_RED_CORIN_LOG.get());
 //            simpleBlock(WRBlocks.RED_CORIN_PLANKS.get());
+
+
         }
 
         protected void axisBlock(RotatedPillarBlock block)
@@ -96,9 +111,13 @@ public class Models
             }
 
             getBuilder(WRItems.DRAGON_EGG.get().getRegistryName().getPath()) // TODO
-                    .parent(new ModelFile.UncheckedModelFile("builtin/parent"))
+                    .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
                     .transforms()
-                        .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0);
+                        .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0).scale(1.5f).end()
+                        .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).rotation(180, -35, 0).translation(2, 11, -12).end()
+                        .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).rotation(180, 35, 0).translation(-2, 11, -12).end()
+                        .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).rotation(253, 65, 0).translation(8, 2, 10).scale(0.75f).end()
+                        .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f, 0.55f, 0.55f);
 
             getBuilder("minutus_alive").texture("layer0", resource("minutus/minutus_alive"));
             item(WRItems.MINUTUS.get(), "minutus/minutus")

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "wyrmroost:canari_planks",
+    "wyrmroost:blue_corin_planks",
+    "wyrmroost:teal_corin_planks",
+    "wyrmroost:red_corin_planks"
+  ]
+}

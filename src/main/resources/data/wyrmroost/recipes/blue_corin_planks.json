@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "minecraft:logs/blue_corin_logs"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:blue_corin_planks",
+    "count": 4
+  }
+}

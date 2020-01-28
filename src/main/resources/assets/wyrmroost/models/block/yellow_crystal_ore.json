@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "wyrmroost:block/yellow_crystal_ore"
+  }
+}

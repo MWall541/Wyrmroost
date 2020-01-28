@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "wyrmroost:common_meat_raw"
   },
-  "result": "wyrmroost:common_meat_raw",
+  "result": "wyrmroost:common_meat_cooked",
   "experience": 0.35,
   "cookingtime": 200
 }

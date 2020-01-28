@@ -6,7 +6,7 @@
     ]
   },
   "criteria": {
-    "has_geode": {
+    "has_material": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_geode",
+      "has_material",
       "has_the_recipe"
     ]
   ]

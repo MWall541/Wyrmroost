@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.blocks.CrystalBlock;
 import WolfShotz.Wyrmroost.content.blocks.PortalBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.EXPBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.LogBlockBase;
@@ -9,6 +10,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.DyeColor;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
@@ -27,24 +29,25 @@ public class WRBlocks
     public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", new Block(ModUtils.blockBuilder(Material.ROCK).harvestLevel(1).hardnessAndResistance(3).sound(SoundType.STONE)));
     public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", new Block(ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)));
     
-    public static final RegistryObject<Block> BLUE_GEODE_ORE = register("blue_geode_ore", new EXPBlock(ModUtils.blockBuilder(Material.ROCK).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 3, 7)));
+    public static final RegistryObject<Block> BLUE_GEODE_ORE = register("blue_geode_ore", new EXPBlock(r -> MathHelper.nextInt(r, 3, 7), ModUtils.blockBuilder(Material.ROCK).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE)));
     public static final RegistryObject<Block> BLUE_GEODE_BLOCK = register("blue_geode_block", new Block(ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(2).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> RED_GEODE_ORE = register("red_geode_ore", new EXPBlock(ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 4, 8)));
+    public static final RegistryObject<Block> RED_GEODE_ORE = register("red_geode_ore", new EXPBlock(r -> MathHelper.nextInt(r, 4, 8), ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.STONE)));
     public static final RegistryObject<Block> RED_GEODE_BLOCK = register("red_geode_block", new Block(ModUtils.blockBuilder(Material.ROCK).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", new EXPBlock(ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(5).hardnessAndResistance(5).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 8, 11)));
+    public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", new EXPBlock(r -> MathHelper.nextInt(r, 8, 11), ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(5).hardnessAndResistance(5).sound(SoundType.STONE)));
     public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", new Block(ModUtils.blockBuilder(Material.ROCK).harvestLevel(5).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> BLUE_CRYSTAL = register("blue_crystal", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> BLUE_CRYSTAL_ORE = register("blue_crystal_ore", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> BLUE_CRYSTAL_BLOCK = register("blue_crystal_block", new Block(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> GREEN_CRYSTAL = register("green_crystal", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> GREEN_CRYSTAL_ORE = register("green_crystal_ore", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> GREEN_CRYSTAL_BLOCK = register("green_crystal_block", new Block(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> ORANGE_CRYSTAL = register("orange_crystal", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> ORANGE_CRYSTAL_ORE = register("orange_crystal_ore", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> ORANGE_CRYSTAL_BLOCK = register("orange_crystal_block", new Block(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
-    public static final RegistryObject<Block> YELLOW_CRYSTAL = register("yellow_crystal", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> YELLOW_CRYSTAL_ORE = register("yellow_crystal_ore", new EXPBlock(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)).setXPDrops(r -> MathHelper.nextInt(r, 5, 8)));
-    public static final RegistryObject<Block> YELLOW_CRYSTAL_BLOCK = register("yellow_crystal_block", new Block(ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
+
+    public static final RegistryObject<Block> BLUE_CRYSTAL = register("blue_crystal", new CrystalBlock(DyeColor.BLUE, r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> BLUE_CRYSTAL_ORE = register("blue_crystal_ore", new EXPBlock(r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> BLUE_CRYSTAL_BLOCK = register("blue_crystal_block", new StainedGlassBlock(DyeColor.BLUE, ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> GREEN_CRYSTAL = register("green_crystal", new CrystalBlock(DyeColor.GREEN, r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> GREEN_CRYSTAL_ORE = register("green_crystal_ore", new EXPBlock(r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> GREEN_CRYSTAL_BLOCK = register("green_crystal_block", new StainedGlassBlock(DyeColor.LIME, ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> ORANGE_CRYSTAL = register("orange_crystal", new CrystalBlock(DyeColor.ORANGE, r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> ORANGE_CRYSTAL_ORE = register("orange_crystal_ore", new EXPBlock(r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> ORANGE_CRYSTAL_BLOCK = register("orange_crystal_block", new StainedGlassBlock(DyeColor.ORANGE, ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> YELLOW_CRYSTAL = register("yellow_crystal", new CrystalBlock(DyeColor.YELLOW, r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(0.5f).sound(SoundType.GLASS)));
+    public static final RegistryObject<Block> YELLOW_CRYSTAL_ORE = register("yellow_crystal_ore", new EXPBlock(r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> YELLOW_CRYSTAL_BLOCK = register("yellow_crystal_block", new StainedGlassBlock(DyeColor.YELLOW, ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
 
     public static final RegistryObject<Block> ASH = register("ash", new SandBlock(0x575757, ModUtils.blockBuilder(Material.SAND).hardnessAndResistance(0.5f)));
     public static final RegistryObject<Block> ASH_BLOCK = register("ash_block", new Block(ModUtils.blockBuilder(Material.MISCELLANEOUS).hardnessAndResistance(1).sound(SoundType.SAND)));
@@ -79,8 +82,13 @@ public class WRBlocks
     
     public static class Tags
     {
-        public static final Tag<Block> STORAGE_BLOCKS_GEODE = new BlockTags.Wrapper(new ResourceLocation("forge", "storage_blocks/geode"));
-        
+        public static final Tag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
+        public static final Tag<Block> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
+        public static final Tag<Block> BLUE_CORIN_LOGS = tag(new ResourceLocation("logs/blue_corin_logs"));
+        public static final Tag<Block> TEAL_CORIN_LOGS = tag(new ResourceLocation("logs/teal_corin_logs"));
+        public static final Tag<Block> RED_CORIN_LOGS = tag(new ResourceLocation("logs/red_corin_logs"));
+
         public static Tag<Block> tag(String name) { return new BlockTags.Wrapper(ModUtils.resource(name)); }
+        public static Tag<Block> tag(ResourceLocation name) { return new BlockTags.Wrapper(name); }
     }
 }

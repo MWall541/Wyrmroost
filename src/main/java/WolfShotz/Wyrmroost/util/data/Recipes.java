@@ -42,6 +42,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
 
         // Materials
+        // blue geode
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.BLUE_GEODE.get(), 9)
                 .addIngredient(WRBlocks.BLUE_GEODE_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.BLUE_GEODE_BLOCK.get()))
@@ -52,6 +53,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.BLUE_GEODE_ORE.get(), WRItems.BLUE_GEODE.get(), 1f, 200, consumer, "bluegeode");
 
+        // red geode
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.RED_GEODE.get(), 9)
                 .addIngredient(WRBlocks.RED_GEODE_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.RED_GEODE_BLOCK.get()))
@@ -62,6 +64,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.RED_GEODE_ORE.get(), WRItems.RED_GEODE.get(), 1f, 200, consumer, "redgeode");
 
+        // purple geode
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.PURPLE_GEODE.get(), 9)
                 .addIngredient(WRBlocks.PURPLE_GEODE_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.PURPLE_GEODE_BLOCK.get()))
@@ -72,6 +75,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get(), 1f, 200, consumer, "purplegeode");
 
+        // platinum
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.PLATINUM_INGOT.get(), 9)
                 .addIngredient(WRBlocks.PLATINUM_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.PLATINUM_BLOCK.get()))
@@ -82,6 +86,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.PLATINUM_ORE.get(), WRItems.PLATINUM_INGOT.get(), 0.7f, 200, consumer, "platinumingot");
 
+        // blue crystal
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.BLUE_SHARD.get(), 9)
                 .addIngredient(WRBlocks.BLUE_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.BLUE_CRYSTAL_BLOCK.get()))
@@ -92,6 +97,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.BLUE_CRYSTAL_ORE.get(), WRItems.BLUE_SHARD.get(), 0.7f, 200, consumer, "blueshard");
 
+        // green crystal
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.GREEN_SHARD.get(), 9)
                 .addIngredient(WRBlocks.GREEN_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.GREEN_CRYSTAL_BLOCK.get()))
@@ -102,6 +108,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.GREEN_CRYSTAL_ORE.get(), WRItems.GREEN_SHARD.get(), 0.7f, 200, consumer, "greenshard");
 
+        // orange crystal
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.ORANGE_SHARD.get(), 9)
                 .addIngredient(WRBlocks.ORANGE_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.ORANGE_CRYSTAL_BLOCK.get()))
@@ -112,6 +119,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.ORANGE_CRYSTAL_ORE.get(), WRItems.ORANGE_SHARD.get(), 0.7f, 200, consumer, "orangeshard");
 
+        // yellow crystal
         ShapelessRecipeBuilder.shapelessRecipe(WRItems.YELLOW_SHARD.get(), 9)
                 .addIngredient(WRBlocks.YELLOW_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.YELLOW_CRYSTAL_BLOCK.get()))
@@ -122,202 +130,58 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
         oreSmeltRecipe(WRBlocks.YELLOW_CRYSTAL_ORE.get(), WRItems.YELLOW_SHARD.get(), 0.7f, 200, consumer, "yellowshard");
 
+        // ash
         ShapedRecipeBuilder.shapedRecipe(WRBlocks.ASH.get())
                 .key('A', WRItems.ASH_PILE.get())
                 .patternLine("AA").patternLine("AA")
                 .addCriterion("has_ash", hasItem(WRBlocks.ASH.get()))
                 .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(WRBlocks.ASH_BLOCK.get())
+                .key('A', WRItems.ASH_PILE.get())
+                .patternLine("AAA").patternLine("AAA")
+                .addCriterion("has_ash", hasItem(WRBlocks.ASH_BLOCK.get()))
+                .build(consumer);
+        ShapelessRecipeBuilder.shapelessRecipe(Items.CHARCOAL.getItem(), 4)
+                .addIngredient(WRBlocks.ASH_LOG.get())
+                .addCriterion("has_log", hasItem(WRBlocks.ASH_BLOCK.get()))
+                .build(consumer);
+
+        // woods
+        ShapelessRecipeBuilder.shapelessRecipe(WRBlocks.CANARI_PLANKS.get(), 4)
+                .addIngredient(WRItems.Tags.CANARI_LOGS)
+                .addCriterion("has_log", hasItem(WRBlocks.CANARI_LOG.get()))
+                .build(consumer);
+        ShapelessRecipeBuilder.shapelessRecipe(WRBlocks.BLUE_CORIN_PLANKS.get(), 4)
+                .addIngredient(WRItems.Tags.BLUE_CORIN_LOGS)
+                .addCriterion("has_log", hasItem(WRBlocks.BLUE_CORIN_LOG.get()))
+                .build(consumer);
+        ShapelessRecipeBuilder.shapelessRecipe(WRBlocks.TEAL_CORIN_PLANKS.get(), 4)
+                .addIngredient(WRItems.Tags.TEAL_CORIN_LOGS)
+                .addCriterion("has_log", hasItem(WRBlocks.TEAL_CORIN_LOG.get()))
+                .build(consumer);
+        ShapelessRecipeBuilder.shapelessRecipe(WRBlocks.RED_CORIN_PLANKS.get(), 4)
+                .addIngredient(WRItems.Tags.RED_CORIN_LOGS)
+                .addCriterion("has_log", hasItem(WRBlocks.RED_CORIN_LOG.get()))
+                .build(consumer);
 
         // Tools
         //blue
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_SWORD.get())
-                .key('G', WRItems.BLUE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("G").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_PICKAXE.get())
-                .key('G', WRItems.BLUE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GGG").patternLine(" S ").patternLine(" S ")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_AXE.get())
-                .key('G', WRItems.BLUE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine("GS").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_SHOVEL.get())
-                .key('G', WRItems.BLUE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("S").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_HOE.get())
-                .key('G', WRItems.BLUE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine(" S").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_HELMET.get())
-                .key('G', WRItems.BLUE_GEODE.get())
-                .patternLine("GGG").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_CHESTPLATE.get())
-                .key('G', WRItems.BLUE_GEODE.get())
-                .patternLine("G G").patternLine("GGG").patternLine("GGG")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_LEGGINGS.get())
-                .key('G', WRItems.BLUE_GEODE.get())
-                .patternLine("GGG").patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.BLUE_GEODE_BOOTS.get())
-                .key('G', WRItems.BLUE_GEODE.get())
-                .patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get()))
-                .build(consumer);
+        makeToolSet(WRItems.BLUE_GEODE.get(), WRItems.BLUE_GEODE_SWORD.get(), WRItems.BLUE_GEODE_PICKAXE.get(), WRItems.BLUE_GEODE_AXE.get(), WRItems.BLUE_GEODE_SHOVEL.get(), WRItems.BLUE_GEODE_HOE.get(), consumer);
+        makeArmorSet(WRItems.BLUE_GEODE.get(), WRItems.BLUE_GEODE_HELMET.get(), WRItems.BLUE_GEODE_CHESTPLATE.get(), WRItems.BLUE_GEODE_LEGGINGS.get(), WRItems.BLUE_GEODE_BOOTS.get(), consumer);
         //red
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_SWORD.get())
-                .key('G', WRItems.RED_GEODE.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("G").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_PICKAXE.get())
-                .key('G', WRItems.RED_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GGG").patternLine(" S ").patternLine(" S ")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_AXE.get())
-                .key('G', WRItems.RED_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine("GS").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_SHOVEL.get())
-                .key('G', WRItems.RED_GEODE.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("S").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_HOE.get())
-                .key('G', WRItems.RED_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine(" S").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_HELMET.get())
-                .key('G', WRItems.RED_GEODE.get())
-                .patternLine("GGG").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_CHESTPLATE.get())
-                .key('G', WRItems.RED_GEODE.get())
-                .patternLine("G G").patternLine("GGG").patternLine("GGG")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_LEGGINGS.get())
-                .key('G', WRItems.RED_GEODE.get())
-                .patternLine("GGG").patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.RED_GEODE_BOOTS.get())
-                .key('G', WRItems.RED_GEODE.get())
-                .patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.RED_GEODE.get()))
-                .build(consumer);
+        makeToolSet(WRItems.RED_GEODE.get(), WRItems.RED_GEODE_SWORD.get(), WRItems.RED_GEODE_PICKAXE.get(), WRItems.RED_GEODE_AXE.get(), WRItems.RED_GEODE_SHOVEL.get(), WRItems.RED_GEODE_HOE.get(), consumer);
+        makeArmorSet(WRItems.RED_GEODE.get(), WRItems.RED_GEODE_HELMET.get(), WRItems.RED_GEODE_CHESTPLATE.get(), WRItems.RED_GEODE_LEGGINGS.get(), WRItems.RED_GEODE_BOOTS.get(), consumer);
         //purple
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_SWORD.get())
-                .key('G', WRItems.PURPLE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("G").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_PICKAXE.get())
-                .key('G', WRItems.PURPLE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GGG").patternLine(" S ").patternLine(" S ")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_AXE.get())
-                .key('G', WRItems.PURPLE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine("GS").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_SHOVEL.get())
-                .key('G', WRItems.PURPLE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("S").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_HOE.get())
-                .key('G', WRItems.PURPLE_GEODE.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine(" S").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_HELMET.get())
-                .key('G', WRItems.PURPLE_GEODE.get())
-                .patternLine("GGG").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_CHESTPLATE.get())
-                .key('G', WRItems.PURPLE_GEODE.get())
-                .patternLine("G G").patternLine("GGG").patternLine("GGG")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_LEGGINGS.get())
-                .key('G', WRItems.PURPLE_GEODE.get())
-                .patternLine("GGG").patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PURPLE_GEODE_BOOTS.get())
-                .key('G', WRItems.PURPLE_GEODE.get())
-                .patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
-                .build(consumer);
+        makeToolSet(WRItems.PURPLE_GEODE.get(), WRItems.PURPLE_GEODE_SWORD.get(), WRItems.PURPLE_GEODE_PICKAXE.get(), WRItems.PURPLE_GEODE_AXE.get(), WRItems.PURPLE_GEODE_SHOVEL.get(), WRItems.PURPLE_GEODE_HOE.get(), consumer);
+        makeArmorSet(WRItems.PURPLE_GEODE.get(), WRItems.PURPLE_GEODE_HELMET.get(), WRItems.PURPLE_GEODE_CHESTPLATE.get(), WRItems.PURPLE_GEODE_LEGGINGS.get(), WRItems.PURPLE_GEODE_BOOTS.get(), consumer);
         //platinum
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_SWORD.get())
-                .key('G', WRItems.PLATINUM_INGOT.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("G").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_PICKAXE.get())
-                .key('G', WRItems.PLATINUM_INGOT.get()).key('S', Items.STICK)
-                .patternLine("GGG").patternLine(" S ").patternLine(" S ")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_AXE.get())
-                .key('G', WRItems.PLATINUM_INGOT.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine("GS").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_SHOVEL.get())
-                .key('G', WRItems.PLATINUM_INGOT.get()).key('S', Items.STICK)
-                .patternLine("G").patternLine("S").patternLine("S")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_HOE.get())
-                .key('G', WRItems.PLATINUM_INGOT.get()).key('S', Items.STICK)
-                .patternLine("GG").patternLine(" S").patternLine(" S")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_HELMET.get())
-                .key('G', WRItems.PLATINUM_INGOT.get())
-                .patternLine("GGG").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_CHESTPLATE.get())
-                .key('G', WRItems.PLATINUM_INGOT.get())
-                .patternLine("G G").patternLine("GGG").patternLine("GGG")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_LEGGINGS.get())
-                .key('G', WRItems.PLATINUM_INGOT.get())
-                .patternLine("GGG").patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(WRItems.PLATINUM_BOOTS.get())
-                .key('G', WRItems.PLATINUM_INGOT.get())
-                .patternLine("G G").patternLine("G G")
-                .addCriterion("has_geode", hasItem(WRItems.PLATINUM_INGOT.get()))
-                .build(consumer);
+        makeToolSet(WRItems.PLATINUM_INGOT.get(), WRItems.PLATINUM_SWORD.get(), WRItems.PLATINUM_PICKAXE.get(), WRItems.PLATINUM_AXE.get(), WRItems.PLATINUM_SHOVEL.get(), WRItems.PLATINUM_HOE.get(), consumer);
+        makeArmorSet(WRItems.PLATINUM_INGOT.get(), WRItems.PLATINUM_HELMET.get(), WRItems.PLATINUM_CHESTPLATE.get(), WRItems.PLATINUM_LEGGINGS.get(), WRItems.PLATINUM_BOOTS.get(), consumer);
 
         // Food
         foodCookRecipe(WRItems.MINUTUS.get(), WRItems.FOOD_COOKED_MINUTUS.get(), 0.35f, 200, "cookedminutus", consumer);
         foodCookRecipe(WRItems.FOOD_LOWTIER_MEAT_RAW.get(), WRItems.FOOD_LOWTIER_MEAT_COOKED.get(), 0.35f, 150, "cooked_lowtier", consumer);
-        foodCookRecipe(WRItems.FOOD_COMMON_MEAT_RAW.get(), WRItems.FOOD_COMMON_MEAT_RAW.get(), 0.35f, 200, "cooked_common", consumer);
+        foodCookRecipe(WRItems.FOOD_COMMON_MEAT_RAW.get(), WRItems.FOOD_COMMON_MEAT_COOKED.get(), 0.35f, 200, "cooked_common", consumer);
         foodCookRecipe(WRItems.FOOD_APEX_MEAT_RAW.get(), WRItems.FOOD_APEX_MEAT_COOKED.get(), 0.35f, 200, "cooked_apex", consumer);
         foodCookRecipe(WRItems.FOOD_BEHEMOTH_MEAT_RAW.get(), WRItems.FOOD_BEHEMOTH_MEAT_COOKED.get(), 0.5f, 250, "cooked_behemoth", consumer);
         ShapedRecipeBuilder.shapedRecipe(WRItems.FOOD_JEWELLED_APPLE.get())
@@ -361,6 +225,59 @@ public class Recipes extends RecipeProvider
                 .key('I', WRItems.PURPLE_GEODE.get()).key('B', WRBlocks.PURPLE_GEODE_BLOCK.get())
                 .patternLine("IB ").patternLine("I B").patternLine(" I ")
                 .addCriterion("has_geode", hasItem(WRItems.PURPLE_GEODE.get()))
+                .build(consumer);
+    }
+
+    private void makeToolSet(IItemProvider material, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe, Consumer<IFinishedRecipe> consumer)
+    {
+        ShapedRecipeBuilder.shapedRecipe(sword)
+                .key('M', material).key('S', Items.STICK)
+                .patternLine("M").patternLine("M").patternLine("S")
+                .addCriterion("has_material", hasItem(material))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(pick)
+                .key('M', material).key('S', Items.STICK)
+                .patternLine("MMM").patternLine(" S ").patternLine(" S ")
+                .addCriterion("has_material", hasItem(material))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(axe)
+                .key('M', material).key('S', Items.STICK)
+                .patternLine("MM").patternLine("MS").patternLine(" S")
+                .addCriterion("has_material", hasItem(axe))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(shovel)
+                .key('M', material).key('S', Items.STICK)
+                .patternLine("M").patternLine("S").patternLine("S")
+                .addCriterion("has_material", hasItem(material))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(hoe)
+                .key('M', material).key('S', Items.STICK)
+                .patternLine("MM").patternLine(" S").patternLine(" S")
+                .addCriterion("has_material", hasItem(material))
+                .build(consumer);
+    }
+
+    private void makeArmorSet(IItemProvider material, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots, Consumer<IFinishedRecipe> consumer)
+    {
+        ShapedRecipeBuilder.shapedRecipe(helmet)
+                .key('M', material)
+                .patternLine("MMM").patternLine("M M")
+                .addCriterion("has_material", hasItem(material))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(chest)
+                .key('M', material)
+                .patternLine("M M").patternLine("MMM").patternLine("MMM")
+                .addCriterion("has_material", hasItem(material))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(legs)
+                .key('M', material)
+                .patternLine("MMM").patternLine("M M").patternLine("M M")
+                .addCriterion("has_material", hasItem(material))
+                .build(consumer);
+        ShapedRecipeBuilder.shapedRecipe(boots)
+                .key('M', material)
+                .patternLine("M M").patternLine("M M")
+                .addCriterion("has_material", hasItem(material))
                 .build(consumer);
     }
 
