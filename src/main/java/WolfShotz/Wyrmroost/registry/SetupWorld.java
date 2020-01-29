@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.registry;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.world.EndOrePlacement;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -13,25 +12,13 @@ import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.IPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.function.Predicate;
 
 public class SetupWorld
 {
-    // =========
-    // Dimension
-    // =========
-    
-    @ObjectHolder(Wyrmroost.MOD_ID + ":dim_wyrmroost")
-    public static final ModDimension DIM_WYRMROOST = null;
-    
-    // ==============
-    // Ore Generation
-    // ==============
-    
+
     private static final Predicate<Biome> NETHER_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER).stream().anyMatch(biome::equals);
     private static final Predicate<Biome> END_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.END).stream().anyMatch(biome::equals);
     private static final Predicate<Biome> OVERWORLD_FILTER = biome -> !NETHER_FILTER.test(biome) && !END_FILTER.test(biome);

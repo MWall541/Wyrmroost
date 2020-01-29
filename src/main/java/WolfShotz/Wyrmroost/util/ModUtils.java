@@ -19,8 +19,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,6 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -124,7 +128,12 @@ public class ModUtils
         for (Set<T> setParam : sets) set.addAll(setParam);
         return set;
     }
-    
+
+    public static <T extends IForgeRegistryEntry<T>> Set<T> getRegistryEntries(DeferredRegister<T> registry)
+    {
+        return registry.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet());
+    }
+
     /**
      * Cleander way of making array's from collections
      */

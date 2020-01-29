@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.world.dimension;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.block.BlockState;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
@@ -8,19 +9,21 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
-import net.minecraft.world.biome.provider.BiomeProviderType;
-import net.minecraft.world.biome.provider.OverworldBiomeProvider;
-import net.minecraft.world.biome.provider.OverworldBiomeProviderSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.*;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 
 public class WyrmroostDimension extends Dimension
 {
+    @ObjectHolder(Wyrmroost.MOD_ID + ":wyrmroost")
+    public static final ModDimension DIM_WYRMROOST = null;
+
     public WyrmroostDimension(World worldIn, DimensionType typeIn)
     {
         super(worldIn, typeIn);
@@ -29,13 +32,7 @@ public class WyrmroostDimension extends Dimension
     @Override
     public ChunkGenerator<?> createChunkGenerator()
     {
-        ChunkGeneratorType<OverworldGenSettings, OverworldChunkGenerator> chunkgeneratortype4 = ChunkGeneratorType.SURFACE;
-        OverworldGenSettings overworldgensettings1 = chunkgeneratortype4.createSettings();
-        BiomeProviderType<OverworldBiomeProviderSettings, OverworldBiomeProvider> biomeProviderType = BiomeProviderType.VANILLA_LAYERED;
-        OverworldBiomeProviderSettings overWorldBiomeProvider = biomeProviderType.createSettings().setGeneratorSettings(new OverworldGenSettings()).setWorldInfo(world.getWorldInfo());
-        BiomeProvider biomeProvider = biomeProviderType.create(overWorldBiomeProvider);
-        
-        return chunkgeneratortype4.create(world, biomeProvider, overworldgensettings1);
+        return new WyrmroostChunkGenerator(world, new WyrmroostGenSettings());
     }
     
     @Nullable

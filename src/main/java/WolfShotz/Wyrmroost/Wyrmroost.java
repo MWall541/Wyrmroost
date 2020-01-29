@@ -58,7 +58,7 @@ public class Wyrmroost
         WRItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         SetupIO.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         WRSounds.SOUNDS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("dim_wyrmroost"));
+        ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost"));
         ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
         
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.CommonConfig.COMMON_SPEC);
@@ -122,7 +122,7 @@ public class Wyrmroost
         public static void registerDimension(RegisterDimensionsEvent evt)
         {
             if (ModUtils.getDimensionInstance() == null)
-                DimensionManager.registerDimension(ModUtils.resource("dim_wyrmroost"), SetupWorld.DIM_WYRMROOST, null, true);
+                DimensionManager.registerDimension(ModUtils.resource("wyrmroost"), WyrmroostDimension.DIM_WYRMROOST, null, true);
         }
         
         /**

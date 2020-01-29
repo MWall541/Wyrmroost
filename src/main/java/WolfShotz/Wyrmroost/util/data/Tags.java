@@ -19,10 +19,10 @@ public class Tags
         @Override
         protected void registerTags()
         {
+            WRItems.Tags.ITEM_BLOCKS.forEach(this::copy);
+
             getBuilder(net.minecraftforge.common.Tags.Items.EGGS).add(WRItems.DRAGON_EGG.get());
             getBuilder(WRItems.Tags.GEODES).add(WRItems.BLUE_GEODE.get(), WRItems.RED_GEODE.get(), WRItems.PURPLE_GEODE.get());
-
-            WRItems.Tags.ITEM_BLOCKS.forEach(this::copy);
         }
     }
 

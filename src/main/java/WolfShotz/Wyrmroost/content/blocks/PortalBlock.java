@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
 import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
-import WolfShotz.Wyrmroost.registry.SetupWorld;
+import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -29,7 +29,7 @@ public class PortalBlock extends Block
     @SuppressWarnings("deprecation")
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
     {
-        if (entityIn.dimension.getModType() == SetupWorld.DIM_WYRMROOST) return;
+        if (entityIn.dimension.getModType() == WyrmroostDimension.DIM_WYRMROOST) return;
         if (!(entityIn instanceof ServerPlayerEntity)) return;
         ServerPlayerEntity player = ((ServerPlayerEntity) entityIn);
         ServerWorld world = DimensionManager.getWorld(player.getServer(), ModUtils.getDimensionInstance(), false, true);

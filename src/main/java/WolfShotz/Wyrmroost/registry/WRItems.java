@@ -143,7 +143,7 @@ public class WRItems
 
         public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCKS = new HashMap<>();
 
-        public static final Tag<Item> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
+        public static final Tag<Item> CANARI_LOGS = itemBlockTag(new ResourceLocation("logs/canari_logs"), WRBlocks.Tags.CANARI_LOGS);
         public static final Tag<Item> BLUE_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/blue_corin_logs"), WRBlocks.Tags.BLUE_CORIN_LOGS);
         public static final Tag<Item> TEAL_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/teal_corin_logs"), WRBlocks.Tags.TEAL_CORIN_LOGS);
         public static final Tag<Item> RED_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/red_corin_logs"), WRBlocks.Tags.RED_CORIN_LOGS);

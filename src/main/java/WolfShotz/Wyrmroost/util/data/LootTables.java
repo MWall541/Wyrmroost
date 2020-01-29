@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.util.data;
 
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.criterion.EntityFlagsPredicate;
@@ -23,7 +24,6 @@ import net.minecraft.world.storage.loot.functions.ApplyBonus;
 import net.minecraft.world.storage.loot.functions.LootingEnchantBonus;
 import net.minecraft.world.storage.loot.functions.SetCount;
 import net.minecraft.world.storage.loot.functions.Smelt;
-import net.minecraftforge.fml.RegistryObject;
 
 import java.util.List;
 import java.util.Map;
@@ -96,7 +96,7 @@ public class LootTables extends LootTableProvider
         @Override
         protected Iterable<Block> getKnownBlocks()
         {
-            return BLOCKS.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList());
+            return ModUtils.getRegistryEntries(BLOCKS);
         }
 
         private void registerStandardDropLoot(Block... blocks)
@@ -139,11 +139,10 @@ public class LootTables extends LootTableProvider
         @Override
         protected Iterable<EntityType<?>> getKnownEntities()
         {
-            return WREntities.ENTITIES.getEntries()
+            return ModUtils.getRegistryEntries(WREntities.ENTITIES)
                     .stream()
-                    .map(RegistryObject::get)
                     .filter(e -> !NO_DROPS.contains(e))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
 
         private static LootFunction.Builder<?> onFireCondition()
