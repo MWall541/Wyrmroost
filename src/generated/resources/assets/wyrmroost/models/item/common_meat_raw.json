@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wyrmroost:item/food/common_meat_raw"
+    "layer0": "wyrmroost:item/common_meat_raw"
   }
 }

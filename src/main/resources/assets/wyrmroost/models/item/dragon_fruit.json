@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wyrmroost:item/food/dragon_fruit"
+    "layer0": "wyrmroost:item/dragon_fruit"
   }
 }

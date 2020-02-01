@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wyrmroost:item/tools/geode/blue/blue_geode_leggings"
+    "layer0": "wyrmroost:item/geode_leggings"
   }
 }

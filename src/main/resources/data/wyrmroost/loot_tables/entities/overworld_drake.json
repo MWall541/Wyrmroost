@@ -66,6 +66,25 @@
           "name": "wyrmroost:common_meat_raw"
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "wyrmroost:drake_backplate"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
+        },
+        {
+          "condition": "minecraft:random_chance_with_looting",
+          "chance": 0.345,
+          "looting_multiplier": 0.03
+        }
+      ]
     }
   ]
 }

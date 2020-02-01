@@ -2,7 +2,7 @@
   "replace": false,
   "values": [
     "wyrmroost:geode",
-    "wyrmroost:geode_red",
-    "wyrmroost:geode_purple"
+    "wyrmroost:red_geode",
+    "wyrmroost:purple_geode"
   ]
 }

@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "wyrmroost:red_geode_ore"
   },
-  "result": "wyrmroost:geode_red",
+  "result": "wyrmroost:red_geode",
   "experience": 1.0,
   "cookingtime": 100
 }

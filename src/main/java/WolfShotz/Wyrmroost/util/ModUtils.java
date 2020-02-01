@@ -42,9 +42,7 @@ import java.util.stream.Collectors;
  */
 public class ModUtils
 {
-    private ModUtils()
-    {
-    } // NU CONSTRUCTOR
+    private ModUtils() {} // NU CONSTRUCTOR
     
     /**
      * Debug Logger
@@ -170,7 +168,7 @@ public class ModUtils
      */
     public static DimensionType getDimensionInstance()
     {
-        return DimensionType.byName(ModUtils.resource("dim_wyrmroost"));
+        return DimensionType.byName(ModUtils.resource("wyrmroost"));
     }
     
     /**

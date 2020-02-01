@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wyrmroost:item/food/blueberries"
+    "layer0": "wyrmroost:item/blueberries"
   }
 }

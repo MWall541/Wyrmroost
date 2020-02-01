@@ -69,6 +69,23 @@
         0.75
       ]
     },
+    "thirdperson_lefthand": {
+      "rotation": [
+        253,
+        65,
+        0
+      ],
+      "translation": [
+        3,
+        13,
+        7
+      ],
+      "scale": [
+        0.75,
+        0.75,
+        0.75
+      ]
+    },
     "ground": {
       "rotation": [
         180,

@@ -30,10 +30,10 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     // Saddle
     public static final ResourceLocation SADDLE_LAYER = resource("accessories/saddle.png");
     // Armor
-    public static final ResourceLocation ARMOR_IRON = resource("accessories/iron.png");
-    public static final ResourceLocation ARMOR_GOLD = resource("accessories/gold.png");
-    public static final ResourceLocation ARMOR_DIAMOND = resource("accessories/diamond.png");
-    public static final ResourceLocation ARMOR_PLATINUM = resource("accessories/platinum.png");
+    public static final ResourceLocation ARMOR_IRON = resource("accessories/iron_dragonarmor.png");
+    public static final ResourceLocation ARMOR_GOLD = resource("accessories/gold_dragonarmor.png");
+    public static final ResourceLocation ARMOR_DIAMOND = resource("accessories/diamond_dragonarmor.png");
+    public static final ResourceLocation ARMOR_PLATINUM = resource("accessories/platinum_dragonarmor.png");
     public static final ResourceLocation ARMOR_GEODE_BLUE = resource("accessories/armor_geode_blue.png");
     public static final ResourceLocation ARMOR_GEODE_RED = resource("accessories/armor_geode_red.png");
     public static final ResourceLocation ARMOR_GEODE_PURPLE = resource("accessories/armor_geode_purple.png");

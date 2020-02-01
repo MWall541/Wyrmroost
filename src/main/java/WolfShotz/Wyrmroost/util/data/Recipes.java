@@ -177,6 +177,23 @@ public class Recipes extends RecipeProvider
         //platinum
         makeToolSet(WRItems.PLATINUM_INGOT.get(), WRItems.PLATINUM_SWORD.get(), WRItems.PLATINUM_PICKAXE.get(), WRItems.PLATINUM_AXE.get(), WRItems.PLATINUM_SHOVEL.get(), WRItems.PLATINUM_HOE.get(), consumer);
         makeArmorSet(WRItems.PLATINUM_INGOT.get(), WRItems.PLATINUM_HELMET.get(), WRItems.PLATINUM_CHESTPLATE.get(), WRItems.PLATINUM_LEGGINGS.get(), WRItems.PLATINUM_BOOTS.get(), consumer);
+        //drake
+        ShapelessRecipeBuilder.shapelessRecipe(WRItems.DRAKE_HELMET.get())
+                .addIngredient(Items.IRON_HELMET).addIngredient(WRItems.DRAKE_BACKPLATE.get(), 3)
+                .addCriterion("has_item", hasItem(WRItems.DRAKE_BACKPLATE.get()))
+                .build(consumer);
+        ShapelessRecipeBuilder.shapelessRecipe(WRItems.DRAKE_CHESTPLATE.get())
+                .addIngredient(Items.IRON_CHESTPLATE).addIngredient(WRItems.DRAKE_BACKPLATE.get(), 6)
+                .addCriterion("has_item", hasItem(WRItems.DRAKE_BACKPLATE.get()))
+                .build(consumer);
+        ShapelessRecipeBuilder.shapelessRecipe(WRItems.DRAKE_LEGGINGS.get())
+                .addIngredient(Items.IRON_LEGGINGS).addIngredient(WRItems.DRAKE_BACKPLATE.get(), 5)
+                .addCriterion("has_item", hasItem(WRItems.DRAKE_BACKPLATE.get()))
+                .build(consumer);
+        ShapelessRecipeBuilder.shapelessRecipe(WRItems.DRAKE_BOOTS.get())
+                .addIngredient(Items.IRON_BOOTS).addIngredient(WRItems.DRAKE_BACKPLATE.get(), 2)
+                .addCriterion("has_item", hasItem(WRItems.DRAKE_BACKPLATE.get()))
+                .build(consumer);
 
         // Food
         foodCookRecipe(WRItems.MINUTUS.get(), WRItems.FOOD_COOKED_MINUTUS.get(), 0.35f, 200, "cookedminutus", consumer);

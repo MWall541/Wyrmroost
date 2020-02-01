@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "wyrmroost:item/tools/platinum/platinum_axe"
+    "layer0": "wyrmroost:item/platinum_axe"
   }
 }

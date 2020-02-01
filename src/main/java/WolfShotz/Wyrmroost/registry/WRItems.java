@@ -33,14 +33,15 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", new DragonStaffItem());
     
     public static final RegistryObject<Item> BLUE_GEODE = register("geode");
-    public static final RegistryObject<Item> RED_GEODE = register("geode_red");
-    public static final RegistryObject<Item> PURPLE_GEODE = register("geode_purple");
+    public static final RegistryObject<Item> RED_GEODE = register("red_geode");
+    public static final RegistryObject<Item> PURPLE_GEODE = register("purple_geode");
     public static final RegistryObject<Item> PLATINUM_INGOT = register("platinum_ingot");
     public static final RegistryObject<Item> BLUE_SHARD = register("blue_shard");
     public static final RegistryObject<Item> GREEN_SHARD = register("green_shard");
     public static final RegistryObject<Item> ORANGE_SHARD = register("orange_shard");
     public static final RegistryObject<Item> YELLOW_SHARD = register("yellow_shard");
     public static final RegistryObject<Item> ASH_PILE = register("ash_pile");
+    public static final RegistryObject<Item> DRAKE_BACKPLATE = register("drake_backplate");
     
     public static final RegistryObject<Item> BLUE_GEODE_SWORD = register("geode_sword", new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> BLUE_GEODE_PICKAXE = register("geode_pick", new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()));
@@ -52,25 +53,25 @@ public class WRItems
     public static final RegistryObject<Item> BLUE_GEODE_LEGGINGS = register("geode_leggings", new ItemArmorBase(ArmorMaterialList.GEODE, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> BLUE_GEODE_BOOTS = register("geode_boots", new ItemArmorBase(ArmorMaterialList.GEODE, EquipmentSlotType.FEET));
     
-    public static final RegistryObject<Item> RED_GEODE_SWORD = register("geode_red_sword", new SwordItem(ToolMaterialList.GEODERED, 4, -2.4f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> RED_GEODE_PICKAXE = register("geode_red_pickaxe", new PickaxeItem(ToolMaterialList.GEODERED, 2, -2.8f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> RED_GEODE_AXE = register("geode_red_axe", new AxeItem(ToolMaterialList.GEODERED, 2, -2.8f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> RED_GEODE_SHOVEL = register("geode_red_shovel", new ShovelItem(ToolMaterialList.GEODERED, 1.5f, -3.0f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> RED_GEODE_HOE = register("geode_red_hoe", new HoeItem(ToolMaterialList.GEODERED, 1.5f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> RED_GEODE_HELMET = register("geode_red_helmet", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.HEAD));
-    public static final RegistryObject<Item> RED_GEODE_CHESTPLATE = register("geode_red_chestplate", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.CHEST));
-    public static final RegistryObject<Item> RED_GEODE_LEGGINGS = register("geode_red_leggings", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.LEGS));
-    public static final RegistryObject<Item> RED_GEODE_BOOTS = register("geode_red_boots", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> RED_GEODE_SWORD = register("red_geode_sword", new SwordItem(ToolMaterialList.GEODERED, 4, -2.4f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> RED_GEODE_PICKAXE = register("red_geode_pickaxe", new PickaxeItem(ToolMaterialList.GEODERED, 2, -2.8f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> RED_GEODE_AXE = register("red_geode_axe", new AxeItem(ToolMaterialList.GEODERED, 2, -2.8f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> RED_GEODE_SHOVEL = register("red_geode_shovel", new ShovelItem(ToolMaterialList.GEODERED, 1.5f, -3.0f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> RED_GEODE_HOE = register("red_geode_hoe", new HoeItem(ToolMaterialList.GEODERED, 1.5f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> RED_GEODE_HELMET = register("red_geode_helmet", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.HEAD));
+    public static final RegistryObject<Item> RED_GEODE_CHESTPLATE = register("red_geode_chestplate", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.CHEST));
+    public static final RegistryObject<Item> RED_GEODE_LEGGINGS = register("red_geode_leggings", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.LEGS));
+    public static final RegistryObject<Item> RED_GEODE_BOOTS = register("red_geode_boots", new ItemArmorBase(ArmorMaterialList.GEODERED, EquipmentSlotType.FEET));
     
-    public static final RegistryObject<Item> PURPLE_GEODE_SWORD = register("geode_purple_sword", new SwordItem(ToolMaterialList.GEODEPURPLE, 4, -2.4f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE = register("geode_purple_pickaxe", new PickaxeItem(ToolMaterialList.GEODEPURPLE, 2, -2.8f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_AXE = register("geode_purple_axe", new AxeItem(ToolMaterialList.GEODEPURPLE, 2, -2.8f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_SHOVEL = register("geode_purple_shovel", new ShovelItem(ToolMaterialList.GEODEPURPLE, 1.5f, -3.0f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_HOE = register("geode_purple_hoe", new HoeItem(ToolMaterialList.GEODEPURPLE, 1.5f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_HELMET = register("geode_purple_helmet", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.HEAD));
-    public static final RegistryObject<Item> PURPLE_GEODE_CHESTPLATE = register("geode_purple_chestplate", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.CHEST));
-    public static final RegistryObject<Item> PURPLE_GEODE_LEGGINGS = register("geode_purple_leggings", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.LEGS));
-    public static final RegistryObject<Item> PURPLE_GEODE_BOOTS = register("geode_purple_boots", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> PURPLE_GEODE_SWORD = register("purple_geode_sword", new SwordItem(ToolMaterialList.GEODEPURPLE, 4, -2.4f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE = register("purple_geode_pickaxe", new PickaxeItem(ToolMaterialList.GEODEPURPLE, 2, -2.8f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_AXE = register("purple_geode_axe", new AxeItem(ToolMaterialList.GEODEPURPLE, 2, -2.8f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_SHOVEL = register("purple_geode_shovel", new ShovelItem(ToolMaterialList.GEODEPURPLE, 1.5f, -3.0f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_HOE = register("purple_geode_hoe", new HoeItem(ToolMaterialList.GEODEPURPLE, 1.5f, ModUtils.itemBuilder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_HELMET = register("purple_geode_helmet", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.HEAD));
+    public static final RegistryObject<Item> PURPLE_GEODE_CHESTPLATE = register("purple_geode_chestplate", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.CHEST));
+    public static final RegistryObject<Item> PURPLE_GEODE_LEGGINGS = register("purple_geode_leggings", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.LEGS));
+    public static final RegistryObject<Item> PURPLE_GEODE_BOOTS = register("purple_geode_boots", new ItemArmorBase(ArmorMaterialList.GEODEPURPLE, EquipmentSlotType.FEET));
     
     public static final RegistryObject<Item> PLATINUM_SWORD = register("platinum_sword", new SwordItem(ToolMaterialList.PLATINUM, 4, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_PICKAXE = register("platinum_pickaxe", new PickaxeItem(ToolMaterialList.PLATINUM, 2, -2.8f, ModUtils.itemBuilder()));
@@ -81,6 +82,11 @@ public class WRItems
     public static final RegistryObject<Item> PLATINUM_CHESTPLATE = register("platinum_chestplate", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> PLATINUM_LEGGINGS = register("platinum_leggings", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> PLATINUM_BOOTS = register("platinum_boots", new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET));
+
+    public static final RegistryObject<Item> DRAKE_HELMET = register("drake_helmet", new DrakeArmorItem(EquipmentSlotType.HEAD));
+    public static final RegistryObject<Item> DRAKE_CHESTPLATE = register("drake_chestplate", new DrakeArmorItem(EquipmentSlotType.CHEST));
+    public static final RegistryObject<Item> DRAKE_LEGGINGS = register("drake_leggings", new DrakeArmorItem(EquipmentSlotType.LEGS));
+    public static final RegistryObject<Item> DRAKE_BOOTS = register("drake_boots", new DrakeArmorItem(EquipmentSlotType.FEET));
 
     public static final RegistryObject<Item> FOOD_LOWTIER_MEAT_RAW = register("lowtier_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_LOWTIER_MEAT)));
     public static final RegistryObject<Item> FOOD_COMMON_MEAT_RAW = register("common_meat_raw", new Item(ModUtils.itemBuilder().food(WRItems.RAW_COMMON_MEAT)));
@@ -99,9 +105,9 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.GOLD));
     public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND = register("diamond_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.DIAMOND));
     public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PLATINUM));
-    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("geode_blue_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.BLUE_GEODE));
-    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("geode_red_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.RED_GEODE));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("geode_purple_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
+    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("bluegeode_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.BLUE_GEODE));
+    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("redgeode_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.RED_GEODE));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purplegeode_dragonarmor", new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
     
     public static final RegistryObject<Item> EGG_DRAKE = register("drake_egg", new CustomSpawnEggItem(WREntities.OVERWORLD_DRAKE::get, 0x788716, 0x3E623E));
     public static final RegistryObject<Item> EGG_MINUTUS = register("minutus_egg", new CustomSpawnEggItem(WREntities.MINUTUS::get, 0xD6BCBC, 0xDEB6C7));
