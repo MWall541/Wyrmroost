@@ -34,7 +34,7 @@ public class DrakeAttackGoal extends MeleeAttackGoal
         if (distToEnemySqr <= d0 && attackTick <= 0 && !drake.isRidingOrBeingRiddenBy(enemy) && drake.getAnimation() != OWDrakeEntity.HORN_ATTACK_ANIMATION)
         {
             NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.HORN_ATTACK_ANIMATION);
-            attackTick = 25;
+            attackTick = 10;
         }
     }
 }

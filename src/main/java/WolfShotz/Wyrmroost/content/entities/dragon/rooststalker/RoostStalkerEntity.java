@@ -8,8 +8,8 @@ import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
@@ -74,9 +74,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(9, new StoleItemFlee(this));
         goalSelector.addGoal(10, new DragonBreedGoal(this, false, false));
         goalSelector.addGoal(11, new ScavengeGoal(this, 1.1d, SCAVENGE_ANIMATION));
-        goalSelector.addGoal(12, SharedEntityGoals.wanderAvoidWater(this, 1d));
-        goalSelector.addGoal(13, SharedEntityGoals.lookAtNoSleeping(this, 5f));
-        goalSelector.addGoal(14, SharedEntityGoals.lookRandomlyNoSleeping(this));
+        goalSelector.addGoal(12, CommonEntityGoals.wanderAvoidWater(this, 1d));
+        goalSelector.addGoal(13, CommonEntityGoals.lookAt(this, 5f));
+        goalSelector.addGoal(14, CommonEntityGoals.lookRandomly(this));
         
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));

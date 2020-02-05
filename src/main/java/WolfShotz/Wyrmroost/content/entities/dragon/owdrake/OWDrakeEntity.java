@@ -7,10 +7,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonGrazeGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
@@ -89,20 +86,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
         goalSelector.addGoal(6, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
-        goalSelector.addGoal(11, SharedEntityGoals.wanderAvoidWater(this, 1));
-        goalSelector.addGoal(12, SharedEntityGoals.lookAtNoSleeping(this, 10f));
-        goalSelector.addGoal(12, SharedEntityGoals.lookRandomlyNoSleeping(this));
+        goalSelector.addGoal(11, new MoveTowardsHomePointGoal(this, 1));
+        goalSelector.addGoal(12, CommonEntityGoals.wanderAvoidWater(this, 1));
+        goalSelector.addGoal(13, CommonEntityGoals.lookAt(this, 10f));
+        goalSelector.addGoal(13, CommonEntityGoals.lookRandomly(this));
         
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this)
-        {
-            @Override
-            public boolean shouldExecute()
-            {
-                return super.shouldExecute() && !isChild();
-            }
-        });
+        targetSelector.addGoal(3, new HurtByTargetGoal(this) { @Override public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }});
         targetSelector.addGoal(4, new DrakeTargetGoal(this));
     }
     
@@ -120,7 +111,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
     
     // ================================
-    //           Entity NBT
+    //           Entity Data
     // ================================
     @Override
     protected void registerData()
@@ -223,19 +214,23 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 playSound(WRSounds.OWDRAKE_ROAR.get(), 2.5f, 1f);
             if (getAnimationTick() == 15)
             {
-                getEntitiesNearby(5).forEach(e -> { // Dont get too close now ;)
-                    if (e instanceof OWDrakeEntity) return;
+                for (Entity e : getEntitiesNearby(5)) // Dont get too close now ;)
+                {
+                    if (e instanceof OWDrakeEntity) continue;
                     double angle = (MathUtils.getAngle(posX, e.posX, posZ, e.posZ) + 90) * Math.PI / 180;
                     double x = 1.2 * (-Math.cos(angle));
                     double z = 1.2 * (-Math.sin(angle));
                     e.addVelocity(x, 0.4d, z);
-                });
+                }
             }
             if (getAnimationTick() > 15)
-                getEntitiesNearby(20, this).forEach(e -> {
-                    if (e instanceof LivingEntity && !(e instanceof OWDrakeEntity))
-                        ((LivingEntity) e).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120));
-                });
+            {
+                for (Entity e : getEntitiesNearby(20, this))
+                {
+                    if (!(e instanceof LivingEntity) || e instanceof OWDrakeEntity) continue;
+                    ((LivingEntity) e).addPotionEffect(new EffectInstance(Effects.SLOWNESS, 120));
+                }
+            }
         }
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8)
@@ -365,7 +360,21 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
-    
+
+    // Difference here is, Drakes patrol home points and shouldn't sleep unless sitting: they are hostile creatures
+    public boolean shouldSleep()
+    {
+        return (!isTamed() || isSitting())
+                && nocturnal == world.isDaytime()
+                && !isBeingRidden()
+                && getAttackTarget() == null
+                && getNavigator().noPath()
+                && !isAngry()
+                && !isInWaterOrBubbleColumn()
+                && !isFlying()
+                && getRNG().nextInt(300) == 0;
+    }
+
     @Override
     public boolean canFly()
     {

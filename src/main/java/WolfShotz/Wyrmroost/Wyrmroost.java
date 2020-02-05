@@ -31,6 +31,7 @@ import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -51,13 +52,15 @@ public class Wyrmroost
     
     public Wyrmroost()
     {
-        FMLJavaModLoadingContext.get().getModEventBus().register(Wyrmroost.class);
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        eventBus.register(Wyrmroost.class);
         
-        WREntities.ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        WRBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        WRItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        SetupIO.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        WRSounds.SOUNDS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        WREntities.ENTITIES.register(eventBus);
+        WRBlocks.BLOCKS.register(eventBus);
+        WRItems.ITEMS.register(eventBus);
+        SetupIO.CONTAINERS.register(eventBus);
+        WRSounds.SOUNDS.register(eventBus);
         ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost"));
         ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
         

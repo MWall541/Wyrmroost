@@ -4,9 +4,9 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.SharedEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
@@ -61,12 +61,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
         goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
-        goalSelector.addGoal(7, SharedEntityGoals.wanderAvoidWater(this, 1));
-        goalSelector.addGoal(8, SharedEntityGoals.lookAtNoSleeping(this, 7f));
-        goalSelector.addGoal(8, SharedEntityGoals.lookRandomlyNoSleeping(this));
+        goalSelector.addGoal(7, CommonEntityGoals.wanderAvoidWater(this, 1));
+        goalSelector.addGoal(8, CommonEntityGoals.lookAt(this, 7f));
+        goalSelector.addGoal(8, CommonEntityGoals.lookRandomly(this));
         
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
-        targetSelector.addGoal(2, SharedEntityGoals.nonTamedTargetGoal(this, PlayerEntity.class, 2, true, true, EntityPredicates.CAN_AI_TARGET));
+        targetSelector.addGoal(2, CommonEntityGoals.nonTamedTargetGoal(this, PlayerEntity.class, 2, true, true, EntityPredicates.CAN_AI_TARGET));
     }
     
     @Override

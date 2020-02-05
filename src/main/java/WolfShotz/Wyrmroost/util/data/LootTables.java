@@ -126,7 +126,7 @@ public class LootTables extends LootTableProvider
             registerLootTable(WREntities.OVERWORLD_DRAKE.get(), LootTable.builder()
                     .addLootPool(lootTable().addEntry(item(Items.LEATHER, 1f, 16f).acceptFunction(looting(1f, 4f))))
                     .addLootPool(lootTable().addEntry(item(WRItems.FOOD_COMMON_MEAT_RAW.get(), 2f, 6f).acceptFunction(onFireCondition()).acceptFunction(looting(1f, 4f))))
-                    .addLootPool(lootTable().addEntry(ItemLootEntry.builder(WRItems.DRAKE_BACKPLATE.get())).acceptCondition(KilledByPlayer.builder()).acceptCondition(RandomChanceWithLooting.builder(0.345f, 0.03f)))
+                    .addLootPool(lootTable().addEntry(ItemLootEntry.builder(WRItems.DRAKE_BACKPLATE.get())).acceptCondition(KilledByPlayer.builder()).acceptCondition(RandomChanceWithLooting.builder(0.65f, 0.03f)))
             );
             registerLootTable(WREntities.ROOSTSTALKER.get(), LootTable.builder()
                     .addLootPool(lootTable().addEntry(item(Items.GOLD_NUGGET, 0f, 4f).acceptFunction(looting(1f, 3f))))

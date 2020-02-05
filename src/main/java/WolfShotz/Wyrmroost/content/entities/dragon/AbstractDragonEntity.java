@@ -3,7 +3,9 @@ package WolfShotz.Wyrmroost.content.entities.dragon;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
+import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
@@ -12,6 +14,7 @@ import WolfShotz.Wyrmroost.util.entityutils.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -26,7 +29,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -56,10 +58,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -74,7 +73,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public List<String> immunes = new ArrayList<>();
     public LazyOptional<ItemStackHandler> invHandler = createInv();
     public DragonEggProperties eggProperties = createEggProperties();
-    
+
     // Dragon Entity Animations
     public int animationTick;
     public Animation animation = NO_ANIMATION;
@@ -87,6 +86,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> FLYING = createKey(DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SLEEPING = createKey(DataSerializers.BOOLEAN);
     public static final DataParameter<Integer> VARIANT = createKey(DataSerializers.VARINT);
+    public static final DataParameter<Optional<BlockPos>> HOME_POS = createKey(DataSerializers.OPTIONAL_BLOCK_POS);
     
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -149,6 +149,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.register(SPECIAL, getSpecialChances() != 0 && getRNG().nextInt(getSpecialChances()) == 0);
         dataManager.register(FLYING, false);
         dataManager.register(SLEEPING, false);
+        dataManager.register(HOME_POS, Optional.empty());
     }
     
     /**
@@ -160,6 +161,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         nbt.putBoolean("special", isSpecial());
         nbt.putBoolean("sleeping", isSleeping());
         invHandler.ifPresent(i -> nbt.put("inv", i.serializeNBT()));
+        getHomePos().ifPresent(blockPos -> {
+            BlockPos pos = getHomePos().get();
+            nbt.putIntArray("homePos", new int[] {pos.getY(), pos.getY(), pos.getZ()});
+        });
         
         super.writeAdditional(nbt);
     }
@@ -173,6 +178,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setSpecial(nbt.getBoolean("special"));
         dataManager.set(SLEEPING, nbt.getBoolean("sleeping")); // Use data manager: Setter method controls animation
         invHandler.ifPresent(i -> i.deserializeNBT(nbt.getCompound("inv")));
+        if (nbt.contains("homePos"))
+        {
+            int[] homePos = nbt.getIntArray("homePos");
+            setHomePos(new BlockPos(homePos[0], homePos[1], homePos[2]));
+        }
+        else setHomePos(Optional.empty());
         
         super.readAdditional(nbt);
     }
@@ -271,7 +282,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         try
         {
             return getInvHandler().map(i -> (DragonArmorItem) i.getStackInSlot(1).getItem()).orElseThrow(() -> new IllegalArgumentException("Item in slot is not instanceof DragonArmorItem!"));
-        } catch (Exception ignore)
+        }
+        catch (Exception ignore)
         {
             return null;
         }
@@ -354,7 +366,22 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (angry) dataManager.set(TAMED, (byte) (b0 | 2));
         else dataManager.set(TAMED, (byte) (b0 & -3));
     }
-    
+
+    public void setHomePos(Optional<BlockPos> homePos)
+    {
+        dataManager.set(HOME_POS, homePos);
+    }
+
+    public void setHomePos(BlockPos homePos)
+    {
+        setHomePos(Optional.of(homePos));
+    }
+
+    public Optional<BlockPos> getHomePos()
+    {
+        return dataManager.get(HOME_POS);
+    }
+
     /**
      * Get the inventory (IItemHandler) if it exists
      */
@@ -421,7 +448,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isServerWorld())
         {
             if (!isSleeping() && --sleepCooldown <= 0 && shouldSleep()) setSleeping(true);
-            else if (isSleeping() && nocturnal != world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
+            else if (isSleeping())
+            {
+                if (isWithinHomeDistanceFromPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
+                if (nocturnal != world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
+            }
         }
         else
         {
@@ -453,7 +484,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (isInteractItem(stack) && stack.interactWithEntity(player, this, hand)) return true;
+        if (stack.interactWithEntity(player, this, hand)) return true;
         
         if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player))
         {
@@ -484,7 +515,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         return false;
     }
-    
+
+    // Overload to make processInteract way less annoying
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand)
     {
@@ -492,17 +524,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         setSleeping(false);
         return true;
-    }
-    
-    /**
-     * Helper method to determine whether this item stack should interact with this dragon
-     */
-    public boolean isInteractItem(ItemStack stack)
-    {
-        Item item = stack.getItem();
-        return item == Items.NAME_TAG
-                       || item == WRItems.DRAGON_STAFF.get()
-                       || item == WRItems.SOUL_CRYSTAL.get();
     }
     
     public ItemStack getStackInSlot(int slot)
@@ -581,7 +602,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
         }
     }
-    
+
+    @Override
+    public boolean isGlowing()
+    {
+        if (!world.isRemote) return super.isGlowing();
+        PlayerEntity player = Minecraft.getInstance().player;
+        ItemStack stack = ModUtils.getHeldStack(player, DragonStaffItem.class);
+        return stack.getItem() instanceof DragonStaffItem && Objects.equals(((DragonStaffItem) stack.getItem()).getDragon(stack, ModUtils.getServerWorld(player)), this) || super.isGlowing();
+    }
+
     /**
      * Spawn drops that may not be able to be covered in the loot table
      */
@@ -631,7 +661,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         
         return false;
     }
-    
+
+    public boolean isWithinHomeDistanceFromPosition()
+    {
+        return !getHomePos().isPresent() || getHomePos().get().distanceSq(getPosition()) < (ConfigData.homeRadius * ConfigData.homeRadius);
+    }
+
     /**
      * Public access version of {@link Entity#setRotation}
      */
@@ -884,7 +919,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean shouldSleep()
     {
-        return (!isTamed() || isSitting())
+        return (!isTamed() || isSitting() || getHomePos().isPresent())
                        && nocturnal == world.isDaytime()
                        && !isBeingRidden()
                        && getAttackTarget() == null
@@ -965,6 +1000,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     
     /**
      * Custom dragon spawn packet. (Bullshit, but) Needed because of inventory handling
+     * TODO yeah completely reevalute what to do here: we shouldnt need to do this, somethings wrong
      */
     @Override
     public IPacket<?> createSpawnPacket()
@@ -980,7 +1016,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
     
     /**
-     * A gui created when right clicked by a {@link WRItems.DRAGON_STAFF}
+     * A gui created when right clicked by a {@link WRItems#DRAGON_STAFF}
      */
     @Nullable
     @Override

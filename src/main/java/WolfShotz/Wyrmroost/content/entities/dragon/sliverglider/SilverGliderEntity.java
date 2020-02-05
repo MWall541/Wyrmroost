@@ -68,11 +68,11 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(4, SharedEntityGoals.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
+        goalSelector.addGoal(4, CommonEntityGoals.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
-        goalSelector.addGoal(10, SharedEntityGoals.lookAtNoSleeping(this, 10f));
+        goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this)
         {
             @Override

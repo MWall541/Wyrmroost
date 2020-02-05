@@ -97,7 +97,7 @@ public class Models
             super(generator, Wyrmroost.MOD_ID, existingFileHelper);
         }
 
-        private static final List<Item> IGNORE = Lists.newArrayList(WRItems.MINUTUS.get(), WRItems.DRAGON_EGG.get());
+        private static final List<Item> IGNORE = Lists.newArrayList(WRItems.MINUTUS.get(), WRItems.DRAGON_EGG.get(), WRItems.DRAGON_STAFF.get());
         static
         {
             IGNORE.addAll(ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(BlockItem.class::isInstance).collect(Collectors.toList()));
@@ -128,11 +128,13 @@ public class Models
                 getBuilder(path.getPath()).parent(model);
             }
 
+            // Eggs
             for (CustomSpawnEggItem item : CustomSpawnEggItem.EGG_TYPES)
             {
                 getBuilder(item.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
             }
 
+            // Dragon Egg
             getBuilder(WRItems.DRAGON_EGG.get().getRegistryName().getPath()) // TODO
                     .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
                     .transforms()
@@ -143,92 +145,24 @@ public class Models
                         .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
                         .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f);
 
-            getBuilder("minutus_alive").texture("layer0", resource("minutus_alive"));
+            // Minutus
+            getBuilder("minutus_alive")
+                    .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+                    .texture("layer0", resource("minutus_alive"));
             item(WRItems.MINUTUS.get())
                     .override()
                     .predicate(ModUtils.resource("isalive"), 1)
                     .model(new ModelFile.UncheckedModelFile(resource("minutus_alive")));
 
+            getBuilder(WRItems.DRAGON_STAFF.get().getRegistryName().getPath())
+                    .parent(new ModelFile.UncheckedModelFile("item/handheld"))
+                    .texture("layer0", resource(WRItems.DRAGON_STAFF.get().getRegistryName().getPath()));
+
+            // All items that do not require custom attention
             ModUtils.getRegistryEntries(WRItems.ITEMS)
                     .stream()
                     .filter(e -> !IGNORE.contains(e))
                     .forEach(this::item);
-
-//            item(WRItems.TARRAGON_TOME.get(), "tarragon_tome");
-//            item(WRItems.SOUL_CRYSTAL.get(), "tools/soul_crystal");
-//            item(WRItems.DRAGON_STAFF.get(), "tools/dragon_staff");
-//
-//            item(WRItems.BLUE_GEODE.get(), "materials/blue_geode");
-//            item(WRItems.RED_GEODE.get(), "materials/red_geode");
-//            item(WRItems.PURPLE_GEODE.get(), "materials/purple_geode");
-//            item(WRItems.PLATINUM_INGOT.get(), "materials/platinum_ingot");
-//            item(WRItems.BLUE_SHARD.get(), "materials/blue_shard");
-//            item(WRItems.GREEN_SHARD.get(), "materials/green_shard");
-//            item(WRItems.ORANGE_SHARD.get(), "materials/orange_shard");
-//            item(WRItems.YELLOW_SHARD.get(), "materials/yellow_shard");
-//            item(WRItems.ASH_PILE.get(), "materials/ash_pile");
-//            item(WRItems.DRAKE_BACKPLATE.get(), "materials/")
-//
-//            handHeld(WRItems.BLUE_GEODE_SWORD.get(), "tools/geode/blue/blue_geode_sword");
-//            handHeld(WRItems.BLUE_GEODE_PICKAXE.get(), "tools/geode/blue/blue_geode_pickaxe");
-//            handHeld(WRItems.BLUE_GEODE_AXE.get(), "tools/geode/blue/blue_geode_axe");
-//            handHeld(WRItems.BLUE_GEODE_SHOVEL.get(), "tools/geode/blue/blue_geode_shovel");
-//            handHeld(WRItems.BLUE_GEODE_HOE.get(), "tools/geode/blue/blue_geode_hoe");
-//            item(WRItems.BLUE_GEODE_HELMET.get(), "tools/geode/blue/blue_geode_helmet");
-//            item(WRItems.BLUE_GEODE_CHESTPLATE.get(), "tools/geode/blue/blue_geode_chestplate");
-//            item(WRItems.BLUE_GEODE_LEGGINGS.get(), "tools/geode/blue/blue_geode_leggings");
-//            item(WRItems.BLUE_GEODE_BOOTS.get(), "tools/geode/blue/blue_geode_boots");
-//
-//            handHeld(WRItems.RED_GEODE_SWORD.get(), "tools/geode/red/red_geode_sword");
-//            handHeld(WRItems.RED_GEODE_PICKAXE.get(), "tools/geode/red/red_geode_pickaxe");
-//            handHeld(WRItems.RED_GEODE_AXE.get(), "tools/geode/red/red_geode_axe");
-//            handHeld(WRItems.RED_GEODE_SHOVEL.get(), "tools/geode/red/red_geode_shovel");
-//            handHeld(WRItems.RED_GEODE_HOE.get(), "tools/geode/red/red_geode_hoe");
-//            item(WRItems.RED_GEODE_HELMET.get(), "tools/geode/red/red_geode_helmet");
-//            item(WRItems.RED_GEODE_CHESTPLATE.get(), "tools/geode/red/red_geode_chestplate");
-//            item(WRItems.RED_GEODE_LEGGINGS.get(), "tools/geode/red/red_geode_leggings");
-//            item(WRItems.RED_GEODE_BOOTS.get(), "tools/geode/red/red_geode_boots");
-//
-//            handHeld(WRItems.PURPLE_GEODE_SWORD.get(), "tools/geode/purple/purple_geode_sword");
-//            handHeld(WRItems.PURPLE_GEODE_PICKAXE.get(), "tools/geode/purple/purple_geode_pickaxe");
-//            handHeld(WRItems.PURPLE_GEODE_AXE.get(), "tools/geode/purple/purple_geode_axe");
-//            handHeld(WRItems.PURPLE_GEODE_SHOVEL.get(), "tools/geode/purple/purple_geode_shovel");
-//            handHeld(WRItems.PURPLE_GEODE_HOE.get(), "tools/geode/purple/purple_geode_hoe");
-//            item(WRItems.PURPLE_GEODE_HELMET.get(), "tools/geode/purple/purple_geode_helmet");
-//            item(WRItems.PURPLE_GEODE_CHESTPLATE.get(), "tools/geode/purple/purple_geode_chestplate");
-//            item(WRItems.PURPLE_GEODE_LEGGINGS.get(), "tools/geode/purple/purple_geode_leggings");
-//            item(WRItems.PURPLE_GEODE_BOOTS.get(), "tools/geode/purple/purple_geode_boots");
-//
-//            handHeld(WRItems.PLATINUM_SWORD.get(), "tools/platinum/platinum_sword");
-//            handHeld(WRItems.PLATINUM_PICKAXE.get(), "tools/platinum/platinum_pickaxe");
-//            handHeld(WRItems.PLATINUM_AXE.get(), "tools/platinum/platinum_axe");
-//            handHeld(WRItems.PLATINUM_SHOVEL.get(), "tools/platinum/platinum_shovel");
-//            handHeld(WRItems.PLATINUM_HOE.get(), "tools/platinum/platinum_hoe");
-//            item(WRItems.PLATINUM_HELMET.get(), "tools/platinum/platinum_helmet");
-//            item(WRItems.PLATINUM_CHESTPLATE.get(), "tools/platinum/platinum_chestplate");
-//            item(WRItems.PLATINUM_LEGGINGS.get(), "tools/platinum/platinum_leggings");
-//            item(WRItems.PLATINUM_BOOTS.get(), "tools/platinum/platinum_boots");
-//
-////            item(WRItems.FOOD_LOWTIER_MEAT_RAW.get(), "food/lowtier_meat_raw");
-//            item(WRItems.FOOD_COMMON_MEAT_RAW.get(), "food/common_meat_raw");
-////            item(WRItems.FOOD_APEX_MEAT_RAW.get(), "food/apex_meat_raw");
-////            item(WRItems.FOOD_BEHEMOTH_MEAT_RAW.get(), "food/behemoth_meat_raw");
-////            item(WRItems.FOOD_LOWTIER_MEAT_COOKED.get(), "food/lowtier_meat_cooked");
-//            item(WRItems.FOOD_COMMON_MEAT_COOKED.get(), "food/common_meat_cooked");
-////            item(WRItems.FOOD_APEX_MEAT_COOKED.get(), "food/apex_meat_cooked");
-////            item(WRItems.FOOD_BEHEMOTH_MEAT_COOKED.get(), "food/behemoth_meat_cooked");
-//            item(WRItems.FOOD_COOKED_MINUTUS.get(), "minutus/cooked_minutus");
-//            item(WRItems.FOOD_JEWELLED_APPLE.get(), "food/jewelled_apple_blue");
-//            item(WRItems.FOOD_DRAGON_FRUIT.get(), "food/dragon_fruit");
-//            item(WRItems.FOOD_BLUEBERRIES.get(), "food/blueberries");
-//
-//            item(WRItems.DRAGON_ARMOR_IRON.get(), "tools/dragonarmors/iron");
-//            item(WRItems.DRAGON_ARMOR_GOLD.get(), "tools/dragonarmors/gold");
-//            item(WRItems.DRAGON_ARMOR_DIAMOND.get(), "tools/dragonarmors/diamond");
-//            item(WRItems.DRAGON_ARMOR_PLATINUM.get(), "tools/dragonarmors/platinum");
-//            item(WRItems.DRAGON_ARMOR_BLUE_GEODE.get(), "tools/dragonarmors/blue_geode");
-//            item(WRItems.DRAGON_ARMOR_RED_GEODE.get(), "tools/dragonarmors/red_geode");
-//            item(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get(), "tools/dragonarmors/purple_geode");
         }
 
         protected ItemModelBuilder item(Item item)
