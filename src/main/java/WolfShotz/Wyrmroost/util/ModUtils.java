@@ -5,8 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -18,10 +20,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +33,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -102,17 +105,25 @@ public class ModUtils
                        .clientAcceptedVersions(versionSync::equals)
                        .serverAcceptedVersions(versionSync::equals)
                        .networkProtocolVersion(() -> versionSync)
-                       .simpleChannel();
+                .simpleChannel();
     }
-    
+
     /**
      * Get the Client World
      */
-    public static World getClientWorld()
+    public static ClientWorld getClientWorld()
     {
         return Minecraft.getInstance().world;
     }
-    
+
+    /**
+     * Get the Server World
+     */
+    public static ServerWorld getServerWorld(PlayerEntity player)
+    {
+        return ServerLifecycleHooks.getCurrentServer().func_71218_a(player.dimension);
+    }
+
     /**
      * Merge all elements from passed sets into one set.
      *
@@ -133,14 +144,21 @@ public class ModUtils
     }
 
     /**
-     * Cleander way of making array's from collections
+     * Checks both hands of the passed player for an item that is instance of itemClass.
+     * If one hand has one, return that ItemStack, else return the main hands stack.
+     *
+     * @param player    the player
+     * @param itemClass the class were checking instanceof
+     * @param <T>       Type of item
+     * @return An ItemStack which
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T[] toArray(Collection<T> collection)
+    public static <T extends Item> ItemStack getHeldStack(PlayerEntity player, Class<T> itemClass)
     {
-        return (T[]) collection.toArray();
+        ItemStack main = player.getHeldItemMainhand();
+        ItemStack off = player.getHeldItemOffhand();
+        return itemClass.isInstance(main.getItem()) ? main : itemClass.isInstance(off.getItem()) ? off : main;
     }
-    
+
     /**
      * Get an entity type by a string "key"
      */

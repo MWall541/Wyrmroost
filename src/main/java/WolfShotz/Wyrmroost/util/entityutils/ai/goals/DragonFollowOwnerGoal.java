@@ -50,7 +50,7 @@ public class DragonFollowOwnerGoal extends Goal
      */
     public boolean shouldExecute()
     {
-        if (dragon.isSleeping()) return false;
+        if (dragon.isSleeping() || dragon.getHomePos().isPresent()) return false;
         
         LivingEntity preOwner = dragon.getOwner();
         
