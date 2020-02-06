@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
@@ -8,12 +9,14 @@ import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.SyncedItemStackHandler;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
+import WolfShotz.Wyrmroost.util.network.messages.SyncItemStackMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -30,8 +33,6 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -51,27 +52,23 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.*;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedObject, INamedContainerProvider, IEntityAdditionalSpawnData
+public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedObject, INamedContainerProvider, SyncedItemStackHandler.IInventoryListener
 {
     public static final UUID ARMOR_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     public int shouldFlyThreshold = 3;
     public int sleepCooldown;
-    public boolean nocturnal = false;
     public List<String> immunes = new ArrayList<>();
-    public LazyOptional<ItemStackHandler> invHandler = createInv();
+    public LazyOptional<SyncedItemStackHandler> invHandler = createInv(); // TODO fix on world load inventory issues
     public DragonEggProperties eggProperties = createEggProperties();
 
     // Dragon Entity Animations
@@ -79,7 +76,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public Animation animation = NO_ANIMATION;
     public static Animation SLEEP_ANIMATION;
     public static Animation WAKE_ANIMATION;
-    
+
     // Dragon Entity Data
     public static final DataParameter<Boolean> GENDER = createKey(DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SPECIAL = createKey(DataSerializers.BOOLEAN);
@@ -87,18 +84,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> SLEEPING = createKey(DataSerializers.BOOLEAN);
     public static final DataParameter<Integer> VARIANT = createKey(DataSerializers.VARINT);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = createKey(DataSerializers.OPTIONAL_BLOCK_POS);
-    
+
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
-        
+
         setTamed(false);
-        
+
         moveController = new FlightMovementController(this);
         lookController = new DragonLookController(this);
         stepHeight = 1;
+
+        invHandler.ifPresent(i -> i.addListener(this));
     }
-    
+
     /**
      * Register the AI Goals
      */
@@ -108,7 +107,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(2, sitGoal = new SitGoal(this));
     }
-    
+
     /**
      * If this dragon flies, obtain the flight movement controller
      * Note: This should only be called if we're sure this dragon can fly. So run a check first! ({@code canFly()})
@@ -124,7 +123,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             throw new ClassCastException("moveController is not a Flight Movement Controller!");
         }
     }
-    
+
     /**
      * Needed because the field is private >.>
      */
@@ -133,11 +132,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return new DragonBodyController(this);
     }
-    
+
     // ================================
     //           Entity NBT
     // ================================
-    
+
     /**
      * Register the NBT data
      */
@@ -145,13 +144,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerData()
     {
         super.registerData();
-        
+
         dataManager.register(SPECIAL, getSpecialChances() != 0 && getRNG().nextInt(getSpecialChances()) == 0);
         dataManager.register(FLYING, false);
         dataManager.register(SLEEPING, false);
         dataManager.register(HOME_POS, Optional.empty());
     }
-    
+
     /**
      * Sava data
      */
@@ -163,12 +162,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         invHandler.ifPresent(i -> nbt.put("inv", i.serializeNBT()));
         getHomePos().ifPresent(blockPos -> {
             BlockPos pos = getHomePos().get();
-            nbt.putIntArray("homePos", new int[] {pos.getY(), pos.getY(), pos.getZ()});
+            nbt.putIntArray("homePos", new int[]{pos.getY(), pos.getY(), pos.getZ()});
         });
-        
+
         super.writeAdditional(nbt);
     }
-    
+
     /**
      * Load data
      */
@@ -184,10 +183,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             setHomePos(new BlockPos(homePos[0], homePos[1], homePos[2]));
         }
         else setHomePos(Optional.empty());
-        
+
         super.readAdditional(nbt);
     }
-    
+
     /**
      * Gets the Gender of the dragonEntity. <P>
      * true = Male | false = Female. Anything else is an abomination.
@@ -197,17 +196,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         try
         {
             return dataManager.get(GENDER);
-        } catch (NullPointerException ignore)
+        }
+        catch (NullPointerException ignore)
         {
             return true;
         }
     }
-    
+
     public void setGender(boolean sex)
     {
         dataManager.set(GENDER, sex);
     }
-    
+
     /**
      * Whether or not this dragonEntity is albino. true == isSpecial, false == is not
      */
@@ -215,17 +215,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return dataManager.get(SPECIAL);
     }
-    
+
     public void setSpecial(boolean albino)
     {
         dataManager.set(SPECIAL, albino);
     }
-    
+
     public int getSpecialChances()
     {
         return rand.nextInt(400) + 100;
     }
-    
+
     /**
      * Whether or not the dragon is flying
      */
@@ -233,7 +233,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return dataManager.get(FLYING);
     }
-    
+
     public void setFlying(boolean fly)
     {
         if (isFlying() == fly) return;
@@ -241,9 +241,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         {
             getNavigator().clearPath();
             dataManager.set(FLYING, true);
-        } else dataManager.set(FLYING, false);
+        }
+        else dataManager.set(FLYING, false);
     }
-    
+
     /**
      * Whether or not the dragon is saddled
      */
@@ -251,7 +252,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return getInvHandler().map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false);
     }
-    
+
     /**
      * Get the variant of the dragon (if it has them)
      */
@@ -260,23 +261,24 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         try
         {
             return dataManager.get(VARIANT);
-        } catch (NullPointerException ignore)
+        }
+        catch (NullPointerException ignore)
         {
             return 0;
         }
     }
-    
+
     public void setVariant(int variant)
     {
         if (getVariant() == variant) return;
         dataManager.set(VARIANT, variant);
     }
-    
+
     public boolean hasArmor()
     {
         return getArmor() != null;
     }
-    
+
     public DragonArmorItem getArmor()
     {
         try
@@ -288,22 +290,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return null;
         }
     }
-    
+
     public void setArmored()
     {
         if (!world.isRemote)
         {
             IAttributeInstance armor = getAttribute(SharedMonsterAttributes.ARMOR);
-            
+
             if (hasArmor())
             {
                 armor.removeModifier(ARMOR_UUID);
                 armor.applyModifier(new AttributeModifier("Armor Modifier", getArmor().getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(true));
                 playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
-            } else armor.removeModifier(ARMOR_UUID);
+            }
+            else armor.removeModifier(ARMOR_UUID);
         }
     }
-    
+
     /**
      * Whether or not the dragon is sleeping.
      */
@@ -312,43 +315,39 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return dataManager.get(SLEEPING);
     }
-    
-    public void setSleeping(boolean sleep)
-    { // If we have a sleep animation, then play it.
+
+    public void setSleeping(boolean sleep) // If we have a sleep animation, then play it.
+    {
         if (isSleeping() == sleep || world.isRemote) return;
-        
+
         dataManager.set(SLEEPING, sleep);
-        isJumping = false;
-        navigator.clearPath();
-        setAttackTarget(null);
+        clearAI();
         if (!sleep) sleepCooldown = 350;
         if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null && noActiveAnimation())
-            NetworkUtils.sendAnimationPacket(this, sleep? SLEEP_ANIMATION : WAKE_ANIMATION);
-        
+            NetworkUtils.sendAnimationPacket(this, sleep ? SLEEP_ANIMATION : WAKE_ANIMATION);
+
         recalculateSize(); // Change the hitbox for sitting / sleeping
     }
-    
+
     /**
      * Setter for dragon sitting
      */
     public void setSit(boolean sitting)
     {
         if (isSitting() == sitting) return;
-        
+
         if (isSleeping()) setSleeping(false);
         if (!world.isRemote)
         {
             sitGoal.setSitting(sitting);
-            isJumping = false;
-            navigator.clearPath();
-            setAttackTarget(null);
+            clearAI();
         }
-        
+
         super.setSitting(sitting);
-        
+
         recalculateSize(); // Change the hitbox for sitting / sleeping
     }
-    
+
     /**
      * Whether or not the dragonEntity is pissed or not.
      */
@@ -356,13 +355,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return (dataManager.get(TAMED) & 2) != 0;
     }
-    
+
     public void setAngry(boolean angry)
     {
         if (isAngry() == angry) return;
-        
+
         byte b0 = dataManager.get(TAMED);
-        
+
         if (angry) dataManager.set(TAMED, (byte) (b0 | 2));
         else dataManager.set(TAMED, (byte) (b0 & -3));
     }
@@ -385,58 +384,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Get the inventory (IItemHandler) if it exists
      */
-    public LazyOptional<ItemStackHandler> getInvHandler()
+    public LazyOptional<SyncedItemStackHandler> getInvHandler()
     {
         return invHandler.cast();
     }
-    
+
     /**
      * Create an inventory (ItemStackHandler)
      */
-    public LazyOptional<ItemStackHandler> createInv()
+    public LazyOptional<SyncedItemStackHandler> createInv()
     {
         return LazyOptional.empty();
     }
-    
-    /**
-     * Called by the server when constructing the spawn packet.
-     * Data should be added to the provided stream.
-     */
-    @Override
-    public void writeSpawnData(PacketBuffer buf)
-    {
-        invHandler.ifPresent(i -> buf.writeCompoundTag(i.serializeNBT()));
-        try
-        {
-            dataManager.writeEntries(buf);
-        }
-        catch (IOException exc)
-        {
-            throw new RuntimeException("Could not write dataManager data");
-        }
-    }
-    
-    /**
-     * Called by the client when it receives a Entity spawn packet.
-     * Data should be read out of the stream in the same way as it was written.
-     */
-    @Override
-    @SuppressWarnings("ConstantConditions")
-    public void readSpawnData(PacketBuffer buf)
-    {
-        try
-        {
-            invHandler.ifPresent(i -> i.deserializeNBT(buf.readCompoundTag()));
-            dataManager.setEntryValues(EntityDataManager.readEntries(buf));
-        }
-        catch (Exception exc)
-        {
-            throw new RuntimeException("Could not read client spawn packet");
-        }
-    }
-    
+
     // ================================
-    
+
     /**
      * Called frequently so the entity can update its state every tick as required.
      */
@@ -444,22 +406,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void livingTick()
     {
         super.livingTick();
-        
+
         if (isServerWorld())
         {
-            if (!isSleeping() && --sleepCooldown <= 0 && shouldSleep()) setSleeping(true);
-            else if (isSleeping())
-            {
-                if (isWithinHomeDistanceFromPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
-                if (nocturnal != world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
-            }
+            handleSleep();
+            if (isSleeping() && isWithinHomeDistanceFromPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
         }
         else
         {
             if (isSpecial()) doSpecialEffects();
         }
     }
-    
+
     /**
      * Called to update the entity's position/logic.
      */
@@ -467,14 +425,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void tick()
     {
         super.tick();
-        
+
         if (getAnimation() != NO_ANIMATION)
         {
             ++animationTick;
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
     }
-    
+
     /**
      * Called when the player interacts with this dragon
      *
@@ -485,34 +443,34 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (stack.interactWithEntity(player, this, hand)) return true;
-        
+
         if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player))
         {
             eat(stack);
             setInLove(player);
-            
+
             return true;
         }
-        
+
         if (isFoodItem(stack) && isTamed())
         {
-            
+
             if (getHealth() < getMaxHealth())
             {
                 eat(stack);
-                
+
                 return true;
             }
-            
+
             if (isChild())
             {
                 ageUp((int) ((float) (-getGrowingAge() / 20) * 0.1F), true);
                 eat(stack);
-                
+
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -521,34 +479,45 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean processInteract(PlayerEntity player, Hand hand)
     {
         if (!processInteract(player, hand, player.getHeldItem(hand))) return false;
-        
+
         setSleeping(false);
         return true;
     }
-    
+
+    @Override
+    public void onContentsChanged(SyncedItemStackHandler handler)
+    {
+        ModUtils.L.info(invHandler.map(i -> i.getStackInSlot(0)).orElse(ItemStack.EMPTY));
+        if (!world.isRemote)
+            Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new SyncItemStackMessage(this));
+    }
+
     public ItemStack getStackInSlot(int slot)
     {
         return getInvHandler().map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
     }
-    
+
     public void setStackInSlot(int slot, ItemStack stack)
     {
         getInvHandler().ifPresent(i -> i.setStackInSlot(slot, stack));
     }
-    
+
     /**
      * Get all entities in a given range in front of this entity and damage all within it
+     * TODO fix for range
      */
     public void attackInFront(int range)
     {
-        AxisAlignedBB aabb = new AxisAlignedBB(getPosition().offset(getHorizontalFacing(), range + range)).grow(range, 0, range);
+        AxisAlignedBB size = getBoundingBox();
+        AxisAlignedBB aabb = size.offset(MathUtils.calculateYawAngle(renderYawOffset, 0, size.getXSize()));
+
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
-        
+
         if (livingEntities.isEmpty()) return;
-        
+
         livingEntities.forEach(this::attackEntityAsMob);
     }
-    
+
     /**
      * Called to damage entites
      */
@@ -558,10 +527,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (entity == getOwner()) return false;
         if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner())
             return false;
-        
+
         return super.attackEntityAsMob(entity);
     }
-    
+
     /**
      * Whether the dragon should attack or not
      */
@@ -570,10 +539,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (!isTamed()) return true;
         if (target instanceof TameableEntity) return ((TameableEntity) target).getOwner() != owner;
-        
+
         return true;
     }
-    
+
     /**
      * Called when the entity is attacked by something
      */
@@ -582,10 +551,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         setSleeping(false);
         setSit(false);
-        
+
         return super.attackEntityFrom(source, amount);
     }
-    
+
     /**
      * Effects to play when the dragon is 'Special'
      * Default to white sparkles around the body.
@@ -609,7 +578,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (!world.isRemote) return super.isGlowing();
         PlayerEntity player = Minecraft.getInstance().player;
         ItemStack stack = ModUtils.getHeldStack(player, DragonStaffItem.class);
-        return stack.getItem() instanceof DragonStaffItem && Objects.equals(((DragonStaffItem) stack.getItem()).getDragon(stack, ModUtils.getServerWorld(player)), this) || super.isGlowing();
+        return stack.getItem() instanceof DragonStaffItem && Objects.equals(DragonStaffItem.getDragon(stack, ModUtils.getServerWorld(player)), this) || super.isGlowing();
     }
 
     /**
@@ -623,7 +592,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         });
         super.spawnDrops(src);
     }
-    
+
     /**
      * Try to teleport to this owners position after a search for a safe location
      */
@@ -633,7 +602,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (owner == null) return;
         tryTeleportToPos(owner.getPosition().add(-2, 0, -2));
     }
-    
+
     /**
      * Try teleporting to a pos after a search for a safe location
      */
@@ -644,7 +613,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         double growY = aabb.maxY - aabb.minY;
         double growZ = aabb.maxZ - aabb.minZ;
         AxisAlignedBB potentialAABB = new AxisAlignedBB(pos).grow(growX, 0, growZ).expand(0, growY, 0);
-        
+
         for (int i = 0; i <= 4; ++i)
         {
             for (int l = 0; l <= 4; ++l)
@@ -653,15 +622,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 {
                     setPosition(pos.getX(), pos.getY(), pos.getZ());
                     getNavigator().clearPath();
-                    
+
                     return true;
                 }
             }
         }
-        
+
         return false;
     }
 
+    /**
+     * Are we within our home distance if we have one?
+     */
     public boolean isWithinHomeDistanceFromPosition()
     {
         return !getHomePos().isPresent() || getHomePos().get().distanceSq(getPosition()) < (ConfigData.homeRadius * ConfigData.homeRadius);
@@ -675,7 +647,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.rotationYaw = yaw % 360.0F;
         this.rotationPitch = pitch % 360.0F;
     }
-    
+
     /**
      * Handle eating. (Effects, healing, breeding etc)
      */
@@ -689,16 +661,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             {
                 try
                 { // Surrounding in try catch block. checking for null doesnt seem to work...
-                    List<Pair<EffectInstance, Float>> effects = stack.getItem().getFood().getEffects();
+                    List<Pair<EffectInstance, Float>> effects = Objects.requireNonNull(stack.getItem().getFood()).getEffects();
                     if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
                         effects.forEach(e -> addPotionEffect(e.getLeft()));
-                } catch (Exception ignore) {}
+                }
+                catch (Exception ignore)
+                {
+                }
             }
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
             if (world.isRemote)
             {
                 Vec3d mouth = getApproximateMouthPos();
-                
+
                 for (int i = 0; i < 11; ++i)
                 {
                     Vec3d vec3d1 = new Vec3d(((double) rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) rand.nextFloat() - 0.5D) * 0.1D);
@@ -709,7 +684,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
     }
-    
+
     /**
      * Tame the dragon to the tamer if true
      * else, play the failed tame effects
@@ -727,7 +702,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 setHealth(getMaxHealth());
                 playTameEffect(true);
                 world.setEntityState(this, (byte) 7);
-                
+
                 return true;
             }
             else
@@ -736,10 +711,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 world.setEntityState(this, (byte) 6);
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Add health to the current amount
      */
@@ -747,7 +722,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void heal(float healAmount)
     {
         super.heal(healAmount);
-        
+
         if (world.isRemote)
         {
             for (int i = 0; i < getWidth() * 5; ++i)
@@ -759,7 +734,59 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
     }
-    
+
+    /**
+     * Children are actually eggs. So create an egg item of this dragon type and yeet it into the air
+     */
+    @Nullable
+    @Override
+    public AgeableEntity createChild(AgeableEntity ageable)
+    {
+        CompoundNBT tag = new CompoundNBT();
+        ItemStack eggStack = new ItemStack(WRItems.DRAGON_EGG.get());
+
+        tag.putString("dragonType", EntityType.getKey(getType()).toString());
+        tag.putInt("hatchTime", getEggProperties().getHatchTime());
+        eggStack.setTag(tag);
+
+        ItemEntity eggItem = new ItemEntity(world, posX, posY, posZ, eggStack);
+
+        eggItem.setMotion(0, getHeight() / 2, 0);
+        world.addEntity(eggItem);
+
+        return null;
+    }
+
+    /**
+     * Handle Sleeping of this dragons
+     * Override for different sleep patterns of different dragons
+     */
+    public void handleSleep()
+    {
+        if (!isSleeping()
+                && --sleepCooldown <= 0
+                && !world.isDaytime()
+                && (!isTamed() || isSitting() || (getHomePos().isPresent() && isWithinHomeDistanceFromPosition()))
+                && !isBeingRidden()
+                && getAttackTarget() == null
+                && getNavigator().noPath()
+                && !isAngry()
+                && !isInWaterOrBubbleColumn()
+                && !isFlying()
+                && getRNG().nextInt(300) == 0) setSleeping(true);
+        else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
+    }
+
+    /**
+     * Clear any AI tasks that might still be running
+     */
+    public void clearAI()
+    {
+        isJumping = false;
+        navigator.clearPath();
+        setAttackTarget(null);
+    }
+
     /**
      * A universal getter for the position of the mouth on the dragon.
      * This is prone to be inaccurate, but can serve good enough for most things
@@ -771,14 +798,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return MathUtils.calculateYawAngle(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
     }
-    
+
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
         Optional<CustomSpawnEggItem> egg = CustomSpawnEggItem.EGG_TYPES.stream().filter(e -> e.type.get() == getType()).findFirst();
         return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
-    
+
     /**
      * Get all entities in this entities bounding box increased by a range
      */
@@ -786,7 +813,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), found -> found != this && getPassengers().stream().noneMatch(found::equals));
     }
-    
+
     /**
      * Get all entities excluding certain ones in this entities bounding box increased by a range
      */
@@ -794,7 +821,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return world.getEntitiesInAABBexcluding(instanceExclusion, getBoundingBox().grow(radius), found -> getPassengers().stream().noneMatch(found::equals));
     }
-    
+
     /**
      * Add additional motion to current velocity
      */
@@ -802,7 +829,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         setMotion(getMotion().add(vec3d));
     }
-    
+
     /**
      * Add additional motion to current velocity
      */
@@ -810,7 +837,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         setMotion(getMotion().add(x, y, z));
     }
-    
+
     /**
      * Nuff' said
      */
@@ -819,7 +846,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (!isSleeping()) super.playAmbientSound();
     }
-    
+
     /**
      * Set a damage source immunity
      */
@@ -827,7 +854,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         immunes.add(source.getDamageType());
     }
-    
+
     /**
      * Whether or not the dragon is immune to the source or not
      */
@@ -835,7 +862,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return !immunes.isEmpty() && immunes.contains(source.getDamageType());
     }
-    
+
     /**
      * Are we immune to this damage source?
      */
@@ -844,7 +871,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return super.isInvulnerableTo(source) || isImmune(source);
     }
-    
+
     /**
      * Can the rider "steer" or control this entity?
      */
@@ -853,7 +880,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return getControllingPassenger() != null && canBeSteered() && isOwner((LivingEntity) getControllingPassenger());
     }
-    
+
     /**
      * Can we be "steered" or controlled in general?
      */
@@ -862,7 +889,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return isSaddled();
     }
-    
+
     /**
      * Get the passenger controlling this entity
      */
@@ -870,16 +897,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public Entity getControllingPassenger()
     {
-        return this.getPassengers().isEmpty()? null : this.getPassengers().get(0);
+        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
     }
-    
+
     /**
      * Perform a one-shot attack
      */
     public void performGenericAttack()
     {
     }
-    
+
     /**
      * Perform a continuous special attack, e.g. Fire breathing
      *
@@ -888,7 +915,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void performSpecialAttack(boolean shouldContinue)
     {
     }
-    
+
     /**
      * Whether or not we should move
      */
@@ -897,39 +924,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return super.isMovementBlocked() || isSitting() || isSleeping();
     }
-    
-    /**
-     * Whether or not this entity is moving
-     */
-    public boolean isMoving()
-    {
-        return !getPositionVector().equals(getPrevPositionVector());
-    }
-    
-    /**
-     * Get the {@link Vec3d} of the previous position
-     */
-    public Vec3d getPrevPositionVector()
-    {
-        return new Vec3d(prevPosX, prevPosY, prevPosZ);
-    }
-    
-    /**
-     * Should this dragon be able to sleep?
-     */
-    public boolean shouldSleep()
-    {
-        return (!isTamed() || isSitting() || getHomePos().isPresent())
-                       && nocturnal == world.isDaytime()
-                       && !isBeingRidden()
-                       && getAttackTarget() == null
-                       && getNavigator().noPath()
-                       && !isAngry()
-                       && !isInWaterOrBubbleColumn()
-                       && !isFlying()
-                       && getRNG().nextInt(300) == 0;
-    }
-    
+
     /**
      * Whether or not the dragon can fly.
      * For ground entities, return false
@@ -938,23 +933,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return !isChild() && !getLeashed();
     }
-    
+
     /**
      * Get the motion this entity performs when jumping
      */
     @Override
     protected float getJumpUpwardsMotion()
     {
-        return canFly()? 1.2f : super.getJumpUpwardsMotion();
+        return canFly() ? 1.2f : super.getJumpUpwardsMotion();
     }
-    
+
     /**
      * Called to "liftoff" the dragon. (Shoots it up in the air for flight)
      */
     public boolean liftOff()
     {
         if (!canFly()) return false;
-        
+
         for (int i = 1; i < (shouldFlyThreshold / 2.5f) + 1; ++i)
         {
             if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement())
@@ -963,10 +958,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setSit(false);
         setSleeping(false);
         jump();
-        
+
         return true;
     }
-    
+
     /**
      * Handle landing after a fall
      */
@@ -975,46 +970,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (!canFly()) super.fall(distance, damageMultiplier);
     }
-    
-    /**
-     * Children are actually eggs. So create an egg item of this dragon type and yeet it into the air
-     */
-    @Nullable
-    @Override
-    public AgeableEntity createChild(AgeableEntity ageable)
-    {
-        CompoundNBT tag = new CompoundNBT();
-        ItemStack eggStack = new ItemStack(WRItems.DRAGON_EGG.get());
-        
-        tag.putString("dragonType", EntityType.getKey(getType()).toString());
-        tag.putInt("hatchTime", getEggProperties().getHatchTime());
-        eggStack.setTag(tag);
-        
-        ItemEntity eggItem = new ItemEntity(world, posX, posY, posZ, eggStack);
-        
-        eggItem.setMotion(0, getHeight() / 2, 0);
-        world.addEntity(eggItem);
-        
-        return null;
-    }
-    
-    /**
-     * Custom dragon spawn packet. (Bullshit, but) Needed because of inventory handling
-     * TODO yeah completely reevalute what to do here: we shouldnt need to do this, somethings wrong
-     */
-    @Override
-    public IPacket<?> createSpawnPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
-    
+
     /**
      * Set the view angles of the game camera while riding this dragon in 3rd person
      */
     public void setMountCameraAngles(boolean backView)
     {
     }
-    
+
     /**
      * A gui created when right clicked by a {@link WRItems#DRAGON_STAFF}
      */
@@ -1024,7 +987,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return null;
     }
-    
+
     /**
      * Is the passed stack considered a breeding item?
      * Default return {@link #isFoodItem(ItemStack)} - Intended to be overrided if applicable
@@ -1034,7 +997,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return isFoodItem(stack);
     }
-    
+
     /**
      * Is the passed stack considered a food item defined in {@link #getFoodItems()}
      */
@@ -1043,12 +1006,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (getFoodItems() == null || getFoodItems().size() == 0) return false;
         return getFoodItems().contains(stack.getItem());
     }
-    
+
     /**
      * Array Containing all of the dragons food items
      */
     public abstract List<Item> getFoodItems();
-    
+
     public DragonEggProperties getEggProperties()
     {
         if (eggProperties == null) // This shouldn't happen, lazily fix it if it does tho.
@@ -1058,16 +1021,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         return eggProperties;
     }
-    
+
     /**
      * The egg properties this dragon's eggs have
      */
     public abstract DragonEggProperties createEggProperties();
-    
+
     // ================================
     //        Entity Animation
     // ================================
-    
+
     /**
      * Get the current tick time for the playing animation
      */
@@ -1076,7 +1039,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return animationTick;
     }
-    
+
     /**
      * Set the animation tick for the playing animation
      */
@@ -1085,7 +1048,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         animationTick = tick;
     }
-    
+
     /**
      * Get the current playing animation
      */
@@ -1094,7 +1057,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return animation;
     }
-    
+
     /**
      * Set an animation
      */
@@ -1104,7 +1067,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setAnimationTick(0);
         this.animation = animation;
     }
-    
+
     /**
      * Is no active animation playing currently?
      */
@@ -1112,9 +1075,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return getAnimation() == NO_ANIMATION || getAnimationTick() == 0;
     }
-    
+
     // ================================
-    
+
     /**
      * Create a boolean data Parameter
      */

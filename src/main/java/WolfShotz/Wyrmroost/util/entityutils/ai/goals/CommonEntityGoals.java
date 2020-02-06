@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  * <p>
  * Created by WolfShotz on 10/23/2019
  */
-public class SharedEntityGoals
+public class CommonEntityGoals
 {
     /**
      * Walk randomly but do not execute if sleeping
@@ -34,7 +34,7 @@ public class SharedEntityGoals
             }
         };
     }
-    
+
     /**
      * Look at random entities. Do this while NOT sleeping
      *
@@ -42,7 +42,7 @@ public class SharedEntityGoals
      * @param toLookat Entity Class to look at
      * @param distance distance to look at entites
      */
-    public static LookAtGoal lookAtNoSleeping(AbstractDragonEntity entity, Class<LivingEntity> toLookat, float distance)
+    public static LookAtGoal lookAt(AbstractDragonEntity entity, Class<LivingEntity> toLookat, float distance)
     {
         return new LookAtGoal(entity, toLookat, distance)
         {
@@ -55,21 +55,21 @@ public class SharedEntityGoals
             }
         };
     }
-    
+
     /**
-     * Simplified version of {@link #lookAtNoSleeping(AbstractDragonEntity, float)}
+     * Simplified version of {@link #lookAt(AbstractDragonEntity, float)}
      * Goal Owner will look at everything extending off of {@link LivingEntity}
      *
      * @param entity   Goal Owner
      * @param distance distance to at entities
      * @return
      */
-    public static LookAtGoal lookAtNoSleeping(AbstractDragonEntity entity, float distance)
+    public static LookAtGoal lookAt(AbstractDragonEntity entity, float distance)
     {
-        return lookAtNoSleeping(entity, LivingEntity.class, distance);
+        return lookAt(entity, LivingEntity.class, distance);
     }
-    
-    public static LookRandomlyGoal lookRandomlyNoSleeping(AbstractDragonEntity entity)
+
+    public static LookRandomlyGoal lookRandomly(AbstractDragonEntity entity)
     {
         return new LookRandomlyGoal(entity)
         {

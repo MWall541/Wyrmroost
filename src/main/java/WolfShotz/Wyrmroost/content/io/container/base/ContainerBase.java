@@ -15,6 +15,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -177,7 +178,14 @@ public abstract class ContainerBase<T extends AbstractDragonEntity> extends Cont
         return new ContainerBase<RoostStalkerEntity>((RoostStalkerEntity) entity, SetupIO.STALKER_CONTAINER.get(), windowID)
         {{
             buildPlayerSlots(playerInv, 7, 83);
-            dragon.getInvHandler().ifPresent(i -> addSlot(new SlotItemHandler(i, 0, 85, 65)));
+            dragon.getInvHandler().ifPresent(i -> addSlot(new SlotItemHandler(i, 0, 85, 65)
+            {
+                @Override
+                public boolean isItemValid(@Nonnull ItemStack stack)
+                {
+                    return !(stack.getItem() instanceof BlockItem);
+                }
+            }));
         }};
     }
     

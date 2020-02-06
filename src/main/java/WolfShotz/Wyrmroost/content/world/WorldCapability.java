@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.world;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -10,27 +11,37 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CapabilityWorld
+public class WorldCapability
 {
-    @CapabilityInject(CapabilityWorld.class)
-    public static final Capability<CapabilityWorld> OW_CAP = null;
-    
-    private boolean portalTriggered;
-    
+    @CapabilityInject(WorldCapability.class)
+    public static final Capability<WorldCapability> OW_CAP = null;
+
+    public boolean portalTriggered;
+
+    public static boolean isPortalTriggered(World world)
+    {
+        return world.getCapability(OW_CAP).map(WorldCapability::isPortalTriggered).orElse(false);
+    }
+
+    public static void setPortalTriggered(World world, boolean trigger)
+    {
+        world.getCapability(OW_CAP).ifPresent(cap -> cap.setPortalTriggered(trigger));
+    }
+
     public boolean isPortalTriggered()
     {
         return portalTriggered;
     }
-    
-    public void setPortalTriggered(boolean flag)
+
+    public void setPortalTriggered(boolean trigger)
     {
-        this.portalTriggered = flag;
+        portalTriggered = trigger;
     }
-    
+
     public static class PropertiesDispatcher implements ICapabilitySerializable<CompoundNBT>
     {
-        private final CapabilityWorld worldData = new CapabilityWorld();
-        
+        private final WorldCapability instance = new WorldCapability();
+
         /**
          * Retrieves the Optional handler for the capability requested on the specific side.
          * The return value <strong>CAN</strong> be the same for multiple faces.
@@ -43,21 +54,21 @@ public class CapabilityWorld
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
         {
-            return OW_CAP.orEmpty(cap, LazyOptional.of(() -> worldData));
+            return cap == OW_CAP ? LazyOptional.of(() -> instance).cast() : LazyOptional.empty();
         }
         
         @Override
         public CompoundNBT serializeNBT()
         {
             CompoundNBT nbt = new CompoundNBT();
-            nbt.putBoolean("triggerowspawns", worldData.isPortalTriggered());
+            nbt.putBoolean("portal_triggered", instance.isPortalTriggered());
             return nbt;
         }
         
         @Override
         public void deserializeNBT(CompoundNBT nbt)
         {
-            worldData.setPortalTriggered(nbt.getBoolean("triggerowspawns"));
+            instance.setPortalTriggered(nbt.getBoolean("portal_triggered"));
         }
     }
 }

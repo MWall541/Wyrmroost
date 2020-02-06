@@ -55,7 +55,6 @@ public class ScavengeGoal extends MoveToBlockGoal
     public void startExecuting()
     {
         chest = getInventoryAtPosition(world, destinationBlock);
-
         super.startExecuting();
     }
     
@@ -143,7 +142,7 @@ public class ScavengeGoal extends MoveToBlockGoal
         if (!(intentory instanceof ChestTileEntity)) return; // not a chest, ignore it
         ChestTileEntity chest = (ChestTileEntity) intentory;
         
-        chest.numPlayersUsing = open? 1 : -1;
+        chest.numPlayersUsing = open ? 1 : 0;
         chest.getWorld().addBlockEvent(chest.getPos(), chest.getBlockState().getBlock(), 1, chest.numPlayersUsing);
     }
     

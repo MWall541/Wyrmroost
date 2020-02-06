@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.SyncedItemStackHandler;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -41,7 +42,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -54,7 +54,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
-    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", (double) 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
+    private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
     
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION = new Animation(15);
@@ -190,11 +190,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         return 100;
     }
-    
+
     @Override
-    public LazyOptional<ItemStackHandler> createInv()
+    public LazyOptional<SyncedItemStackHandler> createInv()
     {
-        return LazyOptional.of(() -> new ItemStackHandler(19));
+        return LazyOptional.of(() -> new SyncedItemStackHandler(19));
     }
     
     // ================================
@@ -235,12 +235,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8)
         {
-            Entity target = getAttackTarget();
-            
             world.playSound(posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.AMBIENT, 1f, 0.5f, false);
-            
-            if (target != null) attackEntityAsMob(target);
-            else attackInFront(1);
+            attackInFront(1);
         }
         
         super.livingTick();
@@ -267,6 +263,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         {
             setSit(false);
             player.startRiding(this);
+            setHomePos(Optional.empty());
             
             return true;
         }
@@ -355,24 +352,27 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         Biome biome = worldIn.getBiome(new BlockPos(this));
         Set<Biome> biomes = BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA);
-        
+
         if (biomes.contains(biome)) setDrakeVariant(true);
-        
+
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
-    // Difference here is, Drakes patrol home points and shouldn't sleep unless sitting: they are hostile creatures
-    public boolean shouldSleep()
+    @Override
+    public void handleSleep()
     {
-        return (!isTamed() || isSitting())
-                && nocturnal == world.isDaytime()
+        if (!isSleeping()
+                && --sleepCooldown <= 0
+                && !world.isDaytime()
+                && (!isTamed() || isSitting())
                 && !isBeingRidden()
                 && getAttackTarget() == null
                 && getNavigator().noPath()
                 && !isAngry()
                 && !isInWaterOrBubbleColumn()
                 && !isFlying()
-                && getRNG().nextInt(300) == 0;
+                && getRNG().nextInt(300) == 0) setSleeping(true);
+        else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
     }
 
     @Override

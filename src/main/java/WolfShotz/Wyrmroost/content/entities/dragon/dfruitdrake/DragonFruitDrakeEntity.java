@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
+import WolfShotz.Wyrmroost.content.world.WorldCapability;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
@@ -18,7 +18,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.SaddleItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
@@ -97,48 +96,22 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         this.shearCooldownTime = nbt.getInt("shearcooldown");
     }
     // ================================
-    
+
     @Override
     public void tick()
     {
         super.tick();
-        
+
         if (shearCooldownTime > 0) --shearCooldownTime;
     }
-    
-    @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+
+    public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
     {
-        if (super.processInteract(player, hand, stack)) return true;
-        
-        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild())
-        {
-            getInvHandler().ifPresent(i -> {
-                i.insertItem(0, stack, false);
-                consumeItemFromStack(player, stack);
-            });
-            
-            return true;
-        }
-        
-        if (/*isSaddled() && */!isChild() && !player.isSneaking())
-        {
-            setSit(false);
-            player.startRiding(this);
-            
-            return true;
-        }
-        
-        if (isOwner(player) && player.isSneaking())
-        {
-            setSit(true);
-            
-            return true;
-        }
-        
-        return false;
+        World world = worldIn.getWorld();
+
+        return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
     }
-    
+
     @Override
     public void travel(Vec3d vec3d)
     {
@@ -169,13 +142,36 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             }
         }
     }
-    
+
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    {
+        if (super.processInteract(player, hand, stack)) return true;
+
+        if (!isChild() && !player.isSneaking())
+        {
+            setSit(false);
+            player.startRiding(this);
+
+            return true;
+        }
+
+        if (isOwner(player) && player.isSneaking())
+        {
+            setSit(!isSitting());
+
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public boolean canBeSteered()
     {
         return true;
     }
-    
+
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
@@ -193,7 +189,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         return shearCooldownTime <= 0;
     }
-    
+
     @Nonnull
     @Override
     public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune)
@@ -202,14 +198,22 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         shearCooldownTime = 12000;
         return Lists.newArrayList(new ItemStack(WRItems.FOOD_DRAGON_FRUIT.get(), 1));
     }
-    
-    public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
+
+    @Override // These bois are lazy, can sleep during the day
+    public void handleSleep()
     {
-        World world = worldIn.getWorld();
-        
-        System.out.println("trying!");
-        
-        return world.getDimension() instanceof OverworldDimension && world.getCapability(CapabilityWorld.OW_CAP).map(CapabilityWorld::isPortalTriggered).orElse(false);
+        int sleepChance = world.isDaytime() ? 1000 : 300;
+        if (!isSleeping()
+                && --sleepCooldown <= 0
+                && (!isTamed() || isSitting() || (getHomePos().isPresent() && isWithinHomeDistanceFromPosition()))
+                && !isBeingRidden()
+                && getAttackTarget() == null
+                && getNavigator().noPath()
+                && !isAngry()
+                && !isInWaterOrBubbleColumn()
+                && !isFlying()
+                && getRNG().nextInt(sleepChance) == 0) setSleeping(true);
+        else if (isSleeping() && world.isDaytime() && getRNG().nextInt(375) == 0) setSleeping(false);
     }
     
     @Override

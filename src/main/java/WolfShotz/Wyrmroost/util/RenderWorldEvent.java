@@ -41,7 +41,7 @@ public class RenderWorldEvent
 
         if (stack.getItem() instanceof DragonStaffItem)
         {
-            AbstractDragonEntity dragon = ((DragonStaffItem) stack.getItem()).getDragon(stack, ModUtils.getServerWorld(player));
+            AbstractDragonEntity dragon = DragonStaffItem.getDragon(stack, ModUtils.getServerWorld(player));
             ActiveRenderInfo renderInfo = mc.gameRenderer.getActiveRenderInfo();
             BufferBuilder buffer = Tessellator.getInstance().getBuffer();
             double d0 = renderInfo.getProjectedView().x;
@@ -58,7 +58,7 @@ public class RenderWorldEvent
                     double y = homePos.getY() - d1;
                     double z = homePos.getZ() - d2;
 
-                    // save stats
+                    // save states
                     GlStateManager.pushMatrix();
                     GlStateManager.depthFunc(519); // 519
 

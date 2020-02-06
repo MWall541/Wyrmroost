@@ -19,7 +19,6 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
-import com.google.common.collect.Sets;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
@@ -34,6 +33,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.common.BiomeDictionary.Type;
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
@@ -68,7 +68,7 @@ public class WREntities
         registerSpawnEntry(MINUTUS.get(), getMinutusBiomes(), 35, 1, 1);
         registerCustomSpawnEntry(SILVER_GLIDER.get(), getSilverGliderBiomes(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere);
         registerSpawnEntry(ROOSTSTALKER.get(), getStalkerBiomes(), 9, 3, 18);
-        registerCustomSpawnEntry(DRAGON_FRUIT_DRAKE.get(), getDFDBiomes(), 5, 1, 3, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, DragonFruitDrakeEntity::canSpawnHere);
+        registerCustomSpawnEntry(DRAGON_FRUIT_DRAKE.get(), getDFDBiomes(), 100, 1, 3, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING, DragonFruitDrakeEntity::canSpawnHere);
     }
     
     /**
@@ -134,11 +134,10 @@ public class WREntities
     
     private static Set<Biome> getMinutusBiomes()
     {
-        Set<Biome> biomes = Sets.newHashSet();
-        for (Biome biome : BiomeDictionary.getBiomes(Type.SANDY))
-            if (!BiomeDictionary.hasType(biome, Type.MESA)) biomes.add(biome);
-        
-        return biomes;
+        return BiomeDictionary.getBiomes(Type.SANDY)
+                .stream()
+                .filter(b -> !BiomeDictionary.hasType(b, Type.MESA))
+                .collect(Collectors.toSet());
     }
     
     private static Set<Biome> getDFDBiomes()

@@ -130,29 +130,29 @@ public class DragonStaffItem extends Item
     /**
      * Is there a dragon bound to this staff?
      */
-    public boolean isBound(ItemStack stack)
+    public static boolean isBound(ItemStack stack)
     {
         CompoundNBT tag = stack.getTag();
         if (tag == null) return false;
         return tag.hasUniqueId("boundID");
     }
-    
+
     /**
      * run a check using {@link #isBound} first as we could have no dragon(s) bound
      */
     @Nullable
-    public AbstractDragonEntity getDragon(ItemStack stack, ServerWorld world)
+    public static AbstractDragonEntity getDragon(ItemStack stack, ServerWorld world)
     {
         CompoundNBT tag = stack.getTag();
-        return isBound(stack)? (AbstractDragonEntity) world.getEntityByUuid(tag.getUniqueId("boundID")) : null;
+        return isBound(stack) ? (AbstractDragonEntity) world.getEntityByUuid(tag.getUniqueId("boundID")) : null;
     }
-    
+
     /**
      * @param target the entity were checking if is a dragon or not
      * @nullable Can return null if this isnt a dragon, or isnt tamed.
      */
     @Nullable
-    public AbstractDragonEntity getDragonTarget(Entity target, PlayerEntity player)
+    public static AbstractDragonEntity getDragonTarget(Entity target, PlayerEntity player)
     {
         if (!target.isAlive()) return null;
         AbstractDragonEntity dragon;

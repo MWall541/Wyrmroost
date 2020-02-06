@@ -20,7 +20,7 @@ import java.util.Random;
 public class MathUtils
 {
     public static final float PI = (float) Math.PI;
-    
+
     /**
      * Returns a new pseudo random double value constrained to the values of {@code (-1.0d)} and {@code (1.0d)}
      */
@@ -28,7 +28,7 @@ public class MathUtils
     {
         return 2 * rand.nextDouble() - 1;
     }
-    
+
     /**
      * Attempt to rotate the first angle to become the second angle, but only allow overall direction change to at max be
      * third parameter
@@ -36,41 +36,41 @@ public class MathUtils
     public static float limitAngle(float sourceAngle, float targetAngle, float maximumChange)
     {
         float f = MathHelper.wrapDegrees(targetAngle - sourceAngle);
-        
+
         if (f > maximumChange) f = maximumChange;
         if (f < -maximumChange) f = -maximumChange;
-        
+
         float f1 = sourceAngle + f;
-        
+
         if (f1 < 0.0F) f1 += 360.0F;
         else if (f1 > 360.0F) f1 -= 360.0F;
-        
+
         return f1;
     }
-    
+
     public static Vec3d calculateYawAngle(float amount, double xOffset, double zOffset)
     {
         return new Vec3d(xOffset, 0, zOffset).rotateYaw(-amount * (PI / 180f));
     }
-    
+
     /**
      * Get the Altitude of an entity from the world surface
      * Subtract 1 from plane pose's as a workaround for a vanilla bug using the wrong pos when plane pose's are negative...
      */
     public static double getAltitude(Entity entity)
     {
-        return entity.posY - entity.world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) entity.posX - (entity.posX < 0? 1 : 0), (int) entity.posZ - (entity.posZ < 0? 1 : 0));
+        return entity.posY - entity.world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) entity.posX - (entity.posX < 0 ? 1 : 0), (int) entity.posZ - (entity.posZ < 0 ? 1 : 0));
     }
-    
+
     /**
      * Get the altitude of a world position from the world surface
      * Subtract 1 from plane pose's as a workaround for a vanilla bug using the wrong pos when plane pose's are negative...
      */
     public static double getAltitude(World world, int x, double y, int z)
     {
-        return y - world.getHeight(Heightmap.Type.WORLD_SURFACE, x - (x < 0? 1 : 0), z - (z < 0? 1 : 0));
+        return y - world.getHeight(Heightmap.Type.WORLD_SURFACE, x - (x < 0 ? 1 : 0), z - (z < 0 ? 1 : 0));
     }
-    
+
     /**
      * Calculate the euclidean plane distance of two points.
      * Double
@@ -81,7 +81,7 @@ public class MathUtils
         double z = targetZ - sourceZ;
         return x * x + z * z;
     }
-    
+
     /**
      * Calculate the euclidean plane distance of two entities.
      * Double
@@ -92,7 +92,7 @@ public class MathUtils
         double z = target.posZ - source.posZ;
         return x * x + z * z;
     }
-    
+
     /**
      * Calculate the euclidean plane distance between two points.
      * Float
@@ -103,7 +103,7 @@ public class MathUtils
         float z = targetZ - sourceZ;
         return x * x + z * z;
     }
-    
+
     /**
      * Calculate euclidean space distance
      * Double
@@ -115,7 +115,7 @@ public class MathUtils
         double z = targetZ - sourceZ;
         return x * x + y * y + z * z;
     }
-    
+
     /**
      * Calculate euclidean space distance
      * Float
@@ -127,7 +127,7 @@ public class MathUtils
         float z = targetZ - sourceZ;
         return x * x + y * y + z * z;
     }
-    
+
     /**
      * Angle measurement converted to radians as a float value <P>
      * <code>angle / 180.0 * PI</code>
@@ -136,7 +136,7 @@ public class MathUtils
     {
         return (float) Math.toRadians(angle);
     }
-    
+
     /**
      * Angle measurement converted to degrees as a float value <P>
      * <code>angle * 180.0 / PI</code>
@@ -145,7 +145,7 @@ public class MathUtils
     {
         return (float) Math.toDegrees(angle);
     }
-    
+
     /**
      * Get the angle between 2 sources
      */
@@ -153,7 +153,7 @@ public class MathUtils
     {
         return Math.atan2(z2 - z1, x2 - x1) * (180 / Math.PI) + 90;
     }
-    
+
     /**
      * Created by TGG on 8/07/2015. Modified by WolfShotz on 9/16/2019 <P>
      * Performs a ray trace of the player's line of sight to see what the player is looking at.
@@ -178,19 +178,19 @@ public class MathUtils
         Vec3d endOfLook = EYES_POSITION.add(LOOK_DIRECTION.x * range, LOOK_DIRECTION.y * range, LOOK_DIRECTION.z * range);
         RayTraceResult targetedBlock = world.rayTraceBlocks(new RayTraceContext(EYES_POSITION, endOfLook, BLOCK_MODE, FLUID_MODE, player));
         double collisionDistanceSQ = range * range;
-        
+
         if (targetedBlock.getType() == RayTraceResult.Type.BLOCK)
         {
             collisionDistanceSQ = targetedBlock.getHitVec().squareDistanceTo(EYES_POSITION);
             endOfLook = targetedBlock.getHitVec();
         }
-        
+
         Vec3d endOfLookDelta = endOfLook.subtract(EYES_POSITION);
         AxisAlignedBB searchBox = player.getBoundingBox().expand(endOfLookDelta.x, endOfLookDelta.y, endOfLookDelta.z).grow(1f); //add
         List<Entity> nearbyEntities = world.getEntitiesWithinAABBExcludingEntity(player, searchBox);
         Entity closestEntityHit = null;
         double closestEntityDistanceSQ = Double.MAX_VALUE;
-        
+
         for (Entity entity : nearbyEntities)
         {
             if (!entity.canBeCollidedWith() || entity == player.getRidingEntity())
@@ -201,22 +201,23 @@ public class MathUtils
                 if (tamedEntity.isOwner(player))
                     continue;
             }
-            
+
             float collisionBorderSize = entity.getCollisionBorderSize();
-            AxisAlignedBB axisalignedbb = entity.getBoundingBox().grow(collisionBorderSize);
-            Optional<Vec3d> movingobjectposition = axisalignedbb.rayTrace(EYES_POSITION, endOfLook);
-            
-            if (axisalignedbb.contains(endOfLook))
+            AxisAlignedBB axisAlignedBB = entity.getBoundingBox().grow(collisionBorderSize);
+            Optional<Vec3d> movingObjectPosition = axisAlignedBB.rayTrace(EYES_POSITION, endOfLook);
+
+            if (axisAlignedBB.contains(endOfLook))
             {
-                double distanceSQ = (!movingobjectposition.isPresent())? EYES_POSITION.squareDistanceTo(endOfLook) : EYES_POSITION.squareDistanceTo(movingobjectposition.get());
+                double distanceSQ = (!movingObjectPosition.isPresent()) ? EYES_POSITION.squareDistanceTo(endOfLook) : EYES_POSITION.squareDistanceTo(movingObjectPosition.get());
                 if (distanceSQ <= closestEntityDistanceSQ)
                 {
                     closestEntityDistanceSQ = distanceSQ;
                     closestEntityHit = entity;
                 }
-            } else if (movingobjectposition.isPresent())
+            }
+            else if (movingObjectPosition.isPresent())
             {
-                double distanceSQ = EYES_POSITION.squareDistanceTo(movingobjectposition.get());
+                double distanceSQ = EYES_POSITION.squareDistanceTo(movingObjectPosition.get());
                 if (distanceSQ <= closestEntityDistanceSQ)
                 {
                     closestEntityDistanceSQ = distanceSQ;
@@ -224,10 +225,10 @@ public class MathUtils
                 }
             }
         }
-        
+
         if (closestEntityDistanceSQ <= collisionDistanceSQ && closestEntityHit != null)
             return new EntityRayTraceResult(closestEntityHit, closestEntityHit.getPositionVec());
-        
+
         return targetedBlock;
     }
 }

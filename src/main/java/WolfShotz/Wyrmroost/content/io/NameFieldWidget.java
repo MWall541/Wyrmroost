@@ -26,6 +26,7 @@ public class NameFieldWidget extends TextFieldWidget
         setText(getMessage());
         screen.getChildren().add(this);
         screen.addButton(button = new ResetNameButton((posX + sizeX), (posY + sizeY) - 13, 15, 15, entity));
+        button.visible = entity.hasCustomName();
     }
     
     @Override
@@ -36,7 +37,7 @@ public class NameFieldWidget extends TextFieldWidget
         
         if (!isFocused() && !entity.getDisplayName().getUnformattedComponentText().equals(getText()))
             setText(entity.getDisplayName().getUnformattedComponentText());
-        
+
         button.visible = entity.hasCustomName();
     }
     

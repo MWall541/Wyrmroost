@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.Butterf
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.SyncedItemStackHandler;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.client.DynamicChain;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
@@ -37,7 +38,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -311,11 +311,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         return ContainerBase.butterflyInv(this, playerInv, windowID);
     }
-    
+
     @Override
-    public LazyOptional<ItemStackHandler> createInv()
+    public LazyOptional<SyncedItemStackHandler> createInv()
     {
-        return LazyOptional.of(() -> new ItemStackHandler(1));
+        return LazyOptional.of(() -> new SyncedItemStackHandler(1));
     }
     
     @Override

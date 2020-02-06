@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.SyncedItemStackHandler;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
@@ -37,7 +38,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -131,7 +131,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         Item item = stack.getItem();
         
         if (!isTamed() && Tags.Items.EGGS.contains(item) || item == WRItems.DRAGON_EGG.get())
-        { //TODO add dragon egg under EGGS tag
+        {
             eat(stack);
             if (tame(rand.nextInt(4) == 0, player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
@@ -263,11 +263,11 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     {
         return ContainerBase.stalkerInv(this, playerInv, windowID);
     }
-    
+
     @Override
-    public LazyOptional<ItemStackHandler> createInv()
+    public LazyOptional<SyncedItemStackHandler> createInv()
     {
-        return LazyOptional.of(() -> new ItemStackHandler(1));
+        return LazyOptional.of(() -> new SyncedItemStackHandler(1));
     }
     
     @Override

@@ -3,8 +3,8 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
-import WolfShotz.Wyrmroost.content.world.CapabilityWorld;
 import WolfShotz.Wyrmroost.content.world.EndOrePlacement;
+import WolfShotz.Wyrmroost.content.world.WorldCapability;
 import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.registry.*;
 import WolfShotz.Wyrmroost.util.ConfigData;
@@ -134,10 +134,8 @@ public class Wyrmroost
         @SubscribeEvent
         public static void attatchWorldCaps(AttachCapabilitiesEvent<World> evt)
         {
-            if (evt.getObject() == null || evt.getObject().isRemote) return;
-            
-            if (!evt.getObject().getCapability(CapabilityWorld.OW_CAP).isPresent())
-                evt.addCapability(ModUtils.resource("overworldproperties"), new CapabilityWorld.PropertiesDispatcher());
+            if (evt.getObject().isRemote) return;
+            evt.addCapability(ModUtils.resource("overworld_cap"), new WorldCapability.PropertiesDispatcher());
         }
         
         /**
@@ -151,13 +149,15 @@ public class Wyrmroost
             ItemStack stack = player.getHeldItem(evt.getHand());
             if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick"))
                 return;
-            
+
             evt.setCanceled(true);
-            
+
+            ModUtils.L.info(WorldCapability.isPortalTriggered(evt.getWorld()));
+
             Entity entity = evt.getTarget();
             if (!(entity instanceof AbstractDragonEntity)) return;
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-            
+
             if (player.isSneaking()) dragon.tame(true, player);
             else if (evt.getWorld().isRemote) Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
         }
