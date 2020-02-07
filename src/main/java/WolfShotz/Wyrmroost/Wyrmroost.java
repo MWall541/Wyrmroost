@@ -33,6 +33,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -73,9 +74,9 @@ public class Wyrmroost
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(CommonEvents.class);
-        
-        SetupWorld.setupOreGen();
-        WREntities.registerEntityWorldSpawns();
+
+        DeferredWorkQueue.runLater(SetupWorld::setupOreGen);
+        DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
         NetworkUtils.registerMessages();
     }
     
