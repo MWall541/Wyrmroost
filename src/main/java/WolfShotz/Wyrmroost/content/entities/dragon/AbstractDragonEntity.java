@@ -1,26 +1,24 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
-import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.SyncedItemStackHandler;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
-import WolfShotz.Wyrmroost.util.network.messages.SyncItemStackMessage;
+import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -52,23 +50,24 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedObject, INamedContainerProvider, SyncedItemStackHandler.IInventoryListener
+public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedObject, INamedContainerProvider
 {
-    public static final UUID ARMOR_UUID = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
     public int shouldFlyThreshold = 3;
     public int sleepCooldown;
-    public List<String> immunes = new ArrayList<>();
-    public LazyOptional<SyncedItemStackHandler> invHandler = createInv(); // TODO fix on world load inventory issues
+    public List<String> immunes = Lists.newArrayList();
+    public LazyOptional<ItemStackHandler> invHandler = createInv();
     public DragonEggProperties eggProperties = createEggProperties();
 
     // Dragon Entity Animations
@@ -94,8 +93,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         moveController = new FlightMovementController(this);
         lookController = new DragonLookController(this);
         stepHeight = 1;
-
-        invHandler.ifPresent(i -> i.addListener(this));
     }
 
     /**
@@ -157,15 +154,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void writeAdditional(CompoundNBT nbt)
     {
+        super.writeAdditional(nbt);
+
         nbt.putBoolean("special", isSpecial());
         nbt.putBoolean("sleeping", isSleeping());
         invHandler.ifPresent(i -> nbt.put("inv", i.serializeNBT()));
-        getHomePos().ifPresent(blockPos -> {
-            BlockPos pos = getHomePos().get();
-            nbt.putIntArray("homePos", new int[]{pos.getY(), pos.getY(), pos.getZ()});
-        });
-
-        super.writeAdditional(nbt);
+        getHomePos().ifPresent(pos -> ModUtils.putBlockPos(nbt, pos, "homePos"));
     }
 
     /**
@@ -174,17 +168,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void readAdditional(CompoundNBT nbt)
     {
+        super.readAdditional(nbt);
+
         setSpecial(nbt.getBoolean("special"));
         dataManager.set(SLEEPING, nbt.getBoolean("sleeping")); // Use data manager: Setter method controls animation
         invHandler.ifPresent(i -> i.deserializeNBT(nbt.getCompound("inv")));
-        if (nbt.contains("homePos"))
-        {
-            int[] homePos = nbt.getIntArray("homePos");
-            setHomePos(new BlockPos(homePos[0], homePos[1], homePos[2]));
-        }
-        else setHomePos(Optional.empty());
-
-        super.readAdditional(nbt);
+        if (nbt.contains("homePos")) setHomePos(ModUtils.getBlockPos(nbt, "homePos"));
     }
 
     /**
@@ -246,14 +235,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     /**
-     * Whether or not the dragon is saddled
-     */
-    public boolean isSaddled()
-    {
-        return getInvHandler().map(s -> !s.getStackInSlot(0).isEmpty()).orElse(false);
-    }
-
-    /**
      * Get the variant of the dragon (if it has them)
      */
     public int getVariant()
@@ -272,39 +253,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (getVariant() == variant) return;
         dataManager.set(VARIANT, variant);
-    }
-
-    public boolean hasArmor()
-    {
-        return getArmor() != null;
-    }
-
-    public DragonArmorItem getArmor()
-    {
-        try
-        {
-            return getInvHandler().map(i -> (DragonArmorItem) i.getStackInSlot(1).getItem()).orElseThrow(() -> new IllegalArgumentException("Item in slot is not instanceof DragonArmorItem!"));
-        }
-        catch (Exception ignore)
-        {
-            return null;
-        }
-    }
-
-    public void setArmored()
-    {
-        if (!world.isRemote)
-        {
-            IAttributeInstance armor = getAttribute(SharedMonsterAttributes.ARMOR);
-
-            if (hasArmor())
-            {
-                armor.removeModifier(ARMOR_UUID);
-                armor.applyModifier(new AttributeModifier("Armor Modifier", getArmor().getDmgReduction(), AttributeModifier.Operation.ADDITION).setSaved(true));
-                playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1f, 1f);
-            }
-            else armor.removeModifier(ARMOR_UUID);
-        }
     }
 
     /**
@@ -384,15 +332,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Get the inventory (IItemHandler) if it exists
      */
-    public LazyOptional<SyncedItemStackHandler> getInvHandler()
+    public ItemStackHandler getInvHandler()
     {
-        return invHandler.cast();
+        return invHandler.orElse(new ItemStackHandler());
     }
 
     /**
      * Create an inventory (ItemStackHandler)
      */
-    public LazyOptional<SyncedItemStackHandler> createInv()
+    public LazyOptional<ItemStackHandler> createInv()
     {
         return LazyOptional.empty();
     }
@@ -484,32 +432,24 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return true;
     }
 
-    @Override
-    public void onContentsChanged(SyncedItemStackHandler handler)
-    {
-        ModUtils.L.info(invHandler.map(i -> i.getStackInSlot(0)).orElse(ItemStack.EMPTY));
-        if (!world.isRemote)
-            Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new SyncItemStackMessage(this));
-    }
-
     public ItemStack getStackInSlot(int slot)
     {
-        return getInvHandler().map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
+        return invHandler.map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
     }
 
     public void setStackInSlot(int slot, ItemStack stack)
     {
-        getInvHandler().ifPresent(i -> i.setStackInSlot(slot, stack));
+        invHandler.ifPresent(i -> i.setStackInSlot(slot, stack));
     }
 
     /**
      * Get all entities in a given range in front of this entity and damage all within it
-     * TODO fix for range
+     *
      */
     public void attackInFront(int range)
     {
         AxisAlignedBB size = getBoundingBox();
-        AxisAlignedBB aabb = size.offset(MathUtils.calculateYawAngle(renderYawOffset, 0, size.getXSize()));
+        AxisAlignedBB aabb = size.offset(MathUtils.calculateYawAngle(renderYawOffset, 0, range));
 
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
 
@@ -587,7 +527,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected void spawnDrops(DamageSource src)
     {
-        getInvHandler().ifPresent(i -> {
+        invHandler.ifPresent(i -> {
             for (int index = 0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index));
         });
         super.spawnDrops(src);
@@ -879,15 +819,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean canPassengerSteer()
     {
         return getControllingPassenger() != null && canBeSteered() && isOwner((LivingEntity) getControllingPassenger());
-    }
-
-    /**
-     * Can we be "steered" or controlled in general?
-     */
-    @Override
-    public boolean canBeSteered()
-    {
-        return isSaddled();
     }
 
     /**

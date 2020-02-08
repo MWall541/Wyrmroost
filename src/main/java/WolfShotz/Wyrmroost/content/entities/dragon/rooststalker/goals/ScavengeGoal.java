@@ -87,6 +87,7 @@ public class ScavengeGoal extends MoveToBlockGoal
                 {
                     chest.removeStackFromSlot(index);
                     dragon.invHandler.ifPresent(i -> i.setStackInSlot(0, stack));
+                    dragon.setItem(stack);
                 }
             }
         }

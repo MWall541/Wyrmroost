@@ -22,13 +22,13 @@ import java.util.Random;
 
 // #blit(xPos, yPos, initialX pixel, initialY pixel, x width, y width, .png width, .png height);
 @OnlyIn(Dist.CLIENT)
-public class ContainerScreenBase<T extends ContainerBase> extends ContainerScreen<T>
+public class ContainerScreenBase<T extends ContainerBase<?>> extends ContainerScreen<T>
 {
     public static final ResourceLocation STANDARD_GUI = ModUtils.resource("textures/io/dragonscreen/dragoninv.png");
     public static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
     public static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glitter_7.png");
     public static final ResourceLocation WIDGETS = ModUtils.resource("textures/io/widgets.png");
-    
+
     public T dragonInv;
     public ResourceLocation background;
     public Random rand = new Random();
@@ -147,19 +147,19 @@ public class ContainerScreenBase<T extends ContainerBase> extends ContainerScree
     {
         InventoryScreen.drawEntityOnScreen(guiLeft + 40, guiTop + 60, 15, (guiLeft + 40) - mouseX, (guiTop + 75 - 30) - mouseY, dragonInv.dragon);
     }
-    
+
     public NameFieldWidget createNameField()
     {
         return new NameFieldWidget(font, guiLeft + 72, guiTop + 22, 100, 12, this);
     }
-    
+
     public void bindTexture(ResourceLocation texture)
     {
         assert minecraft != null;
         minecraft.getTextureManager().bindTexture(texture);
     }
-    
-    public static <T extends ContainerBase> ContainerScreenBase<T> singleSlotScreen(T container, PlayerInventory playerInv, ITextComponent name)
+
+    public static <T extends ContainerBase<?>> ContainerScreenBase<T> singleSlotScreen(T container, PlayerInventory playerInv, ITextComponent name)
     {
         return new ContainerScreenBase<T>(container, playerInv, name)
         {

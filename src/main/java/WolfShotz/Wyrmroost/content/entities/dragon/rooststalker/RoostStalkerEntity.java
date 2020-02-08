@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.SyncedItemStackHandler;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
@@ -32,12 +31,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,16 +52,18 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
 {
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
-    
+
     public static final Animation SCAVENGE_ANIMATION = new Animation(35);
-    
+
+    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(RoostStalkerEntity.class, DataSerializers.ITEMSTACK);
+
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world)
     {
         super(stalker, world);
-        
+
         moveController = new MovementController(this);
         stepHeight = 0;
-        
+
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
         
@@ -77,26 +83,48 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(12, CommonEntityGoals.wanderAvoidWater(this, 1d));
         goalSelector.addGoal(13, CommonEntityGoals.lookAt(this, 5f));
         goalSelector.addGoal(14, CommonEntityGoals.lookRandomly(this));
-        
+
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new HurtByTargetGoal(this).setCallsForHelp());
         targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, AnimalEntity.class, false, TARGETS));
     }
-    
-    @Deprecated // Data Fix
+
+    @Override
+    protected void registerData()
+    {
+        super.registerData();
+
+        dataManager.register(ITEM, ItemStack.EMPTY);
+    }
+
     @Override
     public void readAdditional(CompoundNBT nbt)
     {
         super.readAdditional(nbt);
-        
+
+        setItem(invHandler.map(i -> i.getStackInSlot(0)).orElse(ItemStack.EMPTY));
+
+        // Data Fix - todo: remove later
         ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-        if (!stack.isEmpty()) getInvHandler().ifPresent(i -> {
-            i.insertItem(0, stack, false);
+        if (!stack.isEmpty()) invHandler.ifPresent(i -> {
+            setItem(stack);
+            setStackInSlot(0, stack);
             setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
         });
     }
-    
+
+    public ItemStack getItem()
+    {
+        return dataManager.get(ITEM);
+    }
+
+    public void setItem(ItemStack item)
+    {
+        dataManager.set(ITEM, item);
+        if (!item.isEmpty()) playSound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0.5f, 1);
+    }
+
     @Override
     protected void registerAttributes()
     {
@@ -158,6 +186,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
             
             if (stack.isEmpty() || canPickUpStack(stack))
             {
+                setItem(stack);
                 setStackInSlot(0, stack);
                 player.setHeldItem(hand, heldItem);
                 
@@ -265,9 +294,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     }
 
     @Override
-    public LazyOptional<SyncedItemStackHandler> createInv()
+    public LazyOptional<ItemStackHandler> createInv()
     {
-        return LazyOptional.of(() -> new SyncedItemStackHandler(1));
+        return LazyOptional.of(() -> new ItemStackHandler(1));
     }
     
     @Override

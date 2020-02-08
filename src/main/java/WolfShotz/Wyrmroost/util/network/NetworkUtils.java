@@ -3,7 +3,10 @@ package WolfShotz.Wyrmroost.util.network;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
-import WolfShotz.Wyrmroost.util.network.messages.*;
+import WolfShotz.Wyrmroost.util.network.messages.AnimationMessage;
+import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
+import WolfShotz.Wyrmroost.util.network.messages.EggHatchMessage;
+import WolfShotz.Wyrmroost.util.network.messages.EntityRenameMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -21,7 +24,6 @@ public class NetworkUtils
         registerMSG(DragonKeyBindMessage.class, DragonKeyBindMessage::new);
         registerMSG(EggHatchMessage.class, EggHatchMessage::new);
         registerMSG(EntityRenameMessage.class, EntityRenameMessage::new);
-        registerMSG(SyncItemStackMessage.class, SyncItemStackMessage::new);
     }
     
     public static <T extends IMessage> void registerMSG(Class<T> clazz, Function<PacketBuffer, T> decoder)

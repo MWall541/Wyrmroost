@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -188,7 +189,7 @@ public class ModUtils
     {
         return DimensionType.byName(ModUtils.resource("wyrmroost"));
     }
-    
+
     /**
      * Creates a new TranslationTextComponent appended with the passed strings
      */
@@ -198,7 +199,22 @@ public class ModUtils
         for (int i = 1; i < strings.length; ++i) translation.appendSibling(new TranslationTextComponent(strings[i]));
         return translation;
     }
-    
+
+    /**
+     * Put a BlockPos into an nbt Compound
+     * The positions are put into an int array and then fed into the compound
+     */
+    public static void putBlockPos(CompoundNBT nbt, BlockPos pos, String key)
+    {
+        nbt.putIntArray(key, new int[]{pos.getY(), pos.getY(), pos.getZ()});
+    }
+
+    public static BlockPos getBlockPos(CompoundNBT nbt, String key)
+    {
+        int[] poses = nbt.getIntArray(key);
+        return new BlockPos(poses[0], poses[1], poses[2]);
+    }
+
     /**
      * Find the first occurrence of a given string and replace it.
      *

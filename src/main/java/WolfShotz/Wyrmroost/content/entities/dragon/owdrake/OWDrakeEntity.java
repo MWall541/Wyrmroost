@@ -5,9 +5,9 @@ import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeAttackGoal
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.goals.DrakeTargetGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
+import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.SyncedItemStackHandler;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -42,6 +42,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -55,7 +56,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 {
     private static final UUID SPRINTING_ID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
-    
+
     // Dragon Entity Animations
     public static final Animation SIT_ANIMATION = new Animation(15);
     public static final Animation STAND_ANIMATION = new Animation(15);
@@ -63,17 +64,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public static final Animation HORN_ATTACK_ANIMATION = new Animation(15);
     public static final Animation ROAR_ANIMATION = new Animation(86);
     public static final Animation TALK_ANIMATION = new Animation(20);
-    
+
     // Dragon Entity Data
     private static final DataParameter<Boolean> VARIANT_BOOL = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Boolean> HAS_CHEST = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
-    
+    private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<ItemStack> ARMOR = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.ITEMSTACK);
+
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world)
     {
         super(drake, world);
-        
+
         moveController = new MovementController(this);
-        
+
         SLEEP_ANIMATION = new Animation(20);
         WAKE_ANIMATION = new Animation(15);
     }
@@ -119,7 +121,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.registerData();
         dataManager.register(GENDER, getRNG().nextBoolean());
         dataManager.register(VARIANT_BOOL, false);
-        dataManager.register(HAS_CHEST, false);
+        dataManager.register(SADDLED, false);
+        dataManager.register(ARMOR, ItemStack.EMPTY);
     }
     
     /** Save Game */
@@ -136,16 +139,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void readAdditional(CompoundNBT nbt)
     {
+        super.readAdditional(nbt);
+
         setGender(nbt.getBoolean("gender"));
         setDrakeVariant(nbt.getBoolean("variant"));
-        
-        setHasChest(getInvHandler().map(h -> !h.getStackInSlot(0).isEmpty()).orElse(false));
+        setArmor(invHandler.map(i -> i.getStackInSlot(1).getItem()).orElse(null));
+        setSaddled(invHandler.map(i -> !i.getStackInSlot(0).isEmpty()).orElse(false));
+
+        // Datafix
         if (nbt.getBoolean("saddled"))
-            getInvHandler().ifPresent(h -> h.setStackInSlot(1, new ItemStack(Items.SADDLE, 1))); // Datafix
-        
-        super.readAdditional(nbt);
+            invHandler.ifPresent(h -> h.setStackInSlot(1, new ItemStack(Items.SADDLE, 1)));
     }
-    
+
     /**
      * The Variant of the drake.
      * false == Common, true == Savanna. Boolean since we only have 2 different variants
@@ -154,29 +159,71 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         return dataManager.get(VARIANT_BOOL);
     }
-    
+
+    /**
+     * Set the drake variant
+     * false == Common, true == Savanna.
+     */
     public void setDrakeVariant(boolean variant)
     {
         dataManager.set(VARIANT_BOOL, variant);
     }
-    
+
+    /**
+     * Does the drake have a chest?
+     */
     public boolean hasChest()
     {
-        return dataManager.get(HAS_CHEST);
+        return invHandler.map(i -> !i.getStackInSlot(2).isEmpty()).orElse(false);
     }
-    
-    public void setHasChest(boolean set)
+
+    /**
+     * Whether or not the drake is saddled
+     */
+    public boolean isSaddled()
     {
-        dataManager.set(HAS_CHEST, set);
+        return dataManager.get(SADDLED);
     }
-    
+
+    /**
+     * Set the drake saddled
+     */
+    public void setSaddled(boolean flag)
+    {
+        if (flag) playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1, 1);
+        dataManager.set(SADDLED, flag);
+    }
+
+    /**
+     * Get the armor of the drake
+     */
+    public DragonArmorItem getArmor()
+    {
+        return (DragonArmorItem) dataManager.get(ARMOR).getItem();
+    }
+
+    /**
+     * Set the armor of the drake
+     */
+    public void setArmor(Item armor)
+    {
+        if (!(armor instanceof DragonArmorItem)) armor = null;
+        dataManager.set(ARMOR, new ItemStack(armor));
+        if (armor != null) playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1, 1);
+    }
+
+    public boolean isArmored()
+    {
+        return dataManager.get(ARMOR).getItem() instanceof DragonArmorItem;
+    }
+
     /**
      * Set sprinting switch for Entity.
      */
     public void setSprinting(boolean sprinting)
     {
         if (isSprinting() == sprinting) return;
-        
+
         IAttributeInstance attribute = getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
         
         super.setSprinting(sprinting);
@@ -192,9 +239,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public LazyOptional<SyncedItemStackHandler> createInv()
+    public LazyOptional<ItemStackHandler> createInv()
     {
-        return LazyOptional.of(() -> new SyncedItemStackHandler(19));
+        return LazyOptional.of(() -> new ItemStackHandler(19));
     }
     
     // ================================
@@ -236,7 +283,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8)
         {
             world.playSound(posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.AMBIENT, 1f, 0.5f, false);
-            attackInFront(1);
+            attackInFront(2);
         }
         
         super.livingTick();
@@ -246,18 +293,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (super.processInteract(player, hand, stack)) return true;
-        
+
         // If holding a saddle and this is not a child, Saddle up!
-        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild())
-        { // instaceof: for custom saddles (if any)
-            getInvHandler().ifPresent(s -> {
-                s.insertItem(0, stack, false);
+        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) // instaceof: for custom saddles (if any)
+        {
+            invHandler.ifPresent(s -> {
+                s.setStackInSlot(0, stack);
                 consumeItemFromStack(player, stack);
             });
-            
+            setSaddled(true);
             return true;
         }
-        
+
         // If Saddled and not sneaking, start riding
         if (isSaddled() && !isChild() && !player.isSneaking() && (!isTamed() || isOwner(player)))
         {
@@ -376,11 +423,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
+    public boolean canBeSteered() { return isSaddled(); }
+
+    @Override
     public boolean canFly()
     {
         return false;
     }
-    
+
     @Override
     public void fall(float distance, float damageMultiplier)
     {

@@ -52,7 +52,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
         @Override
         public void render(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale)
         {
-            ItemStack stack = stalker.getStackInSlot(0);
+            ItemStack stack = stalker.getItem();
             
             if (!stack.isEmpty())
             {

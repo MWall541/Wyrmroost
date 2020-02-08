@@ -157,7 +157,12 @@ public class WREntities
     private static <T extends MobEntity> void registerSpawnEntry(EntityType<T> entity, Set<Biome> biomes, int frequency, int minAmount, int maxAmount)
     {
         registerBiomeSpawnEntry(entity, frequency, minAmount, maxAmount, biomes);
-        registerGenericSpawnPlacement(entity);
+
+        EntitySpawnPlacementRegistry.register(entity,
+                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                (type, world, reason, blockPos, rng) -> // Allow Spawning on any block that is lit and above sea level
+                        blockPos.getY() > world.getSeaLevel() - 20 && world.getLightSubtracted(blockPos, 0) > 8);
     }
     
     /**
@@ -177,16 +182,6 @@ public class WREntities
         biomes.stream()
                 .filter(Objects::nonNull)
                 .forEach(biome -> biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
-    }
-    
-    private static <T extends MobEntity> void registerGenericSpawnPlacement(EntityType<T> entity)
-    {
-        EntitySpawnPlacementRegistry.register(entity,
-                                              EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                                              Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                                              (type, world, reason, blockPos, rng) -> // Allow Spawning on any block that is lit and above sea level
-                                                      blockPos.getY() > world.getSeaLevel() - 20 && world.getLightSubtracted(blockPos, 0) > 8
-        );
     }
     
     

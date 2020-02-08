@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyL
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
-import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
 import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.ButterflyInvScreen;
 import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.OWDrakeInvScreen;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -34,18 +33,15 @@ public class SetupIO
     {
         ScreenManager.registerFactory(OWDRAKE_CONTAINER.get(), OWDrakeInvScreen::new);
         ScreenManager.registerFactory(BUTTERFLY_CONTAINER.get(), ButterflyInvScreen::new);
-        ScreenManager.<ContainerBase<RoostStalkerEntity>, ContainerScreenBase<ContainerBase<RoostStalkerEntity>>>registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase::singleSlotScreen);
+//        ScreenManager.registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase::singleSlotScreen);
     }
     
     @SuppressWarnings("unchecked")
     private static <T extends Container, E extends Entity> ContainerType<T> createEntityContainer(IEntityContainerFactory<T, E> creation)
     {
-        return IForgeContainerType.create((windowId, inv, buf) -> {
-            E entity = (E) ModUtils.getClientWorld().getEntityByID(buf.readInt());
-            return creation.get(entity, inv, windowId);
-        });
+        return IForgeContainerType.create((windowId, inv, buf) -> creation.get((E) ModUtils.getClientWorld().getEntityByID(buf.readInt()), inv, windowId));
     }
-    
+
     public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, ContainerType<T> type)
     {
         return CONTAINERS.register(name, () -> type);

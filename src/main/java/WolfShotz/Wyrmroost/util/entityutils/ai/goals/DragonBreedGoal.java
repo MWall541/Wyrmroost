@@ -27,7 +27,6 @@ public class DragonBreedGoal extends BreedGoal
     @Override
     public boolean shouldExecute()
     {
-//        if (!canInAir) return false; TODO
         if (straight)
             return super.shouldExecute() && ((AbstractDragonEntity) field_75391_e).getGender() == !dragon.getGender();
         else return super.shouldExecute();
