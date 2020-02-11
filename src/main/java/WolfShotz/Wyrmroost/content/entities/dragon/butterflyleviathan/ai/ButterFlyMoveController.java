@@ -35,16 +35,18 @@ public class ButterFlyMoveController extends MovementController
             float f1 = (float) (speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
             if (mob.isInWater())
             {
-                mob.setAIMoveSpeed(f1 * 0.02f);
-                float f2 = -((float) (MathHelper.atan2(y, (double) MathHelper.sqrt(x * x + z * z)) * (double) (180f / MathUtils.PI)));
+                mob.setAIMoveSpeed(f1 * 2);
+                float f2 = -((float) (MathHelper.atan2(y, MathHelper.sqrt(x * x + z * z)) * (double) (180f / MathUtils.PI)));
                 f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85f, 85f);
                 mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 5f);
                 float f3 = MathHelper.cos(mob.rotationPitch * (MathUtils.PI / 180f));
                 float f4 = MathHelper.sin(mob.rotationPitch * (MathUtils.PI / 180f));
                 mob.moveForward = f3 * f1;
                 mob.moveVertical = -f4 * f1;
-            } else mob.setAIMoveSpeed(f1 * 0.1f);
-        } else
+            }
+            else mob.setAIMoveSpeed(f1 * 1.2f);
+        }
+        else
         {
             mob.setAIMoveSpeed(0);
             mob.setMoveStrafing(0);

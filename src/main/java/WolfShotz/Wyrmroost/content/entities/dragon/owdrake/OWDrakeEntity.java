@@ -345,13 +345,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (isBeingRidden() && canBeSteered() && isOwner((LivingEntity) getControllingPassenger()))
         {
             LivingEntity rider = (LivingEntity) getControllingPassenger();
-            if (canPassengerSteer())
+            if (canPassengerSteer() && canBeSteered())
             {
                 float f = rider.moveForward, s = rider.moveStrafing;
-                float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting()? SPRINTING_SPEED_BOOST.getAmount() : 1));
+                float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting() ? SPRINTING_SPEED_BOOST.getAmount() : 1));
                 boolean moving = (f != 0 || s != 0);
                 Vec3d target = new Vec3d(s, vec3d.y, f);
-                
+
                 setSprinting(rider.isSprinting());
                 setAIMoveSpeed(speed);
                 super.travel(target);

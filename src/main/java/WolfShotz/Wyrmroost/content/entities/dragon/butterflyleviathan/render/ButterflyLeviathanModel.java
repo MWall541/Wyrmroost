@@ -332,7 +332,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     @Override
     public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-        faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, neck3);
+        faceTarget(netHeadYaw, headPitch, 2, neck1, neck2, neck3);
     }
     
     private float globalSpeed = 0.5f;
@@ -361,16 +361,19 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     
     private void setInitialPositions()
     {
+        if (entity.isInWater() || !entity.onGround) body1.rotateAngleX = (float) -entity.getMotion().y;
+
         if (entity.isUnderWater())
         {
-        
-        } else
+
+        }
+        else
         {
             neck1.rotateAngleX = -0.6f;
             neck2.rotateAngleX = 0.15f;
             neck3.rotateAngleX = 0.2f;
             head.rotateAngleX = 0.3f;
-            
+
             topWingFinPhalangeL1.rotateAngleY = 4.25f;
             topWingFinPhalangeL2.rotateAngleY = 0.5f;
             bottomWingFinPhalangeL1.rotateAngleY = -0.5f;

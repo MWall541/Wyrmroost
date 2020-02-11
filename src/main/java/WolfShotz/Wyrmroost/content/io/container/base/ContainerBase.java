@@ -124,6 +124,9 @@ public abstract class ContainerBase<T extends AbstractDragonEntity> extends Cont
 
                 @Override
                 public int getItemStackLimit(@Nonnull ItemStack stack) { return 1; }
+
+                @Override
+                public void onSlotChanged() { dragon.setHasConduit(getStack().getItem() == Items.CONDUIT); }
             }));
         }};
     }

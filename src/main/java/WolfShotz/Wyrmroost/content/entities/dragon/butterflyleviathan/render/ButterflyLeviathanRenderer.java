@@ -2,9 +2,11 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -33,11 +35,8 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         
         if (entity.hasConduit())
         {
-            double angle = entity.rotationYawHead * (Math.PI / 180d) + 1.570796d;
-            double offsetX = x + 4.2d * Math.cos(angle);
-            double offsetY = y - (entity.rotationPitch / 20) + 4;
-            double offsetZ = z + 4.2d * Math.sin(angle);
-            ConduitRenderer.render(entity.ticksExisted, this::bindTexture, offsetX, offsetY, offsetZ, partialTicks);
+            Vec3d vec3d = MathUtils.calculateYawAngle(entityYaw, 0, 4.2).add(x, y + entity.getEyeHeight() + 2, z);
+            ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
         }
     }
     

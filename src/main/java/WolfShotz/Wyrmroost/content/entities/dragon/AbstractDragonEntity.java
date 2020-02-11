@@ -64,18 +64,6 @@ import java.util.Optional;
  */
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedObject, INamedContainerProvider
 {
-    public int shouldFlyThreshold = 3;
-    public int sleepCooldown;
-    public List<String> immunes = Lists.newArrayList();
-    public LazyOptional<ItemStackHandler> invHandler = createInv();
-    public DragonEggProperties eggProperties = createEggProperties();
-
-    // Dragon Entity Animations
-    public int animationTick;
-    public Animation animation = NO_ANIMATION;
-    public static Animation SLEEP_ANIMATION;
-    public static Animation WAKE_ANIMATION;
-
     // Dragon Entity Data
     public static final DataParameter<Boolean> GENDER = createKey(DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SPECIAL = createKey(DataSerializers.BOOLEAN);
@@ -83,6 +71,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> SLEEPING = createKey(DataSerializers.BOOLEAN);
     public static final DataParameter<Integer> VARIANT = createKey(DataSerializers.VARINT);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = createKey(DataSerializers.OPTIONAL_BLOCK_POS);
+
+    // Dragon Entity Animations
+    public int animationTick;
+    public Animation animation = NO_ANIMATION;
+    public static Animation SLEEP_ANIMATION;
+    public static Animation WAKE_ANIMATION;
+
+    public int shouldFlyThreshold = 3;
+    public int sleepCooldown;
+    public List<String> immunes = Lists.newArrayList();
+    public LazyOptional<ItemStackHandler> invHandler = createInv();
+    public DragonEggProperties eggProperties = createEggProperties();
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -605,9 +605,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
                         effects.forEach(e -> addPotionEffect(e.getLeft()));
                 }
-                catch (Exception ignore)
-                {
-                }
+                catch (Exception ignore) {}
             }
             playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
             if (world.isRemote)
@@ -818,7 +816,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canPassengerSteer()
     {
-        return getControllingPassenger() != null && canBeSteered() && isOwner((LivingEntity) getControllingPassenger());
+        return getControllingPassenger() != null && isOwner((LivingEntity) getControllingPassenger());
     }
 
     /**

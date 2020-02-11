@@ -6,12 +6,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.function.Consumer;
 
 @OnlyIn(Dist.CLIENT)
 public class ConduitRenderer
@@ -23,15 +22,15 @@ public class ConduitRenderer
     private static final CageModel CAGE = new CageModel();
     private static final EyeModel EYE = new EyeModel();
     private static final WindModel WIND = new WindModel();
-    
-    public static void render(float ticks, Consumer<ResourceLocation> textureBinder, double x, double y, double z, float partialTicks)
+
+    public static void render(TextureManager textureManager, float ticks, double x, double y, double z, float partialTicks)
     {
         float f = ticks + partialTicks;
         float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
         f2 += f2 * f2;
-        
+
         // Render Cage Model
-        textureBinder.accept(CAGE_TEXTURE);
+        textureManager.bindTexture(CAGE_TEXTURE);
         GlStateManager.disableCull();
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) x, (float) y + 0.3f + f2 * 0.2f, (float) z);
@@ -41,10 +40,10 @@ public class ConduitRenderer
         int j = (int) ticks / 3 % 22;
         WIND.setBoxIndex(j);
         int k = (int) ticks / 66 % 3;
-        
+
         // Render Wind Model
-        if (k == 1) textureBinder.accept(VERTICAL_WIND_TEXTURE);
-        else textureBinder.accept(WIND_TEXTURE);
+        if (k == 1) textureManager.bindTexture(VERTICAL_WIND_TEXTURE);
+        else textureManager.bindTexture(WIND_TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.translated(x, y + 0.5d, z);
         if (k != 0) GlStateManager.rotatef(90f, 0, 0, 1f);
@@ -60,8 +59,8 @@ public class ConduitRenderer
         
         // Render Eye Model
         ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
-        
-        textureBinder.accept(OPEN_EYE_TEXTURE);
+
+        textureManager.bindTexture(OPEN_EYE_TEXTURE);
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) x, (float) y + 0.3f + f2 * 0.2f, (float) z);
         GlStateManager.scalef(0.5f, 0.5f, 0.5f);

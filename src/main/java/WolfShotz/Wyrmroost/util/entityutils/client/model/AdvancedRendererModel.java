@@ -6,11 +6,10 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class AdvancedRendererModel<T extends Entity> extends RendererModel
+public class AdvancedRendererModel extends RendererModel
 {
     public float defaultRotationX;
     public float defaultRotationY;
@@ -27,12 +26,12 @@ public class AdvancedRendererModel<T extends Entity> extends RendererModel
     public int textureOffsetX;
     public int textureOffsetY;
     public boolean scaleChildren;
-    private AdvancedLivingEntityModel<T> model;
+    private AdvancedLivingEntityModel<?> model;
     private AdvancedRendererModel parent;
     private int displayList;
     private boolean compiled;
-    
-    public AdvancedRendererModel(AdvancedLivingEntityModel<T> model, String name)
+
+    public AdvancedRendererModel(AdvancedLivingEntityModel<?> model, String name)
     {
         super(model, name);
         scaleX = 1.0F;
@@ -40,13 +39,13 @@ public class AdvancedRendererModel<T extends Entity> extends RendererModel
         scaleZ = 1.0F;
         this.model = model;
     }
-    
-    public AdvancedRendererModel(AdvancedLivingEntityModel<T> model)
+
+    public AdvancedRendererModel(AdvancedLivingEntityModel<?> model)
     {
         this(model, null);
     }
-    
-    public AdvancedRendererModel(AdvancedLivingEntityModel<T> model, int textureOffsetX, int textureOffsetY)
+
+    public AdvancedRendererModel(AdvancedLivingEntityModel<?> model, int textureOffsetX, int textureOffsetY)
     {
         this(model);
         setTextureOffset(textureOffsetX, textureOffsetY);
@@ -171,13 +170,13 @@ public class AdvancedRendererModel<T extends Entity> extends RendererModel
             GlStateManager.translatef(offsetX, offsetY, offsetZ);
             GlStateManager.translatef(rotationPointX * scale, rotationPointY * scale, rotationPointZ * scale);
             if (rotateAngleZ != 0.0F)
-                GlStateManager.rotatef((float) Math.toDegrees((double) rotateAngleZ), 0.0F, 0.0F, 1.0F);
+                GlStateManager.rotatef((float) Math.toDegrees(rotateAngleZ), 0.0F, 0.0F, 1.0F);
             
             if (rotateAngleY != 0.0F)
-                GlStateManager.rotatef((float) Math.toDegrees((double) rotateAngleY), 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotatef((float) Math.toDegrees(rotateAngleY), 0.0F, 1.0F, 0.0F);
             
             if (rotateAngleX != 0.0F)
-                GlStateManager.rotatef((float) Math.toDegrees((double) rotateAngleX), 1.0F, 0.0F, 0.0F);
+                GlStateManager.rotatef((float) Math.toDegrees(rotateAngleX), 1.0F, 0.0F, 0.0F);
             
             if (scaleX != 1.0F || scaleY != 1.0F || scaleZ != 1.0F)
                 GlStateManager.scalef(scaleX, scaleY, scaleZ);
@@ -190,13 +189,13 @@ public class AdvancedRendererModel<T extends Entity> extends RendererModel
                 GlStateManager.translatef(offsetX, offsetY, offsetZ);
                 GlStateManager.translatef(rotationPointX * scale, rotationPointY * scale, rotationPointZ * scale);
                 if (rotateAngleZ != 0.0F)
-                    GlStateManager.rotatef((float) Math.toDegrees((double) rotateAngleZ), 0.0F, 0.0F, 1.0F);
+                    GlStateManager.rotatef((float) Math.toDegrees(rotateAngleZ), 0.0F, 0.0F, 1.0F);
                 
                 if (rotateAngleY != 0.0F)
-                    GlStateManager.rotatef((float) Math.toDegrees((double) rotateAngleY), 0.0F, 1.0F, 0.0F);
+                    GlStateManager.rotatef((float) Math.toDegrees(rotateAngleY), 0.0F, 1.0F, 0.0F);
                 
                 if (rotateAngleX != 0.0F)
-                    GlStateManager.rotatef((float) Math.toDegrees((double) rotateAngleX), 1.0F, 0.0F, 0.0F);
+                    GlStateManager.rotatef((float) Math.toDegrees(rotateAngleX), 1.0F, 0.0F, 0.0F);
             }
             
             if (childModels != null)
@@ -220,8 +219,8 @@ public class AdvancedRendererModel<T extends Entity> extends RendererModel
         GlStateManager.endList();
         compiled = true;
     }
-    
-    public AdvancedLivingEntityModel<T> getModel()
+
+    public AdvancedLivingEntityModel<?> getModel()
     {
         return model;
     }
@@ -253,10 +252,10 @@ public class AdvancedRendererModel<T extends Entity> extends RendererModel
         float movementScale = model.getMovementScale();
         degree *= movementScale;
         speed *= movementScale;
-        float bob = (float) (Math.sin((double) (f * speed)) * (double) f1 * (double) degree - (double) (f1 * degree));
+        float bob = (float) (Math.sin(f * speed) * (double) f1 * (double) degree - (double) (f1 * degree));
         if (bounce)
         {
-            bob = (float) (-Math.abs(Math.sin((double) (f * speed)) * (double) f1 * (double) degree));
+            bob = (float) (-Math.abs(Math.sin(f * speed) * (double) f1 * (double) degree));
         }
         
         rotationPointY += bob;

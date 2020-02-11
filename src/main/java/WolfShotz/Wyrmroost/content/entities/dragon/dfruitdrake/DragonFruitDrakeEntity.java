@@ -167,22 +167,13 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public boolean canBeSteered()
-    {
-        return true;
-    }
+    public boolean canBeSteered() { return true;}
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
-    {
-        return sizeIn.height;
-    }
-    
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height; }
+
     @Override
-    public double getMountedYOffset()
-    {
-        return super.getMountedYOffset() + 0.1d;
-    }
+    public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
     
     @Override
     public boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos)

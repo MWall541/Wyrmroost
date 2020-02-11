@@ -21,14 +21,8 @@ public class ButterflyNavigator extends SwimmerPathNavigator
     }
     
     @Override
-    public boolean canEntityStandOnPos(BlockPos pos)
-    {
-        return !world.getBlockState(pos).isAir(world, pos);
-    }
-    
+    public boolean canEntityStandOnPos(BlockPos pos) { return !world.getBlockState(pos).isAir(world, pos); }
+
     @Override
-    protected boolean canNavigate()
-    {
-        return true;
-    }
+    protected boolean canNavigate() { return true; }
 }
