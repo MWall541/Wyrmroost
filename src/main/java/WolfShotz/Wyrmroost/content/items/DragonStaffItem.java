@@ -64,35 +64,42 @@ public class DragonStaffItem extends Item
     {
         ItemStack stack = player.getHeldItem(hand);
 
-        if (!isBound(stack)) return ActionResult.newResult(ActionResultType.PASS, stack);
-
-        if (player.isSneaking()) // Clear Bounded dragon
+        // Clear Bounded Dragon
+        if (player.isSneaking())
         {
             stack.setTag(new CompoundNBT());
             player.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             return ActionResult.newResult(ActionResultType.SUCCESS, stack);
         }
-        
+
+        // Raytrace targets
+
         RayTraceResult rtr = MathUtils.rayTrace(world, player, 50, true);
         AbstractDragonEntity dragon = getDragon(stack, ModUtils.getServerWorld(player));
-
-        ModUtils.L.info(dragon.getHomePos().isPresent());
 
         if (rtr.getType() == RayTraceResult.Type.ENTITY)
         {
             EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
-            if (!(ertr.getEntity() instanceof LivingEntity)) return ActionResult.newResult(ActionResultType.PASS, stack); // shouldnt attack any non living creatures...
 
-            // Found an entity
-            LivingEntity entity = (LivingEntity) ertr.getEntity();
+            // Dragon Commanding
+            AbstractDragonEntity dragonTarget = getDragonTarget(ertr.getEntity(), player);
 
-            if (entity instanceof AbstractDragonEntity && ((AbstractDragonEntity) entity).getOwner() == player) // If the entity found is a dragon of ours, call it over
+            if (dragonTarget != null && dragonTarget.getOwner() == player)
             {
                 if (dragon.isFlying() && !world.isRemote)
                     dragon.getFlightMoveController().resetCourse().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
                 else if (dragon.isSitting()) dragon.setSit(false);
+                player.playSound(SoundEvents.BLOCK_BELL_USE, 1, 1);
                 return ActionResult.newResult(ActionResultType.SUCCESS, stack);
             }
+
+            // Attack
+
+            if (!isBound(stack)) return ActionResult.newResult(ActionResultType.PASS, stack);
+            if (!(ertr.getEntity() instanceof LivingEntity))
+                return ActionResult.newResult(ActionResultType.PASS, stack); // shouldnt attack any non living creatures...
+
+            LivingEntity entity = (LivingEntity) ertr.getEntity();
 
             if (dragon.shouldAttackEntity(entity, dragon.getOwner())) // If the entity found is attackable, then go for it
             {
@@ -122,10 +129,7 @@ public class DragonStaffItem extends Item
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack)
-    {
-        return isBound(stack);
-    }
+    public boolean hasEffect(ItemStack stack) { return isBound(stack); }
 
     /**
      * Is there a dragon bound to this staff?

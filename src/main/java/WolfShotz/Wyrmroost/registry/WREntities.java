@@ -57,7 +57,7 @@ public class WREntities
     
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = register("dragon_egg", EntityType.Builder.create(DragonEggEntity::new, EntityClassification.MISC).disableSummoning());
     
-    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART = register("multipart_entity", EntityType.Builder.<MultiPartEntity>create(EntityClassification.MISC).disableSummoning().disableSerialization().setShouldReceiveVelocityUpdates(false));
+    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART = register("multipart_entity", EntityType.Builder.<MultiPartEntity>create(MultiPartEntity::new, EntityClassification.MISC).disableSummoning().disableSerialization().setShouldReceiveVelocityUpdates(false));
     
     /**
      * Registers World Spawning for entities
@@ -89,10 +89,7 @@ public class WREntities
         
         registerEntityRenderingHandler(MultiPartEntity.class, mgr -> new EntityRenderer<MultiPartEntity>(mgr)
         {
-            protected ResourceLocation getEntityTexture(MultiPartEntity entity)
-            {
-                return null;
-            }
+            protected ResourceLocation getEntityTexture(MultiPartEntity entity) { return null; }
         });
     }
     

@@ -192,36 +192,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
-    public void setGender(boolean sex)
-    {
-        dataManager.set(GENDER, sex);
-    }
+    public void setGender(boolean sex) { dataManager.set(GENDER, sex); }
 
     /**
      * Whether or not this dragonEntity is albino. true == isSpecial, false == is not
      */
-    public boolean isSpecial()
-    {
-        return dataManager.get(SPECIAL);
-    }
+    public boolean isSpecial() { return dataManager.get(SPECIAL); }
 
-    public void setSpecial(boolean albino)
-    {
-        dataManager.set(SPECIAL, albino);
-    }
+    public void setSpecial(boolean albino) { dataManager.set(SPECIAL, albino); }
 
-    public int getSpecialChances()
-    {
-        return rand.nextInt(400) + 100;
-    }
+    public int getSpecialChances() { return rand.nextInt(400) + 100; }
 
     /**
      * Whether or not the dragon is flying
      */
-    public boolean isFlying()
-    {
-        return dataManager.get(FLYING);
-    }
+    public boolean isFlying() { return dataManager.get(FLYING); }
 
     public void setFlying(boolean fly)
     {
