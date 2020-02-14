@@ -325,7 +325,6 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
         GlStateManager.translated(-body1.rotationPointX * f5, -body1.rotationPointY * f5, -body1.rotationPointZ * f5);
         body1.render(f5);
-        entity.dc.render(f5, dynamicTailArray);
         GlStateManager.popMatrix();
     }
     
@@ -347,8 +346,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         resetToDefaultPose();
         globalSpeed = 0.5f;
         globalDegree = 0.5f;
-        entity.dc.updateChain(partialTick, tailArray, dynamicTailArray, 0, 0.1f, 0.1f, 0.97f, 35, false);
-        
+
         setInitialPositions();
         
         flap(bottomWingFinPhalangeL1, 0.2f, 0.3f, false, 0, 0, frame, 0.5f);

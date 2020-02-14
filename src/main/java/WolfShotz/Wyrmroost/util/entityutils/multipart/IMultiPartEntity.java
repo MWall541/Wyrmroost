@@ -57,8 +57,5 @@ public interface IMultiPartEntity
         return new MultiPartEntity(host, radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier);
     }
     
-    default LivingEntity getHost()
-    {
-        return (LivingEntity) this;
-    }
+    default LivingEntity getHost() { return (LivingEntity) this; }
 }

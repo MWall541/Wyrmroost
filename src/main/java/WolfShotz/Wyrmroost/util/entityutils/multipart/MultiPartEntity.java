@@ -11,6 +11,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -22,7 +23,12 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
 {
     public LivingEntity host;
     public float radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier;
-    
+
+    public MultiPartEntity(EntityType<? extends MultiPartEntity> multiPart, World world)
+    {
+        super(multiPart, world);
+    }
+
     public MultiPartEntity(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier)
     {
         super(WREntities.MULTIPART.get(), host.world);
@@ -31,22 +37,22 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         this.angleYaw = (angleYaw + 90f) * (MathUtils.PI / 180f);
         this.offsetY = offsetY;
         this.damageMultiplier = damageMultiplier;
-        
+
         resize(sizeX, sizeY);
     }
     
     @Override
     public void tick()
     {
-        if (!host.isAlive())
-        { // Our host is dead, so we shouldnt exist!
+        if (host == null || !host.isAlive()) // Our host is dead, so we shouldnt exist!
+        {
             remove();
             return;
         }
-        
-        setPositionAndUpdate(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
+
+        setPosition(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
         if (!world.isRemote) collideWithNearbyEntities();
-        
+
         super.baseTick();
     }
     
@@ -71,45 +77,30 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         this.sizeY = sizeY;
         recalculateSize();
     }
-    
+
     @Override
-    public EntitySize getSize(Pose poseIn)
-    {
-        return EntitySize.flexible(sizeX, sizeY);
-    }
+    public EntitySize getSize(Pose poseIn) { return EntitySize.flexible(sizeX, sizeY); }
     
     @Override
     public boolean attackEntityFrom(DamageSource source, float damage)
     {
         return host.attackEntityFrom(source, damage * damageMultiplier);
     }
-    
+
     @Override
-    public boolean isEntityEqual(Entity entity)
-    {
-        return this == entity || host == entity;
-    }
-    
+    public boolean isEntityEqual(Entity entity) { return this == entity || host == entity; }
+
     @Override
-    protected void registerData()
-    {
-    }
-    
+    protected void registerData() {}
+
     @Override
-    protected void readAdditional(CompoundNBT compound)
-    {
-    }
-    
+    protected void readAdditional(CompoundNBT compound) {}
+
     @Override
-    protected void writeAdditional(CompoundNBT compound)
-    {
-    }
-    
+    protected void writeAdditional(CompoundNBT compound) {}
+
     @Override
-    public boolean canBeCollidedWith()
-    {
-        return true;
-    }
+    public boolean canBeCollidedWith() { return true; }
     
     public void collideWithNearbyEntities()
     {
@@ -122,12 +113,10 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         return host.getPickedResult(target);
     }
-    
+
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport)
-    {
-    }
+    public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) {}
     
     @Override
     public IPacket<?> createSpawnPacket()

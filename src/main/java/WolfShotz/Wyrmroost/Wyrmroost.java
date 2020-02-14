@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.registry.*;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -153,14 +155,22 @@ public class Wyrmroost
 
             evt.setCanceled(true);
 
-            ModUtils.L.info(WorldCapability.isPortalTriggered(evt.getWorld()));
-
             Entity entity = evt.getTarget();
             if (!(entity instanceof AbstractDragonEntity)) return;
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
             if (player.isSneaking()) dragon.tame(true, player);
             else if (evt.getWorld().isRemote) Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
+        }
+
+        @SubscribeEvent
+        public static void onEntityTrack(PlayerEvent.StartTracking evt)
+        {
+            Entity target = evt.getTarget();
+            if (!(target instanceof IMultiPartEntity)) return;
+            IMultiPartEntity entity = (IMultiPartEntity) target;
+            entity.iterateParts().forEach(target.world::addEntity);
+            ModUtils.L.info("aaa");
         }
     }
     
