@@ -207,6 +207,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
      */
     public void setArmor(Item armor)
     {
+        DragonArmorItem.setDragonArmored(this, 1);
         if (!(armor instanceof DragonArmorItem)) armor = null;
         dataManager.set(ARMOR, new ItemStack(armor));
         if (armor != null) playSound(SoundEvents.ENTITY_HORSE_ARMOR, 1, 1);

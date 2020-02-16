@@ -4,13 +4,14 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveTowardsHomePointGoal;
-import WolfShotz.Wyrmroost.util.entityutils.client.DynamicChain;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
+import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
@@ -37,46 +38,44 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static net.minecraft.entity.SharedMonsterAttributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.MAX_HEALTH;
+import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 
-public class ButterflyLeviathanEntity extends AbstractDragonEntity /*implements IMultiPartEntity TODO multipart */
+public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.createKey(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
 
     // Multipart
-//    public MultiPartEntity headPart;
-//    public MultiPartEntity wingLeftPart;
-//    public MultiPartEntity wingRightPart;
-//    public MultiPartEntity tail1Part;
-//    public MultiPartEntity tail2Part;
-//    public MultiPartEntity tail3Part;
+    public MultiPartEntity headPart;
+    public MultiPartEntity wingLeftPart;
+    public MultiPartEntity wingRightPart;
+    public MultiPartEntity tail1Part;
+    public MultiPartEntity tail2Part;
+    public MultiPartEntity tail3Part;
 
     public RandomWalkingGoal moveGoal;
-    @OnlyIn(Dist.CLIENT)
-    public DynamicChain dc;
 
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world)
     {
         super(blevi, world);
 
-//        headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
-//        wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
-//        wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
-//        tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
-//        tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
-//        tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
-
-        if (world.isRemote) dc = new DynamicChain(this);
-
         moveController = new ButterFlyMoveController(this);
+
+        if (!world.isRemote)
+        {
+            headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
+            wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
+            wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
+            tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
+            tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
+            tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
+        }
     }
     
     @Override
@@ -96,7 +95,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity /*implements 
 
         getAttribute(MAX_HEALTH).setBaseValue(70d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.1); // On land speed, in water speed is handled in the move controller
-        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+//        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
 
     @Override
@@ -150,8 +149,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity /*implements 
     public void tick()
     {
         super.tick();
+        tickParts();
 
-//        tickParts();
         recalculateSize();
 
         if (hasConduit())
@@ -172,21 +171,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity /*implements 
     {
         super.updateAITasks();
 
-        if (isInWater())
-        {
-            moveGoal.setExecutionChance(10);
-        }
-        else
-        {
-            moveGoal.setExecutionChance(120);
-        }
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
-    {
-        if (isUnderWater()) return 2f;
-        return 2.55f;
+        if (isInWater()) moveGoal.setExecutionChance(10);
+        else moveGoal.setExecutionChance(120);
     }
 
     @Override
@@ -257,12 +243,18 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity /*implements 
         }
     }
 
-//    @Override
-//    public MultiPartEntity[] getParts()
-//    {
-//        return new MultiPartEntity[]{headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part};
-//    }
+    @Override
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    {
+        if (isUnderWater()) return 2f;
+        return 3.1f;
+    }
 
+    @Override
+    public MultiPartEntity[] getParts()
+    {
+        return new MultiPartEntity[]{headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part};
+    }
 
     @Override
     public void setMountCameraAngles(boolean backView)
@@ -271,7 +263,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity /*implements 
         else GlStateManager.translated(0, 0, -7d);
     }
 
-    public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER); }
+    public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER, true); }
 
     @Override
     public boolean canFly() { return false; }
@@ -280,43 +272,28 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity /*implements 
     public boolean canBeSteered() { return true; }
 
     @Override
-    public boolean canBeRiddenInWater(Entity rider)
-    {
-        return true;
-    }
-    
+    public boolean canBeRiddenInWater(Entity rider) { return true; }
+
     @Override
-    public boolean isNotColliding(IWorldReader worldIn)
-    {
-        return worldIn.checkNoEntityCollision(this);
-    }
-    
+    public boolean isNotColliding(IWorldReader worldIn) { return worldIn.checkNoEntityCollision(this); }
+
     @Override
-    public boolean canBreatheUnderwater()
-    {
-        return true;
-    }
-    
+    public boolean canBreatheUnderwater() { return true; }
+
     @Override
-    public boolean isPushedByWater()
-    {
-        return false;
-    }
-    
+    public boolean isPushedByWater() { return false; }
+
     /**
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems()
-    {
-        return Lists.newArrayList(Items.SEAGRASS, Items.KELP);
-    }
-    
+    public List<Item> getFoodItems() { return Lists.newArrayList(Items.SEAGRASS, Items.KELP); }
+
     @Nullable
     @Override
     public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
     {
-        return ContainerBase.butterflyInv(this, playerInv, windowID);
+        return new ContainerBase.ButterflyContainer(this, playerInv, windowID);
     }
 
     @Override

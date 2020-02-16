@@ -4,13 +4,13 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.ScavengeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemFlee;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -290,20 +290,14 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
     {
-        return ContainerBase.stalkerInv(this, playerInv, windowID);
+        return new ContainerBase.StalkerContainer(this, playerInv, windowID);
     }
 
     @Override
-    public LazyOptional<ItemStackHandler> createInv()
-    {
-        return LazyOptional.of(() -> new ItemStackHandler(1));
-    }
-    
+    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.of(() -> new ItemStackHandler(1)); }
+
     @Override
-    public DragonEggProperties createEggProperties()
-    {
-        return new DragonEggProperties(0.25f, 0.35f, 6000);
-    }
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
     
     @Override
     public Animation[] getAnimations()

@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.io.container.base;
+package WolfShotz.Wyrmroost.util.io;
 
 import net.minecraft.inventory.container.Slot;
 

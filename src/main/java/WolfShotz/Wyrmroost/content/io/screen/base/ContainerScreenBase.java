@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.io.screen.base;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.io.NameFieldWidget;
-import WolfShotz.Wyrmroost.content.io.container.base.ContainerBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.io.ContainerBase;
+import WolfShotz.Wyrmroost.util.io.NameFieldWidget;
 import WolfShotz.Wyrmroost.util.network.messages.EntityRenameMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.gui.IGuiEventListener;
@@ -27,7 +27,6 @@ public class ContainerScreenBase<T extends ContainerBase<?>> extends ContainerSc
     public static final ResourceLocation STANDARD_GUI = ModUtils.resource("textures/io/dragonscreen/dragoninv.png");
     public static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
     public static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glitter_7.png");
-    public static final ResourceLocation WIDGETS = ModUtils.resource("textures/io/widgets.png");
 
     public T dragonInv;
     public ResourceLocation background;
@@ -123,24 +122,16 @@ public class ContainerScreenBase<T extends ContainerBase<?>> extends ContainerSc
         GlStateManager.color4f(1f, 1f, 1f, 1f);
         GlStateManager.popMatrix();
     }
-    
+
     /**
-     * Public access version of {@link Screen#addButton}
+     * Public access version of {@link net.minecraft.client.gui.screen.Screen#addButton(Widget)}
      */
     @Override
-    public <T extends Widget> T addButton(T widget)
-    {
-        return super.addButton(widget);
-    }
+    public <T extends Widget> T addButton(T widget) { return super.addButton(widget); }
     
     public List<IGuiEventListener> getChildren()
     {
         return children;
-    }
-    
-    public List<Widget> getWidgets()
-    {
-        return buttons;
     }
     
     public void renderEntity(int mouseX, int mouseY)
@@ -159,16 +150,24 @@ public class ContainerScreenBase<T extends ContainerBase<?>> extends ContainerSc
         minecraft.getTextureManager().bindTexture(texture);
     }
 
-    public static <T extends ContainerBase<?>> ContainerScreenBase<T> singleSlotScreen(T container, PlayerInventory playerInv, ITextComponent name)
+    public static class BasicEntityScreen<T extends ContainerBase<?>> extends ContainerScreenBase<T>
     {
-        return new ContainerScreenBase<T>(container, playerInv, name)
+        public BasicEntityScreen(T container, PlayerInventory playerInv, ITextComponent name)
         {
-            @Override
-            protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
-            {
-                super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-                blit(guiLeft + 70, guiTop + 55, 0, 164, 18, 18, textureWidth, textureHeight);
-            }
-        };
+            super(container, playerInv, name);
+        }
+
+        @Override
+        protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+        {
+            super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+            blit(guiLeft + 70, guiTop + 55, 0, 164, 18, 18, textureWidth, textureHeight);
+        }
+
+        @Override
+        protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+        {
+            super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        }
     }
 }

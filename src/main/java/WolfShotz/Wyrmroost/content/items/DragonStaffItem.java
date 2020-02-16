@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -86,11 +87,22 @@ public class DragonStaffItem extends Item
 
             if (dragonTarget != null && dragonTarget.getOwner() == player)
             {
-                if (dragon.isFlying() && !world.isRemote)
-                    dragon.getFlightMoveController().resetCourse().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
-                else if (dragon.isSitting()) dragon.setSit(false);
-                player.playSound(SoundEvents.BLOCK_BELL_USE, 1, 1);
-                return ActionResult.newResult(ActionResultType.SUCCESS, stack);
+                boolean flag = false;
+                if (dragonTarget.isFlying() && !world.isRemote)
+                {
+                    dragonTarget.getFlightMoveController().resetCourse().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+                    flag = true;
+                }
+                else if (dragonTarget.isSitting())
+                {
+                    dragon.setSit(false);
+                    flag = true;
+                }
+                if (flag)
+                {
+                    player.playSound(SoundEvents.BLOCK_BELL_USE, 1, 1);
+                    return ActionResult.newResult(ActionResultType.SUCCESS, stack);
+                }
             }
 
             // Attack
@@ -114,6 +126,8 @@ public class DragonStaffItem extends Item
             BlockRayTraceResult brtr = (BlockRayTraceResult) rtr;
             BlockPos homePos = brtr.getPos();
             if (!world.getBlockState(homePos).isSolid()) return ActionResult.newResult(ActionResultType.PASS, stack);
+            if (brtr.getHitVec().distanceTo(player.getPositionVec()) >= Minecraft.getInstance().playerController.getBlockReachDistance())
+                return ActionResult.newResult(ActionResultType.PASS, stack);
 
             if (!world.isRemote)
             {

@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.io.container.base;
+package WolfShotz.Wyrmroost.util.io;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEnti
 import WolfShotz.Wyrmroost.registry.SetupIO;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -16,20 +15,17 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraftforge.items.SlotItemHandler;
 
-import javax.annotation.Nonnull;
-
-public abstract class ContainerBase<T extends AbstractDragonEntity> extends Container
+public class ContainerBase<T extends AbstractDragonEntity> extends Container
 {
     public T dragon;
-    
+
     public ContainerBase(T dragon, ContainerType<?> type, int windowID)
     {
         super(type, windowID);
         this.dragon = dragon;
     }
-    
+
     /**
      * Determines whether supplied player can use this container
      */
@@ -84,50 +80,33 @@ public abstract class ContainerBase<T extends AbstractDragonEntity> extends Cont
             itemStack = itemStack1.copy();
             if (index < 36 && !mergeItemStack(itemStack1, 36, inventorySlots.size(), false)) return ItemStack.EMPTY;
             else if (!mergeItemStack(itemStack1, 0, 37, true)) return ItemStack.EMPTY;
-            
+
             if (itemStack1.isEmpty()) slot.putStack(ItemStack.EMPTY);
             else slot.onSlotChanged();
         }
-        
+
         return itemStack;
     }
 
-    public static ContainerBase<RoostStalkerEntity> stalkerInv(Entity entity, PlayerInventory playerInv, int windowID)
+    public static class StalkerContainer extends ContainerBase<RoostStalkerEntity>
     {
-        return new ContainerBase<RoostStalkerEntity>((RoostStalkerEntity) entity, SetupIO.STALKER_CONTAINER.get(), windowID)
-        {{
+        public StalkerContainer(RoostStalkerEntity stalker, PlayerInventory playerInv, int windowID)
+        {
+            super(stalker, SetupIO.STALKER_CONTAINER.get(), windowID);
             buildPlayerSlots(playerInv, 7, 83);
-            dragon.invHandler.ifPresent(i -> addSlot(new SlotItemHandler(i, 0, 85, 65)
-            {
-                @Override
-                public boolean isItemValid(@Nonnull ItemStack stack)
-                {
-                    return !(stack.getItem() instanceof BlockItem);
-                }
-            }));
-        }};
+            dragon.invHandler.ifPresent(i -> addSlot(new ItemHandlerSlotBuilder(i, 0, 85, 65).only(s -> !(s.getItem() instanceof BlockItem))));
+        }
     }
-    
-    public static ContainerBase<ButterflyLeviathanEntity> butterflyInv(Entity entity, PlayerInventory playerInv, int windowID)
+
+    public static class ButterflyContainer extends ContainerBase<ButterflyLeviathanEntity>
     {
-        return new ContainerBase<ButterflyLeviathanEntity>((ButterflyLeviathanEntity) entity, SetupIO.BUTTERFLY_CONTAINER.get(), windowID)
-        {{
-            buildPlayerSlots(playerInv, 7, 83);
-
-            dragon.invHandler.ifPresent(i -> addSlot(new SlotItemHandler(i, 0, 127, 56)
-            {
-                @Override
-                public boolean isItemValid(@Nonnull ItemStack stack) { return stack.getItem() == Items.CONDUIT; }
-
-                @Override
-                public int getSlotStackLimit() { return 1; }
-
-                @Override
-                public int getItemStackLimit(@Nonnull ItemStack stack) { return 1; }
-
-                @Override
-                public void onSlotChanged() { dragon.setHasConduit(getStack().getItem() == Items.CONDUIT); }
-            }));
-        }};
+        public ButterflyContainer(ButterflyLeviathanEntity bfly, PlayerInventory playerinv, int windowID)
+        {
+            super(bfly, SetupIO.BUTTERFLY_CONTAINER.get(), windowID);
+            dragon.invHandler.ifPresent(i -> addSlot(new ItemHandlerSlotBuilder(i, 0, 127, 56)
+                    .only(s -> s.getItem() == Items.CONDUIT)
+                    .limit(1)
+                    .onSlotUpdate(s -> dragon.setHasConduit(s.getStack().getItem() == Items.CONDUIT))));
+        }
     }
 }

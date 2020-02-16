@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens;
 
-import WolfShotz.Wyrmroost.content.io.NameFieldWidget;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.io.NameFieldWidget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;

@@ -463,7 +463,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner)
     {
         if (!isTamed()) return true;
-        if (target instanceof TameableEntity) return ((TameableEntity) target).getOwner() != owner;
+        if (target instanceof TameableEntity)
+        {
+            TameableEntity tamable = (TameableEntity) target;
+            return tamable.getOwner() != null && !tamable.getOwner().equals(owner);
+        }
 
         return true;
     }
@@ -546,7 +550,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 if ((i < 1 || l < 1 || i > 3 || l > 3) && ModUtils.isBoxSafe(potentialAABB, world) && (isFlying() || !world.getBlockState(pos.down()).isAir(world, pos)))
                 {
                     setPosition(pos.getX(), pos.getY(), pos.getZ());
-                    getNavigator().clearPath();
+                    clearAI();
 
                     return true;
                 }
@@ -888,29 +892,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Set the view angles of the game camera while riding this dragon in 3rd person
      */
-    public void setMountCameraAngles(boolean backView)
-    {
-    }
+    public void setMountCameraAngles(boolean backView) {}
 
     /**
      * A gui created when right clicked by a {@link WRItems#DRAGON_STAFF}
      */
     @Nullable
     @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
-    {
-        return null;
-    }
+    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return null; }
 
     /**
      * Is the passed stack considered a breeding item?
      * Default return {@link #isFoodItem(ItemStack)} - Intended to be overrided if applicable
      */
     @Override
-    public boolean isBreedingItem(ItemStack stack)
-    {
-        return isFoodItem(stack);
-    }
+    public boolean isBreedingItem(ItemStack stack) { return isFoodItem(stack); }
 
     /**
      * Is the passed stack considered a food item defined in {@link #getFoodItems()}
