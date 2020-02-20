@@ -1,4 +1,8 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "wyrmroost:teal_corin_log",
+    "wyrmroost:teal_corin_wood",
+    "wyrmroost:stripped_teal_corin_log"
+  ]
 }

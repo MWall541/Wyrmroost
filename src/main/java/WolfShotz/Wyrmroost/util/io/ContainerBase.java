@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.util.io;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
-import WolfShotz.Wyrmroost.registry.SetupIO;
+import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -92,7 +92,7 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
     {
         public StalkerContainer(RoostStalkerEntity stalker, PlayerInventory playerInv, int windowID)
         {
-            super(stalker, SetupIO.STALKER_CONTAINER.get(), windowID);
+            super(stalker, WRIO.STALKER_CONTAINER.get(), windowID);
             buildPlayerSlots(playerInv, 7, 83);
             dragon.invHandler.ifPresent(i -> addSlot(new ItemHandlerSlotBuilder(i, 0, 85, 65).only(s -> !(s.getItem() instanceof BlockItem))));
         }
@@ -102,7 +102,7 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
     {
         public ButterflyContainer(ButterflyLeviathanEntity bfly, PlayerInventory playerinv, int windowID)
         {
-            super(bfly, SetupIO.BUTTERFLY_CONTAINER.get(), windowID);
+            super(bfly, WRIO.BUTTERFLY_CONTAINER.get(), windowID);
             dragon.invHandler.ifPresent(i -> addSlot(new ItemHandlerSlotBuilder(i, 0, 127, 56)
                     .only(s -> s.getItem() == Items.CONDUIT)
                     .limit(1)

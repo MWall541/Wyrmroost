@@ -1,4 +1,8 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "wyrmroost:canari_log",
+    "wyrmroost:canari_wood",
+    "wyrmroost:stripped_canari_log"
+  ]
 }

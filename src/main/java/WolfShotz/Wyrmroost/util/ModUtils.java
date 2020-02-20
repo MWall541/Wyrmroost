@@ -185,10 +185,7 @@ public class ModUtils
     /**
      * Get the instance of the wyrmroost dimension
      */
-    public static DimensionType getDimensionInstance()
-    {
-        return DimensionType.byName(ModUtils.resource("wyrmroost"));
-    }
+    public static DimensionType getDimensionInstance() { return DimensionType.byName(ModUtils.resource("wyrmroost")); }
 
     /**
      * Creates a new TranslationTextComponent appended with the passed strings
