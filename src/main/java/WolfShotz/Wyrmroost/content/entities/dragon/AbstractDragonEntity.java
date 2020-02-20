@@ -557,6 +557,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
 
+        getBoundingBox().expand(0.1, 0.1, 0.1);
+
         return false;
     }
 

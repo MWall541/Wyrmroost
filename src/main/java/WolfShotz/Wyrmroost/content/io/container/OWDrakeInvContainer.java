@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.io.container;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.registry.SetupIO;
+import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import WolfShotz.Wyrmroost.util.io.ItemHandlerSlotBuilder;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +18,7 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
 {
     public OWDrakeInvContainer(OWDrakeEntity drake, PlayerInventory playerInv, int windowID)
     {
-        super(drake, SetupIO.OWDRAKE_CONTAINER.get(), windowID);
+        super(drake, WRIO.OWDRAKE_CONTAINER.get(), windowID);
 
         buildPlayerSlots(playerInv, 7, 83);
         dragon.invHandler.ifPresent(h -> {

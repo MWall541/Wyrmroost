@@ -21,7 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import static WolfShotz.Wyrmroost.util.io.ContainerBase.ButterflyContainer;
 import static WolfShotz.Wyrmroost.util.io.ContainerBase.StalkerContainer;
 
-public class SetupIO
+public class WRIO
 {
     public static final DeferredRegister<ContainerType<?>> CONTAINERS = new DeferredRegister<>(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
 

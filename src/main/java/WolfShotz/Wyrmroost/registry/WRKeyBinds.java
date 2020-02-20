@@ -3,12 +3,12 @@ package WolfShotz.Wyrmroost.registry;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-public class KeyBinds
+public class WRKeyBinds
 {
     private static final String CATEGORY = "keyCategory.wyrmroost";
-    
+
     public static KeyBinding genericAttack;
-    
+
     public static void registerKeys()
     {
         genericAttack = registerKey("key.genericAttack", 86, CATEGORY);

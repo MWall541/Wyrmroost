@@ -15,24 +15,26 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.common.ModDimension;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
 public class WyrmroostDimension extends Dimension
 {
-    @ObjectHolder(Wyrmroost.MOD_ID + ":wyrmroost")
-    public static final ModDimension DIM_WYRMROOST = null;
+    public static final DeferredRegister<ModDimension> DIMENSION = new DeferredRegister<>(ForgeRegistries.MOD_DIMENSIONS, Wyrmroost.MOD_ID);
+    public static final RegistryObject<ModDimension> WYRMROOST_DIM = DIMENSION.register("wyrmroost", () -> ModDimension.withFactory(WyrmroostDimension::new));
 
     public WyrmroostDimension(World worldIn, DimensionType typeIn)
     {
         super(worldIn, typeIn);
     }
-    
+
     @Override
     public ChunkGenerator<?> createChunkGenerator()
     {
-        return new WyrmroostChunkGenerator(world, new WyrmroostGenSettings());
+        return new WyrmroostChunkGenerator(world);
     }
     
     @Nullable
@@ -90,15 +92,12 @@ public class WyrmroostDimension extends Dimension
         double d1 = 0.5d - Math.cos(d0 * Math.PI) / 2d;
         return (float) (d0 * 2d + d1) / 3f;
     }
-    
+
     /**
      * Returns 'true' if in the "main surface world", but 'false' if in the Nether or End dimensions.
      */
     @Override
-    public boolean isSurfaceWorld()
-    {
-        return true;
-    }
+    public boolean isSurfaceWorld() { return true; }
     
     /**
      * Return Vec3D with biome specific fog color
@@ -114,24 +113,18 @@ public class WyrmroostDimension extends Dimension
         f1 = f1 * (f * 0.94F + 0.06F);
         f2 = f2 * (f * 0.94F + 0.06F);
         f3 = f3 * (f * 0.91F + 0.09F);
-        return new Vec3d((double) f1, (double) f2, (double) f3);
+        return new Vec3d(f1, f2, f3);
     }
-    
+
     /**
      * True if the player can respawn in this dimension (true = overworld, false = nether).
      */
     @Override
-    public boolean canRespawnHere()
-    {
-        return true;
-    }
-    
+    public boolean canRespawnHere() { return true; }
+
     /**
      * Returns true if the given X,Z coordinate should show environmental fog.
      */
     @Override
-    public boolean doesXZShowFog(int x, int z)
-    {
-        return false;
-    }
+    public boolean doesXZShowFog(int x, int z) { return false; }
 }
