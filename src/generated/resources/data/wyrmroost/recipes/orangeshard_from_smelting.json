@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "wyrmroost:orange_crystal_ore"
-  },
-  "result": "wyrmroost:orange_shard",
-  "experience": 0.7,
-  "cookingtime": 200
-}

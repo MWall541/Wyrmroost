@@ -14,6 +14,7 @@ import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.data.loot.EntityLootTables;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -34,7 +35,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static WolfShotz.Wyrmroost.registry.WRBlocks.*;
 
@@ -61,6 +61,8 @@ public class LootTables extends LootTableProvider
 
     public static class BlockLoot extends BlockLootTables
     {
+        public static final LootFunction.Builder<?> FORTUNE = ApplyBonus.uniformBonusCount(Enchantments.FORTUNE);
+
         public final Map<Block, LootTable.Builder> lootTables = Maps.newHashMap();
 
         @Override
@@ -74,23 +76,24 @@ public class LootTables extends LootTableProvider
             registerOre(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
 
             registerOre(BLUE_CRYSTAL_ORE.get(), WRItems.BLUE_SHARD.get());
-            registerLootTable(BLUE_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.BLUE_SHARD.get(), 1).acceptFunction(ApplyBonus.uniformBonusCount(Enchantments.FORTUNE)))));
+            registerLootTable(BLUE_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.BLUE_SHARD.get(), 1).acceptFunction(FORTUNE))));
 
             registerOre(GREEN_CRYSTAL_ORE.get(), WRItems.GREEN_SHARD.get());
-            registerLootTable(GREEN_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.GREEN_SHARD.get(), 1).acceptFunction(ApplyBonus.uniformBonusCount(Enchantments.FORTUNE)))));
+            registerLootTable(GREEN_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.GREEN_SHARD.get(), 1).acceptFunction(FORTUNE))));
 
             registerOre(ORANGE_CRYSTAL_ORE.get(), WRItems.ORANGE_SHARD.get());
-            registerLootTable(ORANGE_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.ORANGE_SHARD.get(), 1).acceptFunction(ApplyBonus.uniformBonusCount(Enchantments.FORTUNE)))));
+            registerLootTable(ORANGE_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.ORANGE_SHARD.get(), 1).acceptFunction(FORTUNE))));
 
             registerOre(YELLOW_CRYSTAL_ORE.get(), WRItems.YELLOW_SHARD.get());
-            registerLootTable(YELLOW_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.YELLOW_SHARD.get(), 1).acceptFunction(ApplyBonus.uniformBonusCount(Enchantments.FORTUNE)))));
+            registerLootTable(YELLOW_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.YELLOW_SHARD.get(), 1).acceptFunction(FORTUNE))));
 
             registerSilkTouch(CANARI_LEAVES.get());
 
             // All blocks that have not been given special treatment above, drop themselves!
             for (Block block : getKnownBlocks())
             {
-                if (!lootTables.containsKey(block)) registerDropSelfLootTable(block);
+                if (!lootTables.containsKey(block) && block.getLootTable() != net.minecraft.world.storage.loot.LootTables.EMPTY) // Loottable is already set to not have one, ignore.
+                    registerDropSelfLootTable(block);
             }
         }
 
@@ -102,6 +105,8 @@ public class LootTables extends LootTableProvider
             for (Block block : getKnownBlocks())
             {
                 ResourceLocation loot = block.getLootTable();
+                if (loot == net.minecraft.world.storage.loot.LootTables.EMPTY)
+                    continue; // Loottable is already set to not have one, ignore.
                 if (!lootTables.containsKey(block))
                     throw new IllegalStateException(String.format("Missing loottable '%s' for '%s', How the fuck did this happen?", loot, Registry.BLOCK.getKey(block)));
                 consumer.accept(loot, lootTables.remove(block));
@@ -120,26 +125,28 @@ public class LootTables extends LootTableProvider
         }
 
         @Override
-        protected void registerLootTable(Block blockIn, LootTable.Builder table)
-        {
-            lootTables.put(blockIn, table);
-        }
+        protected void registerLootTable(Block blockIn, LootTable.Builder table) { lootTables.put(blockIn, table); }
     }
 
     public static class EntityLoot extends EntityLootTables
     {
-        private static final List<EntityType<?>> NO_DROPS = ImmutableList.of(WREntities.SILVER_GLIDER.get(), WREntities.DRAGON_EGG.get(), WREntities.MULTIPART.get(), WREntities.BUTTERFLY_LEVIATHAN.get());
+        private static final LootFunction.Builder<?> FIRE_CONDITION = Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, ON_FIRE));
+
         private static final EntityPredicate.Builder ON_FIRE = EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build());
+        private final Map<EntityType<?>, LootTable.Builder> lootTables = Maps.newHashMap();
 
         @Override
         protected void addTables()
         {
+            // TODO Silver glider, Butterfly Leviathan
+            registerEmptyTables(WREntities.SILVER_GLIDER.get(), WREntities.BUTTERFLY_LEVIATHAN.get());
+
             registerLootTable(WREntities.MINUTUS.get(), LootTable.builder()
-                    .addLootPool(lootTable().addEntry(item(WRItems.MINUTUS.get(), 1).acceptFunction(onFireCondition())))
+                    .addLootPool(lootTable().addEntry(item(WRItems.MINUTUS.get(), 1).acceptFunction(FIRE_CONDITION)))
             );
             registerLootTable(WREntities.OVERWORLD_DRAKE.get(), LootTable.builder()
                     .addLootPool(lootTable().addEntry(item(Items.LEATHER, 1f, 16f).acceptFunction(looting(1f, 4f))))
-                    .addLootPool(lootTable().addEntry(item(WRItems.COMMON_MEAT_RAW.get(), 2f, 6f).acceptFunction(onFireCondition()).acceptFunction(looting(1f, 4f))))
+                    .addLootPool(lootTable().addEntry(item(WRItems.COMMON_MEAT_RAW.get(), 2f, 6f).acceptFunction(FIRE_CONDITION).acceptFunction(looting(1f, 4f))))
                     .addLootPool(lootTable().addEntry(ItemLootEntry.builder(WRItems.DRAKE_BACKPLATE.get())).acceptCondition(KilledByPlayer.builder()).acceptCondition(RandomChanceWithLooting.builder(0.65f, 0.03f)))
             );
             registerLootTable(WREntities.ROOSTSTALKER.get(), LootTable.builder()
@@ -153,18 +160,48 @@ public class LootTables extends LootTableProvider
             );
         }
 
+        /**
+         * Our way is much neater and cooler anyway. fuck mojang
+         */
+        @Override
+        public void accept(BiConsumer<ResourceLocation, LootTable.Builder> consumer)
+        {
+            addTables();
+
+            for (EntityType<?> entity : getKnownEntities())
+            {
+                if (!lootTables.containsKey(entity))
+                {
+                    if (entity.getClassification() == EntityClassification.MISC) continue;
+                    throw new IllegalArgumentException(String.format("Missing Loottable for entry: '%s'", entity.getRegistryName()));
+                }
+                consumer.accept(entity.getLootTable(), lootTables.remove(entity));
+            }
+        }
+
         @Override
         protected Iterable<EntityType<?>> getKnownEntities()
         {
-            return ModUtils.getRegistryEntries(WREntities.ENTITIES)
-                    .stream()
-                    .filter(e -> !NO_DROPS.contains(e))
-                    .collect(Collectors.toSet());
+            return ModUtils.getRegistryEntries(WREntities.ENTITIES);
         }
 
-        private static LootFunction.Builder<?> onFireCondition()
+        /**
+         * @param types the types to register an empty loot tables
+         * @deprecated SHOULD ONLY USE THIS WHEN AN ENTITY ABSOLUTELY DOES NOT HAVE ONE, OR IS UNDECIDED!
+         */
+        public void registerEmptyTables(EntityType<?>... types)
         {
-            return Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, ON_FIRE));
+            for (EntityType<?> type : types)
+            {
+                ModUtils.L.warn("Registering EMPTY Loottable for: '{}'", type.getRegistryName());
+                registerLootTable(type, LootTable.builder());
+            }
+        }
+
+        @Override
+        protected void registerLootTable(EntityType<?> type, LootTable.Builder table)
+        {
+            lootTables.put(type, table);
         }
     }
 

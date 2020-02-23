@@ -101,6 +101,7 @@ public class WRItems
     public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", () -> new Item(ModUtils.itemBuilder().food(WRFoods.JEWELLED_APPLE)));
     public static final RegistryObject<Item> DRAGON_FRUIT = register("dragon_fruit", () -> new Item(ModUtils.itemBuilder().food(WRFoods.DRAGON_FRUIT)));
     public static final RegistryObject<Item> BLUEBERRIES = register("blueberries", () -> new Item(ModUtils.itemBuilder().food(WRFoods.BLUEBERRIES)));
+    public static final RegistryObject<Item> CANARI_CHERRY = register("canari_cherry", () -> new Item(ModUtils.itemBuilder().food(WRFoods.CANARI_CHERRY)));
 
     public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragonarmor", () -> new DragonArmorItem(DragonArmorItem.DragonArmorType.IRON));
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragonarmor", () -> new DragonArmorItem(DragonArmorItem.DragonArmorType.GOLD));
@@ -139,7 +140,8 @@ public class WRItems
         public static final Food DRAGON_FRUIT = new Food.Builder().hunger(6).saturation(0.55f).build();
         public static final Food BLUEBERRIES = new Food.Builder().hunger(2).saturation(0.1f).build();
         public static final Food COOKED_MINUTUS = new Food.Builder().hunger(6).saturation(0.7f).meat().build();
-        public static final Food CINIS_ROOT = new Food.Builder().hunger(3).saturation(0.5f).effect(new EffectInstance(Effects.HASTE, 300), 1f).build();
+        public static final Food CANARI_CHERRY = new Food.Builder().hunger(2).saturation(1f).build();
+        public static final Food CINIS_ROOT = new Food.Builder().hunger(2).saturation(0.5f).effect(new EffectInstance(Effects.HASTE, 300), 1f).build();
         public static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturation(0.9f).setAlwaysEdible()
                 .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
                 .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)

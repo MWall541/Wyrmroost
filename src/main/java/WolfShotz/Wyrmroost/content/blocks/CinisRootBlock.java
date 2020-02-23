@@ -42,8 +42,6 @@ public class CinisRootBlock extends BushBlock implements IGrowable
     @Override
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
     {
-        ModUtils.L.info(state.get(GROWTH));
-
         if (state.get(GROWTH) != 1) return false;
         InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRBlocks.CINIS_ROOT.get()));
         worldIn.setBlockState(pos, getDefaultState(), 4);

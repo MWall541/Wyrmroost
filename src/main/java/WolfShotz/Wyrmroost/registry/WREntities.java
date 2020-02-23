@@ -63,11 +63,14 @@ public class WREntities
      */
     public static void registerEntityWorldSpawns()
     {
+        // OW
         registerSpawnEntry(OVERWORLD_DRAKE.get(), 8, 1, 3, getByTypes(Type.SANDY, Type.PLAINS));
         registerSpawnEntry(MINUTUS.get(), 35, 1, 1, getByTypes(Type.SANDY).stream().filter(b -> !BiomeDictionary.hasType(b, Type.MESA)).collect(Collectors.toSet()));
         registerCustomSpawnEntry(SILVER_GLIDER.get(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere, getByTypes(Type.BEACH, Type.PLAINS));
         registerSpawnEntry(ROOSTSTALKER.get(), 9, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
         registerCustomSpawnEntry(DRAGON_FRUIT_DRAKE.get(), 100, 1, 3, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING, DragonFruitDrakeEntity::canSpawnHere, BiomeDictionary.getBiomes(Type.JUNGLE));
+
+        // Dimension: these have to be done here instead of the biome builder because entities aren't registered yet...
         registerSpawnEntry(BUTTERFLY_LEVIATHAN.get(), 1, 1, 1, Sets.newHashSet(WRBiomes.STYGIAN_SEA.get()));
     }
     

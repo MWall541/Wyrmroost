@@ -15,11 +15,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
+import java.util.function.Supplier;
+
 public class LogBlockBase extends LogBlock
 {
-    public final Block strippedLog;
+    public final Supplier<Block> strippedLog;
 
-    public LogBlockBase(MaterialColor verticalColorIn, Block strippedLog, Properties properties)
+    public LogBlockBase(MaterialColor verticalColorIn, Supplier<Block> strippedLog, Properties properties)
     {
         super(verticalColorIn, properties);
         this.strippedLog = strippedLog;
@@ -34,7 +36,7 @@ public class LogBlockBase extends LogBlock
             worldIn.playSound(player, pos, SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1f, 1f);
             if (!worldIn.isRemote)
             {
-                worldIn.setBlockState(pos, strippedLog.getDefaultState().with(RotatedPillarBlock.AXIS, worldIn.getBlockState(pos).get(RotatedPillarBlock.AXIS)), 11);
+                worldIn.setBlockState(pos, strippedLog.get().getDefaultState().with(RotatedPillarBlock.AXIS, worldIn.getBlockState(pos).get(RotatedPillarBlock.AXIS)), 11);
                 player.getHeldItem(handIn).damageItem(1, player, playerConsumer -> playerConsumer.sendBreakAnimation(handIn));
             }
             return true;

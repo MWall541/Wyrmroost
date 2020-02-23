@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#minecraft:logs/canari_logs",
-    "#minecraft:logs/blue_corin_logs",
-    "#minecraft:logs/teal_corin_logs",
-    "#minecraft:logs/red_corin_logs"
-  ]
-}

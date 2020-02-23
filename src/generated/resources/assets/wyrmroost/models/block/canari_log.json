@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "side": "wyrmroost:block/canari_log",
+    "end": "wyrmroost:block/canari_log_top"
+  }
+}

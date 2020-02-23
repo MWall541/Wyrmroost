@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.util.data;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.blocks.CanariLeavesBlock;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRItems;
@@ -23,59 +24,56 @@ public class Models
 {
     public static class BlockModels extends BlockStateProvider
     {
+        public final ExistingFileHelper theGOODexistingFileHelper;
+
         public BlockModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
             super(generator, Wyrmroost.MOD_ID, existingFileHelper);
+            this.theGOODexistingFileHelper = existingFileHelper;
         }
 
         @Override
         protected void registerStatesAndModels()
         {
-            simpleBlock(WRBlocks.BLUE_GEODE_BLOCK.get());
-            simpleBlock(WRBlocks.RED_GEODE_BLOCK.get());
-            simpleBlock(WRBlocks.PURPLE_GEODE_BLOCK.get());
-            simpleBlock(WRBlocks.BLUE_GEODE_ORE.get());
-            simpleBlock(WRBlocks.RED_GEODE_ORE.get());
-            simpleBlock(WRBlocks.PURPLE_GEODE_ORE.get());
-            simpleBlock(WRBlocks.PLATINUM_BLOCK.get());
-            simpleBlock(WRBlocks.PLATINUM_ORE.get());
-
-            simpleBlock(WRBlocks.BLUE_CRYSTAL_BLOCK.get());
-            simpleBlock(WRBlocks.BLUE_CRYSTAL.get());
-            simpleBlock(WRBlocks.BLUE_CRYSTAL_ORE.get());
-            simpleBlock(WRBlocks.GREEN_CRYSTAL_BLOCK.get());
-            simpleBlock(WRBlocks.GREEN_CRYSTAL.get());
-            simpleBlock(WRBlocks.GREEN_CRYSTAL_ORE.get());
-            simpleBlock(WRBlocks.ORANGE_CRYSTAL_BLOCK.get());
-            simpleBlock(WRBlocks.ORANGE_CRYSTAL.get());
-            simpleBlock(WRBlocks.ORANGE_CRYSTAL_ORE.get());
-            simpleBlock(WRBlocks.YELLOW_CRYSTAL_BLOCK.get());
-            simpleBlock(WRBlocks.YELLOW_CRYSTAL.get());
-            simpleBlock(WRBlocks.YELLOW_CRYSTAL_ORE.get());
-
-            simpleBlock(WRBlocks.ASH.get());
-            simpleBlock(WRBlocks.ASH_BLOCK.get());
             logBlock((LogBlock) WRBlocks.ASH_LOG.get());
 
-//            logBlock((LogBlock) WRBlocks.CANARI_LOG.get());
-//            axisBlock((LogBlock) WRBlocks.STRIPPED_CANARI.get());
-//            simpleBlock(WRBlocks.CANARI_WOOD.get());
-//            simpleBlock(WRBlocks.CANARI_PLANKS.get());
+            logBlock((LogBlock) WRBlocks.CANARI_LOG.get());
+            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_CANARI.get());
+            simpleBlock(WRBlocks.CANARI_WOOD.get(), "canari_log"); // The all sided bark blocks. its called "wood" in vanilla so idgaf
+
+            ModelFile leaves = getExistingFile(mcLoc(BLOCK_FOLDER + "/leaves"));
+            getVariantBuilder(WRBlocks.CANARI_LEAVES.get()) // This took a stupid amount of time to figure out please help me
+                    .partialState()
+                    .with(CanariLeavesBlock.BERRIES, true)
+                    .modelForState().modelFile(cubeAll("canari_leaves_berries", modLoc("block/canari_leaves_berries")).parent(leaves)).addModel()
+                    .partialState()
+                    .with(CanariLeavesBlock.BERRIES, false)
+                    .modelForState().modelFile(cubed(WRBlocks.CANARI_LEAVES.get()).parent(leaves)).addModel();
 
             logBlock((LogBlock) WRBlocks.BLUE_CORIN_LOG.get());
             axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_BLUE_CORIN_LOG.get());
             simpleBlock(WRBlocks.BLUE_CORIN_WOOD.get(), "blue_corin_log");
-            simpleBlock(WRBlocks.BLUE_CORIN_PLANKS.get());
 
             logBlock((LogBlock) WRBlocks.TEAL_CORIN_LOG.get());
             axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_TEAL_CORIN_LOG.get());
             simpleBlock(WRBlocks.TEAL_CORIN_WOOD.get(), "teal_corin_log");
-            simpleBlock(WRBlocks.TEAL_CORIN_PLANKS.get());
 
             logBlock((LogBlock) WRBlocks.RED_CORIN_LOG.get());
             simpleBlock(WRBlocks.RED_CORIN_WOOD.get(), "red_corin_log");
             axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_RED_CORIN_LOG.get());
-            simpleBlock(WRBlocks.RED_CORIN_PLANKS.get());
+
+            // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
+            // If this is unwanted, it is important to define so above
+            for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS))
+            {
+                if (registeredBlocks.containsKey(block)) continue;
+
+                ResourceLocation name = block.getRegistryName();
+                if (!theGOODexistingFileHelper.exists(new ResourceLocation(name.getNamespace(), BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+                    ModUtils.L.error("Texture {} does not exist in any resource pack! Skipping this model...", name);
+                else simpleBlock(block);
+            }
+
         }
 
         protected void axisBlock(RotatedPillarBlock block)
@@ -86,6 +84,11 @@ public class Models
         protected void simpleBlock(Block block, String path)
         {
             simpleBlock(block, cubeAll(block.getRegistryName().getPath(), ModUtils.resource("block/" + path)));
+        }
+
+        public BlockModelBuilder cubed(Block block)
+        {
+            return cubeAll(block.getRegistryName().getPath(), blockTexture(block));
         }
     }
 
