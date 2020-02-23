@@ -10,15 +10,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.LogBlock;
 import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.TieredItem;
+import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.fml.RegistryObject;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Models
 {
@@ -92,50 +91,25 @@ public class Models
 
     public static class ItemModels extends ItemModelProvider
     {
+        final ExistingFileHelper theGOODExistingFileHelper;
+        private final List<Item> REGISTERED = Lists.newArrayList();
+
         public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
             super(generator, Wyrmroost.MOD_ID, existingFileHelper);
-        }
-
-        private static final List<Item> IGNORE = Lists.newArrayList(WRItems.MINUTUS.get(), WRItems.DRAGON_EGG.get(), WRItems.DRAGON_STAFF.get());
-        static
-        {
-            IGNORE.addAll(ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(BlockItem.class::isInstance).collect(Collectors.toList()));
-            IGNORE.addAll(CustomSpawnEggItem.EGG_TYPES);
-            IGNORE.addAll(Lists.newArrayList( // MISSING TEXTURES
-                    WRItems.FOOD_LOWTIER_MEAT_RAW.get(),
-                    WRItems.FOOD_LOWTIER_MEAT_COOKED.get(),
-                    WRItems.FOOD_APEX_MEAT_RAW.get(),
-                    WRItems.FOOD_APEX_MEAT_COOKED.get(),
-                    WRItems.FOOD_BEHEMOTH_MEAT_RAW.get(),
-                    WRItems.FOOD_BEHEMOTH_MEAT_COOKED.get(),
-                    WRItems.DRAKE_BOOTS.get(),
-                    WRItems.DRAKE_LEGGINGS.get(),
-                    WRItems.DRAKE_CHESTPLATE.get(),
-                    WRItems.DRAKE_HELMET.get()
-            ));
+            this.theGOODExistingFileHelper = existingFileHelper;
         }
 
         @Override
         @SuppressWarnings("ConstantConditions")
         protected void registerModels()
         {
-            // Item Blocks
-            for (RegistryObject<Block> registryBlock : WRBlocks.BLOCKS.getEntries())
-            {
-                ResourceLocation path = registryBlock.get().getRegistryName();
-                ModelFile model = new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath());
-                getBuilder(path.getPath()).parent(model);
-            }
-
-            // Eggs
+            // SpawnEggs
             for (CustomSpawnEggItem item : CustomSpawnEggItem.EGG_TYPES)
-            {
-                getBuilder(item.getRegistryName().getPath()).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
-            }
+                itemBare(item).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
 
             // Dragon Egg
-            getBuilder(WRItems.DRAGON_EGG.get().getRegistryName().getPath()) // TODO
+            item(WRItems.DRAGON_EGG.get()) // TODO make this a custom baked model...
                     .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
                     .transforms()
                         .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0).scale(1.5f).end()
@@ -154,25 +128,49 @@ public class Models
                     .predicate(ModUtils.resource("isalive"), 1)
                     .model(new ModelFile.UncheckedModelFile(resource("minutus_alive")));
 
-            getBuilder(WRItems.DRAGON_STAFF.get().getRegistryName().getPath())
-                    .parent(new ModelFile.UncheckedModelFile("item/handheld"))
-                    .texture("layer0", resource(WRItems.DRAGON_STAFF.get().getRegistryName().getPath()));
+            // Dragon Staff
+            item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
+
+            // Item Blocks
+            item(WRBlocks.CINIS_ROOT.get().asItem());
+            for (RegistryObject<Block> registryBlock : WRBlocks.BLOCKS.getEntries()) // All Standard ItemBlocks
+            {
+                if (REGISTERED.contains(registryBlock.get().asItem())) continue;
+                ResourceLocation path = registryBlock.get().getRegistryName();
+                ModelFile model = new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath());
+                itemBare(registryBlock.get().asItem()).parent(model);
+            }
 
             // All items that do not require custom attention
             ModUtils.getRegistryEntries(WRItems.ITEMS)
                     .stream()
-                    .filter(e -> !IGNORE.contains(e))
+                    .filter(e -> !REGISTERED.contains(e))
                     .forEach(this::item);
         }
 
-        protected ItemModelBuilder item(Item item)
+        public ItemModelBuilder item(Item item)
         {
-            ResourceLocation name = item.getRegistryName();
-            String parent = (item instanceof TieredItem)? "item/handheld" : "item/generated";
+            ItemModelBuilder builder = itemBare(item);
 
-            return super.getBuilder(name.getPath())
-                    .parent(new ModelFile.UncheckedModelFile(parent))
-                    .texture("layer0", resource(name.getPath()));
+            // model
+            String parent = (item instanceof TieredItem) ? "item/handheld" : "item/generated";
+            builder.parent(new ModelFile.UncheckedModelFile(parent));
+
+            // texture
+            ResourceLocation texture = resource(item.getRegistryName().getPath());
+            if (!theGOODExistingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+            {
+                ModUtils.L.error("Texture {} does not exist in any resource pack! Skipping...", texture);
+            }
+            else builder.texture("layer0", texture);
+
+            return builder;
+        }
+
+        public ItemModelBuilder itemBare(Item item)
+        {
+            REGISTERED.add(item);
+            return getBuilder(item.getRegistryName().getPath());
         }
 
         private static ResourceLocation resource(String path)
@@ -181,9 +179,6 @@ public class Models
         }
 
         @Override
-        public String getName()
-        {
-            return "Wyrmroost Item Models";
-        }
+        public String getName() { return "Wyrmroost Item Models"; }
     }
 }

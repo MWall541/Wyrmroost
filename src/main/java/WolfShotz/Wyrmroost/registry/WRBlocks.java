@@ -1,8 +1,7 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.CrystalBlock;
-import WolfShotz.Wyrmroost.content.blocks.PortalBlock;
+import WolfShotz.Wyrmroost.content.blocks.*;
 import WolfShotz.Wyrmroost.content.blocks.base.EXPBlock;
 import WolfShotz.Wyrmroost.content.blocks.base.LogBlockBase;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -11,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
@@ -20,12 +20,14 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.function.Supplier;
+
 public class WRBlocks
 {
     public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
-    
+
     public static final RegistryObject<Block> PORTAL_BLOCK = register("wyrmroost_portal", new PortalBlock());
-    
+
     public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", new Block(ModUtils.blockBuilder(Material.ROCK).harvestLevel(1).hardnessAndResistance(3).sound(SoundType.STONE)));
     public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", new Block(ModUtils.blockBuilder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)));
     
@@ -49,7 +51,10 @@ public class WRBlocks
     public static final RegistryObject<Block> YELLOW_CRYSTAL_ORE = register("yellow_crystal_ore", new EXPBlock(r -> MathHelper.nextInt(r, 5, 8), ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(2f).sound(SoundType.STONE)));
     public static final RegistryObject<Block> YELLOW_CRYSTAL_BLOCK = register("yellow_crystal_block", new StainedGlassBlock(DyeColor.YELLOW, ModUtils.blockBuilder(Material.ICE).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(1).sound(SoundType.GLASS)));
 
-    public static final RegistryObject<Block> ASH = register("ash", new SandBlock(0x575757, ModUtils.blockBuilder(Material.SAND).hardnessAndResistance(0.5f)));
+    public static final RegistryObject<Block> CINIS_ROOT = register("cinis_root", new CinisRootBlock(), () -> new BlockItem(WRBlocks.CINIS_ROOT.get(), ModUtils.itemBuilder().food(WRItems.WRFoods.CINIS_ROOT)));
+    public static final RegistryObject<Block> LISTIS_CACTUS = register("listis_cactus", new ListisCactusBlock(ModUtils.blockBuilder(Material.CACTUS).tickRandomly().hardnessAndResistance(0.4F).sound(SoundType.CLOTH).lightValue(11)));
+
+    public static final RegistryObject<Block> ASH = register("ash", new AshBlock());
     public static final RegistryObject<Block> ASH_BLOCK = register("ash_block", new Block(ModUtils.blockBuilder(Material.MISCELLANEOUS).hardnessAndResistance(1).sound(SoundType.SAND)));
     public static final RegistryObject<Block> ASH_LOG = register("ash_log", new LogBlock(MaterialColor.BROWN, ModUtils.blockBuilder(Material.WOOD)));
 
@@ -74,12 +79,17 @@ public class WRBlocks
     public static final RegistryObject<Block> RED_CORIN_WOOD = register("red_corin_wood", new RotatedPillarBlock(ModUtils.blockBuilder(Material.WOOD)));
     public static final RegistryObject<Block> RED_CORIN_PLANKS = register("red_corin_planks", new Block(ModUtils.blockBuilder(Material.WOOD).hardnessAndResistance(2, 3)));
 
-    private static RegistryObject<Block> register(String name, Block block)
+    public static RegistryObject<Block> register(String name, Block block)
     {
-        WRItems.register(name, new BlockItem(block, ModUtils.itemBuilder()));
+        return register(name, block, () -> new BlockItem(block, ModUtils.itemBuilder()));
+    }
+
+    public static RegistryObject<Block> register(String name, Block block, Supplier<Item> itemBlock)
+    {
+        WRItems.register(name, itemBlock);
         return BLOCKS.register(name, () -> block);
     }
-    
+
     public static class Tags
     {
         public static final Tag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
@@ -89,6 +99,10 @@ public class WRBlocks
         public static final Tag<Block> RED_CORIN_LOGS = tag(new ResourceLocation("logs/red_corin_logs"));
 
         public static Tag<Block> tag(String name) { return new BlockTags.Wrapper(ModUtils.resource(name)); }
-        public static Tag<Block> tag(ResourceLocation name) { return new BlockTags.Wrapper(name); }
+
+        public static Tag<Block> tag(ResourceLocation name)
+        {
+            return new BlockTags.Wrapper(name);
+        }
     }
 }

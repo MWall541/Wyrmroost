@@ -10,13 +10,14 @@ import net.minecraft.world.gen.feature.ReplaceBlockConfig;
 import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Predicate;
 
 public class WRWorldFeatures
 {
+
+
     public static void setupOreGen()
     {
         for (Biome biome : ForgeRegistries.BIOMES)
@@ -48,11 +49,6 @@ public class WRWorldFeatures
 
     private static final Predicate<Biome> NETHER_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER).stream().anyMatch(biome::equals);
     private static final Predicate<Biome> END_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.END).stream().anyMatch(biome::equals);
-
-    public void registerWorldFeatures(IEventBus bus)
-    {
-
-    }
 
     /**
      * Helper method that turns this rediculously long line into something more convenient and readable...

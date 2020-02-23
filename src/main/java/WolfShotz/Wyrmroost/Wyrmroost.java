@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
-import WolfShotz.Wyrmroost.content.world.EndOrePlacement;
 import WolfShotz.Wyrmroost.content.world.WorldCapability;
 import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.registry.*;
@@ -28,7 +27,6 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -43,7 +41,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(Wyrmroost.MOD_ID)
 @SuppressWarnings("unused")
@@ -58,18 +55,18 @@ public class Wyrmroost
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         eventBus.register(Wyrmroost.class);
-        
+
         WREntities.ENTITIES.register(eventBus);
         WRBlocks.BLOCKS.register(eventBus);
         WRItems.ITEMS.register(eventBus);
-        SetupIO.CONTAINERS.register(eventBus);
+        WRIO.CONTAINERS.register(eventBus);
         WRSounds.SOUNDS.register(eventBus);
-        ForgeRegistries.MOD_DIMENSIONS.register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost"));
-        ForgeRegistries.DECORATORS.register(new EndOrePlacement().setRegistryName("end_ore"));
-        
+        WRBiomes.BIOMES.register(eventBus);
+        WyrmroostDimension.DIMENSION.register(eventBus);
+
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.CommonConfig.COMMON_SPEC);
     }
-    
+
     // Mod Bus Event Listeners
     
     @SubscribeEvent
@@ -77,7 +74,7 @@ public class Wyrmroost
     {
         MinecraftForge.EVENT_BUS.register(CommonEvents.class);
 
-        DeferredWorkQueue.runLater(SetupWorld::setupOreGen);
+        DeferredWorkQueue.runLater(WRWorldFeatures::setupOreGen);
         DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
         NetworkUtils.registerMessages();
     }
@@ -86,12 +83,12 @@ public class Wyrmroost
     public static void clientSetup(final FMLClientSetupEvent event)
     {
         MinecraftForge.EVENT_BUS.register(ClientEvents.class);
-        
+
         WREntities.registerEntityRenders();
-        KeyBinds.registerKeys();
-        SetupIO.screenSetup();
+        WRKeyBinds.registerKeys();
+        WRIO.screenSetup();
     }
-    
+
     /**
      * Fire on config change
      */
@@ -128,7 +125,7 @@ public class Wyrmroost
         public static void registerDimension(RegisterDimensionsEvent evt)
         {
             if (ModUtils.getDimensionInstance() == null)
-                DimensionManager.registerDimension(ModUtils.resource("wyrmroost"), WyrmroostDimension.DIM_WYRMROOST, null, true);
+                DimensionManager.registerDimension(ModUtils.resource("wyrmroost"), WyrmroostDimension.WYRMROOST_DIM.get(), null, true);
         }
         
         /**
@@ -170,7 +167,6 @@ public class Wyrmroost
             if (!(target instanceof IMultiPartEntity)) return;
             IMultiPartEntity entity = (IMultiPartEntity) target;
             entity.iterateParts().forEach(target.world::addEntity);
-            ModUtils.L.info("aaa");
         }
     }
     
@@ -190,11 +186,11 @@ public class Wyrmroost
             PlayerEntity player = Minecraft.getInstance().player;
             
             // Generic Attack
-            if (KeyBinds.genericAttack.isPressed())
+            if (WRKeyBinds.genericAttack.isPressed())
             {
                 if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
                 AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
-                
+
                 if (dragon.noActiveAnimation())
                 {
                     dragon.performGenericAttack();

@@ -15,6 +15,7 @@ import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -83,7 +84,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         goalSelector.addGoal(2, new DragonFollowOwnerGoal(this, 1, 20d, 3d));
         goalSelector.addGoal(3, new MoveTowardsHomePointGoal(this, 1));
-        goalSelector.addGoal(4, moveGoal = new RandomWalkingGoal(this, 1d, 10));
+        goalSelector.addGoal(4, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
         goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 10f));
         goalSelector.addGoal(6, CommonEntityGoals.lookRandomly(this));
     }

@@ -89,10 +89,7 @@ public class ModUtils
         return new ItemGroup(name)
         {
             @Override
-            public ItemStack createIcon()
-            {
-                return displayItem.get();
-            }
+            public ItemStack createIcon() { return displayItem.get(); }
         };
     }
     
@@ -206,6 +203,10 @@ public class ModUtils
         nbt.putIntArray(key, new int[]{pos.getY(), pos.getY(), pos.getZ()});
     }
 
+    /**
+     * Retrieve a blockpos from an nbt compound
+     * Positions are retrieved from an int array of 3 elements
+     */
     public static BlockPos getBlockPos(CompoundNBT nbt, String key)
     {
         int[] poses = nbt.getIntArray(key);

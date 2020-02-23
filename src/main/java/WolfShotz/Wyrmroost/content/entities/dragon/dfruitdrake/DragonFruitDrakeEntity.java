@@ -187,7 +187,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
-        return Lists.newArrayList(new ItemStack(WRItems.FOOD_DRAGON_FRUIT.get(), 1));
+        return Lists.newArrayList(new ItemStack(WRItems.DRAGON_FRUIT.get(), 1));
     }
 
     @Override // These bois are lazy, can sleep during the day
@@ -217,7 +217,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public List<Item> getFoodItems()
     {
         List<Item> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
-        Collections.addAll(foods, WRItems.FOOD_DRAGON_FRUIT.get(), Items.APPLE, Items.SWEET_BERRIES);
+        Collections.addAll(foods, WRItems.DRAGON_FRUIT.get(), Items.APPLE, Items.SWEET_BERRIES);
         return foods;
     }
     
