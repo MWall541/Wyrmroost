@@ -1,7 +1,9 @@
 package WolfShotz.Wyrmroost.content.world.dimension;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.world.biomes.ExtendedBiome;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -14,6 +16,7 @@ import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -98,13 +101,22 @@ public class WyrmroostDimension extends Dimension
      */
     @Override
     public boolean isSurfaceWorld() { return true; }
-    
+
+    /**
+     * True if the player can respawn in this dimension (true = overworld, false = nether).
+     */
+    @Override
+    public boolean canRespawnHere() { return true; }
+
     /**
      * Return Vec3D with biome specific fog color
      */
     @Override
     public Vec3d getFogColor(float celestialAngle, float partialTicks)
     {
+        Biome biome = getBiome(Minecraft.getInstance().player.getPosition());
+        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).getFogColor(celestialAngle, partialTicks);
+
         float f = MathHelper.cos(celestialAngle * ((float) Math.PI * 2F)) * 2.0F + 0.5F;
         f = MathHelper.clamp(f, 0.0F, 1.0F);
         float f1 = 0.7529412F;
@@ -117,14 +129,75 @@ public class WyrmroostDimension extends Dimension
     }
 
     /**
-     * True if the player can respawn in this dimension (true = overworld, false = nether).
-     */
-    @Override
-    public boolean canRespawnHere() { return true; }
-
-    /**
      * Returns true if the given X,Z coordinate should show environmental fog.
      */
     @Override
-    public boolean doesXZShowFog(int x, int z) { return false; }
+    public boolean doesXZShowFog(int x, int z)
+    {
+        Biome biome = getBiome();
+        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).doesXZShowFog(x, z);
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public IRenderHandler getSkyRenderer()
+    {
+        Biome biome = getBiome();
+        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).skyRenderer;
+
+        return super.getSkyRenderer();
+    }
+
+    @Nullable
+    @Override
+    public IRenderHandler getCloudRenderer()
+    {
+        Biome biome = getBiome();
+        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).cloudRenderer;
+
+        return super.getCloudRenderer();
+    }
+
+    @Nullable
+    @Override
+    public IRenderHandler getWeatherRenderer()
+    {
+        Biome biome = getBiome();
+        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).weatherRenderer;
+
+        return super.getWeatherRenderer();
+    }
+
+    @Override
+    public float getSunBrightness(float partialTicks)
+    {
+        Biome biome = getBiome();
+        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).getSunBrightness(world, partialTicks);
+
+        return super.getSunBrightness(partialTicks);
+    }
+
+    @Override
+    public void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors)
+    {
+        Biome biome = getBiome();
+        if (biome instanceof ExtendedBiome)
+            ((ExtendedBiome) biome).getLightmapColors(partialTicks, sunBrightness, skyLight, blockLight, colors);
+    }
+
+    @Override
+    public Vec3d getCloudColor(float partialTicks)
+    {
+        Biome biome = getBiome();
+        if (biome instanceof ExtendedBiome)
+            ((ExtendedBiome) biome).getCloudColor(getWorld(), partialTicks);
+
+        return getWorld().getCloudColorBody(partialTicks);
+    }
+
+    public Biome getBiome()
+    {
+        return getBiome(Minecraft.getInstance().player.getPosition());
+    }
 }

@@ -37,7 +37,7 @@ public class CanariLeavesBlock extends LeavesBlock
         super.randomTick(state, worldIn, pos, random);
 
         if (!state.get(BERRIES) && state.get(DISTANCE) < 7)
-            worldIn.setBlockState(pos, state.with(BERRIES, true));
+            worldIn.setBlockState(pos, state.cycle(BERRIES));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CanariLeavesBlock extends LeavesBlock
     {
         if (!state.get(BERRIES)) return false;
         InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRItems.CANARI_CHERRY.get()));
-        worldIn.setBlockState(pos, state.cycle(BERRIES), 4);
+        worldIn.setBlockState(pos, state.cycle(BERRIES));
         return true;
     }
 

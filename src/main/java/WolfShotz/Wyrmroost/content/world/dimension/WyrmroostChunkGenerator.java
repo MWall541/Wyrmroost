@@ -32,7 +32,7 @@ public class WyrmroostChunkGenerator extends NoiseChunkGenerator<WyrmroostChunkG
 
     public WyrmroostChunkGenerator(World world)
     {
-        super(world, new SingleBiomeProvider(new SingleBiomeProviderSettings().setBiome(WRBiomes.FROST_CREVASSE.get())), 4, 8, 256, new Config(), true);
+        super(world, new SingleBiomeProvider(new SingleBiomeProviderSettings().setBiome(WRBiomes.ASH_DESERT.get())), 4, 8, 256, new Config(), true);
         this.depthNoise = new OctavesNoiseGenerator(this.randomSeed, 16);
     }
 

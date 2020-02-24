@@ -130,9 +130,9 @@ public class LootTables extends LootTableProvider
 
     public static class EntityLoot extends EntityLootTables
     {
+        private static final EntityPredicate.Builder ON_FIRE = EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build());
         private static final LootFunction.Builder<?> FIRE_CONDITION = Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, ON_FIRE));
 
-        private static final EntityPredicate.Builder ON_FIRE = EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build());
         private final Map<EntityType<?>, LootTable.Builder> lootTables = Maps.newHashMap();
 
         @Override

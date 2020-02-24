@@ -8,6 +8,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.gen.GenerationStage;
@@ -20,7 +23,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
 
-public class AshDesertBiome extends Biome
+public class AshDesertBiome extends ExtendedBiome
 {
     public AshDesertBiome()
     {
@@ -63,6 +66,23 @@ public class AshDesertBiome extends Biome
         addSpawn(EntityClassification.MONSTER, new Biome.SpawnListEntry(EntityType.ZOMBIE_VILLAGER, 1, 1, 1));
         addSpawn(EntityClassification.MONSTER, new Biome.SpawnListEntry(EntityType.HUSK, 80, 4, 4));
     }
+
+    @Override
+    public Vec3d getFogColor(float celestialAngle, float partialTicks)
+    {
+        float f = MathHelper.cos(celestialAngle * ((float) Math.PI * 2F)) * 2.0F + 0.5F;
+        f = MathHelper.clamp(f, 0.0F, 0.1F);
+        return new Vec3d(f, f, f);
+    }
+
+    @Override
+    public float getSunBrightness(World world, float partialTicks)
+    {
+        return super.getSunBrightness(world, partialTicks) - 0.5f;
+    }
+
+    @Override
+    public boolean doesXZShowFog(int x, int z) { return true; }
 
     @Override
     public int getSkyColorByTemp(float currentTemperature) { return 0x525252; }
