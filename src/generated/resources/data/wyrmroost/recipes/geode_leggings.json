@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "MMM",
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "M": {
+      "item": "wyrmroost:geode"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:geode_leggings"
+  }
+}

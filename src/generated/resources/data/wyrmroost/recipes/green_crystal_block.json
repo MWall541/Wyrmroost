@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    },
+    {
+      "item": "wyrmroost:green_shard"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:green_crystal_block"
+  }
+}

@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.world.features.AshTreeFeature;
 import WolfShotz.Wyrmroost.content.world.features.CinisRootFeature;
 import WolfShotz.Wyrmroost.content.world.features.ListisCactusFeature;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
+import WolfShotz.Wyrmroost.util.world.IExtendedBiome;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -23,7 +24,7 @@ import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
 
-public class AshDesertBiome extends ExtendedBiome
+public class AshDesertBiome extends Biome implements IExtendedBiome
 {
     public AshDesertBiome()
     {
@@ -78,7 +79,7 @@ public class AshDesertBiome extends ExtendedBiome
     @Override
     public float getSunBrightness(World world, float partialTicks)
     {
-        return super.getSunBrightness(world, partialTicks) - 0.5f;
+        return IExtendedBiome.super.getSunBrightness(world, partialTicks) - 0.5f;
     }
 
     @Override

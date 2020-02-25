@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "wyrmroost:yellow_crystal_ore"
+  },
+  "result": "wyrmroost:yellow_shard",
+  "experience": 0.7,
+  "cookingtime": 200
+}

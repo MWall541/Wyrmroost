@@ -59,6 +59,7 @@ public class Wyrmroost
         WREntities.ENTITIES.register(eventBus);
         WRBlocks.BLOCKS.register(eventBus);
         WRItems.ITEMS.register(eventBus);
+        WRFluids.FLUIDS.register(eventBus);
         WRIO.CONTAINERS.register(eventBus);
         WRSounds.SOUNDS.register(eventBus);
         WRBiomes.BIOMES.register(eventBus);

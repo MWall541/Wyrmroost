@@ -72,6 +72,7 @@ public class WREntities
 
         // Dimension: these have to be done here instead of the biome builder because entities aren't registered yet...
         registerSpawnEntry(BUTTERFLY_LEVIATHAN.get(), 1, 1, 1, Sets.newHashSet(WRBiomes.STYGIAN_SEA.get()));
+        registerSpawnEntry(CANARI_WYVERN.get(), 9, 2, 5, Sets.newHashSet(WRBiomes.CAUSTIC_SWAMP.get()));
     }
     
     /**

@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    {
+      "item": "wyrmroost:platinum_ingot"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:platinum_block"
+  }
+}

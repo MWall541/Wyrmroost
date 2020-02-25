@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:green_crystal_block"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:green_shard",
+    "count": 9
+  }
+}

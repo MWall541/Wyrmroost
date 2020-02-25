@@ -31,6 +31,7 @@ import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -77,6 +78,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
             tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
         }
+
+        setImmune(new DamageSource("brine_water"));
     }
     
     @Override

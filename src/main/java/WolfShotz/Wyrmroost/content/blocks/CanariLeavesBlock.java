@@ -2,10 +2,7 @@ package WolfShotz.Wyrmroost.content.blocks;
 
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
@@ -15,17 +12,24 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.Random;
 
-public class CanariLeavesBlock extends LeavesBlock
+public class CanariLeavesBlock extends LeavesBlock implements IGrowable
 {
     public static final BooleanProperty BERRIES = BooleanProperty.create("berries");
 
     public CanariLeavesBlock()
     {
         super(ModUtils.blockBuilder(Material.LEAVES).hardnessAndResistance(0.2f).sound(SoundType.PLANT).tickRandomly());
+
+        setDefaultState(stateContainer.getBaseState()
+                .with(DISTANCE, 7)
+                .with(PERSISTENT, false)
+                .with(BERRIES, false));
     }
 
     @Override
@@ -36,8 +40,8 @@ public class CanariLeavesBlock extends LeavesBlock
     {
         super.randomTick(state, worldIn, pos, random);
 
-        if (!state.get(BERRIES) && state.get(DISTANCE) < 7)
-            worldIn.setBlockState(pos, state.cycle(BERRIES));
+        if (!state.get(BERRIES) && state.get(DISTANCE) < 7 && random.nextInt(10) == 0)
+            worldIn.setBlockState(pos, state.cycle(BERRIES), Constants.BlockFlags.DEFAULT);
     }
 
     @Override
@@ -45,8 +49,26 @@ public class CanariLeavesBlock extends LeavesBlock
     {
         if (!state.get(BERRIES)) return false;
         InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRItems.CANARI_CHERRY.get()));
-        worldIn.setBlockState(pos, state.cycle(BERRIES));
+        worldIn.setBlockState(pos, state.cycle(BERRIES), Constants.BlockFlags.DEFAULT);
         return true;
+    }
+
+    @Override
+    public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
+    {
+        return !state.get(BERRIES);
+    }
+
+    @Override
+    public boolean canUseBonemeal(World worldIn, Random rand, BlockPos pos, BlockState state)
+    {
+        return !state.get(BERRIES);
+    }
+
+    @Override
+    public void grow(World worldIn, Random rand, BlockPos pos, BlockState state)
+    {
+        worldIn.setBlockState(pos, state.cycle(BERRIES));
     }
 
     @Override

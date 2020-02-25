@@ -4,19 +4,21 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.blocks.CanariLeavesBlock;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
+import WolfShotz.Wyrmroost.registry.WRFluids;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.LogBlock;
 import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.TieredItem;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
-import net.minecraftforge.fml.RegistryObject;
 
 import java.util.List;
 
@@ -67,6 +69,7 @@ public class Models
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS))
             {
                 if (registeredBlocks.containsKey(block)) continue;
+                if (block instanceof FlowingFluidBlock) continue;
 
                 ResourceLocation name = block.getRegistryName();
                 if (!theGOODexistingFileHelper.exists(new ResourceLocation(name.getNamespace(), BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
@@ -107,10 +110,6 @@ public class Models
         @SuppressWarnings("ConstantConditions")
         protected void registerModels()
         {
-            // SpawnEggs
-            for (CustomSpawnEggItem item : CustomSpawnEggItem.EGG_TYPES)
-                itemBare(item).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
-
             // Dragon Egg
             item(WRItems.DRAGON_EGG.get()) // TODO make this a custom baked model...
                     .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
@@ -134,21 +133,28 @@ public class Models
             // Dragon Staff
             item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
 
+            // SpawnEggs
+            for (CustomSpawnEggItem item : CustomSpawnEggItem.EGG_TYPES)
+                itemBare(item).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
+
             // Item Blocks
             item(WRBlocks.CINIS_ROOT.get().asItem());
-            for (RegistryObject<Block> registryBlock : WRBlocks.BLOCKS.getEntries()) // All Standard ItemBlocks
+            for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS)) // All Standard ItemBlocks
             {
-                if (REGISTERED.contains(registryBlock.get().asItem())) continue;
-                ResourceLocation path = registryBlock.get().getRegistryName();
-                ModelFile model = new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath());
-                itemBare(registryBlock.get().asItem()).parent(model);
+                if (REGISTERED.contains(block.asItem())) continue;
+                if (block instanceof FlowingFluidBlock) continue;
+
+                ResourceLocation path = block.getRegistryName();
+                itemBare(block.asItem())
+                        .parent(new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath()));
             }
 
+            // Buckets
+            for (Fluid fluid : ModUtils.getRegistryEntries(WRFluids.FLUIDS))
+                itemBare(fluid.getFilledBucket()).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"));
+
             // All items that do not require custom attention
-            ModUtils.getRegistryEntries(WRItems.ITEMS)
-                    .stream()
-                    .filter(e -> !REGISTERED.contains(e))
-                    .forEach(this::item);
+            ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(e -> !REGISTERED.contains(e)).forEach(this::item);
         }
 
         public ItemModelBuilder item(Item item)

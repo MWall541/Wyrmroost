@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -24,6 +25,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
+
+        setImmune(new DamageSource("caustic_water"));
     }
     
     @Override
@@ -33,7 +36,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         
         getAttribute(MAX_HEALTH).setBaseValue(16d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.2d);
-        getAttribute(ATTACK_DAMAGE).setBaseValue(5.5d);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(5.5d);
     }
     
     @Override

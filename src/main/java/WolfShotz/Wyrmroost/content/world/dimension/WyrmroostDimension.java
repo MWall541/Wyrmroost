@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.world.dimension;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.world.biomes.ExtendedBiome;
+import WolfShotz.Wyrmroost.util.world.IExtendedBiome;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tags.BlockTags;
@@ -115,7 +115,7 @@ public class WyrmroostDimension extends Dimension
     public Vec3d getFogColor(float celestialAngle, float partialTicks)
     {
         Biome biome = getBiome(Minecraft.getInstance().player.getPosition());
-        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).getFogColor(celestialAngle, partialTicks);
+        if (biome instanceof IExtendedBiome) return ((IExtendedBiome) biome).getFogColor(celestialAngle, partialTicks);
 
         float f = MathHelper.cos(celestialAngle * ((float) Math.PI * 2F)) * 2.0F + 0.5F;
         f = MathHelper.clamp(f, 0.0F, 1.0F);
@@ -135,7 +135,7 @@ public class WyrmroostDimension extends Dimension
     public boolean doesXZShowFog(int x, int z)
     {
         Biome biome = getBiome();
-        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).doesXZShowFog(x, z);
+        if (biome instanceof IExtendedBiome) return ((IExtendedBiome) biome).doesXZShowFog(x, z);
         return false;
     }
 
@@ -144,7 +144,7 @@ public class WyrmroostDimension extends Dimension
     public IRenderHandler getSkyRenderer()
     {
         Biome biome = getBiome();
-        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).skyRenderer;
+        if (biome instanceof IExtendedBiome) return ((IExtendedBiome) biome).getSkyRenderer();
 
         return super.getSkyRenderer();
     }
@@ -154,7 +154,7 @@ public class WyrmroostDimension extends Dimension
     public IRenderHandler getCloudRenderer()
     {
         Biome biome = getBiome();
-        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).cloudRenderer;
+        if (biome instanceof IExtendedBiome) return ((IExtendedBiome) biome).getCloudRenderer();
 
         return super.getCloudRenderer();
     }
@@ -164,7 +164,7 @@ public class WyrmroostDimension extends Dimension
     public IRenderHandler getWeatherRenderer()
     {
         Biome biome = getBiome();
-        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).weatherRenderer;
+        if (biome instanceof IExtendedBiome) return ((IExtendedBiome) biome).getWeatherRenderer();
 
         return super.getWeatherRenderer();
     }
@@ -173,7 +173,7 @@ public class WyrmroostDimension extends Dimension
     public float getSunBrightness(float partialTicks)
     {
         Biome biome = getBiome();
-        if (biome instanceof ExtendedBiome) return ((ExtendedBiome) biome).getSunBrightness(world, partialTicks);
+        if (biome instanceof IExtendedBiome) return ((IExtendedBiome) biome).getSunBrightness(world, partialTicks);
 
         return super.getSunBrightness(partialTicks);
     }
@@ -182,16 +182,16 @@ public class WyrmroostDimension extends Dimension
     public void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors)
     {
         Biome biome = getBiome();
-        if (biome instanceof ExtendedBiome)
-            ((ExtendedBiome) biome).getLightmapColors(partialTicks, sunBrightness, skyLight, blockLight, colors);
+        if (biome instanceof IExtendedBiome)
+            ((IExtendedBiome) biome).getLightmapColors(partialTicks, sunBrightness, skyLight, blockLight, colors);
     }
 
     @Override
     public Vec3d getCloudColor(float partialTicks)
     {
         Biome biome = getBiome();
-        if (biome instanceof ExtendedBiome)
-            ((ExtendedBiome) biome).getCloudColor(getWorld(), partialTicks);
+        if (biome instanceof IExtendedBiome)
+            ((IExtendedBiome) biome).getCloudColor(getWorld(), partialTicks);
 
         return getWorld().getCloudColorBody(partialTicks);
     }
