@@ -24,3 +24,6 @@ run
 
 # Files from Forge MDK
 forge*changelog.txt
+
+# Generated Resources. newp
+/src/main/generated

@@ -45,6 +45,8 @@ public class WRFluids
      * Fluid Registry Cache: Holds anything related to a fluid
      * This includes the fluid source block, the fluid flowing block,
      * the fluid block itself, and its bucket item
+     * <p>
+     * I could make a sort of system in fluid classes themselves by im fucking lazy so idgaf
      */
     public static class FluidRegistry
     {

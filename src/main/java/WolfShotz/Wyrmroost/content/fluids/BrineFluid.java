@@ -46,10 +46,7 @@ public class BrineFluid extends WaterFluid
     public Fluid getFlowingFluid() { return WRFluids.BRINE.getFlow(); }
 
     @Override
-    public boolean isSource(IFluidState state) { return source; }
-
-    @Override
-    public int getLevel(IFluidState state) { return isSource(state) ? 8 : state.get(LEVEL_1_8); }
+    public Item getFilledBucket() { return WRFluids.BRINE.getBucketItem(); }
 
     public BlockState getBlockState(IFluidState state)
     {
@@ -57,13 +54,16 @@ public class BrineFluid extends WaterFluid
     }
 
     @Override
+    public boolean isSource(IFluidState state) { return source; }
+
+    @Override
+    public int getLevel(IFluidState state) { return isSource(state) ? 8 : state.get(LEVEL_1_8); }
+
+    @Override
     public boolean isEquivalentTo(Fluid fluidIn)
     {
         return fluidIn == WRFluids.BRINE.getSource() || fluidIn == WRFluids.BRINE.getFlow();
     }
-
-    @Override
-    public Item getFilledBucket() { return WRFluids.BRINE.getBucketItem(); }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder)
