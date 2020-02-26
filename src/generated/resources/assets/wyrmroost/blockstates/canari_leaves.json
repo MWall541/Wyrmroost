@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "berries=false": {
+      "model": "wyrmroost:block/canari_leaves"
+    },
+    "berries=true": {
+      "model": "wyrmroost:block/canari_leaves_berries"
+    }
+  }
+}
