@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "wyrmroost:blue_crystal_ore"
-  },
-  "result": "wyrmroost:blue_shard",
-  "experience": 0.7,
-  "cookingtime": 100
-}

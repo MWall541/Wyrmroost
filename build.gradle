@@ -55,7 +55,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            args '--mod', 'wyrmroost', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'wyrmroost', '--all', '--output', file('src/main/generated_resources/'), '--existing', file('src/main/resources/')
 
             ideaModule "${project.name}.main"
         }

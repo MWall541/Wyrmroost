@@ -1,7 +1,0 @@
-{
-  "parent": "block/cube_column",
-  "textures": {
-    "side": "wyrmroost:block/stripped_red_corin_log",
-    "end": "wyrmroost:block/stripped_red_corin_log_top"
-  }
-}

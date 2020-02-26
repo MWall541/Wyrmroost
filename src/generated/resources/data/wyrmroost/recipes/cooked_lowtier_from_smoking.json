@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smoking",
-  "ingredient": {
-    "item": "wyrmroost:lowtier_meat_raw"
-  },
-  "result": "wyrmroost:lowtier_meat_cooked",
-  "experience": 0.35,
-  "cookingtime": 50
-}

@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "wyrmroost:green_crystal_ore"
-  },
-  "result": "wyrmroost:green_shard",
-  "experience": 0.7,
-  "cookingtime": 100
-}
