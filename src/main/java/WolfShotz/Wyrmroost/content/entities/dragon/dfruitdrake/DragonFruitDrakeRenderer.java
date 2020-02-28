@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -25,6 +25,6 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
     
     public static ResourceLocation resource(String png)
     {
-        return ModUtils.resource(DEF_LOC + "dfruitdrake/" + png);
+        return Wyrmroost.rl(DEF_LOC + "dfruitdrake/" + png);
     }
 }

@@ -98,7 +98,7 @@ public class WRBlocks
         public static final Tag<Block> TEAL_CORIN_LOGS = tag(new ResourceLocation("logs/teal_corin_logs"));
         public static final Tag<Block> RED_CORIN_LOGS = tag(new ResourceLocation("logs/red_corin_logs"));
 
-        public static Tag<Block> tag(String name) { return new BlockTags.Wrapper(ModUtils.resource(name)); }
+        public static Tag<Block> tag(String name) { return new BlockTags.Wrapper(Wyrmroost.rl(name)); }
 
         public static Tag<Block> tag(ResourceLocation name)
         {

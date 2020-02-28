@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -34,7 +33,7 @@ public class WRSounds
 
     private static RegistryObject<SoundEvent> register(String name)
     {
-        return SOUNDS.register(name, () -> new SoundEvent(ModUtils.resource(name)));
+        return SOUNDS.register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
     }
 
     private static RegistryObject<SoundEvent> registerEntity(String name) { return register("entity." + name); }

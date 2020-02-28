@@ -5,8 +5,7 @@ import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.monster.SlimeEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.function.BiFunction;
@@ -44,8 +43,9 @@ public class DrakeTargetGoal extends NearestAttackableTargetGoal<LivingEntity>
     private static Predicate<LivingEntity> getTargetPredicate(OWDrakeEntity drake)
     {
         return e -> {
-            if (!drake.isTamed()) return e instanceof PlayerEntity && !e.isSpectator() && ((PlayerEntity) e).isCreative();
-            else if (drake.getHomePos().isPresent()) return e instanceof MonsterEntity || e instanceof SlimeEntity;
+            if (!drake.isTamed())
+                return e instanceof PlayerEntity && !e.isSpectator() && ((PlayerEntity) e).isCreative();
+            else if (drake.getHomePos().isPresent()) return e instanceof IMob;
             return false;
         };
     }

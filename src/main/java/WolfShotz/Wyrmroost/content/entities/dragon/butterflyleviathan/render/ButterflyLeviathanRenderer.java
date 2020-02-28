@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.util.MathUtils;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -27,17 +27,10 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         super(manager, new ButterflyLeviathanModel(), 2f);
         addLayer(new GlowLayer(d -> GLOW, ButterflyLeviathanEntity::hasConduit));
     }
-    
-    @Override
-    public void doRender(ButterflyLeviathanEntity entity, double x, double y, double z, float entityYaw, float partialTicks)
+
+    public static ResourceLocation resource(String png)
     {
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
-        
-        if (entity.hasConduit())
-        {
-            Vec3d vec3d = MathUtils.calculateYawAngle(entityYaw, 0, 4.2).add(x, y + entity.getEyeHeight() + 2, z);
-            ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
-        }
+        return Wyrmroost.rl(DEF_LOC + "butterflyleviathan/" + png);
     }
     
     @Nullable
@@ -54,9 +47,16 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
                 return PURPLE;
         }
     }
-    
-    public static ResourceLocation resource(String png)
+
+    @Override
+    public void doRender(ButterflyLeviathanEntity entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
-        return ModUtils.resource(DEF_LOC + "butterflyleviathan/" + png);
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+
+        if (entity.hasConduit())
+        {
+            Vec3d vec3d = QuikMaths.calculateYawAngle(entityYaw, 0, 4.2).add(x, y + entity.getEyeHeight() + 2, z);
+            ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
+        }
     }
 }

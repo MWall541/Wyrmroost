@@ -7,7 +7,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -265,7 +265,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 for (Entity e : getEntitiesNearby(5)) // Dont get too close now ;)
                 {
                     if (e instanceof OWDrakeEntity) continue;
-                    double angle = (MathUtils.getAngle(posX, e.posX, posZ, e.posZ) + 90) * Math.PI / 180;
+                    double angle = (QuikMaths.getAngle(posX, e.posX, posZ, e.posZ) + 90) * Math.PI / 180;
                     double x = 1.2 * (-Math.cos(angle));
                     double z = 1.2 * (-Math.sin(angle));
                     e.addVelocity(x, 0.4d, z);

@@ -31,7 +31,7 @@ version = "${project.mod_version}"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 sourceSets {
-    main.resources.srcDirs += 'src/main/generated'
+    main.resources.srcDirs += 'src/main/generated_resources'
 }
 
 minecraft {
@@ -55,9 +55,8 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            args '--mod', 'wyrmroost', '--all', '--output', file('src/main/generated_resources/'), '--existing', file('src/main/resources/')
-
             ideaModule "${project.name}.main"
+            args '--mod', 'wyrmroost', '--all', '--output', file('src/main/generated_resources/'), '--existing', file('src/main/resources/')
         }
     }
 }

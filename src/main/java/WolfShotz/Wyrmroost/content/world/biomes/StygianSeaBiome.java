@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.world.biomes;
 
+import WolfShotz.Wyrmroost.util.world.WRBiome;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.biome.Biome;
@@ -15,7 +16,7 @@ import net.minecraft.world.gen.placement.IPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 
-public class StygianSeaBiome extends Biome
+public class StygianSeaBiome extends WRBiome
 {
     public StygianSeaBiome()
     {

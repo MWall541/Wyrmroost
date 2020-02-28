@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
@@ -87,9 +87,9 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
             @Override
             public void startExecuting()
             {
-                double x = posX + MathUtils.nextPseudoDouble(rand) * 24d;
-                double y = posY + MathUtils.nextPseudoDouble(rand) * 16d;
-                double z = posZ + MathUtils.nextPseudoDouble(rand) * 24d;
+                double x = posX + QuikMaths.nextPseudoDouble(rand) * 24d;
+                double y = posY + QuikMaths.nextPseudoDouble(rand) * 16d;
+                double z = posZ + QuikMaths.nextPseudoDouble(rand) * 24d;
                 if (!world.isDaytime() && rand.nextInt(5) == 0) y = -Math.abs(y);
                 for (int i = 1; i < 6; i++)
                 {
@@ -241,15 +241,15 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
                 rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
                 setRotation(player.rotationYawHead, rotationPitch);
-                
-                Vec3d rotationOffset = MathUtils.calculateYawAngle(player.renderYawOffset, 0, 0.5d);
+
+                Vec3d rotationOffset = QuikMaths.calculateYawAngle(player.renderYawOffset, 0, 0.5d);
                 double offsetX = rotationOffset.x;
                 double offsetZ = rotationOffset.z;
                 if (player.isElytraFlying())
                 {
                     float angle = (0.01745329251f * player.renderYawOffset) + 90;
-                    offsetX = (double) (-2f * MathHelper.sin((float) (Math.PI + angle)));
-                    offsetZ = (double) (-2f * MathHelper.cos(angle));
+                    offsetX = -2f * MathHelper.sin((float) (Math.PI + angle));
+                    offsetZ = -2f * MathHelper.cos(angle);
                 }
                 
                 setPosition(player.posX + offsetX, player.posY + 1.55d, player.posZ + offsetZ);
@@ -294,11 +294,11 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     
     public boolean shouldGlide(PlayerEntity player)
     {
-        return (player.isJumping && MathUtils.getAltitude(player) > shouldFlyThreshold) &&
-                       player.getRidingEntity() == null &&
-                       !player.abilities.isFlying &&
-                       !player.isInWater() &&
-                       super.canFly();
+        return (player.isJumping && QuikMaths.getAltitude(player) > shouldFlyThreshold) &&
+                player.getRidingEntity() == null &&
+                !player.abilities.isFlying &&
+                !player.isInWater() &&
+                super.canFly();
     }
     
     public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand)

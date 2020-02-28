@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.world.biomes;
 
+import WolfShotz.Wyrmroost.util.world.WRBiome;
 import com.mojang.datafixers.Dynamic;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -19,7 +20,7 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
 import java.util.Random;
 import java.util.function.Function;
 
-public class FrostCrevasseBiome extends Biome
+public class FrostCrevasseBiome extends WRBiome
 {
     public static final SurfaceBuilder<SurfaceBuilderConfig> FROST_CREVASSE = new FrostCrevasseSurfaceBuilder(SurfaceBuilderConfig::deserialize);
 

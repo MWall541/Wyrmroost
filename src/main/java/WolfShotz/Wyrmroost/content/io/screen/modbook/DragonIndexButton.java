@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.io.screen.modbook;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeModel;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerModel;
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderModel;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -73,7 +73,7 @@ public abstract class DragonIndexButton extends AbstractButton
     public static DragonIndexButton owDrakeButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked)
     {
         final OWDrakeModel MODEL = new OWDrakeModel();
-        final ResourceLocation TEXTURE = ModUtils.resource("textures/entity/dragon/owdrake/male_com.png");
+        final ResourceLocation TEXTURE = Wyrmroost.rl("textures/entity/dragon/owdrake/male_com.png");
         
         return new DragonIndexButton(x, y, screen, pageToSet, "Overworld Drake", unlocked)
         {
@@ -94,7 +94,7 @@ public abstract class DragonIndexButton extends AbstractButton
     public static DragonIndexButton silverGliderButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked)
     {
         final SilverGliderModel MODEL = new SilverGliderModel();
-        final ResourceLocation TEXTURE = ModUtils.resource("textures/entity/dragon/silverglider/female.png");
+        final ResourceLocation TEXTURE = Wyrmroost.rl("textures/entity/dragon/silverglider/female.png");
         
         return new DragonIndexButton(x, y, screen, pageToSet, "SilverGlider", unlocked)
         {
@@ -117,7 +117,7 @@ public abstract class DragonIndexButton extends AbstractButton
     public static DragonIndexButton roostStalkerButton(int x, int y, TarragonTomeScreen screen, int pageToSet, boolean unlocked)
     {
         final RoostStalkerModel MODEL = new RoostStalkerModel();
-        final ResourceLocation TEXTURE = ModUtils.resource("textures/entity/dragon/rooststalker/body.png");
+        final ResourceLocation TEXTURE = Wyrmroost.rl("textures/entity/dragon/rooststalker/body.png");
         
         return new DragonIndexButton(x, y, screen, pageToSet, "Roost Stalker", unlocked)
         {

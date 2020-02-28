@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -56,15 +56,15 @@ public class SoulCrystalItem extends Item
         {
             for (int i = 0; i <= dragon.getWidth() * 25; ++i)
             {
-                double calcX = MathHelper.cos(i + 360 / MathUtils.PI * 360f) * (dragon.getWidth() * 1.5d);
-                double calcZ = MathHelper.sin(i + 360 / MathUtils.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double calcX = MathHelper.cos(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double calcZ = MathHelper.sin(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
                 double x = dragon.posX + calcX;
                 double y = dragon.posY + (dragon.getHeight() * 1.8f);
                 double z = dragon.posZ + calcZ;
                 double xMot = -calcX / 5f;
                 double yMot = -(dragon.getHeight() / 8);
                 double zMot = -calcZ / 5f;
-                
+
                 world.addParticle(ParticleTypes.END_ROD, x, y, z, xMot, yMot, zMot);
             }
         }
@@ -102,8 +102,8 @@ public class SoulCrystalItem extends Item
             double posZ = pos.getZ() + 0.5d;
             for (int i = 0; i < entity.getWidth() * 25; ++i)
             {
-                double x = MathHelper.cos(i + 360 / MathUtils.PI * 360f) * (entity.getWidth() * 1.5d);
-                double z = MathHelper.sin(i + 360 / MathUtils.PI * 360f) * (entity.getWidth() * 1.5d);
+                double x = MathHelper.cos(i + 360 / QuikMaths.PI * 360f) * (entity.getWidth() * 1.5d);
+                double z = MathHelper.sin(i + 360 / QuikMaths.PI * 360f) * (entity.getWidth() * 1.5d);
                 double xMot = x / 10f;
                 double yMot = entity.getHeight() / 18f;
                 double zMot = z / 10f;

@@ -53,7 +53,7 @@ public class RenderWorldEvent
                 if (dragon.getHomePos().isPresent())
                 {
                     BlockPos homePos = dragon.getHomePos().get();
-                    ResourceLocation loc = ModUtils.resource("textures/io/homepos.png");
+                    ResourceLocation loc = Wyrmroost.rl("textures/io/homepos.png");
                     double x = homePos.getX() - d0;
                     double y = homePos.getY() - d1;
                     double z = homePos.getZ() - d2;

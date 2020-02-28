@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveTowardsHomePointGoal;
@@ -195,7 +195,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             rotationYawHead = renderYawOffset;
             if (isInWater() && (rider.moveForward != 0 || rider.moveStrafing != 0))
             {
-                float f4 = MathHelper.sin(rotationPitch * (MathUtils.PI / 180f));
+                float f4 = MathHelper.sin(rotationPitch * (QuikMaths.PI / 180f));
                 setMotion(getMotion().x, -f4 * 2, getMotion().z);
             }
             setAIMoveSpeed(speed);
@@ -240,9 +240,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         if (rand.nextInt(35) != 0) return;
         for (int i = 0; i < 16; ++i)
         {
-            double motionX = MathUtils.nextPseudoDouble(rand) * 1.5f;
-            double motionY = MathUtils.nextPseudoDouble(rand);
-            double motionZ = MathUtils.nextPseudoDouble(rand) * 1.5f;
+            double motionX = QuikMaths.nextPseudoDouble(rand) * 1.5f;
+            double motionY = QuikMaths.nextPseudoDouble(rand);
+            double motionZ = QuikMaths.nextPseudoDouble(rand) * 1.5f;
 //            world.addParticle(ParticleTypes.NAUTILUS, headPart.posX, headPart.posY + 4, headPart.posZ, motionX, motionY, motionZ);
         }
     }

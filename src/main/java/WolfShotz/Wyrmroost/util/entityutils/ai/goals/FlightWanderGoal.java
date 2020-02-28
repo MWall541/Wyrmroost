@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.util.entityutils.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.Goal;
@@ -29,9 +29,9 @@ public class FlightWanderGoal extends Goal
         if (dragon.getAttackTarget() != null) return false;
         
         if (!dragon.getMoveHelper().isUpdating()) return true;
-        
+
         MovementController moveController = dragon.getMoveHelper();
-        double euclid = MathUtils.getSpaceDistSq(dragon.posX, moveController.getX(), dragon.posY, moveController.getY(), dragon.posZ, moveController.getZ());
+        double euclid = QuikMaths.getSpaceDistSq(dragon.posX, moveController.getX(), dragon.posY, moveController.getY(), dragon.posZ, moveController.getZ());
         
         return euclid < 1 || euclid > 3068d;
     }
@@ -40,10 +40,10 @@ public class FlightWanderGoal extends Goal
     public void startExecuting()
     {
         Random rand = dragon.getRNG();
-        
-        double x = dragon.posX + MathUtils.nextPseudoDouble(rand) * 24d;
-        double y = dragon.posY + -MathUtils.nextPseudoDouble(rand) * 16.0F;
-        double z = dragon.posZ + MathUtils.nextPseudoDouble(rand) * 24.0F;
+
+        double x = dragon.posX + QuikMaths.nextPseudoDouble(rand) * 24d;
+        double y = dragon.posY + -QuikMaths.nextPseudoDouble(rand) * 16.0F;
+        double z = dragon.posZ + QuikMaths.nextPseudoDouble(rand) * 24.0F;
         dragon.getMoveHelper().setMoveTo(x, y, z, dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue());
     }
     

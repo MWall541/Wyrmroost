@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.world.features;
+package WolfShotz.Wyrmroost.content.world.features.canaritree;
 
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import net.minecraft.world.gen.feature.NoFeatureConfig;

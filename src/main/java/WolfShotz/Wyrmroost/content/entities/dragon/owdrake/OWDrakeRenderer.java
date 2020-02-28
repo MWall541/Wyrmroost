@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.owdrake;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -93,6 +93,6 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     
     public static ResourceLocation resource(String png)
     {
-        return ModUtils.resource(DEF_LOC + "owdrake/" + png);
+        return Wyrmroost.rl(DEF_LOC + "owdrake/" + png);
     }
 }

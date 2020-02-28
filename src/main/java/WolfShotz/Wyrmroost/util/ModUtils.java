@@ -52,15 +52,7 @@ public class ModUtils
      * Debug Logger
      */
     public static final Logger L = LogManager.getLogger(Wyrmroost.MOD_ID);
-    
-    /**
-     * Register a new Resource Location.
-     */
-    public static ResourceLocation resource(String path)
-    {
-        return new ResourceLocation(Wyrmroost.MOD_ID, path);
-    }
-    
+
     /**
      * Item Properties builder
      */
@@ -178,11 +170,11 @@ public class ModUtils
         
         return true;
     }
-    
+
     /**
      * Get the instance of the wyrmroost dimension
      */
-    public static DimensionType getDimensionInstance() { return DimensionType.byName(ModUtils.resource("wyrmroost")); }
+    public static DimensionType getDimensionInstance() { return DimensionType.byName(Wyrmroost.rl("wyrmroost")); }
 
     /**
      * Creates a new TranslationTextComponent appended with the passed strings

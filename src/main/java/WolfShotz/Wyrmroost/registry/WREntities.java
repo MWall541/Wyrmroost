@@ -41,6 +41,7 @@ import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerE
  * Created by WolfShotz - 7/3/19 19:03 <p>
  * <p>
  * Class responsible for the setup and registration of entities, and their spawning.
+ * Entity type generics are defined because a) forge told me so and b) because its broken without it.
  */
 public class WREntities
 {

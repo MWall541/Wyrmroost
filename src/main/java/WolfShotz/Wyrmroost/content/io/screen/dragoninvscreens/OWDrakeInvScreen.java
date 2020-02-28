@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.io.NameFieldWidget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerInventory;
@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class OWDrakeInvScreen extends ContainerScreenBase<OWDrakeInvContainer>
 {
-    private static final ResourceLocation DRAKE_GUI = ModUtils.resource("textures/io/dragonscreen/owdrakeinv.png");
+    private static final ResourceLocation DRAKE_GUI = Wyrmroost.rl("textures/io/dragonscreen/owdrakeinv.png");
     
     public OWDrakeInvScreen(OWDrakeInvContainer container, PlayerInventory playerInv, ITextComponent name)
     {

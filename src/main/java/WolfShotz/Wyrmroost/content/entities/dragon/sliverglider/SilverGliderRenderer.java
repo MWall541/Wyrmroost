@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -55,6 +55,6 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     
     public static ResourceLocation resource(String png)
     {
-        return ModUtils.resource(DEF_LOC + "silverglider/" + png);
+        return Wyrmroost.rl(DEF_LOC + "silverglider/" + png);
     }
 }

@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.util.data;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -86,7 +87,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.BLUE_GEODE.get(), 9)
                 .addIngredient(WRBlocks.BLUE_GEODE_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.BLUE_GEODE_BLOCK.get()))
-                .build(consumer, ModUtils.resource("bluegeode_from_block"));
+                .build(consumer, Wyrmroost.rl("bluegeode_from_block"));
         shapeless(WRBlocks.BLUE_GEODE_BLOCK.get())
                 .addIngredient(WRItems.BLUE_GEODE.get(), 9) // defining a number in a shapeless recipe will require that many on the grid
                 .addCriterion("has_block", hasItem(WRBlocks.BLUE_GEODE_BLOCK.get()))
@@ -97,7 +98,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.RED_GEODE.get(), 9)
                 .addIngredient(WRBlocks.RED_GEODE_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.RED_GEODE_BLOCK.get()))
-                .build(consumer, ModUtils.resource("redgeode_from_block"));
+                .build(consumer, Wyrmroost.rl("redgeode_from_block"));
         shapeless(WRBlocks.RED_GEODE_BLOCK.get())
                 .addIngredient(WRItems.RED_GEODE.get(), 9)
                 .addCriterion("has_block", hasItem(WRBlocks.RED_GEODE_BLOCK.get()))
@@ -108,7 +109,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.PURPLE_GEODE.get(), 9)
                 .addIngredient(WRBlocks.PURPLE_GEODE_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.PURPLE_GEODE_BLOCK.get()))
-                .build(consumer, ModUtils.resource("purplegeode_from_block"));
+                .build(consumer, Wyrmroost.rl("purplegeode_from_block"));
         shapeless(WRBlocks.PURPLE_GEODE_BLOCK.get())
                 .addIngredient(WRItems.PURPLE_GEODE.get(), 9)
                 .addCriterion("has_block", hasItem(WRBlocks.PURPLE_GEODE_BLOCK.get()))
@@ -119,7 +120,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.PLATINUM_INGOT.get(), 9)
                 .addIngredient(WRBlocks.PLATINUM_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.PLATINUM_BLOCK.get()))
-                .build(consumer, ModUtils.resource("platinumingot_from_block"));
+                .build(consumer, Wyrmroost.rl("platinumingot_from_block"));
         shapeless(WRBlocks.PLATINUM_BLOCK.get())
                 .addIngredient(WRItems.PLATINUM_INGOT.get(), 9)
                 .addCriterion("has_block", hasItem(WRBlocks.PLATINUM_BLOCK.get()))
@@ -130,7 +131,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.BLUE_SHARD.get(), 9)
                 .addIngredient(WRBlocks.BLUE_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.BLUE_CRYSTAL_BLOCK.get()))
-                .build(consumer, ModUtils.resource("blueshard_from_block"));
+                .build(consumer, Wyrmroost.rl("blueshard_from_block"));
         shapeless(WRBlocks.BLUE_CRYSTAL_BLOCK.get())
                 .addIngredient(WRItems.BLUE_SHARD.get(), 9)
                 .addCriterion("has_block", hasItem(WRBlocks.BLUE_CRYSTAL_BLOCK.get()))
@@ -141,7 +142,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.GREEN_SHARD.get(), 9)
                 .addIngredient(WRBlocks.GREEN_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.GREEN_CRYSTAL_BLOCK.get()))
-                .build(consumer, ModUtils.resource("greenshard_from_block"));
+                .build(consumer, Wyrmroost.rl("greenshard_from_block"));
         shapeless(WRBlocks.GREEN_CRYSTAL_BLOCK.get())
                 .addIngredient(WRItems.GREEN_SHARD.get(), 9)
                 .addCriterion("has_block", hasItem(WRBlocks.GREEN_CRYSTAL_BLOCK.get()))
@@ -152,7 +153,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.ORANGE_SHARD.get(), 9)
                 .addIngredient(WRBlocks.ORANGE_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.ORANGE_CRYSTAL_BLOCK.get()))
-                .build(consumer, ModUtils.resource("orangeshard_from_block"));
+                .build(consumer, Wyrmroost.rl("orangeshard_from_block"));
         shapeless(WRBlocks.ORANGE_CRYSTAL_BLOCK.get())
                 .addIngredient(WRItems.ORANGE_SHARD.get(), 9)
                 .addCriterion("has_block", hasItem(WRBlocks.ORANGE_CRYSTAL_BLOCK.get()))
@@ -163,7 +164,7 @@ public class Recipes extends RecipeProvider
         shapeless(WRItems.YELLOW_SHARD.get(), 9)
                 .addIngredient(WRBlocks.YELLOW_CRYSTAL_BLOCK.get())
                 .addCriterion("has_block", hasItem(WRBlocks.YELLOW_CRYSTAL_BLOCK.get()))
-                .build(consumer, ModUtils.resource("yellowshard_from_block"));
+                .build(consumer, Wyrmroost.rl("yellowshard_from_block"));
         shapeless(WRBlocks.YELLOW_CRYSTAL_BLOCK.get())
                 .addIngredient(WRItems.YELLOW_SHARD.get(), 9)
                 .addCriterion("has_block", hasItem(WRBlocks.YELLOW_CRYSTAL_BLOCK.get()))
@@ -342,10 +343,10 @@ public class Recipes extends RecipeProvider
     {
         CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(recipeIn), resultIn, experienceIn, cookingTimeIn)
                 .addCriterion("has_ore", hasItem(recipeIn))
-                .build(consumer, ModUtils.resource(id + "_from_smelting"));
+                .build(consumer, Wyrmroost.rl(id + "_from_smelting"));
         CookingRecipeBuilder.blastingRecipe(Ingredient.fromItems(recipeIn), resultIn, experienceIn, cookingTimeIn - 100)
                 .addCriterion("has_ore", hasItem(recipeIn))
-                .build(consumer, ModUtils.resource(id + "_from_blasting"));
+                .build(consumer, Wyrmroost.rl(id + "_from_blasting"));
         REGISTERED.add(recipeIn);
     }
 
@@ -353,13 +354,13 @@ public class Recipes extends RecipeProvider
     {
         CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(recipeIn), resultIn, experienceIn, cookingTimeIn)
                 .addCriterion("has_food", hasItem(recipeIn))
-                .build(consumer, ModUtils.resource(id + "_from_smelting"));
+                .build(consumer, Wyrmroost.rl(id + "_from_smelting"));
         CookingRecipeBuilder.cookingRecipe(Ingredient.fromItems(recipeIn), resultIn, experienceIn, cookingTimeIn + 500, CookingRecipeSerializer.CAMPFIRE_COOKING)
                 .addCriterion("has_food", hasItem(recipeIn))
-                .build(consumer, ModUtils.resource(id + "_from_campfire"));
+                .build(consumer, Wyrmroost.rl(id + "_from_campfire"));
         CookingRecipeBuilder.cookingRecipe(Ingredient.fromItems(recipeIn), resultIn, experienceIn, cookingTimeIn - 100, CookingRecipeSerializer.SMOKING)
                 .addCriterion("has_food", hasItem(recipeIn))
-                .build(consumer, ModUtils.resource(id + "_from_smoking"));
+                .build(consumer, Wyrmroost.rl(id + "_from_smoking"));
         REGISTERED.add(recipeIn);
     }
 }

@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.util.entityutils.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -43,7 +43,7 @@ public class FlightMovementController extends MovementController
                 double x = posX - mob.posX;
                 double y = posY - mob.posY;
                 double z = posZ - mob.posZ;
-                double euclid = MathHelper.sqrt(MathUtils.getSpaceDistSq(mob.posX, posX, mob.posY, posY, mob.posZ, posZ));
+                double euclid = MathHelper.sqrt(QuikMaths.getSpaceDistSq(mob.posX, posX, mob.posY, posY, mob.posZ, posZ));
                 
                 if (euclid < (double) 2.5000003E-7F)
                 { // Too small of a move target, dont move
@@ -57,14 +57,14 @@ public class FlightMovementController extends MovementController
                     courseCooldown = new Random().nextInt(5) + 3;
                 } else action = Action.WAIT;
             }
-            
-            dragon.rotationYaw = -((float) MathHelper.atan2(dragon.getMotion().x, dragon.getMotion().z)) * (180F / MathUtils.PI);
+
+            dragon.rotationYaw = -((float) MathHelper.atan2(dragon.getMotion().x, dragon.getMotion().z)) * (180F / QuikMaths.PI);
             dragon.renderYawOffset = dragon.rotationYaw;
             dragon.getLookController().setLookPosition(posX, posY, posZ, 30, 30);
             
             Vec3d vec3d = dragon.getLookVec();
             Vec3d motion = dragon.getMotion();
-            float f = dragon.rotationPitch * (MathUtils.PI / 180f);
+            float f = dragon.rotationPitch * (QuikMaths.PI / 180f);
             double d6 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
             double d8 = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
             double d1 = vec3d.length();

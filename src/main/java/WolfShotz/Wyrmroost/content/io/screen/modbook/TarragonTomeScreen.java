@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.io.screen.modbook;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.items.TarragonTomeItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.google.common.collect.Lists;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 public class TarragonTomeScreen extends Screen
 {
     private final ItemStack TOME;
-    private static final ResourceLocation TEXTURE = ModUtils.resource("textures/io/modbook/tome.png");
+    private static final ResourceLocation TEXTURE = Wyrmroost.rl("textures/io/modbook/tome.png");
     private final List<Page> PAGES = Lists.newArrayList();
     private int pageNumber = 0;
     private ChangePageButton next, back;
@@ -117,7 +118,7 @@ public class TarragonTomeScreen extends Screen
                 if (line.contains("{backgroundResource}"))
                 {
                     String fileName = line.substring(line.indexOf("[") + 1, line.indexOf("]"));
-                    currentPage.backgroundResource = ModUtils.resource("textures/io/modbook/" + fileName);
+                    currentPage.backgroundResource = Wyrmroost.rl("textures/io/modbook/" + fileName);
                     
                     continue;
                 }
@@ -134,7 +135,7 @@ public class TarragonTomeScreen extends Screen
                 if (line.contains("{renderImage}"))
                 {
                     String[] renderImageMethod = makeParameterArray(line, "{renderImage}", 5);
-                    ResourceLocation loc = ModUtils.resource("textures/io/modbook/" + renderImageMethod[0]);
+                    ResourceLocation loc = Wyrmroost.rl("textures/io/modbook/" + renderImageMethod[0]);
                     int posX = Integer.parseInt(renderImageMethod[1]);
                     int posZ = Integer.parseInt(renderImageMethod[2]);
                     int imageWidth = Integer.parseInt(renderImageMethod[3]);
@@ -158,14 +159,14 @@ public class TarragonTomeScreen extends Screen
         {
             IResourceManager manager = Minecraft.getInstance().getResourceManager();
             String lang = Minecraft.getInstance().gameSettings.language;
-            ResourceLocation resource = ModUtils.resource("lang/book/" + lang + ".txt");
+            ResourceLocation resource = Wyrmroost.rl("lang/book/" + lang + ".txt");
             
             try
             {
                 return manager.getResource(resource);
             } catch (FileNotFoundException e)
             {
-                resource = ModUtils.resource("lang/book/en_us.txt");
+                resource = Wyrmroost.rl("lang/book/en_us.txt");
                 String fallBack = resource.getPath().replaceAll("-([a-z\\-]{2,6})_?([a-z]{0,3})", "");
                 
                 return manager.getResource(new ResourceLocation(resource.getNamespace(), fallBack));

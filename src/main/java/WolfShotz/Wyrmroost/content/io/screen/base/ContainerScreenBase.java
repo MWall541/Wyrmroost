@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.content.io.screen.base;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import WolfShotz.Wyrmroost.util.io.NameFieldWidget;
 import WolfShotz.Wyrmroost.util.network.messages.EntityRenameMessage;
@@ -24,7 +23,7 @@ import java.util.Random;
 @OnlyIn(Dist.CLIENT)
 public class ContainerScreenBase<T extends ContainerBase<?>> extends ContainerScreen<T>
 {
-    public static final ResourceLocation STANDARD_GUI = ModUtils.resource("textures/io/dragonscreen/dragoninv.png");
+    public static final ResourceLocation STANDARD_GUI = Wyrmroost.rl("textures/io/dragonscreen/dragoninv.png");
     public static final ResourceLocation HEART = new ResourceLocation("textures/particle/heart.png");
     public static final ResourceLocation SPECIAL = new ResourceLocation("textures/particle/glitter_7.png");
 

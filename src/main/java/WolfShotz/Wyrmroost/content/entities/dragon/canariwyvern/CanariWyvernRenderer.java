@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -47,6 +47,6 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
     
     private static ResourceLocation resource(String png)
     {
-        return ModUtils.resource(DEF_LOC + "canari/" + png);
+        return Wyrmroost.rl(DEF_LOC + "canari/" + png);
     }
 }

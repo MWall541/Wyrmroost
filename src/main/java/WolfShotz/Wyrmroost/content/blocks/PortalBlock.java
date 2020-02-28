@@ -30,7 +30,7 @@ public class PortalBlock extends Block
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
     {
 
-        if (entityIn.dimension.getModType() == WyrmroostDimension.WYRMROOST_DIM.get()) return;
+        if (entityIn.dimension.getModType() == WyrmroostDimension.WYRMROOST_DIM) return;
         if (!(entityIn instanceof ServerPlayerEntity)) return;
         ServerPlayerEntity player = ((ServerPlayerEntity) entityIn);
         ServerWorld world = DimensionManager.getWorld(player.getServer(), ModUtils.getDimensionInstance(), false, true);

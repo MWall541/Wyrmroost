@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import net.minecraft.entity.Entity;
@@ -108,8 +108,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         prevRotationYaw = player.rotationYawHead;
         
         double xOffset = checkShoulderOccupants(player)? -0.35f : 0.35f;
-        
-        Vec3d vec3d1 = MathUtils.calculateYawAngle(player.renderYawOffset, xOffset, 0.1).add(player.posX, 0, player.posZ);
+
+        Vec3d vec3d1 = QuikMaths.calculateYawAngle(player.renderYawOffset, xOffset, 0.1).add(player.posX, 0, player.posZ);
         setPosition(vec3d1.x, player.posY + 1.4, vec3d1.z);
     }
     

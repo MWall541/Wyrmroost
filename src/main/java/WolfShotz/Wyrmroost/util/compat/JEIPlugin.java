@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.util.compat;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.registry.WRItems;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -18,7 +18,7 @@ public class JEIPlugin implements IModPlugin
     @Override
     public ResourceLocation getPluginUid()
     {
-        return ModUtils.resource("info");
+        return Wyrmroost.rl("info");
     }
     
     @Override

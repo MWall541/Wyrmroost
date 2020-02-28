@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,7 +12,7 @@ public class DragonEggProperties
 {
     private final float WIDTH, HEIGHT;
     private final int HATCH_TIME;
-    private ResourceLocation texture = ModUtils.resource("textures/entity/dragonegg/default.png");
+    private ResourceLocation texture = Wyrmroost.rl("textures/entity/dragonegg/default.png");
     private Predicate<DragonEggEntity> conditions = e -> true;
     
     /**

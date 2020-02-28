@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.fluids;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.registry.WRFluids;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
@@ -34,7 +35,7 @@ public class BrineFluid extends WaterFluid
     protected FluidAttributes createAttributes()
     {
         return FluidAttributes
-                .builder(ModUtils.resource("block/brine_still"), new ResourceLocation("block/brine_flow"))
+                .builder(Wyrmroost.rl("block/brine_still"), new ResourceLocation("block/brine_flow"))
                 .translationKey("block.wyrmroost.brine")
                 .build(this);
     }

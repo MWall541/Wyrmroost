@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.items;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -23,7 +24,8 @@ public class MinutusItem extends Item
     {
         super(ModUtils.itemBuilder());
 
-        addPropertyOverride(ModUtils.resource("isalive"), (item, world, player) -> {
+        addPropertyOverride(Wyrmroost.rl("isalive"), (item, world, player) ->
+        {
             if (item.hasTag()) if (item.getTag().getBoolean("isalive")) return 1f;
             return 0f;
         });

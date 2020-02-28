@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -41,7 +41,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     
     public static ResourceLocation resource(String png)
     {
-        return ModUtils.resource(DEF_LOC + "rooststalker/" + png);
+        return Wyrmroost.rl(DEF_LOC + "rooststalker/" + png);
     }
     
     // Item Stack Layer Renderer

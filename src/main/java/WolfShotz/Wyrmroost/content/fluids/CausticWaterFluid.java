@@ -38,7 +38,7 @@ public class CausticWaterFluid extends WaterFluid
                 .builder(new ResourceLocation("block/water_still"), new ResourceLocation("block/water_flow"))
                 .overlay(new ResourceLocation("block/water_overlay"))
                 .translationKey("block.wyrmroost.caustic_water")
-                .color(0x79a315e4)
+                .color(0x1a2a87e4)
                 .build(this);
     }
 

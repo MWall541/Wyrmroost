@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.util.entityutils.client.layer;
 
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -38,7 +38,7 @@ public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extend
         if (i <= 0) return;
         
         if (arrow == null) arrow = new ArrowEntity(entityIn.world, entityIn.posX, entityIn.posY, entityIn.posZ);
-        Random random = new Random((long) entityIn.getEntityId());
+        Random random = new Random(entityIn.getEntityId());
         
         RenderHelper.disableStandardItemLighting();
         
@@ -60,10 +60,10 @@ public class ArrowLayer<T extends LivingEntity, M extends EntityModel<T>> extend
             f1 = -1f * (f1 * 2f - 1f);
             f2 = -1f * (f2 * 2f - 1f);
             float f6 = MathHelper.sqrt(f * f + f2 * f2);
-            arrow.prevRotationYaw = arrow.rotationYaw = (float) (Math.atan2((double) f, (double) f2) * (180f / MathUtils.PI));
-            arrow.prevRotationPitch = arrow.rotationPitch = (float) (Math.atan2((double) f1, (double) f6) * (180f / MathUtils.PI));
+            arrow.prevRotationYaw = arrow.rotationYaw = (float) (Math.atan2(f, f2) * (180f / QuikMaths.PI));
+            arrow.prevRotationPitch = arrow.rotationPitch = (float) (Math.atan2(f1, f6) * (180f / QuikMaths.PI));
             renderManager.renderEntity(arrow, 0, 0, 0, 0, partialTicks, false);
-            
+
             GlStateManager.popMatrix();
         }
         

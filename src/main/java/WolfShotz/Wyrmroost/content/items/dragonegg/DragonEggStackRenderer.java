@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.items.dragonegg;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggModel;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -35,7 +36,7 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
             AbstractDragonEntity dragon = (AbstractDragonEntity) ModUtils.getTypeByString(tag.getString("dragonType")).create(ModUtils.getClientWorld());
             if (dragon != null) return dragon.getEggProperties().getEggTexture();
         }
-        
-        return ModUtils.resource("textures/entity/dragonegg/default.png");
+
+        return Wyrmroost.rl("textures/entity/dragonegg/default.png");
     }
 }

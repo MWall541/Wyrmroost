@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -75,7 +75,7 @@ public class DragonStaffItem extends Item
 
         // Raytrace targets
 
-        RayTraceResult rtr = MathUtils.rayTrace(world, player, 50, true);
+        RayTraceResult rtr = QuikMaths.rayTrace(world, player, 50, true);
         AbstractDragonEntity dragon = getDragon(stack, ModUtils.getServerWorld(player));
 
         if (rtr.getType() == RayTraceResult.Type.ENTITY)

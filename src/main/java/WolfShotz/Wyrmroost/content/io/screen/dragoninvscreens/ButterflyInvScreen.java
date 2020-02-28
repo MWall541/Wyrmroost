@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import WolfShotz.Wyrmroost.util.io.NameFieldWidget;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ButterflyInvScreen extends ContainerScreenBase<ContainerBase.ButterflyContainer>
 {
-    public static final ResourceLocation BUTTERFLY_GUI = ModUtils.resource("textures/io/dragonscreen/butterflyinv.png");
+    public static final ResourceLocation BUTTERFLY_GUI = Wyrmroost.rl("textures/io/dragonscreen/butterflyinv.png");
 
     public ButterflyInvScreen(ContainerBase.ButterflyContainer container, PlayerInventory playerInv, ITextComponent name)
     {

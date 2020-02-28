@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.content.items.DrakeArmorItem;
 import WolfShotz.Wyrmroost.content.world.WorldCapability;
 import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.registry.*;
@@ -11,6 +12,7 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
+import com.google.common.collect.Streams;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -19,6 +21,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -27,7 +30,10 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
@@ -48,7 +54,7 @@ public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
     public static final ItemGroup CREATIVE_TAB = ModUtils.itemGroupFactory("wyrmroost", () -> new ItemStack(WRItems.BLUE_GEODE.get()));
-    public static final SimpleChannel NETWORK = ModUtils.simplisticChannel(ModUtils.resource(MOD_ID), "1.0");
+    public static final SimpleChannel NETWORK = ModUtils.simplisticChannel(rl(MOD_ID), "1.0");
     
     public Wyrmroost()
     {
@@ -63,7 +69,8 @@ public class Wyrmroost
         WRIO.CONTAINERS.register(eventBus);
         WRSounds.SOUNDS.register(eventBus);
         WRBiomes.BIOMES.register(eventBus);
-        WyrmroostDimension.DIMENSION.register(eventBus);
+        WRWorld.FEATURES.register(eventBus);
+        eventBus.addGenericListener(ModDimension.class, (RegistryEvent.Register<ModDimension> e) -> e.getRegistry().register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost")));
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.CommonConfig.COMMON_SPEC);
     }
@@ -75,7 +82,7 @@ public class Wyrmroost
     {
         MinecraftForge.EVENT_BUS.register(CommonEvents.class);
 
-        DeferredWorkQueue.runLater(WRWorldFeatures::setupOreGen);
+        DeferredWorkQueue.runLater(WRWorld::setupWorldGen);
         DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
         NetworkUtils.registerMessages();
     }
@@ -107,12 +114,60 @@ public class Wyrmroost
     public static void registerItemColors(ColorHandlerEvent.Item evt)
     {
         ItemColors handler = evt.getItemColors();
-        
+
         IItemColor eggColor = (stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex);
         CustomSpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
     }
-    
-    
+
+    /**
+     * Register a new Wyrmroost Specific Resource Location.
+     */
+    public static ResourceLocation rl(String path) { return new ResourceLocation(MOD_ID, path); }
+
+    /**
+     * Forge EventBus listeners on CLIENT distribution
+     */
+    @OnlyIn(Dist.CLIENT)
+    public static class ClientEvents
+    {
+        /**
+         * Handles custom keybind pressing
+         */
+        @SubscribeEvent
+        public static void onKeyPress(InputEvent.KeyInputEvent event)
+        {
+            if (Minecraft.getInstance().world == null) return; // Dont do anything on the main menu screen
+            PlayerEntity player = Minecraft.getInstance().player;
+
+            // Generic Attack
+            if (WRKeyBinds.genericAttack.isPressed())
+            {
+                if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
+                AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
+
+                if (dragon.noActiveAnimation())
+                {
+                    dragon.performGenericAttack();
+                    Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
+                }
+            }
+        }
+
+        /**
+         * Handles the perspective/position of the camera
+         */
+        @SubscribeEvent
+        public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
+        {
+            Minecraft mc = Minecraft.getInstance();
+            Entity entity = mc.player.getRidingEntity();
+            if (!(entity instanceof AbstractDragonEntity)) return;
+            int i1 = mc.gameSettings.thirdPersonView;
+
+            if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
+        }
+    }
+
     /**
      * Forge EventBus listeners
      */
@@ -126,9 +181,9 @@ public class Wyrmroost
         public static void registerDimension(RegisterDimensionsEvent evt)
         {
             if (ModUtils.getDimensionInstance() == null)
-                DimensionManager.registerDimension(ModUtils.resource("wyrmroost"), WyrmroostDimension.WYRMROOST_DIM.get(), null, true);
+                DimensionManager.registerDimension(rl("wyrmroost"), WyrmroostDimension.WYRMROOST_DIM, null, true);
         }
-        
+
         /**
          * Attatch our capabilities
          */
@@ -136,9 +191,9 @@ public class Wyrmroost
         public static void attatchWorldCaps(AttachCapabilitiesEvent<World> evt)
         {
             if (evt.getObject().isRemote) return;
-            evt.addCapability(ModUtils.resource("overworld_cap"), new WorldCapability.PropertiesDispatcher());
+            evt.addCapability(rl("overworld_cap"), new WorldCapability.PropertiesDispatcher());
         }
-        
+
         /**
          * Nuff' said
          */
@@ -169,49 +224,17 @@ public class Wyrmroost
             IMultiPartEntity entity = (IMultiPartEntity) target;
             entity.iterateParts().forEach(target.world::addEntity);
         }
-    }
-    
-    /**
-     * Forge EventBus listeners on CLIENT distribution
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static class ClientEvents
-    {
-        /**
-         * Handles custom keybind pressing
-         */
-        @SubscribeEvent
-        public static void onKeyPress(InputEvent.KeyInputEvent event)
-        {
-            if (Minecraft.getInstance().world == null) return; // Dont do anything on the main menu screen
-            PlayerEntity player = Minecraft.getInstance().player;
-            
-            // Generic Attack
-            if (WRKeyBinds.genericAttack.isPressed())
-            {
-                if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
-                AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
 
-                if (dragon.noActiveAnimation())
-                {
-                    dragon.performGenericAttack();
-                    Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
-                }
-            }
-        }
-        
-        /**
-         * Handles the perspective/position of the camera
-         */
         @SubscribeEvent
-        public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
+        public static void onChangeEquipment(LivingEquipmentChangeEvent evt)
         {
-            Minecraft mc = Minecraft.getInstance();
-            Entity entity = mc.player.getRidingEntity();
-            if (!(entity instanceof AbstractDragonEntity)) return;
-            int i1 = mc.gameSettings.thirdPersonView;
-            
-            if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
+            if (!(evt.getEntity() instanceof PlayerEntity)) return;
+            Iterable<ItemStack> armor = evt.getEntity().getArmorInventoryList();
+            Streams.stream(armor)
+                    .filter(i -> i.getItem() instanceof DrakeArmorItem)
+                    .map(i -> (DrakeArmorItem) i.getItem())
+                    .forEach(i -> i.setFullSet(Streams.stream(armor).allMatch(k -> k.getItem() instanceof DrakeArmorItem)));
         }
     }
+
 }

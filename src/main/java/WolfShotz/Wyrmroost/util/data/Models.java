@@ -86,7 +86,7 @@ public class Models
 
         protected void simpleBlock(Block block, String path)
         {
-            simpleBlock(block, cubeAll(block.getRegistryName().getPath(), ModUtils.resource("block/" + path)));
+            simpleBlock(block, cubeAll(block.getRegistryName().getPath(), Wyrmroost.rl("block/" + path)));
         }
 
         public BlockModelBuilder cubed(Block block)
@@ -106,55 +106,9 @@ public class Models
             this.theGOODExistingFileHelper = existingFileHelper;
         }
 
-        @Override
-        @SuppressWarnings("ConstantConditions")
-        protected void registerModels()
+        private static ResourceLocation resource(String path)
         {
-            // Dragon Egg
-            item(WRItems.DRAGON_EGG.get()) // TODO make this a custom baked model...
-                    .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
-                    .transforms()
-                        .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0).scale(1.5f).end()
-                        .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).rotation(180, -35, 0).translation(2, 11, -12).end()
-                        .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).rotation(180, 35, 0).translation(-2, 11, -12).end()
-                        .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).rotation(253, 65, 0).translation(8, 2, 10).scale(0.75f).end()
-                        .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
-                        .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f);
-
-            // Minutus
-            getBuilder("minutus_alive")
-                    .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
-                    .texture("layer0", resource("minutus_alive"));
-            item(WRItems.MINUTUS.get())
-                    .override()
-                    .predicate(ModUtils.resource("isalive"), 1)
-                    .model(new ModelFile.UncheckedModelFile(resource("minutus_alive")));
-
-            // Dragon Staff
-            item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
-
-            // SpawnEggs
-            for (CustomSpawnEggItem item : CustomSpawnEggItem.EGG_TYPES)
-                itemBare(item).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
-
-            // Item Blocks
-            item(WRBlocks.CINIS_ROOT.get().asItem());
-            for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS)) // All Standard ItemBlocks
-            {
-                if (REGISTERED.contains(block.asItem())) continue;
-                if (block instanceof FlowingFluidBlock) continue;
-
-                ResourceLocation path = block.getRegistryName();
-                itemBare(block.asItem())
-                        .parent(new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath()));
-            }
-
-            // Buckets
-            for (Fluid fluid : ModUtils.getRegistryEntries(WRFluids.FLUIDS))
-                itemBare(fluid.getFilledBucket()).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"));
-
-            // All items that do not require custom attention
-            ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(e -> !REGISTERED.contains(e)).forEach(this::item);
+            return Wyrmroost.rl("item/" + path);
         }
 
         public ItemModelBuilder item(Item item)
@@ -182,9 +136,55 @@ public class Models
             return getBuilder(item.getRegistryName().getPath());
         }
 
-        private static ResourceLocation resource(String path)
+        @Override
+        @SuppressWarnings("ConstantConditions")
+        protected void registerModels()
         {
-            return ModUtils.resource("item/" + path);
+            // Dragon Egg
+            item(WRItems.DRAGON_EGG.get()) // TODO make this a custom baked model...
+                    .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
+                    .transforms()
+                    .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0).scale(1.5f).end()
+                        .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).rotation(180, -35, 0).translation(2, 11, -12).end()
+                        .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).rotation(180, 35, 0).translation(-2, 11, -12).end()
+                        .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).rotation(253, 65, 0).translation(8, 2, 10).scale(0.75f).end()
+                        .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
+                        .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f);
+
+            // Minutus
+            getBuilder("minutus_alive")
+                    .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+                    .texture("layer0", resource("minutus_alive"));
+            item(WRItems.MINUTUS.get())
+                    .override()
+                    .predicate(Wyrmroost.rl("isalive"), 1)
+                    .model(new ModelFile.UncheckedModelFile(resource("minutus_alive")));
+
+            // Dragon Staff
+            item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
+
+            // SpawnEggs
+            for (CustomSpawnEggItem item : CustomSpawnEggItem.EGG_TYPES)
+                itemBare(item).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
+
+            // Item Blocks
+            item(WRBlocks.CINIS_ROOT.get().asItem());
+            for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS)) // All Standard ItemBlocks
+            {
+                if (REGISTERED.contains(block.asItem())) continue;
+                if (block instanceof FlowingFluidBlock) continue;
+
+                ResourceLocation path = block.getRegistryName();
+                itemBare(block.asItem())
+                        .parent(new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath()));
+            }
+
+            // Buckets
+            for (Fluid fluid : ModUtils.getRegistryEntries(WRFluids.FLUIDS))
+                itemBare(fluid.getFilledBucket()).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"));
+
+            // All items that do not require custom attention
+            ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(e -> !REGISTERED.contains(e)).forEach(this::item);
         }
 
         @Override

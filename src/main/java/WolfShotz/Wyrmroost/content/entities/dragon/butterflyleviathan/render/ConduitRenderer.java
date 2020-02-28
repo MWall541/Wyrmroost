@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 
-import WolfShotz.Wyrmroost.util.MathUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -34,7 +34,7 @@ public class ConduitRenderer
         GlStateManager.disableCull();
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) x, (float) y + 0.3f + f2 * 0.2f, (float) z);
-        GlStateManager.rotatef((f * -0.0375f) * (180 / MathUtils.PI), 0.5F, 1.0F, 0.5F);
+        GlStateManager.rotatef((f * -0.0375f) * (180 / QuikMaths.PI), 0.5F, 1.0F, 0.5F);
         CAGE.render();
         GlStateManager.popMatrix();
         int j = (int) ticks / 3 % 22;

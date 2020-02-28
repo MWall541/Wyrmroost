@@ -5,8 +5,8 @@ import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.MathUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlightMovementController;
@@ -434,7 +434,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void attackInFront(int range)
     {
         AxisAlignedBB size = getBoundingBox();
-        AxisAlignedBB aabb = size.offset(MathUtils.calculateYawAngle(renderYawOffset, 0, range));
+        AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, range));
 
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
 
@@ -606,8 +606,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 for (int i = 0; i < 11; ++i)
                 {
                     Vec3d vec3d1 = new Vec3d(((double) rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) rand.nextFloat() - 0.5D) * 0.1D);
-                    vec3d1 = vec3d1.rotatePitch(-rotationPitch * (MathUtils.PI / 180f));
-                    vec3d1 = vec3d1.rotateYaw(-rotationYaw * (MathUtils.PI / 180f));
+                    vec3d1 = vec3d1.rotatePitch(-rotationPitch * (QuikMaths.PI / 180f));
+                    vec3d1 = vec3d1.rotateYaw(-rotationYaw * (QuikMaths.PI / 180f));
                     world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), mouth.x, mouth.y, mouth.z, vec3d1.x, vec3d1.y, vec3d1.z);
                 }
             }
@@ -725,7 +725,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public Vec3d getApproximateMouthPos()
     {
-        return MathUtils.calculateYawAngle(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
+        return QuikMaths.calculateYawAngle(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
     }
 
     @Override

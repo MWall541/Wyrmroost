@@ -163,7 +163,7 @@ public class WRItems
         public static final Tag<Item> TEAL_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/teal_corin_logs"), WRBlocks.Tags.TEAL_CORIN_LOGS);
         public static final Tag<Item> RED_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/red_corin_logs"), WRBlocks.Tags.RED_CORIN_LOGS);
     
-        private static Tag<Item> tag(String name) { return new ItemTags.Wrapper(ModUtils.resource(name)); }
+        private static Tag<Item> tag(String name) { return new ItemTags.Wrapper(Wyrmroost.rl(name)); }
 
         private static Tag<Item> itemBlockTag(ResourceLocation name, Tag<Block> copy)
         {
