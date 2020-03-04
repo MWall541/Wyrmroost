@@ -29,7 +29,6 @@ public class PortalBlock extends Block
     @SuppressWarnings("deprecation")
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
     {
-
         if (entityIn.dimension.getModType() == WyrmroostDimension.WYRMROOST_DIM) return;
         if (!(entityIn instanceof ServerPlayerEntity)) return;
         ServerPlayerEntity player = ((ServerPlayerEntity) entityIn);
@@ -42,11 +41,12 @@ public class PortalBlock extends Block
         double d4 = Math.min(-2.9999872E7D, border.minZ() + 16d);
         double d5 = Math.min(2.9999872E7D, border.maxX() - 16d);
         double d6 = Math.min(2.9999872E7D, border.maxZ() - 16d);
+        world.forceChunk(player.chunkCoordX, player.chunkCoordZ, false);
         x = MathHelper.clamp(x, d3, d5);
         z = MathHelper.clamp(z, d4, d6);
-        double y = world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) x, (int) z); // doesnt work, cant get chunk surface when it isnt loaded yet...
+        double y = world.getHeight(Heightmap.Type.WORLD_SURFACE, (int) x, (int) z);
 
-        WorldCapability.setPortalTriggered(ServerLifecycleHooks.getCurrentServer().func_71218_a(DimensionType.OVERWORLD), true);
-        ((ServerPlayerEntity) entityIn).func_200619_a(world, x, y, z, player.rotationYaw, player.rotationPitch);
+        WorldCapability.setPortalTriggered(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD), true);
+        ((ServerPlayerEntity) entityIn).teleport(world, x, y, z, player.rotationYaw, player.rotationPitch);
     }
 }

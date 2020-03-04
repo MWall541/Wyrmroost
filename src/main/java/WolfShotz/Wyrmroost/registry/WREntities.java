@@ -52,7 +52,7 @@ public class WREntities
     public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER = register("silver_glider", buildCreatureEntity(SilverGliderEntity::new).size(1.5f, 0.75f));
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = register("roost_stalker", buildCreatureEntity(RoostStalkerEntity::new).size(0.65f, 0.5f));
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN = register("butterfly_leviathan", EntityType.Builder.create(ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE).size(4f, 3f));
-    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = register("dragon_fruit_drake", buildCreatureEntity(DragonFruitDrakeEntity::new).size(1.5f, 2.5f));
+    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = register("dragon_fruit_drake", buildCreatureEntity(DragonFruitDrakeEntity::new).size(1.5f, 1.9f));
     public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = register("canari_wyvern", buildCreatureEntity(CanariWyvernEntity::new).size(0.45f, 1f));
     
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = register("dragon_egg", EntityType.Builder.create(DragonEggEntity::new, EntityClassification.MISC).disableSummoning());
@@ -69,7 +69,7 @@ public class WREntities
         registerSpawnEntry(MINUTUS.get(), 35, 1, 1, getByTypes(Type.SANDY).stream().filter(b -> !BiomeDictionary.hasType(b, Type.MESA)).collect(Collectors.toSet()));
         registerCustomSpawnEntry(SILVER_GLIDER.get(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere, getByTypes(Type.BEACH, Type.PLAINS));
         registerSpawnEntry(ROOSTSTALKER.get(), 9, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
-        registerCustomSpawnEntry(DRAGON_FRUIT_DRAKE.get(), 100, 1, 3, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING, DragonFruitDrakeEntity::canSpawnHere, BiomeDictionary.getBiomes(Type.JUNGLE));
+        DragonFruitDrakeEntity.handleSpawning();
 
         // Dimension: these have to be done here instead of the biome builder because entities aren't registered yet...
         registerSpawnEntry(BUTTERFLY_LEVIATHAN.get(), 1, 1, 1, Sets.newHashSet(WRBiomes.STYGIAN_SEA.get()));

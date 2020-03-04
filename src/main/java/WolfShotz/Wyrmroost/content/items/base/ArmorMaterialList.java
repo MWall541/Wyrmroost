@@ -8,8 +8,6 @@ import net.minecraft.item.Rarity;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.function.Supplier;
 
@@ -84,7 +82,6 @@ public enum ArmorMaterialList implements IArmorMaterial
     }
     
     @Override
-    @OnlyIn(Dist.CLIENT)
     public String getName()
     {
         return name;

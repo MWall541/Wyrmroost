@@ -1,9 +1,8 @@
 package WolfShotz.Wyrmroost.content.items;
 
+import WolfShotz.Wyrmroost.ClientEvents;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.io.screen.modbook.TarragonTomeScreen;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,9 +17,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -35,7 +31,7 @@ public class TarragonTomeItem extends Item
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
     {
-        if (world.isRemote) DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> openGUI(player.getHeldItem(hand)));
+        if (world.isRemote) ClientEvents.bookScreen(player.getHeldItem(hand));
         
         return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
     }
@@ -51,22 +47,11 @@ public class TarragonTomeItem extends Item
     }
     
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip")
                             .appendSibling(new StringTextComponent("sgdshdf")
                                                    .applyTextStyle(TextFormatting.OBFUSCATED))
                             .applyTextStyle(TextFormatting.GRAY));
-    }
-    
-    /**
-     * Opens the GUI on the Client Side
-     * This is needed otherwise a sided exception is thrown
-     */
-    @OnlyIn(Dist.CLIENT)
-    private void openGUI(ItemStack stack)
-    {
-        Minecraft.getInstance().displayGuiScreen(new TarragonTomeScreen(stack));
     }
 }

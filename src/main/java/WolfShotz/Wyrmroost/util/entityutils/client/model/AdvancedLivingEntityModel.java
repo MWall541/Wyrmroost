@@ -140,12 +140,12 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     
     public void rotate(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z)
     {
-        animator.rotate(model, (float) Math.toRadians((double) x), (float) Math.toRadians((double) y), (float) Math.toRadians((double) z));
+        animator.rotate(model, (float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
     }
     
     public void rotateMinus(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z)
     {
-        animator.rotate(model, (float) Math.toRadians((double) x) - model.defaultRotationX, (float) Math.toRadians((double) y) - model.defaultRotationY, (float) Math.toRadians((double) z) - model.defaultRotationZ);
+        animator.rotate(model, (float) Math.toRadians(x) - model.defaultRotationX, (float) Math.toRadians(y) - model.defaultRotationY, (float) Math.toRadians(z) - model.defaultRotationZ);
     }
     
     public void idleAnim(float frame)

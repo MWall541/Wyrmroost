@@ -13,6 +13,7 @@ public class ModelAnimator
     private int prevTempTick;
     private boolean correctAnimation = false;
     private IAnimatedObject entity;
+    private boolean keyFrameInverted = false;
     private HashMap<AdvancedRendererModel, BoxPosCache> boxPosCache = new HashMap<>();
     private HashMap<AdvancedRendererModel, BoxPosCache> prevPosCache = new HashMap<>();
     
@@ -43,7 +44,7 @@ public class ModelAnimator
         correctAnimation = entity.getAnimation() == animation;
         return correctAnimation;
     }
-    
+
     public void startKeyframe(int duration)
     {
         if (correctAnimation)
@@ -52,13 +53,18 @@ public class ModelAnimator
             tempTick += duration;
         }
     }
-    
+
+    public void invertKeyframe(boolean invert)
+    {
+        keyFrameInverted = invert;
+    }
+
     public void setStaticKeyframe(int duration)
     {
         startKeyframe(duration);
         endKeyframe(true);
     }
-    
+
     public void resetKeyframe(int duration)
     {
         startKeyframe(duration);
@@ -67,11 +73,23 @@ public class ModelAnimator
     
     public void rotate(AdvancedRendererModel box, float x, float y, float z)
     {
+        if (keyFrameInverted)
+        {
+            x = -x;
+            y = -y;
+            z = -z;
+        }
         if (correctAnimation) getPosCache(box).addRotation(x, y, z);
     }
     
     public void move(AdvancedRendererModel box, float x, float y, float z)
     {
+        if (keyFrameInverted)
+        {
+            x = -x;
+            y = -y;
+            z = -z;
+        }
         if (correctAnimation) getPosCache(box).addOffset(x, y, z);
     }
     
@@ -83,6 +101,7 @@ public class ModelAnimator
     public void endKeyframe()
     {
         endKeyframe(false);
+        keyFrameInverted = false;
     }
     
     private void endKeyframe(boolean stationary)

@@ -27,10 +27,6 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> STALKER_HURT = registerEntity("rooststalker.hurt");
     public static final RegistryObject<SoundEvent> STALKER_DEATH = registerEntity("rooststalker.death");
 
-    // misc
-    public static final RegistryObject<SoundEvent> FROST_GRASS_CRUNCH = register("block.frosted_grass.step");
-
-
     private static RegistryObject<SoundEvent> register(String name)
     {
         return SOUNDS.register(name, () -> new SoundEvent(Wyrmroost.rl(name)));

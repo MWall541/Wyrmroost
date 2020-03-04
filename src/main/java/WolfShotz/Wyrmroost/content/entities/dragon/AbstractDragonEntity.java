@@ -46,8 +46,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.ItemStackHandler;
@@ -429,17 +427,24 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     /**
      * Get all entities in a given range in front of this entity and damage all within it
-     *
      */
-    public void attackInFront(int range)
+    public void attackInFront(int radius)
     {
         AxisAlignedBB size = getBoundingBox();
-        AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, range));
+        AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(radius);
+        attackInAABB(aabb);
+    }
 
+    /**
+     * Beat up probably innocent creatures in a given aabb
+     *
+     * @param aabb good example: getBoundingBox().offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, getBounding().getXSize() / 2));
+     */
+    public void attackInAABB(AxisAlignedBB aabb)
+    {
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
 
         if (livingEntities.isEmpty()) return;
-
         livingEntities.forEach(this::attackEntityAsMob);
     }
 
@@ -489,7 +494,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Default to white sparkles around the body.
      * Can be overriden to do custom effects.
      */
-    @OnlyIn(Dist.CLIENT)
     public void doSpecialEffects()
     {
         if (ticksExisted % 25 == 0)
@@ -680,7 +684,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         ItemEntity eggItem = new ItemEntity(world, posX, posY, posZ, eggStack);
 
-        eggItem.setMotion(0, getHeight() / 2, 0);
+        eggItem.setMotion(0, getHeight() / 3, 0);
         world.addEntity(eggItem);
 
         return null;

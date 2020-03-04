@@ -29,8 +29,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -267,8 +265,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         {
             tame(getRNG().nextInt(5) == 0, player);
             eat(stack);
-            if (isSleeping()) setSleeping(false);
-            
+
             return true;
         }
         
@@ -309,7 +306,6 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     }
     
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void doSpecialEffects()
     {
         if (ticksExisted % 5 == 0)

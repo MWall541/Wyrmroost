@@ -4,15 +4,12 @@ import WolfShotz.Wyrmroost.util.entityutils.client.model.SocketRendererModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Credit to Bob Mowzie of Mowzies mobs.
  * <p>
  * Created by Josh on 8/30/2018.
  */
-@OnlyIn(Dist.CLIENT)
 public class DynamicChain
 {
     private Vec3d[] p;
@@ -241,7 +238,7 @@ public class DynamicChain
         float f1 = MathHelper.sin(-yaw - (float) Math.PI);
         float f2 = -MathHelper.cos(-pitch);
         float f3 = MathHelper.sin(-pitch);
-        return new Vec3d((double) (f1 * f2), (double) f3, (double) (f * f2));
+        return new Vec3d(f1 * f2, f3, f * f2);
     }
     
     private static Vec3d angleBetween(Vec3d p1, Vec3d p2)

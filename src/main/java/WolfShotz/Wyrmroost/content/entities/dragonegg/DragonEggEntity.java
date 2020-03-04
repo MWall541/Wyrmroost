@@ -22,10 +22,10 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
+
+import java.util.Objects;
 
 public class DragonEggEntity extends Entity implements IAnimatedObject
 {
@@ -34,7 +34,6 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
     public int hatchTime;
     public DragonEggProperties properties;
 
-    @OnlyIn(Dist.CLIENT)
     public boolean wiggleInvert, wiggleInvert2;
     private int animationTick;
     private Animation animation = NO_ANIMATION;
@@ -55,7 +54,7 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
     @Override
     public void readAdditional(CompoundNBT compound)
     {
-        containedDragon = ModUtils.<AbstractDragonEntity>getTypeByString(compound.getString("dragonType"));
+        containedDragon = ModUtils.getTypeByString(compound.getString("dragonType"));
         hatchTime = compound.getInt("hatchTime");
     }
     
@@ -164,16 +163,16 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
      */
     public void hatch()
     {
-        AbstractDragonEntity newDragon = containedDragon.create(world);
-        if (newDragon == null)
-        {
-            safeError();
-            return;
-        }
         if (!world.isRemote)
         {
+            AbstractDragonEntity newDragon = containedDragon.create(world);
+            if (newDragon == null)
+            {
+                safeError();
+                return;
+            }
             newDragon.setPosition(posX, posY, posZ);
-            newDragon.setGrowingAge(-(newDragon.getEggProperties().getHatchTime() * 2));
+            newDragon.setGrowingAge(newDragon.getEggProperties().getGrowthTime());
             newDragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
             world.addEntity(newDragon);
         }
@@ -228,7 +227,7 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
         {
             try
             {
-                return properties = containedDragon.create(world).getEggProperties();
+                return properties = Objects.requireNonNull(containedDragon.create(world)).getEggProperties();
             }
             catch (NullPointerException e)
             {

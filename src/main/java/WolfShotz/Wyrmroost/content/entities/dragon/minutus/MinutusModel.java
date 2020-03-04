@@ -3,14 +3,11 @@ package WolfShotz.Wyrmroost.content.entities.dragon.minutus;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * WR Lesser Desertwyrm - Ukan
  * Created using Tabula 7.0.1
  */
-@OnlyIn(Dist.CLIENT)
 public class MinutusModel extends AdvancedLivingEntityModel<MinutusEntity>
 {
     public AdvancedRendererModel body1;

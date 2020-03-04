@@ -8,10 +8,7 @@ import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class ButterflyInvScreen extends ContainerScreenBase<ContainerBase.ButterflyContainer>
 {
     public static final ResourceLocation BUTTERFLY_GUI = Wyrmroost.rl("textures/io/dragonscreen/butterflyinv.png");

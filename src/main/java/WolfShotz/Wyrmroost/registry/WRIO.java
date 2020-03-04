@@ -11,8 +11,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -29,7 +27,6 @@ public class WRIO
     public static final RegistryObject<ContainerType<StalkerContainer>> STALKER_CONTAINER = register("stalker_inv", entityContainer(StalkerContainer::new));
     public static final RegistryObject<ContainerType<ButterflyContainer>> BUTTERFLY_CONTAINER = register("butterfly_inv", entityContainer(ButterflyContainer::new));
 
-    @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("ConstantConditions")
     public static void screenSetup()
     {

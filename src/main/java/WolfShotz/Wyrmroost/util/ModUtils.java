@@ -34,11 +34,11 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -111,21 +111,7 @@ public class ModUtils
      */
     public static ServerWorld getServerWorld(PlayerEntity player)
     {
-        return ServerLifecycleHooks.getCurrentServer().func_71218_a(player.dimension);
-    }
-
-    /**
-     * Merge all elements from passed sets into one set.
-     *
-     * @param sets The sets to merge
-     * @return One set collection with merged elements
-     */
-    @SafeVarargs
-    public static <T> Set<T> collectAll(Set<T>... sets)
-    {
-        Set<T> set = new HashSet<>();
-        for (Set<T> setParam : sets) set.addAll(setParam);
-        return set;
+        return ServerLifecycleHooks.getCurrentServer().getWorld(player.dimension);
     }
 
     public static <T extends IForgeRegistryEntry<T>> Set<T> getRegistryEntries(DeferredRegister<T> registry)
@@ -157,16 +143,17 @@ public class ModUtils
     {
         return (EntityType<T>) EntityType.byKey(key).orElse(null);
     }
-    
+
     /**
      * Is the given aabb clear of all (solid) blocks?
      */
     public static boolean isBoxSafe(AxisAlignedBB aabb, World world)
     {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int x = MathHelper.floor(aabb.minX); x < MathHelper.floor(aabb.maxX); ++x)
             for (int y = MathHelper.ceil(aabb.minY); y < MathHelper.floor(aabb.maxY); ++y)
                 for (int z = MathHelper.floor(aabb.minZ); z < MathHelper.floor(aabb.maxZ); ++z)
-                    if (world.getBlockState(new BlockPos(x, y, z)).isSolid()) return false;
+                    if (world.getBlockState(pos.setPos(x, y, z)).isSolid()) return false;
         
         return true;
     }
@@ -203,6 +190,20 @@ public class ModUtils
     {
         int[] poses = nbt.getIntArray(key);
         return new BlockPos(poses[0], poses[1], poses[2]);
+    }
+
+    /**
+     * Get all blocks inside a AABB
+     */
+    public static Stream<BlockPos> getAllPosesInBB(AxisAlignedBB bb, World world)
+    {
+        int minX = MathHelper.floor(bb.minX);
+        int maxX = MathHelper.ceil(bb.maxX);
+        int minY = MathHelper.floor(bb.minY);
+        int maxY = MathHelper.ceil(bb.maxY);
+        int minZ = MathHelper.floor(bb.minZ);
+        int maxZ = MathHelper.ceil(bb.maxZ);
+        return BlockPos.getAllInBox(minX, minY, minZ, maxX - 1, maxY - 1, maxZ - 1);
     }
 
     /**

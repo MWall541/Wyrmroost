@@ -123,7 +123,8 @@ public class DragonFollowOwnerGoal extends Goal
                 double z = owner.posZ + 0.5d;
                 dragon.getMoveHelper().setMoveTo(x, y, z, followSpeed);
             }
-        } else
+        }
+        else
         {
             if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
                 dragon.tryTeleportToOwner();

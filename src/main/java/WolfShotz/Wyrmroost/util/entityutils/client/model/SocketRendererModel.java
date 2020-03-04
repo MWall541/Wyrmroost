@@ -2,8 +2,6 @@ package WolfShotz.Wyrmroost.util.entityutils.client.model;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
@@ -14,7 +12,6 @@ import javax.vecmath.Vector3d;
  * <p>
  * Created by Josh on 5/8/2017.
  */
-@OnlyIn(Dist.CLIENT)
 public class SocketRendererModel extends AdvancedRendererModel
 {
     public SocketRendererModel(AdvancedLivingEntityModel model, String name)

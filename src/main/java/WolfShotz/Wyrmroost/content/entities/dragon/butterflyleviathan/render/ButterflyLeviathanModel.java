@@ -6,15 +6,12 @@ import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityMod
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import WolfShotz.Wyrmroost.util.entityutils.client.model.SocketRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * butterfly leviathan - Kingdomall
  * Created using Tabula 7.0.1
  */
-@OnlyIn(Dist.CLIENT)
 public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<ButterflyLeviathanEntity>
 {
     public AdvancedRendererModel body1;

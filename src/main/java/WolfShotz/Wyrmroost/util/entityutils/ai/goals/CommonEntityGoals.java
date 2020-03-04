@@ -1,17 +1,17 @@
 package WolfShotz.Wyrmroost.util.entityutils.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.crafting.Ingredient;
 
-import javax.annotation.Nullable;
-import java.util.function.Predicate;
+import java.util.EnumSet;
 
 /**
  * Shared Dragon Entity goals
  * A small library of tweaked vanilla goals for Dragon entities
+ * Because vanilla can't do it the right way
  * <p>
  * Created by WolfShotz on 10/23/2019
  */
@@ -100,31 +100,18 @@ public class CommonEntityGoals
             }
         };
     }
-    
+
     /**
-     * When not tamed, attack the nearest attackable target matching the entity class and predicate filter
+     * (Memey title:) Follow parent goal but it has mutex flags
      *
-     * @param dragon     Goal Owner
-     * @param tClass     Target Class
-     * @param distance   Distance to search for targets
-     * @param checkSight Should the target be in sight of the goal Owner?
-     * @param nearbyOnly Should the target be near the goal owner?
-     * @param filter     Conditions the target has to pass
+     * @param animal The animal
+     * @param speed  The Speed
+     * @return a better follow parent goal
      */
-    @SuppressWarnings("unchecked") // Controlled
-    public static <T extends LivingEntity> NearestAttackableTargetGoal nonTamedTargetGoal(AbstractDragonEntity dragon, Class<T> tClass, int distance, boolean checkSight, boolean nearbyOnly, @Nullable Predicate<? extends Entity> filter)
+    public static FollowParentGoal followParentGoal(AnimalEntity animal, double speed)
     {
-        return new NearestAttackableTargetGoal(dragon, tClass, distance, checkSight, nearbyOnly, filter)
-        {
-            public boolean shouldExecute()
-            {
-                return !((AbstractDragonEntity) goalOwner).isTamed() && super.shouldExecute();
-            }
-            
-            public boolean shouldContinueExecuting()
-            {
-                return targetEntitySelector != null? targetEntitySelector.canTarget(goalOwner, nearestTarget) : super.shouldContinueExecuting();
-            }
-        };
+        FollowParentGoal goal = new FollowParentGoal(animal, speed);
+        goal.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        return goal;
     }
 }

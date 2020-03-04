@@ -32,7 +32,7 @@ public class DragonEggItem extends Item
 {
     public DragonEggItem()
     {
-        super(ModUtils.itemBuilder().maxStackSize(1).setTEISR(() -> DragonEggStackRenderer::new));
+        super(ModUtils.itemBuilder().maxStackSize(1));
     }
     
     @Override

@@ -8,10 +8,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class OWDrakeInvScreen extends ContainerScreenBase<OWDrakeInvContainer>
 {
     private static final ResourceLocation DRAKE_GUI = Wyrmroost.rl("textures/io/dragonscreen/owdrakeinv.png");

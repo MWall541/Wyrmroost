@@ -144,10 +144,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         ItemStack stack = getStackInSlot(0);
         
         if (stack.isEmpty()) return;
-        if (isBreedingItem(stack))
-        {
-            eat(stack);
-        }
+        if (isBreedingItem(stack)) eat(stack);
     }
     
     @Override

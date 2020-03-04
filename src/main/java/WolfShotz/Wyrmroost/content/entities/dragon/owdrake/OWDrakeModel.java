@@ -5,14 +5,11 @@ import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * WR Overworld Drake - Ukan
  * Created using Tabula 7.0.1
  */
-@OnlyIn(Dist.CLIENT)
 public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
 {
     public AdvancedRendererModel body1;

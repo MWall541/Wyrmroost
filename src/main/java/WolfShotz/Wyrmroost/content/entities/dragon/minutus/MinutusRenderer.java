@@ -5,12 +5,9 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class MinutusRenderer extends MobRenderer<MinutusEntity, EntityModel<MinutusEntity>>
 {
     private ResourceLocation minutus = Wyrmroost.rl("textures/entity/dragon/minutus/body.png");

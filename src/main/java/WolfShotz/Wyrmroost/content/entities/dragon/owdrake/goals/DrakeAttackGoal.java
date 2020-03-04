@@ -14,19 +14,25 @@ public class DrakeAttackGoal extends MeleeAttackGoal
         super(drake, 1d, true);
         this.drake = drake;
     }
-    
+
     @Override
     public boolean shouldExecute()
     {
         return super.shouldExecute() && !drake.isBeingRidden();
     }
-    
+
+    @Override
+    public boolean shouldContinueExecuting()
+    {
+        return !drake.isBeingRidden() && super.shouldContinueExecuting();
+    }
+
     @Override
     public void tick()
     {
         if (drake.noActiveAnimation()) super.tick();
     }
-    
+
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
     {

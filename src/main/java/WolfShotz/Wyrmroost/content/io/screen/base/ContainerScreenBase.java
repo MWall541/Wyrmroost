@@ -13,14 +13,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 import java.util.Random;
 
 // #blit(xPos, yPos, initialX pixel, initialY pixel, x width, y width, .png width, .png height);
-@OnlyIn(Dist.CLIENT)
 public class ContainerScreenBase<T extends ContainerBase<?>> extends ContainerScreen<T>
 {
     public static final ResourceLocation STANDARD_GUI = Wyrmroost.rl("textures/io/dragonscreen/dragoninv.png");

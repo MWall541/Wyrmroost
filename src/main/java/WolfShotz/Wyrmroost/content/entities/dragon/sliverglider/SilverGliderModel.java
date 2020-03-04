@@ -6,8 +6,6 @@ import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityMod
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
@@ -19,7 +17,6 @@ import static WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGli
  * WRSilverGlider - Kingdomall
  * Created using Tabula 7.0.1
  */
-@OnlyIn(Dist.CLIENT)
 public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEntity>
 {
     public AdvancedRendererModel mainbody;

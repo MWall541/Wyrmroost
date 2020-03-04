@@ -9,10 +9,7 @@ import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class ConduitRenderer
 {
     private static final ResourceLocation CAGE_TEXTURE = new ResourceLocation("textures/entity/conduit/cage.png");
@@ -71,7 +68,6 @@ public class ConduitRenderer
         GlStateManager.popMatrix();
     }
     
-    @OnlyIn(Dist.CLIENT)
     static class CageModel extends Model
     {
         private final RendererModel cageBox;
@@ -90,7 +86,6 @@ public class ConduitRenderer
         }
     }
     
-    @OnlyIn(Dist.CLIENT)
     static class EyeModel extends Model
     {
         private final RendererModel eyeBox;
@@ -109,7 +104,6 @@ public class ConduitRenderer
         }
     }
     
-    @OnlyIn(Dist.CLIENT)
     static class WindModel extends Model
     {
         private final RendererModel[] windBoxes = new RendererModel[22];

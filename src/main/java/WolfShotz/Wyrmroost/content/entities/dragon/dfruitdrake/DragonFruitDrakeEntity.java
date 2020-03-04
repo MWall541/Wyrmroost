@@ -1,14 +1,21 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.goals.NonTamedBabyTemptGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.world.WorldCapability;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
@@ -18,20 +25,29 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.EntityPredicates;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.OverworldDimension;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -42,32 +58,34 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
 {
+    public static final Animation STAND_ANIMATION = new Animation(15);
+    public static final Animation SIT_ANIMATION = new Animation(15);
+
+    public static final DataParameter<Integer> AGE = EntityDataManager.createKey(DragonFruitDrakeEntity.class, DataSerializers.VARINT);
+
     private int shearCooldownTime;
-    
+    public int age = 0;
+
     public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world)
     {
         super(dragon, world);
-        
+
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
     }
-    
-    @Override
-    protected void registerGoals()
+
+    public static void handleSpawning()
     {
-        goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(3, sitGoal = new SitGoal(this));
-        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
-        goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
-        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
-        goalSelector.addGoal(7, CommonEntityGoals.wanderAvoidWater(this, 1));
-        goalSelector.addGoal(8, CommonEntityGoals.lookAt(this, 7f));
-        goalSelector.addGoal(8, CommonEntityGoals.lookRandomly(this));
-        
-        targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
-        targetSelector.addGoal(2, CommonEntityGoals.nonTamedTargetGoal(this, PlayerEntity.class, 2, true, true, EntityPredicates.CAN_AI_TARGET));
+        BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
+                .stream()
+                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 8, 2, 4)));
+        EntitySpawnPlacementRegistry.register(
+                WREntities.DRAGON_FRUIT_DRAKE.get(),
+                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
+                Heightmap.Type.MOTION_BLOCKING,
+                DragonFruitDrakeEntity::canSpawnHere);
     }
-    
+
     @Override
     protected void registerAttributes()
     {
@@ -76,40 +94,60 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
         getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4d);
     }
-    
+
     // ================================
     //           Entity NBT
     // ================================
-    @Override
-    public void writeAdditional(CompoundNBT nbt)
-    {
-        super.writeAdditional(nbt);
-        
-        nbt.putInt("shearcooldown", shearCooldownTime);
-    }
-    
-    @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-        
-        this.shearCooldownTime = nbt.getInt("shearcooldown");
-    }
-    // ================================
 
-    @Override
-    public void tick()
-    {
-        super.tick();
-
-        if (shearCooldownTime > 0) --shearCooldownTime;
-    }
-
-    public static boolean canSpawnHere(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
+    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
     {
         World world = worldIn.getWorld();
 
         return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
+    }
+
+    @Override
+    public void writeAdditional(CompoundNBT nbt)
+    {
+        super.writeAdditional(nbt);
+
+        nbt.putInt("shearcooldown", shearCooldownTime);
+    }
+
+    @Override
+    protected void registerGoals()
+    {
+        goalSelector.addGoal(1, new SwimGoal(this));
+        goalSelector.addGoal(3, sitGoal = new SitGoal(this));
+        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
+        goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(WRItems.DRAGON_FRUIT.get())));
+        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
+        goalSelector.addGoal(8, CommonEntityGoals.followParentGoal(this, 1));
+        goalSelector.addGoal(9, CommonEntityGoals.wanderAvoidWater(this, 1));
+        goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 7f));
+        goalSelector.addGoal(11, CommonEntityGoals.lookRandomly(this));
+
+        targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
+        targetSelector.addGoal(2, new NonTamedTargetGoal(this, PlayerEntity.class, true, true, false));
+    }
+
+    @Override
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(AGE, 0);
+    }
+
+    // ================================
+
+    @Override
+    public void readAdditional(CompoundNBT nbt)
+    {
+        super.readAdditional(nbt);
+
+        this.shearCooldownTime = nbt.getInt("shearcooldown");
+        dataManager.set(AGE, growingAge);
     }
 
     @Override
@@ -144,11 +182,38 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
+    public void setSit(boolean sitting)
+    {
+        if (isSitting() == sitting) return;
+        super.setSit(sitting);
+        if (sitting) setAnimation(SIT_ANIMATION);
+        else setAnimation(STAND_ANIMATION);
+    }
+
+    @Override
+    public void tick()
+    {
+        super.tick();
+
+
+        if (shearCooldownTime > 0) --shearCooldownTime;
+        if (age < 0) ++age;
+    }
+
+    @Override
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (super.processInteract(player, hand, stack)) return true;
 
-        if (!isChild() && !player.isSneaking())
+        if (!isTamed() && isChild() && isFoodItem(stack))
+        {
+            tame(getRNG().nextInt(5) == 0, player);
+            eat(stack);
+
+            return true;
+        }
+
+        if (isOwner(player) && !isChild() && !player.isSneaking())
         {
             setSit(false);
             player.startRiding(this);
@@ -167,10 +232,49 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
+    public void notifyDataManagerChange(DataParameter<?> key)
+    {
+        super.notifyDataManagerChange(key);
+        if (key.equals(AGE)) age = dataManager.get(AGE);
+    }
+
+    @Override
+    public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isNotColliding(IWorldReader worldIn)
+    {
+        if (worldIn.checkNoEntityCollision(this) && !worldIn.containsAnyLiquid(getBoundingBox()))
+        {
+            BlockPos blockpos = new BlockPos(posX, getBoundingBox().minY, posZ);
+            if (blockpos.getY() < worldIn.getSeaLevel()) return false;
+
+            BlockState blockstate = worldIn.getBlockState(blockpos.down());
+            Block block = blockstate.getBlock();
+            return block == Blocks.GRASS_BLOCK || blockstate.isIn(BlockTags.LEAVES);
+        }
+
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+    {
+        if (reason == SpawnReason.NATURAL && getRNG().nextDouble() <= ConfigData.dfdBabyChance)
+            setGrowingAge(getEggProperties().getGrowthTime());
+
+        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+
+    @Override
     public boolean canBeSteered() { return true;}
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height; }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return 1.8f; }
 
     @Override
     public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
@@ -194,7 +298,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public void handleSleep()
     {
         int sleepChance = world.isDaytime() ? 1000 : 300;
-        if (!isSleeping()
+        if (!isSleeping() && (isChild() || !world.isDaytime())
                 && --sleepCooldown <= 0
                 && (!isTamed() || isSitting() || (getHomePos().isPresent() && isWithinHomeDistanceFromPosition()))
                 && !isBeingRidden()
@@ -212,24 +316,30 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         return false;
     }
-    
+
     @Override
     public List<Item> getFoodItems()
     {
         List<Item> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
-        Collections.addAll(foods, WRItems.DRAGON_FRUIT.get(), Items.APPLE, Items.SWEET_BERRIES);
+        Collections.addAll(foods, Items.APPLE, Items.SWEET_BERRIES);
         return foods;
     }
-    
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return stack.getItem() == WRItems.DRAGON_FRUIT.get();
+    }
+
     @Override
     public DragonEggProperties createEggProperties()
     {
         return new DragonEggProperties(0.45f, 0.75f, 9600);
     }
-    
+
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[]{NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION};
+        return new Animation[]{NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, STAND_ANIMATION, SIT_ANIMATION};
     }
 }

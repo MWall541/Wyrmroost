@@ -7,15 +7,12 @@ import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.antlr.v4.runtime.misc.Triple;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // blit(xPos, yPos, initialX pixel, initialY pixel, x width, y width, .png width, .png height);
-@OnlyIn(Dist.CLIENT)
 public class Page
 {
     private final FontRenderer font;

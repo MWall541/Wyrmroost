@@ -1,8 +1,16 @@
-package WolfShotz.Wyrmroost.util;
+package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
+import WolfShotz.Wyrmroost.content.io.screen.modbook.TarragonTomeScreen;
+import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
+import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.registry.WRIO;
+import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.registry.WRKeyBinds;
+import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -10,7 +18,10 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -19,19 +30,100 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.opengl.GL11;
 
-@EventBusSubscriber(modid = Wyrmroost.MOD_ID)
-public class RenderWorldEvent
+/**
+ * EventBus listeners on CLIENT distribution
+ * Also a client helper class because yes.
+ */
+@SuppressWarnings("unused")
+public class ClientEvents
 {
+    public static void onModConstruction(IEventBus bus)
+    {
+        bus.addListener(ClientEvents::clientSetup);
+        bus.addListener(ClientEvents::registerItemColors);
+    }
+
+    public static void clientSetup(final FMLClientSetupEvent event)
+    {
+        MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+
+        WREntities.registerEntityRenders();
+        WRKeyBinds.registerKeys();
+        WRIO.screenSetup();
+    }
+
+    /**
+     * Registers item colors for rendering
+     */
+    public static void registerItemColors(ColorHandlerEvent.Item evt)
+    {
+        ItemColors handler = evt.getItemColors();
+
+        IItemColor eggColor = (stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex);
+        CustomSpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
+    }
+
+    // ==========================================================
+    //  Forge Eventbus listeners
+    //
+    //  Anything below here isnt related to the mod bus,
+    //  so like runtime stuff (Non-registry stuff)
+    // ==========================================================
+
+    /**
+     * Handles custom keybind pressing
+     */
+    @SubscribeEvent
+    public static void onKeyPress(InputEvent.KeyInputEvent event)
+    {
+        if (Minecraft.getInstance().world == null) return; // Dont do anything on the main menu screen
+        PlayerEntity player = Minecraft.getInstance().player;
+
+        // Generic Attack
+        if (WRKeyBinds.genericAttack.isPressed())
+        {
+            if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
+            AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
+
+            if (dragon.noActiveAnimation())
+            {
+                dragon.performGenericAttack();
+                Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
+            }
+        }
+    }
+
+    /**
+     * Handles the perspective/position of the camera
+     */
+    @SubscribeEvent
+    public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
+    {
+        Minecraft mc = Minecraft.getInstance();
+        Entity entity = mc.player.getRidingEntity();
+        if (!(entity instanceof AbstractDragonEntity)) return;
+        int i1 = mc.gameSettings.thirdPersonView;
+
+        if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
+    }
+
     @SubscribeEvent
     public static void renderWorld(RenderWorldLastEvent event)
     {
         renderDragonStaff();
     }
+
+    // ====================
 
     public static void renderDragonStaff()
     {
@@ -111,5 +203,16 @@ public class RenderWorldEvent
                 }
             }
         }
+    }
+
+    public static void debugScreen(AbstractDragonEntity dragon)
+    {
+        Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
+    }
+
+    public static void bookScreen(ItemStack stack)
+    {
+        if (stack.getItem() != WRItems.TARRAGON_TOME.get()) return;
+        Minecraft.getInstance().displayGuiScreen(new TarragonTomeScreen(stack));
     }
 }
