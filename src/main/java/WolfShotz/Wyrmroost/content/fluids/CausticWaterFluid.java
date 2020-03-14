@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.fluid.WaterFluid;
@@ -38,7 +39,7 @@ public class CausticWaterFluid extends WaterFluid
                 .builder(new ResourceLocation("block/water_still"), new ResourceLocation("block/water_flow"))
                 .overlay(new ResourceLocation("block/water_overlay"))
                 .translationKey("block.wyrmroost.caustic_water")
-                .color(0x1a2a87e4)
+                .color(0xFF3F4FE4)
                 .build(this);
     }
 
@@ -85,7 +86,8 @@ public class CausticWaterFluid extends WaterFluid
         @Override
         public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
         {
-            entityIn.attackEntityFrom(new DamageSource("caustic_water"), 2);
+            if (entityIn instanceof LivingEntity)
+                entityIn.attackEntityFrom(new DamageSource("caustic_water").setDamageBypassesArmor(), 1);
         }
     }
 }

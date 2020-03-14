@@ -1,7 +1,9 @@
 package WolfShotz.Wyrmroost.content.world.biomes;
 
+import WolfShotz.Wyrmroost.registry.WRFluids;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.world.WRBiome;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -10,22 +12,26 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.structure.MineshaftConfig;
 import net.minecraft.world.gen.feature.structure.MineshaftStructure;
 import net.minecraft.world.gen.placement.*;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
+import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
+
+import java.util.Random;
 
 public class CausticSwampBiome extends WRBiome
 {
     public CausticSwampBiome()
     {
         super(new Biome.Builder()
-                .surfaceBuilder(SurfaceBuilder.SWAMP, SurfaceBuilder.GRASS_DIRT_GRAVEL_CONFIG)
-                .precipitation(Biome.RainType.RAIN)
-                .category(Biome.Category.SWAMP)
-                .depth(-0.2F)
+                .surfaceBuilder(new CausticSurfaceBuilder(), SurfaceBuilder.GRASS_DIRT_GRAVEL_CONFIG)
+                .precipitation(RainType.RAIN)
+                .category(Category.SWAMP)
+                .depth(0.2F)
                 .scale(0.1F)
                 .temperature(2f)
                 .downfall(0.9F)
@@ -51,7 +57,6 @@ public class CausticSwampBiome extends WRBiome
 
         DefaultBiomeFeatures.addCarvers(this);
         DefaultBiomeFeatures.addStructures(this);
-        DefaultBiomeFeatures.addLakes(this);
         DefaultBiomeFeatures.addMonsterRooms(this);
         DefaultBiomeFeatures.addStoneVariants(this);
         DefaultBiomeFeatures.addOres(this);
@@ -60,6 +65,8 @@ public class CausticSwampBiome extends WRBiome
         DefaultBiomeFeatures.addExtraReedsAndPumpkins(this);
         DefaultBiomeFeatures.addSprings(this);
         DefaultBiomeFeatures.addFossils(this);
+        addFeature(GenerationStage.Decoration.LOCAL_MODIFICATIONS, createDecoratedFeature(Feature.LAKE, new LakesConfig(WRFluids.CAUSTIC_WATER.getBlock().getDefaultState()), Placement.WATER_LAKE, new LakeChanceConfig(4)));
+        addFeature(GenerationStage.Decoration.LOCAL_MODIFICATIONS, createDecoratedFeature(Feature.LAKE, new LakesConfig(Blocks.LAVA.getDefaultState()), Placement.LAVA_LAKE, new LakeChanceConfig(80)));
         addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(Feature.SEAGRASS, new SeaGrassConfig(64, 0.6D), Placement.TOP_SOLID_HEIGHTMAP, IPlacementConfig.NO_PLACEMENT_CONFIG));
         addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(Feature.SWAMP_FLOWER, IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(1)));
         addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(Feature.GRASS, new GrassFeatureConfig(Blocks.GRASS.getDefaultState()), Placement.COUNT_HEIGHTMAP_DOUBLE, new FrequencyConfig(5)));
@@ -100,5 +107,20 @@ public class CausticSwampBiome extends WRBiome
         f2 = f2 * (f * 0.94F + 0.06F);
         f3 = f3 * (f * 0.91F + 0.09F);
         return new Vec3d(0, f2 * 0.5f, f3 * 0.1f);
+    }
+
+    public static class CausticSurfaceBuilder extends SurfaceBuilder<SurfaceBuilderConfig>
+    {
+        public CausticSurfaceBuilder()
+        {
+            super(SurfaceBuilderConfig::deserialize);
+        }
+
+        @Override
+        public void buildSurface(Random random, IChunk chunkIn, Biome biomeIn, int x, int z, int startHeight, double noise, BlockState defaultBlock, BlockState defaultFluid, int seaLevel, long seed, SurfaceBuilderConfig config)
+        {
+            defaultFluid = WRFluids.CAUSTIC_WATER.getBlock().getDefaultState();
+            SurfaceBuilder.SWAMP.buildSurface(random, chunkIn, biomeIn, x, z, startHeight, noise, defaultBlock, defaultFluid, seaLevel, seed, config);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -72,7 +73,9 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     public AdvancedRendererModel feathers3R;
     public AdvancedRendererModel membrane2R;
     public AdvancedRendererModel membrane3R_1;
-    
+
+    public ModelAnimator animator;
+
     public CanariWyvernModel()
     {
         textureWidth = 150;
@@ -361,6 +364,9 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
         tail3.addChild(tail4);
         leg1L.addChild(leg2L);
         wing2L.addChild(palmL);
+
+        updateDefaultPose();
+        animator = ModelAnimator.create();
     }
     
     @Override
@@ -379,16 +385,25 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     @Override
     public void setLivingAnimations(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float partialTick)
     {
+        float frame = canari.ticksExisted + partialTick;
+
+        resetToDefaultPose();
+
         setInitialPositions();
+
+        idleAnim(frame);
     }
     
     public void setInitialPositions()
     {
-    
     }
     
     @Override
     public void idleAnim(float frame)
     {
+        AdvancedRendererModel[] headArray = {head_1, neck1, neck2};
+        AdvancedRendererModel[] tailArray = {tail1, tail2, tail3, tail4};
+        chainWave(headArray, 0.45f - globalSpeed, 0.1f, -2.5, frame, 0.5f);
+        chainWave(tailArray, 0.44f - globalSpeed, 0.05f, 2.5, frame, 0.5f);
     }
 }

@@ -28,8 +28,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -61,7 +59,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public static final Animation STAND_ANIMATION = new Animation(15);
     public static final Animation SIT_ANIMATION = new Animation(15);
 
-    public static final DataParameter<Integer> AGE = EntityDataManager.createKey(DragonFruitDrakeEntity.class, DataSerializers.VARINT);
+//    public static final DataParameter<Integer> AGE = EntityDataManager.createKey(DragonFruitDrakeEntity.class, DataSerializers.VARINT);
 
     private int shearCooldownTime;
     public int age = 0;
@@ -72,18 +70,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
-    }
-
-    public static void handleSpawning()
-    {
-        BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
-                .stream()
-                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 8, 2, 4)));
-        EntitySpawnPlacementRegistry.register(
-                WREntities.DRAGON_FRUIT_DRAKE.get(),
-                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                Heightmap.Type.MOTION_BLOCKING,
-                DragonFruitDrakeEntity::canSpawnHere);
     }
 
     @Override
@@ -132,22 +118,25 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         targetSelector.addGoal(2, new NonTamedTargetGoal(this, PlayerEntity.class, true, true, false));
     }
 
-    @Override
-    protected void registerData()
+    public static void handleSpawning()
     {
-        super.registerData();
-        dataManager.register(AGE, 0);
+        BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
+                .stream()
+                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 8, 2, 4)));
+        EntitySpawnPlacementRegistry.register(
+                WREntities.DRAGON_FRUIT_DRAKE.get(),
+                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
+                Heightmap.Type.MOTION_BLOCKING,
+                DragonFruitDrakeEntity::canSpawnHere);
     }
 
     // ================================
 
     @Override
-    public void readAdditional(CompoundNBT nbt)
+    protected void registerData()
     {
-        super.readAdditional(nbt);
-
-        this.shearCooldownTime = nbt.getInt("shearcooldown");
-        dataManager.set(AGE, growingAge);
+        super.registerData();
+//        dataManager.register(AGE, 0);
     }
 
     @Override
@@ -232,10 +221,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public void notifyDataManagerChange(DataParameter<?> key)
+    public void readAdditional(CompoundNBT nbt)
     {
-        super.notifyDataManagerChange(key);
-        if (key.equals(AGE)) age = dataManager.get(AGE);
+        super.readAdditional(nbt);
+
+        this.shearCooldownTime = nbt.getInt("shearcooldown");
+//        dataManager.set(AGE, growingAge);
     }
 
     @Override
@@ -260,6 +251,13 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         return false;
     }
 
+    @Override
+    public void notifyDataManagerChange(DataParameter<?> key)
+    {
+        super.notifyDataManagerChange(key);
+//        if (key.equals(AGE)) age = dataManager.get(AGE);
+    }
+
     @Nullable
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
@@ -271,7 +269,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public boolean canBeSteered() { return true;}
+    public boolean canBeSteered() { return true; }
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return 1.8f; }
@@ -310,12 +308,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 && getRNG().nextInt(sleepChance) == 0) setSleeping(true);
         else if (isSleeping() && world.isDaytime() && getRNG().nextInt(375) == 0) setSleeping(false);
     }
-    
+
     @Override
-    public boolean canFly()
-    {
-        return false;
-    }
+    public boolean canFly() { return false; }
 
     @Override
     public List<Item> getFoodItems()

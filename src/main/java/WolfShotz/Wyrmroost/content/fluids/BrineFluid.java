@@ -13,7 +13,6 @@ import net.minecraft.fluid.WaterFluid;
 import net.minecraft.item.Item;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -35,7 +34,7 @@ public class BrineFluid extends WaterFluid
     protected FluidAttributes createAttributes()
     {
         return FluidAttributes
-                .builder(Wyrmroost.rl("block/brine_still"), new ResourceLocation("block/brine_flow"))
+                .builder(Wyrmroost.rl("block/brine_still"), Wyrmroost.rl("block/brine_flow"))
                 .translationKey("block.wyrmroost.brine")
                 .build(this);
     }

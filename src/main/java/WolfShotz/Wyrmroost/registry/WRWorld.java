@@ -32,6 +32,8 @@ public class WRWorld
 
     // Structure Pieces are not a forge registry, so we don't have to be IMC slave bitches and register on vanilla accord:
     public static final IStructurePieceType CANARI_TREE_PIECE = structurePiece("canari_tree", CanariTreePiece::new);
+
+
     private static final Predicate<Biome> NETHER_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER).stream().anyMatch(biome::equals);
     private static final Predicate<Biome> END_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.END).stream().anyMatch(biome::equals);
 

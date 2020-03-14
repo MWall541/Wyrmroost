@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -43,21 +44,34 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     protected void registerData()
     {
         super.registerData();
-        
+
         dataManager.register(VARIANT, getRNG().nextInt(5));
     }
-    
+
     @Override
-    public int getSpecialChances()
+    public void writeAdditional(CompoundNBT nbt)
     {
-        return 0;
+        super.writeAdditional(nbt);
+
+        nbt.putInt("variant", getVariant());
     }
-    
+
+    @Override
+    public void readAdditional(CompoundNBT nbt)
+    {
+        super.readAdditional(nbt);
+
+        setVariant(nbt.getInt("variant"));
+    }
+
+    @Override
+    public int getSpecialChances() { return 0; }
+
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (super.processInteract(player, hand, stack)) return true;
-        
+
         if (isOwner(player))
         {
             if (player.isSneaking())

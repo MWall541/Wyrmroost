@@ -39,9 +39,4 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
 
         return Wyrmroost.rl("textures/entity/dragonegg/default.png");
     }
-
-    public static DragonEggStackRenderer get()
-    {
-        return new DragonEggStackRenderer();
-    }
 }
