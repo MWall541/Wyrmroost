@@ -48,8 +48,9 @@ public class PlayerMount
      */
     public static boolean checkShoulderOccupants(PlayerEntity mount, LivingEntity rider)
     {
+        if (mount == null) return false;
         Optional<Entity> other = mount.getPassengers().stream().filter(e -> e != rider && e instanceof IShoulderMount).findFirst();
-        return other.isPresent() && mount.getPassengers().indexOf(rider) > mount.getPassengers().indexOf(other.get());
+        return (!mount.getLeftShoulderEntity().isEmpty() || !mount.getRightShoulderEntity().isEmpty()) || (other.isPresent() && mount.getPassengers().indexOf(rider) > mount.getPassengers().indexOf(other.get()));
     }
     
     /**
@@ -57,6 +58,9 @@ public class PlayerMount
      */
     public static long getShoulderEntityCount(PlayerEntity entity)
     {
-        return entity.getPassengers().stream().filter(IShoulderMount.class::isInstance).count();
+        long count = entity.getPassengers().stream().filter(IShoulderMount.class::isInstance).count();
+        if (!entity.getLeftShoulderEntity().isEmpty()) count++;
+        if (!entity.getRightShoulderEntity().isEmpty()) count++;
+        return count;
     }
 }

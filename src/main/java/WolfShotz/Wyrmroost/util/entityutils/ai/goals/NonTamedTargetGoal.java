@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -50,7 +49,7 @@ public class NonTamedTargetGoal extends NearestAttackableTargetGoal
         {
             if (!dragon.isTamed())
                 return e instanceof PlayerEntity && !e.isSpectator() && !((PlayerEntity) e).isCreative();
-            return dragon.getHomePos().isPresent() && e instanceof IMob && !(e instanceof CreeperEntity);
+            return dragon.getHomePos().isPresent() && e instanceof IMob;
         };
     }
 }

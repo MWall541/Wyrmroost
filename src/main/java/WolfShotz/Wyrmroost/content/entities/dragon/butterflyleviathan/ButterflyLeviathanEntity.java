@@ -98,7 +98,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         super.registerAttributes();
 
         getAttribute(MAX_HEALTH).setBaseValue(70d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.1); // On land speed, in water speed is handled in the move controller
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.045); // On land speed, in water speed is handled in the move controller
 //        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
 
