@@ -169,7 +169,6 @@ public class WyrmroostDimension extends Dimension
     {
         Biome biome = getBiome();
         if (biome instanceof WRBiome) return ((WRBiome) biome).getSunBrightness(world, partialTicks);
-
         return super.getSunBrightness(partialTicks);
     }
 

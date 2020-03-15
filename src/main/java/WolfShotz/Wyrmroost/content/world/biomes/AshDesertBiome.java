@@ -26,9 +26,11 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
 
 public class AshDesertBiome extends WRBiome
 {
+    public float prevSunBrightness;
+
     public AshDesertBiome()
     {
-        super(new Biome.Builder()
+        super(10, new Biome.Builder()
                 .surfaceBuilder(SurfaceBuilder.DEFAULT, new SurfaceBuilderConfig(WRBlocks.ASH.get().getDefaultState(), WRBlocks.ASH_BLOCK.get().getDefaultState(), Blocks.GRAVEL.getDefaultState()))
                 .precipitation(Biome.RainType.NONE)
                 .category(Biome.Category.DESERT)

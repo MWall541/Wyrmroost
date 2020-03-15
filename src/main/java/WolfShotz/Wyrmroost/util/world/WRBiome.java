@@ -10,14 +10,22 @@ import java.util.function.Consumer;
 
 public class WRBiome extends Biome
 {
+    private final int weight;
+
     // Queue work to do later (example add features, structures) at common setup
     // This is for fixing bull shit with null registries
     public Consumer<Biome> queueWork = b ->
-    {};
+    {
+    };
 
-    public WRBiome(Builder biomeBuilder)
+    /**
+     * @param biomeBuilder - typical biome builder crap
+     * @param weight       - rarity in which we may see this biome
+     */
+    public WRBiome(int weight, Builder biomeBuilder)
     {
         super(biomeBuilder);
+        this.weight = weight;
     }
 
     public IRenderHandler getSkyRenderer() { return null; }
@@ -48,4 +56,6 @@ public class WRBiome extends Biome
     }
 
     public boolean doesXZShowFog(int x, int z) { return false; }
+
+    public int getWeight() { return weight; }
 }

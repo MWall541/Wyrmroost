@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -83,8 +82,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
             if (getRNG().nextInt(350) == 0) setAnimation(CLEAN_FEATHERS_ANIMATION);
         }
 
-        if (getAnimation() == FLAP_WINGS_ANIMATION && getAnimationTick() == 3)
-            playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 1, 0.5f);
+//        if (getAnimation() == FLAP_WINGS_ANIMATION && getAnimationTick() == 3)
+//            playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 1, 0.5f);
     }
 
     @Override

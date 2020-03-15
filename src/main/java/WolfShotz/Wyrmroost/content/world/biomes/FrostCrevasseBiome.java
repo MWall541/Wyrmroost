@@ -26,7 +26,7 @@ public class FrostCrevasseBiome extends WRBiome
 
     public FrostCrevasseBiome()
     {
-        super(new Biome.Builder()
+        super(10, new Biome.Builder()
                 .surfaceBuilder(FROST_CREVASSE, SurfaceBuilder.GRASS_DIRT_GRAVEL_CONFIG)
                 .precipitation(Biome.RainType.SNOW)
                 .category(Biome.Category.ICY)

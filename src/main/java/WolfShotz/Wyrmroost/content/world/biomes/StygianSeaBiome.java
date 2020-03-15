@@ -20,7 +20,7 @@ public class StygianSeaBiome extends WRBiome
 {
     public StygianSeaBiome()
     {
-        super(new Biome.Builder()
+        super(10, new Biome.Builder()
                 .surfaceBuilder(SurfaceBuilder.DEFAULT, SurfaceBuilder.GRASS_DIRT_GRAVEL_CONFIG)
                 .precipitation(RainType.RAIN)
                 .category(Category.OCEAN)

@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.content.world.biomes;
 import WolfShotz.Wyrmroost.registry.WRFluids;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.world.WRBiome;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityClassification;
@@ -27,7 +28,7 @@ public class CausticSwampBiome extends WRBiome
 {
     public CausticSwampBiome()
     {
-        super(new Biome.Builder()
+        super(10, new Biome.Builder()
                 .surfaceBuilder(new CausticSurfaceBuilder(), SurfaceBuilder.GRASS_DIRT_GRAVEL_CONFIG)
                 .precipitation(RainType.RAIN)
                 .category(Category.SWAMP)
@@ -120,6 +121,23 @@ public class CausticSwampBiome extends WRBiome
         public void buildSurface(Random random, IChunk chunkIn, Biome biomeIn, int x, int z, int startHeight, double noise, BlockState defaultBlock, BlockState defaultFluid, int seaLevel, long seed, SurfaceBuilderConfig config)
         {
             defaultFluid = WRFluids.CAUSTIC_WATER.getBlock().getDefaultState();
+
+            int i = x & 15;
+            int j = z & 15;
+            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+
+            for (int k = startHeight; k >= 0; --k)
+            {
+                mutablePos.setPos(i, k, j);
+                if (!chunkIn.getBlockState(mutablePos).isAir())
+                {
+                    Block block = chunkIn.getBlockState(mutablePos).getBlock();
+                    if (k == 62 && block != defaultFluid.getBlock() && block == Blocks.WATER)
+                        chunkIn.setBlockState(mutablePos, defaultFluid, false);
+                    break;
+                }
+            }
+
             SurfaceBuilder.SWAMP.buildSurface(random, chunkIn, biomeIn, x, z, startHeight, noise, defaultBlock, defaultFluid, seaLevel, seed, config);
         }
     }

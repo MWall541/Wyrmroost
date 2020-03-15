@@ -1,17 +1,14 @@
 package WolfShotz.Wyrmroost.content.world.dimension;
 
-import WolfShotz.Wyrmroost.registry.WRBiomes;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.SingleBiomeProvider;
-import net.minecraft.world.biome.provider.SingleBiomeProviderSettings;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.NoiseChunkGenerator;
 import net.minecraft.world.gen.OctavesNoiseGenerator;
+import net.minecraft.world.gen.OverworldGenSettings;
 import net.minecraft.world.gen.WorldGenRegion;
 import net.minecraft.world.spawner.WorldEntitySpawner;
 
@@ -32,7 +29,7 @@ public class WyrmroostChunkGenerator extends NoiseChunkGenerator<WyrmroostChunkG
 
     public WyrmroostChunkGenerator(World world)
     {
-        super(world, new SingleBiomeProvider(new SingleBiomeProviderSettings().setBiome(WRBiomes.CAUSTIC_SWAMP.get())), 4, 8, 256, new Config(), true);
+        super(world, new WyrmroostBiomeProvider(world.getWorldInfo(), new Config()), 4, 8, 256, new Config(), true);
         this.depthNoise = new OctavesNoiseGenerator(this.randomSeed, 16);
     }
 
@@ -118,11 +115,14 @@ public class WyrmroostChunkGenerator extends NoiseChunkGenerator<WyrmroostChunkG
         return d0;
     }
 
-    public static class Config extends GenerationSettings
+    public static class Config extends OverworldGenSettings
     {
-        Config() // dummy.. do more later?
+        Config()
         {
             defaultBlock = Blocks.STONE.getDefaultState(); // ex.
         }
+
+        @Override
+        public int getBedrockFloorHeight() { return 0; }
     }
 }
