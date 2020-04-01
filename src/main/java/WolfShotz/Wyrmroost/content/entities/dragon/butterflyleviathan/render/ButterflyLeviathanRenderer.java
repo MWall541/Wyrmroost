@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -22,7 +21,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public ButterflyLeviathanRenderer(EntityRendererManager manager)
     {
         super(manager, new ButterflyLeviathanModel(), 2f);
-        addLayer(new GlowLayer(d -> GLOW, ButterflyLeviathanEntity::hasConduit));
+        addLayer(new GlowLayer(d -> GLOW, ButterflyLeviathanRenderer::shouldRenderConduit));
     }
 
     public static ResourceLocation resource(String png)
@@ -45,14 +44,20 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         }
     }
 
+    public static boolean shouldRenderConduit(ButterflyLeviathanEntity entity)
+    {
+        if (!entity.hasConduit()) return false;
+        return entity.getAnimation() != ButterflyLeviathanEntity.ACTIVATE_CONDUIT || entity.getAnimationTick() >= 10;
+    }
+
     @Override
     public void doRender(ButterflyLeviathanEntity entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
-        if (entity.hasConduit())
+        if (shouldRenderConduit(entity))
         {
-            Vec3d vec3d = QuikMaths.calculateYawAngle(entityYaw, 0, 4.2).add(x, y + entity.getEyeHeight() + 2, z);
+            Vec3d vec3d = entity.getConduitLocation(new Vec3d(x, y, z));
             ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
         }
     }

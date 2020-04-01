@@ -156,7 +156,7 @@ public class LootTables extends LootTableProvider
                     .addLootPool(lootTable().addEntry(item(WRItems.DRAGON_FRUIT.get(), 1f, 2f).acceptFunction(looting(0f, 2f))))
             );
             registerLootTable(WREntities.CANARI_WYVERN.get(), LootTable.builder()
-                    .addLootPool(lootTable().addEntry(item(Items.FEATHER, 0f, 3f).acceptFunction(looting(0f, 2f))))
+                    .addLootPool(lootTable().addEntry(item(WRItems.CANARI_FEATHER.get(), 0f, 3f).acceptFunction(looting(0f, 2f))))
             );
         }
 

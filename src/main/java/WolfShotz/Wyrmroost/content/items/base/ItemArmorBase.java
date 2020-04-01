@@ -8,7 +8,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
@@ -39,6 +38,6 @@ public class ItemArmorBase extends ArmorItem
     @Override
     public void addInformation(ItemStack p_77624_1_, @Nullable World p_77624_2_, List<ITextComponent> lines, ITooltipFlag p_77624_4_)
     {
-        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new StringTextComponent(material.getName()).applyTextStyle(armorMaterial.getRarity().color)));
+        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + material.getName()).applyTextStyle(armorMaterial.getRarity().color)));
     }
 }

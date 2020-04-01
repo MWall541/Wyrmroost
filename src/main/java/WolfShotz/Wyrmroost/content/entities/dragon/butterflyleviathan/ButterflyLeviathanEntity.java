@@ -5,6 +5,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterF
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.BrineFluid;
+import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
@@ -28,6 +30,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -53,7 +56,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 {
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.createKey(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
 
-    public static final Animation ACTIVATE_CONDUIT = new Animation(50);
+    public static final Animation ACTIVATE_CONDUIT = new Animation(46);
+    public static final Animation SIT_ANIMATION = new Animation(15);
+    public static final Animation STAND_ANIMATION = new Animation(15);
 
     // Multipart
     public MultiPartEntity headPart;
@@ -68,6 +73,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world)
     {
         super(blevi, world);
+        ignoreFrustumCheck = ConfigData.disableFrustumCheck;
 
         moveController = new ButterFlyMoveController(this);
 
@@ -142,8 +148,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public void setHasConduit(boolean flag)
     {
+        if (hasConduit() == flag) return;
         dataManager.set(HAS_CONDUIT, flag);
-        if (flag) playSound(SoundEvents.BLOCK_CONDUIT_ACTIVATE, 1, 1);
+        if (flag) setAnimation(ACTIVATE_CONDUIT);
         else playSound(SoundEvents.BLOCK_CONDUIT_DEACTIVATE, 1, 1);
     }
 
@@ -169,6 +176,24 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 if (rand.nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 2f, 1f);
                 else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 2f, 1f);
             }
+        }
+
+        if (getAnimation() == ACTIVATE_CONDUIT)
+        {
+            if (animationTick == 1) playSound(WRSounds.BFLY_ROAR.get(), 1f, 1f);
+            if (animationTick == 10)
+            {
+                playSound(SoundEvents.BLOCK_CONDUIT_ACTIVATE, 1, 1);
+
+                Vec3d vec3d = getConduitLocation(new Vec3d(posX, posY, posZ));
+                for (int i = 0; i < 26; ++i)
+                {
+                    double velX = Math.cos(i);
+                    double velZ = Math.sin(i);
+                    world.addParticle(ParticleTypes.CLOUD, vec3d.x, vec3d.y + 0.8, vec3d.z, velX, 0, velZ);
+                }
+            }
+
         }
     }
     
@@ -217,16 +242,22 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (super.processInteract(player, hand, stack)) return true;
-        
-        if (isTamed())
+
+        if (isOwner(player))
         {
+            if (player.isSneaking())
+            {
+                setSit(!isSitting());
+                return true;
+            }
+
             player.startRiding(this);
             return true;
         }
         
         return false;
     }
-    
+
     public void applyEffects()
     {
         AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(18d).expand(0, world.getHeight(), 0);
@@ -240,12 +271,13 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     private void spawnConduitParticles()
     {
         if (rand.nextInt(35) != 0) return;
+        Vec3d vec3d = getConduitLocation(new Vec3d(posX, posY, posZ));
         for (int i = 0; i < 16; ++i)
         {
             double motionX = QuikMaths.nextPseudoDouble(rand) * 1.5f;
             double motionY = QuikMaths.nextPseudoDouble(rand);
             double motionZ = QuikMaths.nextPseudoDouble(rand) * 1.5f;
-//            world.addParticle(ParticleTypes.NAUTILUS, headPart.posX, headPart.posY + 4, headPart.posZ, motionX, motionY, motionZ);
+            world.addParticle(ParticleTypes.NAUTILUS, vec3d.x, vec3d.y + 2.25, vec3d.z, motionX, motionY, motionZ);
         }
     }
 
@@ -267,6 +299,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         if (backView) GlStateManager.translated(0, -0.5d, -4d);
         else GlStateManager.translated(0, 0, -7d);
+    }
+
+    public Vec3d getConduitLocation(Vec3d offset)
+    {
+        return QuikMaths.calculateYawAngle(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
     }
 
     public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER, true); }

@@ -61,6 +61,7 @@
     "subtitle": "Drake Death",
     "sounds": [{"name": "wyrmroost:entity/owdrake/death"}]
   },
+
   "entity.rooststalker.idle": {
     "category": "entity",
     "subtitle": "Stalker Idle",
@@ -70,17 +71,64 @@
       {"name": "wyrmroost:entity/rooststalker/idle3"}
     ]
   },
-  
   "entity.rooststalker.hurt": {
     "category": "entity",
     "subtitle": "Stalker Hurt",
-    "sounds": [{"name": "wyrmroost:entity/rooststalker/hurt"}]
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/rooststalker/hurt"
+      }
+    ]
   },
-  
   "entity.rooststalker.death": {
     "category": "entity",
     "subtitle": "Stalker Death",
-    "sounds": [{"name": "wyrmroost:entity/rooststalker/death"}]
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/rooststalker/death"
+      }
+    ]
+  },
+  "entity.bflylevi.idle": {
+    "category": "entity",
+    "subtitle": "Drake Idle",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterflyleviathan/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/butterflyleviathan/idle2"
+      }
+    ]
+  },
+  "entity.bflylevi.roar": {
+    "category": "entity",
+    "subtitle": "Drake Idle",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterflyleviathan/roar"
+      }
+    ]
+  },
+  "entity.bflylevi.hurt": {
+    "category": "entity",
+    "subtitle": "Drake Hurt",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterflyleviathan/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/butterflyleviathan/hurt2"
+      }
+    ]
+  },
+  "entity.bflylevi.death": {
+    "category": "entity",
+    "subtitle": "Drake Death",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterflyleviathan/death"
+      }
+    ]
   }
-  
 }

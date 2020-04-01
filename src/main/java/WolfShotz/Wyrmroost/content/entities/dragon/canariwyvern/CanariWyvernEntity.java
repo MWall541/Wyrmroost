@@ -4,9 +4,11 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -90,8 +93,15 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
 
         if (!isSleeping() && !isFlying() && getRidingEntity() == null && noActiveAnimation())
         {
-            if (getRNG().nextInt(350) == 0) setAnimation(FLAP_WINGS_ANIMATION);
-            if (getRNG().nextInt(350) == 0) setAnimation(CLEAN_FEATHERS_ANIMATION);
+            if (getRNG().nextInt(650) == 0) NetworkUtils.sendAnimationPacket(this, FLAP_WINGS_ANIMATION);
+            else if (getRNG().nextInt(350) == 0) setAnimation(CLEAN_FEATHERS_ANIMATION);
+        }
+
+        if (getAnimation() == FLAP_WINGS_ANIMATION)
+        {
+            if (animationTick == 5 || animationTick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.8f, 1.5f);
+            if (animationTick == 9 && getRNG().nextInt(25) == 0)
+                entityDropItem(new ItemStack(WRItems.CANARI_FEATHER.get()), 0.5f);
         }
     }
 

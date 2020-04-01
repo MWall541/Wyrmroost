@@ -103,6 +103,7 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
         public ButterflyContainer(ButterflyLeviathanEntity bfly, PlayerInventory playerinv, int windowID)
         {
             super(bfly, WRIO.BUTTERFLY_CONTAINER.get(), windowID);
+            buildPlayerSlots(playerinv, 7, 83);
             dragon.invHandler.ifPresent(i -> addSlot(new ItemHandlerSlotBuilder(i, 0, 127, 56)
                     .only(s -> s.getItem() == Items.CONDUIT)
                     .limit(1)

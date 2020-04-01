@@ -39,7 +39,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     public AdvancedRendererModel footL;
     public AdvancedRendererModel neck2;
     public AdvancedRendererModel neck3;
-    public AdvancedRendererModel head;
+    public SocketRendererModel head;
     public AdvancedRendererModel mouthTop;
     public AdvancedRendererModel mouthBottom;
     public AdvancedRendererModel headFrillR;
@@ -64,7 +64,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     public AdvancedRendererModel bottomWingFinMembraneL1;
     public AdvancedRendererModel bottomWingFinMembraneL2;
     public AdvancedRendererModel bottomWingFinMembraneL3;
-    
+
     public SocketRendererModel[] tailArray;
     public SocketRendererModel[] dynamicTailArray;
     private final AdvancedRendererModel[] neckArray;
@@ -238,7 +238,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         topWingFinPhalangeR2.setRotationPoint(13.0F, -0.1F, -0.4F);
         topWingFinPhalangeR2.addBox(0.0F, -1.1F, -0.9F, 14, 2, 2, 0.0F);
         setRotateAngle(topWingFinPhalangeR2, 0.0F, 0.0F, 0.3490658503988659F);
-        head = new AdvancedRendererModel(this, 0, 21);
+        head = new SocketRendererModel(this, 0, 21);
         head.setRotationPoint(0.0F, 0.0F, -6.2F);
         head.addBox(-3.5F, -4.0F, -7.1F, 7, 8, 8, 0.0F);
         bottomWingFinMembraneR2 = new AdvancedRendererModel(this, 92, 200);
@@ -303,7 +303,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         head.addChild(mouthBottom);
         bottomWingFinPhalangeL1.addChild(bottomWingFinMembraneL1);
         body1.addChild(bottomWingFinPhalangeL1);
-        
+
         animator = ModelAnimator.create();
         tailArray = new SocketRendererModel[]{tail1, tail2, tail3, tail4, tail5, tail6};
         dynamicTailArray = new SocketRendererModel[tailArray.length];
@@ -328,7 +328,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     @Override
     public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-        faceTarget(netHeadYaw, headPitch, 2, neck1, neck2, neck3);
+        faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, neck3);
     }
     
     private float globalSpeed = 0.5f;
@@ -339,30 +339,31 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     {
         entity = entityIn;
         float frame = entity.ticksExisted + partialTick;
-        
-        resetToDefaultPose();
-        globalSpeed = 0.5f;
         globalDegree = 0.5f;
+        globalSpeed = 0.5f;
 
+        resetToDefaultPose();
+        animator.update(entityIn);
         setInitialPositions();
-        
-        flap(bottomWingFinPhalangeL1, 0.2f, 0.3f, false, 0, 0, frame, 0.5f);
-        swing(bottomWingFinPhalangeL1, 0.2f, 0.5f, false, 1f, 0.8f, frame, 0.5f);
-        swing(bottomWingFinPhalangeL2, 0.2f, -0.6f, false, 1.5f, 0, frame, 0.5f);
-        flap(bottomWingFinPhalangeL2, 0.2f, -0.5f, false, 0, 0, frame, 0.5f);
 
-//        idleAnim(frame);
+        if (!entity.isSleeping() && !entity.isSitting())
+        {
+//            flap(bottomWingFinPhalangeL1, 0.2f, 0.3f, false, 0, 0, frame, 0.5f);
+//            swing(bottomWingFinPhalangeL1, 0.2f, 0.5f, false, 1f, 0.8f, frame, 0.5f);
+//            swing(bottomWingFinPhalangeL2, 0.2f, -0.6f, false, 1.5f, 0, frame, 0.5f);
+//            flap(bottomWingFinPhalangeL2, 0.2f, -0.5f, false, 0, 0, frame, 0.5f);
+        }
+
+        if (animator.setAnimation(ButterflyLeviathanEntity.ACTIVATE_CONDUIT)) activateConduitAnim();
+
+        idleAnim(frame);
     }
     
     private void setInitialPositions()
     {
-        if (entity.isInWater() || !entity.onGround) body1.rotateAngleX = (float) -entity.getMotion().y;
+        if (entity.isInWater()) body1.rotateAngleX = (float) -entity.getMotion().y;
 
-        if (entity.isUnderWater())
-        {
-
-        }
-        else
+        if (!entity.isUnderWater())
         {
             neck1.rotateAngleX = -0.6f;
             neck2.rotateAngleX = 0.15f;
@@ -377,7 +378,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             bottomWingFinPhalangeL2.rotateAngleZ = 0.6f;
             bottomWingFinPhalangeL2.rotateAngleX = 0.2f;
             topWingFinMembrane3L.rotateAngleZ = 0f;
-            
+
             topWingFinPhalangeR1.rotateAngleY = -1.05f;
             topWingFinPhalangeR2.rotateAngleY = -0.5f;
             bottomWingFinPhalangeR1.rotateAngleY = 0.5f;
@@ -385,18 +386,23 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             bottomWingFinPhalangeR2.rotateAngleY = -0.7f;
             bottomWingFinPhalangeR2.rotateAngleZ = -0.6f;
             bottomWingFinPhalangeR2.rotateAngleX = 0.2f;
-            
+
             legThighL1.rotateAngleX = -1.55f;
             legThighL1.rotateAngleY = 0.5f;
             legSegmentL1.rotateAngleX = 1.6f;
             legSegmentL2.rotateAngleX = -1.6f;
             footL.rotateAngleX = 0f;
-            
+
             legThighR1.rotateAngleX = -1.55f;
             legThighR1.rotateAngleY = -0.5f;
             legSegmentR1.rotateAngleX = 1.6f;
             legSegmentR2.rotateAngleX = -1.6f;
             footR.rotateAngleX = 0f;
+        }
+
+        if (isSitting)
+        {
+
         }
     }
     
@@ -418,9 +424,45 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         swing(bottomWingFinPhalangeL1, 0.05f, 0.05f, false, 0, 0, frame, 0.5f);
         swing(bottomWingFinPhalangeL2, 0.05f, -0.1f, false, 0, 0, frame, 0.5f);
         walk(bottomWingFinPhalangeL2, 0.05f, -0.05f, false, 0, 0, frame, 0.5f);
-        
+
+        swing(bottomWingFinPhalangeR1, 0.05f, 0.05f, true, 0, 0, frame, 0.5f);
+        swing(bottomWingFinPhalangeR2, 0.05f, -0.1f, true, 0, 0, frame, 0.5f);
+        walk(bottomWingFinPhalangeR2, 0.05f, -0.05f, false, 0, 0, frame, 0.5f);
+
         flap(topWingFinPhalangeR1, 0.05f, 0.1f, true, 0, 0, frame, 0.5f);
         swing(topWingFinPhalangeR1, 0.045f, 0.025f, true, 0.5f, 0, frame, 0.5f);
         swing(topWingFinPhalangeR2, 0.045f, 0.05f, true, 0.75f, 0, frame, 0.5f);
+
+        chainSwing(tailArray, globalSpeed - 0.45f, 0.35f, -2, frame, 0.5f);
+        chainWave(tailArray, globalSpeed - 0.47f, 0.05f, -2, frame, 0.5f);
+    }
+
+    public void activateConduitAnim()
+    {
+        animator.startKeyframe(8);
+        for (AdvancedRendererModel box : headArray)
+        {
+            animator.rotate(box, -0.15f, 0, 0);
+        }
+        animator.rotate(mouthBottom, 0.5f, 0, 0);
+        animator.rotate(topWingFinPhalangeL1, 0, -0.2f, 0);
+        animator.rotate(topWingFinPhalangeL2, 0, 0, -0.5f);
+        animator.rotate(topWingFinPhalangeR1, 0, 0.2f, 0);
+        animator.rotate(topWingFinPhalangeR2, 0, 0, -0.5f);
+        animator.rotate(headFrillL, 0, 0, 0.8f);
+        animator.rotate(headFrillR, 0, 0, -0.8f);
+        animator.endKeyframe();
+        animator.setStaticKeyframe(30);
+        animator.resetKeyframe(8);
+    }
+
+    public void sitAnim(boolean stand)
+    {
+
+    }
+
+    public void sleepAnim(boolean wake)
+    {
+
     }
 }

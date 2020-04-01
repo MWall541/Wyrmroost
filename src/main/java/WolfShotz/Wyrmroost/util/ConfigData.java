@@ -15,6 +15,10 @@ public class ConfigData
 
     public static double dfdBabyChance = 0.3d;
 
+    // Client
+    public static boolean disableFrustumCheck = true;
+
+
     /**
      * Config Spec on COMMON Dist
      */
@@ -40,13 +44,14 @@ public class ConfigData
                     .comment("How far dragons can travel from their home points")
                     .translation("config.wyrmroost.homeradius")
                     .defineInRange("homeRadius", 16, 6, 1024);
-            builder.pop();
             builder.comment("Wyrmroost Dragon Options").push("dragons");
             dfdBabyChance = builder
                     .comment("Chances for a Dragon Fruit Drake to spawn as a baby. 0 = No Chance, 1 = Guaranteed. Higher values are better chances")
                     .translation("config.wyrmroost.dfdbabychance")
                     .defineInRange("dfdBabyChance", 0.3d, 0, 1d);
 
+
+            builder.pop();
         }
 
         public static void reload()
@@ -54,6 +59,32 @@ public class ConfigData
             ConfigData.debugMode = COMMON.debugMode.get();
             ConfigData.homeRadius = COMMON.homeRadius.get();
             ConfigData.dfdBabyChance = COMMON.dfdBabyChance.get();
+        }
+    }
+
+    public static class ClientConfig
+    {
+        private static final Pair<ClientConfig, ForgeConfigSpec> SPEC_PAIR = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+        public static final ClientConfig CLIENT = ClientConfig.SPEC_PAIR.getLeft();
+        public static final ForgeConfigSpec CLIENT_SPEC = ClientConfig.SPEC_PAIR.getRight();
+
+        public final ForgeConfigSpec.BooleanValue disableFrustumCheck;
+
+        public ClientConfig(ForgeConfigSpec.Builder builder)
+        {
+            builder.comment("Wyrmroost Client Options").push("General");
+            disableFrustumCheck = builder
+                    .comment("Disables Frustum check when rendering (Dragons parts dont go poof when looking too far)")
+                    .translation("config.wyrmroost.disableFrustumCheck")
+                    .define("disableFrustumCheck", true);
+
+
+            builder.pop();
+        }
+
+        public static void reload()
+        {
+            ConfigData.disableFrustumCheck = CLIENT.disableFrustumCheck.get();
         }
     }
 }

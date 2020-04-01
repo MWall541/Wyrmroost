@@ -32,7 +32,7 @@ public class DrakeArmorItem extends ItemArmorBase
 
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
-    {
+    { // Todo better handle this, could be a better way in 1.15 forge!
         Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot);
 
         if (fullSet)

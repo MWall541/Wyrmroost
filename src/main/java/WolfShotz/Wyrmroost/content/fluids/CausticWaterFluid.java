@@ -1,7 +1,9 @@
 package WolfShotz.Wyrmroost.content.fluids;
 
+import WolfShotz.Wyrmroost.content.items.CanariArmorItem;
 import WolfShotz.Wyrmroost.registry.WRFluids;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import com.google.common.collect.Streams;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
@@ -11,6 +13,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.fluid.WaterFluid;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -89,7 +92,11 @@ public class CausticWaterFluid extends WaterFluid
         public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
         {
             if (entityIn instanceof LivingEntity)
+            {
+                if (Streams.stream(entityIn.getArmorInventoryList()).map(ItemStack::getItem).allMatch(CanariArmorItem.class::isInstance))
+                    return;
                 entityIn.attackEntityFrom(CAUSTIC_WATER, 1);
+            }
         }
     }
 }
