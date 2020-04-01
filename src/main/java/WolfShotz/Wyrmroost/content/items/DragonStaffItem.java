@@ -54,8 +54,12 @@ public class DragonStaffItem extends Item
         AbstractDragonEntity dragon = getDragonTarget(target, player);
         if (dragon == null) return false;
         if (player.world.isRemote) return true;
-        
-        NetworkHooks.openGui((ServerPlayerEntity) player, dragon, buf -> buf.writeInt(dragon.getEntityId()));
+
+        try { NetworkHooks.openGui((ServerPlayerEntity) player, dragon, buf -> buf.writeInt(dragon.getEntityId())); }
+        catch (NullPointerException e)
+        {
+            ModUtils.L.error("Dragon Staff Attempted to open '{}' gui, but it doesn't have one! Report this.", dragon);
+        }
         player.playSound(SoundEvents.UI_TOAST_IN, 1f, 1f);
         return true;
     }

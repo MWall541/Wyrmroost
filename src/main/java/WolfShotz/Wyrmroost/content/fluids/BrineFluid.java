@@ -21,6 +21,8 @@ import java.util.function.Supplier;
 
 public class BrineFluid extends WaterFluid
 {
+    public static final DamageSource BRINE_WATER = new DamageSource("brine_Water").setDamageBypassesArmor();
+
     public final boolean source;
 
     public BrineFluid(boolean source)

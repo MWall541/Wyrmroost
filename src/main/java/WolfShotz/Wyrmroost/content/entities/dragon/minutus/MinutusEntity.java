@@ -217,27 +217,27 @@ public class MinutusEntity extends AnimalEntity implements IAnimatedObject
     {
         return super.isInvulnerableTo(source) || source == DamageSource.IN_WALL;
     }
-    
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
     {
         return WRSounds.MINUTUS_IDLE.get();
     }
-    
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
-    {
-        return WRSounds.MINUTUS_SCREECH.get();
-    }
-    
+
+//    @Nullable
+//    @Override
+//    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+//    {
+////        return WRSounds.MINUTUS_SCREECH.get();
+//    }
+
     @Override
     protected float getSoundVolume()
     {
         return 0.3f;
     }
-    
+
     @Override
     public boolean canBePushed()
     {

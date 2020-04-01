@@ -211,6 +211,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
             stopRiding();
             return;
         }
+
         if (!(entity instanceof PlayerEntity)) return;
         
         PlayerEntity player = (PlayerEntity) entity;

@@ -22,6 +22,8 @@ import java.util.function.Supplier;
 
 public class CausticWaterFluid extends WaterFluid
 {
+    public static final DamageSource CAUSTIC_WATER = new DamageSource("causticWater").setDamageBypassesArmor();
+
     // this is how it shouldve been done...
     public final boolean source;
 
@@ -87,7 +89,7 @@ public class CausticWaterFluid extends WaterFluid
         public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
         {
             if (entityIn instanceof LivingEntity)
-                entityIn.attackEntityFrom(new DamageSource("caustic_water").setDamageBypassesArmor(), 1);
+                entityIn.attackEntityFrom(CAUSTIC_WATER, 1);
         }
     }
 }

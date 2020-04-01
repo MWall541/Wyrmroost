@@ -27,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -73,34 +72,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.232524f);
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
-        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4d);
-    }
-
-    // ================================
-    //           Entity NBT
-    // ================================
-
-    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
-    {
-        World world = worldIn.getWorld();
-
-        return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
-    }
-
-    @Override
-    public void writeAdditional(CompoundNBT nbt)
-    {
-        super.writeAdditional(nbt);
-
-        nbt.putInt("shearcooldown", shearCooldownTime);
-    }
-
-    @Override
     protected void registerGoals()
     {
         goalSelector.addGoal(1, new SwimGoal(this));
@@ -118,6 +89,17 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         targetSelector.addGoal(2, new NonTamedTargetGoal(this, PlayerEntity.class, true, true, false));
     }
 
+    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
+    {
+        World world = worldIn.getWorld();
+
+        return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
+    }
+
+    // ================================
+    //           Entity NBT
+    // ================================
+
     public static void handleSpawning()
     {
         BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
@@ -130,44 +112,32 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 DragonFruitDrakeEntity::canSpawnHere);
     }
 
-    // ================================
-
     @Override
-    protected void registerData()
+    protected void registerAttributes()
     {
-        super.registerData();
-//        dataManager.register(AGE, 0);
+        super.registerAttributes();
+        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.232524f);
+        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
+        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4d);
     }
 
     @Override
-    public void travel(Vec3d vec3d)
+    public void writeAdditional(CompoundNBT nbt)
     {
-        if (!isBeingRidden())
-        {
-            super.travel(vec3d);
-            return;
-        }
-        
-        // We're being ridden, follow rider controls
-        LivingEntity rider = (LivingEntity) getControllingPassenger();
-        if (canPassengerSteer())
-        {
-            float f = rider.moveForward, s = rider.moveStrafing;
-            float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue());
-            boolean moving = (f != 0 || s != 0);
-            Vec3d target = new Vec3d(s, vec3d.y, f);
-            
-            setAIMoveSpeed(speed / 2);
-            super.travel(target);
-            if (moving)
-            {
-                prevRotationYaw = rotationYaw = rider.rotationYaw;
-                rotationPitch = rider.rotationPitch * 0.5f;
-                setRotation(rotationYaw, rotationPitch);
-                renderYawOffset = rotationYaw;
-                rotationYawHead = renderYawOffset;
-            }
-        }
+        super.writeAdditional(nbt);
+
+        nbt.putInt("shearcooldown", shearCooldownTime);
+    }
+
+    // ================================
+
+    @Override
+    public void readAdditional(CompoundNBT nbt)
+    {
+        super.readAdditional(nbt);
+
+        this.shearCooldownTime = nbt.getInt("shearcooldown");
+//        dataManager.set(AGE, growingAge);
     }
 
     @Override
@@ -177,16 +147,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.setSit(sitting);
         if (sitting) setAnimation(SIT_ANIMATION);
         else setAnimation(STAND_ANIMATION);
-    }
-
-    @Override
-    public void tick()
-    {
-        super.tick();
-
-
-        if (shearCooldownTime > 0) --shearCooldownTime;
-        if (age < 0) ++age;
     }
 
     @Override
@@ -221,21 +181,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-
-        this.shearCooldownTime = nbt.getInt("shearcooldown");
-//        dataManager.set(AGE, growingAge);
-    }
-
-    @Override
-    public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn)
-    {
-        return true;
-    }
-
-    @Override
     public boolean isNotColliding(IWorldReader worldIn)
     {
         if (worldIn.checkNoEntityCollision(this) && !worldIn.containsAnyLiquid(getBoundingBox()))
@@ -252,11 +197,48 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public void notifyDataManagerChange(DataParameter<?> key)
+    public void tick()
     {
-        super.notifyDataManagerChange(key);
-//        if (key.equals(AGE)) age = dataManager.get(AGE);
+        super.tick();
+
+
+        if (shearCooldownTime > 0) --shearCooldownTime;
+        if (age < 0) ++age;
     }
+
+    @Override
+    public void travel(Vec3d vec3d)
+    {
+        if (!isBeingRidden())
+        {
+            super.travel(vec3d);
+            return;
+        }
+
+        // We're being ridden, follow rider controls
+        LivingEntity rider = (LivingEntity) getControllingPassenger();
+        if (canPassengerSteer())
+        {
+            float f = rider.moveForward, s = rider.moveStrafing;
+            float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue());
+            boolean moving = (f != 0 || s != 0);
+            Vec3d target = new Vec3d(s, vec3d.y, f);
+
+            setAIMoveSpeed(speed / 2);
+            super.travel(target);
+            if (moving)
+            {
+                prevRotationYaw = rotationYaw = rider.rotationYaw;
+                rotationPitch = rider.rotationPitch * 0.5f;
+                setRotation(rotationYaw, rotationPitch);
+                renderYawOffset = rotationYaw;
+                rotationYawHead = renderYawOffset;
+            }
+        }
+    }
+
+    @Override
+    public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn) { return true; }
 
     @Nullable
     @Override
@@ -295,18 +277,18 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override // These bois are lazy, can sleep during the day
     public void handleSleep()
     {
-        int sleepChance = world.isDaytime() ? 1000 : 300;
-        if (!isSleeping() && (isChild() || !world.isDaytime())
-                && --sleepCooldown <= 0
-                && (!isTamed() || isSitting() || (getHomePos().isPresent() && isWithinHomeDistanceFromPosition()))
-                && !isBeingRidden()
-                && getAttackTarget() == null
-                && getNavigator().noPath()
-                && !isAngry()
-                && !isInWaterOrBubbleColumn()
-                && !isFlying()
-                && getRNG().nextInt(sleepChance) == 0) setSleeping(true);
-        else if (isSleeping() && world.isDaytime() && getRNG().nextInt(375) == 0) setSleeping(false);
+        if (isSleeping() && world.isDaytime() && getRNG().nextInt(375) == 0)
+        {
+            setSleeping(false);
+            return;
+        }
+        if (isSleeping() || (isChild() && world.isDaytime())) return;
+        if (--sleepCooldown > 0) return;
+        if (isTamed() && !isSitting()) return;
+//        if (!(getHomePos().isPresent() && isWithinHomeDistanceFromPosition())) return;
+        if (!isIdling()) return;
+        int sleepChance = world.isDaytime() ? 450 : 300; // neps
+        if (getRNG().nextInt(sleepChance) == 0) setSleeping(true);
     }
 
     @Override

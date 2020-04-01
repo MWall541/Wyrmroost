@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
@@ -12,7 +13,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -31,19 +31,29 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     {
         super(dragon, world);
 
-        setImmune(new DamageSource("caustic_water"));
+        setImmune(CausticWaterFluid.CAUSTIC_WATER);
+    }
+
+    @Override
+    protected void registerGoals()
+    {
+        super.registerGoals();
     }
 
     @Override
     protected void registerAttributes()
     {
         super.registerAttributes();
-        
+
         getAttribute(MAX_HEALTH).setBaseValue(16d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.2d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(5.5d);
     }
-    
+
+    // ================================
+    //           Entity NBT
+    // ================================
+
     @Override
     protected void registerData()
     {
@@ -71,6 +81,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public int getSpecialChances() { return 0; }
 
+    // ================================
+
     @Override
     public void livingTick()
     {
@@ -81,9 +93,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
             if (getRNG().nextInt(350) == 0) setAnimation(FLAP_WINGS_ANIMATION);
             if (getRNG().nextInt(350) == 0) setAnimation(CLEAN_FEATHERS_ANIMATION);
         }
-
-//        if (getAnimation() == FLAP_WINGS_ANIMATION && getAnimationTick() == 3)
-//            playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 1, 0.5f);
     }
 
     @Override

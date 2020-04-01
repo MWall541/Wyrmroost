@@ -384,7 +384,7 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
     @Override
     public void setRotationAngles(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-        faceTarget(netHeadYaw, headPitch, 1, headArray);
+        if (!fruitDrake.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
 
     private float globalDegree = 0.5f;
@@ -542,6 +542,33 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
     public void sleepAnim(boolean wakeUp)
     {
         if (wakeUp) sleepPose();
+        if (!isSitting)
+        {
+            animator.invertKeyframe(wakeUp);
+            animator.move(Body1, 0, 5.6f, 0);
+            animator.rotate(LegfrontL1, -0.66f, 0, 0);
+            animator.rotate(LegfrontL2, -0.7f, 0, 0);
+            animator.rotate(LegfrontL3, 0.55f, 0, 0);
+            animator.rotate(frontfootL, 0.98f, 0, 0);
+
+            animator.rotate(LegfrontR1, -0.66f, 0, 0);
+            animator.rotate(LegfrontR2, -0.7f, 0, 0);
+            animator.rotate(LegfrontR3, 0.4f, 0, 0);
+            animator.rotate(frontfootR, 1.12f, 0, 0);
+
+            animator.rotate(LegThighR, 0.8f, 0, 0);
+            animator.rotate(LegSegmentR1, -2.1f, -0.1f, 0.1f);
+            animator.rotate(LegSegmentR2, -0.1f, 0, 0);
+            animator.rotate(LegSegmentR3, 1.1f, 0, 0);
+            animator.rotate(backfootR, 0.4f, 0, 0);
+            animator.rotate(LegThighR_1, 0.8f, 0, 0);
+            animator.rotate(LegSegmentL1, -2.1f, 0.1f, -0.1f);
+            animator.rotate(LegSegmentL2, -0.1f, 0, 0);
+            animator.rotate(LegSegmentL3, 1.1f, 0, 0);
+            animator.rotate(backfootL, 0.4f, 0, 0);
+
+            animator.rotate(Tail5, -0.29f, 0, 0);
+        }
 
         animator.startKeyframe(15);
         animator.invertKeyframe(wakeUp);

@@ -506,7 +506,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean isGlowing()
+    public boolean isGlowing() // todo: handle this more elegantly?
     {
         if (!world.isRemote) return super.isGlowing();
         PlayerEntity player = Minecraft.getInstance().player;
@@ -700,14 +700,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 && --sleepCooldown <= 0
                 && !world.isDaytime()
                 && (!isTamed() || isSitting() || (getHomePos().isPresent() && isWithinHomeDistanceFromPosition()))
-                && !isBeingRidden()
-                && getAttackTarget() == null
-                && getNavigator().noPath()
-                && !isAngry()
-                && !isInWaterOrBubbleColumn()
-                && !isFlying()
+                && isIdling()
                 && getRNG().nextInt(300) == 0) setSleeping(true);
         else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger)
+    {
+        super.addPassenger(passenger);
+        if (getControllingPassenger() == passenger) clearAI();
     }
 
     /**
@@ -718,6 +720,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         isJumping = false;
         navigator.clearPath();
         setAttackTarget(null);
+    }
+
+    /**
+     * is big boi dragon doing anything?
+     */
+    public boolean isIdling()
+    {
+        return getNavigator().noPath()
+                && getAttackTarget() == null
+                && !isBeingRidden()
+                && !isAngry()
+                && !isInWaterOrBubbleColumn()
+                && !isFlying();
     }
 
     /**

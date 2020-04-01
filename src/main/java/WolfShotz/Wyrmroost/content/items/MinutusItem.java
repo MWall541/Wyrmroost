@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
-import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -12,11 +11,8 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 public class MinutusItem extends Item
 {
@@ -34,8 +30,8 @@ public class MinutusItem extends Item
     @Override
     public void inventoryTick(ItemStack stack, World worldIn, Entity player, int itemSlot, boolean isSelected)
     {
-        if (stack.hasTag() && stack.getTag().getBoolean("isalive") && new Random().nextInt(60) == 0 && isSelected)
-            worldIn.playSound(player.posX, player.posY, player.posZ, WRSounds.MINUTUS_SCREECH.get(), SoundCategory.NEUTRAL, 1f, 1f, false);
+//        if (stack.hasTag() && stack.getTag().getBoolean("isalive") && new Random().nextInt(60) == 0 && isSelected)
+//            worldIn.playSound(player.posX, player.posY, player.posZ, WRSounds.MINUTUS_SCREECH.get(), SoundCategory.NEUTRAL, 1f, 1f, false);
     }
 
     @Override

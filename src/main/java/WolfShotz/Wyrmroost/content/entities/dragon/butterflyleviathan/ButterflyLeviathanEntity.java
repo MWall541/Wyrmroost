@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.content.fluids.BrineFluid;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
@@ -31,7 +32,6 @@ import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -52,6 +52,8 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.createKey(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
+
+    public static final Animation ACTIVATE_CONDUIT = new Animation(50);
 
     // Multipart
     public MultiPartEntity headPart;
@@ -79,7 +81,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
         }
 
-        setImmune(new DamageSource("brine_water"));
+        setImmune(BrineFluid.BRINE_WATER);
     }
     
     @Override
@@ -315,6 +317,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[]{NO_ANIMATION};
+        return new Animation[]{NO_ANIMATION, ACTIVATE_CONDUIT};
     }
 }

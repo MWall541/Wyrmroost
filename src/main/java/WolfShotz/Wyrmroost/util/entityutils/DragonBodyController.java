@@ -29,7 +29,7 @@ public class DragonBodyController extends BodyController
         {
             dragon.renderYawOffset = dragon.rotationYaw;
             dragon.rotationYawHead = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, (float) dragon.getHorizontalFaceSpeed());
-            
+
             return;
         }
         

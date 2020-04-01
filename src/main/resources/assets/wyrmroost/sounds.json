@@ -8,16 +8,6 @@
     ]
   },
 
-  "entity.minutus.screech": {
-    "category": "entity",
-    "subtitle": "Minutus Screech",
-    "sounds" : [
-      {"name": "wyrmroost:entity/minutus/screech1"},
-      {"name": "wyrmroost:entity/minutus/screech2"}
-    ]
-  },
-  
-  
   "entity.silverglider.idle": {
     "category": "entity",
     "subtitle": "SilverGlider Idle",
@@ -40,7 +30,6 @@
     "subtitle": "SilverGlider Hurt",
     "sounds": [{"name": "wyrmroost:entity/silverglider/death"}]
   },
-  
   
   "entity.owdrake.idle": {
     "category": "entity",
@@ -72,8 +61,6 @@
     "subtitle": "Drake Death",
     "sounds": [{"name": "wyrmroost:entity/owdrake/death"}]
   },
-  
-  
   "entity.rooststalker.idle": {
     "category": "entity",
     "subtitle": "Stalker Idle",

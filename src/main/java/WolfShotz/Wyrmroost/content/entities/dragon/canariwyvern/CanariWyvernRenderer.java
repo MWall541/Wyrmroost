@@ -28,7 +28,7 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
     
     public CanariWyvernRenderer(EntityRendererManager manager)
     {
-        super(manager, new CanariWyvernModel(), 1);
+        super(manager, new CanariWyvernModel(), 1.35f);
     }
     
     @Nullable

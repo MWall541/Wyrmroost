@@ -12,7 +12,7 @@ public class WRSounds
 
     // Entities
     public static final RegistryObject<SoundEvent> MINUTUS_IDLE = registerEntity("minutus.idle");
-    public static final RegistryObject<SoundEvent> MINUTUS_SCREECH = registerEntity("minutus.screech");
+//    public static final RegistryObject<SoundEvent> MINUTUS_SCREECH = registerEntity("minutus.screech");
 
     public static final RegistryObject<SoundEvent> SILVERGLIDER_IDLE = registerEntity("silverglider.idle");
     public static final RegistryObject<SoundEvent> SILVERGLIDER_HURT = registerEntity("silverglider.hurt");
@@ -26,6 +26,11 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> STALKER_IDLE = registerEntity("rooststalker.idle");
     public static final RegistryObject<SoundEvent> STALKER_HURT = registerEntity("rooststalker.hurt");
     public static final RegistryObject<SoundEvent> STALKER_DEATH = registerEntity("rooststalker.death");
+
+    public static final RegistryObject<SoundEvent> BFLY_IDLE = registerEntity("bflylevi.idle");
+    public static final RegistryObject<SoundEvent> BFLY_ROAR = registerEntity("bflylevi.roar");
+    public static final RegistryObject<SoundEvent> BFLY_HURT = registerEntity("bflylevi.hurt");
+    public static final RegistryObject<SoundEvent> BFLY_DEATH = registerEntity("bflylevi.death");
 
     private static RegistryObject<SoundEvent> register(String name)
     {

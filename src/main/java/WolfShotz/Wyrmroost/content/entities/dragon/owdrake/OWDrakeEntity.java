@@ -331,8 +331,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             setSit(false);
             player.startRiding(this);
             setHomePos(Optional.empty());
-            clearAI();
-            
+
             return true;
         }
         
@@ -391,7 +390,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         super.travel(vec3d);
     }
-    
+
     @Override
     public void updatePassenger(Entity passenger)
     {
@@ -413,7 +412,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             }
         }
     }
-    
+
     @Nullable
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
