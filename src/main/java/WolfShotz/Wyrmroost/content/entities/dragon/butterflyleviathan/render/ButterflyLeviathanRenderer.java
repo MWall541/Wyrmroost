@@ -47,7 +47,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public static boolean shouldRenderConduit(ButterflyLeviathanEntity entity)
     {
         if (!entity.hasConduit()) return false;
-        return entity.getAnimation() != ButterflyLeviathanEntity.ACTIVATE_CONDUIT || entity.getAnimationTick() >= 10;
+        return entity.getAnimation() != ButterflyLeviathanEntity.CONDUIT_ANIMATION || entity.getAnimationTick() >= 15;
     }
 
     @Override

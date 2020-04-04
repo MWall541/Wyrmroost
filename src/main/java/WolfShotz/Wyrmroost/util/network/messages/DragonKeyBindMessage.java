@@ -22,12 +22,11 @@ import java.util.function.Supplier;
 public class DragonKeyBindMessage implements IMessage
 {
     public static final int PERFORM_GENERIC_ATTACK = 0;
-    public static final int START_SPECIAL_ATTACK = 1;
-    public static final int END_SPECIAL_ATTACK = 2;
-    
+    public static final int PERFORM_SPECIAL_ATTACK = 1;
+
     private int dragonID;
     private int key;
-    
+
     public DragonKeyBindMessage(AbstractDragonEntity entity, int key)
     {
         this.dragonID = entity.getEntityId();

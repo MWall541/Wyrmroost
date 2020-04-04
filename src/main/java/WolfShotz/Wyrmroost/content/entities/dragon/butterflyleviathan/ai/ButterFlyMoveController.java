@@ -41,8 +41,8 @@ public class ButterFlyMoveController extends MovementController
                 mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 5f);
                 float f3 = MathHelper.cos(mob.rotationPitch * (QuikMaths.PI / 180f));
                 float f4 = MathHelper.sin(mob.rotationPitch * (QuikMaths.PI / 180f));
-                mob.moveForward = f3 * f1;
-                mob.moveVertical = -f4 * f1;
+                mob.moveForward = f3 * (f1 * 10);
+                mob.moveVertical = -f4 * (f1 * 10);
             }
             else mob.setAIMoveSpeed(f1 * 1.2f);
         }

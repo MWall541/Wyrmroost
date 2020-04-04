@@ -101,6 +101,17 @@ public class ClientEvents
                 Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
             }
         }
+        if (WRKeyBinds.specialAttack.isPressed())
+        {
+            if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
+            AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
+
+            if (dragon.noActiveAnimation())
+            {
+                dragon.performSpecialAttack(true);
+                Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_SPECIAL_ATTACK));
+            }
+        }
     }
 
     /**

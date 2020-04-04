@@ -22,11 +22,13 @@ import net.minecraftforge.client.model.generators.*;
 
 import java.util.List;
 
+@SuppressWarnings("ConstantConditions")
 public class Models
 {
     public static class BlockModels extends BlockStateProvider
     {
         public final ExistingFileHelper theGOODexistingFileHelper;
+        private final List<String> MISSING_TEXTURES = Lists.newArrayList();
 
         public BlockModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
@@ -73,10 +75,12 @@ public class Models
 
                 ResourceLocation name = block.getRegistryName();
                 if (!theGOODexistingFileHelper.exists(new ResourceLocation(name.getNamespace(), BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
-                    ModUtils.L.error("Texture {} does not exist in any resource pack! Skipping this model...", name);
+                    MISSING_TEXTURES.add(name.getPath().replace("block/", ""));
                 else simpleBlock(block);
             }
 
+            if (!MISSING_TEXTURES.isEmpty())
+                ModUtils.L.error("Blocks are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
         }
 
         protected void axisBlock(RotatedPillarBlock block)
@@ -99,6 +103,7 @@ public class Models
     {
         final ExistingFileHelper theGOODExistingFileHelper;
         private final List<Item> REGISTERED = Lists.newArrayList();
+        private final List<String> MISSING_TEXTURES = Lists.newArrayList();
 
         public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
         {
@@ -123,7 +128,7 @@ public class Models
             ResourceLocation texture = resource(item.getRegistryName().getPath());
             if (!theGOODExistingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
             {
-                ModUtils.L.error("Texture {} does not exist in any resource pack! Skipping...", texture);
+                MISSING_TEXTURES.add(texture.getPath().replace("item/", ""));
             }
             else builder.texture("layer0", texture);
 
@@ -141,15 +146,15 @@ public class Models
         protected void registerModels()
         {
             // Dragon Egg
-            item(WRItems.DRAGON_EGG.get()) // TODO make this a custom baked model...
+            itemBare(WRItems.DRAGON_EGG.get()) // TODO make this a custom baked model...
                     .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
                     .transforms()
                     .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0).scale(1.5f).end()
-                        .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).rotation(180, -35, 0).translation(2, 11, -12).end()
-                        .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).rotation(180, 35, 0).translation(-2, 11, -12).end()
-                        .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).rotation(253, 65, 0).translation(8, 2, 10).scale(0.75f).end()
-                        .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
-                        .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f);
+                    .transform(ModelBuilder.Perspective.FIRSTPERSON_RIGHT).rotation(180, -35, 0).translation(2, 11, -12).end()
+                    .transform(ModelBuilder.Perspective.FIRSTPERSON_LEFT).rotation(180, 35, 0).translation(-2, 11, -12).end()
+                    .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).rotation(253, 65, 0).translation(8, 2, 10).scale(0.75f).end()
+                    .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
+                    .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
 
             // Minutus
             getBuilder("minutus_alive")
@@ -185,6 +190,9 @@ public class Models
 
             // All items that do not require custom attention
             ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(e -> !REGISTERED.contains(e)).forEach(this::item);
+
+            if (!MISSING_TEXTURES.isEmpty())
+                ModUtils.L.error("Items are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
         }
 
         @Override

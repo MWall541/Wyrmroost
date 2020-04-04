@@ -6,7 +6,10 @@ import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -20,9 +23,21 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
-    public static final ItemGroup CREATIVE_TAB = ModUtils.itemGroupFactory("wyrmroost", () -> new ItemStack(WRItems.BLUE_GEODE.get()));
     public static final SimpleChannel NETWORK = ModUtils.simplisticChannel(rl(MOD_ID), "1.0");
-    
+    public static final ItemGroup CREATIVE_TAB = new ItemGroup("wyrmroost")
+    {
+        @Override
+        public ItemStack createIcon() { return new ItemStack(WRItems.BLUE_GEODE.get()); }
+
+        @Override
+        public void fill(NonNullList<ItemStack> items)
+        {
+            super.fill(items);
+            if (ConfigData.debugMode)
+                items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
+        }
+    };
+
     public Wyrmroost()
     {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();

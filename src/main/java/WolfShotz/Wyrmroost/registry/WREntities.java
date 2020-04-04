@@ -104,6 +104,7 @@ public class WREntities
 
     private static <T extends Entity> EntityType.Builder<T> buildCreatureEntity(EntityType.IFactory<T> entity)
     {
+
         return EntityType.Builder.create(entity, EntityClassification.CREATURE);
     }
 

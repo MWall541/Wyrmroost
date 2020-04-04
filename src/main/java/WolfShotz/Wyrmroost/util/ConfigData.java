@@ -74,10 +74,9 @@ public class ConfigData
         {
             builder.comment("Wyrmroost Client Options").push("General");
             disableFrustumCheck = builder
-                    .comment("Disables Frustum check when rendering (Dragons parts dont go poof when looking too far)")
+                    .comment("Disables Frustum check when rendering (Dragons parts dont go poof when looking too far) - Only applies to bigger bois")
                     .translation("config.wyrmroost.disableFrustumCheck")
                     .define("disableFrustumCheck", true);
-
 
             builder.pop();
         }

@@ -42,6 +42,8 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     @Override
     public void tick()
     {
+        // todo: Hitboxes do not reappear after host is unloaded and reloaded on client side...
+
         if (host == null || !host.isAlive()) // Our host is dead, so we shouldnt exist!
         {
             remove();
@@ -49,7 +51,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         }
 
         setPosition(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
-        if (!world.isRemote) collideWithNearbyEntities();
+        collideWithNearbyEntities();
 
         super.baseTick();
     }

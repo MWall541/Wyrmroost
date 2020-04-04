@@ -995,6 +995,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void setAnimation(Animation animation)
     {
+        if (animation == null) animation = NO_ANIMATION;
         setAnimationTick(0);
         this.animation = animation;
     }

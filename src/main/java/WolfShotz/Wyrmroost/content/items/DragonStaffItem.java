@@ -99,7 +99,7 @@ public class DragonStaffItem extends Item
                 }
                 else if (dragonTarget.isSitting())
                 {
-                    dragon.setSit(false);
+                    dragonTarget.setSit(false);
                     flag = true;
                 }
                 if (flag)

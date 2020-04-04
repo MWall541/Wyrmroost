@@ -102,7 +102,7 @@ public class CommonEntityGoals
     }
 
     /**
-     * (Memey title:) Follow parent goal but it has mutex flags
+     * Follow parent goal but its cooler cus mutex flags
      *
      * @param animal The animal
      * @param speed  The Speed

@@ -201,6 +201,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         super.tick();
 
+        setSprinting(getAttackTarget() != null);
 
         if (shearCooldownTime > 0) --shearCooldownTime;
         if (age < 0) ++age;
@@ -209,6 +210,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public void travel(Vec3d vec3d)
     {
+        if (isSprinting()) vec3d.mul(2f, 0, 2f);
+
         if (!isBeingRidden())
         {
             super.travel(vec3d);

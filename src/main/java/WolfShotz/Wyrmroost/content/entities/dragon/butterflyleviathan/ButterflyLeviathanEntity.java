@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.BFlyAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
@@ -8,9 +9,8 @@ import WolfShotz.Wyrmroost.content.fluids.BrineFluid;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveTowardsHomePointGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
@@ -18,8 +18,8 @@ import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.RandomSwimmingGoal;
-import net.minecraft.entity.ai.goal.RandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -35,30 +35,29 @@ import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static net.minecraft.entity.SharedMonsterAttributes.MAX_HEALTH;
-import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.createKey(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
 
-    public static final Animation ACTIVATE_CONDUIT = new Animation(46);
-    public static final Animation SIT_ANIMATION = new Animation(15);
-    public static final Animation STAND_ANIMATION = new Animation(15);
+    public static final Animation CONDUIT_ANIMATION = new Animation(46);
+    public static final Animation ROAR_ANIMATION = new Animation(46);
+    public static final Animation BITE_ANIMATION = new Animation(20);
 
     // Multipart
     public MultiPartEntity headPart;
@@ -69,6 +68,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public MultiPartEntity tail3Part;
 
     public RandomWalkingGoal moveGoal;
+    public int lightningAttackCooldown;
 
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world)
     {
@@ -88,16 +88,24 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         }
 
         setImmune(BrineFluid.BRINE_WATER);
+        setImmune(DamageSource.LIGHTNING_BOLT);
     }
     
     @Override
     protected void registerGoals()
     {
+        goalSelector.addGoal(1, sitGoal = new WaterSitGoal(this));
         goalSelector.addGoal(2, new DragonFollowOwnerGoal(this, 1, 20d, 3d));
         goalSelector.addGoal(3, new MoveTowardsHomePointGoal(this, 1));
+        goalSelector.addGoal(4, new BFlyAttackGoal(this));
         goalSelector.addGoal(4, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
         goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 10f));
         goalSelector.addGoal(6, CommonEntityGoals.lookRandomly(this));
+
+        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        targetSelector.addGoal(4, new NonTamedTargetGoal(this, LivingEntity.class, true, true, false));
     }
     
     @Override
@@ -106,7 +114,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         super.registerAttributes();
 
         getAttribute(MAX_HEALTH).setBaseValue(70d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.045); // On land speed, in water speed is handled in the move controller
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.045d); // On land speed, in water speed is handled in the move controller
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4);
 //        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
     }
 
@@ -143,15 +152,23 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         super.readAdditional(nbt);
 
         setVariant(nbt.getInt("variant"));
-        setHasConduit(invHandler.map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false));
+        dataManager.set(HAS_CONDUIT, invHandler.map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false)); // bcus effects shouldnt be done on load
     }
 
     public void setHasConduit(boolean flag)
     {
         if (hasConduit() == flag) return;
         dataManager.set(HAS_CONDUIT, flag);
-        if (flag) setAnimation(ACTIVATE_CONDUIT);
-        else playSound(SoundEvents.BLOCK_CONDUIT_DEACTIVATE, 1, 1);
+        if (flag)
+        {
+            getAttribute(MOVEMENT_SPEED).setBaseValue(0.06d);
+            setAnimation(CONDUIT_ANIMATION);
+        }
+        else
+        {
+            getAttribute(MOVEMENT_SPEED).setBaseValue(0.045d);
+            playSound(SoundEvents.BLOCK_CONDUIT_DEACTIVATE, 1, 1);
+        }
     }
 
     public boolean hasConduit() { return dataManager.get(HAS_CONDUIT); }
@@ -161,10 +178,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public void tick()
     {
-        super.tick();
         tickParts();
 
         recalculateSize();
+        if (lightningAttackCooldown > 0) --lightningAttackCooldown;
 
         if (hasConduit())
         {
@@ -178,12 +195,14 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             }
         }
 
-        if (getAnimation() == ACTIVATE_CONDUIT)
+        if (getAnimation() == CONDUIT_ANIMATION)
         {
-            if (animationTick == 1) playSound(WRSounds.BFLY_ROAR.get(), 1f, 1f);
-            if (animationTick == 10)
+            if (animationTick == 1) playSound(WRSounds.BFLY_ROAR.get(), 3f, 1f);
+            if (animationTick == 15)
             {
-                playSound(SoundEvents.BLOCK_CONDUIT_ACTIVATE, 1, 1);
+                playSound(SoundEvents.BLOCK_BEACON_ACTIVATE, 1, 1);
+                if (!world.isRemote)
+                    ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, posX, posY, posZ, true));
 
                 Vec3d vec3d = getConduitLocation(new Vec3d(posX, posY, posZ));
                 for (int i = 0; i < 26; ++i)
@@ -193,8 +212,15 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                     world.addParticle(ParticleTypes.CLOUD, vec3d.x, vec3d.y + 0.8, vec3d.z, velX, 0, velZ);
                 }
             }
-
         }
+
+        if (getAnimation() == ROAR_ANIMATION && !world.isRemote)
+        {
+            if (animationTick == 1) playSound(WRSounds.BFLY_ROAR.get(), 3, 1);
+            if (animationTick == 15) strikeTarget();
+        }
+
+        super.tick();
     }
     
     @Override
@@ -222,8 +248,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             rotationYawHead = renderYawOffset;
             if (isInWater() && (rider.moveForward != 0 || rider.moveStrafing != 0))
             {
-                float f4 = MathHelper.sin(rotationPitch * (QuikMaths.PI / 180f));
-                setMotion(getMotion().x, -f4 * 2, getMotion().z);
+                float yVel = -(MathHelper.sin(rotationPitch * (QuikMaths.PI / 180f))) * (speed * 15);
+                if (yVel > 0f && !isUnderWater() && getMotion().y < 0.5f) yVel = 0;
+                setMotion(getMotion().x, yVel, getMotion().z);
             }
             setAIMoveSpeed(speed);
             vec3d = new Vec3d(rider.moveStrafing, vec3d.y, rider.moveForward);
@@ -260,7 +287,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public void applyEffects()
     {
-        AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(18d).expand(0, world.getHeight(), 0);
+        AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(25d).expand(0, world.getHeight(), 0);
         List<PlayerEntity> list = world.getEntitiesWithinAABB(PlayerEntity.class, axisalignedbb);
         if (list.isEmpty()) return;
         for (PlayerEntity player : list)
@@ -282,11 +309,54 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
+    public void performSpecialAttack(boolean shouldContinue)
+    {
+        if (!isInWater() || world.isRaining() || lightningAttackCooldown > 0) return;
+        if (!(getControllingPassenger() instanceof PlayerEntity)) return;
+        RayTraceResult rtr = QuikMaths.rayTrace(world, (PlayerEntity) getControllingPassenger(), 25d, false);
+        if (rtr.getType() != RayTraceResult.Type.ENTITY) return;
+        EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
+        if (!(ertr.getEntity() instanceof LivingEntity)) return;
+        setAnimation(ROAR_ANIMATION);
+        setAttackTarget((LivingEntity) ertr.getEntity());
+    }
+
+    public void strikeTarget()
+    {
+        LivingEntity target = getAttackTarget();
+        if (!world.isRemote)
+            ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.posX, target.posY, target.posZ, false));
+        lightningAttackCooldown = hasConduit() ? 50 : 200;
+        if (isBeingRidden()) setAttackTarget(null);
+    }
+
+    @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
-        if (isUnderWater()) return 2f;
+//        if (isUnderWater()) return 2f;
         return 3.1f;
     }
+
+    @Override
+    protected boolean isMovementBlocked()
+    {
+        return super.isMovementBlocked() || getAnimation() == CONDUIT_ANIMATION || getAnimation() == ROAR_ANIMATION;
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return WRSounds.BFLY_IDLE.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.BFLY_HURT.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return WRSounds.BFLY_DEATH.get(); }
+
+    @Override
+    public int getTalkInterval() { return 165; }
 
     @Override
     public MultiPartEntity[] getParts()
@@ -354,6 +424,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[]{NO_ANIMATION, ACTIVATE_CONDUIT};
+        return new Animation[]{NO_ANIMATION, CONDUIT_ANIMATION, ROAR_ANIMATION};
     }
 }
