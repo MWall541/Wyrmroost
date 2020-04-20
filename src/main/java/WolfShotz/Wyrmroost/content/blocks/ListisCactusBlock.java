@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
-import WolfShotz.Wyrmroost.registry.WRBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CactusBlock;
@@ -16,6 +15,7 @@ public class ListisCactusBlock extends CactusBlock
     @Override
     public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction facing, IPlantable plantable)
     {
-        return plantable.getPlant(world, pos).getBlock() == WRBlocks.LISTIS_CACTUS.get();
+//        return plantable.getPlant(world, pos).getBlock() == WRBlocks.LISTIS_CACTUS.get();
+        return true;
     }
 }

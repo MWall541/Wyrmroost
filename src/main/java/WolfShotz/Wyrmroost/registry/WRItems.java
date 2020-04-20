@@ -27,7 +27,7 @@ public class WRItems
 {
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
+//    public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
     public static final RegistryObject<Item> MINUTUS = register("minutus", MinutusItem::new);
     public static final RegistryObject<Item> DRAGON_EGG = register("dragon_egg", DragonEggItem::new);
     public static final RegistryObject<Item> SOUL_CRYSTAL = register("soul_crystal", SoulCrystalItem::new);
@@ -37,11 +37,11 @@ public class WRItems
     public static final RegistryObject<Item> RED_GEODE = register("red_geode");
     public static final RegistryObject<Item> PURPLE_GEODE = register("purple_geode");
     public static final RegistryObject<Item> PLATINUM_INGOT = register("platinum_ingot");
-    public static final RegistryObject<Item> BLUE_SHARD = register("blue_shard");
-    public static final RegistryObject<Item> GREEN_SHARD = register("green_shard");
-    public static final RegistryObject<Item> ORANGE_SHARD = register("orange_shard");
-    public static final RegistryObject<Item> YELLOW_SHARD = register("yellow_shard");
-    public static final RegistryObject<Item> ASH_PILE = register("ash_pile");
+    //    public static final RegistryObject<Item> BLUE_SHARD = register("blue_shard");
+//    public static final RegistryObject<Item> GREEN_SHARD = register("green_shard");
+//    public static final RegistryObject<Item> ORANGE_SHARD = register("orange_shard");
+//    public static final RegistryObject<Item> YELLOW_SHARD = register("yellow_shard");
+//    public static final RegistryObject<Item> ASH_PILE = register("ash_pile");
     public static final RegistryObject<Item> DRAKE_BACKPLATE = register("drake_backplate");
     public static final RegistryObject<Item> CANARI_FEATHER = register("canari_feather");
 
@@ -105,9 +105,9 @@ public class WRItems
     public static final RegistryObject<Item> BEHEMOTH_MEAT_COOKED = register("behemoth_meat_cooked", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_BEHEMOTH_MEAT)));
     public static final RegistryObject<Item> COOKED_MINUTUS = register("cooked_minutus", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_MINUTUS)));
     public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", () -> new Item(ModUtils.itemBuilder().food(WRFoods.JEWELLED_APPLE)));
-    public static final RegistryObject<Item> DRAGON_FRUIT = register("dragon_fruit", () -> new Item(ModUtils.itemBuilder().food(WRFoods.DRAGON_FRUIT)));
-    public static final RegistryObject<Item> BLUEBERRIES = register("blueberries", () -> new Item(ModUtils.itemBuilder().food(WRFoods.BLUEBERRIES)));
-    public static final RegistryObject<Item> CANARI_CHERRY = register("canari_cherry", () -> new Item(ModUtils.itemBuilder().food(WRFoods.CANARI_CHERRY)));
+//    public static final RegistryObject<Item> DRAGON_FRUIT = register("dragon_fruit", () -> new Item(ModUtils.itemBuilder().food(WRFoods.DRAGON_FRUIT)));
+//    public static final RegistryObject<Item> BLUEBERRIES = register("blueberries", () -> new Item(ModUtils.itemBuilder().food(WRFoods.BLUEBERRIES)));
+//    public static final RegistryObject<Item> CANARI_CHERRY = register("canari_cherry", () -> new Item(ModUtils.itemBuilder().food(WRFoods.CANARI_CHERRY)));
 
     public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragonarmor", () -> new DragonArmorItem(DragonArmorItem.DragonArmorType.IRON));
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragonarmor", () -> new DragonArmorItem(DragonArmorItem.DragonArmorType.GOLD));
@@ -116,14 +116,6 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("bluegeode_dragonarmor", () -> new DragonArmorItem(DragonArmorItem.DragonArmorType.BLUE_GEODE));
     public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("redgeode_dragonarmor", () -> new DragonArmorItem(DragonArmorItem.DragonArmorType.RED_GEODE));
     public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purplegeode_dragonarmor", () -> new DragonArmorItem(DragonArmorItem.DragonArmorType.PURPLE_GEODE));
-
-    public static final RegistryObject<Item> EGG_DRAKE = register("drake_egg", () -> new CustomSpawnEggItem(WREntities.OVERWORLD_DRAKE::get, 0x788716, 0x3E623E));
-    public static final RegistryObject<Item> EGG_MINUTUS = register("minutus_egg", () -> new CustomSpawnEggItem(WREntities.MINUTUS::get, 0xD6BCBC, 0xDEB6C7));
-    public static final RegistryObject<Item> EGG_SILVER_GLIDER = register("silverglider_egg", () -> new CustomSpawnEggItem(WREntities.SILVER_GLIDER::get, 0xC8C8C8, 0xC4C4C4));
-    public static final RegistryObject<Item> EGG_ROOSTSTALKER = register("rooststalker_egg", () -> new CustomSpawnEggItem(WREntities.ROOSTSTALKER::get, 0x52100D, 0x959595));
-    public static final RegistryObject<Item> EGG_BUTTERFLYLEVIATHAN = register("butterflyleviathan_egg", () -> new CustomSpawnEggItem(WREntities.BUTTERFLY_LEVIATHAN::get, 0x17283C, 0x7A6F5A));
-    public static final RegistryObject<Item> EGG_DRAGONFRUITDRAKE = register("fruitdrake_egg", () -> new CustomSpawnEggItem(WREntities.DRAGON_FRUIT_DRAKE::get, 0xe05c9a, 0x788716));
-    public static final RegistryObject<Item> EGG_CANARIWYVERN = register("canariwyvern_egg", () -> new CustomSpawnEggItem(WREntities.CANARI_WYVERN::get, 0xffffff, 0xffffff));
 
     static RegistryObject<Item> register(String name, Supplier<Item> item) { return ITEMS.register(name, item); }
 

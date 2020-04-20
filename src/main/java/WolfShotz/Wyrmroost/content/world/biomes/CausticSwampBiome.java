@@ -1,7 +1,5 @@
 package WolfShotz.Wyrmroost.content.world.biomes;
 
-import WolfShotz.Wyrmroost.registry.WRFluids;
-import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.world.WRBiome;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -66,7 +64,7 @@ public class CausticSwampBiome extends WRBiome
         DefaultBiomeFeatures.addExtraReedsAndPumpkins(this);
         DefaultBiomeFeatures.addSprings(this);
         DefaultBiomeFeatures.addFossils(this);
-        addFeature(GenerationStage.Decoration.LOCAL_MODIFICATIONS, createDecoratedFeature(Feature.LAKE, new LakesConfig(WRFluids.CAUSTIC_WATER.getBlock().getDefaultState()), Placement.WATER_LAKE, new LakeChanceConfig(4)));
+//        addFeature(GenerationStage.Decoration.LOCAL_MODIFICATIONS, createDecoratedFeature(Feature.LAKE, new LakesConfig(WRFluids.CAUSTIC_WATER.getBlock().getDefaultState()), Placement.WATER_LAKE, new LakeChanceConfig(4)));
         addFeature(GenerationStage.Decoration.LOCAL_MODIFICATIONS, createDecoratedFeature(Feature.LAKE, new LakesConfig(Blocks.LAVA.getDefaultState()), Placement.LAVA_LAKE, new LakeChanceConfig(80)));
         addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(Feature.SEAGRASS, new SeaGrassConfig(64, 0.6D), Placement.TOP_SOLID_HEIGHTMAP, IPlacementConfig.NO_PLACEMENT_CONFIG));
         addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(Feature.SWAMP_FLOWER, IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_HEIGHTMAP_32, new FrequencyConfig(1)));
@@ -78,10 +76,10 @@ public class CausticSwampBiome extends WRBiome
 
         queueWork = b ->
         {
-            b.addStructure(WRWorld.CANARI_TREE_STRUCTURE.get(), IFeatureConfig.NO_FEATURE_CONFIG);
+//            b.addStructure(WRWorld.CANARI_TREE_STRUCTURE.get(), IFeatureConfig.NO_FEATURE_CONFIG);
 
-            b.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(WRWorld.CANARI_TREE_FEATURE.get(), IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(2, 0.1F, 1)));
-            b.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(WRWorld.CANARI_TREE_STRUCTURE.get(), IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(2, 0.1F, 1)));
+//            b.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(WRWorld.CANARI_TREE_FEATURE.get(), IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(2, 0.1F, 1)));
+//            b.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, createDecoratedFeature(WRWorld.CANARI_TREE_STRUCTURE.get(), IFeatureConfig.NO_FEATURE_CONFIG, Placement.COUNT_EXTRA_HEIGHTMAP, new AtSurfaceWithExtraConfig(2, 0.1F, 1)));
         };
     }
 
@@ -120,7 +118,7 @@ public class CausticSwampBiome extends WRBiome
         @Override
         public void buildSurface(Random random, IChunk chunkIn, Biome biomeIn, int x, int z, int startHeight, double noise, BlockState defaultBlock, BlockState defaultFluid, int seaLevel, long seed, SurfaceBuilderConfig config)
         {
-            defaultFluid = WRFluids.CAUSTIC_WATER.getBlock().getDefaultState();
+//            defaultFluid = WRFluids.CAUSTIC_WATER.getBlock().getDefaultState();
 
             int i = x & 15;
             int j = z & 15;

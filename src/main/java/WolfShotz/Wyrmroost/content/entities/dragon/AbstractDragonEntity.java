@@ -510,7 +510,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (!world.isRemote) return super.isGlowing();
         PlayerEntity player = Minecraft.getInstance().player;
-        ItemStack stack = ModUtils.getHeldStack(player, DragonStaffItem.class);
+        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
         return stack.getItem() instanceof DragonStaffItem && Objects.equals(DragonStaffItem.getDragon(stack, ModUtils.getServerWorld(player)), this) || super.isGlowing();
     }
 

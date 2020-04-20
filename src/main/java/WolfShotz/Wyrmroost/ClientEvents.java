@@ -1,15 +1,30 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.render.ButterflyLeviathanRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.CanariWyvernEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.CanariWyvernRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
-import WolfShotz.Wyrmroost.content.io.screen.modbook.TarragonTomeScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
-import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRKeyBinds;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
@@ -20,6 +35,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -40,6 +56,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.opengl.GL11;
 
+import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
+
 /**
  * EventBus listeners on CLIENT distribution
  * Also a client helper class because yes.
@@ -57,7 +75,7 @@ public class ClientEvents
     {
         MinecraftForge.EVENT_BUS.register(ClientEvents.class);
 
-        WREntities.registerEntityRenders();
+        registerEntityRenders();
         WRKeyBinds.registerKeys();
         WRIO.screenSetup();
     }
@@ -140,7 +158,7 @@ public class ClientEvents
     {
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity player = mc.player;
-        ItemStack stack = ModUtils.getHeldStack(player, DragonStaffItem.class);
+        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
 
         if (stack.getItem() instanceof DragonStaffItem)
         {
@@ -223,7 +241,25 @@ public class ClientEvents
 
     public static void bookScreen(ItemStack stack)
     {
-        if (stack.getItem() != WRItems.TARRAGON_TOME.get()) return;
-        Minecraft.getInstance().displayGuiScreen(new TarragonTomeScreen(stack));
+//        if (stack.getItem() != WRItems.TARRAGON_TOME.get()) return;
+//        Minecraft.getInstance().displayGuiScreen(new TarragonTomeScreen(stack));
+    }
+
+    public static void registerEntityRenders()
+    {
+        registerEntityRenderingHandler(OWDrakeEntity.class, OWDrakeRenderer::new);
+        registerEntityRenderingHandler(MinutusEntity.class, MinutusRenderer::new);
+        registerEntityRenderingHandler(SilverGliderEntity.class, SilverGliderRenderer::new);
+        registerEntityRenderingHandler(RoostStalkerEntity.class, RoostStalkerRenderer::new);
+        registerEntityRenderingHandler(ButterflyLeviathanEntity.class, ButterflyLeviathanRenderer::new);
+        registerEntityRenderingHandler(DragonFruitDrakeEntity.class, DragonFruitDrakeRenderer::new);
+        registerEntityRenderingHandler(CanariWyvernEntity.class, CanariWyvernRenderer::new);
+
+        registerEntityRenderingHandler(DragonEggEntity.class, DragonEggRenderer::new);
+
+        registerEntityRenderingHandler(MultiPartEntity.class, mgr -> new EntityRenderer<MultiPartEntity>(mgr)
+        {
+            protected ResourceLocation getEntityTexture(MultiPartEntity entity) { return null; }
+        });
     }
 }

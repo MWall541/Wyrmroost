@@ -1,12 +1,9 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
-import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -42,9 +39,9 @@ public class CinisRootBlock extends BushBlock implements IGrowable
     @Override
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
     {
-        if (state.get(GROWTH) != 1) return false;
-        InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRBlocks.CINIS_ROOT.get()));
-        worldIn.setBlockState(pos, getDefaultState(), 4);
+//        if (state.get(GROWTH) != 1) return false;
+//        InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRBlocks.CINIS_ROOT.get()));
+//        worldIn.setBlockState(pos, getDefaultState(), 4);
         return true;
     }
 

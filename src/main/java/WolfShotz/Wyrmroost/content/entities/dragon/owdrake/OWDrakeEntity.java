@@ -80,7 +80,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         SLEEP_ANIMATION = new Animation(20);
         WAKE_ANIMATION = new Animation(15);
     }
-    
+
     @Override
     protected void registerGoals()
     {

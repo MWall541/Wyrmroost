@@ -3,9 +3,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.goals.NonTamedBabyTemptGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.world.WorldCapability;
 import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
@@ -37,7 +35,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.IShearable;
@@ -47,7 +44,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
@@ -57,8 +53,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 {
     public static final Animation STAND_ANIMATION = new Animation(15);
     public static final Animation SIT_ANIMATION = new Animation(15);
-
-//    public static final DataParameter<Integer> AGE = EntityDataManager.createKey(DragonFruitDrakeEntity.class, DataSerializers.VARINT);
 
     private int shearCooldownTime;
     public int age = 0;
@@ -71,6 +65,29 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         WAKE_ANIMATION = new Animation(15);
     }
 
+    public static void handleSpawning()
+    {
+        BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
+                .stream()
+                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 8, 2, 4)));
+        EntitySpawnPlacementRegistry.register(
+                WREntities.DRAGON_FRUIT_DRAKE.get(),
+                EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
+                Heightmap.Type.MOTION_BLOCKING,
+                ((a, b, c, d, e) -> true));
+    }
+
+//    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
+//    {
+//        World world = worldIn.getWorld();
+//
+//        return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
+//    }
+
+    // ================================
+    //           Entity NBT
+    // ================================
+
     @Override
     protected void registerGoals()
     {
@@ -78,7 +95,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         goalSelector.addGoal(3, sitGoal = new SitGoal(this));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
         goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
-        goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(WRItems.DRAGON_FRUIT.get())));
+        goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
         goalSelector.addGoal(8, CommonEntityGoals.followParentGoal(this, 1));
         goalSelector.addGoal(9, CommonEntityGoals.wanderAvoidWater(this, 1));
@@ -87,29 +104,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, new NonTamedTargetGoal(this, PlayerEntity.class, true, true, false));
-    }
-
-    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
-    {
-        World world = worldIn.getWorld();
-
-        return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
-    }
-
-    // ================================
-    //           Entity NBT
-    // ================================
-
-    public static void handleSpawning()
-    {
-        BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
-                .stream()
-                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 8, 2, 4)));
-        EntitySpawnPlacementRegistry.register(
-                WREntities.DRAGON_FRUIT_DRAKE.get(),
-                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                Heightmap.Type.MOTION_BLOCKING,
-                DragonFruitDrakeEntity::canSpawnHere);
     }
 
     @Override
@@ -274,7 +268,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
-        return Lists.newArrayList(new ItemStack(WRItems.DRAGON_FRUIT.get(), 1));
+        return Lists.newArrayList(new ItemStack(Items.APPLE, 1));
     }
 
     @Override // These bois are lazy, can sleep during the day
@@ -305,21 +299,17 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         return foods;
     }
 
+    //    @Override
+//    public boolean isBreedingItem(ItemStack stack)
+//    {
+//        return stack.getItem() == WRItems.DRAGON_FRUIT.get();
+//    }
     @Override
-    public boolean isBreedingItem(ItemStack stack)
-    {
-        return stack.getItem() == WRItems.DRAGON_FRUIT.get();
-    }
+    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.APPLE; }
 
     @Override
-    public DragonEggProperties createEggProperties()
-    {
-        return new DragonEggProperties(0.45f, 0.75f, 9600);
-    }
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.45f, 0.75f, 9600); }
 
     @Override
-    public Animation[] getAnimations()
-    {
-        return new Animation[]{NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, STAND_ANIMATION, SIT_ANIMATION};
-    }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, STAND_ANIMATION, SIT_ANIMATION}; }
 }

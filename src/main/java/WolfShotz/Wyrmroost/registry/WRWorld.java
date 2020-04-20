@@ -1,17 +1,17 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.world.features.canaritree.CanariTreePiece;
-import WolfShotz.Wyrmroost.content.world.features.canaritree.CanariTreeStructure;
 import WolfShotz.Wyrmroost.util.world.WRBiome;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.gen.feature.ReplaceBlockConfig;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
-import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.BiomeDictionary;
@@ -26,12 +26,12 @@ public class WRWorld
 {
     public static final DeferredRegister<Feature<?>> FEATURES = new DeferredRegister<>(ForgeRegistries.FEATURES, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<Feature<NoFeatureConfig>> CANARI_TREE_FEATURE = feature("canari_tree_structure", () -> new TreeFeature(NoFeatureConfig::deserialize, true, 3, WRBlocks.CANARI_LOG.get().getDefaultState(), WRBlocks.CANARI_LEAVES.get().getDefaultState(), false));
+//    public static final RegistryObject<Feature<NoFeatureConfig>> CANARI_TREE_FEATURE = feature("canari_tree_structure", () -> new TreeFeature(NoFeatureConfig::deserialize, true, 3, WRBlocks.CANARI_LOG.get().getDefaultState(), WRBlocks.CANARI_LEAVES.get().getDefaultState(), false));
 
-    public static final RegistryObject<Structure<NoFeatureConfig>> CANARI_TREE_STRUCTURE = feature("canari_tree", CanariTreeStructure::new);
+//    public static final RegistryObject<Structure<NoFeatureConfig>> CANARI_TREE_STRUCTURE = feature("canari_tree", CanariTreeStructure::new);
 
     // Structure Pieces are not a forge registry, so we don't have to be IMC slave bitches and register on vanilla accord:
-    public static final IStructurePieceType CANARI_TREE_PIECE = structurePiece("canari_tree", CanariTreePiece::new);
+//    public static final IStructurePieceType CANARI_TREE_PIECE = structurePiece("canari_tree", CanariTreePiece::new);
 
 
     private static final Predicate<Biome> NETHER_FILTER = biome -> BiomeDictionary.getBiomes(BiomeDictionary.Type.NETHER).stream().anyMatch(biome::equals);

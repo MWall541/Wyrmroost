@@ -65,10 +65,10 @@ public class Recipes extends RecipeProvider
     protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
     {
         // Misc Tools
-        shapeless(WRItems.TARRAGON_TOME.get())
-                .addIngredient(Items.BOOK).addIngredient(WRItems.Tags.GEODES) // Items in this shapeless recipe, max 9 unless ur retarded
-                .addCriterion("has_book", hasItem(Items.BOOK)) // dummy so I don't piss off other mods
-                .build(consumer); // nuff' said?
+//        shapeless(WRItems.TARRAGON_TOME.get())
+//                .addIngredient(Items.BOOK).addIngredient(WRItems.Tags.GEODES) // Items in this shapeless recipe, max 9 unless ur retarded
+//                .addCriterion("has_book", hasItem(Items.BOOK)) // dummy so I don't piss off other mods
+//                .build(consumer); // nuff' said?
 
         shaped(WRItems.SOUL_CRYSTAL.get())
                 .key('G', WRItems.BLUE_GEODE.get()).key('E', Items.ENDER_EYE) // Keys to define the patterns
@@ -128,82 +128,82 @@ public class Recipes extends RecipeProvider
         oreSmeltRecipe(WRBlocks.PLATINUM_ORE.get(), WRItems.PLATINUM_INGOT.get(), 0.7f, 200, consumer, "platinumingot");
 
         // blue crystal
-        shapeless(WRItems.BLUE_SHARD.get(), 9)
-                .addIngredient(WRBlocks.BLUE_CRYSTAL_BLOCK.get())
-                .addCriterion("has_block", hasItem(WRBlocks.BLUE_CRYSTAL_BLOCK.get()))
-                .build(consumer, Wyrmroost.rl("blueshard_from_block"));
-        shapeless(WRBlocks.BLUE_CRYSTAL_BLOCK.get())
-                .addIngredient(WRItems.BLUE_SHARD.get(), 9)
-                .addCriterion("has_block", hasItem(WRBlocks.BLUE_CRYSTAL_BLOCK.get()))
-                .build(consumer);
-        oreSmeltRecipe(WRBlocks.BLUE_CRYSTAL_ORE.get(), WRItems.BLUE_SHARD.get(), 0.7f, 200, consumer, "blueshard");
+//        shapeless(WRItems.BLUE_SHARD.get(), 9)
+//                .addIngredient(WRBlocks.BLUE_CRYSTAL_BLOCK.get())
+//                .addCriterion("has_block", hasItem(WRBlocks.BLUE_CRYSTAL_BLOCK.get()))
+//                .build(consumer, Wyrmroost.rl("blueshard_from_block"));
+//        shapeless(WRBlocks.BLUE_CRYSTAL_BLOCK.get())
+//                .addIngredient(WRItems.BLUE_SHARD.get(), 9)
+//                .addCriterion("has_block", hasItem(WRBlocks.BLUE_CRYSTAL_BLOCK.get()))
+//                .build(consumer);
+//        oreSmeltRecipe(WRBlocks.BLUE_CRYSTAL_ORE.get(), WRItems.BLUE_SHARD.get(), 0.7f, 200, consumer, "blueshard");
 
         // green crystal
-        shapeless(WRItems.GREEN_SHARD.get(), 9)
-                .addIngredient(WRBlocks.GREEN_CRYSTAL_BLOCK.get())
-                .addCriterion("has_block", hasItem(WRBlocks.GREEN_CRYSTAL_BLOCK.get()))
-                .build(consumer, Wyrmroost.rl("greenshard_from_block"));
-        shapeless(WRBlocks.GREEN_CRYSTAL_BLOCK.get())
-                .addIngredient(WRItems.GREEN_SHARD.get(), 9)
-                .addCriterion("has_block", hasItem(WRBlocks.GREEN_CRYSTAL_BLOCK.get()))
-                .build(consumer);
-        oreSmeltRecipe(WRBlocks.GREEN_CRYSTAL_ORE.get(), WRItems.GREEN_SHARD.get(), 0.7f, 200, consumer, "greenshard");
+//        shapeless(WRItems.GREEN_SHARD.get(), 9)
+//                .addIngredient(WRBlocks.GREEN_CRYSTAL_BLOCK.get())
+//                .addCriterion("has_block", hasItem(WRBlocks.GREEN_CRYSTAL_BLOCK.get()))
+//                .build(consumer, Wyrmroost.rl("greenshard_from_block"));
+//        shapeless(WRBlocks.GREEN_CRYSTAL_BLOCK.get())
+//                .addIngredient(WRItems.GREEN_SHARD.get(), 9)
+//                .addCriterion("has_block", hasItem(WRBlocks.GREEN_CRYSTAL_BLOCK.get()))
+//                .build(consumer);
+//        oreSmeltRecipe(WRBlocks.GREEN_CRYSTAL_ORE.get(), WRItems.GREEN_SHARD.get(), 0.7f, 200, consumer, "greenshard");
 
         // orange crystal
-        shapeless(WRItems.ORANGE_SHARD.get(), 9)
-                .addIngredient(WRBlocks.ORANGE_CRYSTAL_BLOCK.get())
-                .addCriterion("has_block", hasItem(WRBlocks.ORANGE_CRYSTAL_BLOCK.get()))
-                .build(consumer, Wyrmroost.rl("orangeshard_from_block"));
-        shapeless(WRBlocks.ORANGE_CRYSTAL_BLOCK.get())
-                .addIngredient(WRItems.ORANGE_SHARD.get(), 9)
-                .addCriterion("has_block", hasItem(WRBlocks.ORANGE_CRYSTAL_BLOCK.get()))
-                .build(consumer);
-        oreSmeltRecipe(WRBlocks.ORANGE_CRYSTAL_ORE.get(), WRItems.ORANGE_SHARD.get(), 0.7f, 200, consumer, "orangeshard");
+//        shapeless(WRItems.ORANGE_SHARD.get(), 9)
+//                .addIngredient(WRBlocks.ORANGE_CRYSTAL_BLOCK.get())
+//                .addCriterion("has_block", hasItem(WRBlocks.ORANGE_CRYSTAL_BLOCK.get()))
+//                .build(consumer, Wyrmroost.rl("orangeshard_from_block"));
+//        shapeless(WRBlocks.ORANGE_CRYSTAL_BLOCK.get())
+//                .addIngredient(WRItems.ORANGE_SHARD.get(), 9)
+//                .addCriterion("has_block", hasItem(WRBlocks.ORANGE_CRYSTAL_BLOCK.get()))
+//                .build(consumer);
+//        oreSmeltRecipe(WRBlocks.ORANGE_CRYSTAL_ORE.get(), WRItems.ORANGE_SHARD.get(), 0.7f, 200, consumer, "orangeshard");
 
         // yellow crystal
-        shapeless(WRItems.YELLOW_SHARD.get(), 9)
-                .addIngredient(WRBlocks.YELLOW_CRYSTAL_BLOCK.get())
-                .addCriterion("has_block", hasItem(WRBlocks.YELLOW_CRYSTAL_BLOCK.get()))
-                .build(consumer, Wyrmroost.rl("yellowshard_from_block"));
-        shapeless(WRBlocks.YELLOW_CRYSTAL_BLOCK.get())
-                .addIngredient(WRItems.YELLOW_SHARD.get(), 9)
-                .addCriterion("has_block", hasItem(WRBlocks.YELLOW_CRYSTAL_BLOCK.get()))
-                .build(consumer);
-        oreSmeltRecipe(WRBlocks.YELLOW_CRYSTAL_ORE.get(), WRItems.YELLOW_SHARD.get(), 0.7f, 200, consumer, "yellowshard");
+//        shapeless(WRItems.YELLOW_SHARD.get(), 9)
+//                .addIngredient(WRBlocks.YELLOW_CRYSTAL_BLOCK.get())
+//                .addCriterion("has_block", hasItem(WRBlocks.YELLOW_CRYSTAL_BLOCK.get()))
+//                .build(consumer, Wyrmroost.rl("yellowshard_from_block"));
+//        shapeless(WRBlocks.YELLOW_CRYSTAL_BLOCK.get())
+//                .addIngredient(WRItems.YELLOW_SHARD.get(), 9)
+//                .addCriterion("has_block", hasItem(WRBlocks.YELLOW_CRYSTAL_BLOCK.get()))
+//                .build(consumer);
+//        oreSmeltRecipe(WRBlocks.YELLOW_CRYSTAL_ORE.get(), WRItems.YELLOW_SHARD.get(), 0.7f, 200, consumer, "yellowshard");
 
         // ash
-        shaped(WRBlocks.ASH.get())
-                .key('A', WRItems.ASH_PILE.get())
-                .patternLine("AA").patternLine("AA")
-                .addCriterion("has_ash", hasItem(WRBlocks.ASH.get()))
-                .build(consumer);
-        shaped(WRBlocks.ASH_BLOCK.get())
-                .key('A', WRItems.ASH_PILE.get())
-                .patternLine("AAA").patternLine("AAA")
-                .addCriterion("has_ash", hasItem(WRBlocks.ASH_BLOCK.get()))
-                .build(consumer);
-        shapeless(Items.CHARCOAL.getItem(), 4)
-                .addIngredient(WRBlocks.ASH_LOG.get())
-                .addCriterion("has_log", hasItem(WRBlocks.ASH_BLOCK.get()))
-                .build(consumer);
+//        shaped(WRBlocks.ASH.get())
+//                .key('A', WRItems.ASH_PILE.get())
+//                .patternLine("AA").patternLine("AA")
+//                .addCriterion("has_ash", hasItem(WRBlocks.ASH.get()))
+//                .build(consumer);
+//        shaped(WRBlocks.ASH_BLOCK.get())
+//                .key('A', WRItems.ASH_PILE.get())
+//                .patternLine("AAA").patternLine("AAA")
+//                .addCriterion("has_ash", hasItem(WRBlocks.ASH_BLOCK.get()))
+//                .build(consumer);
+//        shapeless(Items.CHARCOAL.getItem(), 4)
+//                .addIngredient(WRBlocks.ASH_LOG.get())
+//                .addCriterion("has_log", hasItem(WRBlocks.ASH_BLOCK.get()))
+//                .build(consumer);
 
         // woods
-        shapeless(WRBlocks.CANARI_PLANKS.get(), 4)
-                .addIngredient(WRItems.Tags.CANARI_LOGS)
-                .addCriterion("has_log", hasItem(WRBlocks.CANARI_LOG.get()))
-                .build(consumer);
-        shapeless(WRBlocks.BLUE_CORIN_PLANKS.get(), 4)
-                .addIngredient(WRItems.Tags.BLUE_CORIN_LOGS)
-                .addCriterion("has_log", hasItem(WRBlocks.BLUE_CORIN_LOG.get()))
-                .build(consumer);
-        shapeless(WRBlocks.TEAL_CORIN_PLANKS.get(), 4)
-                .addIngredient(WRItems.Tags.TEAL_CORIN_LOGS)
-                .addCriterion("has_log", hasItem(WRBlocks.TEAL_CORIN_LOG.get()))
-                .build(consumer);
-        shapeless(WRBlocks.RED_CORIN_PLANKS.get(), 4)
-                .addIngredient(WRItems.Tags.RED_CORIN_LOGS)
-                .addCriterion("has_log", hasItem(WRBlocks.RED_CORIN_LOG.get()))
-                .build(consumer);
+//        shapeless(WRBlocks.CANARI_PLANKS.get(), 4)
+//                .addIngredient(WRItems.Tags.CANARI_LOGS)
+//                .addCriterion("has_log", hasItem(WRBlocks.CANARI_LOG.get()))
+//                .build(consumer);
+//        shapeless(WRBlocks.BLUE_CORIN_PLANKS.get(), 4)
+//                .addIngredient(WRItems.Tags.BLUE_CORIN_LOGS)
+//                .addCriterion("has_log", hasItem(WRBlocks.BLUE_CORIN_LOG.get()))
+//                .build(consumer);
+//        shapeless(WRBlocks.TEAL_CORIN_PLANKS.get(), 4)
+//                .addIngredient(WRItems.Tags.TEAL_CORIN_LOGS)
+//                .addCriterion("has_log", hasItem(WRBlocks.TEAL_CORIN_LOG.get()))
+//                .build(consumer);
+//        shapeless(WRBlocks.RED_CORIN_PLANKS.get(), 4)
+//                .addIngredient(WRItems.Tags.RED_CORIN_LOGS)
+//                .addCriterion("has_log", hasItem(WRBlocks.RED_CORIN_LOG.get()))
+//                .build(consumer);
 
         // Tools
         //blue

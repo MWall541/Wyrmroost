@@ -3,17 +3,18 @@ package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
-import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
+import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -164,21 +165,18 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         Vec3d vec3d1 = QuikMaths.calculateYawAngle(player.renderYawOffset, xOffset, 0.1).add(player.posX, 0, player.posZ);
         setPosition(vec3d1.x, player.posY + 1.4, vec3d1.z);
     }
-    
+
     /**
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems()
-    {
-        return null;
-    }
+    public List<Item> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
     
     @Override
     public DragonEggProperties createEggProperties()
     {
-        return new DragonEggProperties(0.35f, 0.5f, 6000)
-                       .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == WRBlocks.CANARI_LEAVES.get());
+        return new DragonEggProperties(0.35f, 0.5f, 6000);
+//                       .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == WRBlocks.CANARI_LEAVES.get());
     }
     
     @Override

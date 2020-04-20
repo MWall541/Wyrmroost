@@ -1,8 +1,6 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.fluids.BrineFluid;
-import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.fluid.FlowingFluid;
@@ -29,8 +27,8 @@ public class WRFluids
 {
     public static final DeferredRegister<Fluid> FLUIDS = new DeferredRegister<>(ForgeRegistries.FLUIDS, Wyrmroost.MOD_ID);
 
-    public static final FluidRegistry CAUSTIC_WATER = register("caustic_water", CausticWaterFluid::create, CausticWaterFluid.Block::new);
-    public static final FluidRegistry BRINE = register("brine", BrineFluid::create, BrineFluid.Block::new);
+//    public static final FluidRegistry CAUSTIC_WATER = register("caustic_water", CausticWaterFluid::create, CausticWaterFluid.Block::new);
+//    public static final FluidRegistry BRINE = register("brine", BrineFluid::create, BrineFluid.Block::new);
 
     public static FluidRegistry register(String name, Function<Boolean, Supplier<? extends FlowingFluid>> fluidFunc, Supplier<FlowingFluidBlock> block)
     {

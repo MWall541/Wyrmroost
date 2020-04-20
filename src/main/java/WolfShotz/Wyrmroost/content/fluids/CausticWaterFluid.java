@@ -1,24 +1,11 @@
 package WolfShotz.Wyrmroost.content.fluids;
 
-import WolfShotz.Wyrmroost.content.items.CanariArmorItem;
-import WolfShotz.Wyrmroost.registry.WRFluids;
-import WolfShotz.Wyrmroost.util.ModUtils;
-import com.google.common.collect.Streams;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.fluid.WaterFluid;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 
 import java.util.function.Supplier;
@@ -48,31 +35,31 @@ public class CausticWaterFluid extends WaterFluid
                 .build(this);
     }
 
-    @Override
-    public Fluid getStillFluid() { return WRFluids.CAUSTIC_WATER.getSource(); }
-
-    @Override
-    public Fluid getFlowingFluid() { return WRFluids.CAUSTIC_WATER.getFlow(); }
+//    @Override
+//    public Fluid getStillFluid() { return WRFluids.CAUSTIC_WATER.getSource(); }
+//
+//    @Override
+//    public Fluid getFlowingFluid() { return WRFluids.CAUSTIC_WATER.getFlow(); }
 
     @Override
     public boolean isSource(IFluidState state) { return source; }
 
     @Override
-    public int getLevel(IFluidState state) { return isSource(state) ? 8 : state.get(LEVEL_1_8); }
+    public int getLevel(IFluidState state) { return isSource(state)? 8 : state.get(LEVEL_1_8); }
 
-    public BlockState getBlockState(IFluidState state)
-    {
-        return WRFluids.CAUSTIC_WATER.getBlock().getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
-    }
+//    public BlockState getBlockState(IFluidState state)
+//    {
+//        return WRFluids.CAUSTIC_WATER.getBlock().getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
+//    }
 
-    @Override
-    public boolean isEquivalentTo(Fluid fluidIn)
-    {
-        return fluidIn == WRFluids.CAUSTIC_WATER.getSource() || fluidIn == WRFluids.CAUSTIC_WATER.getFlow();
-    }
+//    @Override
+//    public boolean isEquivalentTo(Fluid fluidIn)
+//    {
+//        return fluidIn == WRFluids.CAUSTIC_WATER.getSource() || fluidIn == WRFluids.CAUSTIC_WATER.getFlow();
+//    }
 
-    @Override
-    public Item getFilledBucket() { return WRFluids.CAUSTIC_WATER.getBucketItem(); }
+//    @Override
+//    public Item getFilledBucket() { return WRFluids.CAUSTIC_WATER.getBucketItem(); }
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder)
@@ -81,22 +68,22 @@ public class CausticWaterFluid extends WaterFluid
         if (!source) builder.add(LEVEL_1_8);
     }
 
-    public static class Block extends FlowingFluidBlock
-    {
-        public Block()
-        {
-            super(WRFluids.CAUSTIC_WATER.source, ModUtils.blockBuilder(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100).noDrops());
-        }
-
-        @Override
-        public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
-        {
-            if (entityIn instanceof LivingEntity)
-            {
-                if (Streams.stream(entityIn.getArmorInventoryList()).map(ItemStack::getItem).allMatch(CanariArmorItem.class::isInstance))
-                    return;
-                entityIn.attackEntityFrom(CAUSTIC_WATER, 1);
-            }
-        }
-    }
+//    public static class Block extends FlowingFluidBlock
+//    {
+//        public Block()
+//        {
+//            super(WRFluids.CAUSTIC_WATER.source, ModUtils.blockBuilder(Material.WATER).doesNotBlockMovement().hardnessAndResistance(100).noDrops());
+//        }
+//
+//        @Override
+//        public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn)
+//        {
+//            if (entityIn instanceof LivingEntity)
+//            {
+//                if (Streams.stream(entityIn.getArmorInventoryList()).map(ItemStack::getItem).allMatch(CanariArmorItem.class::isInstance))
+//                    return;
+//                entityIn.attackEntityFrom(CAUSTIC_WATER, 1);
+//            }
+//        }
+//    }
 }

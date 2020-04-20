@@ -1,17 +1,11 @@
 package WolfShotz.Wyrmroost.content.blocks;
 
-import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -44,14 +38,14 @@ public class CanariLeavesBlock extends LeavesBlock implements IGrowable
             worldIn.setBlockState(pos, state.cycle(BERRIES), Constants.BlockFlags.DEFAULT);
     }
 
-    @Override
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
-    {
-        if (!state.get(BERRIES)) return false;
-        InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRItems.CANARI_CHERRY.get()));
-        worldIn.setBlockState(pos, state.cycle(BERRIES), Constants.BlockFlags.DEFAULT);
-        return true;
-    }
+//    @Override
+//    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
+//    {
+//        if (!state.get(BERRIES)) return false;
+//        InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRItems.CANARI_CHERRY.get()));
+//        worldIn.setBlockState(pos, state.cycle(BERRIES), Constants.BlockFlags.DEFAULT);
+//        return true;
+//    }
 
     @Override
     public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)

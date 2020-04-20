@@ -2,12 +2,9 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.items.DrakeArmorItem;
-import WolfShotz.Wyrmroost.content.world.WorldCapability;
-import WolfShotz.Wyrmroost.content.world.dimension.WyrmroostDimension;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Streams;
@@ -16,15 +13,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -73,23 +66,23 @@ public class CommonEvents
     /**
      * Register the Mod Dimension
      */
-    @SubscribeEvent
-    @SuppressWarnings("ConstantConditions")
-    public static void registerDimension(RegisterDimensionsEvent evt)
-    {
-        if (ModUtils.getDimensionInstance() == null)
-            DimensionManager.registerDimension(Wyrmroost.rl("wyrmroost"), WyrmroostDimension.WYRMROOST_DIM, null, true);
-    }
+//    @SubscribeEvent
+//    @SuppressWarnings("ConstantConditions")
+//    public static void registerDimension(RegisterDimensionsEvent evt)
+//    {
+//        if (ModUtils.getDimensionInstance() == null)
+//            DimensionManager.registerDimension(Wyrmroost.rl("wyrmroost"), WyrmroostDimension.WYRMROOST_DIM, null, true);
+//    }
 
     /**
      * Attatch our capabilities
      */
-    @SubscribeEvent
-    public static void attachWorldCaps(AttachCapabilitiesEvent<World> evt)
-    {
-        if (evt.getObject().isRemote) return;
-        evt.addCapability(Wyrmroost.rl("overworld_cap"), new WorldCapability.PropertiesDispatcher());
-    }
+//    @SubscribeEvent
+//    public static void attachWorldCaps(AttachCapabilitiesEvent<World> evt)
+//    {
+//        if (evt.getObject().isRemote) return;
+//        evt.addCapability(Wyrmroost.rl("overworld_cap"), new WorldCapability.PropertiesDispatcher());
+//    }
 
     /**
      * Nuff' said

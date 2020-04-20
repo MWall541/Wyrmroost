@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.util.data;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.CanariLeavesBlock;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRFluids;
@@ -10,7 +9,6 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.LogBlock;
 import net.minecraft.block.RotatedPillarBlock;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
@@ -39,32 +37,32 @@ public class Models
         @Override
         protected void registerStatesAndModels()
         {
-            logBlock((LogBlock) WRBlocks.ASH_LOG.get());
-
-            logBlock((LogBlock) WRBlocks.CANARI_LOG.get());
-            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_CANARI.get());
-            simpleBlock(WRBlocks.CANARI_WOOD.get(), "canari_log"); // The all sided bark blocks. its called "wood" in vanilla so idgaf
-
-            ModelFile leaves = getExistingFile(mcLoc(BLOCK_FOLDER + "/leaves"));
-            getVariantBuilder(WRBlocks.CANARI_LEAVES.get()) // This took a stupid amount of time to figure out please help me
-                    .partialState()
-                    .with(CanariLeavesBlock.BERRIES, true)
-                    .modelForState().modelFile(cubeAll("canari_leaves_berries", modLoc("block/canari_leaves_berries")).parent(leaves)).addModel()
-                    .partialState()
-                    .with(CanariLeavesBlock.BERRIES, false)
-                    .modelForState().modelFile(cubed(WRBlocks.CANARI_LEAVES.get()).parent(leaves)).addModel();
-
-            logBlock((LogBlock) WRBlocks.BLUE_CORIN_LOG.get());
-            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_BLUE_CORIN_LOG.get());
-            simpleBlock(WRBlocks.BLUE_CORIN_WOOD.get(), "blue_corin_log");
-
-            logBlock((LogBlock) WRBlocks.TEAL_CORIN_LOG.get());
-            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_TEAL_CORIN_LOG.get());
-            simpleBlock(WRBlocks.TEAL_CORIN_WOOD.get(), "teal_corin_log");
-
-            logBlock((LogBlock) WRBlocks.RED_CORIN_LOG.get());
-            simpleBlock(WRBlocks.RED_CORIN_WOOD.get(), "red_corin_log");
-            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_RED_CORIN_LOG.get());
+//            logBlock((LogBlock) WRBlocks.ASH_LOG.get());
+//
+//            logBlock((LogBlock) WRBlocks.CANARI_LOG.get());
+//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_CANARI.get());
+//            simpleBlock(WRBlocks.CANARI_WOOD.get(), "canari_log"); // The all sided bark blocks. its called "wood" in vanilla so idgaf
+//
+//            ModelFile leaves = getExistingFile(mcLoc(BLOCK_FOLDER + "/leaves"));
+//            getVariantBuilder(WRBlocks.CANARI_LEAVES.get()) // This took a stupid amount of time to figure out please help me
+//                    .partialState()
+//                    .with(CanariLeavesBlock.BERRIES, true)
+//                    .modelForState().modelFile(cubeAll("canari_leaves_berries", modLoc("block/canari_leaves_berries")).parent(leaves)).addModel()
+//                    .partialState()
+//                    .with(CanariLeavesBlock.BERRIES, false)
+//                    .modelForState().modelFile(cubed(WRBlocks.CANARI_LEAVES.get()).parent(leaves)).addModel();
+//
+//            logBlock((LogBlock) WRBlocks.BLUE_CORIN_LOG.get());
+//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_BLUE_CORIN_LOG.get());
+//            simpleBlock(WRBlocks.BLUE_CORIN_WOOD.get(), "blue_corin_log");
+//
+//            logBlock((LogBlock) WRBlocks.TEAL_CORIN_LOG.get());
+//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_TEAL_CORIN_LOG.get());
+//            simpleBlock(WRBlocks.TEAL_CORIN_WOOD.get(), "teal_corin_log");
+//
+//            logBlock((LogBlock) WRBlocks.RED_CORIN_LOG.get());
+//            simpleBlock(WRBlocks.RED_CORIN_WOOD.get(), "red_corin_log");
+//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_RED_CORIN_LOG.get());
 
             // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
             // If this is unwanted, it is important to define so above
@@ -173,7 +171,7 @@ public class Models
                 itemBare(item).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
 
             // Item Blocks
-            item(WRBlocks.CINIS_ROOT.get().asItem());
+//            item(WRBlocks.CINIS_ROOT.get().asItem());
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS)) // All Standard ItemBlocks
             {
                 if (REGISTERED.contains(block.asItem())) continue;

@@ -34,13 +34,13 @@ import java.util.function.Supplier;
 public class CustomSpawnEggItem extends Item
 {
     public static List<CustomSpawnEggItem> EGG_TYPES = Lists.newArrayList();
-    public final Supplier<EntityType> type;
+    public final Supplier<EntityType<?>> type;
     private final int PRIMARY_COLOR, SECONDARY_COLOR;
-    
-    public CustomSpawnEggItem(Supplier<EntityType> type, int primaryColor, int secondaryColor)
+
+    public CustomSpawnEggItem(Supplier<EntityType<?>> type, int primaryColor, int secondaryColor)
     {
         super(ModUtils.itemBuilder());
-        
+
         this.type = type;
         this.PRIMARY_COLOR = primaryColor;
         this.SECONDARY_COLOR = secondaryColor;

@@ -123,16 +123,15 @@ public class ModUtils
      * Checks both hands of the passed player for an item that is instance of itemClass.
      * If one hand has one, return that ItemStack, else return the main hands stack.
      *
-     * @param player    the player
-     * @param itemClass the class were checking instanceof
-     * @param <T>       Type of item
-     * @return An ItemStack which
+     * @param player the player
+     * @param item   the item were trying to get
+     * @return An ItemStack which may return the main hand stack if we cannot match.
      */
-    public static <T extends Item> ItemStack getHeldStack(PlayerEntity player, Class<T> itemClass)
+    public static ItemStack getHeldStack(PlayerEntity player, Item item)
     {
         ItemStack main = player.getHeldItemMainhand();
         ItemStack off = player.getHeldItemOffhand();
-        return itemClass.isInstance(main.getItem()) ? main : itemClass.isInstance(off.getItem()) ? off : main;
+        return item == main.getItem()? main : item == off.getItem()? off : main;
     }
 
     /**
