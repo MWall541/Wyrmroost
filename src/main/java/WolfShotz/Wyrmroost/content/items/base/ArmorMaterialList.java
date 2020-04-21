@@ -16,14 +16,14 @@ import java.util.function.Supplier;
  */
 public enum ArmorMaterialList implements IArmorMaterial
 {
-    GEODE("geode", new int[]{4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.BLUE_GEODE),
-    GEODERED("geode_red", new int[]{4, 8, 9, 5}, 3f, 52, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE),
-    GEODEPURPLE("geode_purple", new int[]{6, 10, 12, 8}, 4f, 60, 28, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE, Rarity.RARE),
-    PLATINUM("platinum", new int[]{2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, WRItems.PLATINUM_INGOT),
-    DRAKE("drake", new int[]{3, 6, 8, 3}, 1.2f, 32, 9, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, WRItems.DRAKE_BACKPLATE, Rarity.UNCOMMON),
-    CANARI("canari", new int[]{2, 3, 4, 1}, 0f, 15, 15, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, WRItems.CANARI_FEATHER);
+    GEODE("geode", new int[] {4, 7, 9, 4}, 2.8f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.BLUE_GEODE),
+    GEODERED("geode_red", new int[] {4, 8, 9, 5}, 3f, 52, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE),
+    GEODEPURPLE("geode_purple", new int[] {6, 10, 12, 8}, 4f, 60, 28, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE, Rarity.RARE),
+    PLATINUM("platinum", new int[] {2, 5, 7, 2}, 0.2f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, WRItems.PLATINUM_INGOT),
+    DRAKE("drake", new int[] {3, 6, 8, 3}, 1.2f, 32, 9, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, WRItems.DRAKE_BACKPLATE, Rarity.UNCOMMON);
+//    CANARI("canari", new int[]{2, 3, 4, 1}, 0f, 15, 15, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, WRItems.CANARI_FEATHER);
 
-    private final int[] durabilityArray = new int[]{13, 15, 16, 11};
+    private final int[] durabilityArray = new int[] {13, 15, 16, 11};
     private final int durability, enchantability;
     private final int[] dmgReduction;
     private final float toughness;

@@ -12,8 +12,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,15 +42,17 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     public static final Animation STAND_ANIMATION = new Animation(10);
     public static final Animation TAKE_OFF_ANIMATION = new Animation(10);
     public static final Animation FLAP_ANIMATION = new Animation(10);
-    
+
+    public int shotDownTimer;
+
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world)
     {
         super(entity, world);
-        
+
         SLEEP_ANIMATION = new Animation(20);
         WAKE_ANIMATION = new Animation(15);
     }
-    
+
     @Override
     protected void registerAttributes()
     {
@@ -71,49 +71,21 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
         goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
-        goalSelector.addGoal(11, new LookRandomlyGoal(this)
+        goalSelector.addGoal(11, CommonEntityGoals.lookRandomly(this));
+
+        goalSelector.addGoal(8, new FlyerWanderGoal(this, true, true)
         {
             @Override
-            public boolean shouldExecute()
+            public Vec3d getPosition()
             {
-                return !isSleeping() && super.shouldExecute();
-            }
-        });
-        
-        goalSelector.addGoal(8, new FlightWanderGoal(this)
-        {
-            @Override
-            public void startExecuting()
-            {
-                double x = posX + QuikMaths.nextPseudoDouble(rand) * 24d;
-                double y = posY + QuikMaths.nextPseudoDouble(rand) * 16d;
-                double z = posZ + QuikMaths.nextPseudoDouble(rand) * 24d;
-                if (!world.isDaytime() && rand.nextInt(5) == 0) y = -Math.abs(y);
-                for (int i = 1; i < 6; i++)
+                Vec3d vec3d = super.getPosition();
+                if (isFlying())
                 {
-                    if (world.getBlockState(getPosition().down(i)).getMaterial().isLiquid())
-                    {
-                        y = Math.abs(y);
-                        break;
-                    }
+                    for (int i = 1; i < 4; i++)
+                        if (world.getBlockState(SilverGliderEntity.this.getPosition().down(i)).getMaterial().isLiquid())
+                            return new Vec3d(vec3d.x, Math.abs(vec3d.y), vec3d.z);
                 }
-                moveController.setMoveTo(x, y, z, getAttribute(FLYING_SPEED).getValue());
-                lookController.setLookPosition(x, y, z, 30, 30);
-            }
-        });
-        
-        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1)
-        {
-            @Override
-            public boolean shouldExecute()
-            {
-                return !isFlying() && super.shouldExecute();
-            }
-            
-            @Override
-            public boolean shouldContinueExecuting()
-            {
-                return super.shouldContinueExecuting() && !isFlying();
+                return vec3d;
             }
         });
     }
@@ -169,12 +141,9 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     {
         dataManager.set(VARIANT, variant);
     }
-    
+
     @Override
-    public int getSpecialChances()
-    {
-        return 500;
-    }
+    public int getSpecialChances() { return 500; }
     
     // ================================
     
@@ -193,6 +162,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         super.tick();
         
         shouldFlyThreshold = 3 + (isRiding()? 2 : 0);
+        if (shotDownTimer > 0) --shotDownTimer;
     }
     
     @Override
@@ -320,6 +290,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public boolean canFly()
     {
+        if (shotDownTimer > 0) return false;
         if (isRiding() && getRidingEntity() instanceof PlayerEntity)
         {
             PlayerEntity player = (PlayerEntity) getRidingEntity();
@@ -328,12 +299,23 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         if (isRiding()) return false;
         return super.canFly();
     }
-    
+
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount)
+    {
+        if (!isTamed() && source.isProjectile())
+        {
+            shotDownTimer = 12000;
+            setFlying(false);
+        }
+        return super.attackEntityFrom(source, amount);
+    }
+
     public boolean isRiding()
     {
         return getRidingEntity() != null;
     }
-    
+
     @Override
     protected float getSoundVolume()
     {

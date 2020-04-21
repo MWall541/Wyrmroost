@@ -43,7 +43,7 @@ public class WRItems
 //    public static final RegistryObject<Item> YELLOW_SHARD = register("yellow_shard");
 //    public static final RegistryObject<Item> ASH_PILE = register("ash_pile");
     public static final RegistryObject<Item> DRAKE_BACKPLATE = register("drake_backplate");
-    public static final RegistryObject<Item> CANARI_FEATHER = register("canari_feather");
+//    public static final RegistryObject<Item> CANARI_FEATHER = register("canari_feather");
 
     public static final RegistryObject<Item> BLUE_GEODE_SWORD = register("geode_sword", () -> new SwordItem(ToolMaterialList.GEODE, 4, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> BLUE_GEODE_PICKAXE = register("geode_pick", () -> new PickaxeItem(ToolMaterialList.GEODE, 2, -2.8f, ModUtils.itemBuilder()));
@@ -90,10 +90,9 @@ public class WRItems
     public static final RegistryObject<Item> DRAKE_LEGGINGS = register("drake_leggings", () -> new DrakeArmorItem(EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> DRAKE_BOOTS = register("drake_boots", () -> new DrakeArmorItem(EquipmentSlotType.FEET));
 
-    public static final RegistryObject<Item> CANARI_HELMET = register("canari_helmet", () -> new CanariArmorItem(EquipmentSlotType.HEAD));
-    public static final RegistryObject<Item> CANARI_CHESTPLATE = register("canari_chestplate", () -> new CanariArmorItem(EquipmentSlotType.CHEST));
-    public static final RegistryObject<Item> CANARI_LEGGINGS = register("canari_leggings", () -> new CanariArmorItem(EquipmentSlotType.LEGS));
-    public static final RegistryObject<Item> CANARI_BOOTS = register("canari_boots", () -> new CanariArmorItem(EquipmentSlotType.FEET));
+//    public static final RegistryObject<Item> CANARI_HELMET = register("canari_helmet", () -> new CanariArmorItem(EquipmentSlotType.HEAD));
+//    public static final RegistryObject<Item> CANARI_CHESTPLATE = register("canari_chestplate", () -> new CanariArmorItem(EquipmentSlotType.CHEST));
+//    public static final RegistryObject<Item> CANARI_BOOTS = register("canari_boots", () -> new CanariArmorItem(EquipmentSlotType.FEET));
 
     public static final RegistryObject<Item> LOWTIER_MEAT_RAW = register("lowtier_meat_raw", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_LOWTIER_MEAT)));
     public static final RegistryObject<Item> COMMON_MEAT_RAW = register("common_meat_raw", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_COMMON_MEAT)));
@@ -156,11 +155,11 @@ public class WRItems
 
         public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCKS = new HashMap<>();
 
-        public static final Tag<Item> CANARI_LOGS = itemBlockTag(new ResourceLocation("logs/canari_logs"), WRBlocks.Tags.CANARI_LOGS);
-        public static final Tag<Item> BLUE_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/blue_corin_logs"), WRBlocks.Tags.BLUE_CORIN_LOGS);
-        public static final Tag<Item> TEAL_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/teal_corin_logs"), WRBlocks.Tags.TEAL_CORIN_LOGS);
-        public static final Tag<Item> RED_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/red_corin_logs"), WRBlocks.Tags.RED_CORIN_LOGS);
-    
+//        public static final Tag<Item> CANARI_LOGS = itemBlockTag(new ResourceLocation("logs/canari_logs"), WRBlocks.Tags.CANARI_LOGS);
+//        public static final Tag<Item> BLUE_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/blue_corin_logs"), WRBlocks.Tags.BLUE_CORIN_LOGS);
+//        public static final Tag<Item> TEAL_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/teal_corin_logs"), WRBlocks.Tags.TEAL_CORIN_LOGS);
+//        public static final Tag<Item> RED_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/red_corin_logs"), WRBlocks.Tags.RED_CORIN_LOGS);
+
         private static Tag<Item> tag(String name) { return new ItemTags.Wrapper(Wyrmroost.rl(name)); }
 
         private static Tag<Item> itemBlockTag(ResourceLocation name, Tag<Block> copy)

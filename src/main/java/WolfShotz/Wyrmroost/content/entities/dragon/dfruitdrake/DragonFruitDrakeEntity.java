@@ -96,7 +96,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
         goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
-        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
+        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(8, CommonEntityGoals.followParentGoal(this, 1));
         goalSelector.addGoal(9, CommonEntityGoals.wanderAvoidWater(this, 1));
         goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 7f));
@@ -255,7 +255,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     @Override
     public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
-    
+
     @Override
     public boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos)
     {
@@ -284,7 +284,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         if (isTamed() && !isSitting()) return;
 //        if (!(getHomePos().isPresent() && isWithinHomeDistanceFromPosition())) return;
         if (!isIdling()) return;
-        int sleepChance = world.isDaytime() ? 450 : 300; // neps
+        int sleepChance = world.isDaytime()? 450 : 300; // neps
         if (getRNG().nextInt(sleepChance) == 0) setSleeping(true);
     }
 

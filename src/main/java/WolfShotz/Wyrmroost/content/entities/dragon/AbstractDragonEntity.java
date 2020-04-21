@@ -79,11 +79,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static Animation SLEEP_ANIMATION;
     public static Animation WAKE_ANIMATION;
 
-    public int shouldFlyThreshold = 3;
+    public final LazyOptional<ItemStackHandler> invHandler;
     public int sleepCooldown;
     public List<String> immunes = Lists.newArrayList();
-    public LazyOptional<ItemStackHandler> invHandler = createInv();
-    public DragonEggProperties eggProperties = createEggProperties();
+    // delegates
+    public int shouldFlyThreshold = 3;
+    public DragonEggProperties eggProperties;
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -93,6 +94,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         moveController = new FlightMovementController(this);
         lookController = new DragonLookController(this);
+        invHandler = createInv();
+        eggProperties = createEggProperties();
         stepHeight = 1;
     }
 
@@ -126,10 +129,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Needed because the field is private >.>
      */
     @Override
-    protected BodyController createBodyController()
-    {
-        return new DragonBodyController(this);
-    }
+    protected BodyController createBodyController() { return new DragonBodyController(this); }
 
     // ================================
     //           Entity NBT
@@ -183,14 +183,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean getGender()
     {
-        try
-        {
-            return dataManager.get(GENDER);
-        }
-        catch (NullPointerException ignore)
-        {
-            return true;
-        }
+        try { return dataManager.get(GENDER); }
+        catch (NullPointerException ignore) { return true; }
     }
 
     public void setGender(boolean sex) { dataManager.set(GENDER, sex); }
@@ -215,9 +209,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (canFly() && fly && liftOff())
         {
             getNavigator().clearPath();
+            navigator = new FlyingPathNavigator(this, world);
             dataManager.set(FLYING, true);
         }
-        else dataManager.set(FLYING, false);
+        else
+        {
+            navigator = new GroundPathNavigator(this, world);
+            dataManager.set(FLYING, false);
+        }
     }
 
     /**
@@ -343,20 +342,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (isServerWorld())
         {
+            // uhh so were falling, we should probably start flying
             boolean flying = canFly() && getAltitude(true) > shouldFlyThreshold && getRidingEntity() == null;
-            if (flying != isFlying())
-            {
-                // notify client
-                setFlying(flying);
-
-                // update AI follow range (needs to be updated before creating
-                // new PathNavigate!)
-//                getAttribute(FOLLOW_RANGE).setBaseValue(flying? BASE_FOLLOW_RANGE_FLYING : BASE_FOLLOW_RANGE);
-
-                // update pathfinding method
-                if (flying) navigator = new FlyingPathNavigator(this, world);
-                else navigator = new GroundPathNavigator(this, world);
-            }
+            if (flying != isFlying()) setFlying(flying);
 
             handleSleep();
             if (isSleeping() && isWithinHomeDistanceFromPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
@@ -612,9 +600,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getPosition());
 
         if (capThreshold)
+        {
             for (int i = 0; i <= shouldFlyThreshold + 1 && !world.getBlockState(pos).getMaterial().isSolid(); ++i)
                 pos.move(0, -1, 0);
-        else while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid()) pos.move(0, -1, 0);
+        }
+        else
+        { // cap to the world void (y = 0)
+            while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid())
+                pos.move(0, -1, 0);
+        }
         return posY - pos.getY();
     }
 
@@ -748,6 +742,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     /**
+     * Get the player potentially controlling this dragon
+     * {@code null} if its not a player or no controller at all.
+     *
+     * @return The Player controlling this dragon, else null
+     */
+    @Nullable
+    public PlayerEntity getControllingPlayer()
+    {
+        Entity passenger = getControllingPassenger();
+        if (passenger instanceof PlayerEntity) return (PlayerEntity) passenger;
+        return null;
+    }
+
+    /**
      * Clear any AI tasks that might still be running
      */
     public void clearAI()
@@ -808,24 +816,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Add additional motion to current velocity
      */
-    public void addMotion(Vec3d vec3d)
-    {
-        setMotion(getMotion().add(vec3d));
-    }
+    public void addMotion(Vec3d vec3d) { setMotion(getMotion().add(vec3d)); }
 
     /**
      * Add additional motion to current velocity
      */
-    public void addMotion(double x, double y, double z)
-    {
-        setMotion(getMotion().add(x, y, z));
-    }
+    public void addMotion(double x, double y, double z) { setMotion(getMotion().add(x, y, z)); }
 
     @Override
-    public void playSound(SoundEvent soundIn, float volume, float pitch)
-    {
-        playSound(soundIn, volume, pitch, false);
-    }
+    public void playSound(SoundEvent soundIn, float volume, float pitch) { playSound(soundIn, volume, pitch, false); }
 
     public void playSound(SoundEvent sound, float volume, float pitch, boolean local)
     {
@@ -874,8 +873,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public Entity getControllingPassenger()
     {
-        return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
+        return this.getPassengers().isEmpty()? null : this.getPassengers().get(0);
     }
+
+    @Override
+    public boolean isOnLadder() { return false; }
 
     /**
      * Perform a one-shot attack
@@ -917,7 +919,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected float getJumpUpwardsMotion()
     {
-        return canFly() ? 1.2f : super.getJumpUpwardsMotion();
+        return canFly()? 1.25f : super.getJumpUpwardsMotion();
     }
 
     /**
@@ -935,6 +937,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setSit(false);
         setSleeping(false);
         jump();
+        clearAI();
 
         return true;
     }

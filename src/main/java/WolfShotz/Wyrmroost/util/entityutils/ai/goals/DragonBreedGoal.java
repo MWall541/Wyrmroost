@@ -11,9 +11,11 @@ public class DragonBreedGoal extends BreedGoal
 {
     private final AbstractDragonEntity dragon;
     private boolean canInAir, straight;
-    
+
     /**
-     * @param canInAir - Setter to have dragons "get it on" in the air! Yeah idfk I blame the community.
+     * @param dragon   duh
+     * @param canInAir I uh. hm.
+     * @param straight Should respect genders, otherwise bang the same one!
      */
     public DragonBreedGoal(AbstractDragonEntity dragon, boolean canInAir, boolean straight)
     {

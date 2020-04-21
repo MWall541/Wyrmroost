@@ -96,7 +96,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         goalSelector.addGoal(1, sitGoal = new WaterSitGoal(this));
         goalSelector.addGoal(2, new DragonFollowOwnerGoal(this, 1, 20d, 3d));
-        goalSelector.addGoal(3, new MoveTowardsHomePointGoal(this, 1));
+        goalSelector.addGoal(3, new MoveToHomeGoal(this, 1));
         goalSelector.addGoal(4, new BFlyAttackGoal(this));
         goalSelector.addGoal(4, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
         goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 10f));

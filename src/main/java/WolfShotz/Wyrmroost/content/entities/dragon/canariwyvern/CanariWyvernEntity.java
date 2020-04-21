@@ -4,20 +4,23 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.CanariMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
-import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.controller.BodyController;
+import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.Vec3d;
@@ -41,14 +44,17 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         shouldFlyThreshold = 2;
 
         moveController = new CanariMoveController(this);
+        lookController = new LookController(this);
     }
 
     @Override
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(3, new FlyerWanderGoal(this, 19));
-        goalSelector.addGoal(4, new DragonFollowOwnerGoal(this, 1, 10, 1.5d));
+        goalSelector.addGoal(3, new FlyerFollowOwnerGoal(this, 7, 1, 4, true));
+        goalSelector.addGoal(4, new FlyerWanderGoal(this, true, true));
+        goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 5));
+        goalSelector.addGoal(6, CommonEntityGoals.lookRandomly(this));
     }
 
     @Override
@@ -59,8 +65,11 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         getAttribute(MAX_HEALTH).setBaseValue(16d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.2d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(5.5d);
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.4);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.3);
     }
+
+    @Override
+    protected BodyController createBodyController() { return new BodyController(this); }
 
     // ================================
     //           Entity NBT
@@ -110,7 +119,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         {
             if (animationTick == 5 || animationTick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.7f, 2, true);
             if (animationTick == 9 && getRNG().nextInt(25) == 0)
-                entityDropItem(new ItemStack(WRItems.CANARI_FEATHER.get()), 0.5f);
+                entityDropItem(new ItemStack(Items.FEATHER), 0.5f);
         }
     }
 
@@ -177,19 +186,25 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         setRotation(rotationYaw, rotationPitch);
         rotationYawHead = player.rotationYawHead;
         prevRotationYaw = player.rotationYawHead;
-        
+
         double xOffset = checkShoulderOccupants(player)? -0.35f : 0.35f;
 
         Vec3d vec3d1 = QuikMaths.calculateYawAngle(player.renderYawOffset, xOffset, 0.1).add(player.posX, 0, player.posZ);
         setPosition(vec3d1.x, player.posY + 1.4, vec3d1.z);
     }
 
+    @Override
+    public boolean canBeCollidedWith() { return super.canBeCollidedWith() || getRidingEntity() != null; }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }
+
     /**
      * Array Containing all of the dragons food items
      */
     @Override
     public List<Item> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
-    
+
     @Override
     public DragonEggProperties createEggProperties()
     {

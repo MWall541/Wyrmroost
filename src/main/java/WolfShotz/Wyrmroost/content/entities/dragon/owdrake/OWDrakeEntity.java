@@ -88,8 +88,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new DrakeAttackGoal(this));
         goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
         goalSelector.addGoal(6, new DragonBreedGoal(this, false, true));
-        goalSelector.addGoal(10, new DragonGrazeGoal(this, 2, GRAZE_ANIMATION));
-        goalSelector.addGoal(11, new MoveTowardsHomePointGoal(this, 1));
+        goalSelector.addGoal(10, new GrazeGoal(this, 2, GRAZE_ANIMATION));
+        goalSelector.addGoal(11, new MoveToHomeGoal(this, 1));
         goalSelector.addGoal(12, CommonEntityGoals.wanderAvoidWater(this, 1));
         goalSelector.addGoal(13, CommonEntityGoals.lookAt(this, 10f));
         goalSelector.addGoal(13, CommonEntityGoals.lookRandomly(this));

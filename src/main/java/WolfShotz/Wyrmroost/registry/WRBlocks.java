@@ -90,16 +90,13 @@ public class WRBlocks
     public static class Tags
     {
         public static final Tag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
-        public static final Tag<Block> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
-        public static final Tag<Block> BLUE_CORIN_LOGS = tag(new ResourceLocation("logs/blue_corin_logs"));
-        public static final Tag<Block> TEAL_CORIN_LOGS = tag(new ResourceLocation("logs/teal_corin_logs"));
-        public static final Tag<Block> RED_CORIN_LOGS = tag(new ResourceLocation("logs/red_corin_logs"));
+//        public static final Tag<Block> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
+//        public static final Tag<Block> BLUE_CORIN_LOGS = tag(new ResourceLocation("logs/blue_corin_logs"));
+//        public static final Tag<Block> TEAL_CORIN_LOGS = tag(new ResourceLocation("logs/teal_corin_logs"));
+//        public static final Tag<Block> RED_CORIN_LOGS = tag(new ResourceLocation("logs/red_corin_logs"));
 
         public static Tag<Block> tag(String name) { return new BlockTags.Wrapper(Wyrmroost.rl(name)); }
 
-        public static Tag<Block> tag(ResourceLocation name)
-        {
-            return new BlockTags.Wrapper(name);
-        }
+        public static Tag<Block> tag(ResourceLocation name) { return new BlockTags.Wrapper(name); }
     }
 }

@@ -36,20 +36,20 @@ public class CanariMoveController extends MovementController
         double dist = dragonPos.distanceTo(movePos);
 
         // move towards target if it's far enough away
-        if (dist > 1.5)
+        if (dist > 0.5)
         {
-            double flySpeed = dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue();
+            double flySpeed = 0.1f;
 
             // update velocity to approach target
-            dragon.setMotion(dir.scale(flySpeed));
+            dragon.setMotion(dir.scale(flySpeed).add(dragon.getMotion()));
         }
-        else dragon.setMotion(dragon.getMotion().scale(0.8d));
+        dragon.setMotion(dragon.getMotion().scale(0.8d));
 
         // face entity towards target
         if (dist > 2.5E-7)
         {
             float newYaw = (float) Math.toDegrees(Math.PI * 2 - Math.atan2(dir.x, dir.z));
-            dragon.rotationYaw = limitAngle(dragon.rotationYaw, newYaw, 90);
+            dragon.rotationYaw = limitAngle(dragon.rotationYaw, newYaw, 30);
             dragon.setAIMoveSpeed((float) (speed * dragon.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
         }
 
