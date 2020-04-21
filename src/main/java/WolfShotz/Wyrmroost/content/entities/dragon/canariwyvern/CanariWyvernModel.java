@@ -405,11 +405,42 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
         animator.update(canari);
         setInitialPositions();
 
+//        limbSwing = canari.ticksExisted * 0.5f;
+//        limbSwingAmount = 0.5f;
+
+        if (canari.isFlying())
+        {
+
+        }
+        else
+        {
+            wing1L.rotateAngleZ -= limbSwingAmount * 0.35;
+            wing1R.rotateAngleZ += limbSwingAmount * 0.35;
+
+            bob(body1, globalSpeed, 0.25f, true, limbSwing, limbSwingAmount);
+
+            swing(wing1L, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(wing1L, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+
+            swing(wing1R, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(wing1R, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+
+            walk(leg1L, globalSpeed, 1, false, 0, 0, limbSwing, limbSwingAmount);
+            walk(leg2L, globalSpeed, 0.8f, false, -1.8f, 0.5f, limbSwing, limbSwingAmount);
+            walk(leg3L, globalSpeed, -1.2f, false, -1.8f, -0.5f, limbSwing, limbSwingAmount);
+            walk(footL, globalSpeed, 2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
+
+            walk(leg1R, globalSpeed, 1, true, 0, 0, limbSwing, limbSwingAmount);
+            walk(leg2R, globalSpeed, -0.8f, false, -1.8f, 0.5f, limbSwing, limbSwingAmount);
+            walk(leg3R, globalSpeed, 1.2f, false, -1.8f, -0.5f, limbSwing, limbSwingAmount);
+            walk(footL_1, globalSpeed, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
+        }
+
         if (canari.isSitting()) sitPose();
         if (canari.isSleeping()) sleepPose();
 
         if (animator.setAnimation(CanariWyvernEntity.FLAP_WINGS_ANIMATION)) flapWingsAnim();
-        if (animator.setAnimation(CanariWyvernEntity.CLEAN_FEATHERS_ANIMATION)) cleanWingsAnim(frame);
+        if (animator.setAnimation(CanariWyvernEntity.PREEN_ANIMATION)) cleanWingsAnim(frame);
         if (animator.setAnimation(CanariWyvernEntity.THREAT_ANIMATION)) threatAnim(frame);
 
         idleAnim(frame);
@@ -418,35 +449,42 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     // Standing pose without the t-pose wings shit
     public void setInitialPositions()
     {
-        // left wing
-        wing1L.rotateAngleX = 1f;
-        wing1L.rotateAngleY = -0.8f;
-        wing2L.rotateAngleY = 2.5f;
-        palmL.rotateAngleY = -0.8f;
-        phalang1L.rotateAngleY = -1.4f;
-        phalang2L.rotateAngleY = -1.85f;
-        phalang3L.rotateAngleY = -2.15f;
-        feathers1L.rotateAngleX = 0.05f;
-        feathers1L.rotateAngleY = 0.3f;
-        feathers2L.rotateAngleY = -1.2f;
-        feathers3L.rotateAngleX = 0.001f;
-        membrane3L.rotateAngleY = 3f;
-        membrane3L_1.rotateAngleY = 0.8f;
+        if (entity.isFlying())
+        {
 
-        // right wing
-        wing1R.rotateAngleX = 1f;
-        wing1R.rotateAngleY = 0.8f;
-        wing2R.rotateAngleY = -2.5f;
-        palmR.rotateAngleY = 0.8f;
-        phalang1R.rotateAngleY = 1.4f;
-        phalang2R.rotateAngleY = 1.85f;
-        phalang3R.rotateAngleY = 2.15f;
-        feathers1R.rotateAngleX = 0.05f;
-        feathers1R.rotateAngleY = -0.3f;
-        feathers2R.rotateAngleY = 1.2f;
-        feathers3R.rotateAngleX = 0.001f;
-        membrane3R.rotateAngleY = -3f;
-        membrane3R_1.rotateAngleY = -0.8f;
+        }
+        else
+        {
+            // left wing
+            wing1L.rotateAngleX = 1f;
+            wing1L.rotateAngleY = -0.8f;
+            wing2L.rotateAngleY = 2.5f;
+            palmL.rotateAngleY = -0.8f;
+            phalang1L.rotateAngleY = -1.4f;
+            phalang2L.rotateAngleY = -1.85f;
+            phalang3L.rotateAngleY = -2.15f;
+            feathers1L.rotateAngleX = 0.05f;
+            feathers1L.rotateAngleY = 0.3f;
+            feathers2L.rotateAngleY = -1.2f;
+            feathers3L.rotateAngleX = 0.001f;
+            membrane3L.rotateAngleY = 3f;
+            membrane3L_1.rotateAngleY = 0.8f;
+
+            // right wing
+            wing1R.rotateAngleX = 1f;
+            wing1R.rotateAngleY = 0.8f;
+            wing2R.rotateAngleY = -2.5f;
+            palmR.rotateAngleY = 0.8f;
+            phalang1R.rotateAngleY = 1.4f;
+            phalang2R.rotateAngleY = 1.85f;
+            phalang3R.rotateAngleY = 2.15f;
+            feathers1R.rotateAngleX = 0.05f;
+            feathers1R.rotateAngleY = -0.3f;
+            feathers2R.rotateAngleY = 1.2f;
+            feathers3R.rotateAngleX = 0.001f;
+            membrane3R.rotateAngleY = -3f;
+            membrane3R_1.rotateAngleY = -0.8f;
+        }
     }
 
     public void sitPose()
@@ -498,6 +536,9 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     @Override
     public void idleAnim(float frame)
     {
+        body1.rotateAngleX += Math.cos(frame * (globalSpeed - 0.45f)) * 0.08f;
+        body2.rotateAngleX -= Math.cos(frame * (globalSpeed - 0.45f)) * 0.08f;
+
         chainWave(headArray, 0.45f - globalSpeed, 0.1f, 2.5, frame, 0.5f);
         chainWave(tailArray, 0.44f - globalSpeed, 0.05f, 2.5, frame, 0.5f);
         flap(wing1L, 0.45f - globalSpeed, 0.2f, false, 0, 0, frame, 0.5f);

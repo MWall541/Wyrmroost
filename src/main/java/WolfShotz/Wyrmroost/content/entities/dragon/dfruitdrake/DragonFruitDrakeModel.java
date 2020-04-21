@@ -372,11 +372,12 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
     @Override
     public void render(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
     {
-        double size = fruitDrake.getGrowingAge() < 0 ? 0.75d : 1.5d;
+        double size = fruitDrake.getGrowingAge() < 0? 0.75d : 1.5d;
+        double height = fruitDrake.getGrowingAge() < 0? 0.5f : -0.5f;
 
         GlStateManager.pushMatrix();
         GlStateManager.scaled(size, size, size);
-        GlStateManager.translated(0, -0.5f, 0);
+        GlStateManager.translated(0, height, 0);
         Body1.render(scale);
         GlStateManager.popMatrix();
     }

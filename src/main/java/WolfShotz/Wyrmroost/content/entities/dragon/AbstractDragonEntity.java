@@ -37,9 +37,12 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.FlyingPathNavigator;
+import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -340,6 +343,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (isServerWorld())
         {
+            boolean flying = canFly() && getAltitude(true) > shouldFlyThreshold && getRidingEntity() == null;
+            if (flying != isFlying())
+            {
+                // notify client
+                setFlying(flying);
+
+                // update AI follow range (needs to be updated before creating
+                // new PathNavigate!)
+//                getAttribute(FOLLOW_RANGE).setBaseValue(flying? BASE_FOLLOW_RANGE_FLYING : BASE_FOLLOW_RANGE);
+
+                // update pathfinding method
+                if (flying) navigator = new FlyingPathNavigator(this, world);
+                else navigator = new GroundPathNavigator(this, world);
+            }
+
             handleSleep();
             if (isSleeping() && isWithinHomeDistanceFromPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
         }
@@ -584,6 +602,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     /**
+     * Get the altitude of the dragon. (height from the dragon to the solid ground)
+     *
+     * @param capThreshold - Cap the lookup to the {@link AbstractDragonEntity#shouldFlyThreshold} for faster results
+     * @return distance from the ground
+     */
+    public double getAltitude(boolean capThreshold)
+    {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getPosition());
+
+        if (capThreshold)
+            for (int i = 0; i <= shouldFlyThreshold + 1 && !world.getBlockState(pos).getMaterial().isSolid(); ++i)
+                pos.move(0, -1, 0);
+        else while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid()) pos.move(0, -1, 0);
+        return posY - pos.getY();
+    }
+
+    /**
      * Handle eating. (Effects, healing, breeding etc)
      */
     public void eat(@Nullable ItemStack stack)
@@ -786,30 +821,33 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setMotion(getMotion().add(x, y, z));
     }
 
+    @Override
+    public void playSound(SoundEvent soundIn, float volume, float pitch)
+    {
+        playSound(soundIn, volume, pitch, false);
+    }
+
+    public void playSound(SoundEvent sound, float volume, float pitch, boolean local)
+    {
+        if (isSilent()) return;
+
+        volume *= getSoundVolume();
+        pitch *= getSoundPitch();
+
+        if (local) world.playSound(posX, posY, posZ, sound, getSoundCategory(), volume, pitch, false);
+        else world.playSound(null, posX, posY, posZ, sound, getSoundCategory(), volume, pitch);
+    }
+
     /**
-     * Nuff' said
+     * YOU SNORE SHUT THE F*** UP!
      */
     @Override
-    public void playAmbientSound()
-    {
-        if (!isSleeping()) super.playAmbientSound();
-    }
+    public boolean isSilent() { return super.isSilent() || isSleeping(); }
 
     /**
      * Set a damage source immunity
      */
-    public void setImmune(DamageSource source)
-    {
-        immunes.add(source.getDamageType());
-    }
-
-    /**
-     * Whether or not the dragon is immune to the source or not
-     */
-    private boolean isImmune(DamageSource source)
-    {
-        return !immunes.isEmpty() && immunes.contains(source.getDamageType());
-    }
+    public void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
 
     /**
      * Are we immune to this damage source?
@@ -817,7 +855,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
-        return super.isInvulnerableTo(source) || isImmune(source);
+        return super.isInvulnerableTo(source) || (!immunes.isEmpty() && immunes.contains(source.getDamageType()));
     }
 
     /**

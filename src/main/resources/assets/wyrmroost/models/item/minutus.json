@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wyrmroost:item/minutus"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "wyrmroost:isalive": 1.0
+      },
+      "model": "wyrmroost:item/minutus_alive"
+    }
+  ]
+}

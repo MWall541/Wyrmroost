@@ -10,22 +10,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -35,10 +30,8 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -58,7 +51,7 @@ public class ModUtils
      */
     public static Item.Properties itemBuilder()
     {
-        return new Item.Properties().group(Wyrmroost.CREATIVE_TAB);
+        return new Item.Properties().group(Wyrmroost.ITEM_GROUP);
     }
     
     /**
@@ -71,31 +64,6 @@ public class ModUtils
         else if (material == Material.ROCK) properties.harvestTool(ToolType.PICKAXE);
         else if (material == Material.SAND) properties.harvestTool(ToolType.SHOVEL).sound(SoundType.SAND);
         return properties;
-    }
-    
-    /**
-     * Itemgroup (creative tab.. smh) factory
-     */
-    public static ItemGroup itemGroupFactory(String name, Supplier<ItemStack> displayItem)
-    {
-        return new ItemGroup(name)
-        {
-            @Override
-            public ItemStack createIcon() { return displayItem.get(); }
-        };
-    }
-    
-    /**
-     * Even simpler network channel builder
-     */
-    public static SimpleChannel simplisticChannel(ResourceLocation name, String versionSync)
-    {
-        return NetworkRegistry.ChannelBuilder
-                       .named(name)
-                       .clientAcceptedVersions(versionSync::equals)
-                       .serverAcceptedVersions(versionSync::equals)
-                       .networkProtocolVersion(() -> versionSync)
-                .simpleChannel();
     }
 
     /**
@@ -158,11 +126,6 @@ public class ModUtils
     }
 
     /**
-     * Get the instance of the wyrmroost dimension
-     */
-    public static DimensionType getDimensionInstance() { return DimensionType.byName(Wyrmroost.rl("wyrmroost")); }
-
-    /**
      * Creates a new TranslationTextComponent appended with the passed strings
      */
     public static ITextComponent appendableTextTranslation(String... strings)
@@ -189,20 +152,6 @@ public class ModUtils
     {
         int[] poses = nbt.getIntArray(key);
         return new BlockPos(poses[0], poses[1], poses[2]);
-    }
-
-    /**
-     * Get all blocks inside a AABB
-     */
-    public static Stream<BlockPos> getAllPosesInBB(AxisAlignedBB bb, World world)
-    {
-        int minX = MathHelper.floor(bb.minX);
-        int maxX = MathHelper.ceil(bb.maxX);
-        int minY = MathHelper.floor(bb.minY);
-        int maxY = MathHelper.ceil(bb.maxY);
-        int minZ = MathHelper.floor(bb.minZ);
-        int maxZ = MathHelper.ceil(bb.maxZ);
-        return BlockPos.getAllInBox(minX, minY, minZ, maxX - 1, maxY - 1, maxZ - 1);
     }
 
     /**

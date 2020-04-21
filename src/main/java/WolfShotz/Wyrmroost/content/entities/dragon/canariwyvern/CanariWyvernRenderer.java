@@ -9,28 +9,15 @@ import javax.annotation.Nullable;
 
 public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEntity>
 {
-    public static final ResourceLocation FEMALE_BLUE = resource("body_fb.png");
-    public static final ResourceLocation FEMALE_GREEN = resource("body_fg.png");
-    public static final ResourceLocation FEMALE_PURPLE = resource("body_fp.png");
-    public static final ResourceLocation FEMALE_RED = resource("body_fr.png");
-    public static final ResourceLocation FEMALE_YELLOW = resource("body_fy.png");
-    public static final ResourceLocation MALE_BLUE = resource("body_mb.png");
-    public static final ResourceLocation MALE_GREEN = resource("body_mg.png");
-    public static final ResourceLocation MALE_PURPLE = resource("body_mp.png");
-    public static final ResourceLocation MALE_RED = resource("body_mr.png");
-    public static final ResourceLocation MALE_YELLOW = resource("body_my.png");
     // Easter egg
-    private static final ResourceLocation FEMALE_LADY = resource("lady.png");
-    private static final ResourceLocation RUDY = resource("rudy.png");
-    
-    private static final ResourceLocation[] MALE_VARS = new ResourceLocation[]{MALE_BLUE, MALE_GREEN, MALE_YELLOW, MALE_RED, MALE_PURPLE};
-    private static final ResourceLocation[] FEMALE_VARS = new ResourceLocation[]{FEMALE_YELLOW, FEMALE_PURPLE, FEMALE_GREEN, FEMALE_BLUE, FEMALE_RED};
-    
+    private static final ResourceLocation EE_LADY = resource("lady.png");
+    private static final ResourceLocation EE_RUDY = resource("rudy.png");
+
     public CanariWyvernRenderer(EntityRendererManager manager)
     {
-        super(manager, new CanariWyvernModel(), 1.35f);
+        super(manager, new CanariWyvernModel(), 0.5f);
     }
-    
+
     @Nullable
     @Override
     protected ResourceLocation getEntityTexture(CanariWyvernEntity canari)
@@ -38,11 +25,14 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
         if (canari.hasCustomName())
         {
             String name = canari.getCustomName().getUnformattedComponentText();
-            if (name.equals("Rudy")) return RUDY;
-            if (name.equals("Lady Everlyn Winklestein") && !canari.getGender()) return FEMALE_LADY;
+            if (name.equals("Rudy")) return EE_RUDY;
+            if (name.equals("Lady Everlyn Winklestein") && !canari.getGender()) return EE_LADY;
         }
-        
-        return canari.getGender()? MALE_VARS[canari.getVariant()] : FEMALE_VARS[canari.getVariant()];
+
+        String path = "body_" + canari.getVariant();
+        if (canari.getGender()) path += "m";
+        else path += "f";
+        return resource(path += ".png");
     }
     
     private static ResourceLocation resource(String png)

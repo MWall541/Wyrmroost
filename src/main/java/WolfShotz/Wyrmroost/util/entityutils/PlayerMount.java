@@ -30,10 +30,6 @@ public class PlayerMount
         }
     }
     
-    public interface IMountable extends IHeadMount, IShoulderMount
-    {
-    }
-    
     /**
      * Checks to see if the player head is occupied by another {@link IHeadMount} entity
      */

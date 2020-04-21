@@ -5,7 +5,6 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +18,10 @@ import java.util.Random;
  */
 public class QuikMaths
 {
+    /**
+     * Float Version of PI.
+     * Why? so we don't have to cast the fucking official one
+     */
     public static final float PI = (float) Math.PI;
 
     /**
@@ -29,27 +32,12 @@ public class QuikMaths
         return 2 * rand.nextDouble() - 1;
     }
 
+    /**
+     * A good way to get a position offset by the direction of a yaw angle.
+     */
     public static Vec3d calculateYawAngle(float amount, double xOffset, double zOffset)
     {
         return new Vec3d(xOffset, 0, zOffset).rotateYaw(-amount * (PI / 180f));
-    }
-
-    /**
-     * Get the Altitude of an entity from the world surface
-     * Subtract 1 from plane pose's as a workaround for a vanilla bug using the wrong pos when plane pose's are negative...
-     */
-    public static double getAltitude(Entity entity)
-    {
-        return getAltitude(entity.world, (int) entity.posX, entity.posY, (int) entity.posZ);
-    }
-
-    /**
-     * Get the altitude of a world position from the world surface
-     * Subtract 1 from plane pose's as a workaround for a vanilla bug using the wrong pos when plane pose's are negative...
-     */
-    public static double getAltitude(World world, int x, double y, int z)
-    {
-        return y - world.getHeight(Heightmap.Type.WORLD_SURFACE, x - (x < 0 ? 1 : 0), z - (z < 0 ? 1 : 0));
     }
 
     /**
@@ -74,24 +62,6 @@ public class QuikMaths
         float y = targetY - sourceY;
         float z = targetZ - sourceZ;
         return x * x + y * y + z * z;
-    }
-
-    /**
-     * Angle measurement converted to radians as a float value <P>
-     * <code>angle / 180.0 * PI</code>
-     */
-    public static float toRadians(float angle)
-    {
-        return (float) Math.toRadians(angle);
-    }
-
-    /**
-     * Angle measurement converted to degrees as a float value <P>
-     * <code>angle * 180.0 / PI</code>
-     */
-    public static float toDegrees(float angle)
-    {
-        return (float) Math.toDegrees(angle);
     }
 
     /**

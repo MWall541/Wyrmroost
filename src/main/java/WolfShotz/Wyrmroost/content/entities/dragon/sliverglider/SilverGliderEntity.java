@@ -291,7 +291,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     
     public boolean shouldGlide(PlayerEntity player)
     {
-        return (player.isJumping && QuikMaths.getAltitude(player) > shouldFlyThreshold) &&
+        return (player.isJumping && getAltitude(true) > shouldFlyThreshold) &&
                 player.getRidingEntity() == null &&
                 !player.abilities.isFlying &&
                 !player.isInWater() &&

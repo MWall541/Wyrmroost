@@ -25,10 +25,10 @@ public class DynamicChain
     private Entity entity;
     private Vec3d prevP;
     private Vec3d prevV;
-    
+
     private Vec3d[] pOrig;
     private int prevUpdateTick;
-    
+
     public DynamicChain(Entity entity)
     {
         this.entity = entity;
@@ -45,7 +45,112 @@ public class DynamicChain
         pOrig = new Vec3d[0];
         prevUpdateTick = -1;
     }
-    
+
+    private static Vec3d angleBetween(Vec3d p1, Vec3d p2)
+    {
+        float dz = (float) (p2.z - p1.z);
+        float dx = (float) (p2.x - p1.x);
+        float dy = (float) (p2.y - p1.y);
+
+        float yaw = (float) MathHelper.atan2(dz, dx);
+        float pitch = (float) MathHelper.atan2(Math.sqrt(dz * dz + dx * dx), dy);
+        return wrapAngles(new Vec3d(yaw, pitch, 0));
+    }
+
+    public static Vec3d toPitchYaw(Vec3d vector)
+    {
+
+        double f3 = vector.y;
+        double pitch = -Math.asin(f3);
+        double f2 = -Math.cos(pitch);
+        double f1 = vector.x / f2;
+        double yaw = -Math.asin(f1) + Math.PI / 2;
+
+        return wrapAngles(new Vec3d(yaw, pitch, 0));
+    }
+
+    private static Vec3d toEuler(Vec3d axis, double angle)
+    {
+        System.out.println(axis + ", " + angle);
+        double s = Math.sin(angle);
+        double c = Math.cos(angle);
+        double t = 1 - c;
+
+        double yaw;
+        double pitch;
+        double roll;
+
+        double x = axis.x;
+        double y = axis.y;
+        double z = axis.z;
+
+        final double v = x * y * t + z * s;
+        double atan2 = Math.atan2(x * Math.sin(angle / 2), Math.cos(angle / 2));
+        if (v > 0.998)
+        { // north pole singularity detected
+            yaw = 2 * atan2;
+            pitch = Math.PI / 2;
+            roll = 0;
+        }
+        else if (v < -0.998)
+        { // south pole singularity detected
+            yaw = -2 * atan2;
+            pitch = -Math.PI / 2;
+            roll = 0;
+        }
+        else
+        {
+            yaw = Math.atan2(y * s - x * z * t, 1 - (y * y + z * z) * t);
+            pitch = Math.asin(v);
+            roll = Math.atan2(x * s - y * z * t, 1 - (x * x + z * z) * t);
+        }
+
+        return new Vec3d(yaw, pitch, roll);
+    }
+
+    private static Vec3d wrapAngles(Vec3d r)
+    {
+        double x = r.x;
+        double y = r.y;
+        double z = r.z;
+
+        while (x > Math.PI) x -= 2 * Math.PI;
+        while (x < -Math.PI) x += 2 * Math.PI;
+
+        while (y > Math.PI) y -= 2 * Math.PI;
+        while (y < -Math.PI) y += 2 * Math.PI;
+
+        while (z > Math.PI) z -= 2 * Math.PI;
+        while (z < -Math.PI) z += 2 * Math.PI;
+
+        return new Vec3d(x, y, z);
+    }
+
+    public void render(float f5, SocketRendererModel[] dynModelRenderers)
+    {
+        if (dynModelRenderers == null) return;
+        for (int i = 0; i < dynModelRenderers.length - 1; i++)
+        {
+            if (dynModelRenderers[i] == null) return;
+            dynModelRenderers[i].render(f5);
+        }
+    }
+
+    private static Vec3d fromPitchYaw(float pitch, float yaw)
+    {
+        float f = MathHelper.cos(-yaw - (float) Math.PI);
+        float f1 = MathHelper.sin(-yaw - (float) Math.PI);
+        float f2 = -MathHelper.cos(-pitch);
+        float f3 = MathHelper.sin(-pitch);
+        return new Vec3d(f1 * f2, f3, f * f2);
+    }
+
+    private static Vec3d multiply(Vec3d u, Vec3d v, boolean preserveDir)
+    {
+        if (preserveDir) return new Vec3d(u.x * Math.abs(v.x), u.y * Math.abs(v.y), u.z * Math.abs(v.z));
+        return new Vec3d(u.x * v.x, u.y * v.y, u.z * v.z);
+    }
+
     public void updateBendConstraint(float gravityAmount, float stiffness, float stiffnessFalloff, float damping, int numUpdates, boolean useFloor)
     {
         Vec3d[] prevPos = new Vec3d[p.length];
@@ -62,18 +167,18 @@ public class DynamicChain
                 if (i == 0)
                 {
                     Vec3d root = pOrig[i];
-                    
+
                     p[i] = root;
                     v[i] = p[i].subtract(prevPos[i]);
                     a[i] = v[i].subtract(prevVel[i]);
                 }
-                
+
                 Vec3d target = angleBetween(
                         pOrig[i],
                         pOrig[i + 1]);
-                
+
                 r[i] = angleBetween(p[i], p[i + 1]);
-                
+
                 T[i] = wrapAngles(r[i].subtract(target)).scale(-stiffness / (Math.pow(i + 1, stiffnessFalloff)));
                 double down = Math.PI / 2;
                 Vec3d gravityVec = wrapAngles(new Vec3d(
@@ -91,14 +196,14 @@ public class DynamicChain
                 rv[i] = wrapAngles(rv[i]);
                 r[i] = r[i].add(rv[i].scale(1 / ((float) numUpdates)));
                 r[i] = wrapAngles(r[i]);
-                
+
                 p[i + 1] = fromPitchYaw((float) (r[i].y - Math.PI / 2), (float) (r[i].x - Math.PI / 2)).scale(d[i + 1]).add(p[i]);
                 v[i + 1] = p[i + 1].subtract(prevPos[i + 1]);
                 a[i + 1] = v[i + 1].subtract(prevVel[i + 1]);
             }
         }
     }
-    
+
     public void updateSpringConstraint(float gravityAmount, float dampAmount, float stiffness, float maxForce, boolean doAttract, float attractFalloff, int numUpdates)
     {
         for (int j = 0; j < numUpdates; j++)
@@ -108,13 +213,14 @@ public class DynamicChain
                 a[i] = F[i].scale(1 / m[i]);
                 v[i] = v[i].add(a[i].scale(1 / ((float) numUpdates)));
                 p[i] = p[i].add(v[i].scale(1 / ((float) numUpdates)));
-                
+
                 Vec3d disp;
                 if (i == 0)
                 {
                     Vec3d root = pOrig[i]; //origModelRenderers[i].getWorldPos(entity, LLibrary.PROXY.getPartialTicks());
                     disp = p[i].subtract(root);
-                } else
+                }
+                else
                 {
                     disp = p[i].subtract(p[i - 1]);
                 }
@@ -128,11 +234,11 @@ public class DynamicChain
                     F[i] = F[i].add(attract.scale(1 / (1 + i * i * attractFalloff)));
                 }
                 if (F[i].length() > maxForce) F[i].normalize().scale(maxForce);
-                
+
             }
         }
     }
-    
+
     public void setChain(SocketRendererModel[] chainOrig, SocketRendererModel[] chainDynamic)
     {
         p = new Vec3d[chainOrig.length];
@@ -158,21 +264,21 @@ public class DynamicChain
             rv[i] = new Vec3d(0, 0, 0);
             ra[i] = new Vec3d(0, 0, 0);
             m[i] = 0.5f + 0.5f / (i + 1);
-            
+
             if (i > 0) d[i] = (float) p[i].distanceTo(p[i - 1]);
             else d[i] = 1f;
-            
+
             chainOrig[i].isHidden = true;
         }
-        
+
         for (int i = 0; i < chainOrig.length - 1; i++)
         {
             r[i] = angleBetween(p[i], p[i + 1]);
         }
-        
+
         prevP = p[0];
         prevV = v[0];
-        
+
         for (int i = 0; i < chainOrig.length; i++)
         {
             if (chainDynamic[i] == null)
@@ -181,33 +287,33 @@ public class DynamicChain
             }
         }
     }
-    
+
     public void updateChain(float delta, SocketRendererModel[] chainOrig, SocketRendererModel[] chainDynamic, float gravityAmount, float stiffness, float stiffnessFalloff, float damping, int numUpdates, boolean useFloor)
     {
         if (p.length != chainOrig.length || Double.isNaN(p[1].x))
         {
             setChain(chainOrig, chainDynamic);
         }
-        
+
         if (prevUpdateTick != entity.ticksExisted)
         {
             for (int i = 0; i < chainOrig.length; i++)
             {
                 pOrig[i] = chainOrig[i].getWorldPos(entity, delta);
             }
-            
+
             updateBendConstraint(gravityAmount, stiffness, stiffnessFalloff, damping, numUpdates, useFloor);
-            
+
             prevUpdateTick = entity.ticksExisted;
         }
-        
+
         if (chainDynamic == null) return;
         for (int i = chainDynamic.length - 1; i >= 0; i--)
         {
             if (chainDynamic[i] == null) return;
             Vec3d renderPos = p[i].add(v[i].scale(delta)).add(a[i].scale(0.5 * delta * delta));
             chainDynamic[i].setWorldPos(entity, renderPos, delta);
-            
+
             if (i < chainDynamic.length - 1)
             {
                 Vec3d p1 = new Vec3d(chainDynamic[i].rotationPointX, chainDynamic[i].rotationPointY, chainDynamic[i].rotationPointZ);
@@ -220,110 +326,5 @@ public class DynamicChain
                 chainDynamic[i].rotateAngleZ = (float) r[i].z;
             }
         }
-    }
-    
-    public void render(float f5, SocketRendererModel[] dynModelRenderers)
-    {
-        if (dynModelRenderers == null) return;
-        for (int i = 0; i < dynModelRenderers.length - 1; i++)
-        {
-            if (dynModelRenderers[i] == null) return;
-            dynModelRenderers[i].render(f5);
-        }
-    }
-    
-    private static Vec3d fromPitchYaw(float pitch, float yaw)
-    {
-        float f = MathHelper.cos(-yaw - (float) Math.PI);
-        float f1 = MathHelper.sin(-yaw - (float) Math.PI);
-        float f2 = -MathHelper.cos(-pitch);
-        float f3 = MathHelper.sin(-pitch);
-        return new Vec3d(f1 * f2, f3, f * f2);
-    }
-    
-    private static Vec3d angleBetween(Vec3d p1, Vec3d p2)
-    {
-        float dz = (float) (p2.z - p1.z);
-        float dx = (float) (p2.x - p1.x);
-        float dy = (float) (p2.y - p1.y);
-        
-        float yaw = (float) MathHelper.atan2(dz, dx);
-        float pitch = (float) MathHelper.atan2(Math.sqrt(dz * dz + dx * dx), dy);
-        return wrapAngles(new Vec3d(yaw, pitch, 0));
-    }
-    
-    public static Vec3d toPitchYaw(Vec3d vector)
-    {
-        
-        double f3 = vector.y;
-        double pitch = -Math.asin(f3);
-        double f2 = -Math.cos(pitch);
-        double f1 = vector.x / f2;
-        double yaw = -Math.asin(f1) + Math.PI / 2;
-        
-        return wrapAngles(new Vec3d(yaw, pitch, 0));
-    }
-    
-    private static Vec3d toEuler(Vec3d axis, double angle)
-    {
-        System.out.println(axis + ", " + angle);
-        double s = Math.sin(angle);
-        double c = Math.cos(angle);
-        double t = 1 - c;
-        
-        double yaw;
-        double pitch;
-        double roll;
-        
-        double x = axis.x;
-        double y = axis.y;
-        double z = axis.z;
-        
-        final double v = x * y * t + z * s;
-        if (v > 0.998)
-        { // north pole singularity detected
-            yaw = 2 * Math.atan2(x * Math.sin(angle / 2), Math.cos(angle / 2));
-            pitch = Math.PI / 2;
-            roll = 0;
-        } else if (v < -0.998)
-        { // south pole singularity detected
-            yaw = -2 * Math.atan2(x * Math.sin(angle / 2), Math.cos(angle / 2));
-            pitch = -Math.PI / 2;
-            roll = 0;
-        } else
-        {
-            yaw = Math.atan2(y * s - x * z * t, 1 - (y * y + z * z) * t);
-            pitch = Math.asin(v);
-            roll = Math.atan2(x * s - y * z * t, 1 - (x * x + z * z) * t);
-        }
-        
-        return new Vec3d(yaw, pitch, roll);
-    }
-    
-    private static Vec3d wrapAngles(Vec3d r)
-    {
-        double x = r.x;
-        double y = r.y;
-        double z = r.z;
-        
-        while (x > Math.PI) x -= 2 * Math.PI;
-        while (x < -Math.PI) x += 2 * Math.PI;
-        
-        while (y > Math.PI) y -= 2 * Math.PI;
-        while (y < -Math.PI) y += 2 * Math.PI;
-        
-        while (z > Math.PI) z -= 2 * Math.PI;
-        while (z < -Math.PI) z += 2 * Math.PI;
-        
-        return new Vec3d(x, y, z);
-    }
-    
-    private static Vec3d multiply(Vec3d u, Vec3d v, boolean preserveDir)
-    {
-        if (preserveDir)
-        {
-            return new Vec3d(u.x * Math.abs(v.x), u.y * Math.abs(v.y), u.z * Math.abs(v.z));
-        }
-        return new Vec3d(u.x * v.x, u.y * v.y, u.z * v.z);
     }
 }

@@ -95,32 +95,41 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
     {
         return (float) (rootOffset * 3.141592653589793D / (double) (2 * boxes.length));
     }
-    
+
     public float getMovementScale()
     {
         return this.movementScale;
     }
-    
+
     public void setMovementScale(float movementScale)
     {
         this.movementScale = movementScale;
     }
-    
+
+    /**
+     * Rotate Angle X
+     */
     public void walk(AdvancedRendererModel box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount)
     {
         box.walk(speed, degree, invert, offset, weight, walk, walkAmount);
     }
-    
+
+    /**
+     * Rotate Angle Z
+     */
     public void flap(AdvancedRendererModel box, float speed, float degree, boolean invert, float offset, float weight, float flap, float flapAmount)
     {
         box.flap(speed, degree, invert, offset, weight, flap, flapAmount);
     }
-    
+
+    /**
+     * Rotate Angle Y
+     */
     public void swing(AdvancedRendererModel box, float speed, float degree, boolean invert, float offset, float weight, float swing, float swingAmount)
     {
         box.swing(speed, degree, invert, offset, weight, swing, swingAmount);
     }
-    
+
     public void bob(AdvancedRendererModel box, float speed, float degree, boolean bounce, float f, float f1)
     {
         box.bob(speed, degree, bounce, f, f1);

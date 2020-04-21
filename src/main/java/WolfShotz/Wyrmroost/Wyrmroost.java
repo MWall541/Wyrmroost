@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.registry.*;
 import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -14,26 +13,21 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
-    public static final SimpleChannel NETWORK = ModUtils.simplisticChannel(rl(MOD_ID), "1.0");
-    public static final ItemGroup CREATIVE_TAB = new ItemGroup("wyrmroost")
-    {
-        @Override
-        public ItemStack createIcon() { return new ItemStack(WRItems.BLUE_GEODE.get()); }
-
-        @Override
-        public void fill(NonNullList<ItemStack> items)
-        {
-            super.fill(items);
-            if (ConfigData.debugMode)
-                items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
-        }
-    };
+    public static final ItemGroup ITEM_GROUP = new WRItemGroup();
+    private static final String PROTOCOL_VERSION = "1.0";
+    public static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
+            .named(rl("network"))
+            .clientAcceptedVersions(PROTOCOL_VERSION::equals)
+            .serverAcceptedVersions(PROTOCOL_VERSION::equals)
+            .networkProtocolVersion(() -> PROTOCOL_VERSION)
+            .simpleChannel();
 
     public Wyrmroost()
     {
@@ -56,7 +50,31 @@ public class Wyrmroost
     }
 
     /**
-     * Register a new Wyrmroost Specific Resource Location.
+     * Register a new Wyrmroost Specific Resource Location. <P>
+     * Don't bash me for the method name it makes total sense ffs: <P>
+     * <b><i>r</i></b>esource <P>
+     * <b><i>l</i></b>ocation <P>
+     *
+     * @return somethin related to a resource idk
      */
     public static ResourceLocation rl(String path) { return new ResourceLocation(MOD_ID, path); }
+
+    /**
+     * Its still <b>Creative Tab</b>. Idc what anyone says.
+     */
+    static class WRItemGroup extends ItemGroup
+    {
+        public WRItemGroup() { super("wyrmroost"); }
+
+        @Override
+        public ItemStack createIcon() { return new ItemStack(WRItems.BLUE_GEODE.get()); }
+
+        @Override
+        public void fill(NonNullList<ItemStack> items)
+        {
+            super.fill(items);
+            if (ConfigData.debugMode)
+                items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
+        }
+    }
 }

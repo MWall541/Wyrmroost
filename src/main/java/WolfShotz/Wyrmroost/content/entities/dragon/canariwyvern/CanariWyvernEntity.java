@@ -1,13 +1,15 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.CanariMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -28,7 +30,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMount.IShoulderMount
 {
     public static final Animation FLAP_WINGS_ANIMATION = new Animation(22);
-    public static final Animation CLEAN_FEATHERS_ANIMATION = new Animation(36);
+    public static final Animation PREEN_ANIMATION = new Animation(36);
     public static final Animation THREAT_ANIMATION = new Animation(40);
 
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
@@ -36,12 +38,17 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         super(dragon, world);
 
         setImmune(CausticWaterFluid.CAUSTIC_WATER);
+        shouldFlyThreshold = 2;
+
+        moveController = new CanariMoveController(this);
     }
 
     @Override
     protected void registerGoals()
     {
         super.registerGoals();
+        goalSelector.addGoal(3, new FlyerWanderGoal(this, 19));
+        goalSelector.addGoal(4, new DragonFollowOwnerGoal(this, 1, 10, 1.5d));
     }
 
     @Override
@@ -52,6 +59,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         getAttribute(MAX_HEALTH).setBaseValue(16d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.2d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(5.5d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.4);
     }
 
     // ================================
@@ -94,13 +102,13 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
 
         if (!isSleeping() && !isFlying() && getRidingEntity() == null && noActiveAnimation())
         {
-            if (getRNG().nextInt(650) == 0) NetworkUtils.sendAnimationPacket(this, FLAP_WINGS_ANIMATION);
-            else if (getRNG().nextInt(350) == 0) setAnimation(CLEAN_FEATHERS_ANIMATION);
+            if (getRNG().nextInt(650) == 0) setAnimation(FLAP_WINGS_ANIMATION);
+            else if (getRNG().nextInt(350) == 0) setAnimation(PREEN_ANIMATION);
         }
 
         if (getAnimation() == FLAP_WINGS_ANIMATION)
         {
-            if (animationTick == 5 || animationTick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.8f, 1.5f);
+            if (animationTick == 5 || animationTick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.7f, 2, true);
             if (animationTick == 9 && getRNG().nextInt(25) == 0)
                 entityDropItem(new ItemStack(WRItems.CANARI_FEATHER.get()), 0.5f);
         }
@@ -130,14 +138,24 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         }
         return false;
     }
-    
+
+    @Override
+    public void travel(Vec3d vec3d)
+    {
+        if (!isFlying()) // Flying is controlled entirely in the move helper
+        {
+            super.travel(vec3d);
+            return;
+        }
+    }
+
     @Override
     public void updateRidden()
     {
         super.updateRidden();
-        
+
         Entity entity = getRidingEntity();
-        
+
         if (!entity.isAlive())
         {
             stopRiding();
@@ -178,10 +196,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         return new DragonEggProperties(0.35f, 0.5f, 6000);
 //                       .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == WRBlocks.CANARI_LEAVES.get());
     }
-    
+
     @Override
-    public WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation[] getAnimations()
+    public Animation[] getAnimations()
     {
-        return new Animation[]{NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, FLAP_WINGS_ANIMATION, CLEAN_FEATHERS_ANIMATION, THREAT_ANIMATION};
+        return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION};
     }
 }
