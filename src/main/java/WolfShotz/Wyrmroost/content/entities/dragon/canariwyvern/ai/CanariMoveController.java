@@ -9,11 +9,13 @@ import net.minecraft.util.math.Vec3d;
 public class CanariMoveController extends MovementController
 {
     private final CanariWyvernEntity dragon;
+    private final boolean preferFlight;
 
-    public CanariMoveController(CanariWyvernEntity canari)
+    public CanariMoveController(CanariWyvernEntity canari, boolean preferFlight)
     {
         super(canari);
         this.dragon = canari;
+        this.preferFlight = preferFlight;
     }
 
     @Override
@@ -34,10 +36,13 @@ public class CanariMoveController extends MovementController
 
         // get euclidean distance to target
         double dist = dragonPos.distanceTo(movePos);
+        // minimum amount to be able to move
+        double minDist = dragon.getWidth() / 2;
 
         // move towards target if it's far enough away
-        if (dist > 0.5)
+        if (dist > minDist)
         {
+            if (preferFlight && dist > minDist + 2) dragon.setFlying(true);
             double flySpeed = 0.1f;
 
             // update velocity to approach target

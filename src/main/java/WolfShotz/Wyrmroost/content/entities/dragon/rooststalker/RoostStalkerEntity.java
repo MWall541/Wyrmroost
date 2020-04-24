@@ -16,7 +16,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.controller.BodyController;
-import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.ChickenEntity;
@@ -61,9 +60,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     {
         super(stalker, world);
 
-        moveController = new MovementController(this);
         stepHeight = 0;
-
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
         

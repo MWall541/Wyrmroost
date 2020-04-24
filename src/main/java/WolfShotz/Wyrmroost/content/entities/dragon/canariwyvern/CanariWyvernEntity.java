@@ -43,7 +43,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         setImmune(CausticWaterFluid.CAUSTIC_WATER);
         shouldFlyThreshold = 2;
 
-        moveController = new CanariMoveController(this);
+        moveController = new CanariMoveController(this, true);
         lookController = new LookController(this);
     }
 
@@ -52,7 +52,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     {
         super.registerGoals();
         goalSelector.addGoal(3, new FlyerFollowOwnerGoal(this, 7, 1, 4, true));
-        goalSelector.addGoal(4, new FlyerWanderGoal(this, true, true));
+        goalSelector.addGoal(4, new FlyerWanderGoal(this, true));
         goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 5));
         goalSelector.addGoal(6, CommonEntityGoals.lookRandomly(this));
     }

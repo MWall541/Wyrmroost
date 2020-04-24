@@ -1,0 +1,13 @@
+"Binary-Breaking" 1.15 Changes and plans
+- Change the data system to make more sense. data keys should start with capital letters. Ex: "HomePos",
+    and remove data fixers - This whole thing WILL remove all current wyrmroost entities in world.
+    tbh, not my problem. this is a caution all users take when updating.
+- Add a "data helper" system to make reading, writing, and OPTIONAL dataManager registering
+- Completely re-work the staff complete with an GUI and properly rendering outlining the bounded dragon
+    currently not "exactly" possible with <1.15 limiting rendering
+- Make many, MANY more things universal
+- contemplate a client package
+- massive clean up (util package looks like a dead whale's guts exploded)
+- make data generators easier to use and actually not make peoples eyes desintegrate from cancer
+- piss everyone off
+- delete this file

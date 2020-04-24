@@ -13,12 +13,11 @@ import java.util.Random;
 public class FlyerWanderGoal extends Goal
 {
     private final AbstractDragonEntity dragon;
-    private final boolean preferFlight, sleepTempted;
+    private final boolean sleepTempted;
 
-    public FlyerWanderGoal(AbstractDragonEntity dragon, boolean preferFlight, boolean sleepTempted)
+    public FlyerWanderGoal(AbstractDragonEntity dragon, boolean sleepTempted)
     {
         this.dragon = dragon;
-        this.preferFlight = preferFlight;
         this.sleepTempted = sleepTempted;
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
     }
@@ -46,7 +45,6 @@ public class FlyerWanderGoal extends Goal
     @Override
     public void startExecuting()
     {
-        if (preferFlight) dragon.setFlying(true);
         Vec3d vec3d = getPosition();
         if (vec3d == null) return;
         dragon.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1);

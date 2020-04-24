@@ -15,7 +15,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.OwnerHurtByTargetGoal;
 import net.minecraft.entity.ai.goal.OwnerHurtTargetGoal;
@@ -74,8 +73,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world)
     {
         super(drake, world);
-
-        moveController = new MovementController(this);
 
         SLEEP_ANIMATION = new Animation(20);
         WAKE_ANIMATION = new Animation(15);

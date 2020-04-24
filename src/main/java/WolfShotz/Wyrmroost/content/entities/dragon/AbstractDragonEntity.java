@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.CanariMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
@@ -9,7 +10,6 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.FlightMovementController;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -92,7 +92,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         setTamed(false);
 
-        moveController = new FlightMovementController(this);
         lookController = new DragonLookController(this);
         invHandler = createInv();
         eggProperties = createEggProperties();
@@ -113,15 +112,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * If this dragon flies, obtain the flight movement controller
      * Note: This should only be called if we're sure this dragon can fly. So run a check first! ({@code canFly()})
      */
-    public FlightMovementController getFlightMoveController()
+    public CanariMoveController getFlightMoveController()
     {
         try
         {
-            return (FlightMovementController) moveController;
+            return (CanariMoveController) moveController;
         }
         catch (ClassCastException e)
         {
-            throw new ClassCastException("moveController is not a Flight Movement Controller!");
+            throw new ClassCastException(String.format("{} is not an instance of FlightMoveController!", moveController.getClass().toString()));
         }
     }
 

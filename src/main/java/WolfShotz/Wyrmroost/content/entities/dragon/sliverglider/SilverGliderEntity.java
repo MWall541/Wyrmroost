@@ -41,7 +41,6 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     public static final Animation SIT_ANIMATION = new Animation(10);
     public static final Animation STAND_ANIMATION = new Animation(10);
     public static final Animation TAKE_OFF_ANIMATION = new Animation(10);
-    public static final Animation FLAP_ANIMATION = new Animation(10);
 
     public int shotDownTimer;
 
@@ -73,7 +72,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
         goalSelector.addGoal(11, CommonEntityGoals.lookRandomly(this));
 
-        goalSelector.addGoal(8, new FlyerWanderGoal(this, true, true)
+        goalSelector.addGoal(8, new FlyerWanderGoal(this, true)
         {
             @Override
             public Vec3d getPosition()
@@ -81,7 +80,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
                 Vec3d vec3d = super.getPosition();
                 if (isFlying())
                 {
-                    for (int i = 1; i < 4; i++)
+                    for (int i = 1; i < 4; i++) // avoid water: y value is always positive
                         if (world.getBlockState(SilverGliderEntity.this.getPosition().down(i)).getMaterial().isLiquid())
                             return new Vec3d(vec3d.x, Math.abs(vec3d.y), vec3d.z);
                 }
@@ -146,15 +145,6 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     public int getSpecialChances() { return 500; }
     
     // ================================
-    
-    
-    @Override
-    public void livingTick()
-    {
-        super.livingTick();
-        
-        if (getAnimation() == FLAP_ANIMATION && getAnimationTick() == 0) setMotion(getMotion().add(0, 0.5d, 0));
-    }
     
     @Override
     public void tick()
@@ -381,7 +371,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[]{NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TAKE_OFF_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, FLAP_ANIMATION};
+        return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TAKE_OFF_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION};
     }
     // ==
 }

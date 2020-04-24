@@ -10,19 +10,9 @@ import javax.annotation.Nullable;
 
 public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 {
-    public static final ResourceLocation MALE_COM = resource("male_com.png");
-    public static final ResourceLocation FEMALE_COM = resource("female_com.png");
-    public static final ResourceLocation MALE_SAV = resource("male_sav.png");
-    public static final ResourceLocation FEMALE_SAV = resource("female_sav.png");
-    public static final ResourceLocation MALE_SPE = resource("male_spe.png");
-    public static final ResourceLocation FEMALE_SPE = resource("female_spe.png");
-    public static final ResourceLocation CHILD_COM = resource("child_com.png");
-    public static final ResourceLocation CHILD_SAV = resource("child_sav.png");
-    public static final ResourceLocation CHILD_SPE = resource("child_spe.png");
     // Easter Egg
     public static final ResourceLocation DAISY = resource("dasy.png");
     public static final ResourceLocation JEB_ = resource("jeb.png");
-    // Saddle
     // Saddle
     public static final ResourceLocation SADDLE_LAYER = resource("accessories/saddle.png");
     // Armor
@@ -41,30 +31,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
         addLayer(new ConditionalLayer(SADDLE_LAYER, OWDrakeEntity::isSaddled));
     }
     
-    @Nullable
-    @Override
-    protected ResourceLocation getEntityTexture(OWDrakeEntity drake)
-    {
-        if (drake.hasCustomName())
-        {
-            String name = drake.getCustomName().getUnformattedComponentText();
-            if (name.equals("Daisy")) return DAISY;
-            if (name.equalsIgnoreCase("Jeb_")) return JEB_;
-        }
-        boolean isSavannah = drake.getDrakeVariant();
-        boolean isSpecial = drake.isSpecial();
-        boolean gender = drake.getGender();
-        
-        if (drake.isChild())
-        {
-            if (isSpecial) return CHILD_SPE;
-            if (isSavannah) return CHILD_SAV;
-            return CHILD_COM;
-        }
-        if (isSpecial) return gender? MALE_SPE : FEMALE_SPE;
-        if (isSavannah) return gender? MALE_SAV : FEMALE_SAV;
-        return gender? MALE_COM : FEMALE_COM;
-    }
+    public static ResourceLocation resource(String png) { return Wyrmroost.rl(DEF_LOC + "owdrake/" + png); }
     
     private ResourceLocation getArmorTexture(DragonArmorItem.DragonArmorType type)
     {
@@ -87,9 +54,21 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
                 return ARMOR_GEODE_PURPLE;
         }
     }
-    
-    public static ResourceLocation resource(String png)
+
+    @Nullable
+    @Override
+    protected ResourceLocation getEntityTexture(OWDrakeEntity drake)
     {
-        return Wyrmroost.rl(DEF_LOC + "owdrake/" + png);
+        if (drake.hasCustomName())
+        {
+            String name = drake.getCustomName().getUnformattedComponentText();
+            if (name.equals("Daisy")) return DAISY;
+            if (name.equalsIgnoreCase("Jeb_")) return JEB_;
+        }
+
+        String path = drake.isChild()? "child" : drake.getGender()? "male" : "female";
+        if (drake.isSpecial()) return resource(path + "_spe.png");
+        if (drake.getDrakeVariant()) return resource(path + "_sav.png");
+        return resource(path + "_com.png");
     }
 }
