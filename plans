@@ -9,5 +9,6 @@
 - contemplate a client package
 - massive clean up (util package looks like a dead whale's guts exploded)
 - make data generators easier to use and actually not make peoples eyes desintegrate from cancer
+- "Special" dragons will hook off of "Variant" and instead use -1 as the value. No sense in having a boolean for another texture change...
 - piss everyone off
 - delete this file
