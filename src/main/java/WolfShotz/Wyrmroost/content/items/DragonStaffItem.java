@@ -94,7 +94,9 @@ public class DragonStaffItem extends Item
                 boolean flag = false;
                 if (dragonTarget.isFlying() && !world.isRemote)
                 {
-                    dragonTarget.getFlightMoveController().resetCourse().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+                    if (dragonTarget.getFlightMoveController().isUpdating()) dragonTarget.tryTeleportToOwner();
+                    else
+                        dragonTarget.getFlightMoveController().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
                     flag = true;
                 }
                 else if (dragonTarget.isSitting())

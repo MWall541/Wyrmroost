@@ -56,10 +56,10 @@ public class DragonKeyBindMessage implements IMessage
                 dragon.performGenericAttack();
                 break;
             case 1:
-                dragon.performSpecialAttack(true);
+                dragon.performAltAttack(true);
                 break;
             case 2:
-                dragon.performSpecialAttack(false);
+                dragon.performAltAttack(false);
                 break;
             default:
                 ModUtils.L.error("Unknown KeyPress packet key... wat?");

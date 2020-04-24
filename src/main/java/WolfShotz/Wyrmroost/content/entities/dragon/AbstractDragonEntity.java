@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.CanariMoveController;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
@@ -79,11 +79,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static Animation SLEEP_ANIMATION;
     public static Animation WAKE_ANIMATION;
 
-    public final LazyOptional<ItemStackHandler> invHandler;
-    public int sleepCooldown;
-    public List<String> immunes = Lists.newArrayList();
     // delegates
     public int shouldFlyThreshold = 3;
+    public int sleepCooldown;
+    public final LazyOptional<ItemStackHandler> invHandler;
+    public List<String> immunes = Lists.newArrayList();
     public DragonEggProperties eggProperties;
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
@@ -112,11 +112,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * If this dragon flies, obtain the flight movement controller
      * Note: This should only be called if we're sure this dragon can fly. So run a check first! ({@code canFly()})
      */
-    public CanariMoveController getFlightMoveController()
+    public FlyerMoveController getFlightMoveController()
     {
         try
         {
-            return (CanariMoveController) moveController;
+            return (FlyerMoveController) moveController;
         }
         catch (ClassCastException e)
         {
@@ -890,7 +890,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      *
      * @param shouldContinue True = continue attacking | False = interrupt / stop attack
      */
-    public void performSpecialAttack(boolean shouldContinue)
+    public void performAltAttack(boolean shouldContinue)
     {
     }
 

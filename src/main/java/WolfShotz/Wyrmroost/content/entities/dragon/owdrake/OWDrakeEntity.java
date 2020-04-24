@@ -299,8 +299,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
             AxisAlignedBB size = getBoundingBox();
             AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(0.5d);
             attackInAABB(aabb);
-//            ModUtils.getAllPosesInBB(aabb.shrink(0.5d), world).forEach(p ->
-//                    world.getBlockState(p).removedByPlayer(world, p, null, false, null));
         }
         
         super.livingTick();

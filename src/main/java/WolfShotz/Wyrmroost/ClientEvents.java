@@ -126,7 +126,7 @@ public class ClientEvents
 
             if (dragon.noActiveAnimation())
             {
-                dragon.performSpecialAttack(true);
+                dragon.performAltAttack(true);
                 Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_SPECIAL_ATTACK));
             }
         }

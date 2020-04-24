@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.CanariMoveController;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.util.QuikMaths;
@@ -43,7 +43,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         setImmune(CausticWaterFluid.CAUSTIC_WATER);
         shouldFlyThreshold = 2;
 
-        moveController = new CanariMoveController(this, true);
+        moveController = new FlyerMoveController(this, true);
         lookController = new LookController(this);
     }
 
@@ -174,8 +174,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         if (!(entity instanceof PlayerEntity)) return;
         
         PlayerEntity player = (PlayerEntity) entity;
-        
-        if (player.isSneaking() && !player.abilities.isFlying)
+
+        if ((player.isSneaking() && !player.abilities.isFlying) || player.getSubmergedHeight() > 1.25 || player.isElytraFlying())
         {
             stopRiding();
             return;

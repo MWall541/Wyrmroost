@@ -57,7 +57,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
 
         if (shouldRenderConduit(entity))
         {
-            Vec3d vec3d = entity.getConduitLocation(new Vec3d(x, y, z));
+            Vec3d vec3d = entity.getConduitPos(new Vec3d(x, y, z));
             ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
         }
     }

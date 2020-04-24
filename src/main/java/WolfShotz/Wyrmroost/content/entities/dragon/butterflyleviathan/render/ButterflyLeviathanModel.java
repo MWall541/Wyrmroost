@@ -355,7 +355,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             chainSwing(tailArray, globalSpeed - 0.1f, globalDegree - 0.4f, -2, limbSwing, limbSwingAmount);
             chainSwing(headArray, globalSpeed - 0.1f, globalDegree - 0.4f, 3f, limbSwing, limbSwingAmount);
             walk(legThighL1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
-            walk(legThighR1, globalSpeed - 0.4f, 0.3f, false, 0, 0, limbSwing, limbSwingAmount);
+            walk(legThighR1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
 
             float wingSpeed = globalSpeed - 0.37f;
             flap(topWingFinPhalangeL1, wingSpeed, globalDegree + 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
@@ -376,7 +376,8 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         }
 
         if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION) || animator.setAnimation(ButterflyLeviathanEntity.ROAR_ANIMATION))
-            activateConduitAnim();
+            roarAnim();
+        if (animator.setAnimation(ButterflyLeviathanEntity.BITE_ANIMATION)) biteAnim();
 
         idleAnim(frame);
     }
@@ -468,7 +469,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
 
     }
 
-    public void activateConduitAnim()
+    public void roarAnim() // 46
     {
         animator.startKeyframe(8);
         for (AdvancedRendererModel box : headArray)
@@ -485,5 +486,18 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         animator.endKeyframe();
         animator.setStaticKeyframe(30);
         animator.resetKeyframe(8);
+    }
+
+    public void biteAnim() // 20
+    {
+        animator.startKeyframe(6);
+        animator.rotate(neck1, -0.4f, 0, 0);
+        animator.rotate(head, 0.4f, 0, 0);
+        animator.rotate(mouthBottom, 1, 0, 0);
+        animator.endKeyframe();
+        animator.startKeyframe(4);
+        animator.rotate(neck1, 0.4f, 0, 0);
+        animator.endKeyframe();
+        animator.resetKeyframe(5);
     }
 }

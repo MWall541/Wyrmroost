@@ -1,5 +1,6 @@
 "Binary-Breaking" 1.15 Changes and plans
 - Change the data system to make more sense. data keys should start with capital letters. Ex: "HomePos",
+    HomePos should be using blockpos.fromLong and toLong. Yeah im retarded.
     and remove data fixers - This whole thing WILL remove all current wyrmroost entities in world.
     tbh, not my problem. this is a caution all users take when updating.
 - Add a "data helper" system to make reading, writing, and OPTIONAL dataManager registering

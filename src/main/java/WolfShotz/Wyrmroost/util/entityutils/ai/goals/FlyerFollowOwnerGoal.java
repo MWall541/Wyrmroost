@@ -82,7 +82,6 @@ public class FlyerFollowOwnerGoal extends Goal
     @Override
     public void tick()
     {
-        dragon.getLookController().setLookPositionWithEntity(owner, 10f, dragon.getVerticalFaceSpeed());
         if (dragon.isSitting()) return;
         if (--timeToRecalcPath > 0) return;
         this.timeToRecalcPath = 10;
@@ -101,10 +100,15 @@ public class FlyerFollowOwnerGoal extends Goal
 //            {
 //
 //            }
-            else dragon.getMoveHelper().setMoveTo(owner.posX, owner.posY + maxHeight, owner.posZ, 1);
+            else if (!dragon.getMoveHelper().isUpdating())
+            {
+                dragon.getLookController().setLookPosition(owner.posX, owner.posY + maxHeight, owner.posZ, 10f, dragon.getVerticalFaceSpeed());
+                dragon.getMoveHelper().setMoveTo(owner.posX, owner.posY + maxHeight, owner.posZ, 1);
+            }
         }
         else
         {
+            dragon.getLookController().setLookPositionWithEntity(owner, 10f, dragon.getVerticalFaceSpeed());
             if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
                 dragon.tryTeleportToOwner();
             else dragon.getNavigator().tryMoveToEntityLiving(owner, 1);

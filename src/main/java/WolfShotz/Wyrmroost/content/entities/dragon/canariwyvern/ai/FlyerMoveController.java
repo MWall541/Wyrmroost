@@ -1,20 +1,20 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.CanariWyvernEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.Vec3d;
 
-public class CanariMoveController extends MovementController
+public class FlyerMoveController extends MovementController
 {
-    private final CanariWyvernEntity dragon;
+    private final AbstractDragonEntity dragon;
     private final boolean preferFlight;
 
-    public CanariMoveController(CanariWyvernEntity canari, boolean preferFlight)
+    public FlyerMoveController(AbstractDragonEntity dragon, boolean preferFlight)
     {
-        super(canari);
-        this.dragon = canari;
+        super(dragon);
+        this.dragon = dragon;
         this.preferFlight = preferFlight;
     }
 
@@ -60,6 +60,7 @@ public class CanariMoveController extends MovementController
 
         // apply movement
         dragon.move(MoverType.SELF, dragon.getMotion());
+        action = Action.WAIT;
     }
 }
 

@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.QuikMaths;
@@ -11,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -37,16 +39,17 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
 {
-    // Dragon Animation
+    // Animation
     public static final Animation SIT_ANIMATION = new Animation(10);
     public static final Animation STAND_ANIMATION = new Animation(10);
-    public static final Animation TAKE_OFF_ANIMATION = new Animation(10);
 
     public int shotDownTimer;
 
     public SilverGliderEntity(EntityType<? extends SilverGliderEntity> entity, World world)
     {
         super(entity, world);
+
+        moveController = new FlyerMoveController(this, true);
 
         SLEEP_ANIMATION = new Animation(20);
         WAKE_ANIMATION = new Animation(15);
@@ -68,7 +71,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(4, CommonEntityGoals.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
         goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
-        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d, 15d));
+        goalSelector.addGoal(7, new FlyerFollowOwnerGoal(this, 12d, 3d, 15d, true));
         goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
         goalSelector.addGoal(11, CommonEntityGoals.lookRandomly(this));
 
@@ -124,8 +127,6 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     {
         if (isFlying() == fly) return;
         super.setFlying(fly);
-        
-        setAnimation(TAKE_OFF_ANIMATION);
     }
     
     /**
@@ -143,28 +144,38 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
 
     @Override
     public int getSpecialChances() { return 500; }
-    
+
     // ================================
-    
+
     @Override
     public void tick()
     {
         super.tick();
-        
+
         shouldFlyThreshold = 3 + (isRiding()? 2 : 0);
         if (shotDownTimer > 0) --shotDownTimer;
     }
-    
+
+    @Override
+    public void travel(Vec3d vec3d)
+    {
+        if (!isFlying())
+        {
+            super.travel(vec3d);
+            return;
+        }
+    }
+
     @Override
     public void updateRidden()
     {
         super.updateRidden();
-        
+
         Entity entity = getRidingEntity();
-        
+
         if (entity != null)
         {
-            if (!entity.isAlive() || entity.isInWater())
+            if (!entity.isAlive() || isInWater())
             {
                 stopRiding();
                 return;
@@ -184,16 +195,61 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
                 
                 if (shouldGlide(player) && !player.isElytraFlying())
                 {
-                    Vec3d lookVec = player.getLookVec();
-                    Vec3d playerMot = player.getMotion();
-                    double xMot = playerMot.x + (lookVec.x / 12);
-                    double zMot = playerMot.z + (lookVec.z / 12);
-                    double yMot = lookVec.y * 1.5;
-                    
-                    if (yMot >= 0) yMot = -0.1f;
-                    
-                    player.setMotion(xMot, yMot, zMot);
-                    if (!isFlying()) setFlying(true);
+                    Vec3d vec3d3 = player.getMotion();
+                    player.setMotion(vec3d3.add(0, 0.09, 0));
+                    if (vec3d3.y > -0.5d) player.fallDistance = 1f;
+
+                    Vec3d vec3d = player.getLookVec();
+                    float f6 = player.rotationPitch * (QuikMaths.PI / 180F);
+                    double d9 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
+                    double d11 = Math.sqrt(horizontalMag(vec3d3));
+                    double d12 = vec3d.length();
+                    float f3 = MathHelper.cos(f6);
+                    f3 = (float) ((double) f3 * (double) f3 * Math.min(1d, d12 / 0.4d));
+                    vec3d3 = player.getMotion().add(0, 0.08 * (-1 + (double) f3 * 0.75d), 0);
+                    if (vec3d3.y < 0.0D && d9 > 0)
+                    {
+                        double d3 = vec3d3.y * -0.1D * (double) f3;
+                        vec3d3 = vec3d3.add(vec3d.x * d3 / d9, d3, vec3d.z * d3 / d9);
+                    }
+
+                    if (f6 < 0.0F && d9 > 0.0D)
+                    {
+                        double d13 = d11 * (double) (-MathHelper.sin(f6)) * 0.04D;
+                        vec3d3 = vec3d3.add(-vec3d.x * d13 / d9, d13 * 3.2D, -vec3d.z * d13 / d9);
+                    }
+
+                    if (d9 > 0.0D)
+                    {
+                        vec3d3 = vec3d3.add((vec3d.x / d9 * d11 - vec3d3.x) * 0.1D, 0.0D, (vec3d.z / d9 * d11 - vec3d3.z) * 0.1D);
+                    }
+
+                    player.setMotion(vec3d3.mul(0.99F, 0.98F, 0.99F));
+                    player.move(MoverType.SELF, player.getMotion());
+                    if (player.collidedHorizontally && !world.isRemote)
+                    {
+                        double d14 = Math.sqrt(horizontalMag(player.getMotion()));
+                        double d4 = d11 - d14;
+                        float f4 = (float) (d4 * 10.0D - 3.0D);
+                        if (f4 > 0.0F)
+                        {
+                            playSound(getFallSound((int) f4), 1.0F, 1.0F);
+                            player.attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
+                            attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
+                        }
+                    }
+
+
+//                    Vec3d lookVec = player.getLookVec();
+//                    Vec3d playerMot = player.getMotion();
+//                    double xMot = playerMot.x + (lookVec.x / 12);
+//                    double zMot = playerMot.z + (lookVec.z / 12);
+//                    double yMot = lookVec.y * 1.5;
+//
+//                    if (yMot >= 0) yMot = -0.1f;
+//
+//                    player.setMotion(xMot, yMot, zMot);
+//                    setFlying(true);
                 }
                 
                 prevRotationPitch = rotationPitch = player.rotationPitch / 2;
@@ -367,11 +423,9 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         return new DragonEggProperties(0.4f, 0.65f, 12000);
     }
     
-    // == Entity Animation ==
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, TAKE_OFF_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION};
+        return new Animation[] {NO_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION};
     }
-    // ==
 }
