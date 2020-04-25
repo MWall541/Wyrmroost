@@ -5,6 +5,8 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.BFlyAtt
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
+import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.content.fluids.BrineFluid;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ConfigData;
@@ -12,8 +14,6 @@ import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
-import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Lists;
@@ -101,12 +101,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         goalSelector.addGoal(4, new BFlyAttackGoal(this));
         goalSelector.addGoal(4, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
         goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 10f));
-        goalSelector.addGoal(6, CommonEntityGoals.lookRandomly(this));
+        goalSelector.addGoal(6, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        targetSelector.addGoal(4, new NonTamedTargetGoal(this, LivingEntity.class, true, true, false));
+        targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, LivingEntity.class, true, true, false));
     }
     
     @Override
@@ -323,7 +323,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public void performAltAttack(boolean shouldContinue)
     {
-        if (world.isRaining()) return;
+        if (world.isRemote) return;
         if (!canLightningStrike()) return;
         PlayerEntity rider = getControllingPlayer();
         if (rider == null) return;
@@ -355,6 +355,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         super.swingArm(hand);
         setAnimation(BITE_ANIMATION);
     }
+
+    @Override
+    public void handleSleep() {}
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
@@ -399,7 +402,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public Vec3d getConduitPos(Vec3d offset)
     {
-        return QuikMaths.calculateYawAngle(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
+        return QuikMaths.calculateYawAngle(renderYawOffset, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
     }
 
     public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER, true); }

@@ -46,7 +46,7 @@ public class ConfigData
                     .defineInRange("homeRadius", 16, 6, 1024);
             builder.comment("Wyrmroost Dragon Options").push("dragons");
             dfdBabyChance = builder
-                    .comment("Chances for a Dragon Fruit Drake to spawn as a baby. 0 = No Chance, 1 = Guaranteed. Higher values are better chances")
+                    .comment("Chances for a Dragon Fruit Drake to spawn as a baby. 0 = No Chance, 1 = (practically) Guaranteed. Higher values are better chances")
                     .translation("config.wyrmroost.dfdbabychance")
                     .defineInRange("dfdBabyChance", 0.3d, 0, 1d);
 

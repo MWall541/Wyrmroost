@@ -1,11 +1,12 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
+import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerWanderGoal;
@@ -15,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.LookController;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -54,7 +56,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(3, new FlyerFollowOwnerGoal(this, 7, 1, 4, true));
         goalSelector.addGoal(4, new FlyerWanderGoal(this, true));
         goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 5));
-        goalSelector.addGoal(6, CommonEntityGoals.lookRandomly(this));
+        goalSelector.addGoal(6, new LookRandomlyGoal(this));
     }
 
     @Override
@@ -194,7 +196,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     }
 
     @Override
-    public boolean canBeCollidedWith() { return super.canBeCollidedWith() || getRidingEntity() != null; }
+    public boolean canBeCollidedWith() { return super.canBeCollidedWith() && !isRiding(); }
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }
@@ -208,7 +210,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public DragonEggProperties createEggProperties()
     {
-        return new DragonEggProperties(0.35f, 0.5f, 6000);
+        return new DragonEggProperties(0.25f, 0.35f, 6000)
+                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/canari/egg.png"));
 //                       .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == WRBlocks.CANARI_LEAVES.get());
     }
 

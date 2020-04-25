@@ -39,19 +39,13 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
      */
     public abstract class AbstractLayerRenderer extends LayerRenderer<T, EntityModel<T>>
     {
-        public AbstractLayerRenderer()
-        {
-            super(AbstractDragonRenderer.this);
-        }
+        public AbstractLayerRenderer() { super(AbstractDragonRenderer.this); }
         
         @Override // Override to deobfuscate params
         public abstract void render(T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale);
-        
+
         @Override
-        public boolean shouldCombineTextures()
-        {
-            return false;
-        }
+        public boolean shouldCombineTextures() { return false; }
     }
     
     /**

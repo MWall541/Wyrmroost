@@ -1,11 +1,11 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.items.DrakeArmorItem;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.entityutils.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
@@ -116,11 +116,6 @@ public class CommonEvents
             IMultiPartEntity entity = (IMultiPartEntity) target;
             entity.iterateParts().forEach(target.world::addEntity);
         }
-//        if (target instanceof DragonFruitDrakeEntity)
-//        {
-//            DragonFruitDrakeEntity drake = (DragonFruitDrakeEntity) target;
-//            drake.age = drake.getDataManager().get(DragonFruitDrakeEntity.AGE);
-//        }
     }
 
     @SubscribeEvent

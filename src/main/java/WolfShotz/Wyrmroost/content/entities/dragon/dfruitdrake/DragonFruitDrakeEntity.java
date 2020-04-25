@@ -11,21 +11,14 @@ import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.SitGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -55,7 +48,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public static final Animation SIT_ANIMATION = new Animation(15);
 
     private int shearCooldownTime;
-    public int age = 0;
+    private int napTime;
 
     public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world)
     {
@@ -97,10 +90,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
         goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f));
-        goalSelector.addGoal(8, CommonEntityGoals.followParentGoal(this, 1));
-        goalSelector.addGoal(9, CommonEntityGoals.wanderAvoidWater(this, 1));
+        goalSelector.addGoal(8, CommonEntityGoals.followParent(this, 1));
+        goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 7f));
-        goalSelector.addGoal(11, CommonEntityGoals.lookRandomly(this));
+        goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, new NonTamedTargetGoal(this, PlayerEntity.class, true, true, false));
@@ -175,22 +168,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public boolean isNotColliding(IWorldReader worldIn)
-    {
-        if (worldIn.checkNoEntityCollision(this) && !worldIn.containsAnyLiquid(getBoundingBox()))
-        {
-            BlockPos blockpos = new BlockPos(posX, getBoundingBox().minY, posZ);
-            if (blockpos.getY() < worldIn.getSeaLevel()) return false;
-
-            BlockState blockstate = worldIn.getBlockState(blockpos.down());
-            Block block = blockstate.getBlock();
-            return block == Blocks.GRASS_BLOCK || blockstate.isIn(BlockTags.LEAVES);
-        }
-
-        return false;
-    }
-
-    @Override
     public void tick()
     {
         super.tick();
@@ -198,7 +175,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         setSprinting(getAttackTarget() != null);
 
         if (shearCooldownTime > 0) --shearCooldownTime;
-        if (age < 0) ++age;
     }
 
     @Override
@@ -234,6 +210,23 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         }
     }
 
+//    @Override
+//    public boolean isNotColliding(IWorldReader worldIn)
+//    {
+//        if (worldIn.checkNoEntityCollision(this) && !worldIn.containsAnyLiquid(getBoundingBox()))
+//        {
+//            BlockPos blockpos = new BlockPos(posX, getBoundingBox().minY, posZ);
+//            return blockpos.getY() < worldIn.getSeaLevel();
+//            if (blockpos.getY() < worldIn.getSeaLevel()) return false;
+//
+//            BlockState blockstate = worldIn.getBlockState(blockpos.down());
+//            Block block = blockstate.getBlock();
+//            return block == Blocks.GRASS_BLOCK || blockstate.isIn(BlockTags.LEAVES);
+//        }
+//
+//        return false;
+//    }
+
     @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn) { return true; }
 
@@ -241,7 +234,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
-        if (reason == SpawnReason.NATURAL && getRNG().nextDouble() <= ConfigData.dfdBabyChance)
+        if ((reason == SpawnReason.NATURAL || reason == SpawnReason.CHUNK_GENERATION || ConfigData.debugMode) && getRNG().nextDouble() <= ConfigData.dfdBabyChance)
             setGrowingAge(getEggProperties().getGrowthTime());
 
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
@@ -274,7 +267,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override // These bois are lazy, can sleep during the day
     public void handleSleep()
     {
-        if (isSleeping() && world.isDaytime() && getRNG().nextInt(375) == 0)
+        if (isSleeping() && --napTime <= 0 && world.isDaytime() && getRNG().nextInt(375) == 0)
         {
             setSleeping(false);
             return;
@@ -285,7 +278,11 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 //        if (!(getHomePos().isPresent() && isWithinHomeDistanceFromPosition())) return;
         if (!isIdling()) return;
         int sleepChance = world.isDaytime()? 450 : 300; // neps
-        if (getRNG().nextInt(sleepChance) == 0) setSleeping(true);
+        if (getRNG().nextInt(sleepChance) == 0)
+        {
+            setSleeping(true);
+            this.napTime = 150 * getRNG().nextInt(9);
+        }
     }
 
     @Override

@@ -2,7 +2,10 @@ package WolfShotz.Wyrmroost.util.entityutils.ai.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.ai.goal.FollowParentGoal;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.crafting.Ingredient;
 
@@ -18,24 +21,6 @@ import java.util.EnumSet;
 public class CommonEntityGoals
 {
     /**
-     * Walk randomly but do not execute if sleeping
-     *
-     * @param entity Goal Owner
-     * @param speed  speed to walk at
-     */
-    public static WaterAvoidingRandomWalkingGoal wanderAvoidWater(AbstractDragonEntity entity, double speed)
-    {
-        return new WaterAvoidingRandomWalkingGoal(entity, speed)
-        {
-            @Override
-            public boolean shouldExecute()
-            {
-                return !entity.isSleeping() && super.shouldExecute();
-            }
-        };
-    }
-
-    /**
      * Look at random entities. Do this while NOT sleeping
      *
      * @param entity   goal Owner
@@ -49,9 +34,7 @@ public class CommonEntityGoals
             @Override
             public boolean shouldExecute()
             {
-                if (!super.shouldExecute()) return false;
-                if (entity.isSleeping()) return false;
-                return !entity.getPassengers().contains(closestEntity);
+                return super.shouldExecute() && !entity.getPassengers().contains(closestEntity);
             }
         };
     }
@@ -67,18 +50,6 @@ public class CommonEntityGoals
     public static LookAtGoal lookAt(AbstractDragonEntity entity, float distance)
     {
         return lookAt(entity, LivingEntity.class, distance);
-    }
-
-    public static LookRandomlyGoal lookRandomly(AbstractDragonEntity entity)
-    {
-        return new LookRandomlyGoal(entity)
-        {
-            @Override
-            public boolean shouldExecute()
-            {
-                return !entity.isSleeping() && super.shouldExecute();
-            }
-        };
     }
     
     /**
@@ -108,7 +79,7 @@ public class CommonEntityGoals
      * @param speed  The Speed
      * @return a better follow parent goal
      */
-    public static FollowParentGoal followParentGoal(AnimalEntity animal, double speed)
+    public static FollowParentGoal followParent(AnimalEntity animal, double speed)
     {
         FollowParentGoal goal = new FollowParentGoal(animal, speed);
         goal.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));

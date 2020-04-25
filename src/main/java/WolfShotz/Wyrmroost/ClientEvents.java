@@ -17,6 +17,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEnti
 import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggRenderer;
+import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
@@ -24,7 +25,6 @@ import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRKeyBinds;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;

@@ -28,10 +28,10 @@ public class WaterSitGoal extends SitGoal
         else if (!tameable.onGround) return false;
         else
         {
-            LivingEntity livingentity = tameable.getOwner();
-            if (livingentity == null) return true;
+            LivingEntity owner = tameable.getOwner();
+            if (owner == null) return true;
             else
-                return (!(tameable.getDistanceSq(livingentity) < 144.0D) || livingentity.getRevengeTarget() == null) && isSitting;
+                return (!(tameable.getDistanceSq(owner) < 144.0D) || owner.getRevengeTarget() == null) && isSitting;
         }
     }
 

@@ -21,30 +21,30 @@
     "firstperson_righthand": {
       "rotation": [
         180,
-        -35,
+        10,
         0
       ],
       "translation": [
-        2,
-        11,
-        -12
+        13,
+        10,
+        -10
       ],
       "scale": [
-        0,
-        0,
-        0
+        1,
+        1,
+        1
       ]
     },
     "firstperson_lefthand": {
       "rotation": [
         180,
-        35,
-        0
+        10,
+        4
       ],
       "translation": [
-        -2,
-        11,
-        -12
+        -7,
+        17,
+        -13
       ],
       "scale": [
         0,

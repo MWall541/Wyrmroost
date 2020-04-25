@@ -30,10 +30,7 @@ public class MoveToHomeGoal extends MoveTowardsRestrictionGoal
     }
 
     @Override
-    public void startExecuting()
-    {
-        dragon.getNavigator().tryMoveToXYZ(movePos.x, movePos.y, movePos.z, 1);
-    }
+    public void startExecuting() { dragon.getNavigator().tryMoveToXYZ(movePos.x, movePos.y, movePos.z, 1); }
 
     @Override
     public void tick()

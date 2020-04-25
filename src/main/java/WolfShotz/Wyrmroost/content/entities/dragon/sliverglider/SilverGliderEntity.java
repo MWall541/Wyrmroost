@@ -1,11 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.sliverglider;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
+import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import net.minecraft.block.Block;
@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -73,7 +74,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new FlyerFollowOwnerGoal(this, 12d, 3d, 15d, true));
         goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
-        goalSelector.addGoal(11, CommonEntityGoals.lookRandomly(this));
+        goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         goalSelector.addGoal(8, new FlyerWanderGoal(this, true)
         {
@@ -159,11 +160,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public void travel(Vec3d vec3d)
     {
-        if (!isFlying())
-        {
-            super.travel(vec3d);
-            return;
-        }
+        if (!isFlying()) super.travel(vec3d);
     }
 
     @Override
@@ -357,11 +354,6 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         return super.attackEntityFrom(source, amount);
     }
 
-    public boolean isRiding()
-    {
-        return getRidingEntity() != null;
-    }
-
     @Override
     protected float getSoundVolume()
     {
@@ -394,29 +386,28 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     public void setSit(boolean sitting)
     {
         if (sitting != isSitting()) setAnimation(sitting? SIT_ANIMATION : STAND_ANIMATION);
-        
+
         super.setSit(sitting);
     }
-    
+
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
         return super.isInvulnerableTo(source) || getRidingEntity() != null;
     }
-    
+
     @Override
-    public boolean canBeCollidedWith()
-    {
-        return !isRiding();
-    }
-    
-    /** Array Containing all of the dragons food items */
+    public boolean canBeCollidedWith() { return !isRiding(); }
+
+    /**
+     * Array Containing all of the dragons food items
+     */
     @Override
     public List<Item> getFoodItems()
     {
         return new ArrayList<>(ItemTags.FISHES.getAllElements());
     }
-    
+
     @Override
     public DragonEggProperties createEggProperties()
     {

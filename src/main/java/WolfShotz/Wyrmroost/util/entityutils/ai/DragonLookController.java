@@ -22,7 +22,7 @@ public class DragonLookController extends LookController
             return;
         }
 
-        if (!dragon.isSitting() && dragon.getRidingEntity() != null)
+        if (/*!dragon.isSitting() && */dragon.getRidingEntity() != null)
         { // Follow vanilla looking
             super.tick();
             return;

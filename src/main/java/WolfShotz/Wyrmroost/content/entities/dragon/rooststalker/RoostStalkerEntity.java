@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import com.google.common.collect.Lists;
@@ -73,13 +74,13 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         super.registerGoals();
         goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1d, true));
-        goalSelector.addGoal(6, new FollowOwnerGoal(this, 1.2f, 8, 2));
+        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2f, 8, 2));
         goalSelector.addGoal(9, new StoleItemFlee(this));
         goalSelector.addGoal(10, new DragonBreedGoal(this, false, false));
         goalSelector.addGoal(11, new ScavengeGoal(this, 1.1d, SCAVENGE_ANIMATION));
-        goalSelector.addGoal(12, CommonEntityGoals.wanderAvoidWater(this, 1d));
+        goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(13, CommonEntityGoals.lookAt(this, 5f));
-        goalSelector.addGoal(14, CommonEntityGoals.lookRandomly(this));
+        goalSelector.addGoal(14, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
@@ -100,21 +101,19 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     {
         super.readAdditional(nbt);
 
-        setItem(invHandler.map(i -> i.getStackInSlot(0)).orElse(ItemStack.EMPTY));
+        dataManager.set(ITEM, invHandler.map(i -> i.getStackInSlot(0)).orElse(ItemStack.EMPTY));
 
         // Data Fix - todo: remove later
         ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-        if (!stack.isEmpty()) invHandler.ifPresent(i -> {
+        if (!stack.isEmpty()) invHandler.ifPresent(i ->
+        {
             setItem(stack);
             setStackInSlot(0, stack);
             setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
         });
     }
 
-    public ItemStack getItem()
-    {
-        return dataManager.get(ITEM);
-    }
+    public ItemStack getItem() { return dataManager.get(ITEM); }
 
     public void setItem(ItemStack item)
     {
@@ -127,7 +126,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     {
         super.registerAttributes();
         getAttribute(MAX_HEALTH).setBaseValue(10d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.3d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.285d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4d);
     }
     

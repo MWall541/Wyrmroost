@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityutils.multipart;
+package WolfShotz.Wyrmroost.content.entities.multipart;
 
 import net.minecraft.entity.LivingEntity;
 

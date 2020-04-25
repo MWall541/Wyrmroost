@@ -19,10 +19,9 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
     @Override
     public void renderByItem(ItemStack itemStackIn)
     {
-        if (texture == null) texture = getEggTexture(itemStackIn); // get texture lazily
+        texture = getEggTexture(itemStackIn); // get texture lazily
         
         GlStateManager.pushMatrix();
-        GlStateManager.color4f(1.5f, 1.5f, 1.5f, 1f);
         Minecraft.getInstance().getTextureManager().bindTexture(texture);
         EGG_MODEL.base.render(0.0625f);
         GlStateManager.popMatrix();

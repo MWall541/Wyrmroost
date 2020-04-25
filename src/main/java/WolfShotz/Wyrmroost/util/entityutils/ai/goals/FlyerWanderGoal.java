@@ -47,7 +47,8 @@ public class FlyerWanderGoal extends Goal
     {
         Vec3d vec3d = getPosition();
         if (vec3d == null) return;
-        dragon.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1);
+        if (dragon.isFlying()) dragon.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1);
+        else dragon.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 1);
     }
 
     public Vec3d getPosition()

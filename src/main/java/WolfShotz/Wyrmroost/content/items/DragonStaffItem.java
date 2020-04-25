@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.entityutils.multipart.MultiPartEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -94,9 +94,9 @@ public class DragonStaffItem extends Item
                 boolean flag = false;
                 if (dragonTarget.isFlying() && !world.isRemote)
                 {
-                    if (dragonTarget.getFlightMoveController().isUpdating()) dragonTarget.tryTeleportToOwner();
+                    if (dragonTarget.getFlyerMoveController().isUpdating()) dragonTarget.tryTeleportToOwner();
                     else
-                        dragonTarget.getFlightMoveController().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+                        dragonTarget.getFlyerMoveController().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
                     flag = true;
                 }
                 else if (dragonTarget.isSitting())

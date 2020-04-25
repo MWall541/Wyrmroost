@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
@@ -10,6 +9,7 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
+import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -73,6 +73,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Integer> VARIANT = createKey(DataSerializers.VARINT);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = createKey(DataSerializers.OPTIONAL_BLOCK_POS);
 
+    // Data Strings
+    public static final String DATA_HOME_POS = "HomePos";
+    public static final String DATA_SPECIAL = "special";
+    public static final String DATA_SLEEPING = "sleeping";
+    public static final String DATA_INV = "Inv";
+
     // Dragon Entity Animations
     public int animationTick;
     public Animation animation = NO_ANIMATION;
@@ -110,18 +116,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     /**
      * If this dragon flies, obtain the flight movement controller
-     * Note: This should only be called if we're sure this dragon can fly. So run a check first! ({@code canFly()})
+     * Note: This should only be called if we're sure this dragon can fly. So run a check first! ({@link #isFlying()})
      */
-    public FlyerMoveController getFlightMoveController()
+    @Nullable
+    public FlyerMoveController getFlyerMoveController()
     {
-        try
-        {
-            return (FlyerMoveController) moveController;
-        }
-        catch (ClassCastException e)
-        {
-            throw new ClassCastException(String.format("{} is not an instance of FlightMoveController!", moveController.getClass().toString()));
-        }
+        return moveController instanceof FlyerMoveController? (FlyerMoveController) moveController : null;
     }
 
     /**
@@ -156,10 +156,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.writeAdditional(nbt);
 
-        nbt.putBoolean("special", isSpecial());
-        nbt.putBoolean("sleeping", isSleeping());
-        invHandler.ifPresent(i -> nbt.put("inv", i.serializeNBT()));
-        getHomePos().ifPresent(pos -> ModUtils.putBlockPos(nbt, pos, "homePos"));
+        nbt.putBoolean(DATA_SPECIAL, isSpecial());
+        nbt.putBoolean(DATA_SLEEPING, isSleeping());
+        invHandler.ifPresent(i -> nbt.put(DATA_INV, i.serializeNBT()));
+        getHomePos().ifPresent(pos -> nbt.putLong(DATA_HOME_POS, pos.toLong()));
     }
 
     /**
@@ -170,10 +170,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.readAdditional(nbt);
 
-        setSpecial(nbt.getBoolean("special"));
-        dataManager.set(SLEEPING, nbt.getBoolean("sleeping")); // Use data manager: Setter method controls animation
-        invHandler.ifPresent(i -> i.deserializeNBT(nbt.getCompound("inv")));
-        if (nbt.contains("homePos")) setHomePos(ModUtils.getBlockPos(nbt, "homePos"));
+        setSpecial(nbt.getBoolean(DATA_SPECIAL));
+        dataManager.set(SLEEPING, nbt.getBoolean(DATA_SLEEPING)); // Use data manager: Setter method controls animation
+        invHandler.ifPresent(i -> i.deserializeNBT(nbt.getCompound(DATA_INV)));
+        if (nbt.contains(DATA_HOME_POS)) setHomePos(BlockPos.fromLong(nbt.getLong(DATA_HOME_POS)));
     }
 
     /**
@@ -511,7 +511,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean isGlowing() // todo: handle this more elegantly?
+    public boolean isGlowing() // todo: handle this more elegantly: 1.15
     {
         if (!world.isRemote) return super.isGlowing();
         PlayerEntity player = Minecraft.getInstance().player;
@@ -543,20 +543,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     /**
      * Try teleporting to a pos after a search for a safe location
+     * Todo: redo.. kinda messy and doesn't always work
      */
     public boolean tryTeleportToPos(BlockPos pos)
     {
-        AxisAlignedBB aabb = getBoundingBox();
-        double growX = aabb.maxX - aabb.minX;
-        double growY = aabb.maxY - aabb.minY;
-        double growZ = aabb.maxZ - aabb.minZ;
-        AxisAlignedBB potentialAABB = new AxisAlignedBB(pos).grow(growX, 0, growZ).expand(0, growY, 0);
+//        AxisAlignedBB aabb = getBoundingBox();
+//        double growX = aabb.maxX - aabb.minX;
+//        double growY = aabb.maxY - aabb.minY;
+//        double growZ = aabb.maxZ - aabb.minZ;
+//        AxisAlignedBB potentialAABB = new AxisAlignedBB(pos).grow(growX, 0, growZ).expand(0, growY, 0);
 
         for (int i = 0; i <= 4; ++i)
         {
             for (int l = 0; l <= 4; ++l)
             {
-                if ((i < 1 || l < 1 || i > 3 || l > 3) && ModUtils.isBoxSafe(potentialAABB, world) && (isFlying() || !world.getBlockState(pos.down()).isAir(world, pos)))
+                if ((i < 1 || l < 1 || i > 3 || l > 3) && world.isCollisionBoxesEmpty(this, getBoundingBox()) && (isFlying() || !world.getBlockState(pos.down()).isAir(world, pos)))
                 {
                     setPosition(pos.getX(), pos.getY(), pos.getZ());
                     clearAI();
@@ -576,7 +577,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isWithinHomeDistanceFromPosition()
     {
-        return !getHomePos().isPresent() || getHomePos().get().distanceSq(getPosition()) < (ConfigData.homeRadius * ConfigData.homeRadius);
+        return !getHomePos().isPresent() || getHomePos().get().distanceSq(getPosition()) < (ConfigData.homeRadius);
     }
 
     /**
@@ -695,6 +696,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
     }
+
+    @Override
+    public int getHorizontalFaceSpeed()
+    {
+        return isFlying()? 10 : super.getHorizontalFaceSpeed();
+    }
+
+    public boolean isRiding() { return getRidingEntity() != null; }
+
 
     /**
      * Children are actually eggs. So create an egg item of this dragon type and yeet it into the air
@@ -900,7 +910,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected boolean isMovementBlocked()
     {
-        return super.isMovementBlocked() || isSitting() || isSleeping();
+        return super.isMovementBlocked() || isSleeping();
     }
 
     /**

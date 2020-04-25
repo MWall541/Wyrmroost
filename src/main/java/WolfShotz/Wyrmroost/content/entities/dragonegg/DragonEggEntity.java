@@ -13,6 +13,7 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
@@ -22,14 +23,14 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Objects;
 
-public class DragonEggEntity extends Entity implements IAnimatedObject
+public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityAdditionalSpawnData
 {
-
     public EntityType<AbstractDragonEntity> containedDragon;
     public int hatchTime;
     public DragonEggProperties properties;
@@ -37,13 +38,10 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
     public boolean wiggleInvert, wiggleInvert2;
     private int animationTick;
     private Animation animation = NO_ANIMATION;
-    
+
     public static final Animation WIGGLE_ANIMATION = new Animation(10);
 
-    public DragonEggEntity(EntityType<? extends DragonEggEntity> dragonEgg, World world)
-    {
-        super(dragonEgg, world);
-    }
+    public DragonEggEntity(EntityType<? extends DragonEggEntity> dragonEgg, World world) { super(dragonEgg, world); }
     
     // ================================
     //           Entity NBT
@@ -84,7 +82,7 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
         super.tick();
         
         updateMotion();
-        
+
         if (getProperties().getConditions().test(this))
         {
             if (world.isRemote)
@@ -228,9 +226,11 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
             try
             {
                 return properties = Objects.requireNonNull(containedDragon.create(world)).getEggProperties();
+
             }
             catch (NullPointerException e)
             {
+                ModUtils.L.warn("Unknown Dragon Type!!!");
                 return properties = new DragonEggProperties(0.65f, 1f, 12000);
             }
         }
@@ -248,38 +248,38 @@ public class DragonEggEntity extends Entity implements IAnimatedObject
         stack.setTag(tag);
         return stack;
     }
-    
+
     @Override
-    public EntitySize getSize(Pose poseIn)
-    {
-        return getProperties().getSize();
-    }
+    public EntitySize getSize(Pose poseIn) { return getProperties().getSize(); }
     
     @Override
     public boolean canBePushed()
     {
         return false;
     }
-    
+
     @Override
     public boolean canBeCollidedWith()
     {
         return true;
     }
-    
+
     // This is needed because it seems to be ignored on server world...
     @Override
-    public void onKillCommand()
-    {
-        remove();
-    }
-    
+    public void onKillCommand() { remove(); }
+
     @Override
-    public IPacket<?> createSpawnPacket()
+    public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+
+    @Override
+    public void writeSpawnData(PacketBuffer buffer) { buffer.writeString(getDragonKey()); }
+
+    @Override
+    public void readSpawnData(PacketBuffer buffer)
     {
-        return NetworkHooks.getEntitySpawningPacket(this);
+        this.containedDragon = ModUtils.getTypeByString(buffer.readString());
     }
-    
+
     // === Animation ===
     @Override
     public int getAnimationTick()

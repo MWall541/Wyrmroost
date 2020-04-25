@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityutils.multipart;
+package WolfShotz.Wyrmroost.content.entities.multipart;
 
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.QuikMaths;

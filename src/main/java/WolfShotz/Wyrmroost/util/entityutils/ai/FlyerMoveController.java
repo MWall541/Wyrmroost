@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.ai;
+package WolfShotz.Wyrmroost.util.entityutils.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.MoverType;
@@ -42,7 +42,8 @@ public class FlyerMoveController extends MovementController
         // move towards target if it's far enough away
         if (dist > minDist)
         {
-            if (preferFlight && dist > minDist + 2) dragon.setFlying(true);
+            if (preferFlight && dist > minDist + 1)
+                dragon.setFlying(true);
             double flySpeed = 0.1f;
 
             // update velocity to approach target
@@ -54,7 +55,7 @@ public class FlyerMoveController extends MovementController
         if (dist > 2.5E-7)
         {
             float newYaw = (float) Math.toDegrees(Math.PI * 2 - Math.atan2(dir.x, dir.z));
-            dragon.rotationYaw = limitAngle(dragon.rotationYaw, newYaw, 30);
+            dragon.rotationYaw = limitAngle(dragon.rotationYaw, newYaw, dragon.getHorizontalFaceSpeed());
             dragon.setAIMoveSpeed((float) (speed * dragon.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue()));
         }
 

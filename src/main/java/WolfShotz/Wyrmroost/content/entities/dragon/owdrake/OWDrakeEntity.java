@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -15,9 +16,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraft.entity.ai.goal.OwnerHurtByTargetGoal;
-import net.minecraft.entity.ai.goal.OwnerHurtTargetGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -83,13 +82,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.registerGoals();
         goalSelector.addGoal(4, new DrakeAttackGoal(this));
-        goalSelector.addGoal(5, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, false, true));
-        goalSelector.addGoal(10, new GrazeGoal(this, 2, GRAZE_ANIMATION));
-        goalSelector.addGoal(11, new MoveToHomeGoal(this, 1));
-        goalSelector.addGoal(12, CommonEntityGoals.wanderAvoidWater(this, 1));
-        goalSelector.addGoal(13, CommonEntityGoals.lookAt(this, 10f));
-        goalSelector.addGoal(13, CommonEntityGoals.lookRandomly(this));
+        goalSelector.addGoal(5, new MoveToHomeGoal(this, 1));
+        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
+        goalSelector.addGoal(7, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(8, new GrazeGoal(this, 2, GRAZE_ANIMATION));
+        goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
+        goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
+        goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
@@ -98,7 +97,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             @Override
             public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
         });
-        targetSelector.addGoal(4, new NonTamedTargetGoal(this, PlayerEntity.class, true, false, false)
+        targetSelector.addGoal(4, new NonTamedTargetGoal<LivingEntity>(this, LivingEntity.class, true, false, false)
         {
             @Override
             public void startExecuting()
