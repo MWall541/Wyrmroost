@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.Butterf
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.content.fluids.BrineFluid;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.QuikMaths;
@@ -70,25 +69,25 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public RandomWalkingGoal moveGoal;
     public int lightningAttackCooldown;
+    private boolean prevUnderWater;
 
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world)
     {
         super(blevi, world);
         ignoreFrustumCheck = ConfigData.disableFrustumCheck;
-
         moveController = new ButterFlyMoveController(this);
+        stepHeight = 2;
 
-        if (!world.isRemote)
-        {
-            headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
-            wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
-            wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
-            tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
-            tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
-            tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
-        }
-
-        setImmune(BrineFluid.BRINE_WATER);
+//        if (!world.isRemote)
+//        {
+//            headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
+//            wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
+//            wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
+//            tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
+//            tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
+//            tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
+//        }
+//        setImmune(BrineFluid.BRINE_WATER);
         setImmune(DamageSource.LIGHTNING_BOLT);
     }
     
@@ -106,7 +105,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, LivingEntity.class, true, true, false));
+        targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, true, false));
     }
     
     @Override
@@ -179,9 +178,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public void tick()
     {
-        tickParts();
+        //        tickParts();
 
-        recalculateSize();
+        boolean underWater = isUnderWater();
+        if (underWater != prevUnderWater) onWaterChange(underWater);
+        prevUnderWater = underWater;
+
         if (lightningAttackCooldown > 0) --lightningAttackCooldown;
 
         if (hasConduit())
@@ -221,24 +223,18 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             if (animationTick == 15) strikeTarget();
         }
 
-        if (getAnimation() == BITE_ANIMATION && animationTick == 7)
+        if (getAnimation() == BITE_ANIMATION)
         {
-            playSound(WRSounds.BFLY_HURT.get(), 1, 1);
-            AxisAlignedBB size = getBoundingBox();
-            AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(2);
-            attackInAABB(aabb);
+            if (animationTick == 1) playSound(WRSounds.BFLY_HURT.get(), 1, 1);
+            if (animationTick == 7)
+            {
+                AxisAlignedBB size = getBoundingBox();
+                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(2);
+                attackInAABB(aabb);
+            }
         }
 
         super.tick();
-    }
-    
-    @Override
-    protected void updateAITasks()
-    {
-        super.updateAITasks();
-
-        if (isInWater()) moveGoal.setExecutionChance(10);
-        else moveGoal.setExecutionChance(120);
     }
 
     @Override
@@ -317,6 +313,20 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         }
     }
 
+    public void onWaterChange(boolean underWater)
+    {
+        if (underWater)
+        {
+            if (moveGoal != null) moveGoal.setExecutionChance(10);
+        }
+        else
+        {
+            if (moveGoal != null) moveGoal.setExecutionChance(120);
+        }
+
+        recalculateSize();
+    }
+
     @Override
     public void performGenericAttack() { swingArm(Hand.MAIN_HAND); }
 
@@ -362,7 +372,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
-//        if (isUnderWater()) return 2f;
+        if (isUnderWater()) return 2f;
         return 3.1f;
     }
 
