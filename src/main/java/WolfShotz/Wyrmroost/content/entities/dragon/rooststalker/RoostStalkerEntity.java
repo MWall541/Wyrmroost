@@ -228,7 +228,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
         prevRotationYaw = player.rotationYawHead;
         setPosition(player.posX, player.posY + 1.8, player.posZ);
     }
-    
+
     @Override
     public int getSpecialChances()
     {
