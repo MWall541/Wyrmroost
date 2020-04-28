@@ -97,7 +97,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             @Override
             public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
         });
-        targetSelector.addGoal(4, new NonTamedTargetGoal<LivingEntity>(this, LivingEntity.class, true, false, false)
+        targetSelector.addGoal(4, new NonTamedTargetGoal<PlayerEntity>(this, PlayerEntity.class, true, false, false)
         {
             @Override
             public void startExecuting()
@@ -109,7 +109,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             }
         });
     }
-    
+
     @Override
     protected void registerAttributes()
     {
@@ -158,7 +158,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         setSaddled(invHandler.map(i -> !i.getStackInSlot(0).isEmpty()).orElse(false));
 
         // Datafix
-        if (nbt.getBoolean("saddled"))
+        if (nbt.contains("saddled"))
             invHandler.ifPresent(h -> h.setStackInSlot(1, new ItemStack(Items.SADDLE, 1)));
     }
 
@@ -440,16 +440,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean canBeSteered() { return isSaddled(); }
 
     @Override
-    public boolean canFly()
-    {
-        return false;
-    }
+    public boolean canFly() { return false; }
 
     @Override
-    public void fall(float distance, float damageMultiplier)
-    {
-        super.fall(distance - 2, damageMultiplier);
-    }
+    public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
     
     @Override
     public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn)
@@ -486,7 +480,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (!isSleeping())
         {
             if (noActiveAnimation()) setAnimation(TALK_ANIMATION);
-            super.playAmbientSound();
+            SoundEvent soundevent = getAmbientSound();
+            if (soundevent != null)
+                playSound(soundevent, getSoundVolume(), getSoundPitch(), true);
         }
     }
     
@@ -511,38 +507,29 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         return WRSounds.OWDRAKE_DEATH.get();
     }
-    
+
     @Override
     public void setSit(boolean sitting)
     {
         if (sitting != isSitting()) setAnimation(sitting? SIT_ANIMATION : STAND_ANIMATION);
-        
+
         super.setSit(sitting);
     }
-    
+
     @Override
-    public void performGenericAttack()
-    {
-        setAnimation(HORN_ATTACK_ANIMATION);
-    }
-    
+    public void performGenericAttack() { setAnimation(HORN_ATTACK_ANIMATION); }
+
     @Override
-    protected boolean isMovementBlocked()
-    {
-        return super.isMovementBlocked() || getAnimation() == ROAR_ANIMATION;
-    }
-    
+    protected boolean isMovementBlocked() { return super.isMovementBlocked(); }
+
     @Override
     public EntitySize getSize(Pose poseIn)
     {
         return (isSitting() || isSleeping())? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
     }
-    
+
     @Override
-    protected int getExperiencePoints(PlayerEntity player)
-    {
-        return 2 + rand.nextInt(3);
-    }
+    protected int getExperiencePoints(PlayerEntity player) { return 2 + rand.nextInt(3); }
     
     @Override
     public void setMountCameraAngles(boolean backView)

@@ -890,6 +890,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     /**
      * Perform a one-shot attack
+     * TODO this SHOULD be for recieving requests from the player owner, so make it a single method with a byte
+     * parameter to allow stuff like this:
+     * if (byte == HORN_ATTACK) {...}
+     * plus, it allows for more actions and honestly, looks sexier in the packet
      */
     public void performGenericAttack()
     {
@@ -898,6 +902,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Perform a continuous special attack, e.g. Fire breathing
      *
+     * @deprecated will be merged with {@link #performGenericAttack()}
      * @param shouldContinue True = continue attacking | False = interrupt / stop attack
      */
     public void performAltAttack(boolean shouldContinue)

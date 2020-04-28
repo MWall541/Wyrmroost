@@ -44,7 +44,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         // todo: Hitboxes do not reappear after host is unloaded and reloaded on client side...
 
-        if (host == null || !host.isAlive()) // Our host is dead, so we shouldnt exist!
+        if (world.isRemote && (host == null || !host.isAlive())) // Our host is dead, so we shouldnt exist!
         {
             remove();
             return;
@@ -80,7 +80,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
 
     @Override
     public EntitySize getSize(Pose poseIn) { return EntitySize.flexible(sizeX, sizeY); }
-    
+
     @Override
     public boolean attackEntityFrom(DamageSource source, float damage)
     {
@@ -89,6 +89,15 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
 
     @Override
     public boolean isEntityEqual(Entity entity) { return this == entity || host == entity; }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return this == o || host == o;
+    }
+
+    @Override
+    public int hashCode() { return host.getEntityId(); }
 
     @Override
     protected void registerData() {}
