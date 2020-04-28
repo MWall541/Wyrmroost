@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
@@ -105,7 +106,7 @@ public class QuikMaths
 
         Vec3d endOfLookDelta = endOfLook.subtract(EYES_POSITION);
         AxisAlignedBB searchBox = player.getBoundingBox().expand(endOfLookDelta.x, endOfLookDelta.y, endOfLookDelta.z).grow(1f); //add
-        List<Entity> nearbyEntities = world.getEntitiesWithinAABBExcludingEntity(player, searchBox);
+        List<Entity> nearbyEntities = world.getEntitiesInAABBexcluding(player, searchBox, e -> EntityPredicates.NOT_SPECTATING.test(e) && !e.equals(player.getRidingEntity()));
         Entity closestEntityHit = null;
         double closestEntityDistanceSQ = Double.MAX_VALUE;
 

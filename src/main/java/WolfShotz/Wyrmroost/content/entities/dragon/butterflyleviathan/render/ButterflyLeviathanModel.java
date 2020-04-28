@@ -332,7 +332,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     {
 
         if (entity.areEyesInFluid(FluidTags.WATER)) body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
-        else faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, neck3);
+        else faceTarget(netHeadYaw, headPitch, 1, head, neck3, neck2, neck1);
     }
     
     private float globalSpeed = 0.5f;
@@ -358,6 +358,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             walk(legThighR1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
 
             float wingSpeed = globalSpeed - 0.37f;
+
             flap(topWingFinPhalangeL1, wingSpeed, globalDegree + 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
             flap(topWingFinPhalangeL2, wingSpeed, globalDegree - 0.1f, false, 1, -0.2f, limbSwing, limbSwingAmount);
             flap(topWingFinMembrane3L, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
@@ -373,6 +374,18 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             flap(bottomWingFinPhalangeR1, wingSpeed, globalDegree - 0.1f, true, 0, 0.25f, limbSwing, limbSwingAmount);
             flap(bottomWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, 0, limbSwing, limbSwingAmount);
             flap(bottomWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
+        }
+        else
+        {
+            flap(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, true, 0.75f, -0.25f, limbSwing, limbSwingAmount);
+            swing(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(bottomWingFinPhalangeL2, globalSpeed - 0.2f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
+            walk(bottomWingFinPhalangeL2, globalSpeed - 0.2f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
+
+            flap(bottomWingFinPhalangeR1, globalSpeed - 0.2f, 0.5f, true, 0.75f, 0.25f, limbSwing, limbSwingAmount);
+            swing(bottomWingFinPhalangeR1, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(bottomWingFinPhalangeR2, globalSpeed - 0.2f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
+            walk(bottomWingFinPhalangeR2, globalSpeed - 0.2f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
         }
 
         if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION) || animator.setAnimation(ButterflyLeviathanEntity.ROAR_ANIMATION))
@@ -428,20 +441,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     @Override
     public void idleAnim(float frame)
     {
-        if (entity.isInWater())
-        {
-//            flap(topWingFinPhalangeL1, 0.05f, 0.2f, false, 0, 0, frame, 0.5f);
-//            swing(topWingFinPhalangeL1, 0.045f, 0.5f, false, 0.5f, 0, frame, 0.5f);
-//            swing(topWingFinPhalangeL2, 0.045f, 0.05f, false, 0.75f, 0, frame, 0.5f);
-//
-//            flap(topWingFinPhalangeR1, 0.05f, 0.2f, true, 0, 0, frame, 0.5f);
-//            swing(topWingFinPhalangeR1, 0.045f, 0.5f, true, 0.5f, 0, frame, 0.5f);
-//            swing(topWingFinPhalangeR2, 0.045f, 0.05f, true, 0.75f, 0, frame, 0.5f);
-//
-//            walk(legThighL1, globalSpeed - 0.49f, 0.1f, false, 0, 0, frame, 0.5f);
-//            walk(legThighR1, globalSpeed - 0.49f, 0.1f, false, 0, 0, frame, 0.5f);
-        }
-        else
+        if (!entity.isUnderWater())
         {
             flap(topWingFinPhalangeL1, 0.05f, 0.1f, false, 0, 0, frame, 0.5f);
             swing(topWingFinPhalangeL1, 0.045f, 0.025f, false, 0.5f, 0, frame, 0.5f);
@@ -460,7 +460,8 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             walk(bottomWingFinPhalangeR2, 0.05f, -0.05f, false, 0, 0, frame, 0.5f);
         }
 
-        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, entity.isUnderWater() ? 3 : -3, frame, 0.5f);
+        globalDegree = 0.5f;
+        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, entity.isUnderWater()? 3 : -3, frame, 0.5f);
         walk(mouthBottom, globalSpeed - 0.45f, 0.15f, false, -0.6f, 0.15f, frame, 0.5f);
 
         float degree = entity.isInWater() ? 0.1f : 0.35f;
@@ -490,10 +491,10 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
 
     public void biteAnim() // 20
     {
-        animator.startKeyframe(6);
+        animator.startKeyframe(10);
         animator.rotate(neck1, -0.4f, 0, 0);
         animator.rotate(head, 0.4f, 0, 0);
-        animator.rotate(mouthBottom, 1, 0, 0);
+        animator.rotate(mouthBottom, 0.65f, 0, 0);
         animator.endKeyframe();
         animator.startKeyframe(4);
         animator.rotate(neck1, 0.4f, 0, 0);
