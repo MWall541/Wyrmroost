@@ -1,22 +1,25 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedAvoidGoal;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 
-public class StoleItemFlee extends NonTamedAvoidGoal
+public class StoleItemFlee extends AvoidEntityGoal<PlayerEntity>
 {
     RoostStalkerEntity dragon;
-    
+
     public StoleItemFlee(RoostStalkerEntity dragon)
     {
-        super(dragon, 7f, 1.15f, 1f);
+        super(dragon, PlayerEntity.class, 7f, 1.15f, 1f); // MAPPERS ARE ASS HOLES! SPEEDS ARE SWAPPED FFS FORGE
         this.dragon = dragon;
     }
-    
+
     @Override
     public boolean shouldExecute()
     {
-        return super.shouldExecute() && !dragon.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty();
+        return !dragon.isTamed()
+                && !dragon.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty()
+                && super.shouldExecute();
     }
 }

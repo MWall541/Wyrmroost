@@ -346,7 +346,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (flying != isFlying()) setFlying(flying);
 
             handleSleep();
-            if (isSleeping() && isWithinHomeDistanceFromPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
+            if (isSleeping() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
         }
         else
         {
@@ -572,12 +572,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
 
-    /**
-     * Are we within our home distance if we have one?
-     */
-    public boolean isWithinHomeDistanceFromPosition()
+    @Override
+    public boolean isWithinHomeDistanceCurrentPosition()
     {
-        return !getHomePos().isPresent() || getHomePos().get().distanceSq(getPosition()) < (ConfigData.homeRadius);
+        return getHomePos().map(pos -> pos.distanceSq(getPosition()) <= ConfigData.homeRadius * ConfigData.homeRadius).orElse(true);
     }
 
     /**
@@ -737,7 +735,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (!isSleeping()
                 && --sleepCooldown <= 0
                 && !world.isDaytime()
-                && (!isTamed() || isSitting() || (getHomePos().isPresent() && isWithinHomeDistanceFromPosition()))
+                && (!isTamed() || isSitting() || (getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition()))
                 && isIdling()
                 && getRNG().nextInt(300) == 0) setSleeping(true);
         else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);

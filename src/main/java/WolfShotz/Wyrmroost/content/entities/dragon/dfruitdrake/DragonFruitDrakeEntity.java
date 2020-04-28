@@ -5,14 +5,16 @@ import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.goals.NonTamedBab
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,6 +46,8 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
 {
+    public static final String DATA_SHEAR = "ShearCooldown";
+
     public static final Animation STAND_ANIMATION = new Animation(15);
     public static final Animation SIT_ANIMATION = new Animation(15);
 
@@ -84,19 +88,19 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     protected void registerGoals()
     {
-        goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(3, sitGoal = new SitGoal(this));
-        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
-        goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
-        goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
-        goalSelector.addGoal(7, new DragonFollowOwnerGoal(this, 1.2d, 12f, 3f));
-        goalSelector.addGoal(8, CommonEntityGoals.followParent(this, 1));
+        super.registerGoals();
+        goalSelector.addGoal(3, new MeleeAttackGoal(this, 1d, false));
+        goalSelector.addGoal(4, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(5, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
+        goalSelector.addGoal(6, new MoveToHomeGoal(this));
+        goalSelector.addGoal(7, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
+        goalSelector.addGoal(8, CommonGoalWrappers.followParent(this, 1));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 7f));
+        goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 7f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
-        targetSelector.addGoal(2, new NonTamedTargetGoal(this, PlayerEntity.class, true, true, false));
+        targetSelector.addGoal(2, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
     }
 
     @Override
@@ -113,7 +117,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         super.writeAdditional(nbt);
 
-        nbt.putInt("shearcooldown", shearCooldownTime);
+        nbt.putInt(DATA_SHEAR, shearCooldownTime);
     }
 
     // ================================
@@ -123,7 +127,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         super.readAdditional(nbt);
 
-        this.shearCooldownTime = nbt.getInt("shearcooldown");
+        this.shearCooldownTime = nbt.getInt(DATA_SHEAR);
 //        dataManager.set(AGE, growingAge);
     }
 

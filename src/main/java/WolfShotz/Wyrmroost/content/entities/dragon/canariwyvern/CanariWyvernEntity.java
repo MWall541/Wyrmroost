@@ -7,7 +7,7 @@ import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerFollowOwnerGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
@@ -55,7 +55,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         super.registerGoals();
         goalSelector.addGoal(3, new FlyerFollowOwnerGoal(this, 7, 1, 4, true));
         goalSelector.addGoal(4, new FlyerWanderGoal(this, true));
-        goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 5));
+        goalSelector.addGoal(5, CommonGoalWrappers.lookAt(this, 5));
         goalSelector.addGoal(6, new LookRandomlyGoal(this));
     }
 

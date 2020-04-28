@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -81,32 +80,23 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(4, new DrakeAttackGoal(this));
-        goalSelector.addGoal(5, new MoveToHomeGoal(this, 1));
-        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2d, 12d, 3d));
+        goalSelector.addGoal(4, new MoveToHomeGoal(this));
+        goalSelector.addGoal(5, new DrakeAttackGoal(this));
+        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(7, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(8, new GrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
+        goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this)
+        targetSelector.addGoal(3, new DefendHomeGoal(this));
+        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this)
         {
             @Override
             public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
-        });
-        targetSelector.addGoal(4, new NonTamedTargetGoal<PlayerEntity>(this, PlayerEntity.class, true, false, false)
-        {
-            @Override
-            public void startExecuting()
-            {
-                if (!isTamed() && getAnimation() != OWDrakeEntity.ROAR_ANIMATION)
-                    NetworkUtils.sendAnimationPacket(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
-                getLookController().setLookPositionWithEntity(nearestTarget, 180, 30);
-                super.startExecuting();
-            }
         });
     }
 
@@ -291,15 +281,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 }
             }
         }
-        
-        if (getAnimation() == HORN_ATTACK_ANIMATION && getAnimationTick() == 8)
+
+        if (getAnimation() == HORN_ATTACK_ANIMATION)
         {
-            world.playSound(posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.AMBIENT, 1f, 0.5f, false);
-            AxisAlignedBB size = getBoundingBox();
-            AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(0.5d);
-            attackInAABB(aabb);
+            prevRotationYaw = rotationYaw = rotationYawHead;
+            if (getAnimationTick() == 8)
+            {
+                world.playSound(posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.AMBIENT, 1f, 0.5f, false);
+                AxisAlignedBB size = getBoundingBox();
+                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(0.5d);
+                attackInAABB(aabb);
+            }
         }
-        
         super.livingTick();
     }
     
@@ -444,12 +437,18 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     public void fall(float distance, float damageMultiplier) { super.fall(distance - 2, damageMultiplier); }
-    
+
     @Override
-    public void setAttackTarget(@Nullable LivingEntity entitylivingbaseIn)
+    public void setAttackTarget(@Nullable LivingEntity target)
     {
-        super.setAttackTarget(entitylivingbaseIn);
-        setAngry(entitylivingbaseIn != null);
+        super.setAttackTarget(target);
+
+        if (target != null)
+        {
+            setAngry(true);
+            if (!isTamed() && getAnimation() != OWDrakeEntity.ROAR_ANIMATION)
+                NetworkUtils.sendAnimationPacket(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
+        }
     }
     
     @Override
@@ -537,7 +536,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (backView) GlStateManager.translated(0, -0.5d, 0.5d);
         else GlStateManager.translated(0, 0, -3d);
     }
-    
+
     @Override
     public List<Item> getFoodItems()
     {

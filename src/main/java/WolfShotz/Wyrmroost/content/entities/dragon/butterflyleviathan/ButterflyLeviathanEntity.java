@@ -10,8 +10,10 @@ import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.NonTamedTargetGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DefendHomeGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.WaterSitGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -95,17 +97,18 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     protected void registerGoals()
     {
         goalSelector.addGoal(1, sitGoal = new WaterSitGoal(this));
-        goalSelector.addGoal(2, new DragonFollowOwnerGoal(this, 1, 20d, 3d));
-        goalSelector.addGoal(3, new MoveToHomeGoal(this, 1));
+        goalSelector.addGoal(2, new MoveToHomeGoal(this));
+        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
         goalSelector.addGoal(4, new BFlyAttackGoal(this));
         goalSelector.addGoal(4, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
-        goalSelector.addGoal(5, CommonEntityGoals.lookAt(this, 10f));
+        goalSelector.addGoal(5, CommonGoalWrappers.lookAt(this, 10f));
         goalSelector.addGoal(6, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this));
-        targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, true, false));
+        targetSelector.addGoal(3, new DefendHomeGoal(this, Entity::isInWater));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
     }
     
     @Override

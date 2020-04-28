@@ -7,9 +7,10 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonEntityGoals;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonFollowOwnerGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import com.google.common.collect.Lists;
@@ -72,20 +73,22 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(4, new LeapAtTargetGoal(this, 0.4F));
-        goalSelector.addGoal(5, new MeleeAttackGoal(this, 1d, true));
-        goalSelector.addGoal(6, new DragonFollowOwnerGoal(this, 1.2f, 8, 2));
+        goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
+        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, true));
+        goalSelector.addGoal(5, new MoveToHomeGoal(this));
+        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2f, 8, 2));
         goalSelector.addGoal(9, new StoleItemFlee(this));
         goalSelector.addGoal(10, new DragonBreedGoal(this, false, false));
         goalSelector.addGoal(11, new ScavengeGoal(this, 1.1d, SCAVENGE_ANIMATION));
         goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(13, CommonEntityGoals.lookAt(this, 5f));
+        goalSelector.addGoal(13, CommonGoalWrappers.lookAt(this, 5f));
         goalSelector.addGoal(14, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this).setCallsForHelp());
-        targetSelector.addGoal(4, new NonTamedTargetGoal<>(this, AnimalEntity.class, false, TARGETS));
+        targetSelector.addGoal(3, new DefendHomeGoal(this));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this).setCallsForHelp());
+        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, AnimalEntity.class, false, true, TARGETS));
     }
 
     @Override

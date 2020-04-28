@@ -6,7 +6,10 @@ import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerFollowOwnerGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -69,11 +72,11 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(4, CommonEntityGoals.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
-        goalSelector.addGoal(5, new NonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f, 1.5f, true));
+        goalSelector.addGoal(4, CommonGoalWrappers.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
+        goalSelector.addGoal(5, CommonGoalWrappers.nonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new FlyerFollowOwnerGoal(this, 12d, 3d, 15d, true));
-        goalSelector.addGoal(10, CommonEntityGoals.lookAt(this, 10f));
+        goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         goalSelector.addGoal(8, new FlyerWanderGoal(this, true)

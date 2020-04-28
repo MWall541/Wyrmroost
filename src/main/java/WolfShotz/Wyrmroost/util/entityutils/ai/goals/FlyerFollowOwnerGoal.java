@@ -33,7 +33,7 @@ public class FlyerFollowOwnerGoal extends Goal
     @Override
     public boolean shouldExecute()
     {
-        if (dragon.isSleeping() || dragon.getHomePos().isPresent()) return false;
+        if (dragon.getHomePos().isPresent()) return false;
 
         LivingEntity preOwner = dragon.getOwner();
         if (dragon.isSitting() || preOwner == null || preOwner.isSpectator()) return false;
