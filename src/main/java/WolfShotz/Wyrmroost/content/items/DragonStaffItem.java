@@ -37,10 +37,10 @@ public class DragonStaffItem extends Item
         AbstractDragonEntity dragon = getDragonTarget(target, player);
         if (dragon == null) return false;
 
-        CompoundNBT tag = new CompoundNBT();
+        CompoundNBT tag = stack.getOrCreateTag();
         tag.putUniqueId("boundID", dragon.getUniqueID());
         stack.setTag(tag);
-        dragon.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 1f);
+        dragon.playSound(SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 1f, true);
         return true;
     }
     

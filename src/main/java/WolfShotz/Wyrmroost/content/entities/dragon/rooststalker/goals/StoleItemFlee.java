@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 
 public class StoleItemFlee extends AvoidEntityGoal<PlayerEntity>
 {
@@ -16,10 +15,5 @@ public class StoleItemFlee extends AvoidEntityGoal<PlayerEntity>
     }
 
     @Override
-    public boolean shouldExecute()
-    {
-        return !dragon.isTamed()
-                && !dragon.getItemStackFromSlot(EquipmentSlotType.MAINHAND).isEmpty()
-                && super.shouldExecute();
-    }
+    public boolean shouldExecute() { return !dragon.isTamed() && !dragon.getItem().isEmpty() && super.shouldExecute(); }
 }

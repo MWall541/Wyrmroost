@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.Butterf
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.QuikMaths;
@@ -278,6 +279,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         if (super.processInteract(player, hand, stack)) return true;
 
+        if (isFoodItem(stack) && !isTamed() && tame(getRNG().nextInt(3) == 0, player)) return true;
+
         if (isOwner(player))
         {
             if (player.isSneaking())
@@ -442,7 +445,15 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() { return Lists.newArrayList(Items.SEAGRASS, Items.KELP); }
+    public List<Item> getFoodItems()
+    {
+        return Lists.newArrayList(
+                Items.SEAGRASS, Items.KELP, Items.BEEF,
+                Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP,
+                Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON,
+                Items.COOKED_MUTTON, WRItems.COMMON_MEAT_RAW.get(), WRItems.COMMON_MEAT_COOKED.get()
+        );
+    }
 
     @Nullable
     @Override
