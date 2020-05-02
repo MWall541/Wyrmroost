@@ -21,29 +21,28 @@ public class FlyerMoveController extends MovementController
     @Override
     public void tick()
     {
+        Vec3d dragonPos = dragon.getPositionVector();
+        Vec3d movePos = new Vec3d(posX, posY, posZ);
+
+        // get euclidean distance to target
+        double dist = dragonPos.distanceTo(movePos);
+        // minimum amount to be able to move
+        double minDist = dragon.getWidth() / 2;
+        if (preferFlight && dist > minDist * 3) dragon.setFlying(true);
+
         if (!dragon.isFlying())
         {
             super.tick();
             return;
         }
 
-        Vec3d dragonPos = dragon.getPositionVector();
-        Vec3d movePos = new Vec3d(posX, posY, posZ);
-
         // get direction vector by subtracting the current position from the
         // target position and normalizing the result
         Vec3d dir = movePos.subtract(dragonPos).normalize();
 
-        // get euclidean distance to target
-        double dist = dragonPos.distanceTo(movePos);
-        // minimum amount to be able to move
-        double minDist = dragon.getWidth() / 2;
-
         // move towards target if it's far enough away
         if (dist > minDist)
         {
-            if (preferFlight && dist > minDist + 1)
-                dragon.setFlying(true);
             double flySpeed = 0.1f;
 
             // update velocity to approach target

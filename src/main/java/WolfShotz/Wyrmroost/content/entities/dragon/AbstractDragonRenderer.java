@@ -29,7 +29,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
     }
-    
+
     // =================
     //   Render Layers
     // =================

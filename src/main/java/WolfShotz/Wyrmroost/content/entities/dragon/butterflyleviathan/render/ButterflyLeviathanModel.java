@@ -350,43 +350,47 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
         animator.update(entityIn);
         setInitialPositions();
 
-        if (entity.isInWater())
+        if (!entity.isSitting())
         {
-            chainSwing(tailArray, globalSpeed - 0.1f, globalDegree - 0.4f, -2, limbSwing, limbSwingAmount);
-            chainSwing(headArray, globalSpeed - 0.1f, globalDegree - 0.4f, 3f, limbSwing, limbSwingAmount);
-            walk(legThighL1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
-            walk(legThighR1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
+            if (entity.isInWater())
+            {
+                chainSwing(tailArray, globalSpeed - 0.1f, globalDegree - 0.4f, -2, limbSwing, limbSwingAmount);
+                chainSwing(headArray, globalSpeed - 0.1f, globalDegree - 0.4f, 3f, limbSwing, limbSwingAmount);
+                walk(legThighL1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
+                walk(legThighR1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
 
-            float wingSpeed = globalSpeed - 0.37f;
+                float wingSpeed = globalSpeed - 0.37f;
 
-            flap(topWingFinPhalangeL1, wingSpeed, globalDegree + 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
-            flap(topWingFinPhalangeL2, wingSpeed, globalDegree - 0.1f, false, 1, -0.2f, limbSwing, limbSwingAmount);
-            flap(topWingFinMembrane3L, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
+                flap(topWingFinPhalangeL1, wingSpeed, globalDegree + 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
+                flap(topWingFinPhalangeL2, wingSpeed, globalDegree - 0.1f, false, 1, -0.2f, limbSwing, limbSwingAmount);
+                flap(topWingFinMembrane3L, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
 
-            flap(bottomWingFinPhalangeL1, wingSpeed, globalDegree - 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
-            flap(bottomWingFinPhalangeL2, wingSpeed, globalDegree - 0.1f, true, 1, 0.2f, limbSwing, limbSwingAmount);
-            flap(bottomWingFinMembraneL3, wingSpeed, globalDegree - 0.35f, true, 2, 0, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeL1, wingSpeed, globalDegree - 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeL2, wingSpeed, globalDegree - 0.1f, true, 1, 0.2f, limbSwing, limbSwingAmount);
+                flap(bottomWingFinMembraneL3, wingSpeed, globalDegree - 0.35f, true, 2, 0, limbSwing, limbSwingAmount);
 
-            flap(topWingFinPhalangeR1, wingSpeed, globalDegree + 0.1f, true, 0, 0.25f, limbSwing, limbSwingAmount);
-            flap(topWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, -0.2f, limbSwing, limbSwingAmount);
-            flap(topWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
+                flap(topWingFinPhalangeR1, wingSpeed, globalDegree + 0.1f, true, 0, 0.25f, limbSwing, limbSwingAmount);
+                flap(topWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, -0.2f, limbSwing, limbSwingAmount);
+                flap(topWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
 
-            flap(bottomWingFinPhalangeR1, wingSpeed, globalDegree - 0.1f, true, 0, 0.25f, limbSwing, limbSwingAmount);
-            flap(bottomWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, 0, limbSwing, limbSwingAmount);
-            flap(bottomWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeR1, wingSpeed, globalDegree - 0.1f, true, 0, 0.25f, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, 0, limbSwing, limbSwingAmount);
+                flap(bottomWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
+            }
+            else
+            {
+                flap(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, true, 0.75f, -0.25f, limbSwing, limbSwingAmount);
+                swing(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeL2, globalSpeed - 0.2f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
+                walk(bottomWingFinPhalangeL2, globalSpeed - 0.2f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
+
+                flap(bottomWingFinPhalangeR1, globalSpeed - 0.2f, 0.5f, true, 0.75f, 0.25f, limbSwing, limbSwingAmount);
+                swing(bottomWingFinPhalangeR1, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeR2, globalSpeed - 0.2f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
+                walk(bottomWingFinPhalangeR2, globalSpeed - 0.2f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
+            }
         }
-        else
-        {
-            flap(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, true, 0.75f, -0.25f, limbSwing, limbSwingAmount);
-            swing(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
-            flap(bottomWingFinPhalangeL2, globalSpeed - 0.2f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
-            walk(bottomWingFinPhalangeL2, globalSpeed - 0.2f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
 
-            flap(bottomWingFinPhalangeR1, globalSpeed - 0.2f, 0.5f, true, 0.75f, 0.25f, limbSwing, limbSwingAmount);
-            swing(bottomWingFinPhalangeR1, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
-            flap(bottomWingFinPhalangeR2, globalSpeed - 0.2f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
-            walk(bottomWingFinPhalangeR2, globalSpeed - 0.2f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
-        }
 
         if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION) || animator.setAnimation(ButterflyLeviathanEntity.ROAR_ANIMATION))
             roarAnim();
@@ -411,7 +415,6 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             bottomWingFinPhalangeL2.rotateAngleY = 0.7f;
             bottomWingFinPhalangeL2.rotateAngleZ = 0.6f;
             bottomWingFinPhalangeL2.rotateAngleX = 0.2f;
-            topWingFinMembrane3L.rotateAngleZ = 0f;
 
             topWingFinPhalangeR1.rotateAngleY = -1.05f;
             topWingFinPhalangeR2.rotateAngleY = -0.5f;
@@ -435,6 +438,17 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             legSegmentR1.rotateAngleX = 1.6f;
             legSegmentR2.rotateAngleX = -1.6f;
             footR.rotateAngleX = 0f;
+
+            if (entity.isSitting())
+            {
+                bottomWingFinPhalangeL1.rotateAngleY = 0.75f;
+                bottomWingFinPhalangeL2.rotateAngleX = 0.1f;
+                bottomWingFinPhalangeL2.rotateAngleZ = -0.1f;
+
+                bottomWingFinPhalangeR1.rotateAngleY = -0.75f;
+                bottomWingFinPhalangeR2.rotateAngleX = 0.1f;
+                bottomWingFinPhalangeR2.rotateAngleZ = 0.1f;
+            }
         }
     }
     

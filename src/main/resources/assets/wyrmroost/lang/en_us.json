@@ -53,18 +53,14 @@
   "item.wyrmroost.cooked_minutus": "Cooked Desertwyrm",
   "item.wyrmroost.drake_meat_raw": "Raw Drake Meat",
   "item.wyrmroost.drake_meat_cooked": "Drake Steak",
-  
   "_comment": "Misc Items",
   "item.wyrmroost.tarragon_tome": "Tarragon Tome",
   "item.wyrmroost.tarragon_tome.tooltip": "Written By ",
-  
   "item.wyrmroost.dragon_egg": "Egg",
   "item.wyrmroost.egg.tooltip": "Hatching in: %smin",
-  "item.wyrmroost.egg.creativetooltip": "You are in Creative: Shift-Right Clicking will iterate through different dragon types",
-
+  "item.wyrmroost.egg.creativetooltip": "You are in Creative: You can convert this egg's type by Left Clicking a dragon",
   "item.wyrmroost.armors.set": "Part of the %s Set",
-  "item.wyrmroost.armors.drakedesc": "Full Set Bonus: Increased Damage and Knockback of Melee Attacks",
-
+  "item.wyrmroost.armors.drakedesc": "Full Set Bonus: Knockback Resistance",
   "item.wyrmroost.soul_crystal": "Dragon Soul Crystal",
   "item.wyrmroost.soul_crystal.jeidesc": "Infused with the mysterious properties of geodes, it has the potential to contain the souls of dragons that you have entrusted. The soul of a dragon can lead you to %s..."
 }

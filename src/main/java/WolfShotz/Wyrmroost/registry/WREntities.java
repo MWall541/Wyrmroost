@@ -69,10 +69,10 @@ public class WREntities
 
     private static <T extends Entity> EntityType.Builder<T> creature(EntityType.IFactory<T> entity)
     {
-        return EntityType.Builder.create(entity, EntityClassification.CREATURE)
-                .setTrackingRange(80)
-                .setUpdateInterval(4)
-                .setShouldReceiveVelocityUpdates(true);
+        return EntityType.Builder.create(entity, EntityClassification.CREATURE);
+//                .setTrackingRange(80)
+//                .setUpdateInterval(4)
+//                .setShouldReceiveVelocityUpdates(true);
     }
 
     private static <T extends MobEntity> void registerSpawnEntry(EntityType<T> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)

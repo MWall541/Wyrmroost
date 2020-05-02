@@ -39,7 +39,7 @@ public class DrakeArmorItem extends ItemArmorBase
         {
             if (slot == this.slot)
             {
-                multimap.put(SharedMonsterAttributes.ATTACK_KNOCKBACK.getName(), new AttributeModifier(WEAPON_KNOCKBACK_MODIFER, "Weapon modifier", 1000d, AttributeModifier.Operation.MULTIPLY_TOTAL));
+//                multimap.put(SharedMonsterAttributes.ATTACK_KNOCKBACK.getName(), new AttributeModifier(WEAPON_KNOCKBACK_MODIFER, "Weapon modifier", 1000d, AttributeModifier.Operation.MULTIPLY_TOTAL));
                 multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(ARMOR_KNOCKBACK_RESISTANCE, "Armor modifier", 10, AttributeModifier.Operation.ADDITION));
             }
 //            else fullSet = false;

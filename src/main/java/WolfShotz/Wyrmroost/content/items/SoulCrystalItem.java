@@ -33,7 +33,7 @@ public class SoulCrystalItem extends Item
     {
         super(ModUtils.itemBuilder().maxStackSize(1));
     }
-    
+
     @Override
     public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
     {
@@ -42,7 +42,7 @@ public class SoulCrystalItem extends Item
         if (!(target instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) target;
         if (dragon.getOwner() != player) return false;
-        
+
         if (!dragon.getPassengers().isEmpty()) dragon.removePassengers();
         if (!world.isRemote)
         {
@@ -52,7 +52,8 @@ public class SoulCrystalItem extends Item
             stack.setTag(tag);
             dragon.remove();
             player.setHeldItem(hand, stack);
-        } else
+        }
+        else
         {
             for (int i = 0; i <= dragon.getWidth() * 25; ++i)
             {
@@ -69,10 +70,10 @@ public class SoulCrystalItem extends Item
             }
         }
         world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
-        
+
         return true;
     }
-    
+
     @Override
     public ActionResultType onItemUse(ItemUseContext context)
     {
@@ -81,7 +82,7 @@ public class SoulCrystalItem extends Item
         World world = context.getWorld();
         AbstractDragonEntity entity = getEntity(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
-        
+
         // Spawn the entity on the server side only
         if (!world.isRemote)
         {
@@ -89,13 +90,13 @@ public class SoulCrystalItem extends Item
             stack.setTag(null);
             world.addEntity(entity);
         }
-        
+
         // Client Side Cosmetics
         if (world.isRemote)
         {
             PlayerEntity player = context.getPlayer();
             EntitySize size = entity.getSize(entity.getPose());
-            
+
             player.swingArm(context.getHand());
             double posX = pos.getX() + 0.5d;
             double posY = pos.getY() + (size.height / 2);
@@ -109,12 +110,12 @@ public class SoulCrystalItem extends Item
                 double zMot = z / 10f;
 
                 world.addParticle(ParticleTypes.END_ROD, posX, posY, posZ, xMot, yMot, zMot);
-                world.addParticle(ParticleTypes.CLOUD, posX, posY + i, posZ, 0, 0, 0);
+                world.addParticle(ParticleTypes.CLOUD, posX, posY + (i * 0.25), posZ, 0, 0, 0);
 
             }
         }
         world.playSound(null, entity.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
-        
+
         return ActionResultType.SUCCESS;
     }
     
@@ -129,47 +130,47 @@ public class SoulCrystalItem extends Item
         
         return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }*/
-    
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         if (containsDragon(stack))
         {
             AbstractDragonEntity dragon = getEntity(stack, world);
-            
+
             tooltip.add(new StringTextComponent("Name: " + dragon.getName().getUnformattedComponentText()));
             tooltip.add(new StringTextComponent("Health: " + Math.round(dragon.getHealth()) / 2 + " ")
-                                .appendSibling(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.DARK_RED)));
+                    .appendSibling(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.DARK_RED)));
             tooltip.add(new StringTextComponent("Tamer: " + dragon.getOwner().getName().getUnformattedComponentText()));
         }
     }
-    
+
     @Override
     public ITextComponent getDisplayName(ItemStack stack)
     {
         ITextComponent name = super.getDisplayName(stack);
-        
+
         if (containsDragon(stack))
             name.applyTextStyle(TextFormatting.AQUA).applyTextStyle(TextFormatting.ITALIC);
-        
+
         return name;
     }
-    
+
     @Override
     public boolean hasEffect(ItemStack stack)
     {
         return containsDragon(stack);
     }
-    
+
     private boolean containsDragon(ItemStack stack)
     {
         return !stack.isEmpty() && stack.hasTag() && stack.getTag().contains("entity");
     }
-    
+
     private AbstractDragonEntity getEntity(ItemStack stack, World world)
     {
         EntityType type = EntityType.byKey(stack.getTag().getString("entity")).orElse(null);
-        
+
         if (type == null) return null;
         AbstractDragonEntity entity = (AbstractDragonEntity) type.create(world);
         entity.read(stack.getTag());

@@ -2,26 +2,30 @@ package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.goals.CanariAvoidGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerFollowOwnerGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.FlyerWanderGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Lists;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.LookController;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
@@ -37,26 +41,43 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     public static final Animation FLAP_WINGS_ANIMATION = new Animation(22);
     public static final Animation PREEN_ANIMATION = new Animation(36);
     public static final Animation THREAT_ANIMATION = new Animation(40);
+    public static final Animation ATTACK_ANIMATION = new Animation(15);
 
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
 
-        setImmune(CausticWaterFluid.CAUSTIC_WATER);
         shouldFlyThreshold = 2;
 
         moveController = new FlyerMoveController(this, true);
         lookController = new LookController(this);
+
+        setImmune(CausticWaterFluid.CAUSTIC_WATER);
+        setImmune(DamageSource.MAGIC);
     }
 
     @Override
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(3, new FlyerFollowOwnerGoal(this, 7, 1, 4, true));
-        goalSelector.addGoal(4, new FlyerWanderGoal(this, true));
-        goalSelector.addGoal(5, CommonGoalWrappers.lookAt(this, 5));
-        goalSelector.addGoal(6, new LookRandomlyGoal(this));
+        goalSelector.addGoal(3, new MoveToHomeGoal(this));
+        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2, true));
+        goalSelector.addGoal(5, new FlyerFollowOwnerGoal(this, 7, 1, 4, true));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
+        goalSelector.addGoal(7, new CanariAvoidGoal(this));
+        goalSelector.addGoal(7, new FlyerWanderGoal(this, true));
+        goalSelector.addGoal(8, CommonGoalWrappers.lookAt(this, 8f));
+        goalSelector.addGoal(9, new LookRandomlyGoal(this));
+
+        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DefendHomeGoal(this));
+        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this)
+        {
+            @Override
+            public boolean shouldExecute() { return !isChild() && super.shouldExecute(); }
+        });
     }
 
     @Override
@@ -66,7 +87,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
 
         getAttribute(MAX_HEALTH).setBaseValue(16d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.2d);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(5.5d);
+        getAttribute(FOLLOW_RANGE).setBaseValue(2);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d);
         getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.3);
     }
 
@@ -111,7 +133,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     {
         super.livingTick();
 
-        if (!isSleeping() && !isFlying() && getRidingEntity() == null && noActiveAnimation())
+        if (!isSleeping() && !isFlying() && !isRiding() && noActiveAnimation())
         {
             if (getRNG().nextInt(650) == 0) setAnimation(FLAP_WINGS_ANIMATION);
             else if (getRNG().nextInt(350) == 0) setAnimation(PREEN_ANIMATION);
@@ -142,6 +164,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
             if (PlayerMount.getShoulderEntityCount(player) < 2)
             {
                 setSit(true);
+                setFlying(false);
+                clearAI();
                 startRiding(player, true);
 
                 return true;
@@ -153,11 +177,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     @Override
     public void travel(Vec3d vec3d)
     {
-        if (!isFlying()) // Flying is controlled entirely in the move helper
-        {
-            super.travel(vec3d);
-            return;
-        }
+        // Flying is controlled entirely in the move helper
+        if (!isFlying()) super.travel(vec3d);
     }
 
     @Override
@@ -196,6 +217,25 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     }
 
     @Override
+    public boolean attackEntityAsMob(Entity entity)
+    {
+        boolean should = super.attackEntityAsMob(entity);
+        if (should && entity instanceof LivingEntity)
+            ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.POISON, 200));
+        return should;
+    }
+
+    @Override
+    protected void setupTamedAI() { getAttribute(FOLLOW_RANGE).setBaseValue(16d); }
+
+    @Override
+    public void swingArm(Hand hand)
+    {
+        super.swingArm(hand);
+        NetworkUtils.sendAnimationPacket(this, ATTACK_ANIMATION);
+    }
+
+    @Override
     public boolean canBeCollidedWith() { return super.canBeCollidedWith() && !isRiding(); }
 
     @Override
@@ -211,13 +251,13 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     public DragonEggProperties createEggProperties()
     {
         return new DragonEggProperties(0.25f, 0.35f, 6000)
-                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/canari/egg.png"));
-//                       .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == WRBlocks.CANARI_LEAVES.get());
+                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/canari/egg.png"))
+                .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == Blocks.JUNGLE_LEAVES);
     }
 
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION};
+        return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION, ATTACK_ANIMATION};
     }
 }

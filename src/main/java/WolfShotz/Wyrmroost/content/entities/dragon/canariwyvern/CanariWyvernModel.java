@@ -400,7 +400,8 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     @Override
     public void setRotationAngles(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-        if (entity.isFlying()) body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
+        if (entity.isFlying() && entityIn.getAnimation() != CanariWyvernEntity.ATTACK_ANIMATION)
+            body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
         faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, head);
     }
 
@@ -416,10 +417,23 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
 
         if (canari.isFlying())
         {
-            flap(wing1L, globalSpeed, 1.5f, false, 0, 0, frame, 0.5f);
-            flap(wing2L, globalSpeed, 1.2f, false, -1f, 0.6f, frame, 0.5f);
-            flap(wing1R, globalSpeed, 1.5f, true, 0, 0, frame, 0.5f);
-            flap(wing2R, globalSpeed, 1.2f, true, -1f, 0.6f, frame, 0.5f);
+            if (canari.getMotion().y >= 0)
+            {
+                flap(wing1L, globalSpeed, 1.5f, false, 0, 0, frame, 0.5f);
+                flap(wing2L, globalSpeed, 1.2f, false, -1f, 0.6f, frame, 0.5f);
+                flap(wing1R, globalSpeed, 1.5f, true, 0, 0, frame, 0.5f);
+                flap(wing2R, globalSpeed, 1.2f, true, -1f, 0.6f, frame, 0.5f);
+            }
+            else
+            {
+                float lookY = (float) canari.getLookVec().y;
+
+                wing1L.rotateAngleY = lookY;
+                wing2L.rotateAngleY = -lookY;
+
+                wing1R.rotateAngleY = -lookY;
+                wing2R.rotateAngleY = lookY;
+            }
         }
         else
         {
@@ -445,12 +459,13 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
             walk(footL_1, globalSpeed, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
         }
 
-        if (canari.isSitting()) sitPose();
+        if (canari.isSitting() && (canari.onGround) || canari.isRiding()) sitPose();
         if (canari.isSleeping()) sleepPose();
 
         if (animator.setAnimation(CanariWyvernEntity.FLAP_WINGS_ANIMATION)) flapWingsAnim();
         if (animator.setAnimation(CanariWyvernEntity.PREEN_ANIMATION)) preenAnim(frame);
         if (animator.setAnimation(CanariWyvernEntity.THREAT_ANIMATION)) threatAnim(frame);
+        if (animator.setAnimation(CanariWyvernEntity.ATTACK_ANIMATION)) attackAnim();
 
         idleAnim(frame);
     }
@@ -530,8 +545,8 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
 
         if (entity.getRidingEntity() instanceof PlayerEntity)
         {
-            if (shouldSwap) wing1L.rotateAngleZ = 0.8f;
-            else wing1R.rotateAngleZ = -0.8f;
+            if (shouldSwap) wing1L.rotateAngleY = -1.85f;
+            else wing1R.rotateAngleY = 1.85f;
             tailRot *= 0.7f;
         }
 
@@ -812,9 +827,9 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
         }
         animator.rotate(body1, 0.5f, 0, 0);
         animator.move(body1, 0, 1f, 0);
-        animator.rotate(neck1, 1.25f, 0, 0);
-        animator.rotate(neck2, -1.75f, 0, 0);
-        animator.rotate(head, -0.7f, 0, 0);
+        animator.rotate(neck1, 1.5f, 0, 0);
+        animator.rotate(neck2, -1.5f, 0, 0);
+        animator.rotate(head, -1.5f, 0, 0);
         animator.rotate(head_1, 1f, 0, 0);
         animator.rotate(jaw, 0.75f, 0, 0);
         animator.rotate(wing1L, 0, 1, -1);
@@ -824,5 +839,58 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
         animator.endKeyframe();
         animator.setStaticKeyframe(13);
         animator.resetKeyframe(8);
+    }
+
+    public void attackAnim()
+    {
+        if (entity.isFlying())
+        {
+            animator.startKeyframe(5);
+            animator.rotate(body1, -0.35f, 0, 0);
+            animator.rotate(neck1, 0.5f, 0, 0);
+            animator.rotate(neck2, 0.5f, 0, 0);
+            animator.rotate(head, 0.65f, 0, 0);
+            animator.rotate(leg1L, 0.5f, 0, 0);
+            animator.rotate(leg2L, -1, 0, 0);
+            animator.rotate(leg3L, 0.5f, 0, 0);
+            animator.rotate(footL, -1f, 0, 0);
+            animator.rotate(leg1R, 0.5f, 0, 0);
+            animator.rotate(leg2R, -1, 0, 0);
+            animator.rotate(leg3R, 0.5f, 0, 0);
+            animator.rotate(footL_1, -1f, 0, 0);
+            for (AdvancedRendererModel box : tailArray) animator.rotate(box, -0.7f, 0, 0);
+//            animator.rotate(tail4, -0.8f, 0, 0);
+            animator.endKeyframe();
+            animator.setStaticKeyframe(5);
+            animator.resetKeyframe(5);
+        }
+        else
+        {
+            animator.startKeyframe(5);
+            animator.rotate(body1, 0.5f, 0, 0);
+            animator.move(body1, 0, 1.25f, 0);
+            animator.rotate(leg1L, -0.5f, 0, 0);
+            animator.rotate(leg1R, -0.5f, 0, 0);
+
+            animator.rotate(neck1, 1.5f, 0, 0);
+            animator.rotate(neck2, -1.5f, 0, 0);
+            animator.rotate(head, -1.5f, 0, 0);
+            animator.rotate(jaw, 0.2f, 0, 0);
+            animator.endKeyframe();
+            animator.startKeyframe(2);
+            animator.rotate(body1, 0.5f, 0, 0);
+            animator.move(body1, 0, 1.25f, 0);
+            animator.rotate(leg1L, -0.5f, 0, 0);
+            animator.rotate(leg1R, -0.5f, 0, 0);
+
+            animator.rotate(neck1, 1.5f, 0, 0);
+            animator.rotate(neck2, -1.5f, 0, 0);
+            animator.rotate(head, -1.5f, 0, 0);
+            animator.rotate(jaw, 0.2f, 0, 0);
+            for (AdvancedRendererModel box : tailArray) animator.rotate(box, 0.8f, 0, 0);
+            animator.rotate(tail4, -0.8f, 0, 0);
+            animator.endKeyframe();
+            animator.resetKeyframe(10);
+        }
     }
 }

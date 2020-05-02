@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
-import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -14,7 +13,6 @@ import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Lists;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -205,14 +203,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setFlying(boolean fly)
     {
         if (isFlying() == fly) return;
+        getNavigator().clearPath();
         if (canFly() && fly && liftOff())
         {
-            getNavigator().clearPath();
             navigator = new FlyingPathNavigator(this, world);
             dataManager.set(FLYING, true);
         }
         else
         {
+            getMoveHelper().setMoveTo(posX, posY, posZ, 1);
             navigator = new GroundPathNavigator(this, world);
             dataManager.set(FLYING, false);
         }
@@ -449,6 +448,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
 
+//        if (ConfigData.debugMode && world.isRemote) ClientEvents.setRenderDebugBox(aabb);
         if (livingEntities.isEmpty()) return;
         livingEntities.forEach(this::attackEntityAsMob);
     }
@@ -513,10 +513,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isGlowing() // todo: handle this more elegantly: 1.15
     {
-        if (!world.isRemote) return super.isGlowing();
-        PlayerEntity player = Minecraft.getInstance().player;
-        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
-        return stack.getItem() instanceof DragonStaffItem && Objects.equals(DragonStaffItem.getDragon(stack, ModUtils.getServerWorld(player)), this) || super.isGlowing();
+        return super.isGlowing();
+//        if (!world.isRemote) return super.isGlowing();
+//        PlayerEntity player = Minecraft.getInstance().player;
+//        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
+//        return stack.getItem() instanceof DragonStaffItem && Objects.equals(DragonStaffItem.getDragon(stack, ModUtils.getServerWorld(player)), this) || super.isGlowing();
     }
 
     /**
@@ -525,7 +526,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected void spawnDrops(DamageSource src)
     {
-        invHandler.ifPresent(i -> {
+        invHandler.ifPresent(i ->
+        {
             for (int index = 0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index));
         });
         super.spawnDrops(src);
@@ -567,15 +569,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
 
-        getBoundingBox().expand(0.1, 0.1, 0.1);
-
+        getMoveHelper().setMoveTo(posX, posY, posZ, 1);
+        clearAI();
         return false;
     }
 
     @Override
-    public boolean isWithinHomeDistanceCurrentPosition()
+    public boolean isWithinHomeDistanceCurrentPosition() { return isWithinHomeDistanceFromPosition(getPosition()); }
+
+    @Override
+    public boolean isWithinHomeDistanceFromPosition(BlockPos pos)
     {
-        return getHomePos().map(pos -> pos.distanceSq(getPosition()) <= ConfigData.homeRadius * ConfigData.homeRadius).orElse(true);
+        return getHomePos().map(home -> home.distanceSq(pos) <= ConfigData.homeRadius * ConfigData.homeRadius).orElse(true);
     }
 
     /**
@@ -949,7 +954,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         setSit(false);
         setSleeping(false);
         jump();
-        clearAI();
+//        clearAI();
 
         return true;
     }

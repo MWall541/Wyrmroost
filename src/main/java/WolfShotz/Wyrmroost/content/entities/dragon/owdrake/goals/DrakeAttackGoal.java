@@ -22,15 +22,15 @@ public class DrakeAttackGoal extends MeleeAttackGoal
     public boolean shouldContinueExecuting() { return !drake.isBeingRidden() && super.shouldContinueExecuting(); }
 
     @Override
-    public void tick()
-    {
-        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION) super.tick();
-    }
+    public void startExecuting() { attacker.setAggroed(true); }
+
+    @Override
+    public void tick() { if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION) super.tick(); }
 
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
     {
-        double d0 = this.getAttackReachSqr(enemy);
+        double d0 = getAttackReachSqr(enemy) - 0.1d;
         if (distToEnemySqr <= d0 && attackTick <= 0 && !drake.isRidingOrBeingRiddenBy(enemy) && drake.getAnimation() != OWDrakeEntity.HORN_ATTACK_ANIMATION)
         {
             NetworkUtils.sendAnimationPacket(drake, OWDrakeEntity.HORN_ATTACK_ANIMATION);

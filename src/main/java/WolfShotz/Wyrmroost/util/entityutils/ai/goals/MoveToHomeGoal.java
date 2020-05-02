@@ -34,9 +34,10 @@ public class MoveToHomeGoal extends Goal
         BlockPos homePos = dragon.getHomePos().get();
         Vec3d movePos = RandomPositionGenerator.findRandomTargetBlockTowards(dragon, ConfigData.homeRadius / 2, 10, new Vec3d(homePos.getX(), homePos.getY(), homePos.getZ()));
         if (dragon.getNavigator().noPath() && movePos != null)
-            dragon.getNavigator().tryMoveToXYZ(movePos.x, movePos.y, movePos.z, 1.25);
+//            dragon.getNavigator().tryMoveToXYZ(movePos.x, movePos.y, movePos.z, 1.25);
+            dragon.getMoveHelper().setMoveTo(movePos.x, movePos.y, movePos.z, 1.25);
 
         if (dragon.getDistanceSq(new Vec3d(dragon.getHomePosition())) > ConfigData.homeRadius + ConfigData.homeRadius || movePos == null) // OK TOO FAR!!
-            dragon.tryTeleportToPos(dragon.getHomePosition());
+            dragon.tryTeleportToPos(dragon.getHomePos().get().up(1));
     }
 }

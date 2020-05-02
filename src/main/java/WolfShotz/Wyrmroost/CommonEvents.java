@@ -54,6 +54,8 @@ public class CommonEvents
     {
         if (evt.getConfig().getSpec() == ConfigData.CommonConfig.COMMON_SPEC)
             ConfigData.CommonConfig.reload();
+        if (evt.getConfig().getSpec() == ConfigData.ClientConfig.CLIENT_SPEC)
+            ConfigData.ClientConfig.reload();
     }
 
     // ==========================================================
@@ -105,6 +107,7 @@ public class CommonEvents
 
         if (player.isSneaking()) dragon.tame(true, player);
         else if (evt.getWorld().isRemote) ClientEvents.debugScreen(dragon);
+//        dragon.setFlying(true);
     }
 
     @SubscribeEvent
@@ -123,9 +126,10 @@ public class CommonEvents
     {
         if (!(evt.getEntity() instanceof PlayerEntity)) return;
         Iterable<ItemStack> armor = evt.getEntity().getArmorInventoryList();
+        boolean full = Streams.stream(armor).allMatch(k -> k.getItem() instanceof DrakeArmorItem);
         Streams.stream(armor)
                 .filter(i -> i.getItem() instanceof DrakeArmorItem)
                 .map(i -> (DrakeArmorItem) i.getItem())
-                .forEach(i -> i.setFullSet(Streams.stream(armor).allMatch(k -> k.getItem() instanceof DrakeArmorItem)));
+                .forEach(i -> i.setFullSet(full));
     }
 }

@@ -59,7 +59,8 @@ public class FlyerWanderGoal extends Goal
             double x = dragon.posX + QuikMaths.nextPseudoDouble(rand) * 20d;
             double y = dragon.posY + QuikMaths.nextPseudoDouble(rand) * 16d;
             double z = dragon.posZ + QuikMaths.nextPseudoDouble(rand) * 20d;
-            if (sleepTempted && !dragon.world.isDaytime()) y = -Math.abs(y);
+            if (sleepTempted && !dragon.world.isDaytime()) y = Math.max(-Math.abs(y), 0);
+            if (y > 175) y -= 25;
             return new Vec3d(x, y, z);
         }
         else return RandomPositionGenerator.findRandomTarget(dragon, 10, 7);

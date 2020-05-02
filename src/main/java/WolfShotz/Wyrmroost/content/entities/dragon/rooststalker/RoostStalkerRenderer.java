@@ -45,7 +45,6 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     @SuppressWarnings("deprecation") // This literally never works lmfao
     private final AbstractLayerRenderer ITEM_STACK_RENDERER = new AbstractLayerRenderer()
     {
-        
         @Override
         public void render(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale)
         {

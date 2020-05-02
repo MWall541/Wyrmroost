@@ -98,7 +98,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         goalSelector.addGoal(1, sitGoal = new WaterSitGoal(this));
         goalSelector.addGoal(2, new MoveToHomeGoal(this));
-        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
+//        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
         goalSelector.addGoal(4, new BFlyAttackGoal(this));
         goalSelector.addGoal(4, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
         goalSelector.addGoal(5, CommonGoalWrappers.lookAt(this, 10f));
@@ -229,10 +229,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         if (getAnimation() == BITE_ANIMATION)
         {
             if (animationTick == 1) playSound(WRSounds.BFLY_HURT.get(), 1, 1);
-            if (animationTick == 7)
+            if (animationTick == 10)
             {
                 AxisAlignedBB size = getBoundingBox();
-                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(2);
+                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize()));
                 attackInAABB(aabb);
             }
         }

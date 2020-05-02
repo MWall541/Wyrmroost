@@ -21,7 +21,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -89,10 +91,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(3, new MeleeAttackGoal(this, 1d, false));
-        goalSelector.addGoal(4, new DragonBreedGoal(this, false, true));
-        goalSelector.addGoal(5, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
-        goalSelector.addGoal(6, new MoveToHomeGoal(this));
+        goalSelector.addGoal(3, new MoveToHomeGoal(this));
+        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
+        goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
         goalSelector.addGoal(7, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(8, CommonGoalWrappers.followParent(this, 1));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
@@ -128,7 +130,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.readAdditional(nbt);
 
         this.shearCooldownTime = nbt.getInt(DATA_SHEAR);
-//        dataManager.set(AGE, growingAge);
     }
 
     @Override
@@ -291,6 +292,21 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     @Override
     public boolean canFly() { return false; }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_COW_AMBIENT; }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_COW_HURT; }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_COW_DEATH; }
+
+    @Override
+    protected float getSoundPitch() { return super.getSoundPitch() * 0.5f; }
 
     @Override
     public List<Item> getFoodItems()

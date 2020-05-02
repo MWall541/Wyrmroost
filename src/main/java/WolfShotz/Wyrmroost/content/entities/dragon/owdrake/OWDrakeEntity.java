@@ -287,9 +287,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
             prevRotationYaw = rotationYaw = rotationYawHead;
             if (getAnimationTick() == 8)
             {
+                playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f);
                 world.playSound(posX, posY, posZ, SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.AMBIENT, 1f, 0.5f, false);
                 AxisAlignedBB size = getBoundingBox();
-                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(0.5d);
+                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() * 0.85));
                 attackInAABB(aabb);
             }
         }
@@ -441,14 +442,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void setAttackTarget(@Nullable LivingEntity target)
     {
-        super.setAttackTarget(target);
-
-        if (target != null)
+        if (target != null && getAttackTarget() != target)
         {
             setAngry(true);
             if (!isTamed() && getAnimation() != OWDrakeEntity.ROAR_ANIMATION)
                 NetworkUtils.sendAnimationPacket(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
         }
+        super.setAttackTarget(target);
     }
     
     @Override
@@ -480,8 +480,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         {
             if (noActiveAnimation()) setAnimation(TALK_ANIMATION);
             SoundEvent soundevent = getAmbientSound();
-            if (soundevent != null)
-                playSound(soundevent, getSoundVolume(), getSoundPitch(), true);
+            if (soundevent != null) playSound(soundevent, 1, 1, true);
         }
     }
     
@@ -499,13 +498,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         super.playHurtSound(source);
     }
-    
+
     @Nullable
     @Override
-    protected SoundEvent getDeathSound()
-    {
-        return WRSounds.OWDRAKE_DEATH.get();
-    }
+    protected SoundEvent getDeathSound() { return WRSounds.OWDRAKE_DEATH.get(); }
 
     @Override
     public void setSit(boolean sitting)

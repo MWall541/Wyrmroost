@@ -165,12 +165,13 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
     public void render(RoostStalkerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
     {
         GlStateManager.pushMatrix();
-        
+
         if (entity.isChild())
         {
             GlStateManager.translatef(0, 0.78f, 0);
             GlStateManager.scaled(0.3d, 0.3d, 0.3d);
-        } else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
+        }
+        else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
         
         torso.render(scale);
         GlStateManager.popMatrix();
@@ -179,6 +180,8 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
     @Override
     public void setRotationAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
+        if (netHeadYaw < -180) netHeadYaw += 360;
+        else if (netHeadYaw > 180) netHeadYaw -= 360;
         if (stalker.getAnimation() != RoostStalkerEntity.SCAVENGE_ANIMATION)
             faceTarget(netHeadYaw, headPitch, 2, head);
     }
@@ -220,8 +223,8 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
         
         if (currentAnim == RoostStalkerEntity.SCAVENGE_ANIMATION)
             scavengeAnim(stalker.getAnimationTick(), frame);
-        
-        boolean flag = stalker.getStackInSlot(0).isEmpty() || stalker.isSleeping();
+
+        boolean flag = stalker.getItem().isEmpty() || stalker.isSleeping();
         idle(frame, flag);
         
         if (!flag) jaw.rotateAngleX = 0.15f;

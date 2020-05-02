@@ -41,9 +41,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -146,13 +144,17 @@ public class ClientEvents
         if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
     }
 
+    public static AxisAlignedBB debugBox;
+
+    // ====================
+    public static int time;
+
     @SubscribeEvent
     public static void renderWorld(RenderWorldLastEvent event)
     {
         renderDragonStaff();
+        renderDebugBox();
     }
-
-    // ====================
 
     public static void renderDragonStaff()
     {
@@ -181,7 +183,7 @@ public class ClientEvents
 
                     // save states
                     GlStateManager.pushMatrix();
-                    GlStateManager.depthFunc(519); // 519
+                    GlStateManager.depthFunc(519);
 
                     // draw
                     GlStateManager.translated(x + 0.5, (y + (Math.sin(dragon.ticksExisted * 0.06) * 0.5)) + 3, z + 0.5);
@@ -232,6 +234,45 @@ public class ClientEvents
                 }
             }
         }
+    }
+
+    public static void renderDebugBox()
+    {
+        if (debugBox == null) return;
+
+        Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        double x = view.x;
+        double y = view.y;
+        double z = view.z;
+
+        GlStateManager.depthMask(false);
+        GlStateManager.disableTexture();
+        GlStateManager.disableLighting();
+        GlStateManager.disableCull();
+        GlStateManager.disableBlend();
+
+        WorldRenderer.drawBoundingBox(
+                debugBox.minX - x,
+                debugBox.minY - y,
+                debugBox.minZ - z,
+                debugBox.maxX - x,
+                debugBox.maxY - y,
+                debugBox.maxZ - z,
+                1, 0, 0, 1);
+
+        GlStateManager.enableTexture();
+        GlStateManager.enableLighting();
+        GlStateManager.enableCull();
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
+
+        if (--time <= 0) debugBox = null;
+    }
+
+    public static void queueRenderBox(AxisAlignedBB aabb)
+    {
+        debugBox = aabb;
+        time = 500;
     }
 
     public static void debugScreen(AbstractDragonEntity dragon)

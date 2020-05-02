@@ -7,16 +7,12 @@ import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -56,11 +52,7 @@ public class DragonStaffItem extends Item
         if (player.world.isRemote) return true;
 
         try { NetworkHooks.openGui((ServerPlayerEntity) player, dragon, buf -> buf.writeInt(dragon.getEntityId())); }
-        catch (NullPointerException e)
-        {
-            ModUtils.L.error("Dragon Staff Attempted to open '{}' gui, but it doesn't have one! Report this.", dragon);
-        }
-        player.playSound(SoundEvents.UI_TOAST_IN, 1f, 1f);
+        catch (NullPointerException e) {/* fail silently, no gui is found for this dragon.*/}
         return true;
     }
     
@@ -94,9 +86,8 @@ public class DragonStaffItem extends Item
                 boolean flag = false;
                 if (dragonTarget.isFlying() && !world.isRemote)
                 {
-                    if (dragonTarget.getFlyerMoveController().isUpdating()) dragonTarget.tryTeleportToOwner();
-                    else
-                        dragonTarget.getFlyerMoveController().setMoveTo(player.posX - random.nextInt(3), Math.ceil(player.posY), player.posZ - random.nextInt(3), dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getBaseValue());
+                    dragonTarget.tryTeleportToOwner();
+                    world.playSound(null, player.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.NEUTRAL, 1, 1);
                     flag = true;
                 }
                 else if (dragonTarget.isSitting())
