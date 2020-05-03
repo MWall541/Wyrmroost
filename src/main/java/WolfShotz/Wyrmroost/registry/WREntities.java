@@ -59,7 +59,7 @@ public class WREntities
         registerSpawnEntry(ROOSTSTALKER.get(), 9, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
         DragonFruitDrakeEntity.handleSpawning();
 
-        registerSpawnEntry(BUTTERFLY_LEVIATHAN.get(), 1, 1, 1, BiomeDictionary.getBiomes(Type.OCEAN));
+        registerSpawnEntry(BUTTERFLY_LEVIATHAN.get(), 4, 1, 1, BiomeDictionary.getBiomes(Type.OCEAN));
         registerSpawnEntry(CANARI_WYVERN.get(), 9, 2, 5, BiomeDictionary.getBiomes(Type.SWAMP));
     }
 
@@ -70,7 +70,7 @@ public class WREntities
     private static <T extends Entity> EntityType.Builder<T> creature(EntityType.IFactory<T> entity)
     {
         return EntityType.Builder.create(entity, EntityClassification.CREATURE);
-//                .setTrackingRange(80)
+//                .setTrackingRange(80) created some weird limbSwing problems, look into it later
 //                .setUpdateInterval(4)
 //                .setShouldReceiveVelocityUpdates(true);
     }

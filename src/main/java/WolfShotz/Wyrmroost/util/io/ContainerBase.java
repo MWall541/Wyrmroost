@@ -3,8 +3,6 @@ package WolfShotz.Wyrmroost.util.io;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.registry.WRIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -32,11 +30,11 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
     @Override
     public boolean canInteractWith(PlayerEntity playerIn)
     {
-        if (dragon instanceof IMultiPartEntity)
-            for (MultiPartEntity part : ((IMultiPartEntity) dragon).getParts())
-                if (part.getDistance(playerIn) < 10) return true;
-        
-        return dragon.getDistance(playerIn) < 10;
+//        if (dragon instanceof IMultiPartEntity)
+//            for (MultiPartEntity part : ((IMultiPartEntity) dragon).getParts())
+//                if (part.getDistance(playerIn) < 10) return true;
+
+        return dragon.getDistance(playerIn) < dragon.getWidth() * 3;
     }
     
     public void buildSlotArea(IInventory inventory, int index, int initialX, int initialY, int length, int height)

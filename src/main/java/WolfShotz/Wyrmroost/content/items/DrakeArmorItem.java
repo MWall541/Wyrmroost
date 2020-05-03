@@ -10,7 +10,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
@@ -49,9 +48,9 @@ public class DrakeArmorItem extends ItemArmorBase
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> lines, ITooltipFlag p_77624_4_)
+    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> lines, ITooltipFlag flag)
     {
-        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new StringTextComponent("Drake").applyTextStyle(TextFormatting.DARK_GREEN)));
+        super.addInformation(stack, world, lines, flag);
         lines.add(new StringTextComponent(""));
         lines.add(new TranslationTextComponent("item.wyrmroost.armors.drakedesc"));
     }

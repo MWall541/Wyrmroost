@@ -305,7 +305,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) // instaceof: for custom saddles (if any)
         {
-            invHandler.ifPresent(s -> {
+            invHandler.ifPresent(s ->
+            {
                 s.setStackInSlot(0, stack);
                 consumeItemFromStack(player, stack);
             });

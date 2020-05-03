@@ -239,8 +239,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
-        if ((reason == SpawnReason.NATURAL || reason == SpawnReason.CHUNK_GENERATION || ConfigData.debugMode) && getRNG().nextDouble() <= ConfigData.dfdBabyChance)
-            setGrowingAge(getEggProperties().getGrowthTime());
+        if (getRNG().nextDouble() <= ConfigData.dfdBabyChance) setGrowingAge(getEggProperties().getGrowthTime());
 
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }

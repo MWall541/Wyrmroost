@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.BFlyAttackGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.BFlyBodyController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
@@ -21,6 +22,7 @@ import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -93,7 +95,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 //        setImmune(BrineFluid.BRINE_WATER);
         setImmune(DamageSource.LIGHTNING_BOLT);
     }
-    
+
+    @Override
+    protected BodyController createBodyController() { return new BFlyBodyController(this); }
+
     @Override
     protected void registerGoals()
     {
@@ -119,8 +124,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
         getAttribute(MAX_HEALTH).setBaseValue(70d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.045d); // On land speed, in water speed is handled in the move controller
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4);
-//        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4d);
+        getAttribute(FOLLOW_RANGE).setBaseValue(28d);
     }
 
     @Override
@@ -250,11 +256,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         {
             LivingEntity rider = (LivingEntity) getControllingPassenger();
 
-            prevRotationYaw = rotationYaw = rider.rotationYaw;
+
             rotationPitch = rider.rotationPitch * 0.5f;
-            setRotation(rotationYaw, rotationPitch);
-            renderYawOffset = rotationYaw;
-            rotationYawHead = renderYawOffset;
+            rotationYawHead = rider.rotationYawHead;
+            rotationYaw = MathHelper.func_219800_b(rotationYawHead, rotationYaw, 10);
             if (isInWater() && (rider.moveForward != 0 || rider.moveStrafing != 0))
             {
                 float yVel = -(MathHelper.sin(rotationPitch * (QuikMaths.PI / 180f))) * (speed * 15);
@@ -289,7 +294,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 return true;
             }
 
-            player.startRiding(this);
+            if (!world.isRemote)
+            {
+                player.startRiding(this);
+                setSit(false);
+            }
             return true;
         }
         
@@ -412,8 +421,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public void setMountCameraAngles(boolean backView)
     {
-        if (backView) GlStateManager.translated(0, -0.5d, -4d);
-        else GlStateManager.translated(0, 0, -7d);
+        if (backView) GlStateManager.translated(0, -1d, -10d);
+        else GlStateManager.translated(0, -1, -7d);
     }
 
     public Vec3d getConduitPos(Vec3d offset)

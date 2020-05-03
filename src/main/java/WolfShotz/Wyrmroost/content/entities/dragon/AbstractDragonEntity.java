@@ -460,8 +460,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean attackEntityAsMob(Entity entity)
     {
         if (entity == getOwner()) return false;
-        if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner())
-            return false;
+        if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return false;
 
         return super.attackEntityAsMob(entity);
     }
@@ -476,7 +475,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (target instanceof TameableEntity)
         {
             TameableEntity tamable = (TameableEntity) target;
-            return tamable.getOwner() != null && !tamable.getOwner().equals(owner);
+            return tamable.getOwner() == null || tamable.getOwner() != owner;
         }
 
         return true;

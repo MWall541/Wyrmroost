@@ -8,8 +8,8 @@ import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
-    private final float WIDTH, HEIGHT;
-    private final int HATCH_TIME;
+    private final float width, height;
+    private final int hatchTime;
     private ResourceLocation texture = Wyrmroost.rl("textures/entity/dragonegg/default.png");
     private Predicate<DragonEggEntity> conditions = e -> true;
 
@@ -20,9 +20,9 @@ public class DragonEggProperties
      */
     public DragonEggProperties(float width, float height, int hatchTime)
     {
-        this.WIDTH = width;
-        this.HEIGHT = height;
-        this.HATCH_TIME = hatchTime;
+        this.width = width;
+        this.height = height;
+        this.hatchTime = hatchTime;
     }
 
     /**
@@ -38,12 +38,12 @@ public class DragonEggProperties
     /**
      * Get the size of the egg
      */
-    public EntitySize getSize() { return EntitySize.flexible(WIDTH, HEIGHT); }
+    public EntitySize getSize() { return EntitySize.flexible(width, height); }
 
     /**
      * Get the hatch time of the egg
      */
-    public int getHatchTime() { return HATCH_TIME; }
+    public int getHatchTime() { return hatchTime; }
 
     /**
      * Gets the growth time for the dragon
@@ -51,7 +51,7 @@ public class DragonEggProperties
      *
      * @return
      */
-    public int getGrowthTime() { return -(HATCH_TIME * 2); }
+    public int getGrowthTime() { return -(hatchTime * 2); }
 
     /**
      * Get the conditions the egg has to be under to continue hatching

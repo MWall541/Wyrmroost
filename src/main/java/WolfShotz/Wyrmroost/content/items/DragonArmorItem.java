@@ -42,7 +42,7 @@ public class DragonArmorItem extends Item
             case PLATINUM:
                 return ArmorMaterialList.PLATINUM.getEnchantability();
             case BLUE_GEODE:
-                return ArmorMaterialList.GEODE.getEnchantability();
+                return ArmorMaterialList.BLUE_GEODE.getEnchantability();
         }
     }
     

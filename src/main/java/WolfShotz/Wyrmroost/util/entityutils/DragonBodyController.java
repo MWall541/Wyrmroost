@@ -11,7 +11,7 @@ import net.minecraft.util.math.MathHelper;
  */
 public class DragonBodyController extends BodyController
 {
-    private AbstractDragonEntity dragon;
+    public AbstractDragonEntity dragon;
     
     public DragonBodyController(AbstractDragonEntity dragon)
     {

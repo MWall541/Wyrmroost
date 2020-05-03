@@ -15,8 +15,6 @@ public class ButterFlyMoveController extends MovementController
     
     public void tick()
     {
-        if (mob.isInWater()) mob.setMotion(mob.getMotion().add(0, 0.005d, 0));
-        
         if (action == MovementController.Action.MOVE_TO && !mob.getNavigator().noPath())
         {
             double x = posX - mob.posX;

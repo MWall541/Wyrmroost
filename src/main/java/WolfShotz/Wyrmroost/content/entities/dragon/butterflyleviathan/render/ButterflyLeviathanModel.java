@@ -330,8 +330,10 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     @Override
     public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
-
-        if (entity.areEyesInFluid(FluidTags.WATER)) body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
+        if (netHeadYaw < -180) netHeadYaw += 360;
+        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        if (entity.areEyesInFluid(FluidTags.WATER) && !entityIn.isSitting())
+            body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
         else faceTarget(netHeadYaw, headPitch, 1, head, neck3, neck2, neck1);
     }
     
@@ -355,7 +357,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
             if (entity.isInWater())
             {
                 chainSwing(tailArray, globalSpeed - 0.1f, globalDegree - 0.4f, -2, limbSwing, limbSwingAmount);
-                chainSwing(headArray, globalSpeed - 0.1f, globalDegree - 0.4f, 3f, limbSwing, limbSwingAmount);
+                chainSwing(headArray, globalSpeed - 0.2f, globalDegree - 0.4f, 3f, limbSwing, limbSwingAmount);
                 walk(legThighL1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
                 walk(legThighR1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
 
@@ -377,7 +379,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
                 flap(bottomWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, 0, limbSwing, limbSwingAmount);
                 flap(bottomWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
             }
-            else
+            else if (Math.abs(entity.getMotion().y) < 0.09)
             {
                 flap(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, true, 0.75f, -0.25f, limbSwing, limbSwingAmount);
                 swing(bottomWingFinPhalangeL1, globalSpeed - 0.2f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
@@ -390,7 +392,6 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
                 walk(bottomWingFinPhalangeR2, globalSpeed - 0.2f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
             }
         }
-
 
         if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION) || animator.setAnimation(ButterflyLeviathanEntity.ROAR_ANIMATION))
             roarAnim();
