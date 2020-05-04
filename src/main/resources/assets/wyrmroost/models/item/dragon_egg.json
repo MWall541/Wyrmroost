@@ -22,17 +22,17 @@
       "rotation": [
         180,
         10,
-        0
+        4
       ],
       "translation": [
-        13,
-        10,
+        14,
+        15,
         -10
       ],
       "scale": [
-        1,
-        1,
-        1
+        0,
+        0,
+        0
       ]
     },
     "firstperson_lefthand": {

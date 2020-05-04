@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:beef",
+    "minecraft:cooked_beef",
+    "minecraft:porkchop",
+    "minecraft:cooked_porkchop",
+    "minecraft:chicken",
+    "minecraft:cooked_chicken",
+    "minecraft:mutton",
+    "minecraft:cooked_mutton",
+    "minecraft:rabbit",
+    "minecraft:cooked_rabbit",
+    "wyrmroost:common_meat_raw",
+    "wyrmroost:common_meat_cooked"
+  ]
+}

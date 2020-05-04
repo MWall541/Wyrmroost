@@ -362,5 +362,6 @@ public class Recipes extends RecipeProvider
                 .addCriterion("has_food", hasItem(recipeIn))
                 .build(consumer, Wyrmroost.rl(id + "_from_smoking"));
         REGISTERED.add(recipeIn);
+        REGISTERED.add(resultIn);
     }
 }

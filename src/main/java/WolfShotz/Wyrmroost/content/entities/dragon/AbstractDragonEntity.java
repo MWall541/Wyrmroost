@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.ClientEvents;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
@@ -8,7 +9,6 @@ import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -53,9 +53,11 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -110,16 +112,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(2, sitGoal = new SitGoal(this));
-    }
-
-    /**
-     * If this dragon flies, obtain the flight movement controller
-     * Note: This should only be called if we're sure this dragon can fly. So run a check first! ({@link #isFlying()})
-     */
-    @Nullable
-    public FlyerMoveController getFlyerMoveController()
-    {
-        return moveController instanceof FlyerMoveController? (FlyerMoveController) moveController : null;
     }
 
     /**
@@ -345,7 +337,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (flying != isFlying()) setFlying(flying);
 
             handleSleep();
-            if (isSleeping() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(25) == 0) heal(0.5f);
+            if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(25) == 0)
+                heal(0.5f);
         }
         else
         {
@@ -368,6 +361,60 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
+    @Override
+    public void updateRidden()
+    {
+        super.updateRidden();
+
+        Entity entity = getRidingEntity();
+
+        if (entity == null || !entity.isAlive())
+        {
+            stopRiding();
+            return;
+        }
+
+        setMotion(Vec3d.ZERO);
+
+        if (entity instanceof PlayerEntity)
+        {
+            PlayerEntity player = (PlayerEntity) entity;
+
+            int index = player.getPassengers().indexOf(this);
+            if ((player.isSneaking() && !player.abilities.isFlying) || player.getSubmergedHeight() > 1.25 || index > 2)
+            {
+                stopRiding();
+                return;
+            }
+
+            prevRotationPitch = rotationPitch = player.rotationPitch / 2;
+            rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
+            setRotation(player.rotationYawHead, rotationPitch);
+
+            double xOffset = index == 1? (getWidth() * 0.8) : index == 2? -(getWidth() * 0.8) : 0;
+            double yOffset = index == 0? 1.85d : 1.38d;
+            double zOffset = 0d;
+
+            if (player.isElytraFlying())
+            {
+                if (!canFly())
+                {
+                    stopRiding();
+                    return;
+                }
+
+                xOffset *= 4d;
+//                yOffset *= 0.1d;
+//                zOffset = -2;
+                setFlying(true);
+            }
+
+            Vec3d pos = QuikMaths.calculateYawAngle(player.renderYawOffset, xOffset, zOffset)
+                    .add(player.posX, player.posY + yOffset, player.posZ);
+            setPosition(pos.x, pos.y, pos.z);
+        }
+    }
+
     /**
      * Called when the player interacts with this dragon
      *
@@ -379,7 +426,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (stack.interactWithEntity(player, this, hand)) return true;
 
-        if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player))
+        if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player) && !player.isSneaking())
         {
             eat(stack);
             setInLove(player);
@@ -435,7 +482,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void attackInFront(int radius)
     {
         AxisAlignedBB size = getBoundingBox();
-        AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() / 2)).grow(radius);
+        AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize())).grow(radius);
         attackInAABB(aabb);
     }
 
@@ -448,7 +495,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
 
-//        if (ConfigData.debugMode && world.isRemote) ClientEvents.setRenderDebugBox(aabb);
+        if (ConfigData.debugMode && world.isRemote) ClientEvents.queueRenderBox(aabb);
         if (livingEntities.isEmpty()) return;
         livingEntities.forEach(this::attackEntityAsMob);
     }
@@ -811,17 +858,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Get all entities in this entities bounding box increased by a range
      */
-    public List<Entity> getEntitiesNearby(double radius)
+    public List<Entity> getEntitiesNearby(double radius, Predicate<Entity> filter)
     {
-        return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), found -> found != this && getPassengers().stream().noneMatch(found::equals));
+        return world.getEntitiesInAABBexcluding(this, getBoundingBox().grow(radius), e -> getPassengers().stream().noneMatch(e::equals) && filter.test(e));
     }
 
-    /**
-     * Get all entities excluding certain ones in this entities bounding box increased by a range
-     */
-    public List<Entity> getEntitiesNearby(double radius, Entity instanceExclusion)
+    public List<Entity> getEntitiesNearby(double radius)
     {
-        return world.getEntitiesInAABBexcluding(instanceExclusion, getBoundingBox().grow(radius), found -> getPassengers().stream().noneMatch(found::equals));
+        return world.getEntitiesInAABBexcluding(this, getBoundingBox().grow(radius), e -> getPassengers().stream().noneMatch(e::equals));
     }
 
     /**
@@ -912,13 +956,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     /**
-     * Whether or not we should move
+     * Sort of misleading name. if this is true, then nothing else is ticked (goals, look, etc)
      */
     @Override
-    protected boolean isMovementBlocked()
-    {
-        return super.isMovementBlocked() || isSleeping();
-    }
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping(); }
 
     /**
      * Whether or not the dragon can fly.
@@ -992,13 +1033,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isFoodItem(ItemStack stack)
     {
         if (getFoodItems() == null || getFoodItems().size() == 0) return false;
+        if (stack == ItemStack.EMPTY) return false;
         return getFoodItems().contains(stack.getItem());
     }
 
     /**
      * Array Containing all of the dragons food items
      */
-    public abstract List<Item> getFoodItems();
+    public abstract Collection<Item> getFoodItems();
 
     public DragonEggProperties getEggProperties()
     {

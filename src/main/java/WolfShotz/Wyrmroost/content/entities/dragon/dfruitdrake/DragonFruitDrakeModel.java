@@ -431,9 +431,9 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
 
         if (animator.setAnimation(DragonFruitDrakeEntity.SIT_ANIMATION)) sitAnim(false);
         if (animator.setAnimation(DragonFruitDrakeEntity.STAND_ANIMATION)) sitAnim(true);
-
         if (animator.setAnimation(DragonFruitDrakeEntity.SLEEP_ANIMATION)) sleepAnim(false);
         if (animator.setAnimation(DragonFruitDrakeEntity.WAKE_ANIMATION)) sleepAnim(true);
+        if (animator.setAnimation(DragonFruitDrakeEntity.BITE_ANIMATION)) biteAnim();
 
         idleAnim(frame, false);
     }
@@ -589,5 +589,24 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
         animator.rotate(TailLeafEND, -0.4f, -0.5f, 0);
 
         animator.endKeyframe();
+    }
+
+    public void biteAnim()
+    {
+        animator.startKeyframe(5);
+        animator.rotate(mouthbottom, 0.5f, 0, 0);
+        for (AdvancedRendererModel box : headArray)
+        {
+            animator.rotate(box, -0.15f, 0, 0);
+        }
+        animator.rotate(Head, 1, 0, 0);
+//        animator.rotate(neck2, -1, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(4);
+        animator.rotate(neck2, 1, 0, 0);
+        animator.endKeyframe();
+
+        animator.resetKeyframe(6);
     }
 }

@@ -459,7 +459,7 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
             walk(footL_1, globalSpeed, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
         }
 
-        if (canari.isSitting() && (canari.onGround) || canari.isRiding()) sitPose();
+        if (canari.isSitting() && !canari.isFlying()) sitPose();
         if (canari.isSleeping()) sleepPose();
 
         if (animator.setAnimation(CanariWyvernEntity.FLAP_WINGS_ANIMATION)) flapWingsAnim();
@@ -535,8 +535,8 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
 
     public void sitPose()
     {
-        boolean shouldSwap = entity.getRidingEntity() instanceof PlayerEntity && entity.checkShoulderOccupants((PlayerEntity) entity.getRidingEntity());
-        float tailRot = shouldSwap ? 0.85f : -0.85f;
+        boolean shouldSwap = entity.getRidingEntity() instanceof PlayerEntity && entity.getRidingEntity().getPassengers().indexOf(entity) == 1;
+        float tailRot = shouldSwap? 0.5f : -0.5f;
 
         body1.offsetY = 0.18f;
 
@@ -545,8 +545,8 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
 
         if (entity.getRidingEntity() instanceof PlayerEntity)
         {
-            if (shouldSwap) wing1L.rotateAngleY = -1.85f;
-            else wing1R.rotateAngleY = 1.85f;
+            wing1L.rotateAngleY = -1.85f;
+            wing1R.rotateAngleY = 1.85f;
             tailRot *= 0.7f;
         }
 

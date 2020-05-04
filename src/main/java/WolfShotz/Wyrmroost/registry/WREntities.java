@@ -59,7 +59,7 @@ public class WREntities
         registerSpawnEntry(ROOSTSTALKER.get(), 9, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
         DragonFruitDrakeEntity.handleSpawning();
 
-        registerSpawnEntry(BUTTERFLY_LEVIATHAN.get(), 4, 1, 1, BiomeDictionary.getBiomes(Type.OCEAN));
+        ButterflyLeviathanEntity.handleSpawning();
         registerSpawnEntry(CANARI_WYVERN.get(), 9, 2, 5, BiomeDictionary.getBiomes(Type.SWAMP));
     }
 
@@ -97,7 +97,7 @@ public class WREntities
     /**
      * Helper method allowing for easier entity world spawning setting
      */
-    private static void registerBiomeSpawnEntry(EntityType<?> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
+    public static void registerBiomeSpawnEntry(EntityType<?> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
     {
         biomes.forEach(biome -> biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
     }
@@ -105,7 +105,7 @@ public class WREntities
     /**
      * Group all biomes into one set according to their BiomeDictionary Types
      */
-    private static Set<Biome> getByTypes(Type... types)
+    public static Set<Biome> getByTypes(Type... types)
     {
         Set<Biome> biomes = Sets.newHashSet();
         for (Type type : types) biomes.addAll(BiomeDictionary.getBiomes(type));

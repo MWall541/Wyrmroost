@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
+import net.minecraft.item.Items;
 
 public class Tags
 {
@@ -22,6 +23,7 @@ public class Tags
 
             getBuilder(net.minecraftforge.common.Tags.Items.EGGS).add(WRItems.DRAGON_EGG.get());
             getBuilder(WRItems.Tags.GEODES).add(WRItems.BLUE_GEODE.get(), WRItems.RED_GEODE.get(), WRItems.PURPLE_GEODE.get());
+            getBuilder(WRItems.Tags.MEATS).add(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, Items.RABBIT, Items.COOKED_RABBIT, WRItems.LOWTIER_MEAT_RAW.get(), WRItems.LOWTIER_MEAT_COOKED.get(), WRItems.COMMON_MEAT_RAW.get(), WRItems.COMMON_MEAT_COOKED.get(), WRItems.APEX_MEAT_RAW.get(), WRItems.APEX_MEAT_COOKED.get(), WRItems.BEHEMOTH_MEAT_RAW.get(), WRItems.BEHEMOTH_MEAT_COOKED.get());
         }
     }
 

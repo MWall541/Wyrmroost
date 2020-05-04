@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.util.QuikMaths;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.MathHelper;
@@ -15,6 +16,8 @@ public class ButterFlyMoveController extends MovementController
     
     public void tick()
     {
+        if (mob.isInWater()) mob.fallDistance = 0;
+
         if (action == MovementController.Action.MOVE_TO && !mob.getNavigator().noPath())
         {
             double x = posX - mob.posX;
@@ -30,19 +33,20 @@ public class ButterFlyMoveController extends MovementController
             mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10f);
             mob.renderYawOffset = mob.rotationYaw;
             mob.rotationYawHead = mob.rotationYaw;
-            float f1 = (float) (speed * mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
+            float speed = (float) (mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
             if (mob.isInWater())
             {
-                mob.setAIMoveSpeed(f1 * 2);
+                speed = (float) (mob.getAttribute(LivingEntity.SWIM_SPEED).getValue());
+                mob.setAIMoveSpeed(speed);
                 float f2 = -((float) (MathHelper.atan2(y, MathHelper.sqrt(x * x + z * z)) * (double) (180f / QuikMaths.PI)));
                 f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85f, 85f);
                 mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 5f);
                 float f3 = MathHelper.cos(mob.rotationPitch * (QuikMaths.PI / 180f));
                 float f4 = MathHelper.sin(mob.rotationPitch * (QuikMaths.PI / 180f));
-                mob.moveForward = f3 * (f1 * 10);
-                mob.moveVertical = -f4 * (f1 * 10);
+                mob.moveForward = f3 * (speed * 8);
+                mob.moveVertical = -f4 * (speed * 8);
             }
-            else mob.setAIMoveSpeed(f1 * 1.2f);
+            else mob.setAIMoveSpeed(speed);
         }
         else
         {

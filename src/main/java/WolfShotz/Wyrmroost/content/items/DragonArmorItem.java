@@ -11,7 +11,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.UUID;
 
@@ -68,10 +68,10 @@ public class DragonArmorItem extends Item
         return type.getDmgReduction();
     }
 
-    public static DragonArmorItem getArmorInInv(ItemStackHandler inv, int slot)
+    public static DragonArmorItem getArmorInInv(IItemHandler inv, int slot)
     {
         Item item = inv.getStackInSlot(slot).getItem();
-        return item instanceof DragonArmorItem ? (DragonArmorItem) item : null;
+        return item instanceof DragonArmorItem? (DragonArmorItem) item : null;
     }
 
     public static void setDragonArmored(AbstractDragonEntity dragon, int slot)
@@ -87,6 +87,9 @@ public class DragonArmorItem extends Item
         }
     }
 
+    /**
+     * @deprecated just make the damage reduction an item constructor parameter... smh wtf is wrong with me
+     */
     public enum DragonArmorType
     {
         IRON(5),
@@ -96,9 +99,9 @@ public class DragonArmorItem extends Item
         BLUE_GEODE(11),
         RED_GEODE(12),
         PURPLE_GEODE(13);
-        
+
         private int dmgReduction;
-        
+
         DragonArmorType(int dmgReduction)
         {
             this.dmgReduction = dmgReduction;

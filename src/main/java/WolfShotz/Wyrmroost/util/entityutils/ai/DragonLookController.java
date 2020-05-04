@@ -3,16 +3,19 @@ package WolfShotz.Wyrmroost.util.entityutils.ai;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.controller.LookController;
 
+/**
+ * @deprecated literally serves no purpose, should just use the default one >.>
+ */
 public class DragonLookController extends LookController
 {
     private AbstractDragonEntity dragon;
-    
+
     public DragonLookController(AbstractDragonEntity dragon)
     {
         super(dragon);
         this.dragon = dragon;
     }
-    
+
     @Override
     public void tick()
     {
@@ -35,5 +38,5 @@ public class DragonLookController extends LookController
             mob.rotationPitch = clampedRotate(mob.rotationPitch, getTargetPitch(), deltaLookPitch);
         }
     }
-    
+
 }

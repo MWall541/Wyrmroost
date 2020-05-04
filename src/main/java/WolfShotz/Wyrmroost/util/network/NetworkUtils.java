@@ -30,6 +30,7 @@ public class NetworkUtils
     {
         ++messageIndex;
         Wyrmroost.NETWORK.registerMessage(messageIndex, clazz, IMessage::encode, decoder, IMessage::handle);
+
     }
     
     public static <T extends Entity & IAnimatedObject> void sendAnimationPacket(T entity, Animation animation)

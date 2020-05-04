@@ -24,6 +24,7 @@ import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
 import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRKeyBinds;
+import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -238,6 +239,7 @@ public class ClientEvents
 
     public static void renderDebugBox()
     {
+        if (!ConfigData.debugMode) return;
         if (debugBox == null) return;
 
         Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();

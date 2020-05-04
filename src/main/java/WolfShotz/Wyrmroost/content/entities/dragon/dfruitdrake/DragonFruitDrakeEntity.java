@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.ControlledAttackGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
@@ -13,7 +14,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -39,6 +39,7 @@ import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +53,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     public static final Animation STAND_ANIMATION = new Animation(15);
     public static final Animation SIT_ANIMATION = new Animation(15);
+    public static final Animation BITE_ANIMATION = new Animation(15);
 
     private int shearCooldownTime;
     private int napTime;
@@ -71,7 +73,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 8, 2, 4)));
         EntitySpawnPlacementRegistry.register(
                 WREntities.DRAGON_FRUIT_DRAKE.get(),
-                EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
+                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING,
                 ((a, b, c, d, e) -> true));
     }
@@ -92,7 +94,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         super.registerGoals();
         goalSelector.addGoal(3, new MoveToHomeGoal(this));
-        goalSelector.addGoal(4, new MeleeAttackGoal(this, 1d, false));
+        goalSelector.addGoal(4, new ControlledAttackGoal(this, 1.1, false, 1.5d, AbstractDragonEntity::performGenericAttack));
         goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
         goalSelector.addGoal(6, new NonTamedBabyTemptGoal(this, 1, Ingredient.fromItems(Items.APPLE)));
         goalSelector.addGoal(7, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
@@ -111,7 +113,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.registerAttributes();
         getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.232524f);
         getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
-        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4d);
+        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3d);
     }
 
     @Override
@@ -180,6 +182,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         setSprinting(getAttackTarget() != null);
 
         if (shearCooldownTime > 0) --shearCooldownTime;
+
+        if (getAnimation() == BITE_ANIMATION && animationTick == 7) attackInFront(0);
     }
 
     @Override
@@ -204,7 +208,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
             setAIMoveSpeed(speed / 2);
             super.travel(target);
-            if (moving)
+            if (moving || getAnimation() == BITE_ANIMATION)
             {
                 prevRotationYaw = rotationYaw = rider.rotationYaw;
                 rotationPitch = rider.rotationPitch * 0.5f;
@@ -290,6 +294,16 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
+    public void performGenericAttack() { swingArm(Hand.MAIN_HAND); }
+
+    @Override
+    public void swingArm(Hand hand)
+    {
+        super.swingArm(hand);
+        setAnimation(BITE_ANIMATION);
+    }
+
+    @Override
     public boolean canFly() { return false; }
 
     @Nullable
@@ -308,7 +322,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     protected float getSoundPitch() { return super.getSoundPitch() * 0.5f; }
 
     @Override
-    public List<Item> getFoodItems()
+    public Collection<Item> getFoodItems()
     {
         List<Item> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
         Collections.addAll(foods, Items.APPLE, Items.SWEET_BERRIES);

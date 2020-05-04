@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.goals.CanariAvoidGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
-import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
@@ -32,7 +31,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.util.List;
+import java.util.Collection;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -152,6 +151,13 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     {
         if (super.processInteract(player, hand, stack)) return true;
 
+        if (!isTamed() && isFoodItem(stack))
+        {
+            eat(stack);
+            tame(getRNG().nextInt(5) == 0, player);
+            return true;
+        }
+
         if (isOwner(player))
         {
             if (player.isSneaking())
@@ -161,7 +167,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
                 return true;
             }
 
-            if (PlayerMount.getShoulderEntityCount(player) < 2)
+            if (player.getPassengers().size() < 3)
             {
                 setSit(true);
                 setFlying(false);
@@ -179,41 +185,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
     {
         // Flying is controlled entirely in the move helper
         if (!isFlying()) super.travel(vec3d);
-    }
-
-    @Override
-    public void updateRidden()
-    {
-        super.updateRidden();
-
-        Entity entity = getRidingEntity();
-
-        if (!entity.isAlive())
-        {
-            stopRiding();
-            return;
-        }
-        
-        if (!(entity instanceof PlayerEntity)) return;
-        
-        PlayerEntity player = (PlayerEntity) entity;
-
-        if ((player.isSneaking() && !player.abilities.isFlying) || player.getSubmergedHeight() > 1.25 || player.isElytraFlying())
-        {
-            stopRiding();
-            return;
-        }
-        
-        rotationYaw = player.rotationYawHead;
-        rotationPitch = player.rotationPitch;
-        setRotation(rotationYaw, rotationPitch);
-        rotationYawHead = player.rotationYawHead;
-        prevRotationYaw = player.rotationYawHead;
-
-        double xOffset = checkShoulderOccupants(player)? -0.35f : 0.35f;
-
-        Vec3d vec3d1 = QuikMaths.calculateYawAngle(player.renderYawOffset, xOffset, 0.1).add(player.posX, 0, player.posZ);
-        setPosition(vec3d1.x, player.posY + 1.4, vec3d1.z);
     }
 
     @Override
@@ -245,7 +216,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
+    public Collection<Item> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
 
     @Override
     public DragonEggProperties createEggProperties()

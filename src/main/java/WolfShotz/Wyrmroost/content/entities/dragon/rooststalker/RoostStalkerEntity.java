@@ -13,8 +13,6 @@ import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
-import com.google.common.collect.Lists;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.controller.BodyController;
@@ -45,7 +43,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -171,12 +169,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
                 
                 return true;
             }
-            
-            if (stack.isEmpty() && heldItem.isEmpty() && !PlayerMount.hasHeadOccupant(player))
+
+            if (stack.isEmpty() && heldItem.isEmpty() && player.getPassengers().size() < 3)
             {
                 setSit(false);
                 startRiding(player, true);
-                
+
                 return true;
             }
             
@@ -196,37 +194,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     public boolean isBreedingItem(ItemStack stack)
     {
         return stack.getItem() == Items.GOLD_NUGGET;
-    }
-    
-    @Override
-    public void updateRidden()
-    {
-        super.updateRidden();
-        
-        Entity entity = getRidingEntity();
-        
-        if (!entity.isAlive())
-        {
-            stopRiding();
-            return;
-        }
-
-        if (!(entity instanceof PlayerEntity)) return;
-        
-        PlayerEntity player = (PlayerEntity) entity;
-        
-        if (player.isSneaking() && !player.abilities.isFlying)
-        {
-            stopRiding();
-            return;
-        }
-        
-        rotationYaw = player.rotationYawHead;
-        rotationPitch = player.rotationPitch;
-        setRotation(rotationYaw, rotationPitch);
-        rotationYawHead = player.rotationYawHead;
-        prevRotationYaw = player.rotationYawHead;
-        setPosition(player.posX, player.posY + 1.8, player.posZ);
     }
 
     @Override
@@ -268,15 +235,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMo
     {
         return WRSounds.STALKER_DEATH.get();
     }
-    
+
     /**
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems()
-    {
-        return Lists.newArrayList(Items.BEEF, Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP, Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON, Items.COOKED_MUTTON, WRItems.COMMON_MEAT_RAW.get(), WRItems.COMMON_MEAT_COOKED.get());
-    }
+    public Collection<Item> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
     
     public boolean canPickUpStack(ItemStack stack)
     {

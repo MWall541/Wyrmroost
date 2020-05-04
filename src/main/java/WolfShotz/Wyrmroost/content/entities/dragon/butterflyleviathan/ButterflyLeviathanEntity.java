@@ -1,21 +1,18 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.BFlyAttackGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.BFlyBodyController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DefendHomeGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.WaterSitGoal;
+import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -45,14 +42,19 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -99,34 +101,18 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     protected BodyController createBodyController() { return new BFlyBodyController(this); }
 
-    @Override
-    protected void registerGoals()
+    public static void handleSpawning()
     {
-        goalSelector.addGoal(1, sitGoal = new WaterSitGoal(this));
-        goalSelector.addGoal(2, new MoveToHomeGoal(this));
-//        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
-        goalSelector.addGoal(4, new BFlyAttackGoal(this));
-        goalSelector.addGoal(4, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
-        goalSelector.addGoal(5, CommonGoalWrappers.lookAt(this, 10f));
-        goalSelector.addGoal(6, new LookRandomlyGoal(this));
-
-        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new DefendHomeGoal(this, Entity::isInWater));
-        targetSelector.addGoal(4, new HurtByTargetGoal(this));
-        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
+        WREntities.registerBiomeSpawnEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1, WREntities.getByTypes(BiomeDictionary.Type.OCEAN));
+        EntitySpawnPlacementRegistry.register(WREntities.BUTTERFLY_LEVIATHAN.get(),
+                EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                ButterflyLeviathanEntity::canSpawnHere);
     }
-    
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
 
-        getAttribute(MAX_HEALTH).setBaseValue(70d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.045d); // On land speed, in water speed is handled in the move controller
-        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4d);
-        getAttribute(FOLLOW_RANGE).setBaseValue(28d);
+    public static boolean canSpawnHere(EntityType<? extends MobEntity> typeIn, IWorld worldIn, SpawnReason reason, BlockPos pos, Random randomIn)
+    {
+        return worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
     }
 
     @Override
@@ -134,7 +120,39 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     @Override
     public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
-    
+
+    @Override
+    protected void registerGoals()
+    {
+        goalSelector.addGoal(1, sitGoal = new WaterSitGoal(this));
+        goalSelector.addGoal(2, new MoveToHomeGoal(this));
+        goalSelector.addGoal(3, new ControlledAttackGoal(this, 1, true, 3.4, b -> swingArm(Hand.MAIN_HAND)));
+//        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
+        goalSelector.addGoal(4, new DragonBreedGoal(this, false, false));
+        goalSelector.addGoal(5, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
+        goalSelector.addGoal(6, CommonGoalWrappers.lookAt(this, 10f));
+        goalSelector.addGoal(7, new LookRandomlyGoal(this));
+
+        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DefendHomeGoal(this, Entity::isInWater));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
+    }
+
+    @Override
+    protected void registerAttributes()
+    {
+        super.registerAttributes();
+
+        getAttribute(MAX_HEALTH).setBaseValue(100d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.08d); // On land speed
+        getAttribute(SWIM_SPEED).setBaseValue(0.1d);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8d);
+        getAttribute(FOLLOW_RANGE).setBaseValue(28d);
+    }
+
     // ================================
     //           Entity NBT
     // ================================
@@ -235,11 +253,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
         if (getAnimation() == BITE_ANIMATION)
         {
+            rotationYaw = rotationYawHead;
             if (animationTick == 1) playSound(WRSounds.BFLY_HURT.get(), 1, 1);
             if (animationTick == 10)
             {
-                AxisAlignedBB size = getBoundingBox();
-                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize()));
+                AxisAlignedBB size = getBoundingBox().shrink(0.3);
+                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() * 1.5));
                 attackInAABB(aabb);
             }
         }
@@ -250,16 +269,15 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public void travel(Vec3d vec3d)
     {
-        float f1 = (float) (getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
-        float speed = isInWater() ? f1 * 2 : f1;
+        float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue());
+        if (isInWater()) speed = (float) getAttribute(SWIM_SPEED).getValue();
         if (canPassengerSteer() && canBeSteered())
         {
             LivingEntity rider = (LivingEntity) getControllingPassenger();
 
-
             rotationPitch = rider.rotationPitch * 0.5f;
             rotationYawHead = rider.rotationYawHead;
-            rotationYaw = MathHelper.func_219800_b(rotationYawHead, rotationYaw, 10);
+            rotationYaw = MathHelper.func_219800_b(rotationYawHead, rotationYaw, 8);
             if (isInWater() && (rider.moveForward != 0 || rider.moveStrafing != 0))
             {
                 float yVel = -(MathHelper.sin(rotationPitch * (QuikMaths.PI / 180f))) * (speed * 15);
@@ -284,7 +302,13 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         if (super.processInteract(player, hand, stack)) return true;
 
-        if (isFoodItem(stack) && !isTamed() && tame(getRNG().nextInt(3) == 0, player)) return true;
+        boolean isFoodItem = isFoodItem(stack);
+        if (!isTamed() && !isInWater() && (isBreedingItem(stack) || isFoodItem))
+        {
+            int chances = isFoodItem? 3 : 7;
+            tame(getRNG().nextInt(chances) == 0, player);
+            return true;
+        }
 
         if (isOwner(player))
         {
@@ -294,7 +318,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 return true;
             }
 
-            if (!world.isRemote)
+            if (!world.isRemote && !isChild())
             {
                 player.startRiding(this);
                 setSit(false);
@@ -387,8 +411,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
-        if (isUnderWater()) return 2f;
-        return 3.1f;
+        float eyeHeight = 3.1f;
+        if (isUnderWater()) eyeHeight = 2f;
+        if (isChild()) eyeHeight *= 0.35f;
+        return eyeHeight;
     }
 
     @Override
@@ -454,14 +480,16 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems()
+    public Collection<Item> getFoodItems()
     {
-        return Lists.newArrayList(
-                Items.SEAGRASS, Items.KELP, Items.BEEF,
-                Items.COOKED_BEEF, Items.PORKCHOP, Items.COOKED_PORKCHOP,
-                Items.CHICKEN, Items.COOKED_CHICKEN, Items.MUTTON,
-                Items.COOKED_MUTTON, WRItems.COMMON_MEAT_RAW.get(), WRItems.COMMON_MEAT_COOKED.get()
-        );
+        return WRItems.Tags.MEATS.getAllElements();
+    }
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return Lists.newArrayList(Items.KELP, Items.DRIED_KELP, Items.DRIED_KELP_BLOCK, Items.SEAGRASS, Items.SEA_PICKLE)
+                .contains(stack.getItem());
     }
 
     @Nullable
@@ -480,7 +508,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public DragonEggProperties createEggProperties()
     {
-        return new DragonEggProperties(1.5f, 2.5f, 40000).setConditions(Entity::isInWater);
+        return new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater);
     }
     
     @Override

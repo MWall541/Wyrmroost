@@ -25,7 +25,7 @@ public class WaterSitGoal extends SitGoal
     public boolean shouldExecute()
     {
         if (!tameable.isTamed()) return false;
-        else if (!tameable.onGround && !tameable.isInWater()) return false;
+//        else if (!tameable.onGround && !tameable.isInWater()) return false;
         else
         {
             LivingEntity owner = tameable.getOwner();

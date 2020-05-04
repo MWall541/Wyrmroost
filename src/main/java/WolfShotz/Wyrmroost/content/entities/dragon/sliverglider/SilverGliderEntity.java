@@ -36,7 +36,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -67,12 +67,19 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.257657d);
         getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.366836d);
     }
-    
+
+    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand)
+    {
+        Block block = world.getBlockState(blockPos.down(1)).getBlock();
+
+        return block == Blocks.AIR || block == Blocks.SAND || block == Blocks.WATER;
+    }
+
     @Override
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(4, CommonGoalWrappers.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
+        goalSelector.addGoal(4, CommonGoalWrappers.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromTag(ItemTags.FISHES)));
         goalSelector.addGoal(5, CommonGoalWrappers.nonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f));
         goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
         goalSelector.addGoal(7, new FlyerFollowOwnerGoal(this, 12d, 3d, 15d, true));
@@ -95,7 +102,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
             }
         });
     }
-    
+
     // ================================
     //           Entity NBT
     // ================================
@@ -103,36 +110,27 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     protected void registerData()
     {
         super.registerData();
-        
+
         dataManager.register(GENDER, getRNG().nextBoolean());
         dataManager.register(VARIANT, getRNG().nextInt(3)); // For females, this value is redundant.
     }
-    
+
     @Override
     public void writeAdditional(CompoundNBT nbt)
     {
         super.writeAdditional(nbt);
-        
+
         nbt.putBoolean("gender", getGender());
         nbt.putInt("variant", getVariant());
     }
-    
-    @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-        
-        setVariant(nbt.getInt("variant"));
-        setGender(nbt.getBoolean("gender"));
-    }
-    
+
     @Override
     public void setFlying(boolean fly)
     {
         if (isFlying() == fly) return;
         super.setFlying(fly);
     }
-    
+
     /**
      * Gets the variant of the Silver Glider.
      */
@@ -140,7 +138,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     {
         return dataManager.get(VARIANT);
     }
-    
+
     public void setVariant(int variant)
     {
         dataManager.set(VARIANT, variant);
@@ -167,79 +165,70 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     }
 
     @Override
+    public void readAdditional(CompoundNBT nbt)
+    {
+        super.readAdditional(nbt);
+
+        setVariant(nbt.getInt("variant"));
+        setGender(nbt.getBoolean("gender"));
+    }
+
+    @Override
     public void updateRidden()
     {
         super.updateRidden();
 
         Entity entity = getRidingEntity();
 
-        if (entity != null)
+        if (entity instanceof PlayerEntity)
         {
-            if (!entity.isAlive() || isInWater())
+            PlayerEntity player = (PlayerEntity) entity;
+
+            if (shouldGlide(player) && !player.isElytraFlying())
             {
-                stopRiding();
-                return;
-            }
-            
-            setMotion(Vec3d.ZERO);
-            
-            if (entity instanceof PlayerEntity)
-            {
-                PlayerEntity player = (PlayerEntity) entity;
-                
-                if (player.isSneaking() && !player.abilities.isFlying)
+                Vec3d vec3d3 = player.getMotion();
+                player.setMotion(vec3d3.add(0, 0.09, 0));
+                if (vec3d3.y > -0.5d) player.fallDistance = 1f;
+
+                Vec3d vec3d = player.getLookVec();
+                float f6 = player.rotationPitch * (QuikMaths.PI / 180F);
+                double d9 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
+                double d11 = Math.sqrt(horizontalMag(vec3d3));
+                double d12 = vec3d.length();
+                float f3 = MathHelper.cos(f6);
+                f3 = (float) ((double) f3 * (double) f3 * Math.min(1d, d12 / 0.4d));
+                vec3d3 = player.getMotion().add(0, 0.08 * (-1 + (double) f3 * 0.75d), 0);
+                if (vec3d3.y < 0.0D && d9 > 0)
                 {
-                    stopRiding();
-                    return;
+                    double d3 = vec3d3.y * -0.1D * (double) f3;
+                    vec3d3 = vec3d3.add(vec3d.x * d3 / d9, d3, vec3d.z * d3 / d9);
                 }
-                
-                if (shouldGlide(player) && !player.isElytraFlying())
+
+                if (f6 < 0.0F && d9 > 0.0D)
                 {
-                    Vec3d vec3d3 = player.getMotion();
-                    player.setMotion(vec3d3.add(0, 0.09, 0));
-                    if (vec3d3.y > -0.5d) player.fallDistance = 1f;
+                    double d13 = d11 * (double) (-MathHelper.sin(f6)) * 0.04D;
+                    vec3d3 = vec3d3.add(-vec3d.x * d13 / d9, d13 * 3.2D, -vec3d.z * d13 / d9);
+                }
 
-                    Vec3d vec3d = player.getLookVec();
-                    float f6 = player.rotationPitch * (QuikMaths.PI / 180F);
-                    double d9 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
-                    double d11 = Math.sqrt(horizontalMag(vec3d3));
-                    double d12 = vec3d.length();
-                    float f3 = MathHelper.cos(f6);
-                    f3 = (float) ((double) f3 * (double) f3 * Math.min(1d, d12 / 0.4d));
-                    vec3d3 = player.getMotion().add(0, 0.08 * (-1 + (double) f3 * 0.75d), 0);
-                    if (vec3d3.y < 0.0D && d9 > 0)
+                if (d9 > 0.0D)
+                {
+                    vec3d3 = vec3d3.add((vec3d.x / d9 * d11 - vec3d3.x) * 0.1D, 0.0D, (vec3d.z / d9 * d11 - vec3d3.z) * 0.1D);
+                }
+
+                player.setMotion(vec3d3.mul(0.99F, 0.98F, 0.99F));
+                player.move(MoverType.SELF, player.getMotion());
+                if (player.collidedHorizontally && !world.isRemote)
+                {
+                    double d14 = Math.sqrt(horizontalMag(player.getMotion()));
+                    double d4 = d11 - d14;
+                    float f4 = (float) (d4 * 10.0D - 3.0D);
+                    if (f4 > 0.0F)
                     {
-                        double d3 = vec3d3.y * -0.1D * (double) f3;
-                        vec3d3 = vec3d3.add(vec3d.x * d3 / d9, d3, vec3d.z * d3 / d9);
+                        playSound(getFallSound((int) f4), 1.0F, 1.0F);
+                        player.attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
+                        attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
                     }
-
-                    if (f6 < 0.0F && d9 > 0.0D)
-                    {
-                        double d13 = d11 * (double) (-MathHelper.sin(f6)) * 0.04D;
-                        vec3d3 = vec3d3.add(-vec3d.x * d13 / d9, d13 * 3.2D, -vec3d.z * d13 / d9);
-                    }
-
-                    if (d9 > 0.0D)
-                    {
-                        vec3d3 = vec3d3.add((vec3d.x / d9 * d11 - vec3d3.x) * 0.1D, 0.0D, (vec3d.z / d9 * d11 - vec3d3.z) * 0.1D);
-                    }
-
-                    player.setMotion(vec3d3.mul(0.99F, 0.98F, 0.99F));
-                    player.move(MoverType.SELF, player.getMotion());
-                    if (player.collidedHorizontally && !world.isRemote)
-                    {
-                        double d14 = Math.sqrt(horizontalMag(player.getMotion()));
-                        double d4 = d11 - d14;
-                        float f4 = (float) (d4 * 10.0D - 3.0D);
-                        if (f4 > 0.0F)
-                        {
-                            playSound(getFallSound((int) f4), 1.0F, 1.0F);
-                            player.attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
-                            attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
-                        }
-                    }
-
-
+                }
 //                    Vec3d lookVec = player.getLookVec();
 //                    Vec3d playerMot = player.getMotion();
 //                    double xMot = playerMot.x + (lookVec.x / 12);
@@ -250,61 +239,10 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
 //
 //                    player.setMotion(xMot, yMot, zMot);
 //                    setFlying(true);
-                }
-                
-                prevRotationPitch = rotationPitch = player.rotationPitch / 2;
-                rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
-                setRotation(player.rotationYawHead, rotationPitch);
-
-                Vec3d rotationOffset = QuikMaths.calculateYawAngle(player.renderYawOffset, 0, 0.5d);
-                double offsetX = rotationOffset.x;
-                double offsetZ = rotationOffset.z;
-                if (player.isElytraFlying())
-                {
-                    float angle = (0.01745329251f * player.renderYawOffset) + 90;
-                    offsetX = -2f * MathHelper.sin((float) (Math.PI + angle));
-                    offsetZ = -2f * MathHelper.cos(angle);
-                }
-                
-                setPosition(player.posX + offsetX, player.posY + 1.55d, player.posZ + offsetZ);
             }
         }
     }
-    
-    @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
-    {
-        if (super.processInteract(player, hand, stack)) return true;
-        
-        // If holding this dragons favorite food, and not tamed, then tame it!
-        if (!isTamed() && isBreedingItem(stack))
-        {
-            tame(getRNG().nextInt(5) == 0, player);
-            eat(stack);
 
-            return true;
-        }
-        
-        // if tamed, then start riding the player
-        if (isTamed() && stack.isEmpty() && !player.isSneaking() && !PlayerMount.hasHeadOccupant(player) && isOwner(player))
-        {
-            startRiding(player, true);
-            setSit(false);
-            getNavigator().clearPath();
-            
-            return true;
-        }
-        
-        if (isTamed() && stack.isEmpty() && player.isSneaking() && isOwner(player))
-        {
-            setSit(!isSitting());
-            
-            return true;
-        }
-        
-        return false;
-    }
-    
     public boolean shouldGlide(PlayerEntity player)
     {
         return (player.isJumping && getAltitude(true) > shouldFlyThreshold) &&
@@ -313,14 +251,41 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
                 !player.isInWater() &&
                 super.canFly();
     }
-    
-    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand)
+
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        Block block = world.getBlockState(blockPos.down(1)).getBlock();
-        
-        return block == Blocks.AIR || block == Blocks.SAND || block == Blocks.WATER;
+        if (super.processInteract(player, hand, stack)) return true;
+
+        // If holding this dragons favorite food, and not tamed, then tame it!
+        if (!isTamed() && isBreedingItem(stack))
+        {
+            tame(getRNG().nextInt(5) == 0, player);
+            eat(stack);
+
+            return true;
+        }
+
+        // if tamed, then start riding the player
+        if (isTamed() && stack.isEmpty() && !player.isSneaking() && player.getPassengers().size() < 3 && isOwner(player))
+        {
+            startRiding(player, true);
+            setSit(false);
+            getNavigator().clearPath();
+
+            return true;
+        }
+
+        if (isTamed() && stack.isEmpty() && player.isSneaking() && isOwner(player))
+        {
+            setSit(!isSitting());
+
+            return true;
+        }
+
+        return false;
     }
-    
+
     @Override
     public void doSpecialEffects()
     {
@@ -332,7 +297,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
             world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.1925f, 0);
         }
     }
-    
+
     @Override
     public boolean canFly()
     {
@@ -362,29 +327,29 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     {
         return 0.5f;
     }
-    
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
     {
         return WRSounds.SILVERGLIDER_IDLE.get();
     }
-    
-    
+
+
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource)
     {
         return WRSounds.SILVERGLIDER_HURT.get();
     }
-    
+
     @Nullable
     @Override
     protected SoundEvent getDeathSound()
     {
         return WRSounds.SILVERGLIDER_DEATH.get();
     }
-    
+
     @Override
     public void setSit(boolean sitting)
     {
@@ -406,7 +371,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
      * Array Containing all of the dragons food items
      */
     @Override
-    public List<Item> getFoodItems()
+    public Collection<Item> getFoodItems()
     {
         return new ArrayList<>(ItemTags.FISHES.getAllElements());
     }
@@ -416,7 +381,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
     {
         return new DragonEggProperties(0.4f, 0.65f, 12000);
     }
-    
+
     @Override
     public Animation[] getAnimations()
     {

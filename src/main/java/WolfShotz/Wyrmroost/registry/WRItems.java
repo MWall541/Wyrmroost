@@ -153,6 +153,8 @@ public class WRItems
     {
         public static final Tag<Item> GEODES = tag("geodes");
 
+        public static final Tag<Item> MEATS = forgeTag("meats");
+
         public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCKS = new HashMap<>();
 
 //        public static final Tag<Item> CANARI_LOGS = itemBlockTag(new ResourceLocation("logs/canari_logs"), WRBlocks.Tags.CANARI_LOGS);
@@ -161,6 +163,8 @@ public class WRItems
 //        public static final Tag<Item> RED_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/red_corin_logs"), WRBlocks.Tags.RED_CORIN_LOGS);
 
         private static Tag<Item> tag(String name) { return new ItemTags.Wrapper(Wyrmroost.rl(name)); }
+
+        private static Tag<Item> forgeTag(String name) { return new ItemTags.Wrapper(new ResourceLocation("forge", name)); }
 
         private static Tag<Item> itemBlockTag(ResourceLocation name, Tag<Block> copy)
         {
