@@ -1,18 +1,13 @@
 package WolfShotz.Wyrmroost.content.io.container;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
-import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
-import WolfShotz.Wyrmroost.registry.WRIO;
-import WolfShotz.Wyrmroost.util.io.ContainerBase;
-import WolfShotz.Wyrmroost.util.io.ItemHandlerSlotBuilder;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SaddleItem;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import WolfShotz.Wyrmroost.content.entities.dragon.*;
+import WolfShotz.Wyrmroost.content.items.*;
+import WolfShotz.Wyrmroost.registry.*;
+import WolfShotz.Wyrmroost.util.io.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.inventory.container.*;
+import net.minecraft.item.*;
+import net.minecraftforge.items.*;
 
 public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
 {

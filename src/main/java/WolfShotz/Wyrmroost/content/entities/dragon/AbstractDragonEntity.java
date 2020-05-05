@@ -1,63 +1,39 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.ClientEvents;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
-import WolfShotz.Wyrmroost.registry.WRItems;
-import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
-import com.google.common.collect.Lists;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.controller.BodyController;
-import net.minecraft.entity.ai.goal.SitGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.network.datasync.IDataSerializer;
-import net.minecraft.particles.ItemParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.FlyingPathNavigator;
-import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.items.ItemStackHandler;
-import org.apache.commons.lang3.tuple.Pair;
+import WolfShotz.Wyrmroost.*;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
+import WolfShotz.Wyrmroost.content.items.*;
+import WolfShotz.Wyrmroost.registry.*;
+import WolfShotz.Wyrmroost.util.*;
+import WolfShotz.Wyrmroost.util.entityutils.*;
+import WolfShotz.Wyrmroost.util.entityutils.ai.*;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
+import WolfShotz.Wyrmroost.util.network.*;
+import com.google.common.collect.*;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.controller.*;
+import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.item.*;
+import net.minecraft.entity.passive.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.inventory.container.*;
+import net.minecraft.item.*;
+import net.minecraft.nbt.*;
+import net.minecraft.network.datasync.*;
+import net.minecraft.particles.*;
+import net.minecraft.pathfinding.*;
+import net.minecraft.potion.*;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
+import net.minecraft.world.*;
+import net.minecraftforge.common.util.*;
+import net.minecraftforge.event.*;
+import net.minecraftforge.items.*;
+import org.apache.commons.lang3.tuple.*;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
+import javax.annotation.*;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * Created by WolfShotz 7/10/19 - 21:36
@@ -195,7 +171,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setFlying(boolean fly)
     {
         if (isFlying() == fly) return;
-        getNavigator().clearPath();
+//        getNavigator().clearPath();
         if (canFly() && fly && liftOff())
         {
             navigator = new FlyingPathNavigator(this, world);
@@ -203,7 +179,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         else
         {
-            getMoveHelper().setMoveTo(posX, posY, posZ, 1);
+//            getMoveHelper().setMoveTo(posX, posY, posZ, 1);
             navigator = new GroundPathNavigator(this, world);
             dataManager.set(FLYING, false);
         }
@@ -410,7 +386,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
 
             Vec3d pos = QuikMaths.calculateYawAngle(player.renderYawOffset, xOffset, zOffset)
-                    .add(player.posX, player.posY + yOffset, player.posZ);
+                    .add(player.getPosX(), player.getPosY() + yOffset, player.getPosZ());
             setPosition(pos.x, pos.y, pos.z);
         }
     }
@@ -549,9 +525,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (ticksExisted % 25 == 0)
         {
-            double x = posX + getWidth() * (getRNG().nextGaussian() * 0.5d);
-            double y = posY + getHeight() * (getRNG().nextDouble());
-            double z = posZ + getWidth() * (getRNG().nextGaussian() * 0.5d);
+            double x = getPosX() + getWidth() * (getRNG().nextGaussian() * 0.5d);
+            double y = getPosY() + getHeight() * (getRNG().nextDouble());
+            double z = getPosZ() + getWidth() * (getRNG().nextGaussian() * 0.5d);
             world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
         }
     }
@@ -584,39 +560,32 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void tryTeleportToOwner()
     {
-        LivingEntity owner = getOwner();
-        if (owner == null) return;
-        tryTeleportToPos(owner.getPosition().add(-2, 0, -2));
+        if (getOwner() == null) return;
+        final int CONSTRAINT = (int) (getWidth() * 0.5) + 2;
+        BlockPos pos = getOwner().getPosition();
+        BlockPos.Mutable potentialPos = new BlockPos.Mutable();
+
+        for (int x = -CONSTRAINT; x < CONSTRAINT; x++)
+            for (int y = -2; y < 2; y++)
+                for (int z = -CONSTRAINT; z < CONSTRAINT; z++)
+                {
+                    potentialPos.setPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
+//                    if (getPosX() - potentialPos.getX() < 2 && getPosZ() - potentialPos.getZ() < 2) continue;
+                    if (trySafeTeleport(potentialPos)) return;
+                }
     }
 
     /**
      * Try teleporting to a pos after a search for a safe location
-     * Todo: redo.. kinda messy and doesn't always work
      */
-    public boolean tryTeleportToPos(BlockPos pos)
+    public boolean trySafeTeleport(BlockPos pos)
     {
-//        AxisAlignedBB aabb = getBoundingBox();
-//        double growX = aabb.maxX - aabb.minX;
-//        double growY = aabb.maxY - aabb.minY;
-//        double growZ = aabb.maxZ - aabb.minZ;
-//        AxisAlignedBB potentialAABB = new AxisAlignedBB(pos).grow(growX, 0, growZ).expand(0, growY, 0);
-
-        for (int i = 0; i <= 4; ++i)
+        BlockPos blockpos = pos.subtract(getPosition());
+        if (world.hasNoCollisions(this, getBoundingBox().offset(blockpos)))
         {
-            for (int l = 0; l <= 4; ++l)
-            {
-                if ((i < 1 || l < 1 || i > 3 || l > 3) && world.isCollisionBoxesEmpty(this, getBoundingBox()) && (isFlying() || !world.getBlockState(pos.down()).isAir(world, pos)))
-                {
-                    setPosition(pos.getX(), pos.getY(), pos.getZ());
-                    clearAI();
-
-                    return true;
-                }
-            }
+            setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), rotationYaw, rotationPitch);
+            return true;
         }
-
-        getMoveHelper().setMoveTo(posX, posY, posZ, 1);
-        clearAI();
         return false;
     }
 
@@ -646,7 +615,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public double getAltitude(boolean capThreshold)
     {
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(getPosition());
+        BlockPos.Mutable pos = new BlockPos.Mutable(getPosition());
 
         if (capThreshold)
         {
@@ -655,10 +624,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         else
         { // cap to the world void (y = 0)
-            while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid())
-                pos.move(0, -1, 0);
+            while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid()) pos.move(0, -1, 0);
         }
-        return posY - pos.getY();
+        return getPosY() - pos.getY();
     }
 
     /**
@@ -738,9 +706,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         {
             for (int i = 0; i < getWidth() * 5; ++i)
             {
-                double x = posX + (getRNG().nextGaussian() * getWidth()) / 1.5d;
-                double y = posY + getRNG().nextDouble() * (getRNG().nextDouble() + 2d);
-                double z = posZ + (getRNG().nextGaussian() * getWidth()) / 1.5d;
+                double x = getPosX() + (getRNG().nextGaussian() * getWidth()) / 1.5d;
+                double y = getPosY() + getRNG().nextDouble() * (getRNG().nextDouble() + 2d);
+                double z = getPosZ() + (getRNG().nextGaussian() * getWidth()) / 1.5d;
                 world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
             }
         }
@@ -769,7 +737,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         tag.putInt("hatchTime", getEggProperties().getHatchTime());
         eggStack.setTag(tag);
 
-        ItemEntity eggItem = new ItemEntity(world, posX, posY, posZ, eggStack);
+        ItemEntity eggItem = new ItemEntity(world, getPosX(), getPosY(), getPosZ(), eggStack);
 
         eggItem.setMotion(0, getHeight() / 3, 0);
         world.addEntity(eggItem);
@@ -845,7 +813,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public Vec3d getApproximateMouthPos()
     {
-        return QuikMaths.calculateYawAngle(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(posX, posY + getEyeHeight() - 0.15d, posZ);
+        return QuikMaths.calculateYawAngle(renderYawOffset, 0, (getWidth() / 2) + 0.5d).add(getPosX(), getPosY() + getEyeHeight() - 0.15d, getPosZ());
     }
 
     @Override
@@ -888,8 +856,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         volume *= getSoundVolume();
         pitch *= getSoundPitch();
 
-        if (local) world.playSound(posX, posY, posZ, sound, getSoundCategory(), volume, pitch, false);
-        else world.playSound(null, posX, posY, posZ, sound, getSoundCategory(), volume, pitch);
+        if (local) world.playSound(getPosX(), getPosY(), getPosZ(), sound, getSoundCategory(), volume, pitch, false);
+        else world.playSound(null, getPosX(), getPosY(), getPosZ(), sound, getSoundCategory(), volume, pitch);
     }
 
     /**
@@ -999,13 +967,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return true;
     }
 
-    /**
-     * Handle landing after a fall
-     */
-    @Override // Disable falling calculations if we can fly (fall damage etc.)
-    public void fall(float distance, float damageMultiplier)
+    @Override // Disable fall calculations if we can fly (fall damage etc.)
+    public boolean onLivingFall(float distance, float damageMultiplier)
     {
-        if (!canFly()) super.fall(distance, damageMultiplier);
+        if (canFly()) return false;
+        return super.onLivingFall(distance, damageMultiplier);
     }
 
     /**

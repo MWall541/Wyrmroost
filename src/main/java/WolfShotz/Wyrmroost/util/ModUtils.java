@@ -1,37 +1,25 @@
 package WolfShotz.Wyrmroost.util;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import WolfShotz.Wyrmroost.*;
+import net.minecraft.block.*;
+import net.minecraft.block.material.*;
+import net.minecraft.client.*;
+import net.minecraft.client.world.*;
+import net.minecraft.entity.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.item.*;
+import net.minecraft.util.text.*;
+import net.minecraft.world.server.*;
+import net.minecraftforge.common.*;
+import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.server.*;
+import net.minecraftforge.registries.*;
+import org.apache.logging.log4j.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import javax.annotation.*;
+import java.util.*;
+import java.util.regex.*;
+import java.util.stream.*;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -112,20 +100,6 @@ public class ModUtils
     }
 
     /**
-     * Is the given aabb clear of all (solid) blocks?
-     */
-    public static boolean isBoxSafe(AxisAlignedBB aabb, World world)
-    {
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        for (int x = MathHelper.floor(aabb.minX); x < MathHelper.floor(aabb.maxX); ++x)
-            for (int y = MathHelper.ceil(aabb.minY); y < MathHelper.floor(aabb.maxY); ++y)
-                for (int z = MathHelper.floor(aabb.minZ); z < MathHelper.floor(aabb.maxZ); ++z)
-                    if (world.getBlockState(pos.setPos(x, y, z)).isSolid()) return false;
-        
-        return true;
-    }
-
-    /**
      * Creates a new TranslationTextComponent appended with the passed strings
      */
     public static ITextComponent appendableTextTranslation(String... strings)
@@ -133,25 +107,6 @@ public class ModUtils
         TranslationTextComponent translation = new TranslationTextComponent(strings[0]);
         for (int i = 1; i < strings.length; ++i) translation.appendSibling(new TranslationTextComponent(strings[i]));
         return translation;
-    }
-
-    /**
-     * Put a BlockPos into an nbt Compound
-     * The positions are put into an int array and then fed into the compound
-     */
-    public static void putBlockPos(CompoundNBT nbt, BlockPos pos, String key)
-    {
-        nbt.putIntArray(key, new int[]{pos.getY(), pos.getY(), pos.getZ()});
-    }
-
-    /**
-     * Retrieve a blockpos from an nbt compound
-     * Positions are retrieved from an int array of 3 elements
-     */
-    public static BlockPos getBlockPos(CompoundNBT nbt, String key)
-    {
-        int[] poses = nbt.getIntArray(key);
-        return new BlockPos(poses[0], poses[1], poses[2]);
     }
 
     /**
