@@ -1,61 +1,41 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.BFlyBodyController;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterFlyMoveController;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.ButterflyNavigator;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.registry.WRItems;
-import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.content.entities.dragon.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.*;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
+import WolfShotz.Wyrmroost.content.entities.multipart.*;
+import WolfShotz.Wyrmroost.registry.*;
+import WolfShotz.Wyrmroost.util.*;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
-import WolfShotz.Wyrmroost.util.io.ContainerBase;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
-import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
+import WolfShotz.Wyrmroost.util.io.*;
+import WolfShotz.Wyrmroost.util.network.*;
+import com.google.common.collect.*;
+import com.mojang.blaze3d.platform.*;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.controller.BodyController;
+import net.minecraft.entity.ai.controller.*;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.passive.SquidEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.entity.effect.*;
+import net.minecraft.entity.player.*;
+import net.minecraft.inventory.container.*;
+import net.minecraft.item.*;
+import net.minecraft.nbt.*;
+import net.minecraft.network.datasync.*;
+import net.minecraft.particles.*;
+import net.minecraft.pathfinding.*;
+import net.minecraft.potion.*;
+import net.minecraft.tags.*;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraft.world.*;
+import net.minecraft.world.gen.*;
+import net.minecraft.world.server.*;
+import net.minecraftforge.common.*;
+import net.minecraftforge.common.util.*;
+import net.minecraftforge.items.*;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import javax.annotation.*;
+import java.util.*;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -111,9 +91,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 ButterflyLeviathanEntity::canSpawnHere);
     }
 
-    public static boolean canSpawnHere(EntityType<? extends MobEntity> typeIn, IWorld worldIn, SpawnReason reason, BlockPos pos, Random rng)
+    public static boolean canSpawnHere(EntityType<? extends MobEntity> typeIn, IWorld worldIn, SpawnReason reason, BlockPos pos, Random randomIn)
     {
-        return rng.nextInt(5) == 0 && worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
+        return worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
     }
 
     @Override
@@ -138,7 +118,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this, Entity::isInWater));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
-        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, LivingEntity.class, false, true, e -> e instanceof PlayerEntity || e instanceof SquidEntity));
+        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
     }
 
     @Override
@@ -234,9 +214,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             {
                 playSound(SoundEvents.BLOCK_BEACON_ACTIVATE, 1, 1);
                 if (!world.isRemote)
-                    ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, posX, posY, posZ, true));
+                    ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, getPosX(), getPosY(), getPosZ(), true));
 
-                Vec3d vec3d = getConduitPos(new Vec3d(posX, posY, posZ));
+                Vec3d vec3d = getConduitPos(new Vec3d(getPosX(), getPosY(), getPosZ()));
                 for (int i = 0; i < 26; ++i)
                 {
                     double velX = Math.cos(i);
@@ -332,7 +312,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public void applyEffects()
     {
-        AxisAlignedBB axisalignedbb = new AxisAlignedBB(posX, posY, posZ, posX + 1, posY + 1, posZ + 1).grow(25d).expand(0, world.getHeight(), 0);
+        AxisAlignedBB axisalignedbb = new AxisAlignedBB(getPosX(), getPosY(), getPosZ(), getPosX() + 1, getPosY() + 1, getPosZ() + 1).grow(25d).expand(0, world.getHeight(), 0);
         List<PlayerEntity> list = world.getEntitiesWithinAABB(PlayerEntity.class, axisalignedbb);
         if (list.isEmpty()) return;
         for (PlayerEntity player : list)
@@ -343,7 +323,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     private void spawnConduitParticles()
     {
         if (rand.nextInt(35) != 0) return;
-        Vec3d vec3d = getConduitPos(new Vec3d(posX, posY, posZ));
+        Vec3d vec3d = getConduitPos(new Vec3d(getPosX(), getPosY(), getPosZ()));
         for (int i = 0; i < 16; ++i)
         {
             double motionX = QuikMaths.nextPseudoDouble(rand) * 1.5f;
@@ -389,7 +369,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         LivingEntity target = getAttackTarget();
         if (!world.isRemote)
-            ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.posX, target.posY, target.posZ, false));
+            ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.getPosX(), target.getPosY(), target.getPosZ(), false));
         lightningAttackCooldown = 125;
         if (getControllingPlayer() != null) setAttackTarget(null);
     }
@@ -413,7 +393,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
         float eyeHeight = 3.1f;
-//        if (isUnderWater()) eyeHeight = 2f;
+        if (isUnderWater()) eyeHeight = 2f;
         if (isChild()) eyeHeight *= 0.35f;
         return eyeHeight;
     }
