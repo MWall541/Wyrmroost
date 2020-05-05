@@ -11,6 +11,7 @@ import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import com.google.common.collect.Lists;
+import net.minecraft.block.BushBlock;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -25,6 +26,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
@@ -78,17 +80,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 ((a, b, c, d, e) -> true));
     }
 
-//    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
-//    {
-//        World world = worldIn.getWorld();
-//
-//        return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
-//    }
-
-    // ================================
-    //           Entity NBT
-    // ================================
-
     @Override
     protected void registerGoals()
     {
@@ -117,14 +108,21 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
+    protected void registerData()
+    {
+        super.registerData();
+
+        dataManager.register(GENDER, getRNG().nextBoolean());
+    }
+
+    @Override
     public void writeAdditional(CompoundNBT nbt)
     {
         super.writeAdditional(nbt);
 
         nbt.putInt(DATA_SHEAR, shearCooldownTime);
+        nbt.putBoolean("Gender", getGender());
     }
-
-    // ================================
 
     @Override
     public void readAdditional(CompoundNBT nbt)
@@ -132,6 +130,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.readAdditional(nbt);
 
         this.shearCooldownTime = nbt.getInt(DATA_SHEAR);
+        setGender(nbt.getBoolean("Gender"));
     }
 
     @Override
@@ -183,7 +182,17 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         if (shearCooldownTime > 0) --shearCooldownTime;
 
-        if (getAnimation() == BITE_ANIMATION && animationTick == 7) attackInFront(0);
+        if (getAnimation() == BITE_ANIMATION && animationTick == 7)
+        {
+            attackInFront(0);
+            if (getControllingPlayer() != null)
+            {
+                AxisAlignedBB aabb = getBoundingBox().grow(3);
+                BlockPos.getAllInBox(new BlockPos(aabb.minX, aabb.minY, aabb.minZ), new BlockPos(aabb.maxX, aabb.maxY, aabb.maxZ))
+                        .filter(p -> world.getBlockState(p).getBlock() instanceof BushBlock)
+                        .forEach(p -> world.destroyBlock(p, true));
+            }
+        }
     }
 
     @Override
@@ -252,7 +261,14 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public boolean canBeSteered() { return true; }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return 1.8f; }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    {
+        float size = 1.8f;
+        if (isChild()) size = 1f;
+        if (isSitting()) size *= 0.75f;
+
+        return size;
+    }
 
     @Override
     public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }

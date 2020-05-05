@@ -32,7 +32,7 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
         String path = "body_" + canari.getVariant();
         if (canari.getGender()) path += "m";
         else path += "f";
-        return resource(path += ".png");
+        return resource(path + ".png");
     }
     
     private static ResourceLocation resource(String png)

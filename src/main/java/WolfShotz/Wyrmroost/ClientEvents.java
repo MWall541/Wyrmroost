@@ -153,7 +153,7 @@ public class ClientEvents
     @SubscribeEvent
     public static void renderWorld(RenderWorldLastEvent event)
     {
-        renderDragonStaff();
+//        renderDragonStaff(); todo
         renderDebugBox();
     }
 

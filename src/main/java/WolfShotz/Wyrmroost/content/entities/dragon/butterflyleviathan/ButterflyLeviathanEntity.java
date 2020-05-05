@@ -22,6 +22,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -110,9 +111,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 ButterflyLeviathanEntity::canSpawnHere);
     }
 
-    public static boolean canSpawnHere(EntityType<? extends MobEntity> typeIn, IWorld worldIn, SpawnReason reason, BlockPos pos, Random randomIn)
+    public static boolean canSpawnHere(EntityType<? extends MobEntity> typeIn, IWorld worldIn, SpawnReason reason, BlockPos pos, Random rng)
     {
-        return worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
+        return rng.nextInt(5) == 0 && worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
     }
 
     @Override
@@ -137,7 +138,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this, Entity::isInWater));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
-        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
+        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, LivingEntity.class, false, true, e -> e instanceof PlayerEntity || e instanceof SquidEntity));
     }
 
     @Override
@@ -412,7 +413,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
         float eyeHeight = 3.1f;
-        if (isUnderWater()) eyeHeight = 2f;
+//        if (isUnderWater()) eyeHeight = 2f;
         if (isChild()) eyeHeight *= 0.35f;
         return eyeHeight;
     }

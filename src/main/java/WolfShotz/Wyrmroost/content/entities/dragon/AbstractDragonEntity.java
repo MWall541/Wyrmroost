@@ -8,7 +8,6 @@ import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.entityutils.DragonBodyController;
-import WolfShotz.Wyrmroost.util.entityutils.ai.DragonLookController;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
@@ -47,6 +46,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.items.ItemStackHandler;
@@ -98,7 +98,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         setTamed(false);
 
-        lookController = new DragonLookController(this);
         invHandler = createInv();
         eggProperties = createEggProperties();
         stepHeight = 1;
@@ -337,8 +336,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (flying != isFlying()) setFlying(flying);
 
             handleSleep();
-            if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(25) == 0)
-                heal(0.5f);
+            if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(150) == 0)
+                heal(1);
         }
         else
         {
@@ -381,7 +380,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             PlayerEntity player = (PlayerEntity) entity;
 
             int index = player.getPassengers().indexOf(this);
-            if ((player.isSneaking() && !player.abilities.isFlying) || player.getSubmergedHeight() > 1.25 || index > 2)
+            if ((player.isSneaking() && !player.abilities.isFlying) || isInWater() || index > 2)
             {
                 stopRiding();
                 return;
@@ -391,7 +390,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
             setRotation(player.rotationYawHead, rotationPitch);
 
-            double xOffset = index == 1? (getWidth() * 0.8) : index == 2? -(getWidth() * 0.8) : 0;
+            // head first!
+            double baseOffset = getWidth() * 0.8;
+            double xOffset = index == 1? baseOffset : index == 2? -baseOffset : 0;
             double yOffset = index == 0? 1.85d : 1.38d;
             double zOffset = 0d;
 
@@ -426,7 +427,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (stack.interactWithEntity(player, this, hand)) return true;
 
-        if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player) && !player.isSneaking())
+        if (!isChild() && canBreed() && isBreedingItem(stack) && isOwner(player) && !player.isSneaking())
         {
             eat(stack);
             setInLove(player);
@@ -734,16 +735,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.heal(healAmount);
 
-        if (world.isRemote)
-        {
-            for (int i = 0; i < getWidth() * 5; ++i)
-            {
-                double x = posX + (getRNG().nextGaussian() * getWidth()) / 1.5d;
-                double y = posY + getRNG().nextDouble() * (getRNG().nextDouble() + 2d);
-                double z = posZ + (getRNG().nextGaussian() * getWidth()) / 1.5d;
-                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
-            }
-        }
+        if (!world.isRemote)
+            ((ServerWorld) world).spawnParticle(ParticleTypes.HAPPY_VILLAGER,
+                    posX,
+                    posY,
+                    posZ,
+                    (int) getWidth() * 5,
+                    getWidth() * 0.85,
+                    getHeight() * 0.85,
+                    getWidth() * 0.85,
+                    0);
     }
 
     @Override
@@ -1102,10 +1103,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Is no active animation playing currently?
      */
-    public boolean noActiveAnimation()
-    {
-        return getAnimation() == NO_ANIMATION || getAnimationTick() == 0;
-    }
+    public boolean noActiveAnimation() { return getAnimation() == NO_ANIMATION || getAnimationTick() == 0; }
 
     // ================================
 

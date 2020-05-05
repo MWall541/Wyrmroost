@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
@@ -41,7 +40,7 @@ import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
+public class SilverGliderEntity extends AbstractDragonEntity
 {
     // Animation
     public static final Animation SIT_ANIMATION = new Animation(10);
@@ -267,7 +266,7 @@ public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMo
         }
 
         // if tamed, then start riding the player
-        if (isTamed() && stack.isEmpty() && !player.isSneaking() && player.getPassengers().size() < 3 && isOwner(player))
+        if (isTamed() && stack.isEmpty() && !player.isSneaking() && player.getPassengers().isEmpty() && isOwner(player))
         {
             startRiding(player, true);
             setSit(false);

@@ -56,7 +56,7 @@ public class WREntities
         registerSpawnEntry(OVERWORLD_DRAKE.get(), 8, 1, 3, getByTypes(Type.SANDY, Type.PLAINS));
         registerSpawnEntry(MINUTUS.get(), 35, 1, 1, getByTypes(Type.SANDY).stream().filter(b -> !BiomeDictionary.hasType(b, Type.MESA)).collect(Collectors.toSet()));
         registerCustomSpawnEntry(SILVER_GLIDER.get(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere, getByTypes(Type.BEACH, Type.PLAINS));
-        registerSpawnEntry(ROOSTSTALKER.get(), 9, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
+        registerSpawnEntry(ROOSTSTALKER.get(), 7, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
         DragonFruitDrakeEntity.handleSpawning();
 
         ButterflyLeviathanEntity.handleSpawning();

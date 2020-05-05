@@ -432,7 +432,6 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
             Random rand = new Random();
             swing(wingphalangetipL, globalSpeed * rand.nextFloat() + 1f, Math.min(rand.nextFloat(), 0.15f), false, 0, 0, frame, 0.5f);
             swing(wingphalangetipR, globalSpeed * rand.nextFloat() + 1f, Math.min(rand.nextFloat(), 0.15f), false, 0, 0, frame, 0.5f);
-
         }
         else
         { // Ground only Anims

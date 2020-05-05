@@ -331,7 +331,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
 
         // If Saddled and not sneaking, start riding
-        if (isSaddled() && hand == Hand.MAIN_HAND && !isBreedingItem(stack) && !isChild() && (!isTamed() || isOwner(player)))
+        if (isSaddled() && !isBreedingItem(stack) && !isChild() && ((!isTamed() && !isInWater()) || isOwner(player)))
         {
             setSit(false);
             if (!world.isRemote) player.startRiding(this);
@@ -397,14 +397,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
         {
             int rand = getRNG().nextInt(100);
 
-/*            if (passenger instanceof PlayerEntity && rand == 0) tame(true, (PlayerEntity) passenger);
-            else*/
-            if (rand % 20 == 0 && getAnimation() != ROAR_ANIMATION)
-            {
-                if (EntityPredicates.CAN_AI_TARGET.test(passenger)) setAttackTarget((LivingEntity) passenger);
-//                if (passenger instanceof ServerPlayerEntity)
-//                    Wyrmroost.NETWORK.sendTo(new EntityMovementChangeMesssage(passenger), ((ServerPlayerEntity) passenger).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
-            }
+            if (passenger instanceof PlayerEntity && rand == 0) tame(true, (PlayerEntity) passenger);
+            else if (rand % 20 == 0 && getAnimation() != ROAR_ANIMATION && EntityPredicates.CAN_AI_TARGET.test(passenger))
+                setAttackTarget((LivingEntity) passenger);
         }
     }
 

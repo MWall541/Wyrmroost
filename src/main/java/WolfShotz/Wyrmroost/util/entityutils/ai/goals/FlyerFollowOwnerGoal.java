@@ -103,7 +103,7 @@ public class FlyerFollowOwnerGoal extends Goal
             else if (!dragon.getMoveHelper().isUpdating())
             {
                 dragon.getLookController().setLookPosition(owner.posX, owner.posY + maxHeight, owner.posZ, 10f, dragon.getVerticalFaceSpeed());
-                dragon.getMoveHelper().setMoveTo(owner.posX, owner.posY + maxHeight, owner.posZ, 1);
+                dragon.getMoveHelper().setMoveTo(owner.posX, owner.posY, owner.posZ, 1);
             }
         }
         else
@@ -111,7 +111,7 @@ public class FlyerFollowOwnerGoal extends Goal
             dragon.getLookController().setLookPositionWithEntity(owner, 10f, dragon.getVerticalFaceSpeed());
             if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
                 dragon.tryTeleportToOwner();
-            else dragon.getNavigator().tryMoveToEntityLiving(owner, 1);
+            else dragon.getMoveHelper().setMoveTo(owner.posX, owner.posY, owner.posZ, 1);
         }
     }
 }

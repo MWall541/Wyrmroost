@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.goals.StoleItemF
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.DragonBreedGoal;
@@ -48,7 +47,7 @@ import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
+public class RoostStalkerEntity extends AbstractDragonEntity
 {
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
 

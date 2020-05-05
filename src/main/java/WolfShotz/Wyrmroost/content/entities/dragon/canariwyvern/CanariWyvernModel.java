@@ -387,12 +387,15 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     @Override
     public void render(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
     {
+        double size = canari.isChild()? 0.25d : 0.5d;
+
         GlStateManager.pushMatrix();
         GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
         GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
-        GlStateManager.scaled(0.5D, 0.5D, 0.5D);
+        GlStateManager.scaled(size, size, size);
         GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
         GlStateManager.translated(-body1.rotationPointX * scale, -body1.rotationPointY * scale, -body1.rotationPointZ * scale);
+        if (canari.isChild()) GlStateManager.translated(0, 0.85d, 0);
         body1.render(scale);
         GlStateManager.popMatrix();
     }
@@ -417,7 +420,7 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
 
         if (canari.isFlying())
         {
-            if (canari.getMotion().y >= 0)
+            if (canari.getMotion().y >= 0 || canari.getMotion().normalize().length() < 1)
             {
                 flap(wing1L, globalSpeed, 1.5f, false, 0, 0, frame, 0.5f);
                 flap(wing2L, globalSpeed, 1.2f, false, -1f, 0.6f, frame, 0.5f);

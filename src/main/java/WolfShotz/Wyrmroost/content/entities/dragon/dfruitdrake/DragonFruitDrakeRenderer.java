@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruitDrakeEntity>
 {
-    public static final ResourceLocation BODY_MALE = resource("body_m.png");
+    public static final ResourceLocation CHILD = resource("child.png");
     
     public DragonFruitDrakeRenderer(EntityRendererManager manager)
     {
@@ -20,7 +20,10 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
     @Override
     protected ResourceLocation getEntityTexture(DragonFruitDrakeEntity entity)
     {
-        return BODY_MALE;
+        if (entity.isChild()) return CHILD;
+        String path = "body_" + (entity.getGender()? "m" : "f");
+        if (entity.isSpecial()) path += "_s";
+        return resource(path + ".png");
     }
     
     public static ResourceLocation resource(String png)

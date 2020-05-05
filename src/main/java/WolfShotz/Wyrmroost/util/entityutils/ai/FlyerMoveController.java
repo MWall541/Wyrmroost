@@ -28,7 +28,7 @@ public class FlyerMoveController extends MovementController
         double dist = dragonPos.distanceTo(movePos);
         // minimum amount to be able to move
         double minDist = dragon.getWidth() / 2;
-        if (preferFlight && dist > minDist * 3) dragon.setFlying(true);
+        if (preferFlight && dist > minDist * 3 && action == Action.MOVE_TO) dragon.setFlying(true);
 
         if (!dragon.isFlying())
         {

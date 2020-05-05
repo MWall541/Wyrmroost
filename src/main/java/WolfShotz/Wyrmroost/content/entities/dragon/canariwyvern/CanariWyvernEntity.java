@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.goals.CanariAvoidGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
-import WolfShotz.Wyrmroost.util.entityutils.PlayerMount;
 import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
 import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
@@ -35,7 +34,7 @@ import java.util.Collection;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMount.IShoulderMount
+public class CanariWyvernEntity extends AbstractDragonEntity
 {
     public static final Animation FLAP_WINGS_ANIMATION = new Animation(22);
     public static final Animation PREEN_ANIMATION = new Animation(36);
@@ -50,6 +49,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
 
         moveController = new FlyerMoveController(this, true);
         lookController = new LookController(this);
+        shouldFlyThreshold = 1;
 
         setImmune(CausticWaterFluid.CAUSTIC_WATER);
         setImmune(DamageSource.MAGIC);
@@ -104,6 +104,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         super.registerData();
 
         dataManager.register(VARIANT, getRNG().nextInt(5));
+        dataManager.register(GENDER, getRNG().nextBoolean());
     }
 
     @Override
@@ -112,6 +113,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         super.writeAdditional(nbt);
 
         nbt.putInt("variant", getVariant());
+        nbt.putBoolean("Gender", getGender());
     }
 
     @Override
@@ -120,6 +122,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity implements PlayerMo
         super.readAdditional(nbt);
 
         setVariant(nbt.getInt("variant"));
+        setGender(nbt.getBoolean("Gender"));
     }
 
     @Override

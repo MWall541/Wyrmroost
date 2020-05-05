@@ -24,8 +24,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'maven-publish'
 
 group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-String modState = (project.mod_state != "RELEASE"? " [${project.mod_state}] " : "-")
-archivesBaseName = "${project.archiveBaseName}" + modState + "${project.mc_version}"
+archivesBaseName = "${project.archiveBaseName}" + "-" + "${project.mc_version}"
 version = "${project.mod_version}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
