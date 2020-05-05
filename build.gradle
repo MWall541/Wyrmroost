@@ -4,7 +4,9 @@ buildscript {
         jcenter()
         mavenCentral()
     }
-    dependencies { classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    }
 }
 
 repositories {
@@ -20,15 +22,17 @@ repositories {
     }
 }
 
+apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'maven-publish'
 
-group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-String modState = (project.mod_state != "RELEASE"? " [${project.mod_state}] " : "-")
-archivesBaseName = "${project.archiveBaseName}" + modState + "${project.mc_version}"
 version = "${project.mod_version}"
+group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "${project.archiveBaseName}" + "-" + version
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
 
 sourceSets {
     main.resources.srcDirs += 'src/main/generated_resources'
@@ -38,25 +42,40 @@ minecraft {
     mappings channel: project.mcp_channel, version: "${project.mcp_mappings}-${project.mappings_version}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    // Default run configurations.
     runs {
         client {
             workingDirectory project.file('run')
-            
-            ideaModule "${project.name}.main"
-            environment 'MOD_CLASSES', "${project.file("out/production/resources").canonicalPath};${project.file("out/production/classes").canonicalPath}"
+
+//            property 'forge.logging.markers', 'CONFIG'
+//            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                dummy {
+                    sources sourceSets.main
+                }
+            }
         }
+
         server {
             workingDirectory project.file('run')
 
-            ideaModule "${project.name}.main"
-            environment 'MOD_CLASSES', "${project.file("out/production/resources").canonicalPath};${project.file("out/production/classes").canonicalPath}"
+            mods {
+                dummy {
+                    sources sourceSets.main
+                }
+            }
         }
+
         data {
             workingDirectory project.file('run')
 
-            ideaModule "${project.name}.main"
             args '--mod', 'wyrmroost', '--all', '--output', file('src/main/generated_resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                dummy {
+                    sources sourceSets.main
+                }
+            }
         }
     }
 }
@@ -74,28 +93,11 @@ jar {
         attributes([
             "Specification-Title": "Wyrmroost",
             "Specification-Vendor": "WolfShotz",
-            "Specification-Version": project.version,
+            "Specification-Version": 1,
             "Implementation-Title": project.name,
-            "Implementation-Version": "${project.mod_version}",
+            "Implementation-Version": "${version}",
             "Implementation-Vendor" :"WolfShotz",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-}
-
-/*
-  Example configuration to allow publishing using the maven-publish task
-  we define a custom artifact that is sourced from the reobfJar output task
-  and then declare that to be published
-  Note you'll need to add a repository here
-*/
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
-}
-
-publishing {
-    publications { mavenJava(MavenPublication) { artifact reobfArtifact } }
-    repositories { maven { url "file:///${project.projectDir}/mcmodsrepo" } }
 }
