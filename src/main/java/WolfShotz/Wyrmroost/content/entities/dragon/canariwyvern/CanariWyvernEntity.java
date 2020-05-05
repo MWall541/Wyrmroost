@@ -1,36 +1,30 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.goals.CanariAvoidGoal;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
-import WolfShotz.Wyrmroost.util.entityutils.ai.FlyerMoveController;
+import WolfShotz.Wyrmroost.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.goals.*;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
+import WolfShotz.Wyrmroost.content.fluids.*;
+import WolfShotz.Wyrmroost.registry.*;
+import WolfShotz.Wyrmroost.util.entityutils.ai.*;
 import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
-import com.google.common.collect.Lists;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.controller.BodyController;
-import net.minecraft.entity.ai.controller.LookController;
+import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
+import WolfShotz.Wyrmroost.util.network.*;
+import com.google.common.collect.*;
+import net.minecraft.block.*;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.controller.*;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.entity.player.*;
+import net.minecraft.item.*;
+import net.minecraft.nbt.*;
+import net.minecraft.potion.*;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
+import net.minecraft.world.*;
 
-import java.util.Collection;
+import javax.annotation.*;
+import java.util.*;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -214,6 +208,18 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return WRSounds.CANARI_IDLE.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damage) { return WRSounds.CANARI_HURT.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return WRSounds.CANARI_DEATH.get(); }
 
     /**
      * Array Containing all of the dragons food items

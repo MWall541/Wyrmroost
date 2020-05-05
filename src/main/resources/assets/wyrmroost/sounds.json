@@ -91,7 +91,7 @@
   },
   "entity.bflylevi.idle": {
     "category": "entity",
-    "subtitle": "Drake Idle",
+    "subtitle": "Butterfly Idle",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterflyleviathan/idle1"
@@ -103,7 +103,7 @@
   },
   "entity.bflylevi.roar": {
     "category": "entity",
-    "subtitle": "Drake Idle",
+    "subtitle": "Butterfly Roar",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterflyleviathan/roar"
@@ -112,7 +112,7 @@
   },
   "entity.bflylevi.hurt": {
     "category": "entity",
-    "subtitle": "Drake Hurt",
+    "subtitle": "Butterfly Hurt",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterflyleviathan/hurt1"
@@ -124,10 +124,40 @@
   },
   "entity.bflylevi.death": {
     "category": "entity",
-    "subtitle": "Drake Death",
+    "subtitle": "Butterfly Death",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterflyleviathan/death"
+      }
+    ]
+  },
+  "entity.canari.idle": {
+    "category": "entity",
+    "subtitle": "Canari Idle",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/canari/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/canari/idle2"
+      }
+    ]
+  },
+  "entity.canari.hurt": {
+    "category": "entity",
+    "subtitle": "Canari Hurt",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/canari/hurt1"
+      }
+    ]
+  },
+  "entity.canari.death": {
+    "category": "entity",
+    "subtitle": "Canari Death",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/canari/death"
       }
     ]
   }

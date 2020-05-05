@@ -1,10 +1,9 @@
 package WolfShotz.Wyrmroost.registry;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import WolfShotz.Wyrmroost.*;
+import net.minecraft.util.*;
+import net.minecraftforge.fml.*;
+import net.minecraftforge.registries.*;
 
 public class WRSounds
 {
@@ -31,6 +30,10 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> BFLY_ROAR = registerEntity("bflylevi.roar");
     public static final RegistryObject<SoundEvent> BFLY_HURT = registerEntity("bflylevi.hurt");
     public static final RegistryObject<SoundEvent> BFLY_DEATH = registerEntity("bflylevi.death");
+
+    public static final RegistryObject<SoundEvent> CANARI_IDLE = registerEntity("canari.idle");
+    public static final RegistryObject<SoundEvent> CANARI_HURT = registerEntity("canari_hurt");
+    public static final RegistryObject<SoundEvent> CANARI_DEATH = registerEntity("canari_death");
 
     private static RegistryObject<SoundEvent> register(String name)
     {
