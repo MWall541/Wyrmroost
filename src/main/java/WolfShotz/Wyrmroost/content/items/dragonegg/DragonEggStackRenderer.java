@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.content.items.dragonegg;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggModel;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggModel;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;

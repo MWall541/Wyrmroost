@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.world.WRBiome;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.registry.Registry;
@@ -53,7 +52,6 @@ public class WRWorld
     {
         for (Biome biome : ForgeRegistries.BIOMES)
         {
-            if (biome instanceof WRBiome) ((WRBiome) biome).queueWork.accept(biome);
             ore(biome);
         }
     }

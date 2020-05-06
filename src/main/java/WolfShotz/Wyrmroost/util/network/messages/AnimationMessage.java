@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.util.network.messages;
 
+import WolfShotz.Wyrmroost.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.IMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;

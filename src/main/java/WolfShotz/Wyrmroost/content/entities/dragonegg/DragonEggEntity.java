@@ -1,11 +1,11 @@
 package WolfShotz.Wyrmroost.content.entities.dragonegg;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.network.messages.EggHatchMessage;
 import net.minecraft.entity.*;
@@ -89,9 +89,9 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
             {
                 if (ticksExisted % 3 == 0)
                 {
-                    double x = posX + rand.nextGaussian() * 0.2d;
-                    double y = posY + rand.nextDouble() + getHeight() / 2;
-                    double z = posZ + rand.nextGaussian() * 0.2d;
+                    double x = getPosX() + rand.nextGaussian() * 0.2d;
+                    double y = getPosY() + rand.nextDouble() + getHeight() / 2;
+                    double z = getPosZ() + rand.nextGaussian() * 0.2d;
                     world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
                 }
             }
@@ -120,17 +120,22 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
             if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
     }
-    
+
     @Override
-    public void fall(float distance, float damageMultiplier)
+    public boolean onLivingFall(float distance, float damageMultiplier)
     {
-        if (distance > 3) crack(false);
+        if (distance > 3)
+        {
+            crack(false);
+            return true;
+        }
+        return false;
     }
-    
+
     private void updateMotion()
     {
         boolean flag = getMotion().y <= 0.0D;
-        double d1 = posY;
+        double d1 = getPosY();
         double d0 = 0.5d;
         
         move(MoverType.SELF, getMotion());
@@ -145,7 +150,7 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
         }
         
         Vec3d vec3d6 = getMotion();
-        if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - posY + d1, vec3d6.z))
+        if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - getPosY() + d1, vec3d6.z))
         {
             setMotion(vec3d6.x, 0.3F, vec3d6.z);
         }
@@ -169,7 +174,7 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
                 safeError();
                 return;
             }
-            newDragon.setPosition(posX, posY, posZ);
+            newDragon.setPosition(getPosX(), getPosY(), getPosZ());
             newDragon.setGrowingAge(newDragon.getEggProperties().getGrowthTime());
             newDragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
             world.addEntity(newDragon);
@@ -181,10 +186,10 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
                 double x = rand.nextGaussian() * 0.2f;
                 double y = rand.nextDouble() * 0.45f;
                 double z = rand.nextGaussian() * 0.2f;
-                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(WRItems.DRAGON_EGG.get())), posX, posY, posZ, x, y, z);
+                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(WRItems.DRAGON_EGG.get())), getPosX(), getPosY(), getPosZ(), x, y, z);
             }
         }
-        world.playSound(posX, posY, posZ, SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
+        world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
         remove();
     }
 
@@ -213,7 +218,7 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
         tag.putString("dragonType", getDragonKey());
         ItemStack itemStack = new ItemStack(WRItems.DRAGON_EGG.get());
         itemStack.setTag(tag);
-        InventoryHelper.spawnItemStack(world, posX, posY, posZ, itemStack);
+        InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), itemStack);
         remove();
         
         return true;

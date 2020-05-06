@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.util.io;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.RoostStalkerEntity;
 import WolfShotz.Wyrmroost.registry.WRIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

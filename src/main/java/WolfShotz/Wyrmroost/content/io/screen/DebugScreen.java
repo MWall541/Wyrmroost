@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.content.io.screen;
 
+import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;

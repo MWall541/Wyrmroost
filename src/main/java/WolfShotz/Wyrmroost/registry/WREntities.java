@@ -1,13 +1,7 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.canariwyvern.CanariWyvernEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.dfruitdrake.DragonFruitDrakeEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.minutus.MinutusEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.owdrake.OWDrakeEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.rooststalker.RoostStalkerEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.sliverglider.SilverGliderEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.*;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
@@ -56,7 +50,7 @@ public class WREntities
         registerSpawnEntry(OVERWORLD_DRAKE.get(), 8, 1, 3, getByTypes(Type.SANDY, Type.PLAINS));
         registerSpawnEntry(MINUTUS.get(), 35, 1, 1, getByTypes(Type.SANDY).stream().filter(b -> !BiomeDictionary.hasType(b, Type.MESA)).collect(Collectors.toSet()));
         registerCustomSpawnEntry(SILVER_GLIDER.get(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere, getByTypes(Type.BEACH, Type.PLAINS));
-        registerSpawnEntry(ROOSTSTALKER.get(), 9, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
+        registerSpawnEntry(ROOSTSTALKER.get(), 7, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
         DragonFruitDrakeEntity.handleSpawning();
 
         ButterflyLeviathanEntity.handleSpawning();
