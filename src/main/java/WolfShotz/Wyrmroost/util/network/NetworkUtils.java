@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.util.network;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.Animation;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.IAnimatedObject;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.util.network.messages.AnimationMessage;
 import WolfShotz.Wyrmroost.util.network.messages.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.util.network.messages.EggHatchMessage;

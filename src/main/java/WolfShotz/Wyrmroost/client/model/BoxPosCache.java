@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityutils.client.model;
+package WolfShotz.Wyrmroost.client.model;
 
 public class BoxPosCache
 {

@@ -1,12 +1,14 @@
 package WolfShotz.Wyrmroost.client.render.entity.silverglider;
 
-import WolfShotz.Wyrmroost.*;
-import WolfShotz.Wyrmroost.client.render.entity.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import net.minecraft.client.renderer.entity.*;
-import net.minecraft.util.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.*;
+import javax.annotation.Nullable;
 
 public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEntity>
 {
@@ -26,17 +28,17 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         addLayer(new GlowLayer(this::getGlowTexture));
         if (isChristmas)
         {
-            addLayer(new ConditionalLayer(XMAS_LAYER, c -> true));
+            addLayer(new ConditionalLayer(c -> true, d -> RenderType.getEntityCutoutNoCull(XMAS_LAYER)));
             addLayer(new GlowLayer(sg -> XMAS_GLOW));
         }
-        addLayer(new SleepLayer(SLEEP));
+        addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
 
     public static ResourceLocation resource(String png) { return Wyrmroost.rl(DEF_LOC + "silverglider/" + png); }
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(SilverGliderEntity sg)
+    public ResourceLocation getEntityTexture(SilverGliderEntity sg)
     {
         if (sg.isSpecial()) return BODY_SPE;
         if (!sg.getGender()) return FEMALE;

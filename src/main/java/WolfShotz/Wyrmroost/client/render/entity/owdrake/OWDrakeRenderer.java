@@ -1,12 +1,13 @@
 package WolfShotz.Wyrmroost.client.render.entity.owdrake;
 
-import WolfShotz.Wyrmroost.*;
-import WolfShotz.Wyrmroost.client.render.entity.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import net.minecraft.client.renderer.entity.*;
-import net.minecraft.util.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.OWDrakeEntity;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.*;
+import javax.annotation.Nullable;
 
 public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 {
@@ -27,8 +28,8 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     public OWDrakeRenderer(EntityRendererManager manager)
     {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ConditionalLayer(this::getArmorTexture, OWDrakeEntity::isArmored));
-        addLayer(new ConditionalLayer(SADDLE_LAYER, OWDrakeEntity::isSaddled));
+        addLayer(new ConditionalLayer(OWDrakeEntity::isArmored, d -> RenderType.getEntityCutoutNoCull(getArmorTexture(d))));
+        addLayer(new ConditionalLayer(OWDrakeEntity::hasChest, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
     }
     
     public static ResourceLocation resource(String png) { return Wyrmroost.rl(DEF_LOC + "owdrake/" + png); }
@@ -57,7 +58,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(OWDrakeEntity drake)
+    public ResourceLocation getEntityTexture(OWDrakeEntity drake)
     {
         if (drake.hasCustomName())
         {

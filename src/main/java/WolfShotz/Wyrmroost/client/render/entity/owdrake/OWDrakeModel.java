@@ -1,9 +1,12 @@
 package WolfShotz.Wyrmroost.client.render.entity.owdrake;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.*;
-import com.mojang.blaze3d.platform.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragon.OWDrakeEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 /**
  * WR Overworld Drake - Ukan
@@ -364,31 +367,24 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     }
     
     private final float f = 0.5f;
-    
+
     @Override
-    public void render(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        GlStateManager.pushMatrix();
-        if (drake.isChild())
-        {
-            GlStateManager.scaled(1, 1, 1);
-            GlStateManager.translated(0, 0.7, 0);
-        } else GlStateManager.scaled(2, 2, 2);
-        
-        body1.render(scale);
-        
-        GlStateManager.popMatrix();
+        ms.push();
+        ms.scale(2, 2, 2);
+        body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        ms.pop();
     }
-    
+
     @Override
-    public void setRotationAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void setRotationAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (netHeadYaw < -180) netHeadYaw += 360;
-        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        super.setRotationAngles(drake, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
             faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
-    
+
     @Override
     public void setLivingAnimations(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
     {
@@ -474,7 +470,7 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
      */
     private void staySitting()
     {
-        body1.offsetY = 0.35f;
+        body1.rotationPointY = 0.35f;
         
         // Front Right
         arm2R.rotateAngleX = -1.5f;

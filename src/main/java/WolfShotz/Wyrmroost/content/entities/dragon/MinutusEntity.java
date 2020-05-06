@@ -1,24 +1,39 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import net.minecraft.block.material.*;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.item.*;
-import net.minecraft.entity.passive.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.projectile.*;
-import net.minecraft.item.*;
-import net.minecraft.nbt.*;
-import net.minecraft.network.datasync.*;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
-import net.minecraft.world.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.IAnimatedObject;
+import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.registry.WRSounds;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.World;
 
-import javax.annotation.*;
-import java.util.*;
-import java.util.function.*;
+import javax.annotation.Nullable;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 

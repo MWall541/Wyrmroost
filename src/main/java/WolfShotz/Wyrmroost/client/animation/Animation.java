@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.util.entityutils.client.animation;
+package WolfShotz.Wyrmroost.client.animation;
 
 public class Animation
 {

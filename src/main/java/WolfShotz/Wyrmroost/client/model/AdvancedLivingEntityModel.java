@@ -1,23 +1,27 @@
-package WolfShotz.Wyrmroost.util.entityutils.client.model;
+package WolfShotz.Wyrmroost.client.model;
 
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
 import java.util.Map;
 
-public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
+public abstract class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
 {
     public T entity;
     public float globalSpeed = 0.5f;
     private float movementScale = 1.0F;
     private final Map<String, Pair<Integer, Integer>> modelTextureMap = Maps.newHashMap();
-    
+    public final List<ModelRenderer> boxList = Lists.newArrayList();
+
     public AdvancedLivingEntityModel() {}
-    
+
     public void updateDefaultPose()
     {
         boxList.stream()
@@ -146,18 +150,27 @@ public class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
-    
+
     public void rotate(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z)
     {
         animator.rotate(model, (float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
     }
-    
+
     public void rotateMinus(ModelAnimator animator, AdvancedRendererModel model, float x, float y, float z)
     {
         animator.rotate(model, (float) Math.toRadians(x) - model.defaultRotationX, (float) Math.toRadians(y) - model.defaultRotationY, (float) Math.toRadians(z) - model.defaultRotationZ);
     }
-    
+
+    @Override
+    public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        if (netHeadYaw < -180) netHeadYaw += 360;
+        else if (netHeadYaw > 180) netHeadYaw -= 360;
+    }
+
     public void idleAnim(float frame)
     {
     }
+
+
 }

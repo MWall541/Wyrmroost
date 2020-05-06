@@ -1,13 +1,14 @@
 package WolfShotz.Wyrmroost.client.render.entity.butterfly;
 
-import WolfShotz.Wyrmroost.*;
-import WolfShotz.Wyrmroost.client.render.entity.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.*;
-import net.minecraft.client.renderer.entity.*;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.*;
+import javax.annotation.Nullable;
 
 public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<ButterflyLeviathanEntity>
 {
@@ -21,17 +22,17 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public ButterflyLeviathanRenderer(EntityRendererManager manager)
     {
         super(manager, new ButterflyLeviathanModel(), 2f);
-        addLayer(new GlowLayer(d -> GLOW, ButterflyLeviathanRenderer::shouldRenderConduit));
+        addLayer(new GlowLayer(ButterflyLeviathanRenderer::shouldRenderConduit, d -> GLOW));
     }
 
     public static ResourceLocation resource(String png)
     {
         return Wyrmroost.rl(DEF_LOC + "butterflyleviathan/" + png);
     }
-    
+
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(ButterflyLeviathanEntity entity)
+    public ResourceLocation getEntityTexture(ButterflyLeviathanEntity entity)
     {
         if (entity.isSpecial()) return ALBINO;
         switch (entity.getVariant())
@@ -51,14 +52,14 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     }
 
     @Override
-    public void doRender(ButterflyLeviathanEntity entity, double x, double y, double z, float entityYaw, float partialTicks)
+    public void render(ButterflyLeviathanEntity entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+        super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 
-        if (shouldRenderConduit(entity))
-        {
-            Vec3d vec3d = entity.getConduitPos(new Vec3d(x, y, z));
-            ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
-        }
+//        if (shouldRenderConduit(entity))
+//        {
+//            Vec3d vec3d = entity.getConduitPos(new Vec3d(x, y, z));
+//            ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
+//        }
     }
 }

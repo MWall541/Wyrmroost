@@ -1,41 +1,61 @@
-package WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan;
+package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.ai.*;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
-import WolfShotz.Wyrmroost.content.entities.multipart.*;
-import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.*;
-import WolfShotz.Wyrmroost.util.entityutils.ai.goals.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.io.*;
-import WolfShotz.Wyrmroost.util.network.*;
-import com.google.common.collect.*;
-import com.mojang.blaze3d.platform.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.DragonBodyController;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.*;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
+import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.ConfigData;
+import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.io.ContainerBase;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.controller.*;
+import net.minecraft.entity.ai.controller.BodyController;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.effect.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.inventory.container.*;
-import net.minecraft.item.*;
-import net.minecraft.nbt.*;
-import net.minecraft.network.datasync.*;
-import net.minecraft.particles.*;
-import net.minecraft.pathfinding.*;
-import net.minecraft.potion.*;
-import net.minecraft.tags.*;
-import net.minecraft.util.*;
+import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.PathFinder;
+import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.pathfinding.SwimmerPathNavigator;
+import net.minecraft.pathfinding.WalkAndSwimNodeProcessor;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
-import net.minecraft.world.*;
-import net.minecraft.world.gen.*;
-import net.minecraft.world.server.*;
-import net.minecraftforge.common.*;
-import net.minecraftforge.common.util.*;
-import net.minecraftforge.items.*;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.*;
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -63,7 +83,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         super(blevi, world);
         ignoreFrustumCheck = ConfigData.disableFrustumCheck;
-        moveController = new ButterFlyMoveController(this);
+        moveController = new MoveController();
         stepHeight = 2;
 
 //        if (!world.isRemote)
@@ -80,7 +100,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
-    protected BodyController createBodyController() { return new BFlyBodyController(this); }
+    protected BodyController createBodyController() { return new BFlyBodyController(); }
 
     public static void handleSpawning()
     {
@@ -97,7 +117,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
-    protected PathNavigator createNavigator(World worldIn) { return new ButterflyNavigator(this, worldIn); }
+    protected PathNavigator createNavigator(World worldIn) { return new Navigator(); }
 
     @Override
     public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
@@ -491,10 +511,101 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         return new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater);
     }
-    
+
     @Override
     public Animation[] getAnimations()
     {
         return new Animation[] {NO_ANIMATION, CONDUIT_ANIMATION, ROAR_ANIMATION, BITE_ANIMATION};
     }
+
+    class BFlyBodyController extends DragonBodyController
+    {
+        public BFlyBodyController() { super(ButterflyLeviathanEntity.this); }
+
+        @Override
+        public void updateRenderAngles()
+        {
+            double deltaX = getPosX() - dragon.prevPosX;
+            double deltaZ = getPosZ() - dragon.prevPosZ;
+            double dist = deltaX * deltaX + deltaZ * deltaZ;
+
+            if (!dragon.isInWater() && dist > 0.0001)
+            {
+                super.updateRenderAngles();
+                return;
+            }
+
+            dragon.renderYawOffset = dragon.rotationYaw;
+            dragon.rotationYawHead = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, (float) dragon.getHorizontalFaceSpeed());
+        }
+    }
+
+    class MoveController extends MovementController
+    {
+        public MoveController() { super(ButterflyLeviathanEntity.this); }
+
+        public void tick()
+        {
+            if (mob.isInWater()) mob.fallDistance = 0;
+
+            if (action == MovementController.Action.MOVE_TO && !mob.getNavigator().noPath())
+            {
+                double x = posX - getPosX();
+                double y = posY - getPosY();
+                double z = posZ - getPosZ();
+                double planeDistSq = x * x + y * y + z * z;
+                if (planeDistSq < 2.5000003E-7)
+                {
+                    mob.setMoveForward(0);
+                    return;
+                }
+                float f = (float) (MathHelper.atan2(z, x) * (180f / QuikMaths.PI)) - 90f;
+                mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10f);
+                mob.renderYawOffset = mob.rotationYaw;
+                mob.rotationYawHead = mob.rotationYaw;
+                float speed = (float) (mob.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
+                if (mob.isInWater())
+                {
+                    speed = (float) (mob.getAttribute(LivingEntity.SWIM_SPEED).getValue());
+                    mob.setAIMoveSpeed(speed);
+                    float f2 = -((float) (MathHelper.atan2(y, MathHelper.sqrt(x * x + z * z)) * (double) (180f / QuikMaths.PI)));
+                    f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85f, 85f);
+                    mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 5f);
+                    float f3 = MathHelper.cos(mob.rotationPitch * (QuikMaths.PI / 180f));
+                    float f4 = MathHelper.sin(mob.rotationPitch * (QuikMaths.PI / 180f));
+                    mob.moveForward = f3 * (speed * 8);
+                    mob.moveVertical = -f4 * (speed * 8);
+                }
+                else mob.setAIMoveSpeed(speed);
+            }
+            else
+            {
+                mob.setAIMoveSpeed(0);
+                mob.setMoveStrafing(0);
+                mob.setMoveVertical(0);
+                mob.setMoveForward(0);
+            }
+        }
+    }
+
+    public class Navigator extends SwimmerPathNavigator
+    {
+        public Navigator()
+        {
+            super(ButterflyLeviathanEntity.this, ButterflyLeviathanEntity.this.world);
+        }
+
+        @Override
+        protected PathFinder getPathFinder(int pathSearchRange)
+        {
+            return new PathFinder(new WalkAndSwimNodeProcessor(), pathSearchRange);
+        }
+
+        @Override
+        public boolean canEntityStandOnPos(BlockPos pos) { return !world.getBlockState(pos).isAir(world, pos); }
+
+        @Override
+        protected boolean canNavigate() { return true; }
+    }
+
 }

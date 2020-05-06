@@ -1,8 +1,11 @@
 package WolfShotz.Wyrmroost.client.render.entity.less_dwyrm;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.*;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragon.MinutusEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 /**
  * WR Lesser Desertwyrm - Ukan
@@ -110,18 +113,18 @@ public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
     
     private float globalSpeed = 0.5f;
     private float f = 0.5f;
-    
+
     @Override
-    public void render(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        body1.render(scale);
+        body1.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
-    
+
     @Override
-    public void setRotationAngles(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void setRotationAngles(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
-        
+
         faceTarget(netHeadYaw, headPitch, 1, head);
     }
     
@@ -136,7 +139,7 @@ public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
         if (minutus.isBurrowed())
         {
             body1.rotateAngleX = -0.8f;
-            body1.offsetY = 0.2f;
+            body1.rotationPointY = 0.2f;
             body2.rotateAngleX = 0.8f;
             neck.rotateAngleX = -0.8f;
             jaw.rotateAngleX = 1f;

@@ -1,14 +1,16 @@
 package WolfShotz.Wyrmroost.client.render.entity.canari;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.util.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.*;
-import com.mojang.blaze3d.platform.*;
-import net.minecraft.client.renderer.entity.model.*;
-import net.minecraft.entity.player.*;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragon.CanariWyvernEntity;
+import WolfShotz.Wyrmroost.util.QuikMaths;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.entity.player.PlayerEntity;
 
-import java.util.*;
+import java.util.Random;
 
 /**
  * WRCanariWyvern - Ukan
@@ -385,23 +387,32 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     }
 
     @Override
-    public void render(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        double size = canari.isChild()? 0.25d : 0.5d;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
-        GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
-        GlStateManager.scaled(size, size, size);
-        GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
-        GlStateManager.translated(-body1.rotationPointX * scale, -body1.rotationPointY * scale, -body1.rotationPointZ * scale);
-        if (canari.isChild()) GlStateManager.translated(0, 0.85d, 0);
-        body1.render(scale);
-        GlStateManager.popMatrix();
+        ms.push();
+        ms.scale(0.5f, 0.5f, 0.5f);
+        body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        ms.pop();
     }
 
+//    @Override
+//    public void render(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+//    {
+//        double size = canari.isChild()? 0.25d : 0.5d;
+//
+//        GlStateManager.pushMatrix();
+//        GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
+//        GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
+//        GlStateManager.scaled(size, size, size);
+//        GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
+//        GlStateManager.translated(-body1.rotationPointX * scale, -body1.rotationPointY * scale, -body1.rotationPointZ * scale);
+//        if (canari.isChild()) GlStateManager.translated(0, 0.85d, 0);
+//        body1.render(scale);
+//        GlStateManager.popMatrix();
+//    }
+
     @Override
-    public void setRotationAngles(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void setRotationAngles(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         if (entity.isFlying() && entityIn.getAnimation() != CanariWyvernEntity.ATTACK_ANIMATION)
             body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
@@ -480,11 +491,11 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
         {
             body2.rotateAngleX = 0f;
 
-            for (RendererModel model : headArray) model.rotateAngleX = 0f;
+            for (ModelRenderer model : headArray) model.rotateAngleX = 0f;
             head.rotateAngleX = 0f;
             head_1.rotateAngleX = 0.5f;
 
-            for (RendererModel model : tailArray) model.rotateAngleX = 0f;
+            for (ModelRenderer model : tailArray) model.rotateAngleX = 0f;
 
             leg1L.rotateAngleX = -1f;
             leg2L.rotateAngleX = 2.7f;
@@ -541,7 +552,7 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
         boolean shouldSwap = entity.getRidingEntity() instanceof PlayerEntity && entity.getRidingEntity().getPassengers().indexOf(entity) == 1;
         float tailRot = shouldSwap? 0.5f : -0.5f;
 
-        body1.offsetY = 0.18f;
+        body1.rotationPointY = 0.18f;
 
         wing1L.rotateAngleX = 0.6f;
         wing1R.rotateAngleX = 0.6f;

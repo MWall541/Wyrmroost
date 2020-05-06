@@ -1,13 +1,14 @@
 package WolfShotz.Wyrmroost.content.entities.dragon.ai.goals;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.util.*;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.ai.controller.*;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.util.math.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.QuikMaths;
+import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.ai.controller.MovementController;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.util.math.Vec3d;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Random;
 
 public class FlyerWanderGoal extends Goal
 {
@@ -30,7 +31,7 @@ public class FlyerWanderGoal extends Goal
         if (dragon.isFlying())
         {
             MovementController moveController = dragon.getMoveHelper();
-            double euclid = QuikMaths.getSpaceDistSq(dragon.posX, moveController.getX(), dragon.posY, moveController.getY(), dragon.posZ, moveController.getZ());
+            double euclid = QuikMaths.getSpaceDistSq(dragon.getPosX(), moveController.getX(), dragon.getPosY(), moveController.getY(), dragon.getPosZ(), moveController.getZ());
 
             return euclid < 1 || euclid > 3068d;
         }
@@ -55,9 +56,9 @@ public class FlyerWanderGoal extends Goal
         if (dragon.isFlying())
         {
             Random rand = dragon.getRNG();
-            double x = dragon.posX + QuikMaths.nextPseudoDouble(rand) * 20d;
-            double y = dragon.posY + QuikMaths.nextPseudoDouble(rand) * 16d;
-            double z = dragon.posZ + QuikMaths.nextPseudoDouble(rand) * 20d;
+            double x = dragon.getPosX() + QuikMaths.nextPseudoDouble(rand) * 20d;
+            double y = dragon.getPosY() + QuikMaths.nextPseudoDouble(rand) * 16d;
+            double z = dragon.getPosZ() + QuikMaths.nextPseudoDouble(rand) * 20d;
             if (sleepTempted && !dragon.world.isDaytime()) y = Math.max(-Math.abs(y), 0);
             if (y > 175) y -= 25;
             return new Vec3d(x, y, z);

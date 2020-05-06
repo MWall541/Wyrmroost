@@ -1,8 +1,11 @@
-package WolfShotz.Wyrmroost.content.entities.dragonegg;
+package WolfShotz.Wyrmroost.client.render.entity.dragon_egg;
 
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.ModelAnimator;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedLivingEntityModel;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 /**
  * WREggTemplate - Ukan
@@ -35,37 +38,42 @@ public class DragonEggModel extends AdvancedLivingEntityModel<DragonEggEntity>
         three.addChild(four);
         base.addChild(two);
         two.addChild(three);
-        
+
         updateDefaultPose();
         animator = ModelAnimator.create();
     }
-    
-    public void render(DragonEggEntity entity)
+
+    public void animate(DragonEggEntity entity)
     {
-        base.render(0.0625f);
-        
         resetToDefaultPose();
         animator.update(entity);
-        
-        if (entity.getAnimation() == DragonEggEntity.WIGGLE_ANIMATION)
+
+        if (animator.setAnimation(DragonEggEntity.WIGGLE_ANIMATION))
         {
-            
-            animator.setAnimation(DragonEggEntity.WIGGLE_ANIMATION);
             float angle = entity.wiggleInvert? -0.55f : 0.55f;
             boolean xz = entity.wiggleInvert2;
             int speed = 3;
-            
+
             animator.startKeyframe(speed);
             if (xz) animator.rotate(base, angle, 0, 0);
             else animator.rotate(base, 0, 0, angle);
             animator.endKeyframe();
-            
+
             animator.startKeyframe(speed);
             if (xz) animator.rotate(base, -angle, 0, 0);
             else animator.rotate(base, 0, 0, -angle);
             animator.endKeyframe();
-            
+
             animator.resetKeyframe(speed + 1);
         }
+    }
+
+    @Override
+    public void setRotationAngles(DragonEggEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+
+    @Override
+    public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    {
+        base.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 }

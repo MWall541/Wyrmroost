@@ -1,38 +1,60 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.*;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
-import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.entityutils.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.io.*;
-import WolfShotz.Wyrmroost.util.network.*;
-import net.minecraft.block.*;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.controller.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DefendHomeGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.io.ContainerBase;
+import WolfShotz.Wyrmroost.util.network.NetworkUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.passive.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.inventory.*;
-import net.minecraft.inventory.container.*;
-import net.minecraft.item.*;
-import net.minecraft.nbt.*;
-import net.minecraft.network.datasync.*;
-import net.minecraft.tileentity.*;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
-import net.minecraft.world.*;
-import net.minecraftforge.common.*;
-import net.minecraftforge.common.util.*;
-import net.minecraftforge.items.*;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.RabbitEntity;
+import net.minecraft.entity.passive.TurtleEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.*;
-import java.util.*;
-import java.util.function.*;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Random;
+import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class RoostStalkerEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
+public class RoostStalkerEntity extends AbstractDragonEntity
 {
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
 

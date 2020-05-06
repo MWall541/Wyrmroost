@@ -1,12 +1,12 @@
 package WolfShotz.Wyrmroost.client.render.entity.canari;
 
-import WolfShotz.Wyrmroost.*;
-import WolfShotz.Wyrmroost.client.render.entity.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import net.minecraft.client.renderer.entity.*;
-import net.minecraft.util.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
+import WolfShotz.Wyrmroost.content.entities.dragon.CanariWyvernEntity;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.*;
+import javax.annotation.Nullable;
 
 public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEntity>
 {
@@ -21,7 +21,7 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(CanariWyvernEntity canari)
+    public ResourceLocation getEntityTexture(CanariWyvernEntity canari)
     {
         if (canari.hasCustomName())
         {

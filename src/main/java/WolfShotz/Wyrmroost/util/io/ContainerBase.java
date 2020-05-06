@@ -1,12 +1,18 @@
 package WolfShotz.Wyrmroost.util.io;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.*;
-import WolfShotz.Wyrmroost.registry.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.inventory.*;
-import net.minecraft.inventory.container.*;
-import net.minecraft.item.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.RoostStalkerEntity;
+import WolfShotz.Wyrmroost.registry.WRIO;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 public class ContainerBase<T extends AbstractDragonEntity> extends Container
 {

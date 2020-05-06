@@ -50,7 +50,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
             return;
         }
 
-        setPosition(host.posX + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.posY + offsetY, host.posZ + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
+        setPosition(host.getPosX() + radius * Math.cos(host.renderYawOffset * (Math.PI / 180f) + angleYaw), host.getPosY() + offsetY, host.getPosZ() + radius * Math.sin(host.renderYawOffset * (Math.PI / 180f) + angleYaw));
         collideWithNearbyEntities();
 
         super.baseTick();

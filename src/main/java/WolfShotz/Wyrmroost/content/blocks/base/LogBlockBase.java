@@ -44,4 +44,10 @@ public class LogBlockBase extends LogBlock
 
         return false;
     }
+
+    @Override
+    public void onBlockClicked(BlockState state, World worldIn, BlockPos pos, PlayerEntity player)
+    {
+        super.onBlockClicked(state, worldIn, pos, player);
+    }
 }

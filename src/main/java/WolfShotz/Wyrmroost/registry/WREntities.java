@@ -1,23 +1,23 @@
 package WolfShotz.Wyrmroost.registry;
 
-import WolfShotz.Wyrmroost.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.*;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
-import WolfShotz.Wyrmroost.content.entities.multipart.*;
-import WolfShotz.Wyrmroost.content.items.*;
-import com.google.common.collect.*;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
+import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import com.google.common.collect.Sets;
 import net.minecraft.entity.*;
-import net.minecraft.world.biome.*;
-import net.minecraft.world.gen.*;
-import net.minecraftforge.common.*;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.registries.*;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static net.minecraftforge.common.BiomeDictionary.*;
+import static net.minecraftforge.common.BiomeDictionary.Type;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>

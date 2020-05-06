@@ -1,12 +1,13 @@
 package WolfShotz.Wyrmroost.client.render.entity.less_dwyrm;
 
-import WolfShotz.Wyrmroost.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import net.minecraft.client.renderer.entity.*;
-import net.minecraft.client.renderer.entity.model.*;
-import net.minecraft.util.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.content.entities.dragon.MinutusEntity;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.*;
+import javax.annotation.Nullable;
 
 public class LessDWyrmRenderer extends MobRenderer<MinutusEntity, EntityModel<MinutusEntity>>
 {
@@ -19,7 +20,7 @@ public class LessDWyrmRenderer extends MobRenderer<MinutusEntity, EntityModel<Mi
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(MinutusEntity entity)
+    public ResourceLocation getEntityTexture(MinutusEntity entity)
     {
         return minutus;
     }

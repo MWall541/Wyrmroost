@@ -1,9 +1,11 @@
 package WolfShotz.Wyrmroost.client.render.entity.dragon_fruit;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.*;
-import com.mojang.blaze3d.platform.*;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragon.DragonFruitDrakeEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 /**
  * dragonfruitdrake - Kingdomall
@@ -370,22 +372,33 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
     }
 
     @Override
-    public void render(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        double size = fruitDrake.isChild()? 0.75d : 1.5d;
-        double height = fruitDrake.isChild()? 0.5f : -0.5f;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.scaled(size, size, size);
-        GlStateManager.translated(0, height, 0);
-        Body1.render(scale);
-        GlStateManager.popMatrix();
+        ms.push();
+        ms.scale(1.5f, 1.5f, 1.5f);
+        Body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        ms.pop();
     }
+//
+//    @Override
+//    public void render(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+//    {
+//        double size = fruitDrake.isChild()? 0.75d : 1.5d;
+//        double height = fruitDrake.isChild()? 0.5f : -0.5f;
+//
+//        GlStateManager.pushMatrix();
+//        GlStateManager.scaled(size, size, size);
+//        GlStateManager.translated(0, height, 0);
+//        Body1.render(scale);
+//        GlStateManager.popMatrix();
+//    }
+
 
     @Override
-    public void setRotationAngles(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void setRotationAngles(DragonFruitDrakeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (!fruitDrake.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
+        super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        if (!entityIn.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
 
     private float globalDegree = 0.5f;
@@ -442,7 +455,7 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
 
     public void sitPose()
     {
-        Body1.offsetY = 0.35f;
+        Body1.rotationPointY = 0.35f;
 
         LegfrontL1.rotateAngleX = -1.65f;
         LegfrontL2.rotateAngleX = -1.5f;

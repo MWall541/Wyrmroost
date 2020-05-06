@@ -1,29 +1,49 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.*;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
-import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import com.google.common.collect.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.ControlledAttackGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.util.ConfigData;
+import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.item.*;
-import net.minecraft.item.crafting.*;
-import net.minecraft.nbt.*;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
-import net.minecraft.world.*;
-import net.minecraft.world.biome.*;
-import net.minecraft.world.gen.*;
-import net.minecraftforge.common.*;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.TemptGoal;
+import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.IShearable;
+import net.minecraftforge.common.Tags;
 
-import javax.annotation.*;
-import java.util.*;
-import java.util.stream.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static net.minecraft.entity.SharedMonsterAttributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable

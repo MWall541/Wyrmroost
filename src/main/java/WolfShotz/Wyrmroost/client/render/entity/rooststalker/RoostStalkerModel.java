@@ -1,9 +1,12 @@
 package WolfShotz.Wyrmroost.client.render.entity.rooststalker;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.*;
-import com.mojang.blaze3d.platform.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragon.RoostStalkerEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 /**
  * Roost stalker - nova
@@ -150,34 +153,43 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
         this.legr2.addChild(footl2_1);
         this.torso.addChild(legr3);
         this.torso.addChild(legr1);
-        
-        tailSegments = new AdvancedRendererModel[]{tail1, tail2, tail3};
-        
+
+        tailSegments = new AdvancedRendererModel[] {tail1, tail2, tail3};
+
         animator = ModelAnimator.create();
-        
+
         updateDefaultPose();
     }
-    
-    private float globalSpeed = 0.5f;
-    
-    @Override
-    public void render(RoostStalkerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
-    {
-        GlStateManager.pushMatrix();
 
-        if (entity.isChild())
-        {
-            GlStateManager.translatef(0, 0.78f, 0);
-            GlStateManager.scaled(0.3d, 0.3d, 0.3d);
-        }
-        else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
-        
-        torso.render(scale);
-        GlStateManager.popMatrix();
-    }
-    
+    private float globalSpeed = 0.5f;
+
     @Override
-    public void setRotationAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    {
+        ms.push();
+        ms.scale(0.625f, 0.625f, 0.625f);
+        torso.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        ms.pop();
+    }
+
+//    @Override
+//    public void render(RoostStalkerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+//    {
+//        GlStateManager.pushMatrix();
+//
+//        if (entity.isChild())
+//        {
+//            GlStateManager.translatef(0, 0.78f, 0);
+//            GlStateManager.scaled(0.3d, 0.3d, 0.3d);
+//        }
+//        else GlStateManager.scaled(0.625d, 0.625d, 0.625d);
+//
+//        torso.render(scale);
+//        GlStateManager.popMatrix();
+//    }
+
+    @Override
+    public void setRotationAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         if (netHeadYaw < -180) netHeadYaw += 360;
         else if (netHeadYaw > 180) netHeadYaw -= 360;
@@ -242,7 +254,7 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
     
     private void staySit()
     {
-        torso.offsetY = 0.21f;
+        torso.rotationPointY = 0.21f;
         
         tail1.rotateAngleX = 0.01f;
         
@@ -258,7 +270,7 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
     
     private void staySleep()
     {
-        torso.offsetY = 0.21f;
+        torso.rotationPointY = 0.21f;
         torso.rotateAngleZ = 1.7f;
         head.rotateAngleX = 1.3f;
         head.rotateAngleY = -0.2f;

@@ -1,31 +1,45 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.*;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.*;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.*;
-import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.*;
-import WolfShotz.Wyrmroost.util.entityutils.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import net.minecraft.block.*;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.item.*;
-import net.minecraft.item.crafting.*;
-import net.minecraft.nbt.*;
-import net.minecraft.particles.*;
-import net.minecraft.tags.*;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
-import net.minecraft.world.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.FlyerMoveController;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.FlyerFollowOwnerGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.FlyerWanderGoal;
+import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.QuikMaths;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MoverType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.RedstoneParticleData;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 
-import javax.annotation.*;
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class SilverGliderEntity extends AbstractDragonEntity implements PlayerMount.IHeadMount
+public class SilverGliderEntity extends AbstractDragonEntity
 {
     // Animation
     public static final Animation SIT_ANIMATION = new Animation(10);

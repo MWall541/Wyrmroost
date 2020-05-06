@@ -1,11 +1,13 @@
 package WolfShotz.Wyrmroost.client.render.entity.butterfly;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.butterflyleviathan.*;
-import WolfShotz.Wyrmroost.util.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.*;
-import com.mojang.blaze3d.platform.*;
-import net.minecraft.tags.*;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.util.QuikMaths;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.tags.FluidTags;
 
 /**
  * butterfly leviathan - Kingdomall
@@ -302,26 +304,35 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     }
 
     @Override
-    public void render(ButterflyLeviathanEntity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        double size = entity.isChild()? 1d : 3d;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
-        GlStateManager.translated(body1.rotationPointX * f5, body1.rotationPointY * f5, body1.rotationPointZ * f5);
-        GlStateManager.scaled(size, size, size);
-        GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
-        GlStateManager.translated(-body1.rotationPointX * f5, -body1.rotationPointY * f5, -body1.rotationPointZ * f5);
-        if (entity.isChild()) GlStateManager.translated(0, 0.8, 0);
-        body1.render(f5);
-        GlStateManager.popMatrix();
+        ms.push();
+        ms.scale(3, 3, 3);
+        body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        ms.pop();
     }
 
+//    @Override
+//    public void render(ButterflyLeviathanEntity entity, float f, float f1, float f2, float f3, float f4, float f5)
+//    {
+//        double size = entity.isChild()? 1d : 3d;
+//
+//        GlStateManager.pushMatrix();
+////        GlStateManager.translated(body1., body1.offsetY, body1.offsetZ);
+////        GlStateManager.translated(body1.rotationPointX * f5, body1.rotationPointY * f5, body1.rotationPointZ * f5);
+//        GlStateManager.scaled(size, size, size);
+////        GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
+////        GlStateManager.translated(-body1.rotationPointX * f5, -body1.rotationPointY * f5, -body1.rotationPointZ * f5);
+//        if (entity.isChild()) GlStateManager.translated(0, 0.8, 0);
+//        body1.render(f5);
+//        GlStateManager.popMatrix();
+//    }
+
+
     @Override
-    public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (netHeadYaw < -180) netHeadYaw += 360;
-        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         if (entity.areEyesInFluid(FluidTags.WATER) && !entityIn.isSitting())
             body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
         else faceTarget(netHeadYaw, headPitch, 1, head, neck3, neck2, neck1);

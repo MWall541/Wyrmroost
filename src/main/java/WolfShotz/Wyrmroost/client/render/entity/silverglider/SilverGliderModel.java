@@ -1,15 +1,20 @@
 package WolfShotz.Wyrmroost.client.render.entity.silverglider;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.animation.*;
-import WolfShotz.Wyrmroost.util.entityutils.client.model.*;
-import com.mojang.blaze3d.platform.*;
-import net.minecraft.util.math.*;
+import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.Vec3d;
 
-import java.util.*;
+import java.util.Random;
 
-import static WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity.*;
-import static WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity.*;
+import static WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity.SLEEP_ANIMATION;
+import static WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity.WAKE_ANIMATION;
+import static WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity.SIT_ANIMATION;
+import static WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity.STAND_ANIMATION;
 
 /**
  * WRSilverGlider - Kingdomall
@@ -387,22 +392,28 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
     }
 
     @Override
-    public void render(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        GlStateManager.pushMatrix();
-        if (entity.isChild())
-        {
-            GlStateManager.scaled(0.35d, 0.35d, 0.35d);
-            GlStateManager.translated(0, 2.75d, 0);
-        }
-
-        mainbody.render(scale);
-
-        GlStateManager.popMatrix();
+        mainbody.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
+//    @Override
+//    public void render(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+//    {
+//        GlStateManager.pushMatrix();
+//        if (entity.isChild())
+//        {
+//            GlStateManager.scaled(0.35d, 0.35d, 0.35d);
+//            GlStateManager.translated(0, 2.75d, 0);
+//        }
+//
+//        mainbody.render(scale);
+//
+//        GlStateManager.popMatrix();
+//    }
+
     @Override
-    public void setRotationAngles(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void setRotationAngles(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         if (!isSleeping) faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
@@ -578,13 +589,13 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
                 defaultGroundPose();
             }
             if ((currentAnim == SLEEP_ANIMATION || currentAnim == WAKE_ANIMATION) && isSitting)
-                mainbody.offsetY = 0.25f;
+                mainbody.rotationPointY = 0.25f;
 
             // Sitting Position / Sleep Position
             if (flag)
             {
                 // Body
-                mainbody.offsetY = 0.25f;
+                mainbody.rotationPointY = 0.25f;
 
                 // Left Wing
                 wingphalange1L.rotateAngleX = 0.3f;
