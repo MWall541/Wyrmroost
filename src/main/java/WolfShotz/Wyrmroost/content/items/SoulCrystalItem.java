@@ -22,6 +22,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -59,9 +60,9 @@ public class SoulCrystalItem extends Item
             {
                 double calcX = MathHelper.cos(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
                 double calcZ = MathHelper.sin(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
-                double x = dragon.posX + calcX;
-                double y = dragon.posY + (dragon.getHeight() * 1.8f);
-                double z = dragon.posZ + calcZ;
+                double x = dragon.getPosX() + calcX;
+                double y = dragon.getPosY() + (dragon.getHeight() * 1.8f);
+                double z = dragon.getPosZ() + calcZ;
                 double xMot = -calcX / 5f;
                 double yMot = -(dragon.getHeight() / 8);
                 double zMot = -calcZ / 5f;
@@ -82,6 +83,13 @@ public class SoulCrystalItem extends Item
         World world = context.getWorld();
         AbstractDragonEntity entity = getEntity(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
+        PlayerEntity player = context.getPlayer();
+
+        if (!world.hasNoCollisions(entity, entity.getBoundingBox()))
+        {
+            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail_message").applyTextStyle(TextFormatting.RED), true);
+            return ActionResultType.FAIL;
+        }
 
         // Spawn the entity on the server side only
         if (!world.isRemote)
@@ -94,7 +102,6 @@ public class SoulCrystalItem extends Item
         // Client Side Cosmetics
         if (world.isRemote)
         {
-            PlayerEntity player = context.getPlayer();
             EntitySize size = entity.getSize(entity.getPose());
 
             player.swingArm(context.getHand());

@@ -1,25 +1,32 @@
 package WolfShotz.Wyrmroost.util;
 
-import WolfShotz.Wyrmroost.*;
-import net.minecraft.block.*;
-import net.minecraft.block.material.*;
-import net.minecraft.client.*;
-import net.minecraft.client.world.*;
-import net.minecraft.entity.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.item.*;
-import net.minecraft.util.text.*;
-import net.minecraft.world.server.*;
-import net.minecraftforge.common.*;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.server.*;
-import net.minecraftforge.registries.*;
-import org.apache.logging.log4j.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.annotation.*;
-import java.util.*;
-import java.util.regex.*;
-import java.util.stream.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31

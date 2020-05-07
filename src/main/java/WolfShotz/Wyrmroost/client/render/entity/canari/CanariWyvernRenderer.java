@@ -27,11 +27,11 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
         {
             String name = canari.getCustomName().getUnformattedComponentText();
             if (name.equals("Rudy")) return EE_RUDY;
-            if (name.equals("Lady Everlyn Winklestein") && !canari.getGender()) return EE_LADY;
+            if (name.equals("Lady Everlyn Winklestein") && !canari.isMale()) return EE_LADY;
         }
 
         String path = "body_" + canari.getVariant();
-        if (canari.getGender()) path += "m";
+        if (canari.isMale()) path += "m";
         else path += "f";
         return resource(path + ".png");
     }

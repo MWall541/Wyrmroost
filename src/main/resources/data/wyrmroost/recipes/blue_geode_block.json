@@ -2,31 +2,31 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     },
     {
-      "item": "wyrmroost:geode"
+      "item": "wyrmroost:blue_geode"
     }
   ],
   "result": {

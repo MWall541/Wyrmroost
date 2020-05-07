@@ -2,11 +2,7 @@ package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
-import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
-import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.ButterflyInvScreen;
-import WolfShotz.Wyrmroost.content.io.screen.dragoninvscreens.OWDrakeInvScreen;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -30,9 +26,9 @@ public class WRIO
     @SuppressWarnings("ConstantConditions")
     public static void screenSetup()
     {
-        ScreenManager.registerFactory(OWDRAKE_CONTAINER.get(), OWDrakeInvScreen::new);
-        ScreenManager.registerFactory(BUTTERFLY_CONTAINER.get(), ButterflyInvScreen::new);
-        ScreenManager.registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase.BasicEntityScreen<StalkerContainer>::new);
+//        ScreenManager.registerFactory(OWDRAKE_CONTAINER.get(), OWDrakeInvScreen::new);
+//        ScreenManager.registerFactory(BUTTERFLY_CONTAINER.get(), ButterflyInvScreen::new);
+//        ScreenManager.registerFactory(STALKER_CONTAINER.get(), ContainerScreenBase.BasicEntityScreen<StalkerContainer>::new);
     }
 
     @SuppressWarnings("unchecked")

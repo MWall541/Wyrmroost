@@ -1,18 +1,19 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.DragonBodyController;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.DragonInvHandler;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.DragonBodyController;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.ConfigData;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
@@ -50,7 +51,6 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -82,7 +82,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world)
     {
         super(blevi, world);
-        ignoreFrustumCheck = ConfigData.disableFrustumCheck;
+        ignoreFrustumCheck = WRConfig.disableFrustumCheck;
         moveController = new MoveController();
         stepHeight = 2;
 
@@ -97,6 +97,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 //        }
 //        setImmune(BrineFluid.BRINE_WATER);
         setImmune(DamageSource.LIGHTNING_BOLT);
+
+        addVariantData(2, true);
     }
 
     @Override
@@ -162,25 +164,13 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     protected void registerData()
     {
         super.registerData();
-
-        dataManager.register(VARIANT, rand.nextInt(2));
         dataManager.register(HAS_CONDUIT, false);
-    }
-    
-    @Override
-    public void writeAdditional(CompoundNBT nbt)
-    {
-        super.writeAdditional(nbt);
-        
-        nbt.putInt("variant", getVariant());
     }
 
     @Override
     public void readAdditional(CompoundNBT nbt)
     {
         super.readAdditional(nbt);
-
-        setVariant(nbt.getInt("variant"));
         dataManager.set(HAS_CONDUIT, invHandler.map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false)); // bcus effects shouldnt be done on load
     }
 
@@ -501,10 +491,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
-    public LazyOptional<ItemStackHandler> createInv()
-    {
-        return LazyOptional.of(() -> new ItemStackHandler(1));
-    }
+    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 1)); }
     
     @Override
     public DragonEggProperties createEggProperties()
@@ -590,10 +577,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public class Navigator extends SwimmerPathNavigator
     {
-        public Navigator()
-        {
-            super(ButterflyLeviathanEntity.this, ButterflyLeviathanEntity.this.world);
-        }
+        public Navigator() { super(ButterflyLeviathanEntity.this, ButterflyLeviathanEntity.this.world); }
 
         @Override
         protected PathFinder getPathFinder(int pathSearchRange)

@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.ConfigData;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -45,8 +44,8 @@ public class Wyrmroost
 //        WRWorld.FEATURES.register(eventBus);
 //        eventBus.addGenericListener(ModDimension.class, (RegistryEvent.Register<ModDimension> e) -> e.getRegistry().register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost")));
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.CommonConfig.COMMON_SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigData.ClientConfig.CLIENT_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.CommonConfig.COMMON_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.ClientConfig.CLIENT_SPEC);
     }
 
     /**
@@ -73,7 +72,7 @@ public class Wyrmroost
         public void fill(NonNullList<ItemStack> items)
         {
             super.fill(items);
-            if (ConfigData.debugMode)
+            if (WRConfig.debugMode)
                 items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
         }
     }

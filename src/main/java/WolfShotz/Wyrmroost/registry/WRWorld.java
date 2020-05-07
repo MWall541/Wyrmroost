@@ -60,21 +60,17 @@ public class WRWorld
     {
         if (NETHER_FILTER.test(biome)) // Nether Ores
         {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(
-                    Feature.ORE,
-                    new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4),
-                    Placement.COUNT_RANGE,
-                    new CountRangeConfig(16, 0, 0, 128)));
+            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
+                    .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4))
+                    .withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(16, 0, 0, 128))));
             return;
         }
 
         if (END_FILTER.test(biome)) // End Ores
         {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(
-                    Feature.EMERALD_ORE,
-                    new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState()),
-                    Placement.RANDOM_COUNT_RANGE,
-                    new CountRangeConfig(16, 0, 0, 128)));
+            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.EMERALD_ORE
+                    .withConfiguration(new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState()))
+                    .withPlacement(Placement.RANDOM_COUNT_RANGE.configure(new CountRangeConfig(16, 0, 0, 128))));
             return;
         }
         // Any other biome not tagged for end or nether
@@ -87,11 +83,8 @@ public class WRWorld
      */
     private static void registerOreEntry(Biome biome, BlockState state, int size, int count, int bottomOffset, int topOffset, int maximum)
     {
-        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Biome.createDecoratedFeature(
-                Feature.ORE,
-                new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size),
-                Placement.COUNT_RANGE,
-                new CountRangeConfig(count, bottomOffset, topOffset, maximum)
-        ));
+        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
+                .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, state, size))
+                .withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(count, bottomOffset, topOffset, maximum))));
     }
 }

@@ -36,7 +36,7 @@ public class DebugScreen extends Screen
     {
         renderBackground();
         super.render(p_render_1_, p_render_2_, p_render_3_);
-        String gender = dragon.getGender()? "male" : "female";
+        String gender = dragon.isMale()? "male" : "female";
         
         drawCenteredString(font, dragon.getDisplayName().getUnformattedComponentText(), (width / 2), 15, 0xffffff);
         drawCenteredString(font, "isSleeping: " + dragon.isSleeping(), (width / 2) + 50, 50, 0xffffff);

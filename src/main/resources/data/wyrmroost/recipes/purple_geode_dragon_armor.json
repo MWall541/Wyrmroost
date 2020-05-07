@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IB ",
+    "I B",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "item": "wyrmroost:purple_geode"
+    },
+    "B": {
+      "item": "wyrmroost:purple_geode_block"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:purple_geode_dragon_armor"
+  }
+}

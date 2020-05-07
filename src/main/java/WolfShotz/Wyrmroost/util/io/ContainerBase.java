@@ -92,7 +92,7 @@ public class ContainerBase<T extends AbstractDragonEntity> extends Container
         {
             super(stalker, WRIO.STALKER_CONTAINER.get(), windowID);
             buildPlayerSlots(playerInv, 7, 83);
-            dragon.invHandler.ifPresent(i -> addSlot(new ItemHandlerSlotBuilder(i, 0, 71, 56).only(s -> !(s.getItem() instanceof BlockItem)).onSlotUpdate(s -> stalker.setItem(s.getStack()))));
+            dragon.invHandler.ifPresent(i -> addSlot(new ItemHandlerSlotBuilder(i, 0, 71, 56).only(s -> !(s.getItem() instanceof BlockItem))));
         }
     }
 

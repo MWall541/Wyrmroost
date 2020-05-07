@@ -1,13 +1,14 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
+import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.CommonGoalWrappers;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.ControlledAttackGoal;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.ControlledAttackGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.util.ConfigData;
+import WolfShotz.Wyrmroost.util.EntityDataEntry;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
@@ -63,6 +64,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
+
+        addDataEntry("ShearTimer", EntityDataEntry.INT, () -> shearCooldownTime, v -> shearCooldownTime = v);
     }
 
     public static void handleSpawning()
@@ -117,24 +120,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.232524f);
         getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
         getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3d);
-    }
-
-    @Override
-    public void writeAdditional(CompoundNBT nbt)
-    {
-        super.writeAdditional(nbt);
-
-        nbt.putInt(DATA_SHEAR, shearCooldownTime);
-    }
-
-    // ================================
-
-    @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-
-        this.shearCooldownTime = nbt.getInt(DATA_SHEAR);
     }
 
     @Override
@@ -246,7 +231,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
-        if (getRNG().nextDouble() <= ConfigData.dfdBabyChance) setGrowingAge(getEggProperties().getGrowthTime());
+        if (getRNG().nextDouble() <= WRConfig.dfdBabyChance) setGrowingAge(getEggProperties().getGrowthTime());
 
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }

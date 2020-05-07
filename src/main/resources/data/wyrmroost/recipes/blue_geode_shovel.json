@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "M",
+    "S",
+    "S"
+  ],
+  "key": {
+    "M": {
+      "item": "wyrmroost:blue_geode"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:blue_geode_shovel"
+  }
+}

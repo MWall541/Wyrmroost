@@ -1,12 +1,12 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.items.DrakeArmorItem;
+import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRWorld;
-import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,10 +52,10 @@ public class CommonEvents
      */
     public static void configLoad(ModConfig.ModConfigEvent evt)
     {
-        if (evt.getConfig().getSpec() == ConfigData.CommonConfig.COMMON_SPEC)
-            ConfigData.CommonConfig.reload();
-        if (evt.getConfig().getSpec() == ConfigData.ClientConfig.CLIENT_SPEC)
-            ConfigData.ClientConfig.reload();
+        if (evt.getConfig().getSpec() == WRConfig.CommonConfig.COMMON_SPEC)
+            WRConfig.CommonConfig.reload();
+        if (evt.getConfig().getSpec() == WRConfig.ClientConfig.CLIENT_SPEC)
+            WRConfig.ClientConfig.reload();
     }
 
     // ==========================================================
@@ -92,7 +92,7 @@ public class CommonEvents
     @SubscribeEvent
     public static void debugStick(PlayerInteractEvent.EntityInteract evt)
     {
-        if (!ConfigData.debugMode) return;
+        if (!WRConfig.debugMode) return;
         PlayerEntity player = evt.getPlayer();
         ItemStack stack = player.getHeldItem(evt.getHand());
         if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick"))
@@ -107,7 +107,7 @@ public class CommonEvents
 
         if (player.isSneaking()) dragon.tame(true, player);
         else if (evt.getWorld().isRemote) ClientEvents.debugScreen(dragon);
-//        dragon.setFlying(true);
+        dragon.setFlying(true);
     }
 
     @SubscribeEvent

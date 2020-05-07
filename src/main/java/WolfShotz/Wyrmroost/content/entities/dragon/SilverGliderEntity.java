@@ -1,13 +1,14 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.FlyerMoveController;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.CommonGoalWrappers;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.FlyerFollowOwnerGoal;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.FlyerWanderGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.FlyerMoveController;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.FlyerFollowOwnerGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -20,7 +21,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.DamageSource;
@@ -55,6 +55,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         SLEEP_ANIMATION = new Animation(20);
         WAKE_ANIMATION = new Animation(15);
+
+        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        addVariantData(3, true); // For females, this value is redundant.
     }
 
     @Override
@@ -109,17 +112,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super.registerData();
 
-        dataManager.register(GENDER, getRNG().nextBoolean());
-        dataManager.register(VARIANT, getRNG().nextInt(3)); // For females, this value is redundant.
-    }
-
-    @Override
-    public void writeAdditional(CompoundNBT nbt)
-    {
-        super.writeAdditional(nbt);
-
-        nbt.putBoolean("gender", getGender());
-        nbt.putInt("variant", getVariant());
     }
 
     @Override
@@ -160,15 +152,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public void travel(Vec3d vec3d)
     {
         if (!isFlying()) super.travel(vec3d);
-    }
-
-    @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-
-        setVariant(nbt.getInt("variant"));
-        setGender(nbt.getBoolean("gender"));
     }
 
     @Override

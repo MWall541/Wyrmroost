@@ -8,6 +8,7 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Random;
@@ -30,7 +31,7 @@ public class CanariLeavesBlock extends LeavesBlock implements IGrowable
     public boolean ticksRandomly(BlockState state) { return true; }
 
     @Override
-    public void randomTick(BlockState state, World worldIn, BlockPos pos, Random random)
+    public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random)
     {
         super.randomTick(state, worldIn, pos, random);
 
@@ -38,7 +39,7 @@ public class CanariLeavesBlock extends LeavesBlock implements IGrowable
             worldIn.setBlockState(pos, state.cycle(BERRIES), Constants.BlockFlags.DEFAULT);
     }
 
-//    @Override
+    //    @Override
 //    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
 //    {
 //        if (!state.get(BERRIES)) return false;
@@ -60,7 +61,7 @@ public class CanariLeavesBlock extends LeavesBlock implements IGrowable
     }
 
     @Override
-    public void grow(World worldIn, Random rand, BlockPos pos, BlockState state)
+    public void grow(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state)
     {
         worldIn.setBlockState(pos, state.cycle(BERRIES));
     }

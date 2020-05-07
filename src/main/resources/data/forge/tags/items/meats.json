@@ -11,7 +11,13 @@
     "minecraft:cooked_mutton",
     "minecraft:rabbit",
     "minecraft:cooked_rabbit",
+    "wyrmroost:lowtier_meat_raw",
+    "wyrmroost:lowtier_meat_cooked",
     "wyrmroost:common_meat_raw",
-    "wyrmroost:common_meat_cooked"
+    "wyrmroost:common_meat_cooked",
+    "wyrmroost:apex_meat_raw",
+    "wyrmroost:apex_meat_cooked",
+    "wyrmroost:behemoth_meat_raw",
+    "wyrmroost:behemoth_meat_cooked"
   ]
 }

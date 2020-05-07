@@ -25,14 +25,14 @@
         4
       ],
       "translation": [
-        13,
-        10,
+        14,
+        15,
         -10
       ],
       "scale": [
-        1,
-        1,
-        1
+        0,
+        0,
+        0
       ]
     },
     "firstperson_lefthand": {
@@ -42,14 +42,14 @@
         4
       ],
       "translation": [
-        -2,
-        11,
-        -12
+        -7,
+        17,
+        -13
       ],
       "scale": [
-        1,
-        1,
-        1
+        0,
+        0,
+        0
       ]
     },
     "thirdperson_righthand": {

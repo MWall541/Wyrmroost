@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.util.io;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.io.screen.base.ContainerScreenBase;
-import WolfShotz.Wyrmroost.util.network.messages.EntityRenameMessage;
+import WolfShotz.Wyrmroost.content.io.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.network.messages.EntityRenameMessage;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -13,28 +13,17 @@ public class NameFieldWidget extends TextFieldWidget implements IGuiEventListene
 {
     private final Entity entity;
 
-    public NameFieldWidget(FontRenderer font, int posX, int posY, int sizeX, int sizeY, ContainerScreenBase<?> screen)
+    public NameFieldWidget(FontRenderer font, int posX, int posY, int sizeX, int sizeY, StaffScreen screen)
     {
-        super(font, posX, posY, sizeX, sizeY, screen.prevName);
-        this.entity = screen.dragonInv.dragon;
+        super(font, posX, posY, sizeX, sizeY, screen.dragon.getName().getUnformattedComponentText());
+        this.entity = screen.dragon;
 
         setEnableBackgroundDrawing(false);
-        setMaxStringLength(16);
-        setTextColor(16777215);
+        setMaxStringLength(35);
+        setTextColor(0xffffff);
         setText(getMessage());
-        screen.getChildren().add(this);
     }
-    
-    @Override
-    public void tick()
-    {
-        super.tick();
-        setEnableBackgroundDrawing(isFocused());
-        
-        if (!isFocused() && !entity.getDisplayName().getUnformattedComponentText().equals(getText()))
-            setText(entity.getDisplayName().getUnformattedComponentText());
-    }
-    
+
     @Override
     public boolean keyPressed(int p1, int p2, int p3)
     {
@@ -45,7 +34,7 @@ public class NameFieldWidget extends TextFieldWidget implements IGuiEventListene
                 StringTextComponent name = getText().isEmpty() ? null : new StringTextComponent(getText());
                 Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(entity, name));
             }
-            setFocused2(false);
+            setFocused(false);
         }
         
         return super.keyPressed(p1, p2, p3);

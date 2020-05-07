@@ -22,7 +22,7 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
     public ResourceLocation getEntityTexture(DragonFruitDrakeEntity entity)
     {
         if (entity.isChild()) return CHILD;
-        String path = "body_" + (entity.getGender()? "m" : "f");
+        String path = "body_" + (entity.isMale()? "m" : "f");
         if (entity.isSpecial()) path += "_s";
         return resource(path + ".png");
     }

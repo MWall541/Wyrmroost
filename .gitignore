@@ -29,4 +29,4 @@ forge*changelog.txt
 /src/main/generated_resources
 
 # some other random assets I don't want on the repo
-assets
+modelassets

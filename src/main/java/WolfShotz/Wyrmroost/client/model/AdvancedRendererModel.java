@@ -1,5 +1,7 @@
 package WolfShotz.Wyrmroost.client.model;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
@@ -10,17 +12,12 @@ public class AdvancedRendererModel extends ModelRenderer
     public float defaultRotationX;
     public float defaultRotationY;
     public float defaultRotationZ;
-    public float defaultOffsetX;
-    public float defaultOffsetY;
-    public float defaultOffsetZ;
     public float defaultPositionX;
     public float defaultPositionY;
     public float defaultPositionZ;
     public float scaleX;
     public float scaleY;
     public float scaleZ;
-    public int textureOffsetX;
-    public int textureOffsetY;
     public boolean scaleChildren;
     private AdvancedLivingEntityModel<?> model;
     private AdvancedRendererModel parent;
@@ -150,23 +147,6 @@ public class AdvancedRendererModel extends ModelRenderer
         rotationPointY += bob;
     }
 
-    /**
-     * Returns the model renderer with the new texture parameters.
-     */
-    public ModelRenderer setTextureSize(int textureWidthIn, int textureHeightIn)
-    {
-        this.textureWidth = (float) textureWidthIn;
-        this.textureHeight = (float) textureHeightIn;
-        return super.setTextureSize(textureWidthIn, textureHeightIn);
-    }
-
-    public AdvancedRendererModel setTextureOffset(int textureOffsetX, int textureOffsetY)
-    {
-        this.textureOffsetX = textureOffsetX;
-        this.textureOffsetY = textureOffsetY;
-        return this;
-    }
-
     public void transitionTo(AdvancedRendererModel to, float timer, float maxTime)
     {
         rotateAngleX += (to.rotateAngleX - rotateAngleX) / maxTime * timer;
@@ -175,5 +155,12 @@ public class AdvancedRendererModel extends ModelRenderer
         rotationPointX += (to.rotationPointX - rotationPointX) / maxTime * timer;
         rotationPointY += (to.rotationPointY - rotationPointY) / maxTime * timer;
         rotationPointZ += (to.rotationPointZ - rotationPointZ) / maxTime * timer;
+    }
+
+    @Override
+    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    {
+        if (showModel) matrixStackIn.scale(scaleX, scaleY, scaleZ);
+        super.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 }

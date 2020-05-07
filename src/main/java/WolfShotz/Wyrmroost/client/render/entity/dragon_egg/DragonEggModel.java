@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.RenderType;
 
 /**
  * WREggTemplate - Ukan
@@ -21,6 +22,7 @@ public class DragonEggModel extends AdvancedLivingEntityModel<DragonEggEntity>
     
     public DragonEggModel()
     {
+        super(RenderType::getEntitySolid);
         textureWidth = 64;
         textureHeight = 32;
         four = new AdvancedRendererModel(this, 0, 19);

@@ -254,7 +254,7 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
     
     private void staySit()
     {
-        torso.rotationPointY = 0.21f;
+        torso.rotationPointY = 33f;
         
         tail1.rotateAngleX = 0.01f;
         

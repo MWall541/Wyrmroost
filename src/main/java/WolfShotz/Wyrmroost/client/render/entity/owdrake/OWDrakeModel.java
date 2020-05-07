@@ -380,7 +380,8 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     @Override
     public void setRotationAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        super.setRotationAngles(drake, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        if (netHeadYaw < -180) netHeadYaw += 360;
+        else if (netHeadYaw > 180) netHeadYaw -= 360;
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
             faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
@@ -470,7 +471,7 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
      */
     private void staySitting()
     {
-        body1.rotationPointY = 0.35f;
+        body1.rotationPointY = -0.35f;
         
         // Front Right
         arm2R.rotateAngleX = -1.5f;

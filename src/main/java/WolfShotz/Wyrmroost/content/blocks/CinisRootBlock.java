@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -14,6 +15,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.PlantType;
 
 import java.util.Random;
@@ -30,19 +32,20 @@ public class CinisRootBlock extends BushBlock implements IGrowable
     }
 
     @Override
-    public void tick(BlockState state, World worldIn, BlockPos pos, Random random)
+    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand)
     {
-        if (random.nextInt(7) == 0 && canGrow(worldIn, pos, state, false))
-            grow(worldIn, random, pos, state);
+        if (rand.nextInt(7) == 0 && canGrow(worldIn, pos, state, false))
+            grow(worldIn, rand, pos, state);
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit)
     {
-//        if (state.get(GROWTH) != 1) return false;
+        if (state.get(GROWTH) != 1) return ActionResultType.PASS;
 //        InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(WRBlocks.CINIS_ROOT.get()));
-//        worldIn.setBlockState(pos, getDefaultState(), 4);
-        return true;
+        worldIn.setBlockState(pos, getDefaultState(), 4);
+
+        return ActionResultType.SUCCESS;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class CinisRootBlock extends BushBlock implements IGrowable
     }
 
     @Override
-    public void grow(World worldIn, Random rand, BlockPos pos, BlockState state)
+    public void grow(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state)
     {
         worldIn.setBlockState(pos, state.cycle(GROWTH), 4);
     }

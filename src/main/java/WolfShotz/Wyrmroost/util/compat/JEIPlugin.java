@@ -26,10 +26,12 @@ public class JEIPlugin implements IModPlugin
     {
         // Soul Crystal
         registry.addIngredientInfo(new ItemStack(WRItems.SOUL_CRYSTAL.get(), 1), VanillaTypes.ITEM,
-                                   new TranslationTextComponent(
-                                           "item.wyrmroost.soul_crystal.jeidesc",
-                                           new StringTextComponent("dsabgi").applyTextStyle(TextFormatting.OBFUSCATED).getFormattedText()
-                                   ).getFormattedText());
+                new TranslationTextComponent(
+                        "item.wyrmroost.soul_crystal.jeidesc",
+                        new StringTextComponent("dsabgi")
+                                .applyTextStyle(TextFormatting.OBFUSCATED)
+                                .getFormattedText())
+                        .getFormattedText());
         
         registry.addIngredientInfo(new ItemStack(WRItems.SOUL_CRYSTAL.get(), 1), VanillaTypes.ITEM, new StringTextComponent("item.wyrmroost.dragon_egg.jeidesc").getFormattedText());
     }

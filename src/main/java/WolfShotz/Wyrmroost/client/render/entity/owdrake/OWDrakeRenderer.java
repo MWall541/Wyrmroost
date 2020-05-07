@@ -3,8 +3,15 @@ package WolfShotz.Wyrmroost.client.render.entity.owdrake;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.OWDrakeEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -16,44 +23,20 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
     public static final ResourceLocation JEB_ = resource("jeb.png");
     // Saddle
     public static final ResourceLocation SADDLE_LAYER = resource("accessories/saddle.png");
-    // Armor
-    public static final ResourceLocation ARMOR_IRON = resource("accessories/armor_iron.png");
-    public static final ResourceLocation ARMOR_GOLD = resource("accessories/armor_gold.png");
-    public static final ResourceLocation ARMOR_DIAMOND = resource("accessories/armor_diamond.png");
-    public static final ResourceLocation ARMOR_PLATINUM = resource("accessories/armor_platinum.png");
-    public static final ResourceLocation ARMOR_GEODE_BLUE = resource("accessories/armor_geode_blue.png");
-    public static final ResourceLocation ARMOR_GEODE_RED = resource("accessories/armor_geode_red.png");
-    public static final ResourceLocation ARMOR_GEODE_PURPLE = resource("accessories/armor_geode_purple.png");
 
     public OWDrakeRenderer(EntityRendererManager manager)
     {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ConditionalLayer(OWDrakeEntity::isArmored, d -> RenderType.getEntityCutoutNoCull(getArmorTexture(d))));
-        addLayer(new ConditionalLayer(OWDrakeEntity::hasChest, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
+        addLayer(new ArmorLayer());
+        addLayer(new ConditionalLayer(OWDrakeEntity::isSaddled, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
     }
     
     public static ResourceLocation resource(String png) { return Wyrmroost.rl(DEF_LOC + "owdrake/" + png); }
 
     private ResourceLocation getArmorTexture(OWDrakeEntity drake)
     {
-        switch (drake.getArmor().getType())
-        {
-            default:
-            case IRON:
-                return ARMOR_IRON;
-            case GOLD:
-                return ARMOR_GOLD;
-            case DIAMOND:
-                return ARMOR_DIAMOND;
-            case PLATINUM:
-                return ARMOR_PLATINUM;
-            case BLUE_GEODE:
-                return ARMOR_GEODE_BLUE;
-            case RED_GEODE:
-                return ARMOR_GEODE_RED;
-            case PURPLE_GEODE:
-                return ARMOR_GEODE_PURPLE;
-        }
+        String path = drake.getArmor().getRegistryName().getPath().replace("_dragon_armor", "");
+        return resource("accessories/armor_" + path + ".png");
     }
 
     @Nullable
@@ -67,9 +50,33 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
             if (name.equalsIgnoreCase("Jeb_")) return JEB_;
         }
 
-        String path = drake.isChild()? "child" : drake.getGender()? "male" : "female";
+        String path = drake.isChild()? "child" : drake.isMale()? "male" : "female";
         if (drake.isSpecial()) return resource(path + "_spe.png");
-        if (drake.getDrakeVariant()) return resource(path + "_sav.png");
+        if (drake.getVariant() == 1) return resource(path + "_sav.png");
         return resource(path + "_com.png");
+    }
+
+    class ArmorLayer extends LayerRenderer<OWDrakeEntity, EntityModel<OWDrakeEntity>>
+    {
+        public final OWDrakeModel MODEL = new OWDrakeModel();
+
+        public ArmorLayer()
+        {
+            super(OWDrakeRenderer.this);
+        }
+
+        @Override
+        public void render(MatrixStack ms, IRenderTypeBuffer type, int packedLightIn, OWDrakeEntity entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
+        {
+            if (entity.isArmored())
+            {
+                IVertexBuilder builder = ItemRenderer.getBuffer(type, RenderType.getEntityCutoutNoCull(getArmorTexture(entity)), false, entity.getStackInSlot(OWDrakeEntity.ARMOR_SLOT).hasEffect());
+                getEntityModel().copyModelAttributesTo(MODEL);
+//                MODEL.setScale(1.001f);
+                MODEL.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTicks);
+                MODEL.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+                MODEL.render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 0.4f);
+            }
+        }
     }
 }

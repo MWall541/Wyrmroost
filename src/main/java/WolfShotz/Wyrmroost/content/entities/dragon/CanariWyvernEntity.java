@@ -2,11 +2,12 @@ package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.FlyerMoveController;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.FlyerMoveController;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.util.EntityDataEntry;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -19,7 +20,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
@@ -50,6 +50,9 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
         setImmune(CausticWaterFluid.CAUSTIC_WATER);
         setImmune(DamageSource.MAGIC);
+
+        addVariantData(5, false);
+        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
     @Override
@@ -91,38 +94,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     @Override
     protected BodyController createBodyController() { return new BodyController(this); }
 
-    // ================================
-    //           Entity NBT
-    // ================================
-
-    @Override
-    protected void registerData()
-    {
-        super.registerData();
-
-        dataManager.register(VARIANT, getRNG().nextInt(5));
-    }
-
-    @Override
-    public void writeAdditional(CompoundNBT nbt)
-    {
-        super.writeAdditional(nbt);
-
-        nbt.putInt("variant", getVariant());
-    }
-
-    @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-
-        setVariant(nbt.getInt("variant"));
-    }
-
     @Override
     public int getSpecialChances() { return 0; }
-
-    // ================================
 
     @Override
     public void livingTick()

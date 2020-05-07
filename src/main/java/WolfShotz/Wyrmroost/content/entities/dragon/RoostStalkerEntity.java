@@ -1,15 +1,16 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.CommonGoalWrappers;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DefendHomeGoal;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.content.entities.dragon.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.DragonInvHandler;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.DefendHomeGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.io.ContainerBase;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -23,7 +24,6 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItem;
@@ -45,7 +45,6 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -56,10 +55,9 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
+    public static final int ITEM_SLOT = 0;
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
-
     public static final Animation SCAVENGE_ANIMATION = new Animation(35);
-
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(RoostStalkerEntity.class, DataSerializers.ITEMSTACK);
 
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world)
@@ -69,8 +67,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         stepHeight = 0;
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
-        
+
         setImmune(DamageSource.DROWN);
+
+        addVariantData(0, true);
     }
     
     @Override
@@ -82,7 +82,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new MoveToHomeGoal(this));
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2f, 8, 2));
         goalSelector.addGoal(10, new DragonBreedGoal(this, false, false));
-        goalSelector.addGoal(11, new ScavengeGoal(this, 1.1d));
+        goalSelector.addGoal(11, new ScavengeGoal(1.1d));
         goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(13, CommonGoalWrappers.lookAt(this, 5f));
         goalSelector.addGoal(14, new LookRandomlyGoal(this));
@@ -113,15 +113,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         super.readAdditional(nbt);
 
         dataManager.set(ITEM, invHandler.map(i -> i.getStackInSlot(0)).orElse(ItemStack.EMPTY));
-
-        // Data Fix - todo: remove later
-        ItemStack stack = getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-        if (!stack.isEmpty()) invHandler.ifPresent(i ->
-        {
-            setItem(stack);
-            setStackInSlot(0, stack);
-            setItemStackToSlot(EquipmentSlotType.MAINHAND, ItemStack.EMPTY);
-        });
     }
 
     public ItemStack getItem() { return dataManager.get(ITEM); }
@@ -190,7 +181,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             
             if (stack.isEmpty() || canPickUpStack(stack))
             {
-                setItem(stack);
                 setStackInSlot(0, stack);
                 player.setHeldItem(hand, heldItem);
                 
@@ -199,52 +189,37 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
         return false;
     }
-    
+
     @Override
-    public boolean isBreedingItem(ItemStack stack)
+    public void onInvContentsChanged(int slot, ItemStack stack)
     {
-        return stack.getItem() == Items.GOLD_NUGGET;
+        if (slot == ITEM_SLOT) setItem(stack);
     }
 
     @Override
-    public int getSpecialChances()
-    {
-        return 185;
-    }
-    
+    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.GOLD_NUGGET; }
+
+    @Override
+    public int getSpecialChances() { return 185; }
+
     @Override
     // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P
-    protected BodyController createBodyController()
-    {
-        return new BodyController(this);
-    }
-    
+    protected BodyController createBodyController() { return new BodyController(this); }
+
     @Override
-    public boolean canFly()
-    {
-        return false;
-    }
-    
+    public boolean canFly() { return false; }
+
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound()
-    {
-        return WRSounds.STALKER_IDLE.get();
-    }
-    
+    protected SoundEvent getAmbientSound() { return WRSounds.STALKER_IDLE.get(); }
+
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
-    {
-        return WRSounds.STALKER_HURT.get();
-    }
-    
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.STALKER_HURT.get(); }
+
     @Nullable
     @Override
-    protected SoundEvent getDeathSound()
-    {
-        return WRSounds.STALKER_DEATH.get();
-    }
+    protected SoundEvent getDeathSound() { return WRSounds.STALKER_DEATH.get(); }
 
     /**
      * Array Containing all of the dragons food items
@@ -265,7 +240,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public LazyOptional<ItemStackHandler> createInv() { return LazyOptional.of(() -> new ItemStackHandler(1)); }
+    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 1)); }
 
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
@@ -281,9 +256,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         private IInventory chest;
         private int searchDelay = 20 + new Random().nextInt(40) + 5;
 
-        public ScavengeGoal(RoostStalkerEntity dragon, double speed)
+        public ScavengeGoal(double speed)
         {
-            super(dragon, speed, 16);
+            super(RoostStalkerEntity.this, speed, 16);
         }
 
         @Override
@@ -328,8 +303,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                     if (!stack.isEmpty() && canPickUpStack(stack))
                     {
                         chest.removeStackFromSlot(index);
-                        invHandler.ifPresent(i -> i.setStackInSlot(0, stack));
-                        setItem(stack);
+                        setStackInSlot(ITEM_SLOT, stack);
                     }
                 }
             }

@@ -1,13 +1,18 @@
 package WolfShotz.Wyrmroost.content.io.container;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.content.items.*;
-import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.io.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.inventory.container.*;
-import net.minecraft.item.*;
-import net.minecraftforge.items.*;
+import WolfShotz.Wyrmroost.content.entities.dragon.OWDrakeEntity;
+import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
+import WolfShotz.Wyrmroost.registry.WRIO;
+import WolfShotz.Wyrmroost.util.io.ContainerBase;
+import WolfShotz.Wyrmroost.util.io.ItemHandlerSlotBuilder;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.SaddleItem;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
 {
@@ -16,9 +21,10 @@ public class OWDrakeInvContainer extends ContainerBase<OWDrakeEntity>
         super(drake, WRIO.OWDRAKE_CONTAINER.get(), windowID);
 
         buildPlayerSlots(playerInv, 7, 83);
-        dragon.invHandler.ifPresent(h -> {
-            addSlot(new ItemHandlerSlotBuilder(h, 0, 73, 16).condition(() -> !dragon.isChild()).only(s -> s.getItem() instanceof SaddleItem).limit(1).onSlotUpdate(s -> dragon.setSaddled(!s.getStack().isEmpty())));
-            addSlot(new ItemHandlerSlotBuilder(h, 1, 73, 34).only(s -> s.getItem() instanceof DragonArmorItem).limit(1).onSlotUpdate(s -> dragon.setArmor(s.getStack().getItem())));
+        dragon.invHandler.ifPresent(h ->
+        {
+            addSlot(new ItemHandlerSlotBuilder(h, 0, 73, 16).condition(() -> !dragon.isChild()).only(s -> s.getItem() instanceof SaddleItem).limit(1));
+            addSlot(new ItemHandlerSlotBuilder(h, 1, 73, 34).only(s -> s.getItem() instanceof DragonArmorItem).limit(1));
             addSlot(buildChestSlot(h, 2, 73, 52, 3, 19));
 
             buildSlotArea((index, posX, posY) -> new ItemHandlerSlotBuilder(h, index, posX, posY).condition(drake::hasChest), 3, 97, 7, 4, 4);

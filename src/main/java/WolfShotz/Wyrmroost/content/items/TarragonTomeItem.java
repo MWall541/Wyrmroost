@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.content.items;
 
-import WolfShotz.Wyrmroost.ClientEvents;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;

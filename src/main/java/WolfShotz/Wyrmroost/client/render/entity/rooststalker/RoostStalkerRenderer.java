@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragon.RoostStalkerEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -51,10 +50,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
 
     class MouthItemLayer extends LayerRenderer<RoostStalkerEntity, EntityModel<RoostStalkerEntity>>
     {
-        public MouthItemLayer()
-        {
-            super(RoostStalkerRenderer.this);
-        }
+        public MouthItemLayer() { super(RoostStalkerRenderer.this); }
 
         @Override
         public void render(MatrixStack ms, IRenderTypeBuffer bufferIn, int packedLightIn, RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
@@ -81,11 +77,11 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
                     ms.rotate(Vector3f.XP.rotationDegrees(headPitch / (1.7f - (i * -1f))));
                     ms.translate(0, -0.3f, 0);
                 }
-                if (stalker.isChild()) GlStateManager.scalef(0.45f, 0.45f, 0.45f);
+                if (stalker.isChild()) ms.scale(0.45f, 0.45f, 0.45f);
 
                 Minecraft.getInstance().getFirstPersonRenderer().renderItemSide(stalker, stack, ItemCameraTransforms.TransformType.GROUND, false, ms, bufferIn, packedLightIn);
 
-                GlStateManager.popMatrix();
+                ms.pop();
             }
         }
     }
