@@ -52,15 +52,11 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
             int red = color >> 16 & 255;
             int green = color >> 8 & 255;
             int blue = color & 255;
-            buffer.setColor(red, green, blue, 100);
+            buffer.setColor(red, green, blue, 255);
             bufferIn = buffer;
         }
 
         super.render(dragon, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-
-        if (flag)
-        {
-        }
     }
 
     @Nullable
@@ -78,7 +74,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         PlayerEntity player = Minecraft.getInstance().player;
         if (player == null) return false;
         ItemStack stack = ModUtils.getHeldStack(Minecraft.getInstance().player, WRItems.DRAGON_STAFF.get());
-        return stack.getItem() == WRItems.DRAGON_STAFF.get() && Objects.equals(((DragonStaffItem) stack.getItem()).boundDragon, dragon);
+        return stack.getItem() == WRItems.DRAGON_STAFF.get() && Objects.equals(((DragonStaffItem) stack.getItem()).getBoundDragon(dragon.world, stack), dragon);
     }
 
     /**

@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.content.items;
 
-import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
@@ -31,8 +30,6 @@ public class TarragonTomeItem extends Item
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
     {
-        if (world.isRemote) ClientEvents.bookScreen(player.getHeldItem(hand));
-        
         return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
     }
     

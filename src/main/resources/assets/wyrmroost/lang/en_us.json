@@ -34,6 +34,7 @@
   "item.wyrmroost.geode_chestplate": "Blue Geode Chestplate",
   "item.wyrmroost.geode_leggings": "Blue Geode Leggings",
   "item.wyrmroost.geode_boots": "Blue Geode Boots",
+
   "item.wyrmroost.armors.red_geode": "Red Geode",
   "item.wyrmroost.red_geode": "Red Geode",
   "block.wyrmroost.red_geode_ore": "Red Geode Ore",
@@ -47,6 +48,7 @@
   "item.wyrmroost.red_geode_chestplate": "Red Geode Chestplate",
   "item.wyrmroost.red_geode_leggings": "Red Geode Leggings",
   "item.wyrmroost.red_geode_boots": "Red Geode Boots",
+
   "item.wyrmroost.armors.purple_geode": "Purple Geode",
   "item.wyrmroost.purple_geode": "Purple Geode",
   "block.wyrmroost.purple_geode_ore": "Purple Geode Ore",
@@ -60,6 +62,7 @@
   "item.wyrmroost.purple_geode_chestplate": "Purple Geode Chestplate",
   "item.wyrmroost.purple_geode_leggings": "Purple Geode Leggings",
   "item.wyrmroost.purple_geode_boots": "Purple Geode Boots",
+
   "item.wyrmroost.armors.platinum": "Platinum",
   "item.wyrmroost.platinum_ingot": "Platinum Ingot",
   "block.wyrmroost.platinum_ore": "Platinum Ore",
@@ -73,13 +76,16 @@
   "item.wyrmroost.platinum_chestplate": "Platinum Chestplate",
   "item.wyrmroost.platinum_leggings": "Platinum Leggings",
   "item.wyrmroost.platinum_boots": "Platinum Boots",
+
   "item.wyrmroost.armors.drake": "Drake",
   "item.wyrmroost.drake_helmet": "Drake Helmet",
   "item.wyrmroost.drake_chestplate": "Drake Chestplate",
   "item.wyrmroost.drake_leggings": "Drake Leggings",
   "item.wyrmroost.drake_boots": "Drake Boots",
   "item.wyrmroost.armors.drakedesc": "Full Set Bonus: Knockback Resistance",
+
   "item.wyrmroost.armors.set": "Part of the %s Set",
+
   "item.wyrmroost.iron_dragonarmor": "Iron Dragon Armor",
   "item.wyrmroost.gold_dragonarmor": "Gold Dragon Armor",
   "item.wyrmroost.diamond_dragonarmor": "Diamond Dragon Armor",
@@ -87,6 +93,7 @@
   "item.wyrmroost.bluegeode_dragonarmor": "Blue Geode Dragon Armor",
   "item.wyrmroost.redgeode_dragonarmor": "Red Geode Dragon Armor",
   "item.wyrmroost.purplegeode_dragonarmor": "Purple Geode Dragon Armor",
+
   "item.wyrmroost.jewelled_apple": "Jewelled Apple",
   "item.wyrmroost.dragon_fruit": "Dragon Fruit",
   "item.wyrmroost.minutus": "Lesser Desertwyrm",
@@ -99,11 +106,18 @@
   "item.wyrmroost.apex_meat_cooked": "Cooked Apex Meat",
   "item.wyrmroost.behemoth_meat_raw": "Raw Behemoth Meat",
   "item.wyrmroost.behemoth_meat_cooked": "Cooked Behemoth Meat",
+
   "item.wyrmroost.dragon_egg": "Egg",
   "item.wyrmroost.egg.tooltip": "Hatching in: %smin",
   "item.wyrmroost.egg.creativetooltip": "You are in Creative: You can convert this egg's type by Left Clicking a dragon",
+
   "item.wyrmroost.soul_crystal": "Dragon Soul Crystal",
   "item.wyrmroost.soul_crystal.jeidesc": "Infused with the mysterious properties of geodes, it has the potential to contain the souls of dragons that you have entrusted. The soul of a dragon can lead you to %s...",
+
   "item.wyrmroost.dragon_staff": "Dragon Staff",
+  "item.wyrmroost.dragon_staff.desc": "Slap a Dragon!",
+  "item.wyrmroost.dragon_staff.bound": "Bound to: %s",
+  "item.wyrmroost.dragon_staff.action": "Action: %s",
+
   "item.wyrmroost.drake_backplate": "Drake Backplate"
 }

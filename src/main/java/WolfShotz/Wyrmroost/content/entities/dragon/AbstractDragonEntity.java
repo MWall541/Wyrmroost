@@ -308,15 +308,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(HOME_POS, homePos);
     }
 
-    public void setHomePos(BlockPos homePos)
-    {
-        setHomePos(Optional.of(homePos));
-    }
+    public Optional<BlockPos> getHomePos() { return dataManager.get(HOME_POS); }
 
-    public Optional<BlockPos> getHomePos()
-    {
-        return dataManager.get(HOME_POS);
-    }
+    public void setHomePos(BlockPos homePos) { setHomePos(Optional.of(homePos)); }
 
     /**
      * Get the inventory (IItemHandler) if it exists
@@ -714,25 +708,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean tame(boolean tame, @Nullable PlayerEntity tamer)
     {
         if (isTamed()) return true;
-        if (!world.isRemote)
+        boolean flag = tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer);
+        if (world.isRemote) playTameEffect(flag);
+        if (flag)
         {
-            if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer))
-            {
-                setTamedBy(tamer);
-                navigator.clearPath();
-                setAttackTarget(null);
-                setHealth(getMaxHealth());
-                playTameEffect(true);
-                world.setEntityState(this, (byte) 7);
-
-                return true;
-            }
-            else
-            {
-                playTameEffect(false);
-                world.setEntityState(this, (byte) 6);
-            }
+            setTamedBy(tamer);
+            navigator.clearPath();
+            setAttackTarget(null);
+            setHealth(getMaxHealth());
+            world.setEntityState(this, (byte) 7);
+            return true;
         }
+        else world.setEntityState(this, (byte) 6);
 
         return false;
     }

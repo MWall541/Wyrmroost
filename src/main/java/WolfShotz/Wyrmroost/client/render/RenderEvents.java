@@ -40,12 +40,12 @@ public class RenderEvents
         if (stack.getItem() != WRItems.DRAGON_STAFF.get()) return;
 
         DragonStaffItem staff = (DragonStaffItem) stack.getItem();
-        AbstractDragonEntity dragon = staff.getBoundDragon(mc.world, stack.getOrCreateTag());
+        AbstractDragonEntity dragon = staff.getBoundDragon(mc.world, stack);
         if (dragon == null) return;
 
         BlockPos pos;
         if (dragon.getHomePos().isPresent()) pos = dragon.getHomePos().get();
-        else if (staff.mode == DragonStaffItem.Mode.HOMEPOS && mc.objectMouseOver instanceof BlockRayTraceResult)
+        else if (staff.getAction(stack) == DragonStaffItem.Action.HOME_POS && mc.objectMouseOver instanceof BlockRayTraceResult)
             pos = ((BlockRayTraceResult) mc.objectMouseOver).getPos();
         else return;
 

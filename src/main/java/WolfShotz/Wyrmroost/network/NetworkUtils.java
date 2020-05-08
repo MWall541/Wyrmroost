@@ -21,7 +21,7 @@ public class NetworkUtils
         registerMSG(DragonKeyBindMessage.class, DragonKeyBindMessage::new);
         registerMSG(EggHatchMessage.class, EggHatchMessage::new);
         registerMSG(EntityRenameMessage.class, EntityRenameMessage::new);
-        registerMSG(StaffModeMessage.class, StaffModeMessage::new);
+        registerMSG(StaffActionMessage.class, StaffActionMessage::new);
     }
     
     public static <T extends IMessage> void registerMSG(Class<T> clazz, Function<PacketBuffer, T> decoder)

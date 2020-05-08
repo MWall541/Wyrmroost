@@ -11,22 +11,16 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class StaffModeMessage implements IMessage
+public class StaffActionMessage implements IMessage
 {
-    public final DragonStaffItem.Mode mode;
+    public final DragonStaffItem.Action action;
 
-    public StaffModeMessage(DragonStaffItem item) { this.mode = item.mode; }
+    public StaffActionMessage(DragonStaffItem.Action action) { this.action = action; }
 
-    public StaffModeMessage(PacketBuffer buf)
-    {
-        mode = buf.readEnumValue(DragonStaffItem.Mode.class);
-    }
+    public StaffActionMessage(PacketBuffer buf) { action = DragonStaffItem.Action.VALUES[buf.readInt()]; }
 
     @Override
-    public void encode(PacketBuffer buf)
-    {
-        buf.writeEnumValue(mode);
-    }
+    public void encode(PacketBuffer buf) { buf.writeInt(action.ordinal()); }
 
     @Override
     public void run(Supplier<NetworkEvent.Context> context)
@@ -35,9 +29,6 @@ public class StaffModeMessage implements IMessage
         if (player == null) return;
         ItemStack stack = ModUtils.getHeldStack(context.get().getSender(), WRItems.DRAGON_STAFF.get());
         if (stack.getItem() == WRItems.DRAGON_STAFF.get())
-        {
-            DragonStaffItem staff = (DragonStaffItem) stack.getItem();
-            staff.setMode(mode);
-        }
+            ((DragonStaffItem) stack.getItem()).setAction(action, player.world, stack);
     }
 }

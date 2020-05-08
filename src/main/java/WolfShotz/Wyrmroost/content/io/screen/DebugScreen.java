@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.content.io.screen;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;
@@ -50,10 +51,15 @@ public class DebugScreen extends Screen
         drawCenteredString(font, "motion: " + dragon.getMotion(), (width / 2), 175, 0xffffff);
         drawCenteredString(font, "moveTo position: " + dragon.getNavigator().getPath(), (width / 2), 200, 0xffffff);
     }
-    
+
     @Override
     public boolean isPauseScreen()
     {
         return true;
+    }
+
+    public static void open(AbstractDragonEntity dragon)
+    {
+        Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
     }
 }

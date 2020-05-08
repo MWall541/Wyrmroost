@@ -12,7 +12,6 @@ import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRendere
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.content.io.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.network.messages.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.registry.WREntities;
@@ -24,12 +23,10 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -124,28 +121,6 @@ public class ClientEvents
         int i1 = mc.gameSettings.thirdPersonView;
 
         if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
-    }
-
-    @SubscribeEvent
-    public static void renderWorld(RenderWorldLastEvent event)
-    {
-//        renderDragonStaff(); todo
-        RenderEvents.renderDebugBox(event.getMatrixStack());
-    }
-
-    public static void renderDragonStaff()
-    {
-    }
-
-    public static void debugScreen(AbstractDragonEntity dragon)
-    {
-        Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
-    }
-
-    public static void bookScreen(ItemStack stack)
-    {
-//        if (stack.getItem() != WRItems.TARRAGON_TOME.get()) return;
-//        Minecraft.getInstance().displayGuiScreen(new TarragonTomeScreen(stack));
     }
 
     public static void registerEntityRenders()

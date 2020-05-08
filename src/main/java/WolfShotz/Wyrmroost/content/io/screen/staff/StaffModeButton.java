@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.content.io.screen.staff;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
-import WolfShotz.Wyrmroost.network.messages.StaffModeMessage;
+import WolfShotz.Wyrmroost.network.messages.StaffActionMessage;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.Minecraft;
@@ -11,12 +11,12 @@ import net.minecraft.item.ItemStack;
 
 public class StaffModeButton extends AbstractButton
 {
-    private final DragonStaffItem.Mode mode;
+    private final DragonStaffItem.Action action;
 
-    public StaffModeButton(int xIn, int yIn, int widthIn, int heightIn, String msg, DragonStaffItem.Mode mode)
+    public StaffModeButton(int xIn, int yIn, int widthIn, int heightIn, String msg, DragonStaffItem.Action action)
     {
         super(xIn, yIn, widthIn, heightIn, msg);
-        this.mode = mode;
+        this.action = action;
     }
 
     @Override
@@ -26,8 +26,8 @@ public class StaffModeButton extends AbstractButton
         if (stack.getItem() == WRItems.DRAGON_STAFF.get())
         {
             DragonStaffItem staff = (DragonStaffItem) stack.getItem();
-            staff.setMode(mode);
-            Wyrmroost.NETWORK.sendToServer(new StaffModeMessage(staff));
+            staff.setAction(action, Minecraft.getInstance().world, stack);
+            Wyrmroost.NETWORK.sendToServer(new StaffActionMessage(action));
         }
         Minecraft.getInstance().displayGuiScreen(null);
     }

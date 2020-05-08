@@ -1,11 +1,9 @@
 package WolfShotz.Wyrmroost.content.items;
 
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.content.io.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.QuikMaths;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,171 +12,195 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
 public class DragonStaffItem extends Item
 {
-    public static final String DATA_BOUND = "BoundDragon";
-
-    public Mode mode;
+    public static final String DATA_DRAGON_ID = "BoundDragon";
+    public static final String DATA_ACTION = "Action";
 
     public DragonStaffItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
 
-    public static void openGui(AbstractDragonEntity dragon)
+    /**
+     * Triggered when Attacking an entity with this item
+     */
+    @Override
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
     {
-        if (dragon.world.isRemote) Minecraft.getInstance().displayGuiScreen(new StaffScreen(dragon));
+        if (entity instanceof AbstractDragonEntity)
+        {
+            AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+            if (dragon.isOwner(player))
+            {
+                boundDragon(dragon, stack);
+                ModUtils.playLocalSound(player.world, player.getPosition(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * @param target the entity we're checking if is a dragon or not
-     * @nullable Can return null if this isnt a dragon, or isnt tamed.
+     * Triggered when Right clicking an entity
      */
-    @Nullable
-    public static AbstractDragonEntity isSuitableTarget(Entity target, PlayerEntity player)
-    {
-        if (!target.isAlive()) return null;
-        AbstractDragonEntity dragon;
-        if (target instanceof AbstractDragonEntity) dragon = (AbstractDragonEntity) target;
-        else if (target instanceof MultiPartEntity) dragon = (AbstractDragonEntity) ((MultiPartEntity) target).host;
-        else return null;
-        if (dragon.getOwner() != player) return null;
-
-        return dragon;
-    }
-
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
+    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
     {
-        AbstractDragonEntity dragon = isSuitableTarget(target, player);
-        if (dragon == null) return false;
-        openGui(dragon);
-        return true;
-    }
-
-    @Override
-    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity target)
-    {
-        AbstractDragonEntity dragon = isSuitableTarget(target, player);
-        if (dragon == null) return false;
-        CompoundNBT nbt = stack.getOrCreateTag();
-        nbt.putInt(DATA_BOUND, dragon.getEntityId());
-        player.world.playSound(player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1, 1, false);
-        return true;
-    }
-
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
-    {
-        ItemStack stack = player.getHeldItem(hand);
-        if (player.isSneaking())
+        if (target instanceof AbstractDragonEntity)
         {
-            clearBound(stack.getOrCreateTag());
-            setMode(Mode.NONE);
-            world.playSound(player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 1, 1, false);
-            return ActionResult.resultSuccess(stack);
+            AbstractDragonEntity dragon = (AbstractDragonEntity) target;
+            if (dragon.isOwner(target))
+            {
+                DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> StaffScreen.open(dragon, stack, this));
+                return true;
+            }
         }
-
-        AbstractDragonEntity dragon = getBoundDragon(world, player.getHeldItem(hand).getOrCreateTag());
-        if (dragon != null && mode.rightClick(this, dragon, player)) return ActionResult.resultSuccess(stack);
-
-        return super.onItemRightClick(world, player, hand);
+        return false;
     }
 
+    /**
+     * Triggered when right clicked on a block
+     */
     @Override
     public ActionResultType onItemUse(ItemUseContext context)
     {
-        AbstractDragonEntity dragon = getBoundDragon(context.getWorld(), context.getPlayer().getHeldItem(context.getHand()).getOrCreateTag());
-        if (dragon != null && mode.clickBlock(this, context, dragon)) return ActionResultType.SUCCESS;
+        ItemStack stack = context.getItem();
+        AbstractDragonEntity dragon = getBoundDragon(context.getWorld(), stack);
+        if (dragon != null && getAction(stack).clickBlock(dragon, context)) return ActionResultType.SUCCESS;
         return ActionResultType.PASS;
     }
 
+    /**
+     * Triggered when right clicked on air
+     */
     @Override
-    public boolean hasEffect(ItemStack stack) { return stack.getOrCreateTag().contains(DATA_BOUND); }
-
-    public void setMode(Mode mode)
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
     {
-        this.mode = mode;
+        ItemStack stack = playerIn.getHeldItem(handIn);
+        AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
+        if (dragon != null && getAction(stack).rightClick(dragon, playerIn, stack))
+            return ActionResult.resultSuccess(stack);
+        return ActionResult.resultPass(stack);
     }
 
-    public AbstractDragonEntity getBoundDragon(World world, CompoundNBT nbt)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        Entity entity = world.getEntityByID(nbt.getInt(DATA_BOUND));
-        if (entity instanceof AbstractDragonEntity) return (AbstractDragonEntity) entity;
+        tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.desc").applyTextStyle(TextFormatting.GRAY));
+        if (stack.hasTag())
+        {
+            AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
+            if (dragon != null)
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", dragon.getName().getFormattedText()));
+            tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", new StringTextComponent(getAction(stack).toString().toLowerCase()).applyTextStyle(TextFormatting.AQUA).getFormattedText()));
+        }
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) { return getAction(stack) != Action.DEFAULT; }
+
+    public void setAction(Action action, World world, ItemStack stack)
+    {
+        CompoundNBT tag = stack.getOrCreateTag();
+        tag.putInt(DATA_ACTION, action.ordinal());
+        getAction(stack).onSelected(getBoundDragon(world, stack));
+    }
+
+    public Action getAction(ItemStack stack)
+    {
+        if (stack.hasTag())
+        {
+            CompoundNBT tag = stack.getTag();
+            if (tag.contains(DATA_ACTION)) return Action.VALUES[tag.getInt(DATA_ACTION)];
+        }
+        return Action.DEFAULT;
+    }
+
+    public void boundDragon(AbstractDragonEntity dragon, ItemStack stack)
+    {
+        CompoundNBT nbt = stack.getOrCreateTag();
+        nbt.putInt(DATA_DRAGON_ID, dragon.getEntityId());
+    }
+
+    @Nullable
+    public AbstractDragonEntity getBoundDragon(World world, ItemStack stack)
+    {
+        if (stack.hasTag())
+        {
+            CompoundNBT tag = stack.getTag();
+            if (tag.contains(DATA_DRAGON_ID))
+                return (AbstractDragonEntity) world.getEntityByID(tag.getInt(DATA_DRAGON_ID));
+        }
         return null;
     }
 
-    public void clearBound(CompoundNBT nbt) { nbt.remove(DATA_BOUND); }
-
-    public enum Mode
+    public void reset(World world, ItemStack stack)
     {
-        NONE
+        if (stack.hasTag()) stack.getTag().remove(DATA_DRAGON_ID);
+        setAction(Action.DEFAULT, world, stack);
+    }
+
+    public enum Action
+    {
+        DEFAULT
                 {
                     @Override
-                    public boolean rightClick(DragonStaffItem staff, AbstractDragonEntity dragon, PlayerEntity player)
+                    public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                     {
-                        openGui(dragon);
+                        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> StaffScreen.open(dragon, stack, (DragonStaffItem) stack.getItem()));
                         return true;
                     }
                 },
 
-        HOMEPOS
+        HOME_POS
                 {
                     @Override
-                    public boolean clickBlock(DragonStaffItem staff, ItemUseContext context, AbstractDragonEntity dragon)
+                    public void onSelected(AbstractDragonEntity dragon) { dragon.setHomePos(Optional.empty()); }
+
+                    @Override
+                    public boolean clickBlock(AbstractDragonEntity dragon, ItemUseContext context)
                     {
                         BlockPos pos = context.getPos();
-                        if (context.getWorld().getBlockState(pos).getMaterial().isSolid())
+                        World world = context.getWorld();
+                        ItemStack stack = context.getItem();
+                        ((DragonStaffItem) stack.getItem()).setAction(DEFAULT, world, stack);
+                        if (world.getBlockState(pos).getMaterial().isSolid())
                         {
                             dragon.setHomePos(pos);
-                            return true;
+                            ModUtils.playLocalSound(world, pos, SoundEvents.BLOCK_BEEHIVE_ENTER, 1, 1);
                         }
-                        staff.setMode(NONE);
-                        return false;
-                    }
-                },
-
-        TARGET
-                {
-                    @Override
-                    public boolean rightClick(DragonStaffItem staff, AbstractDragonEntity dragon, PlayerEntity player)
-                    {
-                        RayTraceResult rtr = QuikMaths.rayTrace(player.world, player, 15, false);
-                        if (rtr.getType() == RayTraceResult.Type.ENTITY)
+                        else
                         {
-                            EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
-                            if (ertr.getEntity() instanceof LivingEntity)
-                            {
-                                LivingEntity entity = (LivingEntity) ertr.getEntity();
-                                if (dragon.shouldAttackEntity(entity, player))
-                                {
-                                    dragon.setAttackTarget(entity);
-                                    return true;
-                                }
-                            }
+                            ModUtils.playLocalSound(world, pos, SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, 1, 1);
+                            for (int i = 0; i < 10; i++)
+                                world.addParticle(ParticleTypes.SMOKE, pos.getX() + 0.5d, pos.getY() + 1, pos.getZ() + 0.5d, 0, Math.min(dragon.getRNG().nextDouble(), 0.25d), 0);
                         }
 
-                        if (rtr.getType() == RayTraceResult.Type.BLOCK)
-                        {
-                            BlockPos pos = ((BlockRayTraceResult) rtr).getPos();
-                            for (int i = 0; i < 15; i++)
-                                player.world.addParticle(ParticleTypes.SMOKE, pos.getX(), pos.getY() + 0.5d, pos.getZ(), 0, 0, 0);
-                        }
-
-                        player.world.playSound(player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.BLOCKS, 1, 1, false);
-                        staff.setMode(NONE);
-                        return false;
+                        return true;
                     }
                 };
 
-        public boolean clickBlock(DragonStaffItem staff, ItemUseContext context, AbstractDragonEntity dragon) { return false; }
+        public static final Action[] VALUES = values(); // cached for speed
 
-        public boolean rightClick(DragonStaffItem staff, AbstractDragonEntity dragon, PlayerEntity player) { return false; }
+        public boolean clickBlock(AbstractDragonEntity dragon, ItemUseContext context) { return false; }
+
+        public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack) { return false; }
+
+        public void onSelected(AbstractDragonEntity dragon) {}
     }
 }
