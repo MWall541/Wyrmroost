@@ -4,10 +4,13 @@ import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
+import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.content.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.DragonBodyController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.EntityDataEntry;
@@ -24,9 +27,6 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -53,10 +53,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -65,7 +62,7 @@ import java.util.function.Supplier;
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedObject, INamedContainerProvider
+public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedObject
 {
     // Common Data Parameters
     public static final DataParameter<Boolean> GENDER = createKey(DataSerializers.BOOLEAN);
@@ -272,8 +269,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setSit(boolean sitting)
     {
         if (isSitting() == sitting) return;
-
-        if (isSleeping()) setSleeping(false);
+        setSleeping(false);
         if (!world.isRemote)
         {
             sitGoal.setSitting(sitting);
@@ -288,10 +284,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Whether or not the dragonEntity is pissed or not.
      */
-    public boolean isAngry()
-    {
-        return (dataManager.get(TAMED) & 2) != 0;
-    }
+    public boolean isAngry() { return (dataManager.get(TAMED) & 2) != 0; }
 
     public void setAngry(boolean angry)
     {
@@ -303,10 +296,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         else dataManager.set(TAMED, (byte) (b0 & -3));
     }
 
-    public void setHomePos(Optional<BlockPos> homePos)
-    {
-        dataManager.set(HOME_POS, homePos);
-    }
+    public void setHomePos(Optional<BlockPos> homePos) { dataManager.set(HOME_POS, homePos); }
 
     public Optional<BlockPos> getHomePos() { return dataManager.get(HOME_POS); }
 
@@ -315,7 +305,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Get the inventory (IItemHandler) if it exists
      */
-    public LazyOptional<DragonInvHandler> getInvHandler() { return invHandler; }
+    public DragonInvHandler getInvHandler()
+    {
+        return invHandler.orElseThrow(() -> new NoSuchElementException("Inventory Handler is not Present!"));
+    }
 
     /**
      * Create an inventory (ItemStackHandler)
@@ -905,10 +898,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     /**
-     * YOU SNORE SHUT THE F*** UP!
+     * Ambient sound. duh.
      */
     @Override
-    public boolean isSilent() { return super.isSilent() || isSleeping(); }
+    public void playAmbientSound() { if (!isSleeping()) super.playAmbientSound(); }
 
     /**
      * Set a damage source immunity
@@ -1024,16 +1017,29 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setMountCameraAngles(boolean backView) {}
 
     /**
-     * A gui created when right clicked by a {@link WRItems#DRAGON_STAFF}
+     * Add Information or widgets to the Staff Screen when it is opened by a player
      */
-    @Nullable
-    @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) { return null; }
+    public void addScreenInfo(StaffScreen screen)
+    {
+        screen.addAction(StaffAction.HOME_POS);
+        screen.addAction(StaffAction.SIT);
+
+        screen.toolTip.add("Owner: " + getOwner().getName().getUnformattedComponentText());
+        screen.toolTip.add(String.format("Health: %s / %s", (int) getHealth(), (int) getMaxHealth()));
+    }
 
     /**
-     * @param slot
+     * Add Container info
      */
-    public void onInvContentsChanged(int slot, ItemStack stack) {}
+    public void addContainerInfo(DragonInvContainer container)
+    {
+        container.buildPlayerSlots(container.playerInv, 17, 136);
+    }
+
+    /**
+     * Called when the inventory is updated
+     */
+    public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad) {}
 
     /**
      * Is the passed stack considered a breeding item?

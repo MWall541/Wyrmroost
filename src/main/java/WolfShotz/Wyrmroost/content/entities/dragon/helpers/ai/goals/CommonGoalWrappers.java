@@ -126,7 +126,7 @@ public class CommonGoalWrappers
         return new NonTamedTargetGoal<T>(tameable, targetClass, checkSight, targets)
         {
             @Override
-            public boolean shouldExecute() { return (!asChild || tameable.isChild()) && super.shouldExecute(); }
+            public boolean shouldExecute() { return (!tameable.isChild() && !asChild) && super.shouldExecute(); }
         };
     }
 

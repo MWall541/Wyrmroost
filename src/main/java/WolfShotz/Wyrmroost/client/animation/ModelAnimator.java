@@ -160,7 +160,6 @@ public class ModelAnimator
                 prevPosCache.putAll(boxPosCache);
                 boxPosCache.clear();
             }
-            
         }
     }
 }

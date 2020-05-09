@@ -1,9 +1,9 @@
 {
   "type": "minecraft:campfire_cooking",
   "ingredient": {
-    "item": "wyrmroost:common_meat_raw"
+    "item": "wyrmroost:raw_common_meat"
   },
-  "result": "wyrmroost:common_meat_cooked",
+  "result": "wyrmroost:cooked_common_meat",
   "experience": 0.35,
   "cookingtime": 700
 }

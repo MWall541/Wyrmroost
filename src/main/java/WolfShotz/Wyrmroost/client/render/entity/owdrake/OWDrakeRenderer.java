@@ -10,13 +10,12 @@ import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
+public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDrakeModel>
 {
     // Easter Egg
     public static final ResourceLocation DAISY = resource("dasy.png");
@@ -30,8 +29,8 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
         addLayer(new ArmorLayer());
         addLayer(new ConditionalLayer(OWDrakeEntity::isSaddled, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
     }
-    
-    public static ResourceLocation resource(String png) { return Wyrmroost.rl(DEF_LOC + "owdrake/" + png); }
+
+    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "owdrake/" + png); }
 
     private ResourceLocation getArmorTexture(OWDrakeEntity drake)
     {
@@ -56,14 +55,11 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
         return resource(path + "_com.png");
     }
 
-    class ArmorLayer extends LayerRenderer<OWDrakeEntity, EntityModel<OWDrakeEntity>>
+    class ArmorLayer extends LayerRenderer<OWDrakeEntity, OWDrakeModel>
     {
         public final OWDrakeModel MODEL = new OWDrakeModel();
 
-        public ArmorLayer()
-        {
-            super(OWDrakeRenderer.this);
-        }
+        public ArmorLayer() { super(OWDrakeRenderer.this); }
 
         @Override
         public void render(MatrixStack ms, IRenderTypeBuffer type, int packedLightIn, OWDrakeEntity entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
@@ -71,11 +67,9 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
             if (entity.isArmored())
             {
                 IVertexBuilder builder = ItemRenderer.getBuffer(type, RenderType.getEntityCutoutNoCull(getArmorTexture(entity)), false, entity.getStackInSlot(OWDrakeEntity.ARMOR_SLOT).hasEffect());
-                getEntityModel().copyModelAttributesTo(MODEL);
-//                MODEL.setScale(1.001f);
-                MODEL.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTicks);
-                MODEL.setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-                MODEL.render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 0.4f);
+                ms.push();
+                getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                ms.pop();
             }
         }
     }

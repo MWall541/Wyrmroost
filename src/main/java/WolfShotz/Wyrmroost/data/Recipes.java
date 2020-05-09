@@ -238,10 +238,10 @@ public class Recipes extends RecipeProvider
 
         // Food
         foodCookRecipe(WRItems.MINUTUS.get(), WRItems.COOKED_MINUTUS.get(), 0.35f, 200, "cookedminutus", consumer);
-        foodCookRecipe(WRItems.LOWTIER_MEAT_RAW.get(), WRItems.LOWTIER_MEAT_COOKED.get(), 0.35f, 150, "cooked_lowtier", consumer);
-        foodCookRecipe(WRItems.COMMON_MEAT_RAW.get(), WRItems.COMMON_MEAT_COOKED.get(), 0.35f, 200, "cooked_common", consumer);
-        foodCookRecipe(WRItems.APEX_MEAT_RAW.get(), WRItems.APEX_MEAT_COOKED.get(), 0.35f, 200, "cooked_apex", consumer);
-        foodCookRecipe(WRItems.BEHEMOTH_MEAT_RAW.get(), WRItems.BEHEMOTH_MEAT_COOKED.get(), 0.5f, 250, "cooked_behemoth", consumer);
+        foodCookRecipe(WRItems.RAW_LOWTIER_MEAT.get(), WRItems.COOKED_LOWTIER_MEAT.get(), 0.35f, 150, "cooked_lowtier", consumer);
+        foodCookRecipe(WRItems.RAW_COMMON_MEAT.get(), WRItems.COOKED_COMMON_MEAT.get(), 0.35f, 200, "cooked_common", consumer);
+        foodCookRecipe(WRItems.RAW_APEX_MEAT.get(), WRItems.COOKED_APEX_MEAT.get(), 0.35f, 200, "cooked_apex", consumer);
+        foodCookRecipe(WRItems.RAW_BEHEMOTH_MEAT.get(), WRItems.COOKED_BEHEMOTH_MEAT.get(), 0.5f, 250, "cooked_behemoth", consumer);
         shaped(WRItems.JEWELLED_APPLE.get())
                 .key('G', WRItems.BLUE_GEODE.get()).key('A', Items.APPLE)
                 .patternLine(" G ").patternLine("GAG").patternLine(" G ")

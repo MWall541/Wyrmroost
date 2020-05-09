@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.util.io;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -10,44 +11,50 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class ItemHandlerSlotBuilder extends SlotItemHandler
+public class SlotBuilder extends SlotItemHandler
 {
+    public static final int CENTER_X = 89;
+    public static final int CENTER_Y = 60;
+
     private Supplier<Boolean> isEnabled = () -> true;
-    private Consumer<ItemHandlerSlotBuilder> onSlotUpdate = s -> {};
+    private Consumer<SlotBuilder> onSlotUpdate = s ->
+    {};
     private Predicate<ItemStack> isItemValid = super::isItemValid;
     private Predicate<PlayerEntity> canTakeStack = super::canTakeStack;
     private int limit = super.getSlotStackLimit();
 
-    public ItemHandlerSlotBuilder(IItemHandler itemHandler, int index, int xPosition, int yPosition)
+    public SlotBuilder(IItemHandler itemHandler, int index, int xPosition, int yPosition)
     {
         super(itemHandler, index, xPosition, yPosition);
     }
 
-    public ItemHandlerSlotBuilder condition(Supplier<Boolean> isEnabled)
+    public SlotBuilder condition(Supplier<Boolean> isEnabled)
     {
         this.isEnabled = isEnabled;
         return this;
     }
 
-    public ItemHandlerSlotBuilder onSlotUpdate(Consumer<ItemHandlerSlotBuilder> onUpdate)
+    public SlotBuilder onSlotUpdate(Consumer<SlotBuilder> onUpdate)
     {
         this.onSlotUpdate = onUpdate;
         return this;
     }
 
-    public ItemHandlerSlotBuilder only(Predicate<ItemStack> isItemValid)
+    public SlotBuilder only(Predicate<ItemStack> isItemValid)
     {
         this.isItemValid = isItemValid;
         return this;
     }
 
-    public ItemHandlerSlotBuilder canTake(Predicate<PlayerEntity> canTakeStack)
+    public SlotBuilder only(Item item) { return only(s -> s.getItem() == item); }
+
+    public SlotBuilder canTake(Predicate<PlayerEntity> canTakeStack)
     {
         this.canTakeStack = canTakeStack;
         return this;
     }
 
-    public ItemHandlerSlotBuilder limit(int limit)
+    public SlotBuilder limit(int limit)
     {
         this.limit = limit;
         return this;
@@ -69,4 +76,7 @@ public class ItemHandlerSlotBuilder extends SlotItemHandler
 
     @Override
     public int getSlotStackLimit() { return limit; }
+
+    @Override
+    public int getItemStackLimit(@Nonnull ItemStack stack) { return limit; }
 }

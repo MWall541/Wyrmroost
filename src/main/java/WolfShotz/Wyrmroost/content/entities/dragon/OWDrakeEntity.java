@@ -1,15 +1,18 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.content.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.content.io.container.OWDrakeInvContainer;
 import WolfShotz.Wyrmroost.content.items.DragonArmorItem;
+import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.io.SlotBuilder;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -17,10 +20,9 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.SaddleItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -172,7 +174,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public int getSpecialChances() { return 100; }
 
     @Override
-    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 19)); }
+    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 24)); }
     
     // ================================
     
@@ -332,11 +334,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void onInvContentsChanged(int slot, ItemStack stack)
+    public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
     {
         if (slot == SADDLE_SLOT)
         {
-            dataManager.set(SADDLED, stack.isEmpty());
+            dataManager.set(SADDLED, !stack.isEmpty());
             if (!stack.isEmpty()) playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1, 1);
         }
 
@@ -482,7 +484,25 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     protected int getExperiencePoints(PlayerEntity player) { return 2 + rand.nextInt(3); }
-    
+
+    @Override
+    public void addScreenInfo(StaffScreen screen)
+    {
+        screen.actions.add(StaffAction.INVENTORY);
+        screen.addAction(StaffAction.TARGETING);
+        super.addScreenInfo(screen);
+    }
+
+    @Override
+    public void addContainerInfo(DragonInvContainer container)
+    {
+        super.addContainerInfo(container);
+        container.addSlot(new SlotBuilder(container.inventory, SADDLE_SLOT, 17, 45).only(Items.SADDLE));
+        container.addSlot(new SlotBuilder(container.inventory, ARMOR_SLOT, 17, 63).only(i -> i.getItem() instanceof DragonArmorItem));
+        container.addSlot(h -> new SlotBuilder(h, CHEST_SLOT, 17, 81).only(Items.CHEST).limit(1).canTake(p -> h.isEmptyAfter(CHEST_SLOT)));
+        container.buildSlotArea(3, 51, 45, 7, 3, (i, x, z) -> new SlotBuilder(container.inventory, i, x, z).condition(this::hasChest));
+    }
+
     @Override
     public void setMountCameraAngles(boolean backView)
     {
@@ -491,27 +511,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Collection<Item> getFoodItems()
-    {
-        return new ArrayList<>(Tags.Items.CROPS_WHEAT.getAllElements());
-    }
-    
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.65f, 1f, 18000); }
+
     @Override
-    public DragonEggProperties createEggProperties()
-    {
-        return new DragonEggProperties(0.65f, 1f, 18000);
-    }
-    
-    @Nullable
-    @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
-    {
-        return new OWDrakeInvContainer(this, playerInv, windowID);
-    }
-    
+    public Collection<Item> getFoodItems() { return new ArrayList<>(Tags.Items.CROPS_WHEAT.getAllElements()); }
+
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[]{NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, ROAR_ANIMATION};
+        return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, ROAR_ANIMATION};
     }
 }

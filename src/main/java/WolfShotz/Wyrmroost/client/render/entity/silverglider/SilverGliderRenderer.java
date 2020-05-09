@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEntity>
+public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEntity, SilverGliderModel>
 {
     // Constant textures
     public static final ResourceLocation FEMALE = resource("female.png");
@@ -34,7 +34,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
 
-    public static ResourceLocation resource(String png) { return Wyrmroost.rl(DEF_LOC + "silverglider/" + png); }
+    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "silverglider/" + png); }
 
     @Nullable
     @Override

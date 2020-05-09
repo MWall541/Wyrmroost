@@ -2,17 +2,14 @@ package WolfShotz.Wyrmroost.client.model;
 
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 public abstract class AdvancedLivingEntityModel<T extends Entity> extends EntityModel<T>
@@ -20,7 +17,6 @@ public abstract class AdvancedLivingEntityModel<T extends Entity> extends Entity
     public T entity;
     public float globalSpeed = 0.5f;
     private float movementScale = 1.0F;
-    private final Map<String, Pair<Integer, Integer>> modelTextureMap = Maps.newHashMap();
     public final List<ModelRenderer> boxList = Lists.newArrayList();
 
     public AdvancedLivingEntityModel() {}
@@ -32,16 +28,6 @@ public abstract class AdvancedLivingEntityModel<T extends Entity> extends Entity
         boxList.stream()
                 .filter(AdvancedRendererModel.class::isInstance)
                 .forEach((model) -> ((AdvancedRendererModel) model).updateDefaultPose());
-    }
-
-    protected void setTextureOffset(String partName, int x, int y)
-    {
-        modelTextureMap.put(partName, Pair.of(x, y));
-    }
-    
-    public Pair<Integer, Integer> getTextureOffset(String partName)
-    {
-        return modelTextureMap.get(partName);
     }
     
     public void resetToDefaultPose()
@@ -66,7 +52,7 @@ public abstract class AdvancedLivingEntityModel<T extends Entity> extends Entity
             box.rotateAngleX += pitchAmount;
         }
     }
-    
+
     public void chainSwing(AdvancedRendererModel[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
     {
         float offset = this.calculateChainOffset(rootOffset, boxes);

@@ -11,14 +11,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity>
+public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity, RoostStalkerModel>
 {
     public static final ResourceLocation BODY = resource("body.png");
     public static final ResourceLocation BODY_SPE = resource("body_spe.png");
@@ -45,10 +44,10 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
 
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(DEF_LOC + "rooststalker/" + png);
+        return Wyrmroost.rl(BASE_PATH + "rooststalker/" + png);
     }
 
-    class MouthItemLayer extends LayerRenderer<RoostStalkerEntity, EntityModel<RoostStalkerEntity>>
+    class MouthItemLayer extends LayerRenderer<RoostStalkerEntity, RoostStalkerModel>
     {
         public MouthItemLayer() { super(RoostStalkerRenderer.this); }
 

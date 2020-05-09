@@ -24,7 +24,7 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     public boolean shouldExecute() { return super.shouldExecute() && !dragon.isBeingRidden(); }
 
     @Override
-    public boolean shouldContinueExecuting() { return !dragon.isBeingRidden() && super.shouldContinueExecuting(); }
+    public boolean shouldContinueExecuting() { return !dragon.isBeingRidden() && dragon.shouldAttackEntity(dragon.getAttackTarget(), dragon.getOwner()) && super.shouldContinueExecuting(); }
 
     @Override
     public void startExecuting() { attacker.setAggroed(true); }

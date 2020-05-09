@@ -48,10 +48,7 @@ public class ModUtils
     /**
      * Item Properties builder
      */
-    public static Item.Properties itemBuilder()
-    {
-        return new Item.Properties().group(Wyrmroost.ITEM_GROUP);
-    }
+    public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.ITEM_GROUP); }
     
     /**
      * Block Properties builder

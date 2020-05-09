@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "item": "wyrmroost:lowtier_meat_raw"
+            "item": "wyrmroost:raw_lowtier_meat"
           }
         ]
       }

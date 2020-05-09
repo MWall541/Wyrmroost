@@ -1,21 +1,21 @@
 package WolfShotz.Wyrmroost.client.render.entity;
 
-import WolfShotz.Wyrmroost.client.RenderStates;
+import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.render.RenderEvents;
+import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
+import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.OutlineLayerBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -27,36 +27,19 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> extends MobRenderer<T, EntityModel<T>>
+public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M extends AdvancedLivingEntityModel<T>> extends MobRenderer<T, M>
 {
-    public static final String DEF_LOC = "textures/entity/dragon/";
+    public static final String BASE_PATH = "textures/entity/dragon/";
     public boolean isChristmas = false;
 
-    public AbstractDragonRenderer(EntityRendererManager manager, EntityModel<T> model, float shadowSize)
+    public AbstractDragonRenderer(EntityRendererManager manager, M model, float shadowSize)
     {
         super(manager, model, shadowSize);
 
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
-    }
-
-    @Override
-    public void render(T dragon, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
-    {
-        boolean flag = shouldRenderOutlines(dragon);
-        if (flag)
-        {
-            OutlineLayerBuffer buffer = Minecraft.getInstance().getRenderTypeBuffers().getOutlineBufferSource();
-            int color = dragon.getTeamColor();
-            int red = color >> 16 & 255;
-            int green = color >> 8 & 255;
-            int blue = color & 255;
-            buffer.setColor(red, green, blue, 255);
-            bufferIn = buffer;
-        }
-
-        super.render(dragon, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        addLayer(new StaffOutlineLayer());
     }
 
     @Nullable
@@ -73,15 +56,16 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
     {
         PlayerEntity player = Minecraft.getInstance().player;
         if (player == null) return false;
+        if (Minecraft.getInstance().currentScreen instanceof StaffScreen) return false;
         ItemStack stack = ModUtils.getHeldStack(Minecraft.getInstance().player, WRItems.DRAGON_STAFF.get());
-        return stack.getItem() == WRItems.DRAGON_STAFF.get() && Objects.equals(((DragonStaffItem) stack.getItem()).getBoundDragon(dragon.world, stack), dragon);
+        return stack.getItem() == WRItems.DRAGON_STAFF.get() && Objects.equals(DragonStaffItem.getBoundDragon(dragon.world, stack), dragon);
     }
 
     /**
      * A conditional layer that can only render if certain conditions are met.
      * E.G. is the dragon sleeping, saddled, etc
      */
-    public class ConditionalLayer extends LayerRenderer<T, EntityModel<T>>
+    public class ConditionalLayer extends LayerRenderer<T, M>
     {
         public Predicate<T> conditions;
         public final Function<T, RenderType> type;
@@ -99,8 +83,6 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
             if (!conditions.test(entity)) return;
 
             IVertexBuilder builder = type.getBuffer(this.type.apply(entity));
-            getEntityModel().setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTicks);
-            getEntityModel().setRotationAngles(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
             getEntityModel().render(ms, builder, packedLightIn, LivingRenderer.getPackedOverlay(entity, 0.0F), 1, 1, 1, 1);
         }
 
@@ -111,7 +93,31 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         }
     }
 
-    public class GlowLayer extends LayerRenderer<T, EntityModel<T>>
+    public class StaffOutlineLayer extends LayerRenderer<T, M>
+    {
+        private final ResourceLocation TEXTURE = new ResourceLocation("textures/entity/creeper/creeper_armor.png");
+
+        public StaffOutlineLayer()
+        {
+            super(AbstractDragonRenderer.this);
+        }
+
+        @Override
+        public void render(MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn, T dragon, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
+        {
+            if (shouldRenderOutlines(dragon))
+            {
+                float uv = dragon.ticksExisted * 0.0025f;
+                IVertexBuilder builder = buffer.getBuffer(RenderEvents.getOutline(TEXTURE, uv, uv));
+                ms.push();
+                ms.scale(1.1f, 1.1f, 1.1f);
+                getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 0.8f);
+                ms.pop();
+            }
+        }
+    }
+
+    public class GlowLayer extends LayerRenderer<T, M>
     {
         public final Function<T, ResourceLocation> texture;
         private final Predicate<T> condition;
@@ -133,7 +139,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity> ext
         {
             if (condition.test(entity))
             {
-                IVertexBuilder builder = bufferIn.getBuffer(RenderStates.getGlow(texture.apply(entity)));
+                IVertexBuilder builder = bufferIn.getBuffer(RenderEvents.getGlow(texture.apply(entity)));
                 getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
         }

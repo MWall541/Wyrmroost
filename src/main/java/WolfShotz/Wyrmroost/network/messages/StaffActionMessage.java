@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.network.messages;
 
-import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
+import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
+import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.IMessage;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -13,11 +14,11 @@ import java.util.function.Supplier;
 
 public class StaffActionMessage implements IMessage
 {
-    public final DragonStaffItem.Action action;
+    public final StaffAction action;
 
-    public StaffActionMessage(DragonStaffItem.Action action) { this.action = action; }
+    public StaffActionMessage(StaffAction action) { this.action = action; }
 
-    public StaffActionMessage(PacketBuffer buf) { action = DragonStaffItem.Action.VALUES[buf.readInt()]; }
+    public StaffActionMessage(PacketBuffer buf) { action = StaffAction.VALUES[buf.readInt()]; }
 
     @Override
     public void encode(PacketBuffer buf) { buf.writeInt(action.ordinal()); }
@@ -29,6 +30,6 @@ public class StaffActionMessage implements IMessage
         if (player == null) return;
         ItemStack stack = ModUtils.getHeldStack(context.get().getSender(), WRItems.DRAGON_STAFF.get());
         if (stack.getItem() == WRItems.DRAGON_STAFF.get())
-            ((DragonStaffItem) stack.getItem()).setAction(action, player.world, stack);
+            DragonStaffItem.setAction(action, player, stack);
     }
 }

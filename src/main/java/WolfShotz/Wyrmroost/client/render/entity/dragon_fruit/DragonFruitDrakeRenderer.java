@@ -8,10 +8,10 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruitDrakeEntity>
+public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruitDrakeEntity, DragonFruitDrakeModel>
 {
     public static final ResourceLocation CHILD = resource("child.png");
-    
+
     public DragonFruitDrakeRenderer(EntityRendererManager manager)
     {
         super(manager, new DragonFruitDrakeModel(), 1.5f);
@@ -29,6 +29,6 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
     
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(DEF_LOC + "dfruitdrake/" + png);
+        return Wyrmroost.rl(BASE_PATH + "dfruitdrake/" + png);
     }
 }

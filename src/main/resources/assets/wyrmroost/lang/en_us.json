@@ -1,9 +1,11 @@
 {
   "itemGroup.wyrmroost": "Wyrmroost",
+
   "_comment": "Controls",
   "keyCategory.wyrmroost": "Wyrmroost Controls",
   "key.genericAttack": "Mount Attack",
   "key.specialAttack": "Alt Mount Attack",
+
   "_comment": "Entities",
   "entity.wyrmroost.overworld_drake": "Overworld Drake",
   "entity.wyrmroost.silver_glider": "Silver Glider",
@@ -12,6 +14,7 @@
   "entity.wyrmroost.butterfly_leviathan": "Butterfly Leviathan",
   "entity.wyrmroost.dragon_fruit_drake": "Dragon Fruit Drake",
   "entity.wyrmroost.canari_wyvern": "Canari Wyvern",
+
   "_comment": "Spawn Eggs",
   "item.wyrmroost.overworld_drake_egg": "Overworld Drake Spawn Egg",
   "item.wyrmroost.minutus_egg": "Lesser Desertwyrm Spawn Egg",
@@ -20,6 +23,7 @@
   "item.wyrmroost.butterfly_leviathan_egg": "Butterfly Leviathan Spawn Egg",
   "item.wyrmroost.dragon_fruit_drake_egg": "Dragonfruit Drake Spawn Egg",
   "item.wyrmroost.canari_wyvern_egg": "Canari Wyvern Spawn Egg",
+
   "_comment": "Items",
   "item.wyrmroost.armors.blue_geode": "Blue Geode",
   "item.wyrmroost.geode": "Blue Geode",
@@ -98,14 +102,14 @@
   "item.wyrmroost.dragon_fruit": "Dragon Fruit",
   "item.wyrmroost.minutus": "Lesser Desertwyrm",
   "item.wyrmroost.cooked_minutus": "Cooked Desertwyrm",
-  "item.wyrmroost.lowtier_meat_raw": "Raw Lowtier Meat",
-  "item.wyrmroost.lowtier_meat_cooked": "Cooked Lowtier Meat",
-  "item.wyrmroost.common_meat_raw": "Raw Common Meat",
-  "item.wyrmroost.common_meat_cooked": "Cooked Common Meat",
-  "item.wyrmroost.apex_meat_raw": "Raw Apex Meat",
-  "item.wyrmroost.apex_meat_cooked": "Cooked Apex Meat",
-  "item.wyrmroost.behemoth_meat_raw": "Raw Behemoth Meat",
-  "item.wyrmroost.behemoth_meat_cooked": "Cooked Behemoth Meat",
+  "item.wyrmroost.raw_lowtier_meat": "Raw Lowtier Meat",
+  "item.wyrmroost.cooked_lowtier_meat": "Cooked Lowtier Meat",
+  "item.wyrmroost.raw_common_meat": "Raw Common Meat",
+  "item.wyrmroost.cooked_common_meat": "Cooked Common Meat",
+  "item.wyrmroost.raw_apex_meat": "Raw Apex Meat",
+  "item.wyrmroost.cooked_apex_meat": "Cooked Apex Meat",
+  "item.wyrmroost.raw_behemoth_meat": "Raw Behemoth Meat",
+  "item.wyrmroost.cooked_behemoth_meat": "Cooked Behemoth Meat",
 
   "item.wyrmroost.dragon_egg": "Egg",
   "item.wyrmroost.egg.tooltip": "Hatching in: %smin",
@@ -118,6 +122,13 @@
   "item.wyrmroost.dragon_staff.desc": "Slap a Dragon!",
   "item.wyrmroost.dragon_staff.bound": "Bound to: %s",
   "item.wyrmroost.dragon_staff.action": "Action: %s",
+  "item.wyrmroost.dragon_staff.action.default": "Open GUI",
+  "item.wyrmroost.dragon_staff.action.inventory": "Access Inventory",
+  "item.wyrmroost.dragon_staff.action.home.set": "Set Home Position",
+  "item.wyrmroost.dragon_staff.action.home.remove": "Remove Home Position",
+  "item.wyrmroost.dragon_staff.action.targeting": "Target Commanding",
+  "item.wyrmroost.dragon_staff.action.sit.come": "Follow",
+  "item.wyrmroost.dragon_staff.action.sit.stay": "Stay",
 
   "item.wyrmroost.drake_backplate": "Drake Backplate"
 }

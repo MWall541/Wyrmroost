@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEntity>
+public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEntity, CanariWyvernModel>
 {
     // Easter egg
     private static final ResourceLocation EE_LADY = resource("lady.png");
@@ -38,6 +38,6 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
     
     private static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(DEF_LOC + "canari/" + png);
+        return Wyrmroost.rl(BASE_PATH + "canari/" + png);
     }
 }

@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.content.items.*;
 import WolfShotz.Wyrmroost.content.items.base.ArmorMaterialList;
 import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.content.items.base.ToolMaterialList;
+import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -93,14 +94,14 @@ public class WRItems
 //    public static final RegistryObject<Item> CANARI_CHESTPLATE = register("canari_chestplate", () -> new CanariArmorItem(EquipmentSlotType.CHEST));
 //    public static final RegistryObject<Item> CANARI_BOOTS = register("canari_boots", () -> new CanariArmorItem(EquipmentSlotType.FEET));
 
-    public static final RegistryObject<Item> LOWTIER_MEAT_RAW = register("lowtier_meat_raw", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_LOWTIER_MEAT)));
-    public static final RegistryObject<Item> COMMON_MEAT_RAW = register("common_meat_raw", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_COMMON_MEAT)));
-    public static final RegistryObject<Item> APEX_MEAT_RAW = register("apex_meat_raw", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_APEX_MEAT)));
-    public static final RegistryObject<Item> BEHEMOTH_MEAT_RAW = register("behemoth_meat_raw", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_BEHEMOTH_MEAT)));
-    public static final RegistryObject<Item> LOWTIER_MEAT_COOKED = register("lowtier_meat_cooked", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_LOWTIER_MEAT)));
-    public static final RegistryObject<Item> COMMON_MEAT_COOKED = register("common_meat_cooked", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_COMMON_MEAT)));
-    public static final RegistryObject<Item> APEX_MEAT_COOKED = register("apex_meat_cooked", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_APEX_MEAT)));
-    public static final RegistryObject<Item> BEHEMOTH_MEAT_COOKED = register("behemoth_meat_cooked", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_BEHEMOTH_MEAT)));
+    public static final RegistryObject<Item> RAW_LOWTIER_MEAT = register("raw_lowtier_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_LOWTIER_MEAT)));
+    public static final RegistryObject<Item> RAW_COMMON_MEAT = register("raw_common_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_COMMON_MEAT)));
+    public static final RegistryObject<Item> RAW_APEX_MEAT = register("raw_apex_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_APEX_MEAT)));
+    public static final RegistryObject<Item> RAW_BEHEMOTH_MEAT = register("raw_behemoth_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_BEHEMOTH_MEAT)));
+    public static final RegistryObject<Item> COOKED_LOWTIER_MEAT = register("cooked_lowtier_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_LOWTIER_MEAT)));
+    public static final RegistryObject<Item> COOKED_COMMON_MEAT = register("cooked_common_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_COMMON_MEAT)));
+    public static final RegistryObject<Item> COOKED_APEX_MEAT = register("cooked_apex_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_APEX_MEAT)));
+    public static final RegistryObject<Item> COOKED_BEHEMOTH_MEAT = register("cooked_behemoth_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_BEHEMOTH_MEAT)));
     public static final RegistryObject<Item> COOKED_MINUTUS = register("cooked_minutus", () -> new Item(ModUtils.itemBuilder().food(WRFoods.COOKED_MINUTUS)));
     public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", () -> new Item(ModUtils.itemBuilder().food(WRFoods.JEWELLED_APPLE)));
 //    public static final RegistryObject<Item> DRAGON_FRUIT = register("dragon_fruit", () -> new Item(ModUtils.itemBuilder().food(WRFoods.DRAGON_FRUIT)));
@@ -152,6 +153,7 @@ public class WRItems
     {
         public static final Tag<Item> GEODES = tag("geodes");
         public static final Tag<Item> MEATS = forgeTag("meats");
+        public static final Tag<Item> DRAGON_MEATS = tag("dragon_meats");
         public static final Tag<Item> PLATINUM = forgeTag("ingots/platinum");
 
         public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCKS = new HashMap<>();

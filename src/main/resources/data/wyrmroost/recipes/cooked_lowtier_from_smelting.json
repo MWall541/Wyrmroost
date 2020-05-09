@@ -1,9 +1,9 @@
 {
   "type": "minecraft:smelting",
   "ingredient": {
-    "item": "wyrmroost:lowtier_meat_raw"
+    "item": "wyrmroost:raw_lowtier_meat"
   },
-  "result": "wyrmroost:lowtier_meat_cooked",
+  "result": "wyrmroost:cooked_lowtier_meat",
   "experience": 0.35,
   "cookingtime": 150
 }

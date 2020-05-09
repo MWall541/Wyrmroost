@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<ButterflyLeviathanEntity>
+public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<ButterflyLeviathanEntity, ButterflyLeviathanModel>
 {
     public static final ResourceLocation BLUE = resource("butterfly_leviathan.png");
     public static final ResourceLocation PURPLE = resource("butterfly_leviathan_purple.png");
@@ -18,7 +18,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public static final ResourceLocation ALBINO = resource("butterfly_leviathan_alb.png");
     // Glow
     public static final ResourceLocation GLOW = resource("butterfly_leviathan_activated.png");
-    
+
     public ButterflyLeviathanRenderer(EntityRendererManager manager)
     {
         super(manager, new ButterflyLeviathanModel(), 2f);
@@ -27,7 +27,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
 
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(DEF_LOC + "butterflyleviathan/" + png);
+        return Wyrmroost.rl(BASE_PATH + "butterflyleviathan/" + png);
     }
 
     @Nullable

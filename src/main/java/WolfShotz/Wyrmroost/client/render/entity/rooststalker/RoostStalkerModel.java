@@ -270,7 +270,7 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
     
     private void staySleep()
     {
-        torso.rotationPointY = 0.21f;
+        torso.rotationPointY = 33f;
         torso.rotateAngleZ = 1.7f;
         head.rotateAngleX = 1.3f;
         head.rotateAngleY = -0.2f;

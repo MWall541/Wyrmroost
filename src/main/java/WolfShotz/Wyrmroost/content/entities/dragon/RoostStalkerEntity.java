@@ -1,16 +1,19 @@
 package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.content.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.io.ContainerBase;
+import WolfShotz.Wyrmroost.util.io.SlotBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -23,9 +26,7 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -191,9 +192,23 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void onInvContentsChanged(int slot, ItemStack stack)
+    public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
     {
         if (slot == ITEM_SLOT) setItem(stack);
+    }
+
+    @Override
+    public void addScreenInfo(StaffScreen screen)
+    {
+        screen.addAction(StaffAction.INVENTORY);
+        super.addScreenInfo(screen);
+    }
+
+    @Override
+    public void addContainerInfo(DragonInvContainer container)
+    {
+        super.addContainerInfo(container);
+        container.addSlot(new SlotBuilder(getInvHandler(), ITEM_SLOT, SlotBuilder.CENTER_X, SlotBuilder.CENTER_Y));
     }
 
     @Override
@@ -230,13 +245,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public boolean canPickUpStack(ItemStack stack)
     {
         return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
-    }
-    
-    @Nullable
-    @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
-    {
-        return new ContainerBase.StalkerContainer(this, playerInv, windowID);
     }
 
     @Override

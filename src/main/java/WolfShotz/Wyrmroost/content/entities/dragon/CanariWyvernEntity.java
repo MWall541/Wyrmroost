@@ -2,10 +2,12 @@ package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
+import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.EntityDataEntry;
 import com.google.common.collect.Lists;
@@ -174,6 +176,13 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super.swingArm(hand);
         NetworkUtils.sendAnimationPacket(this, ATTACK_ANIMATION);
+    }
+
+    @Override
+    public void addScreenInfo(StaffScreen screen)
+    {
+        super.addScreenInfo(screen);
+        screen.addAction(StaffAction.TARGETING);
     }
 
     @Override

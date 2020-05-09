@@ -217,19 +217,19 @@ public class LootTables extends LootTableProvider
             );
             registerLootTable(WREntities.OVERWORLD_DRAKE.get(), LootTable.builder()
                     .addLootPool(lootTable().addEntry(item(Items.LEATHER, 1f, 16f).acceptFunction(looting(1f, 4f))))
-                    .addLootPool(meat(WRItems.COMMON_MEAT_RAW.get(), 2, 6, 1, 4))
+                    .addLootPool(meat(WRItems.RAW_COMMON_MEAT.get(), 2, 6, 1, 4))
                     .addLootPool(lootTable().addEntry(ItemLootEntry.builder(WRItems.DRAKE_BACKPLATE.get())).acceptCondition(KilledByPlayer.builder()).acceptCondition(RandomChanceWithLooting.builder(0.65f, 0.03f)))
             );
             registerLootTable(WREntities.ROOSTSTALKER.get(), LootTable.builder()
                     .addLootPool(lootTable().addEntry(item(Items.GOLD_NUGGET, 0f, 4f).acceptFunction(looting(1f, 3f))))
-                    .addLootPool(meat(WRItems.LOWTIER_MEAT_RAW.get(), 0, 2, 1, 2))
+                    .addLootPool(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 2, 1, 2))
             );
-            registerLootTable(WREntities.DRAGON_FRUIT_DRAKE.get(), LootTable.builder().addLootPool(meat(WRItems.LOWTIER_MEAT_RAW.get(), 1, 2, 0, 2)));
+            registerLootTable(WREntities.DRAGON_FRUIT_DRAKE.get(), LootTable.builder().addLootPool(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 2, 0, 2)));
             registerLootTable(WREntities.CANARI_WYVERN.get(), LootTable.builder()
                     .addLootPool(lootTable().addEntry(item(Items.FEATHER, 0f, 3f).acceptFunction(looting(0f, 2f))))
-                    .addLootPool(meat(WRItems.COMMON_MEAT_RAW.get(), 0, 2, 0, 2))
+                    .addLootPool(meat(WRItems.RAW_COMMON_MEAT.get(), 0, 2, 0, 2))
             );
-            registerLootTable(WREntities.SILVER_GLIDER.get(), LootTable.builder().addLootPool(meat(WRItems.LOWTIER_MEAT_RAW.get(), 1, 4, 2, 3)));
+            registerLootTable(WREntities.SILVER_GLIDER.get(), LootTable.builder().addLootPool(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 4, 2, 3)));
         }
     }
 }

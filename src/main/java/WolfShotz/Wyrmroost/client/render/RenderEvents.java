@@ -2,24 +2,63 @@ package WolfShotz.Wyrmroost.client.render;
 
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.items.DragonStaffItem;
+import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
+import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import org.lwjgl.opengl.GL11;
 
-public class RenderEvents
+public class RenderEvents extends RenderType
 {
+    // == [Render Types] ==
+
+
+    private RenderEvents() { super(null, null, 0, 0, false, false, null, null); } // dummy
+
+    public static RenderType getGlow(ResourceLocation locationIn)
+    {
+        RenderState.TextureState textureState = new RenderState.TextureState(locationIn, false, false);
+        return RenderType.makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder()
+                .texture(textureState)
+                .transparency(RenderState.ADDITIVE_TRANSPARENCY)
+                .alpha(RenderState.DEFAULT_ALPHA)
+                .build(false));
+    }
+
+    public static RenderType getOutline(ResourceLocation texture, float u, float v)
+    {
+        return RenderType.makeType("staff_outline", DefaultVertexFormats.ENTITY, 7, 256, RenderType.State.getBuilder()
+                .texture(new RenderState.TextureState(texture, false, false))
+                .texturing(new RenderState.OffsetTexturingState(u, v))
+                .fog(RenderState.BLACK_FOG)
+                .transparency(RenderState.ADDITIVE_TRANSPARENCY)
+                .diffuseLighting(RenderState.DIFFUSE_LIGHTING_ENABLED)
+                .alpha(RenderState.DEFAULT_ALPHA)
+                .cull(RenderState.CULL_DISABLED)
+                .lightmap(RenderState.LIGHTMAP_ENABLED)
+                .overlay(RenderState.OVERLAY_ENABLED)
+                .depthTest(new RenderState.DepthTestState(GL11.GL_GEQUAL))
+                .build(false));
+    }
+
+
+    // == [Rendering] ==
+
+
     public static AxisAlignedBB debugBox;
     public static int boxTime;
 
@@ -39,31 +78,28 @@ public class RenderEvents
         ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
         if (stack.getItem() != WRItems.DRAGON_STAFF.get()) return;
 
-        DragonStaffItem staff = (DragonStaffItem) stack.getItem();
-        AbstractDragonEntity dragon = staff.getBoundDragon(mc.world, stack);
+        AbstractDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.world, stack);
         if (dragon == null) return;
 
         BlockPos pos;
         if (dragon.getHomePos().isPresent()) pos = dragon.getHomePos().get();
-        else if (staff.getAction(stack) == DragonStaffItem.Action.HOME_POS && mc.objectMouseOver instanceof BlockRayTraceResult)
+        else if (DragonStaffItem.getAction(stack) == StaffAction.HOME_POS && mc.objectMouseOver instanceof BlockRayTraceResult)
             pos = ((BlockRayTraceResult) mc.objectMouseOver).getPos();
         else return;
 
         Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
-        double x = view.x;
-        double y = view.y;
-        double z = view.z;
+        double x = pos.getX() - view.x;
+        double y = pos.getY() - view.y;
+        double z = pos.getZ() - view.z;
 
         IRenderTypeBuffer.Impl impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
         drawShape(ms,
                 impl.getBuffer(RenderType.getLines()),
                 player.world.getBlockState(pos).getShape(player.world, pos),
-                pos.getX() - x,
-                pos.getY() - y,
-                pos.getZ() - z,
+                x, y, z,
                 0, 0, 1, 0.85f);
-        impl.finish();
 
+        impl.finish();
     }
 
     public static void renderDebugBox(MatrixStack ms)

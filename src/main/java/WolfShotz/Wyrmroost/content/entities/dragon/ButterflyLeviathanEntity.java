@@ -2,18 +2,21 @@ package WolfShotz.Wyrmroost.content.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.content.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.DragonBodyController;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import WolfShotz.Wyrmroost.util.io.ContainerBase;
+import WolfShotz.Wyrmroost.util.io.SlotBuilder;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
@@ -22,8 +25,6 @@ import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -61,6 +62,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
 {
+    public static final int CONDUIT_SLOT = 0;
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.createKey(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
 
     public static final Animation CONDUIT_ANIMATION = new Animation(46);
@@ -174,19 +176,19 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         dataManager.set(HAS_CONDUIT, invHandler.map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false)); // bcus effects shouldnt be done on load
     }
 
-    public void setHasConduit(boolean flag)
+    public void setHasConduit(boolean flag, boolean playEffects)
     {
         if (hasConduit() == flag) return;
         dataManager.set(HAS_CONDUIT, flag);
         if (flag)
         {
             getAttribute(MOVEMENT_SPEED).setBaseValue(0.06d);
-            setAnimation(CONDUIT_ANIMATION);
+            if (playEffects) setAnimation(CONDUIT_ANIMATION);
         }
         else
         {
             getAttribute(MOVEMENT_SPEED).setBaseValue(0.045d);
-            playSound(SoundEvents.BLOCK_CONDUIT_DEACTIVATE, 1, 1);
+            if (playEffects) playSound(SoundEvents.BLOCK_CONDUIT_DEACTIVATE, 1, 1);
         }
     }
 
@@ -316,8 +318,29 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             }
             return true;
         }
-        
+
         return false;
+    }
+
+    @Override
+    public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
+    {
+        if (slot == CONDUIT_SLOT) setHasConduit(!stack.isEmpty(), !onLoad);
+    }
+
+    @Override
+    public void addScreenInfo(StaffScreen screen)
+    {
+        screen.addAction(StaffAction.INVENTORY);
+        screen.addAction(StaffAction.TARGETING);
+        super.addScreenInfo(screen);
+    }
+
+    @Override
+    public void addContainerInfo(DragonInvContainer container)
+    {
+        super.addContainerInfo(container);
+        container.addSlot(new SlotBuilder(getInvHandler(), CONDUIT_SLOT, SlotBuilder.CENTER_X, SlotBuilder.CENTER_Y).limit(1).only(Items.CONDUIT));
     }
 
     public void applyEffects()
@@ -481,13 +504,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     {
         return Lists.newArrayList(Items.KELP, Items.DRIED_KELP, Items.DRIED_KELP_BLOCK, Items.SEAGRASS, Items.SEA_PICKLE)
                 .contains(stack.getItem());
-    }
-
-    @Nullable
-    @Override
-    public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player)
-    {
-        return new ContainerBase.ButterflyContainer(this, playerInv, windowID);
     }
 
     @Override

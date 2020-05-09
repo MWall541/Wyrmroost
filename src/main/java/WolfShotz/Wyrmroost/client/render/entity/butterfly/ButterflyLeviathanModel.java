@@ -308,6 +308,7 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     {
         ms.push();
         ms.scale(3, 3, 3);
+        ms.translate(0, -0.17, 0);
         body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
