@@ -26,12 +26,6 @@ public class StaffScreen extends Screen
         this.dragon = dragon;
     }
 
-    public static void open(AbstractDragonEntity dragon, ItemStack stack)
-    {
-        DragonStaffItem.bindDragon(dragon, stack);
-        if (dragon.world.isRemote) Minecraft.getInstance().displayGuiScreen(new StaffScreen(dragon));
-    }
-
     @Override
     protected void init()
     {
@@ -77,4 +71,10 @@ public class StaffScreen extends Screen
     public boolean isPauseScreen() { return false; }
 
     public void addAction(StaffAction action) { actions.add(action); }
+
+    public static void open(AbstractDragonEntity dragon, ItemStack stack)
+    {
+        DragonStaffItem.bindDragon(dragon, stack);
+        if (dragon.world.isRemote) Minecraft.getInstance().displayGuiScreen(new StaffScreen(dragon));
+    }
 }

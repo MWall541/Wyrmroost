@@ -1,71 +1,23 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.content.items.DrakeArmorItem;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
-import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.registry.WRWorld;
 import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 @SuppressWarnings("unused")
 public class CommonEvents
 {
-    /**
-     * This is for MOD Event bus stuff.
-     */
-    public static void onModConstruction(IEventBus bus)
-    {
-        bus.addListener(CommonEvents::commonSetup);
-        bus.addListener(CommonEvents::configLoad);
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> ClientEvents.onModConstruction(bus));
-    }
-
-    public static void commonSetup(final FMLCommonSetupEvent event)
-    {
-        MinecraftForge.EVENT_BUS.register(CommonEvents.class);
-
-        DeferredWorkQueue.runLater(WRWorld::setupWorldGen);
-        DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
-        NetworkUtils.registerMessages();
-    }
-
-    /**
-     * Fire on config change
-     */
-    public static void configLoad(ModConfig.ModConfigEvent evt)
-    {
-        if (evt.getConfig().getSpec() == WRConfig.CommonConfig.COMMON_SPEC)
-            WRConfig.CommonConfig.reload();
-        if (evt.getConfig().getSpec() == WRConfig.ClientConfig.CLIENT_SPEC)
-            WRConfig.ClientConfig.reload();
-    }
-
-    // ==========================================================
-    //  Forge Eventbus listeners
-    //
-    //  Anything below here isnt related to the mod bus,
-    //  so like runtime stuff (Non-registry stuff)
-    // ==========================================================
-
     /**
      * Register the Mod Dimension
      */
@@ -107,7 +59,7 @@ public class CommonEvents
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
         if (player.isSneaking()) dragon.tame(true, player);
-        else if (evt.getWorld().isRemote) DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> DebugScreen.open(dragon));
+        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
     }
 
     @SubscribeEvent

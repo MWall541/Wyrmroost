@@ -1,16 +1,29 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.client.ClientEvents;
+import WolfShotz.Wyrmroost.client.render.RenderEvents;
+import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.*;
+import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -30,22 +43,60 @@ public class Wyrmroost
 
     public Wyrmroost()
     {
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        CommonEvents.onModConstruction(eventBus);
+        MinecraftForge.EVENT_BUS.register(CommonEvents.class);
+        bus.addListener(this::commonSetup);
+        bus.addListener(this::configLoad);
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
+        {
+            MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+            MinecraftForge.EVENT_BUS.addListener(RenderEvents::renderWorld);
+            bus.addListener(this::clientSetup);
+            bus.addListener(this::registerItemColors);
+        });
 
-        WREntities.ENTITIES.register(eventBus);
-        WRBlocks.BLOCKS.register(eventBus);
-        WRItems.ITEMS.register(eventBus);
-//        WRFluids.FLUIDS.register(eventBus);
-        WRIO.CONTAINERS.register(eventBus);
-        WRSounds.SOUNDS.register(eventBus);
-//        WRBiomes.BIOMES.register(eventBus);
-//        WRWorld.FEATURES.register(eventBus);
-//        eventBus.addGenericListener(ModDimension.class, (RegistryEvent.Register<ModDimension> e) -> e.getRegistry().register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost")));
+        WREntities.ENTITIES.register(bus);
+        WRBlocks.BLOCKS.register(bus);
+        WRItems.ITEMS.register(bus);
+//        WRFluids.FLUIDS.register(bus);
+        WRIO.CONTAINERS.register(bus);
+        WRSounds.SOUNDS.register(bus);
+//        WRBiomes.BIOMES.register(bus);
+//        WRWorld.FEATURES.register(bus);
+//        bus.addGenericListener(ModDimension.class, (RegistryEvent.Register<ModDimension> e) -> e.getRegistry().register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost")));
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.CommonConfig.COMMON_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.ClientConfig.CLIENT_SPEC);
+    }
+
+    public void commonSetup(final FMLCommonSetupEvent event)
+    {
+        DeferredWorkQueue.runLater(WRWorld::setupWorldGen);
+        DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
+        NetworkUtils.registerMessages();
+    }
+
+    public void clientSetup(final FMLClientSetupEvent event)
+    {
+        ClientEvents.registerEntityRenders();
+        WRKeyBinds.registerKeys();
+        WRIO.screenSetup();
+    }
+
+    public void configLoad(ModConfig.ModConfigEvent evt)
+    {
+        if (evt.getConfig().getSpec() == WRConfig.CommonConfig.COMMON_SPEC)
+            WRConfig.CommonConfig.reload();
+        if (evt.getConfig().getSpec() == WRConfig.ClientConfig.CLIENT_SPEC)
+            WRConfig.ClientConfig.reload();
+    }
+
+    public void registerItemColors(ColorHandlerEvent.Item evt)
+    {
+        ItemColors handler = evt.getItemColors();
+        IItemColor eggColor = (stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex);
+        CustomSpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
     }
 
     /**

@@ -19,8 +19,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -113,7 +111,7 @@ public class DragonStaffItem extends Item
             AbstractDragonEntity dragon = (AbstractDragonEntity) target;
             if (dragon.isOwner(playerIn))
             {
-                DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> StaffScreen.open(dragon, stack));
+                if (playerIn.world.isRemote) StaffScreen.open(dragon, stack);
                 return true;
             }
         }

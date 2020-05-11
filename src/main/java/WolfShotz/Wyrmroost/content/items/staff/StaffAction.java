@@ -18,8 +18,6 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.Optional;
@@ -31,7 +29,7 @@ public enum StaffAction
                 @Override
                 public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> StaffScreen.open(dragon, stack));
+                    if (player.world.isRemote) StaffScreen.open(dragon, stack);
                     return true;
                 }
             },
