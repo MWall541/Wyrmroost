@@ -16,15 +16,15 @@ public class DataCreator
 
         if (event.includeServer())
         {
-//            gen.addProvider(new Tags.BlockTagsData(gen));
-//            gen.addProvider(new Tags.ItemTagsData(gen));
+            gen.addProvider(new Tags.BlockTagsData(gen));
+            gen.addProvider(new Tags.ItemTagsData(gen));
 //            gen.addProvider(new Tags.FluidTagsData(gen));
-//            gen.addProvider(new Recipes(gen));
-//            gen.addProvider(new LootTables(gen));
+            gen.addProvider(new Recipes(gen));
+            gen.addProvider(new LootTables(gen));
         }
         if (event.includeClient())
         {
-//            gen.addProvider(new Models.BlockModels(gen, event.getExistingFileHelper()));
+            gen.addProvider(new Models.BlockModels(gen, event.getExistingFileHelper()));
             gen.addProvider(new Models.ItemModels(gen, event.getExistingFileHelper()));
         }
     }

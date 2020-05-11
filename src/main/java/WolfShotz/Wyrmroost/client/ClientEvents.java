@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.client;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
@@ -20,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -69,17 +71,16 @@ public class ClientEvents
     /**
      * Handles the perspective/position of the camera
      */
-    @SubscribeEvent
-    public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
-    {
-        Minecraft mc = Minecraft.getInstance();
-        Entity entity = mc.player.getRidingEntity();
-        if (!(entity instanceof AbstractDragonEntity)) return;
-        int i1 = mc.gameSettings.thirdPersonView;
-
-        if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
-    }
-
+//    @SubscribeEvent
+//    public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
+//    {
+//        Minecraft mc = Minecraft.getInstance();
+//        Entity entity = mc.player.getRidingEntity();
+//        if (!(entity instanceof AbstractDragonEntity)) return;
+//        int i1 = mc.gameSettings.thirdPersonView;
+//
+//        if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
+//    }
     public static void registerEntityRenders()
     {
         registerEntityRenderingHandler(WREntities.OVERWORLD_DRAKE.get(), OWDrakeRenderer::new);
