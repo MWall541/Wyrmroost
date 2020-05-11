@@ -87,7 +87,7 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     public ModelAnimator animator;
 
     // false == left, true == right
-    public boolean cleanSide = false;
+    public boolean preenSide = false;
 
     public CanariWyvernModel()
     {
@@ -389,8 +389,12 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
+        float scale = entity.isChild()? 0.25f : 0.5f;
+        float offset = entity.isChild()? 4f : 1f;
+
         ms.push();
-        ms.scale(0.5f, 0.5f, 0.5f);
+        ms.scale(scale, scale, scale);
+        ms.translate(0, offset, 0);
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
@@ -552,7 +556,7 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
         boolean shouldSwap = entity.getRidingEntity() instanceof PlayerEntity && entity.getRidingEntity().getPassengers().indexOf(entity) == 1;
         float tailRot = shouldSwap? 0.5f : -0.5f;
 
-        body1.rotationPointY = 0.18f;
+        body1.rotationPointY = 24f;
 
         wing1L.rotateAngleX = 0.6f;
         wing1R.rotateAngleX = 0.6f;
@@ -804,11 +808,11 @@ public class CanariWyvernModel extends AdvancedLivingEntityModel<CanariWyvernEnt
     public void preenAnim(float frame)
     {
         int tick = animator.getEntity().getAnimationTick();
-        if (tick == 0) cleanSide = new Random().nextBoolean();
+        if (tick == 0) preenSide = new Random().nextBoolean();
 
         animator.startKeyframe(8);
 
-        if (cleanSide) // right side
+        if (preenSide) // right side
         {
             for (AdvancedRendererModel box : headArray)
                 animator.rotate(box, 0.5f, 0.7f, 0);

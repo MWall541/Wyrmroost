@@ -4,8 +4,10 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.IAnimatedObject;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.content.items.DragonEggItem;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.network.messages.EggHatchMessage;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.*;
@@ -31,42 +33,47 @@ import java.util.Objects;
 
 public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityAdditionalSpawnData
 {
+    public static final String DATA_HATCH_TIME = "HatchTime";
+    public static final String DATA_DRAGON_TYPE = "DragonType";
+    public static final Animation WIGGLE_ANIMATION = new Animation(10);
+
     public EntityType<AbstractDragonEntity> containedDragon;
     public int hatchTime;
     public DragonEggProperties properties;
-
     public boolean wiggleInvert, wiggleInvert2;
     private int animationTick;
     private Animation animation = NO_ANIMATION;
 
-    public static final Animation WIGGLE_ANIMATION = new Animation(10);
+    public DragonEggEntity(EntityType<? extends DragonEggEntity> type, World world) { super(type, world);}
 
-    public DragonEggEntity(EntityType<? extends DragonEggEntity> dragonEgg, World world) { super(dragonEgg, world); }
-    
+    public DragonEggEntity(EntityType<AbstractDragonEntity> type, int hatchTime, World world)
+    {
+        super(WREntities.DRAGON_EGG.get(), world);
+        this.containedDragon = type;
+        this.hatchTime = hatchTime;
+    }
+
     // ================================
     //           Entity NBT
     // ================================
     @Override
     protected void registerData() {}
-    
+
     @Override
     public void readAdditional(CompoundNBT compound)
     {
-        containedDragon = ModUtils.getTypeByString(compound.getString("dragonType"));
-        hatchTime = compound.getInt("hatchTime");
+        containedDragon = ModUtils.getTypeByString(compound.getString(DATA_DRAGON_TYPE));
+        hatchTime = compound.getInt(DATA_HATCH_TIME);
     }
     
     @Override
     public void writeAdditional(CompoundNBT compound)
     {
-        compound.putString("dragonType", getDragonKey());
-        compound.putInt("hatchTime", hatchTime);
+        compound.putString(DATA_DRAGON_TYPE, getDragonKey());
+        compound.putInt(DATA_HATCH_TIME, hatchTime);
     }
-    
-    public String getDragonKey()
-    {
-        return EntityType.getKey(containedDragon).toString();
-    }
+
+    public String getDragonKey() { return EntityType.getKey(containedDragon).toString(); }
     
     // ================================
     
@@ -212,15 +219,10 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        CompoundNBT tag = new CompoundNBT();
-        
-        tag.putInt("hatchTime", hatchTime);
-        tag.putString("dragonType", getDragonKey());
-        ItemStack itemStack = new ItemStack(WRItems.DRAGON_EGG.get());
-        itemStack.setTag(tag);
-        InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), itemStack);
+        ItemStack stack = DragonEggItem.createNew(containedDragon, hatchTime);
+        InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), stack);
         remove();
-        
+
         return true;
     }
     
@@ -246,12 +248,7 @@ public class DragonEggEntity extends Entity implements IAnimatedObject, IEntityA
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
-        ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
-        CompoundNBT tag = new CompoundNBT();
-        tag.putString("dragonType", getDragonKey());
-        tag.putInt("hatchTime", getProperties().getHatchTime());
-        stack.setTag(tag);
-        return stack;
+        return DragonEggItem.createNew(containedDragon, hatchTime);
     }
 
     @Override

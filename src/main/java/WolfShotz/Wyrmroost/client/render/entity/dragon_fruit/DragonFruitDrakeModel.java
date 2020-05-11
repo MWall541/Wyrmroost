@@ -374,8 +374,12 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
+        float scale = entity.isChild()? 0.75f : 1.5f;
+        float offset = entity.isChild()? 0.5f : -0.5f;
+
         ms.push();
-        ms.scale(1.5f, 1.5f, 1.5f);
+        ms.scale(scale, scale, scale);
+        ms.translate(0, offset, 0);
         Body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
@@ -455,7 +459,7 @@ public class DragonFruitDrakeModel extends AdvancedLivingEntityModel<DragonFruit
 
     public void sitPose()
     {
-        Body1.rotationPointY = 0.35f;
+        Body1.rotationPointY = 15f;
 
         LegfrontL1.rotateAngleX = -1.65f;
         LegfrontL2.rotateAngleX = -1.5f;

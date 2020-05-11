@@ -201,6 +201,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public void addScreenInfo(StaffScreen screen)
     {
         screen.addAction(StaffAction.INVENTORY);
+        screen.addAction(StaffAction.TARGETING);
         super.addScreenInfo(screen);
     }
 

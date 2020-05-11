@@ -22,7 +22,8 @@ public class NameFieldWidget extends TextFieldWidget
         setMaxStringLength(35);
         setResponder(s ->
         {
-            StringTextComponent name = getText().isEmpty()? null : new StringTextComponent(getText());
+            if (s.equals(dragon.getName().getUnformattedComponentText())) return;
+            StringTextComponent name = s.isEmpty()? null : new StringTextComponent(s);
             Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(dragon, name));
         });
     }

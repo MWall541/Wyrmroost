@@ -19,7 +19,6 @@ import java.util.UUID;
 
 public class DrakeArmorItem extends ItemArmorBase
 {
-    private static final UUID WEAPON_KNOCKBACK_MODIFER = UUID.fromString("bc5d758a-f8ba-4859-8bb3-503209cbbce8");
     private static final UUID ARMOR_KNOCKBACK_RESISTANCE = UUID.fromString("eaa010aa-299d-4c76-9f02-a1283c9e890b");
 
     private boolean fullSet = false;

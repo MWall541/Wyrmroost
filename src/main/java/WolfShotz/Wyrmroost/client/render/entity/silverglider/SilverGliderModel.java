@@ -394,23 +394,15 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
+        ms.push();
+        if (entity.isChild())
+        {
+            ms.scale(0.35f, 0.35f, 0.35f);
+            ms.translate(0, 2.75d, 0);
+        }
         mainbody.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        ms.pop();
     }
-
-//    @Override
-//    public void render(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
-//    {
-//        GlStateManager.pushMatrix();
-//        if (entity.isChild())
-//        {
-//            GlStateManager.scaled(0.35d, 0.35d, 0.35d);
-//            GlStateManager.translated(0, 2.75d, 0);
-//        }
-//
-//        mainbody.render(scale);
-//
-//        GlStateManager.popMatrix();
-//    }
 
     @Override
     public void setRotationAngles(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
@@ -595,7 +587,7 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
             if (flag)
             {
                 // Body
-                mainbody.rotationPointY = 0.25f;
+                mainbody.rotationPointY = 20f;
 
                 // Left Wing
                 wingphalange1L.rotateAngleX = 0.3f;

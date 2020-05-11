@@ -306,9 +306,12 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     @Override
     public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
+        float scale = entity.isChild()? 1f : 3f;
+        float offset = entity.isChild()? 0.85f : -0.17f;
+
         ms.push();
-        ms.scale(3, 3, 3);
-        ms.translate(0, -0.17, 0);
+        ms.scale(scale, scale, scale);
+        ms.translate(0, offset, 0);
         body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
@@ -333,7 +336,8 @@ public class ButterflyLeviathanModel extends AdvancedLivingEntityModel<Butterfly
     @Override
     public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        super.setRotationAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        if (netHeadYaw < -180) netHeadYaw += 360;
+        else if (netHeadYaw > 180) netHeadYaw -= 360;
         if (entity.areEyesInFluid(FluidTags.WATER) && !entityIn.isSitting())
             body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
         else faceTarget(netHeadYaw, headPitch, 1, head, neck3, neck2, neck1);

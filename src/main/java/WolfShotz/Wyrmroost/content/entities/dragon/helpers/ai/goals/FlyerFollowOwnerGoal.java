@@ -41,12 +41,6 @@ public class FlyerFollowOwnerGoal extends Goal
 
         double minDistSq = (minDist * minDist);
         boolean tooClose = (dragon.getDistanceSq(preOwner) < minDistSq);
-
-        if (dragon.isFlying())
-        {
-//            if (orbitOverHead) return true;
-            tooClose = (dragon.getDistanceSq(preOwner.getPositionVec().add(0, maxHeight, 0)) < minDistSq);
-        }
         return !tooClose;
     }
 
@@ -56,12 +50,7 @@ public class FlyerFollowOwnerGoal extends Goal
         if (dragon.isSitting() || owner == null) return false;
 
         double maxDistSq = (maxDist * maxDist);
-        if (dragon.isFlying())
-        {
-//            if (orbitOverHead) return true;
-            return dragon.getDistanceSq(owner.getPositionVec().add(0, maxHeight, 0)) > maxDistSq;
-        }
-        else return !dragon.getNavigator().noPath() && dragon.getDistanceSq(owner) > maxDistSq;
+        return !dragon.getNavigator().noPath() && dragon.getDistanceSq(owner) > maxDistSq;
     }
 
     @Override

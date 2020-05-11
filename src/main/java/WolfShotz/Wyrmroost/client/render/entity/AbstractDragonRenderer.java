@@ -107,11 +107,11 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         {
             if (shouldRenderOutlines(dragon))
             {
-                float uv = dragon.ticksExisted * 0.0025f;
+                float uv = dragon.ticksExisted * 0.001f;
                 IVertexBuilder builder = buffer.getBuffer(RenderEvents.getOutline(TEXTURE, uv, uv));
                 ms.push();
                 ms.scale(1.1f, 1.1f, 1.1f);
-                getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 0.8f);
+                getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 0.6f, 0.6f, 0.6f, 1);
                 ms.pop();
             }
         }

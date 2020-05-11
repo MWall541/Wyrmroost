@@ -49,8 +49,6 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
 {
-    public static final String DATA_SHEAR = "ShearCooldown";
-
     public static final Animation STAND_ANIMATION = new Animation(15);
     public static final Animation SIT_ANIMATION = new Animation(15);
     public static final Animation BITE_ANIMATION = new Animation(15);
@@ -65,7 +63,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
 
-        addDataEntry("ShearTimer", EntityDataEntry.INT, () -> shearCooldownTime, v -> shearCooldownTime = v);
+        addDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
+        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
     public static void handleSpawning()

@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.content.items;
 import WolfShotz.Wyrmroost.client.render.DragonEggStackRenderer;
 import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
-import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -35,25 +35,34 @@ public class DragonEggItem extends Item
     {
         super(ModUtils.itemBuilder().maxStackSize(1).setISTER(() -> DragonEggStackRenderer::new));
     }
-    
+
+    public static ItemStack createNew(EntityType<AbstractDragonEntity> type, int hatchTime)
+    {
+        ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(type).toString());
+        tag.putInt(DragonEggEntity.DATA_HATCH_TIME, hatchTime);
+        stack.setTag(tag);
+        return stack;
+    }
+
     @Override
     public ActionResultType onItemUse(ItemUseContext ctx)
     {
         PlayerEntity player = ctx.getPlayer();
         if (player.isSneaking()) return super.onItemUse(ctx);
-        
+
         World world = ctx.getWorld();
         CompoundNBT tag = ctx.getItem().getTag();
         BlockPos pos = ctx.getPos();
         BlockState state = world.getBlockState(pos);
-        DragonEggEntity eggEntity = WREntities.DRAGON_EGG.get().create(world);
 
-        if (tag == null || !tag.contains("dragonType")) return ActionResultType.PASS;
+        if (tag == null || !tag.contains(DragonEggEntity.DATA_DRAGON_TYPE)) return ActionResultType.PASS;
         if (!state.getCollisionShape(world, pos).isEmpty()) pos = pos.offset(ctx.getFace());
         if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(pos)).isEmpty())
             return ActionResultType.FAIL;
 
-        eggEntity.readAdditional(tag);
+        DragonEggEntity eggEntity = new DragonEggEntity(ModUtils.getTypeByString(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE)), tag.getInt(DragonEggEntity.DATA_HATCH_TIME), world);
         eggEntity.setPosition(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d);
 
         if (!world.isRemote) world.addEntity(eggEntity);
@@ -68,12 +77,12 @@ public class DragonEggItem extends Item
         if (!player.isCreative()) return false;
         if (!entity.isAlive()) return false;
         if (!(entity instanceof AbstractDragonEntity)) return false;
-        
+
         CompoundNBT nbt = new CompoundNBT();
         int hatchTime = ((AbstractDragonEntity) entity.getType().create(player.world)).getEggProperties().getHatchTime();
-        
-        nbt.putString("dragonType", EntityType.getKey(entity.getType()).toString());
-        nbt.putInt("hatchTime", hatchTime);
+
+        nbt.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(entity.getType()).toString());
+        nbt.putInt(DragonEggEntity.DATA_HATCH_TIME, hatchTime);
         stack.setTag(nbt);
         player.sendStatusMessage(getDisplayName(stack), true);
         return true;
@@ -84,12 +93,11 @@ public class DragonEggItem extends Item
     {
         CompoundNBT tag = stack.getTag();
         if (tag == null || tag.isEmpty()) return super.getDisplayName(stack);
-        Optional<EntityType<?>> type = EntityType.byKey(tag.getString("dragonType"));
+        Optional<EntityType<?>> type = EntityType.byKey(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE));
         
         if (type.isPresent())
         {
             String dragonTranslation = type.get().getName().getUnformattedComponentText();
-            
             return ModUtils.appendableTextTranslation(dragonTranslation + " ", getTranslationKey());
         }
         
@@ -101,9 +109,9 @@ public class DragonEggItem extends Item
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         CompoundNBT tag = stack.getTag();
-        
-        if (tag != null && tag.contains("hatchTime"))
-            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.tooltip", tag.getInt("hatchTime") / 1200).applyTextStyle(TextFormatting.AQUA));
+
+        if (tag != null && tag.contains(DragonEggEntity.DATA_HATCH_TIME))
+            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.tooltip", tag.getInt(DragonEggEntity.DATA_HATCH_TIME) / 1200).applyTextStyle(TextFormatting.AQUA));
         PlayerEntity player = Minecraft.getInstance().player;
         if (player != null && player.isCreative())
             tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.creativetooltip").applyTextStyle(TextFormatting.GRAY));

@@ -10,9 +10,9 @@ import WolfShotz.Wyrmroost.content.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.DragonBodyController;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.content.items.DragonEggItem;
 import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
-import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
@@ -178,7 +178,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         int chance = getSpecialChances();
         if (hasSpecial && chance != 0 && getRNG().nextInt(chance) == 0) variants = -1;
         else if (variants != 0) variants = getRNG().nextInt(variants);
-        addDataEntry("Variant", EntityDataEntry.INT, VARIANT, variants);
+        addDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, variants);
     }
 
     /**
@@ -753,13 +753,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public AgeableEntity createChild(AgeableEntity ageable)
     {
-        CompoundNBT tag = new CompoundNBT();
-        ItemStack eggStack = new ItemStack(WRItems.DRAGON_EGG.get());
-
-        tag.putString("dragonType", EntityType.getKey(getType()).toString());
-        tag.putInt("hatchTime", getEggProperties().getHatchTime());
-        eggStack.setTag(tag);
-
+        ItemStack eggStack = DragonEggItem.createNew((EntityType<AbstractDragonEntity>) getType(), getEggProperties().getHatchTime());
         ItemEntity eggItem = new ItemEntity(world, getPosX(), getPosY(), getPosZ(), eggStack);
 
         eggItem.setMotion(0, getHeight() / 3, 0);
@@ -779,6 +773,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 && !world.isDaytime()
                 && (!isTamed() || (isSitting() && isWithinHomeDistanceCurrentPosition()))
                 && isIdling()
+                && !isInWaterOrBubbleColumn()
                 && getRNG().nextInt(300) == 0) setSleeping(true);
         else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
     }

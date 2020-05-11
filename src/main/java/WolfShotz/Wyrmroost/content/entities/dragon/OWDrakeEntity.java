@@ -78,7 +78,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         WAKE_ANIMATION = new Animation(15);
 
         addVariantData(2, true);
-        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
+        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
     @Override

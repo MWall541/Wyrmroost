@@ -20,7 +20,6 @@ import WolfShotz.Wyrmroost.util.io.SlotBuilder;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
@@ -33,10 +32,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.PathFinder;
-import net.minecraft.pathfinding.PathNavigator;
-import net.minecraft.pathfinding.SwimmerPathNavigator;
-import net.minecraft.pathfinding.WalkAndSwimNodeProcessor;
+import net.minecraft.pathfinding.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
@@ -88,6 +84,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         moveController = new MoveController();
         stepHeight = 2;
 
+        // Fix in 1.15: Water mobs need this to get random positions in water
+        // MobEntity's have a path priority map that is compared to 0 in the random pos generator. If it doesn't match, the position isn't generated.
+        // therefore, the creature won't have a means of moving in ai.
+        setPathPriority(PathNodeType.WATER, 0f);
+
 //        if (!world.isRemote)
 //        {
 //            headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
@@ -104,7 +105,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
-    protected BodyController createBodyController() { return new BFlyBodyController(); }
+    protected net.minecraft.entity.ai.controller.BodyController createBodyController() { return new BodyController(); }
 
     public static void handleSpawning()
     {
@@ -521,9 +522,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         return new Animation[] {NO_ANIMATION, CONDUIT_ANIMATION, ROAR_ANIMATION, BITE_ANIMATION};
     }
 
-    class BFlyBodyController extends DragonBodyController
+    class BodyController extends DragonBodyController
     {
-        public BFlyBodyController() { super(ButterflyLeviathanEntity.this); }
+        public BodyController() { super(ButterflyLeviathanEntity.this); }
 
         @Override
         public void updateRenderAngles()

@@ -14,20 +14,18 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 {
     private final DragonEggModel EGG_MODEL = new DragonEggModel();
 
-    public DragonEggRenderer(EntityRendererManager manager)
-    {
-        super(manager);
-    }
+    public DragonEggRenderer(EntityRendererManager manager) { super(manager); }
 
     @Override
     public void render(DragonEggEntity entityIn, float entityYaw, float partialTicks, MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn)
     {
         ms.push();
-        ms.translate(0, -1.5f, 0);
-        renderShapeByType(entityIn, ms);
+        setScale(entityIn, ms);
+        ms.translate(0, -1.5, 0);
         EGG_MODEL.animate(entityIn);
         IVertexBuilder builder = buffer.getBuffer(EGG_MODEL.getRenderType(getEntityTexture(entityIn)));
         EGG_MODEL.render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        ms.pop();
 
         super.render(entityIn, entityYaw, partialTicks, ms, buffer, packedLightIn);
     }
@@ -45,7 +43,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
      * Render Custom egg sizes / shapes. <P>
      * If none is defined, then calculate the model size according to egg size
      */
-    private void renderShapeByType(DragonEggEntity entity, MatrixStack ms)
+    private void setScale(DragonEggEntity entity, MatrixStack ms)
     {
         EntitySize size = entity.getSize(entity.getPose());
         if (size == null) return;

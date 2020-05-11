@@ -139,7 +139,7 @@ public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
         if (minutus.isBurrowed())
         {
             body1.rotateAngleX = -0.8f;
-            body1.rotationPointY = 0.2f;
+            body1.rotationPointY = 26.5f;
             body2.rotateAngleX = 0.8f;
             neck.rotateAngleX = -0.8f;
             jaw.rotateAngleX = 1f;

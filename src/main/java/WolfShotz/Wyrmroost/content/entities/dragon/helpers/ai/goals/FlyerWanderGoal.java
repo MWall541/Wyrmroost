@@ -25,8 +25,10 @@ public class FlyerWanderGoal extends Goal
     @Override
     public boolean shouldExecute()
     {
+        if (dragon.isInWater()) return true;
         if (dragon.isSleeping()) return false;
         if (!dragon.getPassengers().isEmpty()) return false;
+        if (sleepTempted && !dragon.world.isDaytime()) return false;
 
         if (dragon.isFlying())
         {
@@ -47,22 +49,20 @@ public class FlyerWanderGoal extends Goal
     {
         Vec3d vec3d = getPosition();
         if (vec3d == null) return;
-        if (dragon.isFlying()) dragon.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1);
-        else dragon.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 1);
+        dragon.getMoveHelper().setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1);
     }
 
     public Vec3d getPosition()
     {
-        if (dragon.isFlying())
-        {
-            Random rand = dragon.getRNG();
-            double x = dragon.getPosX() + QuikMaths.nextPseudoDouble(rand) * 20d;
-            double y = dragon.getPosY() + QuikMaths.nextPseudoDouble(rand) * 16d;
-            double z = dragon.getPosZ() + QuikMaths.nextPseudoDouble(rand) * 20d;
-            if (sleepTempted && !dragon.world.isDaytime()) y = Math.max(-Math.abs(y), 0);
-            if (y > 175) y -= 25;
-            return new Vec3d(x, y, z);
-        }
-        else return RandomPositionGenerator.findRandomTarget(dragon, 10, 7);
+        if (dragon.isInWater()) return RandomPositionGenerator.getLandPos(dragon, 20, 20);
+
+        Random rand = dragon.getRNG();
+        double x = dragon.getPosX() + QuikMaths.nextPseudoDouble(rand) * 20d;
+        double y = dragon.getPosY() + QuikMaths.nextPseudoDouble(rand) * 16d;
+        double z = dragon.getPosZ() + QuikMaths.nextPseudoDouble(rand) * 20d;
+        if (!dragon.isFlying() && y < 0) y = Math.abs(y);
+        if (dragon.getAltitude(false) > 30) y -= 30;
+        if (sleepTempted && !dragon.world.isDaytime()) y = Math.max(-Math.abs(y), 0);
+        return new Vec3d(x, y, z);
     }
 }

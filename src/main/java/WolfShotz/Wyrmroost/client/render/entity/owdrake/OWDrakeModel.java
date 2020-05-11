@@ -371,8 +371,12 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
+        float scale = entity.isChild()? 1f : 2f;
+        float offset = entity.isChild()? 0.7f : 0;
+
         ms.push();
-        ms.scale(2, 2, 2);
+        ms.scale(scale, scale, scale);
+        ms.translate(0, offset, 0);
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
@@ -389,6 +393,7 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     @Override
     public void setLivingAnimations(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
     {
+        this.entity = drake;
         float frame = drake.ticksExisted;
         Animation currentAnim = drake.getAnimation();
         
@@ -397,7 +402,6 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
         
         if (!drake.isSitting() && !drake.isSleeping())
         {
-            
             // Body bob
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, 0.5f);
             
@@ -471,7 +475,7 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
      */
     private void staySitting()
     {
-        body1.rotationPointY = -0.35f;
+        body1.rotationPointY = 3.5f;
         
         // Front Right
         arm2R.rotateAngleX = -1.5f;
