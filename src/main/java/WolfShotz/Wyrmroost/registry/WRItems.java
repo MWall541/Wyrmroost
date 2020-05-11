@@ -28,7 +28,7 @@ public class WRItems
     public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
 
 //    public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
-    public static final RegistryObject<Item> MINUTUS = register("minutus", MinutusItem::new);
+public static final RegistryObject<Item> LDWYRM = register("desert_wyrm", LDWyrmItem::new);
     public static final RegistryObject<Item> DRAGON_EGG = register("dragon_egg", DragonEggItem::new);
     public static final RegistryObject<Item> SOUL_CRYSTAL = register("soul_crystal", SoulCrystalItem::new);
     public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", DragonStaffItem::new);

@@ -6,7 +6,7 @@ import WolfShotz.Wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRend
 import WolfShotz.Wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRenderer;
-import WolfShotz.Wyrmroost.client.render.entity.less_dwyrm.LessDWyrmRenderer;
+import WolfShotz.Wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
@@ -126,7 +126,7 @@ public class ClientEvents
     public static void registerEntityRenders()
     {
         registerEntityRenderingHandler(WREntities.OVERWORLD_DRAKE.get(), OWDrakeRenderer::new);
-        registerEntityRenderingHandler(WREntities.MINUTUS.get(), LessDWyrmRenderer::new);
+        registerEntityRenderingHandler(WREntities.LESSER_DESERTWYRM.get(), LDWyrmRenderer::new);
         registerEntityRenderingHandler(WREntities.SILVER_GLIDER.get(), SilverGliderRenderer::new);
         registerEntityRenderingHandler(WREntities.ROOSTSTALKER.get(), RoostStalkerRenderer::new);
         registerEntityRenderingHandler(WREntities.BUTTERFLY_LEVIATHAN.get(), ButterflyLeviathanRenderer::new);

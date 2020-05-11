@@ -32,7 +32,7 @@ public class DragonInvHandler extends ItemStackHandler
         if (stacks.isEmpty()) return true;
         if (slot > stacks.size())
         {
-            ModUtils.L.error("slots too high but ok..");
+            ModUtils.L.error("slot's too high but ok..");
             return true;
         }
         return stacks.stream().filter(s -> stacks.indexOf(s) > slot).allMatch(ItemStack::isEmpty);

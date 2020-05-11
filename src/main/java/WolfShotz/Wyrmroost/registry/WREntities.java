@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.content.entities.dragon.*;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
-import com.google.common.collect.Sets;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
@@ -15,7 +15,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static net.minecraftforge.common.BiomeDictionary.Type;
 
@@ -29,7 +28,7 @@ public class WREntities
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<EntityType<MinutusEntity>> MINUTUS = register("minutus", 0xD6BCBC, 0xDEB6C7, creature(MinutusEntity::new).size(0.6f, 0.2f));
+    public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = register("lesser_desertwyrm", 0xD6BCBC, 0xDEB6C7, creature(LDWyrmEntity::new).size(0.6f, 0.2f));
     public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = register("overworld_drake", 0x788716, 0x3E623E, creature(OWDrakeEntity::new).size(2.376f, 2.45f));
     public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER = register("silver_glider", 0xC8C8C8, 0xC4C4C4, creature(SilverGliderEntity::new).size(1.5f, 0.75f));
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = register("roost_stalker", 0x52100D, 0x959595, creature(RoostStalkerEntity::new).size(0.65f, 0.5f));
@@ -47,14 +46,14 @@ public class WREntities
     public static void registerEntityWorldSpawns()
     {
         // OW
-        registerSpawnEntry(OVERWORLD_DRAKE.get(), 8, 1, 3, getByTypes(Type.SAVANNA, Type.PLAINS));
-        registerSpawnEntry(MINUTUS.get(), 35, 1, 1, getByTypes(Type.SANDY).stream().filter(b -> !BiomeDictionary.hasType(b, Type.MESA)).collect(Collectors.toSet()));
-        registerCustomSpawnEntry(SILVER_GLIDER.get(), 2, 2, 5, EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::canSpawnHere, getByTypes(Type.BEACH, Type.PLAINS));
-        registerSpawnEntry(ROOSTSTALKER.get(), 7, 3, 18, getByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
-        DragonFruitDrakeEntity.handleSpawning();
+        basicSpawnConditions(OVERWORLD_DRAKE.get(), 8, 1, 3, ModUtils.getBiomesByType(Type.SAVANNA, Type.PLAINS));
+        LDWyrmEntity.setSpawnConditions();
+        SilverGliderEntity.setSpawnConditions();
+        basicSpawnConditions(ROOSTSTALKER.get(), 7, 3, 13, ModUtils.getBiomesByType(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
+        DragonFruitDrakeEntity.setSpawnConditions();
 
-        ButterflyLeviathanEntity.handleSpawning();
-        registerSpawnEntry(CANARI_WYVERN.get(), 9, 2, 5, BiomeDictionary.getBiomes(Type.SWAMP));
+        ButterflyLeviathanEntity.setSpawnConditions();
+        basicSpawnConditions(CANARI_WYVERN.get(), 9, 2, 5, BiomeDictionary.getBiomes(Type.SWAMP));
     }
 
     // ================================
@@ -69,41 +68,13 @@ public class WREntities
 //                .setShouldReceiveVelocityUpdates(true);
     }
 
-    private static <T extends MobEntity> void registerSpawnEntry(EntityType<T> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
+    private static <T extends MobEntity> void basicSpawnConditions(EntityType<T> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
     {
-        registerBiomeSpawnEntry(entity, frequency, minAmount, maxAmount, biomes);
+        biomes.forEach(b -> b.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
         EntitySpawnPlacementRegistry.register(entity,
                 EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                (type, world, reason, blockPos, rng) -> // Allow Spawning on any block that is lit and above sea level
-                        blockPos.getY() > world.getSeaLevel() - 20 && world.getLightSubtracted(blockPos, 0) > 8);
-    }
-
-    /**
-     * Helper method allowing for easier entity world spawning setting
-     */
-    private static <T extends MobEntity> void registerCustomSpawnEntry(EntityType<T> entity, int frequency, int minAmount, int maxAmount, EntitySpawnPlacementRegistry.PlacementType placementType, Heightmap.Type heightMapType, EntitySpawnPlacementRegistry.IPlacementPredicate canSpawnHere, Set<Biome> biomes)
-    {
-        registerBiomeSpawnEntry(entity, frequency, minAmount, maxAmount, biomes);
-        EntitySpawnPlacementRegistry.register(entity, placementType, heightMapType, canSpawnHere);
-    }
-
-    /**
-     * Helper method allowing for easier entity world spawning setting
-     */
-    public static void registerBiomeSpawnEntry(EntityType<?> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
-    {
-        biomes.forEach(biome -> biome.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
-    }
-
-    /**
-     * Group all biomes into one set according to their BiomeDictionary Types
-     */
-    public static Set<Biome> getByTypes(Type... types)
-    {
-        Set<Biome> biomes = Sets.newHashSet();
-        for (Type type : types) biomes.addAll(BiomeDictionary.getBiomes(type));
-        return biomes;
+                MobEntity::canSpawnOn);
     }
 
     public static <T extends Entity> RegistryObject<EntityType<T>> register(String name, EntityType.Builder<T> type)

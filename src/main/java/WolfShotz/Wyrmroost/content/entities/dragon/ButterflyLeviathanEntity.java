@@ -41,9 +41,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
@@ -52,7 +52,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -107,18 +106,19 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     protected net.minecraft.entity.ai.controller.BodyController createBodyController() { return new BodyController(); }
 
-    public static void handleSpawning()
+    public static void setSpawnConditions()
     {
-        WREntities.registerBiomeSpawnEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1, WREntities.getByTypes(BiomeDictionary.Type.OCEAN));
+        BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
+                .forEach(b -> b.getSpawns(EntityClassification.WATER_CREATURE)
+                        .add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1)));
         EntitySpawnPlacementRegistry.register(WREntities.BUTTERFLY_LEVIATHAN.get(),
                 EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                ButterflyLeviathanEntity::canSpawnHere);
-    }
-
-    public static boolean canSpawnHere(EntityType<? extends MobEntity> typeIn, IWorld worldIn, SpawnReason reason, BlockPos pos, Random randomIn)
-    {
-        return worldIn.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
+                (bfly, world, reason, pos, rng) ->
+                {
+                    if (reason == SpawnReason.SPAWNER) return true;
+                    return world.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
+                });
     }
 
     @Override

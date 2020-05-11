@@ -7,15 +7,14 @@ import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.DragonBreedG
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.FlyerFollowOwnerGoal;
 import WolfShotz.Wyrmroost.content.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.EntityDataEntry;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -26,16 +25,16 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -69,11 +68,20 @@ public class SilverGliderEntity extends AbstractDragonEntity
         getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.366836d);
     }
 
-    public static <T extends AbstractDragonEntity> boolean canSpawnHere(EntityType<T> glider, IWorld world, SpawnReason reason, BlockPos blockPos, Random rand)
+    public static void setSpawnConditions()
     {
-        Block block = world.getBlockState(blockPos.down(1)).getBlock();
+        ModUtils.getBiomesByType(BiomeDictionary.Type.OCEAN, BiomeDictionary.Type.BEACH).forEach(e ->
+                e.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.SILVER_GLIDER.get(), 10, 1, 4)));
+        EntitySpawnPlacementRegistry.register(WREntities.SILVER_GLIDER.get(),
+                EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
+                Heightmap.Type.MOTION_BLOCKING,
+                (glider, world, reason, blockPos, rand) -> // Tropical-like creature. Can spawn on beaches and over oceans.
+                {
+                    if (reason == SpawnReason.SPAWNER) return true;
+                    Block block = world.getBlockState(blockPos.down(1)).getBlock();
 
-        return block == Blocks.AIR || block == Blocks.SAND || block == Blocks.WATER;
+                    return block == Blocks.AIR || block == Blocks.SAND;
+                });
     }
 
     @Override

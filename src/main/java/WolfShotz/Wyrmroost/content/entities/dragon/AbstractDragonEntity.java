@@ -837,7 +837,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
-        Optional<CustomSpawnEggItem> egg = CustomSpawnEggItem.EGG_TYPES.stream().filter(e -> e.type.get() == getType()).findFirst();
+        Optional<CustomSpawnEggItem> egg = CustomSpawnEggItem.EGG_TYPES.stream().filter(e -> getType().equals(e.type.get())).findFirst();
         return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
 

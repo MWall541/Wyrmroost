@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.util;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -17,7 +18,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -29,7 +32,6 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -117,20 +119,25 @@ public class ModUtils
         return translation;
     }
 
+    /**
+     * Play a sound on the local client.
+     *
+     * @param world  :thinking:
+     * @param pos    the pos to play it at (I haven't seen this change anything tho...)
+     * @param sound  again, :thinking:
+     * @param volume so help me god
+     * @param pitch  the pitch of the sound. lower values = sulfur hexafloride, higher values = dying chipmunk
+     */
     public static void playLocalSound(World world, BlockPos pos, SoundEvent sound, float volume, float pitch)
     {
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
     }
 
-    /**
-     * Find the first occurrence of a given string and replace it.
-     *
-     * @param string      The string
-     * @param replacing   The first occurence were replacing
-     * @param replaceWith What were replacing that first occurence with
-     */
-    public static String replaceFirst(String string, String replacing, String replaceWith)
+    public static Set<Biome> getBiomesByType(BiomeDictionary.Type... types)
     {
-        return Pattern.compile(replacing, Pattern.LITERAL).matcher(string).replaceFirst(replaceWith);
+        Set<Biome> biomes = Sets.newHashSet();
+        for (BiomeDictionary.Type type : types) biomes.addAll(BiomeDictionary.getBiomes(type));
+        return biomes;
     }
+
 }

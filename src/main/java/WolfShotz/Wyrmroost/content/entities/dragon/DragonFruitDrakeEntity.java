@@ -67,7 +67,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
-    public static void handleSpawning()
+    public static void setSpawnConditions()
     {
         BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
                 .stream()
