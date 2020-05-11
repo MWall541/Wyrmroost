@@ -237,7 +237,7 @@ public class Recipes extends RecipeProvider
                 .build(consumer);
 
         // Food
-        foodCookRecipe(WRItems.MINUTUS.get(), WRItems.COOKED_MINUTUS.get(), 0.35f, 200, "cookedminutus", consumer);
+        foodCookRecipe(WRItems.LDWYRM.get(), WRItems.COOKED_MINUTUS.get(), 0.35f, 200, "cookedminutus", consumer);
         foodCookRecipe(WRItems.RAW_LOWTIER_MEAT.get(), WRItems.COOKED_LOWTIER_MEAT.get(), 0.35f, 150, "cooked_lowtier", consumer);
         foodCookRecipe(WRItems.RAW_COMMON_MEAT.get(), WRItems.COOKED_COMMON_MEAT.get(), 0.35f, 200, "cooked_common", consumer);
         foodCookRecipe(WRItems.RAW_APEX_MEAT.get(), WRItems.COOKED_APEX_MEAT.get(), 0.35f, 200, "cooked_apex", consumer);

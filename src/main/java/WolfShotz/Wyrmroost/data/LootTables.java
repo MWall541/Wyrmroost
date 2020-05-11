@@ -212,8 +212,8 @@ public class LootTables extends LootTableProvider
             // TODO Silver glider, Butterfly Leviathan
             registerEmptyTables(WREntities.SILVER_GLIDER.get(), WREntities.BUTTERFLY_LEVIATHAN.get());
 
-            registerLootTable(WREntities.MINUTUS.get(), LootTable.builder()
-                    .addLootPool(lootTable().addEntry(item(WRItems.MINUTUS.get(), 1).acceptFunction(FIRE_CONDITION)))
+            registerLootTable(WREntities.LESSER_DESERTWYRM.get(), LootTable.builder()
+                    .addLootPool(lootTable().addEntry(item(WRItems.LDWYRM.get(), 1).acceptFunction(FIRE_CONDITION)))
             );
             registerLootTable(WREntities.OVERWORLD_DRAKE.get(), LootTable.builder()
                     .addLootPool(lootTable().addEntry(item(Items.LEATHER, 1f, 16f).acceptFunction(looting(1f, 4f))))

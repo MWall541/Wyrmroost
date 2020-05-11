@@ -1,9 +1,9 @@
-package WolfShotz.Wyrmroost.client.render.entity.less_dwyrm;
+package WolfShotz.Wyrmroost.client.render.entity.ldwyrm;
 
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
-import WolfShotz.Wyrmroost.content.entities.dragon.MinutusEntity;
+import WolfShotz.Wyrmroost.content.entities.dragon.LDWyrmEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -11,7 +11,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
  * WR Lesser Desertwyrm - Ukan
  * Created using Tabula 7.0.1
  */
-public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
+public class LDWyrmModel extends AdvancedLivingEntityModel<LDWyrmEntity>
 {
     public AdvancedRendererModel body1;
     public AdvancedRendererModel body2;
@@ -33,7 +33,7 @@ public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
     
     private ModelAnimator animator;
 
-    public LessDWyrmModel()
+    public LDWyrmModel()
     {
         this.textureWidth = 30;
         this.textureHeight = 30;
@@ -121,21 +121,21 @@ public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
     }
 
     @Override
-    public void setRotationAngles(MinutusEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setRotationAngles(LDWyrmEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
 
         faceTarget(netHeadYaw, headPitch, 1, head);
     }
-    
+
     @Override
-    public void setLivingAnimations(MinutusEntity minutus, float limbSwing, float limbSwingAmount, float partialTick)
+    public void setLivingAnimations(LDWyrmEntity minutus, float limbSwing, float limbSwingAmount, float partialTick)
     {
         float frame = minutus.ticksExisted;
-        
+
         animator.update(minutus);
         resetToDefaultPose();
-        
+
         if (minutus.isBurrowed())
         {
             body1.rotateAngleX = -0.8f;
@@ -147,8 +147,8 @@ public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
             
             bob(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
         }
-        
-        if (minutus.getAnimation() != MinutusEntity.BITE_ANIMATION)
+
+        if (minutus.getAnimation() != LDWyrmEntity.BITE_ANIMATION)
         {
             walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
             walk(head, 0.45f - globalSpeed, 0.1f, true, 0, (minutus.isBurrowed()? 0f : 0.5f), frame, f);
@@ -157,13 +157,13 @@ public class LessDWyrmModel extends AdvancedLivingEntityModel<MinutusEntity>
         flap(wingR, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
         flap(leg1, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
         flap(leg1_1, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
-        
-        if (minutus.getAnimation() == MinutusEntity.BITE_ANIMATION) bite();
+
+        if (minutus.getAnimation() == LDWyrmEntity.BITE_ANIMATION) bite();
     }
     
     private void bite()
     {
-        animator.setAnimation(MinutusEntity.BITE_ANIMATION);
+        animator.setAnimation(LDWyrmEntity.BITE_ANIMATION);
         
         animator.startKeyframe(4);
         animator.rotate(head, 1f, 0, 0);

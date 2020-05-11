@@ -141,20 +141,20 @@ public class Models
                     .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
 
             // Minutus
-            getBuilder("minutus_alive")
+            getBuilder("desert_wyrm_alive")
                     .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
-                    .texture("layer0", resource("minutus_alive"));
-            item(WRItems.MINUTUS.get())
+                    .texture("layer0", resource("desert_wyrm_alive"));
+            item(WRItems.LDWYRM.get())
                     .override()
-                    .predicate(Wyrmroost.rl("isalive"), 1)
-                    .model(new ModelFile.UncheckedModelFile(resource("minutus_alive")));
+                    .predicate(Wyrmroost.rl("is_alive"), 1f)
+                    .model(new ModelFile.UncheckedModelFile(resource("desert_wyrm_alive")));
 
             // Dragon Staff
             item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
 
             // SpawnEggs
-            for (CustomSpawnEggItem item : CustomSpawnEggItem.EGG_TYPES)
-                itemBare(item).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
+            CustomSpawnEggItem.EGG_TYPES.forEach(i -> itemBare(i)
+                    .parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg"))));
 
             // Item Blocks
 //            item(WRBlocks.CINIS_ROOT.get().asItem());
