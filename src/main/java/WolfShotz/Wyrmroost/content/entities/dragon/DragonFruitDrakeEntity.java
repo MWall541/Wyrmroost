@@ -134,6 +134,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (super.processInteract(player, hand, stack)) return true;
+        if (stack.getItem() == Items.SHEARS)
+            return true; // Shears return false on entity interactions. bad, but workaround for it.
 
         if (!isTamed() && isChild() && isFoodItem(stack))
         {
