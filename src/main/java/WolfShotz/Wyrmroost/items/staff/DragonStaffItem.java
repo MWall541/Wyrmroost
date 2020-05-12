@@ -70,10 +70,24 @@ public class DragonStaffItem extends Item
         return null;
     }
 
-    public static void reset(PlayerEntity player, ItemStack stack)
+    /**
+     * Triggered when right clicked on air
+     */
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
     {
-        if (stack.hasTag()) stack.getTag().remove(DATA_DRAGON_ID);
-        setAction(StaffAction.DEFAULT, player, stack);
+        ItemStack stack = player.getHeldItem(hand);
+        if (player.isSneaking() && stack.hasTag() && stack.getTag().contains(DATA_DRAGON_ID))
+        {
+            reset(stack.getTag());
+            ModUtils.playLocalSound(world, player.getPosition(), SoundEvents.BLOCK_SCAFFOLDING_STEP, 1, 1);
+            return ActionResult.resultSuccess(stack);
+        }
+
+        AbstractDragonEntity dragon = getBoundDragon(world, stack);
+        if (dragon != null && getAction(stack).rightClick(dragon, player, stack))
+            return ActionResult.resultSuccess(stack);
+        return ActionResult.resultPass(stack);
     }
 
     public static void assertStaff(ItemStack stack)
@@ -132,26 +146,6 @@ public class DragonStaffItem extends Item
         return ActionResultType.PASS;
     }
 
-    /**
-     * Triggered when right clicked on air
-     */
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
-    {
-        ItemStack stack = player.getHeldItem(hand);
-        if (player.isSneaking() && stack.hasTag() && stack.getTag().contains(DATA_DRAGON_ID))
-        {
-            reset(player, stack);
-            ModUtils.playLocalSound(world, player.getPosition(), SoundEvents.BLOCK_SCAFFOLDING_STEP, 1, 1);
-            return ActionResult.resultSuccess(stack);
-        }
-
-        AbstractDragonEntity dragon = getBoundDragon(world, stack);
-        if (dragon != null && getAction(stack).rightClick(dragon, player, stack))
-            return ActionResult.resultSuccess(stack);
-        return ActionResult.resultPass(stack);
-    }
-
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
@@ -160,13 +154,12 @@ public class DragonStaffItem extends Item
         {
             AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
             if (dragon != null)
+            {
                 tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", new StringTextComponent(dragon.getName().getUnformattedComponentText()).applyTextStyle(TextFormatting.AQUA)));
-            tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", new TranslationTextComponent(getAction(stack).getTranslateKey(dragon)).applyTextStyle(TextFormatting.AQUA).getFormattedText()));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", new TranslationTextComponent(getAction(stack).getTranslateKey(dragon)).applyTextStyle(TextFormatting.AQUA).getFormattedText()));
+            }
         }
     }
-
-    @Override
-    public boolean hasEffect(ItemStack stack) { return getAction(stack) != StaffAction.DEFAULT; }
 
     /**
      * Not ideal whatsoever, but its literally the best we can do.
@@ -177,8 +170,17 @@ public class DragonStaffItem extends Item
     @Override
     public boolean updateItemStackNBT(CompoundNBT nbt)
     {
-        if (nbt.contains(DATA_DRAGON_ID)) nbt.remove(DATA_DRAGON_ID);
-        nbt.putInt(DATA_ACTION, StaffAction.DEFAULT.ordinal());
+        reset(nbt);
         return false;
+    }
+
+    @Override
+    public boolean hasEffect(ItemStack stack) { return getAction(stack) != StaffAction.DEFAULT; }
+
+    public static void reset(@Nullable CompoundNBT tag)
+    {
+        if (tag == null) return;
+        if (tag.contains(DATA_DRAGON_ID)) tag.remove(DATA_DRAGON_ID);
+        if (tag.contains(DATA_ACTION)) tag.remove(DATA_ACTION);
     }
 }
