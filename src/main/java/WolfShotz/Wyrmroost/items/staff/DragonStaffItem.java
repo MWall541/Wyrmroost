@@ -16,6 +16,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -25,8 +26,8 @@ import java.util.List;
 
 public class DragonStaffItem extends Item
 {
-    public static final String DATA_DRAGON_ID = "BoundDragon";
-    public static final String DATA_ACTION = "Action";
+    public static final String DATA_DRAGON_ID = "BoundDragon"; // int
+    public static final String DATA_ACTION = "Action"; // int
 
     public DragonStaffItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
 
@@ -159,11 +160,25 @@ public class DragonStaffItem extends Item
         {
             AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
             if (dragon != null)
-                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", dragon.getName().getFormattedText()));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", new StringTextComponent(dragon.getName().getUnformattedComponentText()).applyTextStyle(TextFormatting.AQUA)));
             tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", new TranslationTextComponent(getAction(stack).getTranslateKey(dragon)).applyTextStyle(TextFormatting.AQUA).getFormattedText()));
         }
     }
 
     @Override
     public boolean hasEffect(ItemStack stack) { return getAction(stack) != StaffAction.DEFAULT; }
+
+    /**
+     * Not ideal whatsoever, but its literally the best we can do.
+     * Storing the uuid of the dragons means we would have to get that dragon by uuid, which we cant on client,
+     * and this item requires almost constant syncing.
+     * The solution is to just remove everything.
+     */
+    @Override
+    public boolean updateItemStackNBT(CompoundNBT nbt)
+    {
+        if (nbt.contains(DATA_DRAGON_ID)) nbt.remove(DATA_DRAGON_ID);
+        nbt.putInt(DATA_ACTION, StaffAction.DEFAULT.ordinal());
+        return false;
+    }
 }
