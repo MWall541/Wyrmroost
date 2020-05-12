@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -64,6 +65,12 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
 
                 ms.rotate(Vector3f.YP.rotationDegrees(netHeadYaw / 3f));
                 ms.rotate(Vector3f.XP.rotationDegrees(90));
+
+                if (stack.getItem() instanceof BlockItem)
+                {
+                    ms.scale(0.5f, 0.5f, 0.5f);
+                    ms.translate(0, -0.8, -1.3);
+                }
 
                 if (stalker.isSleeping() && stalker.getAnimation() != RoostStalkerEntity.WAKE_ANIMATION)
                 {

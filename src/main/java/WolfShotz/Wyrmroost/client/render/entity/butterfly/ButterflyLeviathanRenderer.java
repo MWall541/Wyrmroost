@@ -6,7 +6,9 @@ import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
 
@@ -52,14 +54,17 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     }
 
     @Override
-    public void render(ButterflyLeviathanEntity entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+    public void render(ButterflyLeviathanEntity entity, float entityYaw, float partialTicks, MatrixStack ms, IRenderTypeBuffer bufferIn, int packedLightIn)
     {
-        super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+        super.render(entity, entityYaw, partialTicks, ms, bufferIn, packedLightIn);
 
-//        if (shouldRenderConduit(entity))
-//        {
-//            Vec3d vec3d = entity.getConduitPos(new Vec3d(x, y, z));
-//            ConduitRenderer.render(renderManager.textureManager, entity.ticksExisted, vec3d.x, vec3d.y, vec3d.z, partialTicks);
-//        }
+        if (shouldRenderConduit(entity))
+        {
+            Vec3d vec3d = entity.getConduitPos(new Vec3d(0, 0, 0));
+            ms.push();
+            ms.translate(vec3d.x, vec3d.y, vec3d.z);
+            ConduitRenderer.render(entity, partialTicks, ms, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY);
+            ms.pop();
+        }
     }
 }

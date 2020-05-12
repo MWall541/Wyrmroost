@@ -27,7 +27,6 @@ import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -243,10 +242,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public Collection<Item> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
     
-    public boolean canPickUpStack(ItemStack stack)
-    {
-        return !(stack.getItem() instanceof BlockItem) && stack.getItem() != Items.GOLD_NUGGET;
-    }
+    public boolean canPickUpStack(ItemStack stack) { return stack.getItem() != Items.GOLD_NUGGET; }
 
     @Override
     public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 1)); }

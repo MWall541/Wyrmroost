@@ -468,7 +468,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public Vec3d getConduitPos(Vec3d offset)
     {
-        return QuikMaths.calculateYawAngle(renderYawOffset, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
+        return QuikMaths.calculateYawAngle(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
     }
 
     public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER, true); }
@@ -495,10 +495,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
      * Array Containing all of the dragons food items
      */
     @Override
-    public Collection<Item> getFoodItems()
-    {
-        return WRItems.Tags.MEATS.getAllElements();
-    }
+    public Collection<Item> getFoodItems() { return WRItems.Tags.DRAGON_MEATS.getAllElements(); }
 
     @Override
     public boolean isBreedingItem(ItemStack stack)
