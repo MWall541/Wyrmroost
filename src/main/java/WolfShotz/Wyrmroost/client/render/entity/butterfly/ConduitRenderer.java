@@ -1,135 +1,81 @@
-//package WolfShotz.Wyrmroost.client.render.entity.butterfly;
-//
-//import WolfShotz.Wyrmroost.util.*;
-//import com.mojang.blaze3d.platform.*;
-//import net.minecraft.client.*;
-//import net.minecraft.client.renderer.*;
-//import net.minecraft.client.renderer.entity.model.*;
-//import net.minecraft.client.renderer.model.*;
-//import net.minecraft.client.renderer.texture.*;
-//import net.minecraft.util.*;
-//import net.minecraft.util.math.*;
-//
-//public class ConduitRenderer
-//{
-//    private static final ResourceLocation CAGE_TEXTURE = new ResourceLocation("textures/entity/conduit/cage.png");
-//    private static final ResourceLocation WIND_TEXTURE = new ResourceLocation("textures/entity/conduit/wind.png");
-//    private static final ResourceLocation VERTICAL_WIND_TEXTURE = new ResourceLocation("textures/entity/conduit/wind_vertical.png");
-//    private static final ResourceLocation OPEN_EYE_TEXTURE = new ResourceLocation("textures/entity/conduit/open_eye.png");
-//    private static final CageModel CAGE = new CageModel();
-//    private static final EyeModel EYE = new EyeModel();
-//    private static final WindModel WIND = new WindModel();
-//
-//    public static void render(TextureManager textureManager, float ticks, double x, double y, double z, float partialTicks)
-//    {
-//        float f = ticks + partialTicks;
-//        float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
-//        f2 += f2 * f2;
-//
-//        // Render Cage Model
-//        textureManager.bindTexture(CAGE_TEXTURE);
-//        GlStateManager.disableCull();
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translatef((float) x, (float) y + 0.3f + f2 * 0.2f, (float) z);
-//        GlStateManager.rotatef((f * -0.0375f) * (180 / QuikMaths.PI), 0.5F, 1.0F, 0.5F);
-//        CAGE.render();
-//        GlStateManager.popMatrix();
-//        int j = (int) ticks / 3 % 22;
-//        WIND.setBoxIndex(j);
-//        int k = (int) ticks / 66 % 3;
-//
-//        // Render Wind Model
-//        if (k == 1) textureManager.bindTexture(VERTICAL_WIND_TEXTURE);
-//        else textureManager.bindTexture(WIND_TEXTURE);
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translated(x, y + 0.5d, z);
-//        if (k != 0) GlStateManager.rotatef(90f, 0, 0, 1f);
-//        WIND.render();
-//        GlStateManager.popMatrix();
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translated(x, y + 0.5d, z);
-//        GlStateManager.scalef(0.875f, 0.875f, 0.875F);
-//        GlStateManager.rotatef(180f, 1f, 0, 0);
-//        GlStateManager.rotatef(180f, 0, 0, 1f);
-//        WIND.render();
-//        GlStateManager.popMatrix();
-//
-//        // Render Eye Model
-//        ActiveRenderInfo activeRenderInfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
-//
-//        textureManager.bindTexture(OPEN_EYE_TEXTURE);
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translatef((float) x, (float) y + 0.3f + f2 * 0.2f, (float) z);
-//        GlStateManager.scalef(0.5f, 0.5f, 0.5f);
-//        GlStateManager.rotatef(-activeRenderInfo.getYaw(), 0, 1f, 0);
-//        GlStateManager.rotatef(activeRenderInfo.getPitch(), 1f, 0, 0);
-//        GlStateManager.rotatef(180f, 0, 0, 1);
-//        EYE.render();
-//        GlStateManager.popMatrix();
-//    }
-//
-//    static class CageModel extends Model
-//    {
-//        private final RendererModel cageBox;
-//
-//        public CageModel()
-//        {
-//            this.textureWidth = 32;
-//            this.textureHeight = 16;
-//            this.cageBox = new RendererModel(this, 0, 0);
-//            this.cageBox.addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8);
-//        }
-//
-//        public void render()
-//        {
-//            this.cageBox.render(0.0625f);
-//        }
-//    }
-//
-//    static class EyeModel extends Model
-//    {
-//        private final RendererModel eyeBox;
-//
-//        public EyeModel()
-//        {
-//            this.textureWidth = 8;
-//            this.textureHeight = 8;
-//            this.eyeBox = new RendererModel(this, 0, 0);
-//            this.eyeBox.addBox(-4.0F, -4.0F, 0.0F, 8, 8, 0, 0.01F);
-//        }
-//
-//        public void render()
-//        {
-//            this.eyeBox.render(0.083333336f);
-//        }
-//    }
-//
-//    static class WindModel extends Model
-//    {
-//        private final RendererModel[] windBoxes = new RendererModel[22];
-//        private int boxIndex;
-//
-//        public WindModel()
-//        {
-//            this.textureWidth = 64;
-//            this.textureHeight = 1024;
-//
-//            for (int i = 0; i < 22; ++i)
-//            {
-//                windBoxes[i] = new RendererModel(this, 0, 32 * i);
-//                windBoxes[i].addBox(-8.0F, -8.0F, -8.0F, 16, 16, 16);
-//            }
-//
-//        }
-//
-//        public void setBoxIndex(int index)
-//        {
-//            this.boxIndex = index;
-//        }
-//
-//        public void render()
-//        {
-//            windBoxes[boxIndex].render(0.0625f);
-//        }
-//    }
-//}
+package WolfShotz.Wyrmroost.client.render.entity.butterfly;
+
+import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.util.QuikMaths;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+
+public class ConduitRenderer
+{
+    public static final Material CAGE_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/cage"));
+    public static final Material WIND_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/wind"));
+    public static final Material VERTICAL_WIND_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/wind_vertical"));
+    public static final Material OPEN_EYE_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/open_eye"));
+
+    private static final ModelRenderer CAGE_MODEL = new ModelRenderer(16, 16, 0, 0);
+    private static final ModelRenderer WIND_MODEL = new ModelRenderer(64, 32, 0, 0);
+    private static final ModelRenderer EYE = new ModelRenderer(32, 16, 0, 0);
+
+    static
+    {
+        CAGE_MODEL.addBox(-4.0F, -4.0F, 0.0F, 8.0F, 8.0F, 0.0F, 0.01F);
+        WIND_MODEL.addBox(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F);
+        EYE.addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F);
+    }
+
+    public static void render(ButterflyLeviathanEntity entity, float partialTicks, MatrixStack ms, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn)
+    {
+        float f = (float) entity.ticksExisted + partialTicks;
+        float f1 = (f * -0.0375f) * (180f / QuikMaths.PI);
+        float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
+        f2 = f2 * f2 + f2;
+
+        // Eye
+        ms.push();
+        ms.translate(0, (0.3F + f2 * 0.2F), 0);
+        Vector3f vector3f = new Vector3f(0.5F, 1.0F, 0.5F);
+        vector3f.normalize();
+        ms.rotate(new Quaternion(vector3f, f1, true));
+        EYE.render(ms, CAGE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), combinedLightIn, combinedOverlayIn);
+        ms.pop();
+
+        // Wind
+        int i = entity.ticksExisted / 66 % 3;
+        ms.push();
+        ms.translate(0, 0.5D, 0);
+        if (i == 1) ms.rotate(Vector3f.XP.rotationDegrees(90.0F));
+        else if (i == 2) ms.rotate(Vector3f.ZP.rotationDegrees(90.0F));
+        IVertexBuilder builder = (i == 1? VERTICAL_WIND_TEXTURE : WIND_TEXTURE).getBuffer(buffer, RenderType::getEntityCutoutNoCull);
+        WIND_MODEL.render(ms, builder, combinedLightIn, combinedOverlayIn);
+        ms.pop();
+
+        // Wind but its the second time
+        ms.push();
+        ms.scale(0.875F, 0.875F, 0.875F);
+        ms.rotate(Vector3f.XP.rotationDegrees(180.0F));
+        ms.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+        WIND_MODEL.render(ms, builder, combinedLightIn, combinedOverlayIn);
+        ms.pop();
+
+        // The cage thingy
+        ActiveRenderInfo activerenderinfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
+        ms.push();
+        ms.translate(0, (0.3F + f2 * 0.2F), 0);
+        ms.scale(0.5F, 0.5F, 0.5F);
+        float f3 = -activerenderinfo.getYaw();
+        ms.rotate(Vector3f.YP.rotationDegrees(f3));
+        ms.rotate(Vector3f.XP.rotationDegrees(activerenderinfo.getPitch()));
+        ms.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+        float f4 = 1.3333334F;
+        ms.scale(f4, f4, f4);
+        CAGE_MODEL.render(ms, OPEN_EYE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), combinedLightIn, combinedOverlayIn);
+        ms.pop();
+    }
+}

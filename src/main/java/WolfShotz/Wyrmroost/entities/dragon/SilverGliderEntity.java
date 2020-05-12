@@ -101,7 +101,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             public Vec3d getPosition()
             {
                 Vec3d vec3d = super.getPosition();
-                if (isFlying())
+                if (vec3d != null && isFlying())
                 {
                     for (int i = 1; i < 4; i++) // avoid water: y value is always positive
                         if (world.getBlockState(SilverGliderEntity.this.getPosition().down(i)).getMaterial().isLiquid())

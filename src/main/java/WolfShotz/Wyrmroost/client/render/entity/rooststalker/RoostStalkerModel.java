@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
 import WolfShotz.Wyrmroost.entities.dragon.RoostStalkerEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.item.BlockItem;
 
 /**
  * Roost stalker - nova
@@ -231,14 +232,18 @@ public class RoostStalkerModel extends AdvancedLivingEntityModel<RoostStalkerEnt
             staySleep();
             wakeAnim();
         }
-        
+
         if (currentAnim == RoostStalkerEntity.SCAVENGE_ANIMATION)
             scavengeAnim(stalker.getAnimationTick(), frame);
 
         boolean flag = stalker.getItem().isEmpty() || stalker.isSleeping();
         idle(frame, flag);
-        
-        if (!flag) jaw.rotateAngleX = 0.15f;
+
+        if (!flag)
+        {
+            if (stalker.getItem().getItem() instanceof BlockItem) jaw.rotateAngleX = 0.3f;
+            else jaw.rotateAngleX = 0.15f;
+        }
     }
     
     public void idle(float frame, boolean head)
