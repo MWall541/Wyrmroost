@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
-import WolfShotz.Wyrmroost.content.entities.dragon.RoostStalkerEntity;
+import WolfShotz.Wyrmroost.entities.dragon.RoostStalkerEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

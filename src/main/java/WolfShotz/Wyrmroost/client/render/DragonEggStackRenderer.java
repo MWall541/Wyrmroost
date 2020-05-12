@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.client.render;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggModel;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

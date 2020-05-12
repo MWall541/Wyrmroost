@@ -1,11 +1,11 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.items.*;
-import WolfShotz.Wyrmroost.content.items.base.ArmorMaterialList;
-import WolfShotz.Wyrmroost.content.items.base.ItemArmorBase;
-import WolfShotz.Wyrmroost.content.items.base.ToolMaterialList;
-import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
+import WolfShotz.Wyrmroost.items.*;
+import WolfShotz.Wyrmroost.items.base.ArmorMaterialList;
+import WolfShotz.Wyrmroost.items.base.ItemArmorBase;
+import WolfShotz.Wyrmroost.items.base.ToolMaterialList;
+import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.EquipmentSlotType;

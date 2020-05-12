@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.client;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
@@ -10,18 +9,15 @@ import WolfShotz.Wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.network.messages.DragonKeyBindMessage;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRKeyBinds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 

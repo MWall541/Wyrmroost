@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.client.screen.DebugScreen;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.content.items.DrakeArmorItem;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.multipart.IMultiPartEntity;
+import WolfShotz.Wyrmroost.items.DrakeArmorItem;
 import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;

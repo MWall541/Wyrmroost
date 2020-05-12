@@ -12,24 +12,18 @@ public class ModelAnimator
     private int tempTick = 0;
     private int prevTempTick;
     private boolean correctAnimation = false;
-    private IAnimatedObject entity;
+    private IAnimatedEntity entity;
     private boolean keyFrameInverted = false;
     private HashMap<AdvancedRendererModel, BoxPosCache> boxPosCache = new HashMap<>();
     private HashMap<AdvancedRendererModel, BoxPosCache> prevPosCache = new HashMap<>();
     
     private ModelAnimator() {}
-    
-    public static ModelAnimator create()
-    {
-        return new ModelAnimator();
-    }
-    
-    public IAnimatedObject getEntity()
-    {
-        return entity;
-    }
-    
-    public void update(IAnimatedObject entity)
+
+    public static ModelAnimator create() { return new ModelAnimator(); }
+
+    public IAnimatedEntity getEntity() { return entity; }
+
+    public void update(IAnimatedEntity entity)
     {
         this.tempTick = prevTempTick = 0;
         this.correctAnimation = false;

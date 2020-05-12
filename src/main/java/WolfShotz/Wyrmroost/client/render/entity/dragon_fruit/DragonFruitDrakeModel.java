@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.client.render.entity.dragon_fruit;
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
-import WolfShotz.Wyrmroost.content.entities.dragon.DragonFruitDrakeEntity;
+import WolfShotz.Wyrmroost.entities.dragon.DragonFruitDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

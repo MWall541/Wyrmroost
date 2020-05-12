@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.client.render;
 
 import WolfShotz.Wyrmroost.WRConfig;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
-import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
+import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;

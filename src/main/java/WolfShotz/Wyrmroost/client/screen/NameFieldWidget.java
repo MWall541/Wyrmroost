@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.screen;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.network.messages.EntityRenameMessage;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;

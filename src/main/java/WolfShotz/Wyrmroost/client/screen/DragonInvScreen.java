@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.screen;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.containers.DragonInvContainer;
+import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;

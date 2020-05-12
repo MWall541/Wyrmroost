@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.client.render.entity.canari;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.content.entities.dragon.CanariWyvernEntity;
+import WolfShotz.Wyrmroost.entities.dragon.CanariWyvernEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 

@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.client.render.entity.dragon_egg;
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
+import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.RenderType;

@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.render.entity.ldwyrm;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.LDWyrmEntity;
+import WolfShotz.Wyrmroost.entities.dragon.LDWyrmEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;

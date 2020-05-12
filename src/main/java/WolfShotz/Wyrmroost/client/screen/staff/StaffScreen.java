@@ -1,9 +1,9 @@
 package WolfShotz.Wyrmroost.client.screen.staff;
 
 import WolfShotz.Wyrmroost.client.screen.NameFieldWidget;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
-import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
+import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;

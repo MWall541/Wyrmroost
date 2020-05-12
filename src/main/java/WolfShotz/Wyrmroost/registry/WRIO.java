@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.screen.DragonInvScreen;
-import WolfShotz.Wyrmroost.content.containers.DragonInvContainer;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.containers.DragonInvContainer;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.Container;

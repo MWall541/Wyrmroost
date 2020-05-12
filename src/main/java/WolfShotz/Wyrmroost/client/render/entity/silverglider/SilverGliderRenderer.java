@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.client.render.entity.silverglider;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;

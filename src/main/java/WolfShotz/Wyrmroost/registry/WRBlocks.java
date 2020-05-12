@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.blocks.base.EXPBlock;
+import WolfShotz.Wyrmroost.blocks.base.EXPBlock;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;

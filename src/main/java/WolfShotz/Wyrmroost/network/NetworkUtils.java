@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.network;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.client.animation.IAnimatedObject;
+import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.network.messages.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
@@ -29,13 +29,13 @@ public class NetworkUtils
         ++messageIndex;
         Wyrmroost.NETWORK.registerMessage(messageIndex, clazz, IMessage::encode, decoder, IMessage::handle);
     }
-    
-    public static <T extends Entity & IAnimatedObject> void sendAnimationPacket(T entity, Animation animation)
+
+    public static <T extends Entity & IAnimatedEntity> void sendAnimationPacket(T entity, Animation animation)
     {
         if (entity.world.isRemote) return; // Why are we even sending this then...?
-        
+
         AnimationMessage message = new AnimationMessage(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation));
-        
+
         entity.setAnimation(animation);
         Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);
     }

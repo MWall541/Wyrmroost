@@ -1,10 +1,10 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.entities.dragon.*;
-import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.entities.dragon.*;
+import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
+import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
+import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.*;
 import net.minecraft.world.biome.Biome;

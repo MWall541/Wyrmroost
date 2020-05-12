@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.network.messages;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.network.IMessage;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.network.PacketBuffer;

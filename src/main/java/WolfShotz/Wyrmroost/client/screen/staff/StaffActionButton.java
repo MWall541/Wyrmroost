@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.client.screen.staff;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.items.staff.DragonStaffItem;
-import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
+import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
+import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.messages.StaffActionMessage;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;

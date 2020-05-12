@@ -4,17 +4,17 @@ import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
-import WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity;
+import WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Random;
 
-import static WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity.SLEEP_ANIMATION;
-import static WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity.WAKE_ANIMATION;
-import static WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity.SIT_ANIMATION;
-import static WolfShotz.Wyrmroost.content.entities.dragon.SilverGliderEntity.STAND_ANIMATION;
+import static WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity.SLEEP_ANIMATION;
+import static WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity.WAKE_ANIMATION;
+import static WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity.SIT_ANIMATION;
+import static WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity.STAND_ANIMATION;
 
 /**
  * WRSilverGlider - Kingdomall

@@ -1,10 +1,10 @@
 //package WolfShotz.Wyrmroost.registry;
 //
 //import WolfShotz.Wyrmroost.Wyrmroost;
-//import WolfShotz.Wyrmroost.content.world.biomes.AshDesertBiome;
-//import WolfShotz.Wyrmroost.content.world.biomes.CausticSwampBiome;
-//import WolfShotz.Wyrmroost.content.world.biomes.FrostCrevasseBiome;
-//import WolfShotz.Wyrmroost.content.world.biomes.StygianSeaBiome;
+//import WolfShotz.Wyrmroost.world.biomes.AshDesertBiome;
+//import WolfShotz.Wyrmroost.world.biomes.CausticSwampBiome;
+//import WolfShotz.Wyrmroost.world.biomes.FrostCrevasseBiome;
+//import WolfShotz.Wyrmroost.world.biomes.StygianSeaBiome;
 //import net.minecraft.world.biome.Biome;
 //import net.minecraftforge.fml.RegistryObject;
 //import net.minecraftforge.registries.DeferredRegister;

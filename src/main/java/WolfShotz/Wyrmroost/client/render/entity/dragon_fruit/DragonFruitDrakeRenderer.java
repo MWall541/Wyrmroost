@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.client.render.entity.dragon_fruit;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.content.entities.dragon.DragonFruitDrakeEntity;
+import WolfShotz.Wyrmroost.entities.dragon.DragonFruitDrakeEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 

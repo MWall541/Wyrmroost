@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.client.render.entity.owdrake;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.content.entities.dragon.OWDrakeEntity;
+import WolfShotz.Wyrmroost.entities.dragon.OWDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

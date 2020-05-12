@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.client.render.entity.ldwyrm;
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
-import WolfShotz.Wyrmroost.content.entities.dragon.LDWyrmEntity;
+import WolfShotz.Wyrmroost.entities.dragon.LDWyrmEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 

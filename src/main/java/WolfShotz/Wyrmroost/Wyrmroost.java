@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
-import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.*;
 import net.minecraft.client.renderer.color.IItemColor;

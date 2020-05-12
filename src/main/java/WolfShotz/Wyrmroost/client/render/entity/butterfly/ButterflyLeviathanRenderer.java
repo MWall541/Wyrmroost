@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.client.render.entity.butterfly;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.entities.dragon.ButterflyLeviathanEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;

@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.data;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.content.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRFluids;
 import WolfShotz.Wyrmroost.registry.WRItems;
