@@ -23,7 +23,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.SaddleItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -88,7 +87,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, 2.1, d -> NetworkUtils.sendAnimationPacket(d, HORN_ATTACK_ANIMATION)));
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(7, new DragonBreedGoal(this, true));
         goalSelector.addGoal(8, new GrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 10f));
@@ -242,13 +241,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (super.processInteract(player, hand, stack)) return true;
 
         // If holding a saddle and this is not a child, Saddle up!
-        if (stack.getItem() instanceof SaddleItem && !isSaddled() && !isChild()) // instaceof: for custom saddles (if any)
+        if (stack.getItem() == Items.SADDLE && !isSaddled() && !isChild()) // instaceof: for custom saddles (if any)
         {
-            invHandler.ifPresent(s ->
-            {
-                s.setStackInSlot(0, stack);
-                consumeItemFromStack(player, stack);
-            });
+            setStackInSlot(SADDLE_SLOT, stack);
+            consumeItemFromStack(player, stack);
             return true;
         }
 
@@ -256,7 +252,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (isOwner(player) && player.isSneaking())
         {
             setSit(!isSitting());
-
             return true;
         }
 

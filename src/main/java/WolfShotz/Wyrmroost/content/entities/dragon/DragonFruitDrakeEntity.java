@@ -96,7 +96,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.registerGoals();
         goalSelector.addGoal(3, new MoveToHomeGoal(this));
         goalSelector.addGoal(4, new ControlledAttackGoal(this, 1.1, false, 1.5d, AbstractDragonEntity::performGenericAttack));
-        goalSelector.addGoal(5, new DragonBreedGoal(this, false, true));
+        goalSelector.addGoal(5, new DragonBreedGoal(this, true));
         goalSelector.addGoal(7, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(8, CommonGoalWrappers.followParent(this, 1));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));

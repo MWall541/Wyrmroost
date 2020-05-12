@@ -25,6 +25,7 @@ import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -424,11 +425,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (stack.interactWithEntity(player, this, hand)) return true;
 
-        if (getGrowingAge() == 0 && canBreed() && isBreedingItem(stack) && isOwner(player) && !player.isSneaking())
+        if (isBreedingItem(stack) && isOwner(player) && !player.isSneaking())
         {
-            eat(stack);
-            setInLove(player);
-
+            if (!world.isRemote && getGrowingAge() == 0 && canBreed())
+            {
+                eat(stack);
+                setInLove(player);
+            }
             return true;
         }
 
@@ -702,7 +705,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (isTamed()) return true;
         boolean flag = tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer);
-        if (world.isRemote) playTameEffect(flag);
         if (flag)
         {
             setTamedBy(tamer);
@@ -735,6 +737,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
             }
         }
+    }
+
+    @Override
+    public boolean canMateWith(AnimalEntity otherAnimal)
+    {
+        if (!super.canMateWith(otherAnimal)) return false;
+        return !isSitting() && !((AbstractDragonEntity) otherAnimal).isSitting();
     }
 
     @Override

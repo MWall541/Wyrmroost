@@ -90,7 +90,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, CommonGoalWrappers.nonTamedTemptGoal(this, 0.6d, true, Ingredient.fromTag(ItemTags.FISHES)));
         goalSelector.addGoal(5, CommonGoalWrappers.nonTamedAvoidGoal(this, PlayerEntity.class, 16f, 1f));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, true, true));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
         goalSelector.addGoal(7, new FlyerFollowOwnerGoal(this, 12d, 3d, 15d, true));
         goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
@@ -177,7 +177,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
             {
                 Vec3d vec3d3 = player.getMotion();
                 player.setMotion(vec3d3.add(0, 0.09, 0));
-                if (vec3d3.y > -0.5d) player.fallDistance = 1f;
 
                 Vec3d vec3d = player.getLookVec();
                 float f6 = player.rotationPitch * (QuikMaths.PI / 180F);
@@ -206,29 +205,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
                 player.setMotion(vec3d3.mul(0.99F, 0.98F, 0.99F));
                 player.move(MoverType.SELF, player.getMotion());
-                if (player.collidedHorizontally && !world.isRemote)
-                {
-                    double d14 = Math.sqrt(horizontalMag(player.getMotion()));
-                    double d4 = d11 - d14;
-                    float f4 = (float) (d4 * 10.0D - 3.0D);
-                    if (f4 > 0.0F)
-                    {
-                        playSound(getFallSound((int) f4), 1.0F, 1.0F);
-                        player.attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
-                        attackEntityFrom(DamageSource.FLY_INTO_WALL, f4);
-                    }
-                }
-//                    Vec3d lookVec = player.getLookVec();
-//                    Vec3d playerMot = player.getMotion();
-//                    double xMot = playerMot.x + (lookVec.x / 12);
-//                    double zMot = playerMot.z + (lookVec.z / 12);
-//                    double yMot = lookVec.y * 1.5;
-//
-//                    if (yMot >= 0) yMot = -0.1f;
-//
-//                    player.setMotion(xMot, yMot, zMot);
-//                    setFlying(true);
             }
+            player.fallDistance = 0;
         }
     }
 

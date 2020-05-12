@@ -22,6 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public enum StaffAction
@@ -71,7 +72,7 @@ public enum StaffAction
                 }
 
                 @Override
-                public String getTranslateKey(AbstractDragonEntity dragon)
+                public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
                 {
                     if (dragon.getHomePos().isPresent()) return "item.wyrmroost.dragon_staff.action.home.remove";
                     return "item.wyrmroost.dragon_staff.action.home.set";
@@ -136,7 +137,7 @@ public enum StaffAction
                 }
 
                 @Override
-                public String getTranslateKey(AbstractDragonEntity dragon)
+                public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
                 {
                     if (dragon.isSitting()) return "item.wyrmroost.dragon_staff.action.sit.come";
                     return "item.wyrmroost.dragon_staff.action.sit.stay";
@@ -151,7 +152,7 @@ public enum StaffAction
 
     public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack) {}
 
-    public String getTranslateKey(AbstractDragonEntity dragon)
+    public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
     {
         return "item.wyrmroost.dragon_staff.action." + toString().toLowerCase();
     }

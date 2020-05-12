@@ -61,8 +61,8 @@ public class WRWorld
         if (NETHER_FILTER.test(biome)) // Nether Ores
         {
             biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE
-                    .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4))
-                    .withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(16, 0, 0, 128))));
+                    .withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 8))
+                    .withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(4, 0, 0, 128))));
             return;
         }
 

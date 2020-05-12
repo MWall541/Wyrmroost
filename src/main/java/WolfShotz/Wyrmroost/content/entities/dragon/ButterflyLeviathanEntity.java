@@ -19,6 +19,7 @@ import WolfShotz.Wyrmroost.util.QuikMaths;
 import WolfShotz.Wyrmroost.util.io.SlotBuilder;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
@@ -74,7 +75,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public RandomWalkingGoal moveGoal;
     public int lightningAttackCooldown;
-    private boolean prevUnderWater;
+    private boolean prevInWater;
 
     public ButterflyLeviathanEntity(EntityType<? extends ButterflyLeviathanEntity> blevi, World world)
     {
@@ -106,27 +107,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     protected net.minecraft.entity.ai.controller.BodyController createBodyController() { return new BodyController(); }
 
-    public static void setSpawnConditions()
-    {
-        BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
-                .forEach(b -> b.getSpawns(EntityClassification.WATER_CREATURE)
-                        .add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1)));
-        EntitySpawnPlacementRegistry.register(WREntities.BUTTERFLY_LEVIATHAN.get(),
-                EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
-                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                (bfly, world, reason, pos, rng) ->
-                {
-                    if (reason == SpawnReason.SPAWNER) return true;
-                    return world.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
-                });
-    }
-
-    @Override
-    protected PathNavigator createNavigator(World worldIn) { return new Navigator(); }
-
-    @Override
-    public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
-
     @Override
     protected void registerGoals()
     {
@@ -134,7 +114,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         goalSelector.addGoal(2, new MoveToHomeGoal(this));
         goalSelector.addGoal(3, new ControlledAttackGoal(this, 1, true, 3.4, b -> swingArm(Hand.MAIN_HAND)));
 //        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
-        goalSelector.addGoal(4, new DragonBreedGoal(this, false, false));
+        goalSelector.addGoal(4, new DragonBreedGoal(this, false));
         goalSelector.addGoal(5, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
         goalSelector.addGoal(6, CommonGoalWrappers.lookAt(this, 10f));
         goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -147,64 +127,19 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-
-        getAttribute(MAX_HEALTH).setBaseValue(100d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.08d); // On land speed
-        getAttribute(SWIM_SPEED).setBaseValue(0.1d);
-        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8d);
-        getAttribute(FOLLOW_RANGE).setBaseValue(28d);
-    }
-
-    // ================================
-    //           Entity NBT
-    // ================================
-    
-    @Override
-    protected void registerData()
-    {
-        super.registerData();
-        dataManager.register(HAS_CONDUIT, false);
-    }
+    protected PathNavigator createNavigator(World worldIn) { return new Navigator(); }
 
     @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-        dataManager.set(HAS_CONDUIT, invHandler.map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false)); // bcus effects shouldnt be done on load
-    }
-
-    public void setHasConduit(boolean flag, boolean playEffects)
-    {
-        if (hasConduit() == flag) return;
-        dataManager.set(HAS_CONDUIT, flag);
-        if (flag)
-        {
-            getAttribute(MOVEMENT_SPEED).setBaseValue(0.06d);
-            if (playEffects) setAnimation(CONDUIT_ANIMATION);
-        }
-        else
-        {
-            getAttribute(MOVEMENT_SPEED).setBaseValue(0.045d);
-            if (playEffects) playSound(SoundEvents.BLOCK_CONDUIT_DEACTIVATE, 1, 1);
-        }
-    }
-
-    public boolean hasConduit() { return dataManager.get(HAS_CONDUIT); }
-
-    // =================================
+    public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
 
     @Override
     public void tick()
     {
         //        tickParts();
 
-        boolean underWater = isUnderWater();
-        if (underWater != prevUnderWater) onWaterChange(underWater);
-        prevUnderWater = underWater;
+        boolean isInWater = isInWater();
+        if (isInWater != prevInWater) onWaterChange(isInWater());
+        prevInWater = isInWater;
 
         if (lightningAttackCooldown > 0) --lightningAttackCooldown;
 
@@ -261,6 +196,64 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
+    protected void registerAttributes()
+    {
+        super.registerAttributes();
+
+        getAttribute(MAX_HEALTH).setBaseValue(100d);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.08d); // On land speed
+        getAttribute(SWIM_SPEED).setBaseValue(0.1d);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8d);
+        getAttribute(FOLLOW_RANGE).setBaseValue(28d);
+    }
+
+    // ================================
+    //           Entity NBT
+    // ================================
+
+    @Override
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(HAS_CONDUIT, false);
+    }
+
+    @Override
+    public void readAdditional(CompoundNBT nbt)
+    {
+        super.readAdditional(nbt);
+        dataManager.set(HAS_CONDUIT, invHandler.map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false)); // bcus effects shouldnt be done on load
+    }
+
+    public void setHasConduit(boolean flag, boolean playEffects)
+    {
+        if (hasConduit() == flag) return;
+        dataManager.set(HAS_CONDUIT, flag);
+        if (flag)
+        {
+            getAttribute(MOVEMENT_SPEED).setBaseValue(0.06d);
+            if (playEffects) setAnimation(CONDUIT_ANIMATION);
+        }
+        else
+        {
+            getAttribute(MOVEMENT_SPEED).setBaseValue(0.045d);
+            if (playEffects) playSound(SoundEvents.BLOCK_CONDUIT_DEACTIVATE, 1, 1);
+        }
+    }
+
+    public boolean hasConduit() { return dataManager.get(HAS_CONDUIT); }
+
+    // =================================
+
+    @Override
+    public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn)
+    {
+        if (worldIn.getFluidState(pos).isTagged(FluidTags.WATER)) return 10f;
+        return worldIn.getBlockState(pos.down()).getBlock() == Blocks.GRASS_BLOCK? 10f : worldIn.getBrightness(pos) - 0.5F;
+    }
+
+    @Override
     public void travel(Vec3d vec3d)
     {
         float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue());
@@ -290,7 +283,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         }
         else super.travel(vec3d);
     }
-    
+
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
@@ -301,6 +294,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         {
             int chances = isFoodItem? 3 : 7;
             tame(getRNG().nextInt(chances) == 0, player);
+            eat(stack);
             return true;
         }
 
@@ -321,6 +315,14 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         }
 
         return false;
+    }
+
+    public void onWaterChange(boolean inWater)
+    {
+        if (moveGoal == null) return;
+        if (inWater) moveGoal.setExecutionChance(1);
+        else moveGoal.setExecutionChance(120);
+        recalculateSize();
     }
 
     @Override
@@ -367,18 +369,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         }
     }
 
-    public void onWaterChange(boolean underWater)
+    public boolean isUnderWater()
     {
-        if (underWater)
-        {
-            if (moveGoal != null) moveGoal.setExecutionChance(10);
-        }
-        else
-        {
-            if (moveGoal != null) moveGoal.setExecutionChance(120);
-        }
-
-        recalculateSize();
+        BlockPos pos = new BlockPos(this.getPosX(), getPosYEye(), this.getPosZ());
+        if (world.chunkExists(pos.getX() >> 4, pos.getZ() >> 4)) return false;
+        return areEyesInFluid(FluidTags.WATER, true);
     }
 
     @Override
@@ -471,7 +466,20 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         return QuikMaths.calculateYawAngle(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
     }
 
-    public boolean isUnderWater() { return areEyesInFluid(FluidTags.WATER, true); }
+    public static void setSpawnConditions()
+    {
+        BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
+                .forEach(b -> b.getSpawns(EntityClassification.WATER_CREATURE)
+                        .add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1)));
+        EntitySpawnPlacementRegistry.register(WREntities.BUTTERFLY_LEVIATHAN.get(),
+                EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                (bfly, world, reason, pos, rng) ->
+                {
+                    if (reason == SpawnReason.SPAWNER) return true;
+                    return rng.nextInt(6) == 0 && world.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
+                });
+    }
 
     @Override
     public boolean canFly() { return false; }
