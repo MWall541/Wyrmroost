@@ -74,6 +74,22 @@ public class QuikMaths
     }
 
     /**
+     * Interpolation Linear
+     */
+    public static float terpLinear(float a, float b, float x)
+    {
+        if (x <= 0)
+        {
+            return a;
+        }
+        if (x >= 1)
+        {
+            return b;
+        }
+        return a * (1 - x) + b * x;
+    }
+
+    /**
      * Created by TGG on 8/07/2015. Modified by WolfShotz on 9/16/2019 <P>
      * Performs a ray trace of the player's line of sight to see what the player is looking at.
      * Similar to the vanilla getMouseOver, which is client side only.

@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.client.render.entity.owdrake;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
+import WolfShotz.Wyrmroost.client.animation.TickFloat;
 import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
 import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
 import WolfShotz.Wyrmroost.entities.dragon.OWDrakeEntity;
@@ -69,11 +70,13 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     public AdvancedRendererModel claw11R;
     public AdvancedRendererModel claw22R;
     public AdvancedRendererModel claw12R;
-    
+
     private AdvancedRendererModel[] headArray, tailArray, toeArray;
-    
+
     private ModelAnimator animator;
-    
+
+    private TickFloat sitTime = new TickFloat().setLimit(0, 1);
+
     public OWDrakeModel()
     {
         textureWidth = 200;
@@ -394,7 +397,7 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     public void setLivingAnimations(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
     {
         this.entity = drake;
-        float frame = drake.ticksExisted;
+        float frame = drake.ticksExisted + partialTick;
         Animation currentAnim = drake.getAnimation();
         
         resetToDefaultPose();
@@ -403,7 +406,7 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
         if (!drake.isSitting() && !drake.isSleeping())
         {
             // Body bob
-            bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, 0.5f);
+            bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, limbSwingAmount);
             
             // Left Arm
             arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
@@ -412,103 +415,93 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
             // Right Arm
             arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
             palmR.walk(globalSpeed, f, false, 2.5f, 0, limbSwing, limbSwingAmount);
-            
+
             // Left Leg
             leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
             footL.walk(globalSpeed, 0.2f, false, 2f, 0, limbSwing, limbSwingAmount);
-            
+
             // Right Leg
             leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
             footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
         }
-        
-        if (drake.isSitting() && currentAnim != OWDrakeEntity.SIT_ANIMATION)
-            staySitting();
-        
-        if (drake.isSleeping() && currentAnim != OWDrakeEntity.SLEEP_ANIMATION)
-            staySleeping();
-        
+
+        float val = sitTime.get();
+        val += entity.isSitting()? 0.05f : -0.05f;
+        sitTime.set(val);
+
+        sit(sitTime.get(partialTick));
+
         if (currentAnim == OWDrakeEntity.TALK_ANIMATION) talkAnim();
-        
-        if (currentAnim == OWDrakeEntity.SIT_ANIMATION) sitAnim();
-        
-        if (currentAnim == OWDrakeEntity.STAND_ANIMATION) standAnim();
-        
-        if (currentAnim == OWDrakeEntity.SLEEP_ANIMATION) sleepAnim(drake.isSitting());
-        
-        if (currentAnim == OWDrakeEntity.WAKE_ANIMATION) wakeAnim(drake.isSitting());
-        
         if (currentAnim == OWDrakeEntity.GRAZE_ANIMATION) grazeAnim(drake.getAnimationTick(), frame);
-        
-        if (currentAnim == OWDrakeEntity.HORN_ATTACK_ANIMATION)
+
+        if (animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION))
         {
             hornAttackAnim();
-            
             return;
         }
-        
-        if (currentAnim == OWDrakeEntity.ROAR_ANIMATION)
+
+        if (animator.setAnimation(OWDrakeEntity.ROAR_ANIMATION))
         {
             roarAnim(drake, frame);
-            
             return;
         }
-        
-        animatieIdle(frame);
+
+        idleAnim(frame);
     }
-    
-    public void animatieIdle(float frame)
+
+    @Override
+    public void idleAnim(float frame)
     {
         chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
         walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
-        
+
         walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
         chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
         chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
     }
-    
+
     /**
      * Sitting <i><b>Position</b></i>
      * <p>
      * Called every tick when drake is sitting and no other animation is playing.
      * Called in {@link #standAnim()} for the initial position
      */
-    private void staySitting()
+    private void sit(float amount)
     {
-        body1.rotationPointY = 3.5f;
-        
-        // Front Right
-        arm2R.rotateAngleX = -1.5f;
-        palmR.rotateAngleX = 1.4f;
-        
-        // Front Left
-        arm2L.rotateAngleX = -1.5f;
-        palmL.rotateAngleX = 1.4f;
-        
-        // Back Right
-        leg2R.rotateAngleX = 1f;
-        leg2R.rotateAngleY = 0.4f;
-        leg3R.setRotationPoint(-0.05F, 4.0F, -1.8F);
-        leg3R.rotateAngleX = -2.6f;
-        footR.rotateAngleX = 1.6f;
-        
-        // Back Left
-        leg2L.rotateAngleX = 1f;
-        leg2L.rotateAngleY = -0.4f;
-        leg3L.setRotationPoint(-0.05F, 4.0F, -1.8F);
-        leg3L.rotateAngleX = -2.6f;
-        footL.rotateAngleX = 1.6f;
-        
-        //Toes
-        for (AdvancedRendererModel toeSegment : toeArray) toeSegment.rotateAngleX = -0.1f;
-        
-        //Tail
-        for (AdvancedRendererModel tailSegment : tailArray) tailSegment.rotateAngleY = -0.6f;
-        tail1.rotateAngleX = -0.2f;
-        tail3.rotateAngleZ = -0.2f;
-        tail4.rotateAngleZ = -0.4f;
-        tail5.rotateAngleZ = -0.3f;
-        tail5.rotateAngleY += 0.1f;
+        body1.rotationPointY += amount * 5.5f;
+
+        arm2L.rotateAngleX += amount * -1.2f;
+
+//        leg1L.rotateAngleX = 0f;
+//        leg1L.rotateAngleY = -0.5f;
+//        leg2L.rotateAngleX = 0.9f;
+//        leg3L.rotateAngleX = -2f;
+
+//        footL.rotateAngleX = 1.5f;
+//        for (AdvancedRendererModel toe : toeArray) toe.rotateAngleX = -0.1f;
+//
+//        // Back Right
+//        leg2R.rotateAngleX = amount * 1f;
+//        leg2R.rotateAngleY = amount * 0.4f;
+//        leg3R.rotateAngleX = amount * -2.6f;
+//        footR.rotateAngleX = amount * 1.6f;
+//
+//        // Back Left
+//        leg2L.rotateAngleX = amount * 1f;
+//        leg2L.rotateAngleY = amount * -0.4f;
+//        leg3L.rotateAngleX = amount * -2.6f;
+//        footL.rotateAngleX = amount * 1.6f;
+//
+//        //Toes
+//        for (AdvancedRendererModel toeSegment : toeArray) toeSegment.rotateAngleX = amount * -0.1f;
+//
+//        //Tail
+//        for (AdvancedRendererModel tailSegment : tailArray) tailSegment.rotateAngleY = amount * -0.6f;
+//        tail1.rotateAngleX = amount * -0.2f;
+//        tail3.rotateAngleZ = amount * -0.2f;
+//        tail4.rotateAngleZ = amount * -0.4f;
+//        tail5.rotateAngleZ = amount * -0.3f;
+//        tail5.rotateAngleY += amount * 0.1f;
     }
     
     /**
@@ -550,12 +543,9 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     
     /**
      * Standing up anim for "un-sitting".
-     * Call {@link #staySitting()} for initial position
      */
     private void standAnim()
     {
-        staySitting();
-        
         animator.setAnimation(OWDrakeEntity.STAND_ANIMATION);
         
         animator.startKeyframe(15);
@@ -591,8 +581,6 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
     
     private void staySleeping()
     {
-        staySitting();
-        
         neck1.rotateAngleX = 0.4f;
         neck1.rotateAngleY = 0.4f;
         neck2.rotateAngleX = -0.2f;
@@ -638,7 +626,7 @@ public class OWDrakeModel extends AdvancedLivingEntityModel<OWDrakeEntity>
             tail4.rotateAngleZ = -0.4f;
             tail5.rotateAngleZ = -0.3f;
             tail5.rotateAngleY += 0.1f;
-        } else staySitting();
+        }
         
         animator.rotate(neck1, 1.2f, 0.4f, 0);
         animator.rotate(neck2, -0.5f, 0.6f, 0);

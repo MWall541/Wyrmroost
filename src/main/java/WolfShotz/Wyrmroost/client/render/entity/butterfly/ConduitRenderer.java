@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.client.render.entity.butterfly;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.ButterflyLeviathanEntity;
+import WolfShotz.Wyrmroost.entities.dragon.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -59,8 +59,8 @@ public class ConduitRenderer
         // Wind but its the second time
         ms.push();
         ms.scale(0.875F, 0.875F, 0.875F);
-        ms.rotate(Vector3f.XP.rotationDegrees(180.0F));
-        ms.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+        ms.rotate(Vector3f.XP.rotationDegrees(180f));
+        ms.rotate(Vector3f.ZP.rotationDegrees(180f));
         WIND_MODEL.render(ms, builder, combinedLightIn, combinedOverlayIn);
         ms.pop();
 
@@ -73,7 +73,7 @@ public class ConduitRenderer
         ms.rotate(Vector3f.YP.rotationDegrees(f3));
         ms.rotate(Vector3f.XP.rotationDegrees(activerenderinfo.getPitch()));
         ms.rotate(Vector3f.ZP.rotationDegrees(180.0F));
-        float f4 = 1.3333334F;
+        float f4 = 1.3333334f;
         ms.scale(f4, f4, f4);
         CAGE_MODEL.render(ms, OPEN_EYE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), combinedLightIn, combinedOverlayIn);
         ms.pop();
