@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.content.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.content.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.content.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.EntityDataEntry;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Blocks;
@@ -28,10 +29,12 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -163,6 +166,18 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         // Flying is controlled entirely in the move helper
         if (!isFlying()) super.travel(vec3d);
     }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return WRSounds.CANARI_IDLE.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.CANARI_HURT.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return WRSounds.CANARI_DEATH.get(); }
 
     @Override
     public boolean attackEntityAsMob(Entity entity)

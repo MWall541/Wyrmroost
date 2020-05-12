@@ -140,6 +140,12 @@
       },
       {
         "name": "wyrmroost:entity/canari/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/canari/idle3"
+      },
+      {
+        "name": "wyrmroost:entity/canari/idle4"
       }
     ]
   },
@@ -149,6 +155,12 @@
     "sounds": [
       {
         "name": "wyrmroost:entity/canari/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/canari/hurt2"
+      },
+      {
+        "name": "wyrmroost:entity/canari/hurt3"
       }
     ]
   },
