@@ -49,7 +49,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -372,8 +371,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public boolean isUnderWater()
     {
-        BlockPos pos = new BlockPos(this.getPosX(), getPosYEye(), this.getPosZ());
-        if (world.chunkExists(pos.getX() >> 4, pos.getZ() >> 4)) return false;
+        BlockPos pos = new BlockPos(getPosX(), getPosYEye(), getPosZ());
+        if (!world.chunkExists(pos.getX() >> 4, pos.getZ() >> 4)) return false;
         return areEyesInFluid(FluidTags.WATER, true);
     }
 
@@ -514,7 +513,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
-    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 1)); }
+    public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
     
     @Override
     public DragonEggProperties createEggProperties()

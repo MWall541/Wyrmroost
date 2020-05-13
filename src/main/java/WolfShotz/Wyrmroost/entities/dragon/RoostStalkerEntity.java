@@ -44,7 +44,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -245,7 +244,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public boolean canPickUpStack(ItemStack stack) { return stack.getItem() != Items.GOLD_NUGGET; }
 
     @Override
-    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 1)); }
+    public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
 
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }

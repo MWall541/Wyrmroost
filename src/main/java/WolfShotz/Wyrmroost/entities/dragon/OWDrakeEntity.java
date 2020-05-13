@@ -40,7 +40,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -78,7 +77,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         WAKE_ANIMATION = new Animation(15);
 
         addVariantData(2, true);
-        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
     @Override
@@ -174,7 +173,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public int getSpecialChances() { return 100; }
 
     @Override
-    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.of(() -> new DragonInvHandler(this, 24)); }
+    public DragonInvHandler createInv() { return new DragonInvHandler(this, 24); }
     
     // ================================
     
@@ -244,7 +243,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() == Items.SADDLE && !isSaddled() && !isChild()) // instaceof: for custom saddles (if any)
         {
-            setStackInSlot(SADDLE_SLOT, stack);
+            if (!world.isRemote) setStackInSlot(SADDLE_SLOT, stack);
             consumeItemFromStack(player, stack);
             return true;
         }
@@ -319,7 +318,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.updatePassenger(passenger);
 
-        if (!isTamed() && passenger instanceof LivingEntity)
+        if (!world.isRemote && !isTamed() && passenger instanceof LivingEntity)
         {
             int rand = getRNG().nextInt(100);
 

@@ -16,7 +16,7 @@ import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -49,7 +49,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -75,15 +74,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     // Dragon Entity Animations
     public int animationTick;
     public Animation animation = NO_ANIMATION;
+    @Deprecated
     public static Animation SLEEP_ANIMATION;
+    @Deprecated
     public static Animation WAKE_ANIMATION;
 
     // other delegates
-    public final LazyOptional<DragonInvHandler> invHandler;
-    public final List<String> immunes = Lists.newArrayList();
-    public final List<EntityDataEntry<?>> dataEntries = Lists.newArrayList();
+    public final Set<String> immunes = Sets.newHashSet();
+    public final Set<EntityDataEntry<?>> dataEntries = Sets.newHashSet();
+    public final Optional<DragonInvHandler> invHandler;
     public DragonEggProperties eggProperties;
-    public int shouldFlyThreshold = 3;
+    @Deprecated
+    public int shouldFlyThreshold = 3; // todo: should be done based on entity height
     public int sleepCooldown;
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
@@ -92,13 +94,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         setTamed(false);
 
-        invHandler = createInv();
+        invHandler = Optional.ofNullable(createInv());
         eggProperties = createEggProperties();
         stepHeight = 1;
 
-        addDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        addDataEntry("HomePos", EntityDataEntry.BLOCK_POS, HOME_POS, Optional.empty());
-        invHandler.ifPresent(i -> addDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
+        registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS, HOME_POS, Optional.empty());
+        invHandler.ifPresent(i -> registerDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
     }
 
     /**
@@ -154,18 +156,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * Add a data entry helper
      */
-    public <T> void addDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
+    public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
     {
+        if (world.isRemote) return;
         dataEntries.add(new EntityDataEntry<>(key, type, write, read));
     }
 
     /**
      * Add a data entry synced to clients using the data manager
      */
-    public <T> void addDataEntry(String key, EntityDataEntry.SerializerType<T> type, DataParameter<T> param, T value)
+    public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, DataParameter<T> param, T value)
     {
         dataManager.register(param, value);
-        addDataEntry(key, type, () -> dataManager.get(param), v -> dataManager.set(param, v));
+        registerDataEntry(key, type, () -> dataManager.get(param), v -> dataManager.set(param, v));
     }
 
     /**
@@ -179,7 +182,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         int chance = getSpecialChances();
         if (hasSpecial && chance != 0 && getRNG().nextInt(chance) == 0) variants = -1;
         else if (variants != 0) variants = getRNG().nextInt(variants);
-        addDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, variants);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, variants);
     }
 
     /**
@@ -308,13 +311,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public DragonInvHandler getInvHandler()
     {
-        return invHandler.orElseThrow(() -> new NoSuchElementException("Inventory Handler is not Present!"));
+        return invHandler.orElseThrow(() -> new NoSuchElementException("This boi doesn't have an inventory wtf are u doing"));
     }
 
     /**
      * Create an inventory (ItemStackHandler)
      */
-    public LazyOptional<DragonInvHandler> createInv() { return LazyOptional.empty(); }
+    public DragonInvHandler createInv() { return null; }
 
     // ================================
 
@@ -1064,6 +1067,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     /**
      * Array Containing all of the dragons food items
+     *
+     * @deprecated todo: probably would be better cached...
      */
     public abstract Collection<Item> getFoodItems();
 
