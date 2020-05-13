@@ -57,7 +57,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         setImmune(DamageSource.MAGIC);
 
         addVariantData(5, false);
-        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
     @Override

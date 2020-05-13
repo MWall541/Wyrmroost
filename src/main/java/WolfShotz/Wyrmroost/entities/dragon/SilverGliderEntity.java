@@ -55,7 +55,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         SLEEP_ANIMATION = new Animation(20);
         WAKE_ANIMATION = new Animation(15);
 
-        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         addVariantData(3, true); // For females, this value is redundant.
     }
 
@@ -216,6 +216,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 player.getRidingEntity() == null &&
                 !player.abilities.isFlying &&
                 !player.isInWater() &&
+                player.getPassengers().indexOf(this) == 0 &&
                 super.canFly();
     }
 

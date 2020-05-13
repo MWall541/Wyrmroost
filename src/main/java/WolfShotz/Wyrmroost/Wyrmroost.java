@@ -72,7 +72,7 @@ public class Wyrmroost
 
     public void commonSetup(final FMLCommonSetupEvent event)
     {
-        DeferredWorkQueue.runLater(WRWorld::setupWorldGen);
+        DeferredWorkQueue.runLater(WRWorld::setupWorld);
         DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
         NetworkUtils.registerMessages();
     }

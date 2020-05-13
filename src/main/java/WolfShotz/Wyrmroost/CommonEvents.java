@@ -30,16 +30,6 @@ public class CommonEvents
 //    }
 
     /**
-     * Attatch our capabilities
-     */
-//    @SubscribeEvent
-//    public static void attachWorldCaps(AttachCapabilitiesEvent<World> evt)
-//    {
-//        if (evt.getObject().isRemote) return;
-//        evt.addCapability(Wyrmroost.rl("overworld_cap"), new WorldCapability.PropertiesDispatcher());
-//    }
-
-    /**
      * Nuff' said
      */
     @SubscribeEvent

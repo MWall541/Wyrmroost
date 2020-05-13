@@ -63,8 +63,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         SLEEP_ANIMATION = new Animation(15);
         WAKE_ANIMATION = new Animation(15);
 
-        addDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
-        addDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
     public static void setSpawnConditions()
@@ -76,7 +76,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 WREntities.DRAGON_FRUIT_DRAKE.get(),
                 EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING,
-                ((a, b, c, d, e) -> true));
+                ((t, w, s, b, r) -> true));
+//                ((t, w, s, b, r) -> w.getWorldInfo().getDimensionData(DimensionType.OVERWORLD).contains(PortalBlock.DATA_PORTAL_ENTERED)));
     }
 
 //    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
