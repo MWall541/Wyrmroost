@@ -177,7 +177,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @param variants   the amount of variants this dragon has
      * @param hasSpecial can be "special"
      */
-    public void addVariantData(int variants, boolean hasSpecial)
+    public void registerVariantData(int variants, boolean hasSpecial)
     {
         int chance = getSpecialChances();
         if (hasSpecial && chance != 0 && getRNG().nextInt(chance) == 0) variants = -1;
@@ -1061,7 +1061,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isFoodItem(ItemStack stack)
     {
         if (getFoodItems() == null || getFoodItems().size() == 0) return false;
-        if (stack == ItemStack.EMPTY) return false;
+        if (stack.isEmpty()) return false;
         return getFoodItems().contains(stack.getItem());
     }
 

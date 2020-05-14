@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.animation;
 
-import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
 import WolfShotz.Wyrmroost.client.model.BoxPosCache;
+import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
 
@@ -14,9 +14,9 @@ public class ModelAnimator
     private boolean correctAnimation = false;
     private IAnimatedEntity entity;
     private boolean keyFrameInverted = false;
-    private HashMap<AdvancedRendererModel, BoxPosCache> boxPosCache = new HashMap<>();
-    private HashMap<AdvancedRendererModel, BoxPosCache> prevPosCache = new HashMap<>();
-    
+    private HashMap<WRModelRenderer, BoxPosCache> boxPosCache = new HashMap<>();
+    private HashMap<WRModelRenderer, BoxPosCache> prevPosCache = new HashMap<>();
+
     private ModelAnimator() {}
 
     public static ModelAnimator create() { return new ModelAnimator(); }
@@ -64,8 +64,8 @@ public class ModelAnimator
         startKeyframe(duration);
         endKeyframe();
     }
-    
-    public void rotate(AdvancedRendererModel box, float x, float y, float z)
+
+    public void rotate(WRModelRenderer box, float x, float y, float z)
     {
         if (keyFrameInverted)
         {
@@ -75,8 +75,8 @@ public class ModelAnimator
         }
         if (correctAnimation) getPosCache(box).addRotation(x, y, z);
     }
-    
-    public void move(AdvancedRendererModel box, float x, float y, float z)
+
+    public void move(WRModelRenderer box, float x, float y, float z)
     {
         if (keyFrameInverted)
         {
@@ -86,8 +86,8 @@ public class ModelAnimator
         }
         if (correctAnimation) getPosCache(box).addOffset(x, y, z);
     }
-    
-    private BoxPosCache getPosCache(AdvancedRendererModel box)
+
+    private BoxPosCache getPosCache(WRModelRenderer box)
     {
         return boxPosCache.computeIfAbsent(box, (b) -> new BoxPosCache());
     }
@@ -107,7 +107,7 @@ public class ModelAnimator
             {
                 if (stationary)
                 {
-                    for (AdvancedRendererModel box : prevPosCache.keySet())
+                    for (WRModelRenderer box : prevPosCache.keySet())
                     {
                         BoxPosCache cache = prevPosCache.get(box);
                         box.rotateAngleX += cache.getRotationX();
@@ -123,8 +123,8 @@ public class ModelAnimator
                     float tick = ((float) (animationTick - prevTempTick) + Minecraft.getInstance().getRenderPartialTicks()) / (float) (tempTick - prevTempTick);
                     float inc = MathHelper.sin((float) ((double) tick * 3.141592653589793D / 2.0D));
                     float dec = 1.0F - inc;
-                    
-                    for (AdvancedRendererModel box : prevPosCache.keySet())
+
+                    for (WRModelRenderer box : prevPosCache.keySet())
                     {
                         BoxPosCache cache = prevPosCache.get(box);
                         box.rotateAngleX += dec * cache.getRotationX();
@@ -134,8 +134,8 @@ public class ModelAnimator
                         box.rotationPointY += dec * cache.getOffsetY();
                         box.rotationPointZ += dec * cache.getOffsetZ();
                     }
-                    
-                    for (AdvancedRendererModel box : boxPosCache.keySet())
+
+                    for (WRModelRenderer box : boxPosCache.keySet())
                     {
                         BoxPosCache cache = boxPosCache.get(box);
                         box.rotateAngleX += inc * cache.getRotationX();

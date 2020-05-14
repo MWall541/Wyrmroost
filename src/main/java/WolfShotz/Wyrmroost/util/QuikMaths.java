@@ -78,14 +78,8 @@ public class QuikMaths
      */
     public static float terpLinear(float a, float b, float x)
     {
-        if (x <= 0)
-        {
-            return a;
-        }
-        if (x >= 1)
-        {
-            return b;
-        }
+        if (x <= 0) return a;
+        if (x >= 1) return b;
         return a * (1 - x) + b * x;
     }
 

@@ -101,7 +101,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 //        setImmune(BrineFluid.BRINE_WATER);
         setImmune(DamageSource.LIGHTNING_BOLT);
 
-        addVariantData(2, true);
+        registerVariantData(2, true);
     }
 
     @Override

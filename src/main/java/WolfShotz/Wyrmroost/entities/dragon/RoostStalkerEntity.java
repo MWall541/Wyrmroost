@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.TickFloat;
 import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
@@ -30,7 +31,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -59,17 +59,17 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public static final Animation SCAVENGE_ANIMATION = new Animation(35);
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(RoostStalkerEntity.class, DataSerializers.ITEMSTACK);
 
+    public TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
+
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world)
     {
         super(stalker, world);
 
         stepHeight = 0;
-        SLEEP_ANIMATION = new Animation(15);
-        WAKE_ANIMATION = new Animation(15);
 
         setImmune(DamageSource.DROWN);
 
-        addVariantData(0, true);
+        registerVariantData(0, true);
     }
     
     @Override
@@ -106,14 +106,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         dataManager.register(ITEM, ItemStack.EMPTY);
     }
 
-    @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-
-        dataManager.set(ITEM, invHandler.map(i -> i.getStackInSlot(0)).orElse(ItemStack.EMPTY));
-    }
-
     public ItemStack getItem() { return dataManager.get(ITEM); }
 
     public void setItem(ItemStack item)
@@ -135,13 +127,14 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
-        
-        if (getHealth() < getMaxHealth() && getRNG().nextInt(400) != 0) return;
-        
-        ItemStack stack = getStackInSlot(0);
-        
-        if (stack.isEmpty()) return;
-        if (isBreedingItem(stack)) eat(stack);
+
+        sleepTimer.add(isSleeping()? 0.08f : -0.15f);
+
+        if (getHealth() < getMaxHealth() && !world.isRemote && getRNG().nextInt(400) == 0)
+        {
+            ItemStack stack = getStackInSlot(0);
+            if (isFoodItem(stack)) eat(stack);
+        }
     }
     
     @Override
@@ -151,13 +144,13 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         
         ItemStack heldItem = getStackInSlot(0);
         Item item = stack.getItem();
-        
-        if (!isTamed() && Tags.Items.EGGS.contains(item) || item == WRItems.DRAGON_EGG.get())
+
+        if (!isTamed() && Tags.Items.EGGS.contains(item))
         {
             eat(stack);
             if (tame(rand.nextInt(4) == 0, player))
                 getAttribute(MAX_HEALTH).setBaseValue(20d);
-            
+
             return true;
         }
         
@@ -252,7 +245,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, SCAVENGE_ANIMATION};
+        return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION};
     }
 
     class ScavengeGoal extends MoveToBlockGoal
@@ -301,7 +294,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                     interactChest(chest, true);
                 if (!chest.isEmpty() && --searchDelay <= 0)
                 {
-                    int index = new Random().nextInt(chest.getSizeInventory());
+                    int index = getRNG().nextInt(chest.getSizeInventory());
                     ItemStack stack = chest.getStackInSlot(index);
 
                     if (!stack.isEmpty() && canPickUpStack(stack))

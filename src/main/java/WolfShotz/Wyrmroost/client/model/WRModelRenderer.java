@@ -1,14 +1,10 @@
 package WolfShotz.Wyrmroost.client.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
-public class AdvancedRendererModel extends ModelRenderer
+public class WRModelRenderer extends ModelRenderer
 {
-    public float textureWidth;
-    public float textureHeight;
     public float defaultRotationX;
     public float defaultRotationY;
     public float defaultRotationZ;
@@ -19,10 +15,10 @@ public class AdvancedRendererModel extends ModelRenderer
     public float scaleY;
     public float scaleZ;
     public boolean scaleChildren;
-    private AdvancedLivingEntityModel<?> model;
-    private AdvancedRendererModel parent;
+    private WREntityModel<?> model;
+    private WRModelRenderer parent;
 
-    public AdvancedRendererModel(AdvancedLivingEntityModel<?> model)
+    public WRModelRenderer(WREntityModel<?> model)
     {
         super(model);
         scaleX = 1.0F;
@@ -32,7 +28,7 @@ public class AdvancedRendererModel extends ModelRenderer
         model.boxList.add(this);
     }
 
-    public AdvancedRendererModel(AdvancedLivingEntityModel<?> model, int textureOffsetX, int textureOffsetY)
+    public WRModelRenderer(WREntityModel<?> model, int textureOffsetX, int textureOffsetY)
     {
         this(model);
         setTextureOffset(textureOffsetX, textureOffsetY);
@@ -93,24 +89,19 @@ public class AdvancedRendererModel extends ModelRenderer
     public void addChild(ModelRenderer child)
     {
         super.addChild(child);
-        if (child instanceof AdvancedRendererModel) ((AdvancedRendererModel) child).setParent(this);
+        if (child instanceof WRModelRenderer) ((WRModelRenderer) child).setParent(this);
     }
-    
-    public AdvancedRendererModel getParent()
+
+    public WRModelRenderer getParent()
     {
         return parent;
     }
-    
-    public void setParent(AdvancedRendererModel parent)
+
+    public void setParent(WRModelRenderer parent)
     {
         this.parent = parent;
     }
 
-    public AdvancedLivingEntityModel<?> getModel()
-    {
-        return model;
-    }
-    
     private float calculateRotation(float speed, float degree, boolean invert, float offset, float weight, float f, float f1)
     {
         float movementScale = model.getMovementScale();
@@ -145,22 +136,5 @@ public class AdvancedRendererModel extends ModelRenderer
         }
 
         rotationPointY += bob;
-    }
-
-    public void transitionTo(AdvancedRendererModel to, float timer, float maxTime)
-    {
-        rotateAngleX += (to.rotateAngleX - rotateAngleX) / maxTime * timer;
-        rotateAngleY += (to.rotateAngleY - rotateAngleY) / maxTime * timer;
-        rotateAngleZ += (to.rotateAngleZ - rotateAngleZ) / maxTime * timer;
-        rotationPointX += (to.rotationPointX - rotationPointX) / maxTime * timer;
-        rotationPointY += (to.rotationPointY - rotationPointY) / maxTime * timer;
-        rotationPointZ += (to.rotationPointZ - rotationPointZ) / maxTime * timer;
-    }
-
-    @Override
-    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
-    {
-        if (showModel) matrixStackIn.scale(scaleX, scaleY, scaleZ);
-        super.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 }

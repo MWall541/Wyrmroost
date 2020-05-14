@@ -56,7 +56,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         setImmune(CausticWaterFluid.CAUSTIC_WATER);
         setImmune(DamageSource.MAGIC);
 
-        addVariantData(5, false);
+        registerVariantData(5, false);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 

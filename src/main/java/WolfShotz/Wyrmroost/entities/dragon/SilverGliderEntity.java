@@ -56,7 +56,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         WAKE_ANIMATION = new Animation(15);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
-        addVariantData(3, true); // For females, this value is redundant.
+        registerVariantData(3, true); // For females, this value is redundant.
     }
 
     @Override

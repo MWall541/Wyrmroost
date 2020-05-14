@@ -3,13 +3,16 @@ package WolfShotz.Wyrmroost.client.animation;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.util.math.MathHelper;
 
+/**
+ *
+ */
 public class TickFloat
 {
     private float min;
     private float max;
-    private boolean clamp = false;
     private float current;
     private float previous;
+    private boolean clamp = false;
 
     public TickFloat() { current = previous = 0; }
 
@@ -18,8 +21,8 @@ public class TickFloat
     public TickFloat setLimit(float min, float max)
     {
         clamp = true;
-        setMin(min);
-        setMax(max);
+        this.min = min;
+        this.max = max;
         set(current);
         return this;
     }
@@ -34,14 +37,14 @@ public class TickFloat
         current = clamp? MathHelper.clamp(value, min, max) : value;
     }
 
-    public void sync() { previous = current; }
-
     public void add(float value)
     {
         sync();
         current += value;
         if (clamp) current = MathHelper.clamp(current, min, max);
     }
+
+    public void sync() { previous = current; }
 
     public float getPrevious() { return previous; }
 

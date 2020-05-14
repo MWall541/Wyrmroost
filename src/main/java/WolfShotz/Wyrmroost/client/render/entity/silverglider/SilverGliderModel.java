@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.client.render.entity.silverglider;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
-import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
-import WolfShotz.Wyrmroost.client.model.AdvancedRendererModel;
+import WolfShotz.Wyrmroost.client.model.WREntityModel;
+import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -20,74 +20,74 @@ import static WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity.STAND_ANIMA
  * WRSilverGlider - Kingdomall
  * Created using Tabula 7.0.1
  */
-public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEntity>
+public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 {
-    public AdvancedRendererModel mainbody;
-    public AdvancedRendererModel secondarybody;
-    public AdvancedRendererModel neck1;
-    public AdvancedRendererModel backFin;
-    public AdvancedRendererModel bottomFin;
-    public AdvancedRendererModel wingphalange1L;
-    public AdvancedRendererModel wingphalange1R;
-    public AdvancedRendererModel tail1;
-    public AdvancedRendererModel legL1;
-    public AdvancedRendererModel legR1;
-    public AdvancedRendererModel tail2;
-    public AdvancedRendererModel tail3;
-    public AdvancedRendererModel tail4;
-    public AdvancedRendererModel tail5;
-    public AdvancedRendererModel tail6;
-    public AdvancedRendererModel tail7;
-    public AdvancedRendererModel tail8;
-    public AdvancedRendererModel tail9;
-    public AdvancedRendererModel tail10;
-    public AdvancedRendererModel tailfin;
-    public AdvancedRendererModel legL2;
-    public AdvancedRendererModel legL3;
-    public AdvancedRendererModel toe2L;
-    public AdvancedRendererModel toe1L;
-    public AdvancedRendererModel toe3L;
-    public AdvancedRendererModel legR2;
-    public AdvancedRendererModel legR3;
-    public AdvancedRendererModel toe2R;
-    public AdvancedRendererModel toe1R;
-    public AdvancedRendererModel toe1R_1;
-    public AdvancedRendererModel neck2;
-    public AdvancedRendererModel neck3;
-    public AdvancedRendererModel neck4;
-    public AdvancedRendererModel head;
-    public AdvancedRendererModel mouthBottom;
-    public AdvancedRendererModel mouthTop;
-    public AdvancedRendererModel eyeL;
-    public AdvancedRendererModel eyeR;
-    public AdvancedRendererModel wingphalange2L;
-    public AdvancedRendererModel membrane1L;
-    public AdvancedRendererModel wingphalange3L;
-    public AdvancedRendererModel wingphalangemiddle1L;
-    public AdvancedRendererModel membrane2L;
-    public AdvancedRendererModel wingphalange4L;
-    public AdvancedRendererModel membrane4L;
-    public AdvancedRendererModel wingphalangetipL;
-    public AdvancedRendererModel membranetipL;
-    public AdvancedRendererModel phalangeL22;
-    public AdvancedRendererModel membrane3L;
-    public AdvancedRendererModel wingphalange2R;
-    public AdvancedRendererModel membrane1R;
-    public AdvancedRendererModel wingphalange3R;
-    public AdvancedRendererModel wingphalangemiddle1R;
-    public AdvancedRendererModel membrane2R;
-    public AdvancedRendererModel wingphalange4R;
-    public AdvancedRendererModel membrane4R;
-    public AdvancedRendererModel wingphalangetipR;
-    public AdvancedRendererModel membranetipR;
-    public AdvancedRendererModel wingphalangemiddle2R;
-    public AdvancedRendererModel membrane3R;
+    public WRModelRenderer mainbody;
+    public WRModelRenderer secondarybody;
+    public WRModelRenderer neck1;
+    public WRModelRenderer backFin;
+    public WRModelRenderer bottomFin;
+    public WRModelRenderer wingphalange1L;
+    public WRModelRenderer wingphalange1R;
+    public WRModelRenderer tail1;
+    public WRModelRenderer legL1;
+    public WRModelRenderer legR1;
+    public WRModelRenderer tail2;
+    public WRModelRenderer tail3;
+    public WRModelRenderer tail4;
+    public WRModelRenderer tail5;
+    public WRModelRenderer tail6;
+    public WRModelRenderer tail7;
+    public WRModelRenderer tail8;
+    public WRModelRenderer tail9;
+    public WRModelRenderer tail10;
+    public WRModelRenderer tailfin;
+    public WRModelRenderer legL2;
+    public WRModelRenderer legL3;
+    public WRModelRenderer toe2L;
+    public WRModelRenderer toe1L;
+    public WRModelRenderer toe3L;
+    public WRModelRenderer legR2;
+    public WRModelRenderer legR3;
+    public WRModelRenderer toe2R;
+    public WRModelRenderer toe1R;
+    public WRModelRenderer toe1R_1;
+    public WRModelRenderer neck2;
+    public WRModelRenderer neck3;
+    public WRModelRenderer neck4;
+    public WRModelRenderer head;
+    public WRModelRenderer mouthBottom;
+    public WRModelRenderer mouthTop;
+    public WRModelRenderer eyeL;
+    public WRModelRenderer eyeR;
+    public WRModelRenderer wingphalange2L;
+    public WRModelRenderer membrane1L;
+    public WRModelRenderer wingphalange3L;
+    public WRModelRenderer wingphalangemiddle1L;
+    public WRModelRenderer membrane2L;
+    public WRModelRenderer wingphalange4L;
+    public WRModelRenderer membrane4L;
+    public WRModelRenderer wingphalangetipL;
+    public WRModelRenderer membranetipL;
+    public WRModelRenderer phalangeL22;
+    public WRModelRenderer membrane3L;
+    public WRModelRenderer wingphalange2R;
+    public WRModelRenderer membrane1R;
+    public WRModelRenderer wingphalange3R;
+    public WRModelRenderer wingphalangemiddle1R;
+    public WRModelRenderer membrane2R;
+    public WRModelRenderer wingphalange4R;
+    public WRModelRenderer membrane4R;
+    public WRModelRenderer wingphalangetipR;
+    public WRModelRenderer membranetipR;
+    public WRModelRenderer wingphalangemiddle2R;
+    public WRModelRenderer membrane3R;
 
-    private AdvancedRendererModel[] toeArray;
-    private AdvancedRendererModel[] headArray;
-    private AdvancedRendererModel[] neckArray;
-    private AdvancedRendererModel[] neckArray2;
-    private AdvancedRendererModel[] tailArray;
+    private WRModelRenderer[] toeArray;
+    private WRModelRenderer[] headArray;
+    private WRModelRenderer[] neckArray;
+    private WRModelRenderer[] neckArray2;
+    private WRModelRenderer[] tailArray;
 
     private ModelAnimator animator;
 
@@ -99,225 +99,225 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
     {
         textureWidth = 160;
         textureHeight = 125;
-        legR3 = new AdvancedRendererModel(this, 58, 14);
+        legR3 = new WRModelRenderer(this, 58, 14);
         legR3.setRotationPoint(-0.02F, 2.5F, 0.1F);
         legR3.addBox(-1.1F, -0.7F, -0.2F, 2, 4, 1, 0.0F);
         setRotateAngle(legR3, -1.3632766787327708F, 0.0F, 0.0F);
-        backFin = new AdvancedRendererModel(this, 0, -14);
+        backFin = new WRModelRenderer(this, 0, -14);
         backFin.setRotationPoint(0.0F, -1.8F, -2.8F);
         backFin.addBox(0.0F, -7.6F, -2.3F, 0, 8, 14, 0.0F);
         setRotateAngle(backFin, 3.875409442231813E-18F, 0.0F, 0.0F);
-        legL3 = new AdvancedRendererModel(this, 58, 14);
+        legL3 = new WRModelRenderer(this, 58, 14);
         legL3.setRotationPoint(0.02F, 2.5F, 0.1F);
         legL3.addBox(-1.1F, -0.7F, -0.2F, 2, 4, 1, 0.0F);
         setRotateAngle(legL3, -1.3632766787327708F, 0.0F, 0.0F);
-        tail2 = new AdvancedRendererModel(this, 88, 53);
+        tail2 = new WRModelRenderer(this, 88, 53);
         tail2.setRotationPoint(-0.02F, -0.02F, 2.8F);
         tail2.addBox(-1.6F, -1.7F, -0.4F, 3, 3, 3, 0.0F);
-        membrane2L = new AdvancedRendererModel(this, 63, 100);
+        membrane2L = new WRModelRenderer(this, 63, 100);
         membrane2L.setRotationPoint(1.3F, 0.0F, -1.4F);
         membrane2L.addBox(0.0F, 0.0F, -0.5F, 12, 0, 18, 0.0F);
         setRotateAngle(membrane2L, 0.0F, -0.17453292519943295F, 0.0F);
-        legL1 = new AdvancedRendererModel(this, 56, 0);
+        legL1 = new WRModelRenderer(this, 56, 0);
         legL1.setRotationPoint(1.6F, 0.9F, 5.9F);
         legL1.addBox(-0.7F, -0.9F, -0.8F, 2, 5, 2, 0.0F);
         setRotateAngle(legL1, -0.5918411493512771F, 0.0F, 0.0F);
-        neck1 = new AdvancedRendererModel(this, 88, 17);
+        neck1 = new WRModelRenderer(this, 88, 17);
         neck1.setRotationPoint(0.0F, 0.0F, -4.0F);
         neck1.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
-        mainbody = new AdvancedRendererModel(this, 70, 24);
+        mainbody = new WRModelRenderer(this, 70, 24);
         mainbody.setRotationPoint(0.0F, 16.0F, 0.0F);
         mainbody.addBox(-2.5F, -2.5F, -5.0F, 5, 5, 10, 0.0F);
-        wingphalange4L = new AdvancedRendererModel(this, 33, 65);
+        wingphalange4L = new WRModelRenderer(this, 33, 65);
         wingphalange4L.setRotationPoint(15.0F, 0.0F, 0.0F);
         wingphalange4L.addBox(0.0F, -0.5F, -0.5F, 25, 1, 1, 0.0F);
         setRotateAngle(wingphalange4L, 0.0F, -0.17453292519943295F, 0.0F);
-        toe2L = new AdvancedRendererModel(this, 60, 20);
+        toe2L = new WRModelRenderer(this, 60, 20);
         toe2L.setRotationPoint(0.0F, 3.0F, 0.2F);
         toe2L.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
         setRotateAngle(toe2L, -0.9560913642424937F, 0.0F, 0.0F);
-        membrane4R = new AdvancedRendererModel(this, -16, 78);
+        membrane4R = new WRModelRenderer(this, -16, 78);
         membrane4R.mirror = true;
         membrane4R.setRotationPoint(0.0F, -0.1F, 0.0F);
         membrane4R.addBox(-40.0F, 0.0F, -0.5F, 40, 0, 18, 0.0F);
-        toe2R = new AdvancedRendererModel(this, 60, 20);
+        toe2R = new WRModelRenderer(this, 60, 20);
         toe2R.setRotationPoint(0.0F, 3.0F, 0.2F);
         toe2R.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
         setRotateAngle(toe2R, -0.9560913642424937F, 0.0F, 0.0F);
-        tailfin = new AdvancedRendererModel(this, 18, 30);
+        tailfin = new WRModelRenderer(this, 18, 30);
         tailfin.setRotationPoint(0.0F, 0.0F, 1.6F);
         tailfin.addBox(-5.0F, 0.0F, -1.6F, 10, 0, 12, 0.0F);
-        membrane1R = new AdvancedRendererModel(this, 38, 100);
+        membrane1R = new WRModelRenderer(this, 38, 100);
         membrane1R.mirror = true;
         membrane1R.setRotationPoint(0.0F, 0.1F, 0.0F);
         membrane1R.addBox(-11.0F, 0.0F, -0.5F, 11, 0, 18, 0.0F);
         setRotateAngle(membrane1R, 0.0F, -0.17453292519943295F, 0.0F);
-        wingphalangetipR = new AdvancedRendererModel(this, 33, 65);
+        wingphalangetipR = new WRModelRenderer(this, 33, 65);
         wingphalangetipR.setRotationPoint(-24.5F, 0.0F, 0.0F);
         wingphalangetipR.addBox(-11.0F, -0.5F, -0.5F, 11, 1, 1, 0.0F);
         setRotateAngle(wingphalangetipR, 0.0F, 0.034033920413889425F, 0.0F);
-        membrane3R = new AdvancedRendererModel(this, -16, 100);
+        membrane3R = new WRModelRenderer(this, -16, 100);
         membrane3R.mirror = true;
         membrane3R.setRotationPoint(1.0F, 0.0F, 0.0F);
         membrane3R.addBox(-20.0F, 0.0F, -0.5F, 20, 0, 18, 0.0F);
         setRotateAngle(membrane3R, 0.0F, 0.074176493209759F, 0.0F);
-        toe1R = new AdvancedRendererModel(this, 60, 20);
+        toe1R = new WRModelRenderer(this, 60, 20);
         toe1R.setRotationPoint(0.5F, 3.0F, 0.2F);
         toe1R.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
         setRotateAngle(toe1R, -0.9560913642424937F, -0.6373942428283291F, 0.0F);
-        eyeL = new AdvancedRendererModel(this, 79, 2);
+        eyeL = new WRModelRenderer(this, 79, 2);
         eyeL.setRotationPoint(1.7F, -0.5F, -3.9F);
         eyeL.addBox(0.0F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         setRotateAngle(eyeL, 0.0F, 0.17453292519943295F, 0.0F);
-        wingphalange3R = new AdvancedRendererModel(this, 0, 65);
+        wingphalange3R = new WRModelRenderer(this, 0, 65);
         wingphalange3R.setRotationPoint(-14.0F, -0.3F, -0.5F);
         wingphalange3R.addBox(-15.0F, -0.5F, -0.5F, 15, 1, 1, 0.0F);
         setRotateAngle(wingphalange3R, 0.0F, 0.17453292519943295F, 0.0F);
-        tail10 = new AdvancedRendererModel(this, 90, 60);
+        tail10 = new WRModelRenderer(this, 90, 60);
         tail10.setRotationPoint(0.02F, 0.02F, 2.0F);
         tail10.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
-        toe1L = new AdvancedRendererModel(this, 60, 20);
+        toe1L = new WRModelRenderer(this, 60, 20);
         toe1L.setRotationPoint(0.5F, 3.0F, 0.2F);
         toe1L.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
         setRotateAngle(toe1L, -0.9560913642424937F, -0.6071201090352446F, 0.0F);
-        wingphalange2L = new AdvancedRendererModel(this, 31, 58);
+        wingphalange2L = new WRModelRenderer(this, 31, 58);
         wingphalange2L.setRotationPoint(9.0F, 0.01F, 0.0F);
         wingphalange2L.addBox(0.0F, -1.0F, -1.0F, 15, 2, 2, 0.0F);
         setRotateAngle(wingphalange2L, 0.0F, 0.3490658503988659F, 0.0F);
-        bottomFin = new AdvancedRendererModel(this, 0, -3);
+        bottomFin = new WRModelRenderer(this, 0, -3);
         bottomFin.setRotationPoint(0.0F, 1.4F, 2.1F);
         bottomFin.addBox(0.0F, -0.1F, -6.4F, 0, 5, 12, 0.0F);
-        mouthBottom = new AdvancedRendererModel(this, 84, 10);
+        mouthBottom = new WRModelRenderer(this, 84, 10);
         mouthBottom.setRotationPoint(0.1F, 1.0F, -4.5F);
         mouthBottom.addBox(-1.5F, -0.5F, -4.0F, 3, 1, 4, 0.0F);
-        legR2 = new AdvancedRendererModel(this, 56, 8);
+        legR2 = new WRModelRenderer(this, 56, 8);
         legR2.setRotationPoint(0.42F, 3.1F, -0.1F);
         legR2.addBox(-1.1F, -0.2F, -1.0F, 2, 3, 2, 0.0F);
         setRotateAngle(legR2, 1.360135086079181F, 0.0F, 0.0F);
-        wingphalangemiddle2R = new AdvancedRendererModel(this, 33, 69);
+        wingphalangemiddle2R = new WRModelRenderer(this, 33, 69);
         wingphalangemiddle2R.setRotationPoint(-10.0F, 0.0F, 0.0F);
         wingphalangemiddle2R.addBox(-10.0F, -0.5F, -0.5F, 10, 1, 1, 0.0F);
         setRotateAngle(wingphalangemiddle2R, 0.0F, 0.17453292519943295F, 0.0F);
-        phalangeL22 = new AdvancedRendererModel(this, 33, 69);
+        phalangeL22 = new WRModelRenderer(this, 33, 69);
         phalangeL22.setRotationPoint(10.0F, 0.0F, 0.0F);
         phalangeL22.addBox(0.0F, -0.5F, -0.5F, 10, 1, 1, 0.0F);
         setRotateAngle(phalangeL22, 0.0F, -0.17453292519943295F, 0.0F);
-        tail7 = new AdvancedRendererModel(this, 90, 60);
+        tail7 = new WRModelRenderer(this, 90, 60);
         tail7.setRotationPoint(-0.02F, -0.02F, 2.0F);
         tail7.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
-        head = new AdvancedRendererModel(this, 80, 0);
+        head = new WRModelRenderer(this, 80, 0);
         head.setRotationPoint(-0.1F, -0.1F, -2.0F);
         head.addBox(-2.4F, -2.0F, -4.8F, 5, 4, 5, 0.0F);
-        neck3 = new AdvancedRendererModel(this, 88, 17);
+        neck3 = new WRModelRenderer(this, 88, 17);
         neck3.setRotationPoint(-0.02F, -0.02F, -2.0F);
         neck3.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
-        membranetipR = new AdvancedRendererModel(this, 74, 78);
+        membranetipR = new WRModelRenderer(this, 74, 78);
         membranetipR.setRotationPoint(-5.2F, 0.2F, 0.0F);
         membranetipR.addBox(-5.7F, -0.5F, -0.5F, 11, 0, 10, 0.0F);
         setRotateAngle(membranetipR, 0.0F, -0.01291543646475804F, 0.0F);
-        wingphalange2R = new AdvancedRendererModel(this, 31, 58);
+        wingphalange2R = new WRModelRenderer(this, 31, 58);
         wingphalange2R.setRotationPoint(-9.0F, 0.01F, 0.0F);
         wingphalange2R.addBox(-15.0F, -1.0F, -1.0F, 15, 2, 2, 0.0F);
         setRotateAngle(wingphalange2R, 0.0F, -0.3490658503988659F, 0.0F);
-        toe3L = new AdvancedRendererModel(this, 60, 20);
+        toe3L = new WRModelRenderer(this, 60, 20);
         toe3L.setRotationPoint(-0.5F, 3.0F, 0.2F);
         toe3L.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
         setRotateAngle(toe3L, -0.9560913642424937F, 0.6373942428283291F, 0.0F);
-        secondarybody = new AdvancedRendererModel(this, 76, 40);
+        secondarybody = new WRModelRenderer(this, 76, 40);
         secondarybody.setRotationPoint(0.0F, -0.3F, 4.9F);
         secondarybody.addBox(-2.1F, -2.1F, -0.5F, 4, 4, 8, 0.0F);
-        wingphalange1R = new AdvancedRendererModel(this, 0, 58);
+        wingphalange1R = new WRModelRenderer(this, 0, 58);
         wingphalange1R.setRotationPoint(-1.5F, -1.0F, -3.0F);
         wingphalange1R.addBox(-10.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
         setRotateAngle(wingphalange1R, 0.0F, 0.17453292519943295F, 0.0F);
-        tail4 = new AdvancedRendererModel(this, 88, 53);
+        tail4 = new WRModelRenderer(this, 88, 53);
         tail4.setRotationPoint(-0.02F, -0.02F, 2.8F);
         tail4.addBox(-1.6F, -1.7F, -0.4F, 3, 3, 3, 0.0F);
-        membrane2R = new AdvancedRendererModel(this, 63, 100);
+        membrane2R = new WRModelRenderer(this, 63, 100);
         membrane2R.mirror = true;
         membrane2R.setRotationPoint(-1.3F, 0.0F, -1.4F);
         membrane2R.addBox(-12.0F, 0.0F, -0.5F, 12, 0, 18, 0.0F);
         setRotateAngle(membrane2R, 0.0F, 0.17453292519943295F, 0.0F);
-        neck2 = new AdvancedRendererModel(this, 88, 17);
+        neck2 = new WRModelRenderer(this, 88, 17);
         neck2.setRotationPoint(0.02F, 0.02F, -2.0F);
         neck2.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
-        wingphalangemiddle1R = new AdvancedRendererModel(this, 0, 70);
+        wingphalangemiddle1R = new WRModelRenderer(this, 0, 70);
         wingphalangemiddle1R.setRotationPoint(-14.0F, -0.2F, 0.5F);
         wingphalangemiddle1R.addBox(-10.0F, -0.5F, -0.5F, 10, 1, 1, 0.0F);
         setRotateAngle(wingphalangemiddle1R, 0.0F, 0.7740535232594852F, 0.0F);
-        tail3 = new AdvancedRendererModel(this, 88, 53);
+        tail3 = new WRModelRenderer(this, 88, 53);
         tail3.setRotationPoint(0.02F, 0.02F, 2.8F);
         tail3.addBox(-1.6F, -1.7F, -0.4F, 3, 3, 3, 0.0F);
-        mouthTop = new AdvancedRendererModel(this, 67, 10);
+        mouthTop = new WRModelRenderer(this, 67, 10);
         mouthTop.setRotationPoint(0.1F, -0.7F, -4.5F);
         mouthTop.addBox(-2.0F, -1.0F, -5.0F, 4, 2, 5, 0.0F);
         setRotateAngle(mouthTop, 0.31869712141416456F, 0.0F, 0.0F);
-        neck4 = new AdvancedRendererModel(this, 88, 17);
+        neck4 = new WRModelRenderer(this, 88, 17);
         neck4.setRotationPoint(0.02F, 0.02F, -2.0F);
         neck4.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
-        tail8 = new AdvancedRendererModel(this, 90, 60);
+        tail8 = new WRModelRenderer(this, 90, 60);
         tail8.setRotationPoint(0.02F, 0.02F, 2.0F);
         tail8.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
-        eyeR = new AdvancedRendererModel(this, 79, 2);
+        eyeR = new WRModelRenderer(this, 79, 2);
         eyeR.setRotationPoint(-1.8F, -0.5F, -3.9F);
         eyeR.addBox(-0.7F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         setRotateAngle(eyeR, 0.0F, -0.17453292519943295F, 0.0F);
-        toe1R_1 = new AdvancedRendererModel(this, 60, 20);
+        toe1R_1 = new WRModelRenderer(this, 60, 20);
         toe1R_1.setRotationPoint(-0.5F, 3.0F, 0.2F);
         toe1R_1.addBox(-0.5F, 0.0F, -0.5F, 1, 2, 1, 0.0F);
         setRotateAngle(toe1R_1, -0.9560913642424937F, 0.6373942428283291F, 0.0F);
-        membranetipL = new AdvancedRendererModel(this, 98, 78);
+        membranetipL = new WRModelRenderer(this, 98, 78);
         membranetipL.setRotationPoint(4.7F, 0.2F, 0.0F);
         membranetipL.addBox(-5.4F, -0.4F, -0.5F, 11, 0, 10, 0.0F);
         setRotateAngle(membranetipL, 0.0F, -0.01291543646475804F, 0.0F);
-        tail6 = new AdvancedRendererModel(this, 90, 60);
+        tail6 = new WRModelRenderer(this, 90, 60);
         tail6.setRotationPoint(0.02F, 0.02F, 2.0F);
         tail6.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
-        wingphalangetipL = new AdvancedRendererModel(this, 33, 65);
+        wingphalangetipL = new WRModelRenderer(this, 33, 65);
         wingphalangetipL.setRotationPoint(24.7F, 0.0F, 0.0F);
         wingphalangetipL.addBox(-0.5F, -0.5F, -0.5F, 11, 1, 1, 0.0F);
         setRotateAngle(wingphalangetipL, 0.0F, 0.030543261909900768F, 0.0F);
-        wingphalange3L = new AdvancedRendererModel(this, 0, 65);
+        wingphalange3L = new WRModelRenderer(this, 0, 65);
         wingphalange3L.setRotationPoint(14.0F, -0.3F, -0.5F);
         wingphalange3L.addBox(0.0F, -0.5F, -0.5F, 15, 1, 1, 0.0F);
         setRotateAngle(wingphalange3L, 0.0F, -0.17453292519943295F, 0.0F);
-        tail1 = new AdvancedRendererModel(this, 88, 53);
+        tail1 = new WRModelRenderer(this, 88, 53);
         tail1.setRotationPoint(0.02F, 0.02F, 7.0F);
         tail1.addBox(-1.6F, -1.7F, -0.4F, 3, 3, 3, 0.0F);
-        membrane4L = new AdvancedRendererModel(this, -16, 78);
+        membrane4L = new WRModelRenderer(this, -16, 78);
         membrane4L.setRotationPoint(0.0F, -0.1F, 0.0F);
         membrane4L.addBox(0.0F, 0.0F, -0.5F, 40, 0, 18, 0.0F);
-        tail9 = new AdvancedRendererModel(this, 90, 60);
+        tail9 = new WRModelRenderer(this, 90, 60);
         tail9.setRotationPoint(-0.02F, -0.02F, 2.0F);
         tail9.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
-        membrane3L = new AdvancedRendererModel(this, -16, 100);
+        membrane3L = new WRModelRenderer(this, -16, 100);
         membrane3L.setRotationPoint(-1.0F, 0.0F, 0.0F);
         membrane3L.addBox(0.0F, 0.0F, -0.5F, 20, 0, 18, 0.0F);
         setRotateAngle(membrane3L, 0.0F, -0.11117747335203879F, 0.0F);
-        legR1 = new AdvancedRendererModel(this, 56, 0);
+        legR1 = new WRModelRenderer(this, 56, 0);
         legR1.setRotationPoint(-2.3F, 0.9F, 5.9F);
         legR1.addBox(-0.7F, -0.9F, -0.8F, 2, 5, 2, 0.0F);
         setRotateAngle(legR1, -0.5918411493512771F, 0.0F, 0.0F);
-        wingphalange1L = new AdvancedRendererModel(this, 0, 58);
+        wingphalange1L = new WRModelRenderer(this, 0, 58);
         wingphalange1L.setRotationPoint(1.5F, -1.0F, -3.0F);
         wingphalange1L.addBox(0.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
         setRotateAngle(wingphalange1L, 0.0F, -0.17453292519943295F, 0.0F);
-        membrane1L = new AdvancedRendererModel(this, 38, 100);
+        membrane1L = new WRModelRenderer(this, 38, 100);
         membrane1L.setRotationPoint(0.0F, 0.1F, 0.0F);
         membrane1L.addBox(0.0F, 0.0F, -0.5F, 11, 0, 18, 0.0F);
         setRotateAngle(membrane1L, 0.0F, 0.17453292519943295F, 0.0F);
-        wingphalange4R = new AdvancedRendererModel(this, 33, 65);
+        wingphalange4R = new WRModelRenderer(this, 33, 65);
         wingphalange4R.setRotationPoint(-15.0F, 0.0F, 0.0F);
         wingphalange4R.addBox(-25.0F, -0.5F, -0.5F, 25, 1, 1, 0.0F);
         setRotateAngle(wingphalange4R, 0.0F, 0.17453292519943295F, 0.0F);
-        tail5 = new AdvancedRendererModel(this, 90, 60);
+        tail5 = new WRModelRenderer(this, 90, 60);
         tail5.setRotationPoint(-0.1F, -0.1F, 2.0F);
         tail5.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
-        wingphalangemiddle1L = new AdvancedRendererModel(this, 0, 70);
+        wingphalangemiddle1L = new WRModelRenderer(this, 0, 70);
         wingphalangemiddle1L.setRotationPoint(14.0F, -0.2F, 0.5F);
         wingphalangemiddle1L.addBox(0.0F, -0.5F, -0.5F, 10, 1, 1, 0.0F);
         setRotateAngle(wingphalangemiddle1L, 0.0F, -0.7740535232594852F, 0.0F);
-        legL2 = new AdvancedRendererModel(this, 56, 8);
+        legL2 = new WRModelRenderer(this, 56, 8);
         legL2.setRotationPoint(0.38F, 3.1F, -0.1F);
         legL2.addBox(-1.1F, -0.2F, -1.0F, 2, 3, 2, 0.0F);
         setRotateAngle(legL2, 1.360135086079181F, 0.0F, 0.0F);
@@ -381,11 +381,11 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
         wingphalange2L.addChild(wingphalangemiddle1L);
         legL1.addChild(legL2);
 
-        toeArray = new AdvancedRendererModel[] {toe1L, toe2L, toe3L, toe1R_1, toe1R, toe2R};
-        headArray = new AdvancedRendererModel[] {neck1, neck2, neck3, neck4, head};
-        neckArray = new AdvancedRendererModel[] {neck1, neck2, neck3, neck4};
-        neckArray2 = new AdvancedRendererModel[] {neck1, neck2};
-        tailArray = new AdvancedRendererModel[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8, tail9, tail10};
+        toeArray = new WRModelRenderer[] {toe1L, toe2L, toe3L, toe1R_1, toe1R, toe2R};
+        headArray = new WRModelRenderer[] {neck1, neck2, neck3, neck4, head};
+        neckArray = new WRModelRenderer[] {neck1, neck2, neck3, neck4};
+        neckArray2 = new WRModelRenderer[] {neck1, neck2};
+        tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8, tail9, tail10};
 
         updateDefaultPose();
         animator = ModelAnimator.create();
@@ -455,9 +455,9 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
 
                 walk(legL1, walkSpeed, 0.4f, false, 0, 0.1f, limbSwing, limbSwingAmount);
                 walk(legR1, walkSpeed, 0.4f, true, 0, 0.1f, limbSwing, limbSwingAmount);
-                for (AdvancedRendererModel toe : new AdvancedRendererModel[] {toe1L, toe2L, toe3L})
+                for (WRModelRenderer toe : new WRModelRenderer[] {toe1L, toe2L, toe3L})
                     walk(toe, walkSpeed, 0.4f, true, -0.6f, 0, limbSwing, limbSwingAmount);
-                for (AdvancedRendererModel toe : new AdvancedRendererModel[] {toe1R, toe2R, toe1R_1})
+                for (WRModelRenderer toe : new WRModelRenderer[] {toe1R, toe2R, toe1R_1})
                     walk(toe, walkSpeed, 0.4f, false, -0.6f, 0, limbSwing, limbSwingAmount);
             }
             else if (current == SIT_ANIMATION)
@@ -527,7 +527,7 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
         else
         {
             // Neck
-            for (AdvancedRendererModel box : neckArray2) box.rotateAngleX = -0.4f;
+            for (WRModelRenderer box : neckArray2) box.rotateAngleX = -0.4f;
             neck3.rotateAngleX = 0.5f;
             neck4.rotateAngleX = 0.25f;
 
@@ -596,8 +596,8 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
                 wingphalange1R.rotateAngleX = 0.3f;
 
                 // Toes
-                for (AdvancedRendererModel toe : toeArray) toe.rotateAngleX = -0.2f;
-                for (AdvancedRendererModel segment : tailArray)
+                for (WRModelRenderer toe : toeArray) toe.rotateAngleX = -0.2f;
+                for (WRModelRenderer segment : tailArray)
                 {
                     segment.rotateAngleX = -0.035f;
                     segment.rotateAngleY = -0.35f;
@@ -613,13 +613,13 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
                     membrane2L.rotateAngleY = -1.75f;
                     membrane3L.rotateAngleY = 0.1f;
 
-                    for (AdvancedRendererModel segment : neckArray)
+                    for (WRModelRenderer segment : neckArray)
                     {
                         segment.rotateAngleX = 0.1f;
                         segment.rotateAngleY = 0.5f;
                     }
                     head.rotateAngleX = -0.2f;
-                    for (AdvancedRendererModel tailSegment : tailArray)
+                    for (WRModelRenderer tailSegment : tailArray)
                     {
                         tailSegment.rotateAngleY = -0.35f;
                         tailSegment.rotateAngleX = -0.035f;
@@ -693,8 +693,8 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
         animator.rotate(legL1, i * -0.6f, 0, 0);
         animator.rotate(legL2, i * 0.95f, 0, 0);
         animator.rotate(legL3, i * -1.15f, 0, 0);
-        for (AdvancedRendererModel toe : toeArray) animator.rotate(toe, i * 0.75f, 0, 0);
-        for (AdvancedRendererModel segment : tailArray) animator.rotate(segment, i * -0.035f, i * -0.35f, 0);
+        for (WRModelRenderer toe : toeArray) animator.rotate(toe, i * 0.75f, 0, 0);
+        for (WRModelRenderer segment : tailArray) animator.rotate(segment, i * -0.035f, i * -0.35f, 0);
     }
 
     private void sleepAnim()
@@ -715,8 +715,8 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
         animator.rotate(neck3, -0.5f, 0, 0);
         animator.rotate(neck4, -0.2f, 0, 0);
         animator.rotate(head, -0.3f, 0, 0);
-        for (AdvancedRendererModel neckSegment : neckArray2) animator.rotate(neckSegment, 0.4f, 0, 0);
-        for (AdvancedRendererModel neck : neckArray) animator.rotate(neck, 0.1f, 0.5f, 0);
+        for (WRModelRenderer neckSegment : neckArray2) animator.rotate(neckSegment, 0.4f, 0, 0);
+        for (WRModelRenderer neck : neckArray) animator.rotate(neck, 0.1f, 0.5f, 0);
         animator.endKeyframe();
     }
 
@@ -732,8 +732,8 @@ public class SilverGliderModel extends AdvancedLivingEntityModel<SilverGliderEnt
         animator.rotate(neck3, 0.5f, 0, 0);
         animator.rotate(neck4, 0.2f, 0, 0);
         animator.rotate(head, 0.3f, 0, 0);
-        for (AdvancedRendererModel neckSegment : neckArray2) animator.rotate(neckSegment, -0.4f, 0, 0);
-        for (AdvancedRendererModel neck : neckArray) animator.rotate(neck, -0.1f, -0.5f, 0);
+        for (WRModelRenderer neckSegment : neckArray2) animator.rotate(neckSegment, -0.4f, 0, 0);
+        for (WRModelRenderer neck : neckArray) animator.rotate(neck, -0.1f, -0.5f, 0);
         animator.endKeyframe();
     }
 }

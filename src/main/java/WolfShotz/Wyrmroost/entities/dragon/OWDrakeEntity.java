@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.TickFloat;
 import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
@@ -58,12 +59,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     private static final AttributeModifier SPRINTING_SPEED_BOOST = (new AttributeModifier(SPRINTING_ID, "Sprinting speed boost", 1.15F, AttributeModifier.Operation.MULTIPLY_TOTAL)).setSaved(false);
 
     // Dragon Entity Animations
-    public static final Animation SIT_ANIMATION = new Animation(15);
-    public static final Animation STAND_ANIMATION = new Animation(15);
     public static final Animation GRAZE_ANIMATION = new Animation(35);
     public static final Animation HORN_ATTACK_ANIMATION = new Animation(15);
     public static final Animation ROAR_ANIMATION = new Animation(86);
     public static final Animation TALK_ANIMATION = new Animation(20);
+    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
@@ -73,10 +74,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super(drake, world);
 
-        SLEEP_ANIMATION = new Animation(20);
-        WAKE_ANIMATION = new Animation(15);
-
-        addVariantData(2, true);
+        registerVariantData(2, true);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
 
@@ -180,12 +178,15 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void livingTick()
     {
+        sitTimer.add((isSitting() || isSleeping())? 0.1f : -0.1f);
+        sleepTimer.add(isSleeping()? 0.04f : -0.1f);
+
         if (!world.isRemote)
         {
             if ((getAttackTarget() == null || !getAttackTarget().isAlive()) && isAngry()) setAngry(false);
             setSprinting(isAngry());
         }
-        
+
         if (getAnimation() == ROAR_ANIMATION)
         {
             if (getAnimationTick() == 1)
@@ -458,14 +459,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return WRSounds.OWDRAKE_DEATH.get(); }
 
     @Override
-    public void setSit(boolean sitting)
-    {
-        if (sitting != isSitting()) setAnimation(sitting? SIT_ANIMATION : STAND_ANIMATION);
-
-        super.setSit(sitting);
-    }
-
-    @Override
     public void performGenericAttack() { setAnimation(HORN_ATTACK_ANIMATION); }
 
     @Override
@@ -514,6 +507,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SIT_ANIMATION, STAND_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, ROAR_ANIMATION};
+        return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, ROAR_ANIMATION};
     }
 }

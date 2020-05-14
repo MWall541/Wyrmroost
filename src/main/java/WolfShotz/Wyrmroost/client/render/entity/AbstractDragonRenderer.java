@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.client.render.entity;
 
-import WolfShotz.Wyrmroost.client.model.AdvancedLivingEntityModel;
+import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M extends AdvancedLivingEntityModel<T>> extends MobRenderer<T, M>
+public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M extends WREntityModel<T>> extends MobRenderer<T, M>
 {
     public static final String BASE_PATH = "textures/entity/dragon/";
     public boolean isChristmas = false;

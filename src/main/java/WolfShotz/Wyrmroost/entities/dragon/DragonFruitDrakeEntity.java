@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.animation.Animation;
+import WolfShotz.Wyrmroost.client.animation.TickFloat;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.ControlledAttackGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
@@ -49,10 +50,10 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
 {
-    public static final Animation STAND_ANIMATION = new Animation(15);
-    public static final Animation SIT_ANIMATION = new Animation(15);
     public static final Animation BITE_ANIMATION = new Animation(15);
 
+    public TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
     private int shearCooldownTime;
     private int napTime;
 
@@ -123,15 +124,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public void setSit(boolean sitting)
-    {
-        if (isSitting() == sitting) return;
-        super.setSit(sitting);
-        if (sitting) setAnimation(SIT_ANIMATION);
-        else setAnimation(STAND_ANIMATION);
-    }
-
-    @Override
     public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (super.processInteract(player, hand, stack)) return true;
@@ -169,12 +161,27 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         super.tick();
 
-        setSprinting(getAttackTarget() != null);
-
         if (shearCooldownTime > 0) --shearCooldownTime;
+        sitTimer.add((isSitting() || isSleeping())? 0.1f : -0.1f);
+        sleepTimer.add(isSleeping()? 0.035f : -0.1f);
+
+        setSprinting(getAttackTarget() != null);
 
         if (getAnimation() == BITE_ANIMATION && animationTick == 7) attackInFront(0);
     }
+
+//    @Override
+//    public void livingTick()
+//    {
+//        super.livingTick();
+//
+//        if (shearCooldownTime > 0) --shearCooldownTime;
+//        sitTimer.add((isSitting() || isSleeping())? 0.5f : -0.5f);
+//
+//        setSprinting(getAttackTarget() != null);
+//
+//        if (getAnimation() == BITE_ANIMATION && animationTick == 7) attackInFront(0);
+//    }
 
     @Override
     public void travel(Vec3d vec3d)
@@ -324,6 +331,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 //    {
 //        return stack.getItem() == WRItems.DRAGON_FRUIT.get();
 //    }
+
     @Override
     public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.APPLE; }
 
@@ -331,5 +339,5 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.45f, 0.75f, 9600); }
 
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, STAND_ANIMATION, SIT_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, BITE_ANIMATION}; }
 }
