@@ -11,33 +11,7 @@
               "function": "minecraft:set_count",
               "count": {
                 "min": 0.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
-              }
-            },
-            {
-              "function": "minecraft:looting_enchant",
-              "count": {
-                "min": 1.0,
-                "max": 3.0
-              }
-            }
-          ],
-          "name": "minecraft:gold_nugget"
-        }
-      ]
-    },
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 0.0,
-                "max": 2.0,
+                "max": 3.0,
                 "type": "minecraft:uniform"
               }
             },
@@ -59,11 +33,35 @@
               "function": "minecraft:looting_enchant",
               "count": {
                 "min": 1.0,
-                "max": 2.0
+                "max": 3.0
               }
             }
           ],
           "name": "wyrmroost:raw_lowtier_meat"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 0.0,
+                "max": 2.0,
+                "type": "minecraft:uniform"
+              }
+            }
+          ],
+          "name": "minecraft:gold_nugget"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:killed_by_player"
         }
       ]
     }

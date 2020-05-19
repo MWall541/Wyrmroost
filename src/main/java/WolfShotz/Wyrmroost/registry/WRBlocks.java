@@ -3,12 +3,14 @@ package WolfShotz.Wyrmroost.registry;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.blocks.base.EXPBlock;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -17,6 +19,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class WRBlocks
@@ -89,14 +92,21 @@ public class WRBlocks
 
     public static class Tags
     {
+        public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCK_TAGS = Maps.newHashMap();
+
         public static final Tag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
 //        public static final Tag<Block> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
 //        public static final Tag<Block> BLUE_CORIN_LOGS = tag(new ResourceLocation("logs/blue_corin_logs"));
 //        public static final Tag<Block> TEAL_CORIN_LOGS = tag(new ResourceLocation("logs/teal_corin_logs"));
 //        public static final Tag<Block> RED_CORIN_LOGS = tag(new ResourceLocation("logs/red_corin_logs"));
 
-        public static Tag<Block> tag(String name) { return new BlockTags.Wrapper(Wyrmroost.rl(name)); }
+        public static Tag<Block> tag(String name) { return tag(Wyrmroost.rl(name));}
 
-        public static Tag<Block> tag(ResourceLocation name) { return new BlockTags.Wrapper(name); }
+        public static Tag<Block> tag(ResourceLocation name)
+        {
+            Tag<Block> tag = new BlockTags.Wrapper(name);
+            ITEM_BLOCK_TAGS.put(tag, new ItemTags.Wrapper(name));
+            return tag;
+        }
     }
 }

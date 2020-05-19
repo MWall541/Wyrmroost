@@ -1,15 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "MM",
-    " S",
-    " S"
+    "XX",
+    " #",
+    " #"
   ],
   "key": {
-    "M": {
+    "X": {
       "item": "wyrmroost:platinum_ingot"
     },
-    "S": {
+    "#": {
       "item": "minecraft:stick"
     }
   },

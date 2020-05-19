@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_block": {
+    "red_geode": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "wyrmroost:red_geode_block"
+            "item": "wyrmroost:red_geode"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_block",
+      "red_geode",
       "has_the_recipe"
     ]
   ]

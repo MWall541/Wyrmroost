@@ -37,6 +37,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -137,9 +139,9 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
      */
     public boolean isBurrowed() { return dataManager.get(BURROWED); }
 
-    // ================================
-
     public void setBurrowed(boolean burrow) { dataManager.set(BURROWED, burrow); }
+
+    // ================================
 
     @Override
     public void livingTick()
@@ -222,7 +224,37 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
     }
 
     @Override
-    public boolean canDespawn(double distanceToClosestPlayer) { return true; }
+    public boolean canDespawn(double distanceToClosestPlayer) { return !world.isDaytime(); }
+
+    @Override
+    public void checkDespawn()
+    {
+        if (isNoDespawnRequired())
+        {
+            idleTime = 0;
+            return;
+        }
+
+        Entity player = world.getClosestPlayer(this, -1d);
+        Event.Result result = ForgeEventFactory.canEntityDespawn(this);
+        if (result == Event.Result.DENY)
+        {
+            idleTime = 0;
+            return;
+        }
+        else if (result == Event.Result.ALLOW)
+        {
+            remove();
+            return;
+        }
+
+        if (player != null)
+        {
+            double distanceSq = player.getDistanceSq(this);
+            if (distanceSq > 1024 && getRNG().nextInt(500) == 0 && canDespawn(distanceSq)) remove();
+            else if (distanceSq < 1024.0D) idleTime = 0;
+        }
+    }
 
     @Override
     public ItemStack getPickedResult(RayTraceResult target)

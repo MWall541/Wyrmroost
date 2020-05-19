@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -149,6 +150,8 @@ public enum StaffAction
     public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack) { return false; }
 
     public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack) {}
+
+    public void render(AbstractDragonEntity dragon, MatrixStack ms) {}
 
     public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
     {

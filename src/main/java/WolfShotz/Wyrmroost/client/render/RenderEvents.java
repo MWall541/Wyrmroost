@@ -26,7 +26,6 @@ public class RenderEvents extends RenderType
 {
     // == [Render Types] ==
 
-
     private RenderEvents() { super(null, null, 0, 0, false, false, null, null); } // dummy
 
     public static RenderType getGlow(ResourceLocation locationIn)
@@ -74,32 +73,29 @@ public class RenderEvents extends RenderType
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity player = mc.player;
         if (player == null) return;
-
         ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
         if (stack.getItem() != WRItems.DRAGON_STAFF.get()) return;
-
         AbstractDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.world, stack);
         if (dragon == null) return;
-
-        BlockPos pos;
-        if (dragon.getHomePos().isPresent()) pos = dragon.getHomePos().get();
-        else if (DragonStaffItem.getAction(stack) == StaffAction.HOME_POS && mc.objectMouseOver instanceof BlockRayTraceResult)
-            pos = ((BlockRayTraceResult) mc.objectMouseOver).getPos();
-        else return;
-
         Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
-        double x = pos.getX() - view.x;
-        double y = pos.getY() - view.y;
-        double z = pos.getZ() - view.z;
 
-        IRenderTypeBuffer.Impl impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-        drawShape(ms,
-                impl.getBuffer(RenderType.getLines()),
-                player.world.getBlockState(pos).getShape(player.world, pos),
-                x, y, z,
-                0, 0, 1, 0.85f);
+        // Render the Home Position
+        BlockPos pos = dragon.getHomePos().orElse((DragonStaffItem.getAction(stack) == StaffAction.HOME_POS && mc.objectMouseOver instanceof BlockRayTraceResult)? ((BlockRayTraceResult) mc.objectMouseOver).getPos() : null);
+        if (pos != null)
+        {
+            double x = pos.getX() - view.x;
+            double y = pos.getY() - view.y;
+            double z = pos.getZ() - view.z;
 
-        impl.finish();
+            IRenderTypeBuffer.Impl impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+            drawShape(ms,
+                    impl.getBuffer(RenderType.getLines()),
+                    player.world.getBlockState(pos).getShape(player.world, pos),
+                    x, y, z,
+                    0, 0, 1, 0.85f);
+
+            impl.finish();
+        }
     }
 
     public static void renderDebugBox(MatrixStack ms)

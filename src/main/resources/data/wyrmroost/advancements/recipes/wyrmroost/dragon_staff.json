@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_rod": {
+    "has_red_geode": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "minecraft:blaze_rod"
+            "item": "wyrmroost:red_geode"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_rod",
+      "has_red_geode",
       "has_the_recipe"
     ]
   ]

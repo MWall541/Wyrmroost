@@ -402,7 +402,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
             roarAnim();
         if (animator.setAnimation(ButterflyLeviathanEntity.BITE_ANIMATION)) biteAnim();
 
-        idleAnim(frame);
+        idle(frame);
     }
 
     private void setInitialPositions()
@@ -459,7 +459,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     }
 
     @Override
-    public void idleAnim(float frame)
+    public void idle(float frame)
     {
         if (!entity.isUnderWater())
         {

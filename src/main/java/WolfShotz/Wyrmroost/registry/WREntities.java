@@ -46,10 +46,10 @@ public class WREntities
     public static void registerEntityWorldSpawns()
     {
         // OW
-        basicSpawnConditions(OVERWORLD_DRAKE.get(), 8, 1, 3, ModUtils.getBiomesByType(Type.SAVANNA, Type.PLAINS));
+        basicSpawnConditions(OVERWORLD_DRAKE.get(), 8, 1, 3, ModUtils.getBiomesByTypes(Type.SAVANNA, Type.PLAINS));
         LDWyrmEntity.setSpawnConditions();
         SilverGliderEntity.setSpawnConditions();
-        basicSpawnConditions(ROOSTSTALKER.get(), 7, 3, 13, ModUtils.getBiomesByType(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
+        basicSpawnConditions(ROOSTSTALKER.get(), 7, 3, 13, ModUtils.getBiomesByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN));
         DragonFruitDrakeEntity.setSpawnConditions();
 
         ButterflyLeviathanEntity.setSpawnConditions();

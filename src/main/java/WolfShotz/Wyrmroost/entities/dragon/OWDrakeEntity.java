@@ -150,10 +150,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
     }
 
-    public boolean isArmored()
-    {
-        return dataManager.get(ARMOR).getItem() instanceof DragonArmorItem;
-    }
+    public boolean isArmored() { return dataManager.get(ARMOR).getItem() instanceof DragonArmorItem; }
 
     public void setSprinting(boolean sprinting)
     {
@@ -235,11 +232,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
         super.livingTick();
     }
-    
+
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (super.processInteract(player, hand, stack)) return true;
+        if (super.playerInteraction(player, hand, stack)) return true;
 
         // If holding a saddle and this is not a child, Saddle up!
         if (stack.getItem() == Items.SADDLE && !isSaddled() && !isChild()) // instaceof: for custom saddles (if any)

@@ -1,14 +1,14 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "G",
-    "B"
+    "X",
+    "#"
   ],
   "key": {
-    "G": {
+    "X": {
       "item": "wyrmroost:red_geode"
     },
-    "B": {
+    "#": {
       "item": "minecraft:blaze_rod"
     }
   },

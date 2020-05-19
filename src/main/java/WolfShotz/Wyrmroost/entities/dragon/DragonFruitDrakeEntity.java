@@ -124,9 +124,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (super.processInteract(player, hand, stack)) return true;
+        if (super.playerInteraction(player, hand, stack)) return true;
         if (stack.getItem() == Items.SHEARS)
             return true; // Shears return false on entity interactions. bad, but workaround for it.
 

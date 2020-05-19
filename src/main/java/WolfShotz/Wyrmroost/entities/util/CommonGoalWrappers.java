@@ -65,10 +65,7 @@ public class CommonGoalWrappers
         return new TemptGoal(dragon, speed, scaredByMovement, temptedItems)
         {
             @Override
-            public boolean shouldExecute()
-            {
-                return !((TameableEntity) creature).isTamed() && super.shouldExecute();
-            }
+            public boolean shouldExecute() { return !((TameableEntity) creature).isTamed() && super.shouldExecute(); }
         };
     }
 
@@ -164,6 +161,6 @@ public class CommonGoalWrappers
 
     public static <T extends LivingEntity> AvoidEntityGoal<T> nonTamedAvoidGoal(TameableEntity tameable, Class<T> avoiding, float distance, float speed)
     {
-        return nonTamedAvoidGoal(tameable, avoiding, e -> true, distance, speed, speed * 1.5f);
+        return nonTamedAvoidGoal(tameable, avoiding, e -> true, distance, speed, speed * 1.43f);
     }
 }

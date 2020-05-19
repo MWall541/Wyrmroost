@@ -485,7 +485,7 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         if (animator.setAnimation(CanariWyvernEntity.THREAT_ANIMATION)) threatAnim(frame);
         if (animator.setAnimation(CanariWyvernEntity.ATTACK_ANIMATION)) attackAnim();
 
-        idleAnim(frame);
+        idle(frame);
     }
 
     // Standing pose without the t-pose wings shit
@@ -598,7 +598,7 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     }
 
     @Override
-    public void idleAnim(float frame)
+    public void idle(float frame)
     {
         if (entity.isFlying())
         {

@@ -19,12 +19,9 @@ import java.util.List;
  */
 public class ItemArmorBase extends ArmorItem
 {
-    public final ArmorMaterialList armorMaterial;
-
     public ItemArmorBase(ArmorMaterialList material, EquipmentSlotType equipType)
     {
         super(material, equipType, ModUtils.itemBuilder().rarity(material.getRarity()));
-        this.armorMaterial = material;
     }
 
     @Nullable
@@ -38,6 +35,6 @@ public class ItemArmorBase extends ArmorItem
     @Override
     public void addInformation(ItemStack p_77624_1_, @Nullable World p_77624_2_, List<ITextComponent> lines, ITooltipFlag p_77624_4_)
     {
-        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + material.getName()).applyTextStyle(armorMaterial.getRarity().color)));
+        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + material.getName()).applyTextStyle(((ArmorMaterialList) material).getRarity().color)));
     }
 }

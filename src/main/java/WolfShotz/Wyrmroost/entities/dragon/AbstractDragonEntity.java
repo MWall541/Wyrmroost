@@ -196,6 +196,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         catch (NullPointerException ignore)
         {
+            ModUtils.L.warn("getVariant call on a dragon that doesnt have these, SHALL IT BE 0 THEN SIRE??");
             return 0;
         }
     }
@@ -383,7 +384,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             PlayerEntity player = (PlayerEntity) entity;
 
             int index = player.getPassengers().indexOf(this);
-            if ((player.isSneaking() && !player.abilities.isFlying) || player.getSubmergedHeight() > 1.25 || index > 2)
+            if ((player.isSneaking() && !player.abilities.isFlying) || isInWater() || index > 2)
             {
                 stopRiding();
                 return;
@@ -393,9 +394,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             rotationYawHead = renderYawOffset = prevRotationYaw = rotationYaw = player.rotationYaw;
             setRotation(player.rotationYawHead, rotationPitch);
 
-            double xOffset = index == 1? (getWidth() * 0.8) : index == 2? -(getWidth() * 0.8) : 0;
-            double yOffset = index == 0? 1.85d : 1.38d;
-            double zOffset = 0d;
+            Vec3d vec3d = getRidingPosOffset(index);
 
             if (player.isElytraFlying())
             {
@@ -405,15 +404,27 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     return;
                 }
 
-                xOffset *= 4d;
-//                yOffset *= 0.1d;
-//                zOffset = -2;
+                vec3d.scale(3);
                 setFlying(true);
             }
 
-            Vec3d pos = QuikMaths.calculateYawAngle(player.renderYawOffset, xOffset, zOffset)
-                    .add(player.getPosX(), player.getPosY() + yOffset, player.getPosZ());
+            Vec3d pos = QuikMaths.calculateYawAngle(player.renderYawOffset, vec3d.x, vec3d.z).add(player.getPosX(), player.getPosY() + vec3d.y, player.getPosZ());
             setPosition(pos.x, pos.y, pos.z);
+        }
+    }
+
+    public Vec3d getRidingPosOffset(int passengerIndex)
+    {
+        double x = getWidth() * 0.8;
+        switch (passengerIndex)
+        {
+            default:
+            case 0:
+                return new Vec3d(0, 1.85d, 0);
+            case 1:
+                return new Vec3d(x, 1.38d, 0);
+            case 2:
+                return new Vec3d(-x, 1.38d, 0);
         }
     }
 
@@ -424,11 +435,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * @param hand   - hand they used to interact
      * @param stack  - the itemstack used when interacted
      */
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (stack.interactWithEntity(player, this, hand)) return true;
 
-        if (isBreedingItem(stack) && isOwner(player) && !player.isSneaking())
+        if (isBreedingItem(stack) && isTamed() && !player.isSneaking())
         {
             if (!world.isRemote && getGrowingAge() == 0 && canBreed())
             {
@@ -464,7 +475,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand)
     {
-        if (!processInteract(player, hand, player.getHeldItem(hand))) return false;
+        if (!playerInteraction(player, hand, player.getHeldItem(hand))) return false;
 
         setSleeping(false);
         return true;
@@ -566,16 +577,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             double z = getPosZ() + getWidth() * (getRNG().nextGaussian() * 0.5d);
             world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
         }
-    }
-
-    @Override
-    public boolean isGlowing() // todo: handle this more elegantly: 1.15
-    {
-        return super.isGlowing();
-//        if (!world.isRemote) return super.isGlowing();
-//        PlayerEntity player = Minecraft.getInstance().player;
-//        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
-//        return stack.getItem() instanceof DragonStaffItem && Objects.equals(DragonStaffItem.getDragon(stack, ModUtils.getServerWorld(player)), this) || super.isGlowing();
     }
 
     /**
@@ -707,8 +708,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean tame(boolean tame, @Nullable PlayerEntity tamer)
     {
         if (isTamed()) return true;
-        boolean flag = tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer);
-        if (flag)
+        if (world.isRemote) return false;
+        if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer))
         {
             setTamedBy(tamer);
             navigator.clearPath();
@@ -921,8 +922,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
-        return super.isInvulnerableTo(source) || (!immunes.isEmpty() && immunes.contains(source.getDamageType()));
+        if (isRiding() && source == DamageSource.IN_WALL) return true;
+        if (!immunes.isEmpty() && immunes.contains(source.getDamageType())) return true;
+        return super.isInvulnerableTo(source);
     }
+
+    @Override
+    public boolean canBeCollidedWith() { return super.canBeCollidedWith() && !isRiding(); }
 
     /**
      * Can the rider "steer" or control this entity?
@@ -1002,7 +1008,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         setSit(false);
         setSleeping(false);
-        jump();
+//        jump();
 //        clearAI();
 
         return true;
@@ -1127,6 +1133,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (animation == null) animation = NO_ANIMATION;
         setAnimationTick(0);
         this.animation = animation;
+    }
+
+    @Override
+    public Animation[] getAnimations()
+    {
+        return new Animation[0];
     }
 
     // ================================

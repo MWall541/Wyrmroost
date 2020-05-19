@@ -6,7 +6,7 @@
     ]
   },
   "criteria": {
-    "has_item": {
+    "drake_backplate": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_item",
+      "drake_backplate",
       "has_the_recipe"
     ]
   ]

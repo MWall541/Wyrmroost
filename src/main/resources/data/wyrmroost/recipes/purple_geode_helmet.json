@@ -1,11 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "MMM",
-    "M M"
+    "XXX",
+    "X X"
   ],
   "key": {
-    "M": {
+    "X": {
       "item": "wyrmroost:purple_geode"
     }
   },

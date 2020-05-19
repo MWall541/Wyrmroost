@@ -153,8 +153,7 @@ public class Models
             item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
 
             // SpawnEggs
-            CustomSpawnEggItem.EGG_TYPES.forEach(i -> itemBare(i)
-                    .parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg"))));
+            CustomSpawnEggItem.EGG_TYPES.forEach(i -> itemBare(i).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg"))));
 
             // Item Blocks
 //            item(WRBlocks.CINIS_ROOT.get().asItem());
@@ -164,8 +163,7 @@ public class Models
                 if (block instanceof FlowingFluidBlock) continue;
 
                 ResourceLocation path = block.getRegistryName();
-                itemBare(block.asItem())
-                        .parent(new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath()));
+                itemBare(block.asItem()).parent(new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath()));
             }
 
             // Buckets

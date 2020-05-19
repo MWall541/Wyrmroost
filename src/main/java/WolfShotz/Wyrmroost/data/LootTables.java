@@ -8,6 +8,7 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.criterion.EntityFlagsPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.NBTPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
@@ -18,13 +19,16 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.conditions.EntityHasProperty;
+import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraft.world.storage.loot.conditions.KilledByPlayer;
-import net.minecraft.world.storage.loot.conditions.RandomChanceWithLooting;
+import net.minecraft.world.storage.loot.conditions.RandomChance;
 import net.minecraft.world.storage.loot.functions.ApplyBonus;
 import net.minecraft.world.storage.loot.functions.LootingEnchantBonus;
 import net.minecraft.world.storage.loot.functions.SetCount;
@@ -130,15 +134,10 @@ public class LootTables extends LootTableProvider
 
     public static class EntityLoot extends EntityLootTables
     {
-        private static final EntityPredicate.Builder ON_FIRE = EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build());
-        private static final LootFunction.Builder<?> FIRE_CONDITION = Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, ON_FIRE));
+        private static final ILootCondition.IBuilder UNTAMED_AND_ADULT = EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(new EntityFlagsPredicate(null, null, null, null, false)).nbt(new NBTPredicate(Util.make(new CompoundNBT(), c -> c.putString("OwnerUUID", "")))));
+        private static final LootFunction.Builder<?> ON_FIRE_SMELT = Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build())));
 
         private final Map<EntityType<?>, LootTable.Builder> lootTables = Maps.newHashMap();
-
-        private static LootPool.Builder lootTable()
-        {
-            return LootPool.builder().rolls(ConstantRange.of(1));
-        }
 
         /**
          * Our way is much neater and cooler anyway. fuck mojang
@@ -167,7 +166,7 @@ public class LootTables extends LootTableProvider
 
         /**
          * @param types the types to register an empty loot tables
-         * @deprecated SHOULD ONLY USE THIS WHEN AN ENTITY ABSOLUTELY DOES NOT HAVE ONE, OR IS UNDECIDED!
+         * @deprecated SHOULD ONLY USE THIS WHEN AN ENTITY ABSOLUTELY DOES NOT HAVE ONE, OR IN TESTING!
          */
         public void registerEmptyTables(EntityType<?>... types)
         {
@@ -199,37 +198,38 @@ public class LootTables extends LootTableProvider
             return ItemLootEntry.builder(itemIn).acceptFunction(SetCount.builder(ConstantRange.of(amount)));
         }
 
-        private static LootPool.Builder meat(IItemProvider itemIn, int minAmount, int maxAmount, int lootingMin, int lootingMax)
-        {
-            return lootTable().addEntry(item(itemIn, minAmount, maxAmount)
-                    .acceptFunction(FIRE_CONDITION)
-                    .acceptFunction(looting(lootingMin, lootingMax)));
-        }
-
         @Override
         protected void addTables()
         {
-            // TODO Silver glider, Butterfly Leviathan
-            registerEmptyTables(WREntities.SILVER_GLIDER.get(), WREntities.BUTTERFLY_LEVIATHAN.get());
+            registerLootTable(WREntities.LESSER_DESERTWYRM.get(), LootTable.builder().addLootPool(singleRollPool().addEntry(item(WRItems.LDWYRM.get(), 1).acceptFunction(ON_FIRE_SMELT))));
 
-            registerLootTable(WREntities.LESSER_DESERTWYRM.get(), LootTable.builder()
-                    .addLootPool(lootTable().addEntry(item(WRItems.LDWYRM.get(), 1).acceptFunction(FIRE_CONDITION)))
-            );
             registerLootTable(WREntities.OVERWORLD_DRAKE.get(), LootTable.builder()
-                    .addLootPool(lootTable().addEntry(item(Items.LEATHER, 1f, 16f).acceptFunction(looting(1f, 4f))))
-                    .addLootPool(meat(WRItems.RAW_COMMON_MEAT.get(), 2, 6, 1, 4))
-                    .addLootPool(lootTable().addEntry(ItemLootEntry.builder(WRItems.DRAKE_BACKPLATE.get())).acceptCondition(KilledByPlayer.builder()).acceptCondition(RandomChanceWithLooting.builder(0.65f, 0.03f)))
-            );
+                    .addLootPool(singleRollPool().addEntry(item(Items.LEATHER, 5, 10).acceptFunction(looting(1, 4))))
+                    .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 1, 7, 2, 3)))
+                    .addLootPool(singleRollPool().addEntry(item(WRItems.DRAKE_BACKPLATE.get(), 1)).acceptCondition(KilledByPlayer.builder()).acceptCondition(UNTAMED_AND_ADULT).acceptCondition(RandomChance.builder(0.25f))));
+
             registerLootTable(WREntities.ROOSTSTALKER.get(), LootTable.builder()
-                    .addLootPool(lootTable().addEntry(item(Items.GOLD_NUGGET, 0f, 4f).acceptFunction(looting(1f, 3f))))
-                    .addLootPool(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 2, 1, 2))
-            );
-            registerLootTable(WREntities.DRAGON_FRUIT_DRAKE.get(), LootTable.builder().addLootPool(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 2, 0, 2)));
+                    .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 3, 1, 3)))
+                    .addLootPool(singleRollPool().addEntry(item(Items.GOLD_NUGGET, 0, 2)).acceptCondition(KilledByPlayer.builder())));
+            registerLootTable(WREntities.DRAGON_FRUIT_DRAKE.get(), LootTable.builder().addLootPool(singleRollPool().addEntry(item(Items.APPLE, 0, 6))));
+
             registerLootTable(WREntities.CANARI_WYVERN.get(), LootTable.builder()
-                    .addLootPool(lootTable().addEntry(item(Items.FEATHER, 0f, 3f).acceptFunction(looting(0f, 2f))))
-                    .addLootPool(meat(WRItems.RAW_COMMON_MEAT.get(), 0, 2, 0, 2))
-            );
-            registerLootTable(WREntities.SILVER_GLIDER.get(), LootTable.builder().addLootPool(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 4, 2, 3)));
+                    .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 0, 3, 1, 2)))
+                    .addLootPool(singleRollPool().addEntry(item(Items.FEATHER, 1, 4).acceptFunction(looting(2, 6)))));
+
+            registerLootTable(WREntities.SILVER_GLIDER.get(), LootTable.builder().addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 5, 1, 3))));
+
+            registerLootTable(WREntities.BUTTERFLY_LEVIATHAN.get(), LootTable.builder()
+                    .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_APEX_MEAT.get(), 4, 6, 2, 4)))
+                    .addLootPool(LootPool.builder().rolls(RandomValueRange.of(1, 4)).addEntry(item(Items.SEA_PICKLE, 0, 2).acceptFunction(looting(1, 2))).addEntry(item(Items.SEAGRASS, 4, 14)).addEntry(item(Items.KELP, 16, 24)))
+                    .addLootPool(singleRollPool().addEntry(item(Items.HEART_OF_THE_SEA, 1).acceptCondition(RandomChance.builder(0.1f))).addEntry(item(Items.NAUTILUS_SHELL, 1).acceptCondition(RandomChance.builder(0.4f)))));
         }
+
+        private static ItemLootEntry.Builder<?> meat(IItemProvider itemIn, int minAmount, int maxAmount, int lootingMin, int lootingMax)
+        {
+            return item(itemIn, minAmount, maxAmount).acceptFunction(ON_FIRE_SMELT).acceptFunction(looting(lootingMin, lootingMax));
+        }
+
+        private static LootPool.Builder singleRollPool() { return LootPool.builder().rolls(ConstantRange.of(1)); }
     }
 }

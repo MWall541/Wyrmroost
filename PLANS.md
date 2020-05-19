@@ -1,8 +1,6 @@
 "Binary-Breaking" 1.15 Changes and plans
 ========================================
 Some these probably won't work, some may. who knows, exactly why theyre plans
-- Completely re-work the staff complete with an GUI and properly rendering outlining the bounded dragon
-    currently not "exactly" possible with <1.15 limiting rendering
     
 - Make many, MANY more things universal
 

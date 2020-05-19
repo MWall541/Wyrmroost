@@ -285,9 +285,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (super.processInteract(player, hand, stack)) return true;
+        if (super.playerInteraction(player, hand, stack)) return true;
 
         boolean isFoodItem = isFoodItem(stack);
         if (!isTamed() && !isInWater() && (isBreedingItem(stack) || isFoodItem))
@@ -477,7 +477,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 (bfly, world, reason, pos, rng) ->
                 {
                     if (reason == SpawnReason.SPAWNER) return true;
-                    return rng.nextInt(6) == 0 && world.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
+                    return rng.nextInt(10) == 0 && world.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
                 });
     }
 

@@ -125,9 +125,9 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (super.processInteract(player, hand, stack)) return true;
+        if (super.playerInteraction(player, hand, stack)) return true;
 
         if (!isTamed() && isFoodItem(stack))
         {

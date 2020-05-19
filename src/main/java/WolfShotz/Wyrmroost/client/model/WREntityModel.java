@@ -175,8 +175,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         box.rotateAngleZ += time * z;
     }
 
-    public void idleAnim(float frame)
+    public void idle(float frame)
     {
     }
-
 }

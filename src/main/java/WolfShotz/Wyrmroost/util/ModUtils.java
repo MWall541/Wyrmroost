@@ -133,7 +133,7 @@ public class ModUtils
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
     }
 
-    public static Set<Biome> getBiomesByType(BiomeDictionary.Type... types)
+    public static Set<Biome> getBiomesByTypes(BiomeDictionary.Type... types)
     {
         Set<Biome> biomes = Sets.newHashSet();
         for (BiomeDictionary.Type type : types) biomes.addAll(BiomeDictionary.getBiomes(type));
