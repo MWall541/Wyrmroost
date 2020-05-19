@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.pathfinding.PathNodeType;
@@ -33,24 +32,20 @@ public class FlyerFollowOwnerGoal extends Goal
     @Override
     public boolean shouldExecute()
     {
+        if (dragon.isSitting()) return false;
         if (dragon.getHomePos().isPresent()) return false;
 
-        LivingEntity preOwner = dragon.getOwner();
-        if (dragon.isSitting() || preOwner == null || preOwner.isSpectator()) return false;
-        this.owner = preOwner;
+        owner = dragon.getOwner();
+        if (owner == null || owner.isSpectator()) return false;
 
-        double minDistSq = (minDist * minDist);
-        boolean tooClose = (dragon.getDistanceSq(preOwner) < minDistSq);
-        return !tooClose;
+        return dragon.getDistanceSq(owner) > (minDist * minDist);
     }
 
     @Override
     public boolean shouldContinueExecuting()
     {
         if (dragon.isSitting() || owner == null) return false;
-
-        double maxDistSq = (maxDist * maxDist);
-        return !dragon.getNavigator().noPath() && dragon.getDistanceSq(owner) > maxDistSq;
+        return dragon.getDistanceSq(owner) <= (maxDist * maxDist);
     }
 
     @Override
@@ -71,36 +66,19 @@ public class FlyerFollowOwnerGoal extends Goal
     @Override
     public void tick()
     {
-        if (dragon.isSitting()) return;
+        dragon.getLookController().setLookPositionWithEntity(owner, dragon.getFaceRotSpeed(), dragon.getVerticalFaceSpeed());
         if (--timeToRecalcPath > 0) return;
         this.timeToRecalcPath = 10;
 
-        if (dragon.getPosY() < owner.getPosY() + (maxDist * 2)) dragon.setFlying(true);
-
         if (dragon.isFlying())
         {
-            if (dragon.getDistanceSq(owner.getPositionVec().add(0, maxHeight, 0)) > (3d * (minDist * minDist)))
-            {
-                double xOff = QuikMaths.nextPseudoDouble(dragon.getRNG()) * 2;
-                double zOff = QuikMaths.nextPseudoDouble(dragon.getRNG()) * 2;
-                dragon.trySafeTeleport(owner.getPosition().add(xOff, maxHeight, zOff));
-            }
-//            else if (circleOverHead)
-//            {
-//
-//            }
-            else if (!dragon.getMoveHelper().isUpdating())
-            {
-                dragon.getLookController().setLookPosition(owner.getPosX(), owner.getPosY() + maxHeight, owner.getPosZ(), 10f, dragon.getVerticalFaceSpeed());
-                dragon.getMoveHelper().setMoveTo(owner.getPosX(), owner.getPosY(), owner.getPosZ(), 1);
-            }
+            if (dragon.getDistanceSq(owner) > (1.5d * ((minDist * minDist) * 2))) dragon.tryTeleportToOwner();
+            else dragon.getMoveHelper().setMoveTo(owner.getPosX(), owner.getPosYEye(), owner.getPosZ(), 1);
         }
         else
         {
-            dragon.getLookController().setLookPositionWithEntity(owner, 10f, dragon.getVerticalFaceSpeed());
-            if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist)))
-                dragon.tryTeleportToOwner();
-            else dragon.getMoveHelper().setMoveTo(owner.getPosX(), owner.getPosY(), owner.getPosZ(), 1);
+            if (dragon.getDistanceSq(owner) > (1.5d * (minDist * minDist))) dragon.tryTeleportToOwner();
+            else dragon.getNavigator().tryMoveToEntityLiving(owner, 1);
         }
     }
 }

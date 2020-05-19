@@ -36,6 +36,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         boxList.stream()
                 .filter(WRModelRenderer.class::isInstance)
                 .forEach((model) -> ((WRModelRenderer) model).resetToDefaultPose());
+        globalSpeed = 0.5f;
     }
 
     public void faceTarget(float yaw, float pitch, float rotationDivisor, WRModelRenderer... boxes)

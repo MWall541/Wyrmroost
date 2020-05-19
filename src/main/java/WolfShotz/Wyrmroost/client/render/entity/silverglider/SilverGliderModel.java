@@ -367,7 +367,12 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     {
         if (netHeadYaw < -180) netHeadYaw += 360;
         else if (netHeadYaw > 180) netHeadYaw -= 360;
-        if (!entityIn.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
+        if (!entityIn.isSleeping()) faceTarget(netHeadYaw, entityIn.isFlying()? 0 : headPitch, 1, headArray);
+        if (entityIn.isFlying())
+        {
+            mainBody.rotateAngleX = headPitch * ((float) Math.PI / 180F);
+            mainBody.rotateAngleZ = -(netHeadYaw * ((float) Math.PI / 180F));
+        }
     }
 
     @Override
@@ -377,26 +382,31 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         float frame = entity.ticksExisted + partialTick;
 
         resetToDefaultPose();
-        wingMembraneR2.rotateAngleX = -0.0001f;
-        wingMembraneR4.rotateAngleX = 0.0001f;
         wingMembraneL2.rotateAngleX = -0.0001f;
-        wingMembraneL4.rotateAngleX = 0.0001f;
+        wingMembraneL4.rotateAngleX = 0.01f;
+        wingMembraneR2.rotateAngleX = 0.0001f;
+        wingMembraneR4.rotateAngleX = -0.01f;
 
         if (!entity.isSitting() && !entity.isSleeping())
         {
             // todo walk cycle
         }
 
-        sit(entity.sitTimer.get(partialTick));
-        sleep(entity.sleepTimer.get(partialTick));
         flight(entity.flightTimer.get(partialTick));
+        sleep(entity.sleepTimer.get(partialTick));
+        sit(entity.sitTimer.get(partialTick));
+
         idle(frame);
     }
 
     @Override
     public void idle(float frame)
     {
+        if (entity.isSleeping()) globalSpeed -= 0.2f;
 
+        chainWave(headArray, globalSpeed * 0.2f, 0.009f, -1, frame, 1);
+        chainWave(tailArray, globalSpeed * 0.1f, 0.03f, -1, frame, 1);
+        chainSwing(tailArray, globalSpeed * 0.07f, 0.01f, -1, frame, 1);
     }
 
     public void sit(float amount)
@@ -422,7 +432,16 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
     public void sleep(float amount)
     {
+        startTime(amount);
 
+        rotate(neck2, 0.5f, 0, 0);
+        rotate(neck4, -0.4f, 0, 0);
+        rotate(head, -0.1f, 0, 0);
+        for (WRModelRenderer part : headArray) rotate(part, 0.05f, 0.5f, 0);
+
+        rotate(wing1R, 0, 0.2f, 0.2f);
+        rotate(wing2R, 0, 0, -0.2f);
+        rotate(wingMembraneElbowR, 0, 0, -0.1f);
     }
 
     public void flight(float amount)

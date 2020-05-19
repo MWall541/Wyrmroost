@@ -232,18 +232,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setFlying(boolean fly)
     {
         if (isFlying() == fly) return;
-//        getNavigator().clearPath();
-        if (canFly() && fly && liftOff())
-        {
-            navigator = new FlyingPathNavigator(this, world);
-            dataManager.set(FLYING, true);
-        }
-        else
-        {
-//            getMoveHelper().setMoveTo(posX, posY, posZ, 1);
-            navigator = new GroundPathNavigator(this, world);
-            dataManager.set(FLYING, false);
-        }
+        dataManager.set(FLYING, fly);
+        if (canFly() && fly && liftOff()) navigator = new FlyingPathNavigator(this, world);
+        else navigator = new GroundPathNavigator(this, world);
     }
 
     /**
@@ -345,15 +336,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.livingTick();
 
+        if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(25) == 0)
+            heal(0.5f);
+
         if (isServerWorld())
         {
             // uhh so were falling, we should probably start flying
-            boolean flying = canFly() && getAltitude(true) > shouldFlyThreshold && getRidingEntity() == null;
-            if (flying != isFlying()) setFlying(flying);
+            boolean flying = shouldFly();
+            if (shouldFly() != isFlying())
+                setFlying(flying);
 
             handleSleep();
-            if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(25) == 0)
-                heal(0.5f);
         }
         else
         {
@@ -378,6 +371,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         setMotion(Vec3d.ZERO);
+        clearAI();
 
         if (entity instanceof PlayerEntity)
         {
@@ -395,7 +389,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             setRotation(player.rotationYawHead, rotationPitch);
 
             Vec3d vec3d = getRidingPosOffset(index);
-
             if (player.isElytraFlying())
             {
                 if (!canFly())
@@ -404,10 +397,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     return;
                 }
 
-                vec3d.scale(3);
+                vec3d = vec3d.scale(1.5);
                 setFlying(true);
             }
-
             Vec3d pos = QuikMaths.calculateYawAngle(player.renderYawOffset, vec3d.x, vec3d.z).add(player.getPosX(), player.getPosY() + vec3d.y, player.getPosZ());
             setPosition(pos.x, pos.y, pos.z);
         }
@@ -415,12 +407,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public Vec3d getRidingPosOffset(int passengerIndex)
     {
-        double x = getWidth() * 0.8;
+        double x = getWidth() * 0.5d + getRidingEntity().getWidth() * 0.5d;
         switch (passengerIndex)
         {
             default:
             case 0:
-                return new Vec3d(0, 1.85d, 0);
+                return new Vec3d(0, 1.81, 0);
             case 1:
                 return new Vec3d(x, 1.38d, 0);
             case 2:
@@ -479,6 +471,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         setSleeping(false);
         return true;
+    }
+
+    public boolean shouldFly()
+    {
+        return canFly() && getAltitude(false) > getHeight() * 2 && getRidingEntity() == null;
     }
 
     /**
@@ -820,6 +817,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         isJumping = false;
         navigator.clearPath();
         setAttackTarget(null);
+        setMoveForward(0);
+        setMoveVertical(0);
     }
 
     /**
@@ -991,7 +990,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected float getJumpUpwardsMotion()
     {
-        return canFly()? 1.25f : super.getJumpUpwardsMotion();
+        float jump = super.getJumpUpwardsMotion();
+        return canFly()? jump * 1.25f : jump;
     }
 
     /**
@@ -1008,7 +1008,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         setSit(false);
         setSleeping(false);
-//        jump();
+        jump();
 //        clearAI();
 
         return true;
