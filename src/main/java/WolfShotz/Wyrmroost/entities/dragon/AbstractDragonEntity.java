@@ -933,9 +933,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Can the rider "steer" or control this entity?
      */
     @Override
-    public boolean canPassengerSteer()
+    public boolean canPassengerSteer() // Only OWNERS can control their pets
     {
-        return getControllingPassenger() != null && isOwner((LivingEntity) getControllingPassenger());
+        Entity entity = getControllingPassenger();
+        return entity instanceof LivingEntity && isOwner((LivingEntity) entity);
     }
 
     /**
