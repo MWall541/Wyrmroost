@@ -1,10 +1,10 @@
 package WolfShotz.Wyrmroost.containers;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.containers.util.ISlotArea;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.registry.WRIO;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -78,24 +78,24 @@ public class DragonInvContainer extends Container
         return itemStack;
     }
 
-    public void buildSlotArea(int index, int initialX, int initialY, int length, int height, ISlotArea slot)
+    public void makeSlots(int firstIndex, int firstX, int firstY, int length, int height, ISlotArea slot)
     {
         for (int y = 0; y < height; ++y)
         {
             for (int x = 0; x < length; ++x)
             {
-                if (inventory.getSlots() <= index)
+                if (inventory.getSlots() <= firstIndex)
                 {
-                    ModUtils.L.error("TOO MANY SLOTS! ABORTING THE REST! Ended Index: {}, Supposed to be: {}", index, length * height);
+                    Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST! Ended Index: {}, Supposed to be: {}", firstIndex, length * height);
                     return;
                 }
-                addSlot(slot.slotPos(index, initialX + x * 18, initialY + y * 18));
-                ++index;
+                addSlot(slot.get(firstIndex, firstX + x * 18, firstY + y * 18));
+                ++firstIndex;
             }
         }
     }
 
-    public void buildSlotArea(IInventory inventory, int index, int initialX, int initialY, int length, int height)
+    public void addSlots(IInventory inventory, int index, int initialX, int initialY, int length, int height)
     {
         for (int y = 0; y < height; ++y)
         {
@@ -103,7 +103,7 @@ public class DragonInvContainer extends Container
             {
                 if (inventory.getSizeInventory() <= index)
                 {
-                    ModUtils.L.error("TOO MANY SLOTS! ABORTING THE REST!");
+                    Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST!");
                     return;
                 }
                 addSlot(new Slot(inventory, index, initialX + x * 18, initialY + y * 18));
@@ -114,7 +114,7 @@ public class DragonInvContainer extends Container
 
     public void buildPlayerSlots(PlayerInventory playerInv, int initialX, int initialY)
     {
-        buildSlotArea(playerInv, 9, initialX, initialY, 9, 3); // Player inv
-        buildSlotArea(playerInv, 0, initialX, initialY + 58, 9, 1); // Hotbar
+        addSlots(playerInv, 9, initialX, initialY, 9, 3); // Player inv
+        addSlots(playerInv, 0, initialX, initialY + 58, 9, 1); // Hotbar
     }
 }

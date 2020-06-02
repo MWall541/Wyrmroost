@@ -15,18 +15,22 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-import java.util.List;
-
 public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnData
 {
     public LivingEntity host;
     public float radius, angleYaw, offsetY, sizeX, sizeY, damageMultiplier;
 
-    public MultiPartEntity(EntityType<? extends MultiPartEntity> multiPart, World world)
-    {
-        super(multiPart, world);
-    }
+    public MultiPartEntity(EntityType<? extends MultiPartEntity> multiPart, World world) { super(multiPart, world); }
 
+    /**
+     * @param host             entity were adding this part to
+     * @param radius           how far the part is away from the host's center
+     * @param angleYaw         angle at which the box is at
+     * @param offsetY          how high the part is
+     * @param sizeX            the width of the part
+     * @param sizeY            the height of the part
+     * @param damageMultiplier damage that is multiplied when hit by this part
+     */
     public MultiPartEntity(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY, float damageMultiplier)
     {
         super(WREntities.MULTIPART.get(), host.world);
@@ -38,7 +42,20 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
 
         resize(sizeX, sizeY);
     }
-    
+
+    /**
+     * @param host     entity were adding this part to
+     * @param radius   how far the part is away from the host's center
+     * @param angleYaw angle at which the box is at
+     * @param offsetY  how high the part is
+     * @param sizeX    the width of the part
+     * @param sizeY    the height of the part
+     */
+    public MultiPartEntity(LivingEntity host, float radius, float angleYaw, float offsetY, float sizeX, float sizeY)
+    {
+        this(host, radius, angleYaw, offsetY, sizeX, sizeY, 1f);
+    }
+
     @Override
     public void tick()
     {
@@ -70,12 +87,23 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         this.offsetY = offsetY;
         resize(sizeX, sizeY);
     }
-    
+
     public void resize(float sizeX, float sizeY)
     {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         recalculateSize();
+    }
+
+    public void collideWithNearbyEntities()
+    {
+        for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(0.20000000298023224d, 0, 0.20000000298023224d)))
+        {
+            if (entity == host) continue;
+            if (entity instanceof MultiPartEntity && ((MultiPartEntity) entity).host == host) continue;
+            if (!entity.canBePushed()) continue;
+            host.applyEntityCollision(entity);
+        }
     }
 
     @Override
@@ -87,14 +115,21 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         return host.attackEntityFrom(source, damage * damageMultiplier);
     }
 
+
+    @Override
+    public boolean canBeCollidedWith() { return true; }
+
+    @Override
+    public ItemStack getPickedResult(RayTraceResult target) { return host.getPickedResult(target); }
+
+    @Override
+    public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) {}
+
     @Override
     public boolean isEntityEqual(Entity entity) { return this == entity || host == entity; }
 
     @Override
-    public boolean equals(Object o)
-    {
-        return this == o || host == o;
-    }
+    public boolean equals(Object o) { return this == o || host == o; }
 
     @Override
     public int hashCode() { return host.getEntityId(); }
@@ -109,28 +144,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     protected void writeAdditional(CompoundNBT compound) {}
 
     @Override
-    public boolean canBeCollidedWith() { return true; }
-    
-    public void collideWithNearbyEntities()
-    {
-        List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(0.20000000298023224d, 0, 0.20000000298023224d));
-        entities.stream().filter(entity -> entity != host && !(entity instanceof MultiPartEntity) && entity.canBePushed()).forEach(e -> host.applyEntityCollision(e));
-    }
-    
-    @Override
-    public ItemStack getPickedResult(RayTraceResult target)
-    {
-        return host.getPickedResult(target);
-    }
-
-    @Override
-    public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) {}
-    
-    @Override
-    public IPacket<?> createSpawnPacket()
-    {
-        return NetworkHooks.getEntitySpawningPacket(this);
-    }
+    public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
     
     /**
      * Called by the server when constructing the spawn packet.

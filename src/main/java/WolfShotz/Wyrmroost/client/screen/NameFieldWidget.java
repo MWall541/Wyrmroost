@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.client.screen;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.network.messages.EntityRenameMessage;
+import WolfShotz.Wyrmroost.network.messages.RenameEntityPacket;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.text.StringTextComponent;
@@ -24,7 +24,7 @@ public class NameFieldWidget extends TextFieldWidget
         {
             if (s.equals(dragon.getName().getUnformattedComponentText())) return;
             StringTextComponent name = s.isEmpty()? null : new StringTextComponent(s);
-            Wyrmroost.NETWORK.sendToServer(new EntityRenameMessage(dragon, name));
+            Wyrmroost.NETWORK.sendToServer(new RenameEntityPacket(dragon, name));
         });
     }
 }

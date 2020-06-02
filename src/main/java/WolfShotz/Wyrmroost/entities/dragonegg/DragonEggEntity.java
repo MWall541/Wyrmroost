@@ -6,7 +6,7 @@ import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
-import WolfShotz.Wyrmroost.network.messages.EggHatchMessage;
+import WolfShotz.Wyrmroost.network.messages.HatchEggPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -106,7 +106,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
             {
                 if (--hatchTime <= 0)
                 {
-                    Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new EggHatchMessage(this));
+                    Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new HatchEggPacket(this));
                     hatch();
                     return;
                 }
@@ -212,7 +212,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
      */
     private void safeError()
     {
-        ModUtils.L.error("THIS ISNT A DRAGON WTF KIND OF ABOMINATION IS THIS HATCHING?!?! Unknown Entity Type for Dragon Egg @ {}", getPosition());
+        Wyrmroost.LOG.error("THIS ISNT A DRAGON WTF KIND OF ABOMINATION IS THIS HATCHING?!?! Unknown Entity Type for Dragon Egg @ {}", getPosition());
         remove();
     }
     
@@ -237,7 +237,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
             }
             catch (NullPointerException e)
             {
-                ModUtils.L.warn("Unknown Dragon Type!!!");
+                Wyrmroost.LOG.warn("Unknown Dragon Type!!!");
                 return properties = new DragonEggProperties(0.65f, 1f, 12000);
             }
         }

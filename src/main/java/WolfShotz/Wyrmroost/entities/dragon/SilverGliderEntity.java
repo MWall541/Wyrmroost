@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.TickFloat;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.FlyerFollowOwnerGoal;
@@ -213,7 +214,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public Collection<Item> getFoodItems() { return ItemTags.FISHES.getAllElements(); }
 
     @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.4f, 0.65f, 12000); }
+    public DragonEggProperties createEggProperties()
+    {
+        return new DragonEggProperties(0.4f, 0.65f, 12000).setCustomTexture(Wyrmroost.rl("textures/entity/dragon/silverglider/egg.png"));
+    }
 
     public static void setSpawnConditions()
     {

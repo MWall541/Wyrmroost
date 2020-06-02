@@ -150,7 +150,7 @@ public class DragonStaffItem extends Item
     {
         assertStaff(stack);
         CompoundNBT tag = stack.getOrCreateTag();
-        tag.putInt(DATA_ACTION, action.ordinal());
+        tag.putInt(DATA_ACTION, StaffAction.ACTIONS.indexOf(action));
         getAction(stack).onSelected(getBoundDragon(player.world, stack), player, stack);
     }
 
@@ -160,7 +160,7 @@ public class DragonStaffItem extends Item
         if (stack.hasTag())
         {
             CompoundNBT tag = stack.getTag();
-            if (tag.contains(DATA_ACTION)) return StaffAction.VALUES[tag.getInt(DATA_ACTION)];
+            if (tag.contains(DATA_ACTION)) return StaffAction.ACTIONS.get(tag.getInt(DATA_ACTION));
         }
         return StaffAction.DEFAULT;
     }
@@ -180,7 +180,10 @@ public class DragonStaffItem extends Item
         {
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_DRAGON_ID))
-                return (AbstractDragonEntity) world.getEntityByID(tag.getInt(DATA_DRAGON_ID));
+            {
+                Entity entity = world.getEntityByID(tag.getInt(DATA_DRAGON_ID));
+                if (entity instanceof AbstractDragonEntity) return ((AbstractDragonEntity) entity);
+            }
         }
         return null;
     }

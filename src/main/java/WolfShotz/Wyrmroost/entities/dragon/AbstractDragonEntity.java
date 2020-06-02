@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
@@ -14,7 +15,6 @@ import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.AgeableEntity;
@@ -196,7 +196,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
         catch (NullPointerException ignore)
         {
-            ModUtils.L.warn("getVariant call on a dragon that doesnt have these, SHALL IT BE 0 THEN SIRE??");
+            Wyrmroost.LOG.warn("getVariant call on a dragon that doesnt have these, SHALL IT BE 0 THEN SIRE??");
             return 0;
         }
     }
@@ -1083,7 +1083,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (eggProperties == null) // This shouldn't happen, lazily fix it if it does tho.
         {
-            ModUtils.L.warn("{} is missing dragon egg properties! Using default values...", getType().getName().getUnformattedComponentText());
+            Wyrmroost.LOG.warn("{} is missing dragon egg properties! Using default values...", getType().getName().getUnformattedComponentText());
             eggProperties = new DragonEggProperties(2f, 2f, 12000);
         }
         return eggProperties;

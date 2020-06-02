@@ -8,5 +8,5 @@ import net.minecraft.inventory.container.Slot;
  */
 public interface ISlotArea
 {
-    Slot slotPos(int index, int posX, int posY);
+    Slot get(int index, int posX, int posY);
 }

@@ -26,8 +26,6 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,11 +39,6 @@ import java.util.stream.Collectors;
 public class ModUtils
 {
     private ModUtils() {} // NU CONSTRUCTOR
-    
-    /**
-     * Debug Logger
-     */
-    public static final Logger L = LogManager.getLogger(Wyrmroost.MOD_ID);
 
     /**
      * Item Properties builder
@@ -91,13 +84,14 @@ public class ModUtils
      *
      * @param player the player
      * @param item   the item were trying to get
-     * @return An ItemStack which may return the main hand stack if we cannot match.
+     * @return An ItemStack if it conatains the specified item, null otherwise
      */
+    @Nullable
     public static ItemStack getHeldStack(PlayerEntity player, Item item)
     {
         ItemStack main = player.getHeldItemMainhand();
         ItemStack off = player.getHeldItemOffhand();
-        return item == main.getItem()? main : item == off.getItem()? off : main;
+        return item == main.getItem()? main : item == off.getItem()? off : null;
     }
 
     /**

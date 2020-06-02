@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.TickFloat;
 import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
@@ -200,7 +201,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public void addContainerInfo(DragonInvContainer container)
     {
         super.addContainerInfo(container);
-        container.addSlot(new SlotBuilder(getInvHandler(), ITEM_SLOT, SlotBuilder.CENTER_X, SlotBuilder.CENTER_Y));
+        container.addSlot(new SlotBuilder(getInvHandler(), ITEM_SLOT));
     }
 
     @Override
@@ -240,7 +241,11 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
 
     @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
+    public DragonEggProperties createEggProperties()
+    {
+        return new DragonEggProperties(0.25f, 0.35f, 6000)
+                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/rooststalker/egg.png"));
+    }
 
     @Override
     public Animation[] getAnimations()

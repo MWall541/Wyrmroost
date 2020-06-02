@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon.helpers;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -32,7 +32,7 @@ public class DragonInvHandler extends ItemStackHandler
         if (stacks.isEmpty()) return true;
         if (slot > stacks.size())
         {
-            ModUtils.L.error("slot's too high but ok..");
+            Wyrmroost.LOG.error("slot's too high but ok..");
             return true;
         }
         return stacks.stream().filter(s -> stacks.indexOf(s) > slot).allMatch(ItemStack::isEmpty);

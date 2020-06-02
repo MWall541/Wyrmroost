@@ -9,18 +9,18 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class EntityRenameMessage implements IMessage
+public class RenameEntityPacket implements IMessage
 {
     private final UUID entity;
     private final ITextComponent text;
-    
-    public EntityRenameMessage(Entity entity, ITextComponent text)
+
+    public RenameEntityPacket(Entity entity, ITextComponent text)
     {
         this.entity = entity.getUniqueID();
         this.text = text;
     }
-    
-    public EntityRenameMessage(PacketBuffer buf)
+
+    public RenameEntityPacket(PacketBuffer buf)
     {
         this.entity = buf.readUniqueId();
         this.text = buf.readTextComponent();

@@ -27,11 +27,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
+    public static final Logger LOG = LogManager.getLogger(MOD_ID);
     public static final ItemGroup ITEM_GROUP = new WRItemGroup();
     private static final String PROTOCOL_VERSION = "1.0";
     public static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
@@ -74,7 +77,7 @@ public class Wyrmroost
     {
         DeferredWorkQueue.runLater(WRWorld::setupWorld);
         DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
-        NetworkUtils.registerMessages();
+        NetworkUtils.registerPackets();
     }
 
     public void clientSetup(final FMLClientSetupEvent event)

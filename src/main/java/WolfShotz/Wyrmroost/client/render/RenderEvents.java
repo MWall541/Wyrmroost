@@ -1,22 +1,13 @@
 package WolfShotz.Wyrmroost.client.render;
 
 import WolfShotz.Wyrmroost.WRConfig;
-import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
-import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.registry.WRItems;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -57,45 +48,14 @@ public class RenderEvents extends RenderType
 
     // == [Rendering] ==
 
-
     public static AxisAlignedBB debugBox;
     public static int boxTime;
 
     public static void renderWorld(RenderWorldLastEvent evt)
     {
         MatrixStack ms = evt.getMatrixStack();
-        renderDragonStaff(ms);
+        StaffRenderer.render(ms);
         renderDebugBox(ms);
-    }
-
-    public static void renderDragonStaff(MatrixStack ms)
-    {
-        Minecraft mc = Minecraft.getInstance();
-        PlayerEntity player = mc.player;
-        if (player == null) return;
-        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
-        if (stack.getItem() != WRItems.DRAGON_STAFF.get()) return;
-        AbstractDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.world, stack);
-        if (dragon == null) return;
-        Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
-
-        // Render the Home Position
-        BlockPos pos = dragon.getHomePos().orElse((DragonStaffItem.getAction(stack) == StaffAction.HOME_POS && mc.objectMouseOver instanceof BlockRayTraceResult)? ((BlockRayTraceResult) mc.objectMouseOver).getPos() : null);
-        if (pos != null)
-        {
-            double x = pos.getX() - view.x;
-            double y = pos.getY() - view.y;
-            double z = pos.getZ() - view.z;
-
-            IRenderTypeBuffer.Impl impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-            drawShape(ms,
-                    impl.getBuffer(RenderType.getLines()),
-                    player.world.getBlockState(pos).getShape(player.world, pos),
-                    x, y, z,
-                    0, 0, 1, 0.85f);
-
-            impl.finish();
-        }
     }
 
     public static void renderDebugBox(MatrixStack ms)

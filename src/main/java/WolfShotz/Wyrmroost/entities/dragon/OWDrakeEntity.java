@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.TickFloat;
 import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
@@ -482,10 +483,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void addContainerInfo(DragonInvContainer container)
     {
         super.addContainerInfo(container);
-        container.addSlot(new SlotBuilder(container.inventory, SADDLE_SLOT, 17, 45).only(Items.SADDLE));
-        container.addSlot(new SlotBuilder(container.inventory, ARMOR_SLOT, 17, 63).only(i -> i.getItem() instanceof DragonArmorItem));
-        container.addSlot(h -> new SlotBuilder(h, CHEST_SLOT, 17, 81).only(Items.CHEST).limit(1).canTake(p -> h.isEmptyAfter(CHEST_SLOT)));
-        container.buildSlotArea(3, 51, 45, 7, 3, (i, x, z) -> new SlotBuilder(container.inventory, i, x, z).condition(this::hasChest));
+
+        DragonInvHandler inv = container.inventory;
+
+        container.addSlot(new SlotBuilder(inv, SADDLE_SLOT, 17, 45).only(Items.SADDLE));
+        container.addSlot(new SlotBuilder(inv, ARMOR_SLOT, 17, 63).only(DragonArmorItem.class));
+        container.addSlot(new SlotBuilder(inv, CHEST_SLOT, 17, 81).only(Items.CHEST).limit(1).canTake(p -> inv.isEmptyAfter(CHEST_SLOT)));
+        container.makeSlots(3, 51, 45, 7, 3, (i, x, z) -> new SlotBuilder(inv, i, x, z).condition(this::hasChest));
     }
 
     @Override
@@ -496,7 +500,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.65f, 1f, 18000); }
+    public DragonEggProperties createEggProperties()
+    {
+        return new DragonEggProperties(0.65f, 1f, 18000)
+                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/owdrake/egg.png"));
+    }
 
     @Override
     public Collection<Item> getFoodItems() { return new ArrayList<>(Tags.Items.CROPS_WHEAT.getAllElements()); }

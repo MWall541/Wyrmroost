@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.network.messages;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.network.IMessage;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * 2: Special Attack end
  * 3: Call Dragon
  */
-public class DragonKeyBindMessage implements IMessage
+public class KeybindPacket implements IMessage
 {
     public static final int PERFORM_GENERIC_ATTACK = 0;
     public static final int PERFORM_SPECIAL_ATTACK = 1;
@@ -27,13 +27,13 @@ public class DragonKeyBindMessage implements IMessage
     private int dragonID;
     private int key;
 
-    public DragonKeyBindMessage(AbstractDragonEntity entity, int key)
+    public KeybindPacket(AbstractDragonEntity entity, int key)
     {
         this.dragonID = entity.getEntityId();
         this.key = key;
     }
-    
-    public DragonKeyBindMessage(PacketBuffer buf)
+
+    public KeybindPacket(PacketBuffer buf)
     {
         dragonID = buf.readInt();
         key = buf.readInt();
@@ -62,7 +62,7 @@ public class DragonKeyBindMessage implements IMessage
                 dragon.performAltAttack(false);
                 break;
             default:
-                ModUtils.L.error("Unknown KeyPress packet key... wat?");
+                Wyrmroost.LOG.error("Unknown KeyPress packet key... wat?");
         }
     }
 }

@@ -12,16 +12,16 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class StaffActionMessage implements IMessage
+public class StaffActionPacket implements IMessage
 {
     public final StaffAction action;
 
-    public StaffActionMessage(StaffAction action) { this.action = action; }
+    public StaffActionPacket(StaffAction action) { this.action = action; }
 
-    public StaffActionMessage(PacketBuffer buf) { action = StaffAction.VALUES[buf.readInt()]; }
+    public StaffActionPacket(PacketBuffer buf) { action = StaffAction.ACTIONS.get(buf.readInt()); }
 
     @Override
-    public void encode(PacketBuffer buf) { buf.writeInt(action.ordinal()); }
+    public void encode(PacketBuffer buf) { buf.writeInt(StaffAction.ACTIONS.indexOf(action)); }
 
     @Override
     public void run(Supplier<NetworkEvent.Context> context)

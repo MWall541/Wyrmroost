@@ -78,7 +78,7 @@ public class Models
             }
 
             if (!MISSING_TEXTURES.isEmpty())
-                ModUtils.L.error("Blocks are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
+                Wyrmroost.LOG.error("Blocks are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
         }
     }
 
@@ -174,7 +174,7 @@ public class Models
             ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(e -> !REGISTERED.contains(e)).forEach(this::item);
 
             if (!MISSING_TEXTURES.isEmpty())
-                ModUtils.L.error("Items are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
+                Wyrmroost.LOG.error("Items are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
         }
 
         @Override

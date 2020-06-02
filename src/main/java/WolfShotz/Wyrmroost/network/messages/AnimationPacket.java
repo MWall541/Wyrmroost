@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.network.messages;
 
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
+import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.network.IMessage;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.network.PacketBuffer;
@@ -11,29 +11,37 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class EggHatchMessage implements IMessage
+public class AnimationPacket implements IMessage
 {
     private int entityID;
-    
-    public EggHatchMessage(DragonEggEntity entity)
+    private int animationIndex;
+
+    public AnimationPacket(int entityID, int index)
     {
-        this.entityID = entity.getEntityId();
+        this.entityID = entityID;
+        this.animationIndex = index;
+    }
+
+    public AnimationPacket(PacketBuffer buf)
+    {
+        entityID = buf.readInt();
+        animationIndex = buf.readInt();
     }
     
-    public EggHatchMessage(PacketBuffer buf)
-    {
-        this.entityID = buf.readInt();
-    }
-    
+    @Override
     public void encode(PacketBuffer buf)
     {
         buf.writeInt(entityID);
+        buf.writeInt(animationIndex);
     }
     
+    @Override
     public void run(Supplier<NetworkEvent.Context> context)
     {
         World world = DistExecutor.callWhenOn(Dist.CLIENT, () -> ModUtils::getClientWorld);
-        
-        ((DragonEggEntity) world.getEntityByID(entityID)).hatch();
+        IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(entityID);
+
+        if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
+        else entity.setAnimation(entity.getAnimations()[animationIndex]);
     }
 }

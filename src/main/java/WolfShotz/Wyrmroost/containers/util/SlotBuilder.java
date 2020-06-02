@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.containers.util;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IItemProvider;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -16,17 +17,19 @@ public class SlotBuilder extends SlotItemHandler
     public static final int CENTER_X = 89;
     public static final int CENTER_Y = 60;
 
+    private int limit = super.getSlotStackLimit();
     private Supplier<Boolean> isEnabled = () -> true;
-    private Consumer<SlotBuilder> onSlotUpdate = s ->
-    {};
     private Predicate<ItemStack> isItemValid = super::isItemValid;
     private Predicate<PlayerEntity> canTakeStack = super::canTakeStack;
-    private int limit = super.getSlotStackLimit();
+    private Consumer<SlotBuilder> onSlotUpdate = s ->
+    {};
 
-    public SlotBuilder(IItemHandler itemHandler, int index, int xPosition, int yPosition)
+    public SlotBuilder(IItemHandler handler, int index, int posX, int posY)
     {
-        super(itemHandler, index, xPosition, yPosition);
+        super(handler, index, posX, posY);
     }
+
+    public SlotBuilder(IItemHandler handler, int index) { this(handler, index, CENTER_X, CENTER_Y); }
 
     public SlotBuilder condition(Supplier<Boolean> isEnabled)
     {
@@ -34,7 +37,7 @@ public class SlotBuilder extends SlotItemHandler
         return this;
     }
 
-    public SlotBuilder onSlotUpdate(Consumer<SlotBuilder> onUpdate)
+    public SlotBuilder onUpdate(Consumer<SlotBuilder> onUpdate)
     {
         this.onSlotUpdate = onUpdate;
         return this;
@@ -47,6 +50,8 @@ public class SlotBuilder extends SlotItemHandler
     }
 
     public SlotBuilder only(Item item) { return only(s -> s.getItem() == item); }
+
+    public SlotBuilder only(Class<? extends IItemProvider> clazz) { return only(s -> clazz.isInstance(s.getItem())); }
 
     public SlotBuilder canTake(Predicate<PlayerEntity> canTakeStack)
     {

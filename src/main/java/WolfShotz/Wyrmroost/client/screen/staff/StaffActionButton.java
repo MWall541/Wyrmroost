@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.client.screen.staff;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.messages.StaffActionMessage;
+import WolfShotz.Wyrmroost.network.messages.StaffActionPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.Minecraft;
@@ -29,7 +29,7 @@ public class StaffActionButton extends AbstractButton
         if (stack.getItem() == WRItems.DRAGON_STAFF.get())
         {
             DragonStaffItem.setAction(action, player, stack);
-            Wyrmroost.NETWORK.sendToServer(new StaffActionMessage(action));
+            Wyrmroost.NETWORK.sendToServer(new StaffActionPacket(action));
         }
         Minecraft.getInstance().displayGuiScreen(null);
     }

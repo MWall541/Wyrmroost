@@ -9,32 +9,42 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.function.Function;
+import java.lang.reflect.InvocationTargetException;
 
 public class NetworkUtils
 {
     private static int messageIndex;
-    
-    public static void registerMessages()
+
+    public static void registerPackets()
     {
-        registerMSG(AnimationMessage.class, AnimationMessage::new);
-        registerMSG(DragonKeyBindMessage.class, DragonKeyBindMessage::new);
-        registerMSG(EggHatchMessage.class, EggHatchMessage::new);
-        registerMSG(EntityRenameMessage.class, EntityRenameMessage::new);
-        registerMSG(StaffActionMessage.class, StaffActionMessage::new);
+        register(AnimationPacket.class);
+        register(KeybindPacket.class);
+        register(HatchEggPacket.class);
+        register(RenameEntityPacket.class);
+        register(StaffActionPacket.class);
     }
-    
-    public static <T extends IMessage> void registerMSG(Class<T> clazz, Function<PacketBuffer, T> decoder)
+
+    public static <T extends IMessage> void register(Class<T> clazz)
     {
         ++messageIndex;
-        Wyrmroost.NETWORK.registerMessage(messageIndex, clazz, IMessage::encode, decoder, IMessage::handle);
+        Wyrmroost.NETWORK.registerMessage(messageIndex,
+                clazz,
+                T::encode,
+                buf ->
+                {
+                    try { return clazz.getConstructor(PacketBuffer.class).newInstance(buf); }
+                    catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e)
+                    {
+                        throw new RuntimeException(String.format("Invalid/Missing Constructor in packet class: %s [] %s", clazz.toString(), e));
+                    }
+                }, T::handle);
     }
 
     public static <T extends Entity & IAnimatedEntity> void sendAnimationPacket(T entity, Animation animation)
     {
         if (entity.world.isRemote) return; // Why are we even sending this then...?
 
-        AnimationMessage message = new AnimationMessage(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation));
+        AnimationPacket message = new AnimationPacket(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation));
 
         entity.setAnimation(animation);
         Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), message);

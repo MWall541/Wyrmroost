@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.data;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -172,7 +173,7 @@ public class LootTables extends LootTableProvider
         {
             for (EntityType<?> type : types)
             {
-                ModUtils.L.warn("Registering EMPTY Loottable for: '{}'", type.getRegistryName());
+                Wyrmroost.LOG.warn("Registering EMPTY Loottable for: '{}'", type.getRegistryName());
                 registerLootTable(type, LootTable.builder());
             }
         }

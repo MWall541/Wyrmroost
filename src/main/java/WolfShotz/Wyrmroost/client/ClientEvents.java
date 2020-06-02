@@ -11,7 +11,7 @@ import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRendere
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.network.messages.DragonKeyBindMessage;
+import WolfShotz.Wyrmroost.network.messages.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRKeyBinds;
 import net.minecraft.client.Minecraft;
@@ -48,7 +48,7 @@ public class ClientEvents
             if (dragon.noActiveAnimation())
             {
                 dragon.performGenericAttack();
-                Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_GENERIC_ATTACK));
+                Wyrmroost.NETWORK.sendToServer(new KeybindPacket(dragon, KeybindPacket.PERFORM_GENERIC_ATTACK));
             }
         }
         if (WRKeyBinds.specialAttack.isPressed())
@@ -59,7 +59,7 @@ public class ClientEvents
             if (dragon.noActiveAnimation())
             {
                 dragon.performAltAttack(true);
-                Wyrmroost.NETWORK.sendToServer(new DragonKeyBindMessage(dragon, DragonKeyBindMessage.PERFORM_SPECIAL_ATTACK));
+                Wyrmroost.NETWORK.sendToServer(new KeybindPacket(dragon, KeybindPacket.PERFORM_SPECIAL_ATTACK));
             }
         }
     }

@@ -42,7 +42,7 @@ public class Recipes extends RecipeProvider
         for (Item item : ModUtils.getRegistryEntries(WRItems.ITEMS))
         {
             if (!REGISTERED.contains(item))
-                ModUtils.L.warn("Item '{}' does not have a recipe associated with it!", item.getRegistryName());
+                Wyrmroost.LOG.warn("Item '{}' does not have a recipe associated with it!", item.getRegistryName());
         }
     }
 
@@ -50,7 +50,7 @@ public class Recipes extends RecipeProvider
     {
         if (REGISTERED.contains(result))
         {
-            ModUtils.L.warn(result.asItem().getRegistryName().getPath() + " is Already Registered!");
+            Wyrmroost.LOG.warn(result.asItem().getRegistryName().getPath() + " is Already Registered!");
             return;
         }
         ShapedRecipeBuilder builder = ShapedRecipeBuilder.shapedRecipe(result, count);
@@ -78,7 +78,7 @@ public class Recipes extends RecipeProvider
     {
         if (REGISTERED.contains(result))
         {
-            ModUtils.L.warn(result.asItem().getRegistryName().getPath() + " is Already Registered!");
+            Wyrmroost.LOG.warn(result.asItem().getRegistryName().getPath() + " is Already Registered!");
             return;
         }
         ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapelessRecipe(result, count);
