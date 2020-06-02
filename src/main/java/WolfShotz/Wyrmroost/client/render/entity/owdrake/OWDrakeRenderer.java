@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDrakeModel>
 {
     // Easter Egg
-    public static final ResourceLocation DAISY = resource("dasy.png");
+    public static final ResourceLocation DAISY = resource("daisy.png");
     public static final ResourceLocation JEB_ = resource("jeb.png");
     // Saddle
     public static final ResourceLocation SADDLE_LAYER = resource("accessories/saddle.png");
@@ -57,8 +57,6 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
 
     class ArmorLayer extends LayerRenderer<OWDrakeEntity, OWDrakeModel>
     {
-        public final OWDrakeModel MODEL = new OWDrakeModel();
-
         public ArmorLayer() { super(OWDrakeRenderer.this); }
 
         @Override
@@ -67,9 +65,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
             if (entity.isArmored())
             {
                 IVertexBuilder builder = ItemRenderer.getBuffer(type, RenderType.getEntityCutoutNoCull(getArmorTexture(entity)), false, entity.getStackInSlot(OWDrakeEntity.ARMOR_SLOT).hasEffect());
-                ms.push();
                 getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
-                ms.pop();
             }
         }
     }
