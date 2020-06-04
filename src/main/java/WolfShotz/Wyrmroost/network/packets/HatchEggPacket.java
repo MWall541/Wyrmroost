@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.network.messages;
+package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.network.IMessage;

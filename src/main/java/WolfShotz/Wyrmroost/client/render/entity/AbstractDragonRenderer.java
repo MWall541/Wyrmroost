@@ -86,7 +86,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         {
             if (condition.test(entity))
             {
-                IVertexBuilder builder = bufferIn.getBuffer(RenderEvents.getGlow(texture.apply(entity)));
+                IVertexBuilder builder = bufferIn.getBuffer(RenderEvents.getGlowType(texture.apply(entity)));
                 getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
         }

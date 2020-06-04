@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.network;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
-import WolfShotz.Wyrmroost.network.messages.*;
+import WolfShotz.Wyrmroost.network.packets.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.PacketDistributor;

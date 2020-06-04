@@ -11,7 +11,7 @@ import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRendere
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.network.messages.KeybindPacket;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRKeyBinds;
 import net.minecraft.client.Minecraft;

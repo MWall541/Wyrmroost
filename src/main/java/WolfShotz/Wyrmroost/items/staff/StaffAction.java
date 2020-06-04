@@ -1,11 +1,15 @@
 package WolfShotz.Wyrmroost.items.staff;
 
+import WolfShotz.Wyrmroost.client.render.RenderEvents;
+import WolfShotz.Wyrmroost.client.render.StaffRenderer;
 import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,15 +32,7 @@ import java.util.Optional;
 public class StaffAction
 {
     public static final List<StaffAction> ACTIONS = Lists.newArrayList();
-    public static final StaffAction DEFAULT = new StaffAction()
-    {
-        @Override
-        public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
-        {
-            if (player.world.isRemote) StaffScreen.open(dragon, stack);
-            return true;
-        }
-    };
+
     public static final StaffAction HOME_POS = new StaffAction()
     {
         @Override
@@ -72,6 +68,14 @@ public class StaffAction
         }
 
         @Override
+        public void render(AbstractDragonEntity dragon, MatrixStack ms)
+        {
+            RayTraceResult rtr = Minecraft.getInstance().objectMouseOver;
+            if (rtr instanceof BlockRayTraceResult)
+                RenderEvents.drawBlockPos(ms, ((BlockRayTraceResult) rtr).getPos(), dragon.world, 7, 0x4d0000ff);
+        }
+
+        @Override
         public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
         {
             if (dragon != null && dragon.getHomePos().isPresent())
@@ -81,6 +85,8 @@ public class StaffAction
     };
     public static final StaffAction TARGETING = new StaffAction("targeting")
     {
+        public static final int TARGET_RANGE = 20;
+
         @Override
         public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
         {
@@ -91,7 +97,7 @@ public class StaffAction
         @Override
         public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
         {
-            RayTraceResult rtr = QuikMaths.rayTrace(dragon.world, player, 20, false);
+            RayTraceResult rtr = QuikMaths.rayTrace(dragon.world, player, TARGET_RANGE, false);
             if (rtr instanceof EntityRayTraceResult)
             {
                 EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
@@ -114,31 +120,13 @@ public class StaffAction
             }
             return true;
         }
-    };
-    public static final StaffAction INVENTORY = new StaffAction("inventory")
-    {
-        @Override
-        public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
-        {
-            DragonStaffItem.setAction(DEFAULT, player, stack);
-            if (!player.world.isRemote)
-                NetworkHooks.openGui((ServerPlayerEntity) player, DragonInvContainer.getProvider(dragon), b -> b.writeInt(dragon.getEntityId()));
-        }
-    };
-    public static final StaffAction SIT = new StaffAction()
-    {
-        @Override
-        public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
-        {
-            dragon.setSit(!dragon.isSitting());
-            DragonStaffItem.setAction(DEFAULT, player, stack);
-        }
 
         @Override
-        public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
+        public void render(AbstractDragonEntity dragon, MatrixStack ms)
         {
-            if (dragon != null && dragon.isSitting()) return "item.wyrmroost.dragon_staff.action.sit.come";
-            return "item.wyrmroost.dragon_staff.action.sit.stay";
+            RayTraceResult rtr = QuikMaths.rayTrace(dragon.world, Minecraft.getInstance().player, TARGET_RANGE, false);
+            if (rtr instanceof EntityRayTraceResult)
+                StaffRenderer.outlineEntitiesQueue.add(((EntityRayTraceResult) rtr).getEntity());
         }
     };
     public final String name;
@@ -157,5 +145,49 @@ public class StaffAction
 
     public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack) {}
 
+    // ===
+    // @formatter:off
+    // ===
+
+    public static final StaffAction DEFAULT = new StaffAction()
+    {
+        @Override
+        public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+        {
+            if (player.world.isRemote) StaffScreen.open(dragon, stack);
+            return true;
+        }
+    };
+
+    public void render(AbstractDragonEntity dragon, MatrixStack ms) {}
+
     public String getTranslateKey(@Nullable AbstractDragonEntity dragon) { return "item.wyrmroost.dragon_staff.action." + name; }
+
+    public static final StaffAction INVENTORY = new StaffAction("inventory")
+    {
+        @Override
+        public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+        {
+            DragonStaffItem.setAction(DEFAULT, player, stack);
+            if (!player.world.isRemote)
+                NetworkHooks.openGui((ServerPlayerEntity) player, DragonInvContainer.getProvider(dragon), b -> b.writeInt(dragon.getEntityId()));
+        }
+    };
+
+    public static final StaffAction SIT = new StaffAction()
+    {
+        @Override
+        public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+        {
+            dragon.setSit(!dragon.isSitting());
+            DragonStaffItem.setAction(DEFAULT, player, stack);
+        }
+
+        @Override
+        public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
+        {
+            if (dragon != null && dragon.isSitting()) return "item.wyrmroost.dragon_staff.action.sit.come";
+            return "item.wyrmroost.dragon_staff.action.sit.stay";
+        }
+    };
 }

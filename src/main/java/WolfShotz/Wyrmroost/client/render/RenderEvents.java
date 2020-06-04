@@ -8,41 +8,40 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import org.lwjgl.opengl.GL11;
+
+import java.util.OptionalDouble;
 
 public class RenderEvents extends RenderType
 {
     // == [Render Types] ==
 
+    @SuppressWarnings("ConstantConditions")
     private RenderEvents() { super(null, null, 0, 0, false, false, null, null); } // dummy
 
-    public static RenderType getGlow(ResourceLocation locationIn)
+    public static RenderType getGlowType(ResourceLocation locationIn)
     {
         RenderState.TextureState textureState = new RenderState.TextureState(locationIn, false, false);
-        return RenderType.makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder()
+        return makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder()
                 .texture(textureState)
                 .transparency(RenderState.ADDITIVE_TRANSPARENCY)
                 .alpha(RenderState.DEFAULT_ALPHA)
                 .build(false));
     }
 
-    public static RenderType getOutline(ResourceLocation texture, float u, float v)
+    public static RenderType getThiccLines(double thickness)
     {
-        return RenderType.makeType("staff_outline", DefaultVertexFormats.ENTITY, 7, 256, RenderType.State.getBuilder()
-                .texture(new RenderState.TextureState(texture, false, false))
-                .texturing(new RenderState.OffsetTexturingState(u, v))
-                .fog(RenderState.BLACK_FOG)
-                .transparency(RenderState.ADDITIVE_TRANSPARENCY)
-                .diffuseLighting(RenderState.DIFFUSE_LIGHTING_ENABLED)
-                .alpha(RenderState.DEFAULT_ALPHA)
-                .cull(RenderState.CULL_DISABLED)
-                .lightmap(RenderState.LIGHTMAP_ENABLED)
-                .overlay(RenderState.OVERLAY_ENABLED)
-                .depthTest(new RenderState.DepthTestState(GL11.GL_GEQUAL))
-                .build(false));
+        return makeType("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
+                State.getBuilder()
+                        .line(new LineState(OptionalDouble.of(thickness)))
+                        .layer(PROJECTION_LAYERING)
+                        .transparency(TRANSLUCENT_TRANSPARENCY)
+                        .writeMask(COLOR_WRITE)
+                        .build(false));
     }
 
 
@@ -63,12 +62,12 @@ public class RenderEvents extends RenderType
         if (!WRConfig.debugMode) return;
         if (debugBox == null) return;
 
-        Vec3d view = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+        Vec3d view = getProjectedView();
         double x = view.x;
         double y = view.y;
         double z = view.z;
 
-        IRenderTypeBuffer.Impl type = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+        IRenderTypeBuffer.Impl type = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         WorldRenderer.drawBoundingBox(
                 ms, type.getBuffer(RenderType.getLines()),
                 debugBox.minX - x,
@@ -98,4 +97,23 @@ public class RenderEvents extends RenderType
             buffer.pos(matrix4f, (float) (p_230013_18_ + xIn), (float) (p_230013_20_ + yIn), (float) (p_230013_22_ + zIn)).color(red, green, blue, alpha).endVertex();
         });
     }
+
+    public static void drawBlockPos(MatrixStack ms, BlockPos pos, World world, double lineThickness, int argb)
+    {
+        Vec3d view = getProjectedView();
+        double x = pos.getX() - view.x;
+        double y = pos.getY() - view.y;
+        double z = pos.getZ() - view.z;
+
+        IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+        RenderEvents.drawShape(ms,
+                impl.getBuffer(getThiccLines(lineThickness)),
+                world.getBlockState(pos).getShape(world, pos),
+                x, y, z,
+                ((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >> 24) & 0xFF) / 255f);
+
+        impl.finish();
+    }
+
+    public static Vec3d getProjectedView() { return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView(); }
 }

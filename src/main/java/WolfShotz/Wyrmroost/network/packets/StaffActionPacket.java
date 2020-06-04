@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.network.messages;
+package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;

@@ -1,11 +1,7 @@
-package WolfShotz.Wyrmroost.client.animation;
+package WolfShotz.Wyrmroost.util;
 
-import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.util.math.MathHelper;
 
-/**
- *
- */
 public class TickFloat
 {
     private float min;

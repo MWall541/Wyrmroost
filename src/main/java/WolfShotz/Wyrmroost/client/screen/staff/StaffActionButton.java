@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.client.screen.staff;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.messages.StaffActionPacket;
+import WolfShotz.Wyrmroost.network.packets.StaffActionPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.Minecraft;

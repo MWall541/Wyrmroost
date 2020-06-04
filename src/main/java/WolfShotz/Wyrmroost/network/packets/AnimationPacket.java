@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.network.messages;
+package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.network.IMessage;

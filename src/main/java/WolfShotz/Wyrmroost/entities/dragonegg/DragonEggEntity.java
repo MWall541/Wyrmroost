@@ -6,7 +6,7 @@ import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
-import WolfShotz.Wyrmroost.network.messages.HatchEggPacket;
+import WolfShotz.Wyrmroost.network.packets.HatchEggPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
