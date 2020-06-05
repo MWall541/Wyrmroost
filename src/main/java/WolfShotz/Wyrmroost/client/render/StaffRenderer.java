@@ -31,8 +31,9 @@ import java.util.List;
 public class StaffRenderer
 {
     private static ShaderGroup outlineShader;
-    public static List<Entity> outlineEntitiesQueue = Lists.newArrayList();
-    public static OutlineLayerBuffer outlineLayerBuffer = new OutlineLayerBuffer(Minecraft.getInstance().getRenderTypeBuffers().getBufferSource());
+    public static final List<Entity> outlineEntitiesQueue = Lists.newArrayList();
+    public static final OutlineLayerBuffer outlineLayerBuffer = new OutlineLayerBuffer(Minecraft.getInstance().getRenderTypeBuffers().getBufferSource());
+    private static final ResourceLocation SHADER_LOC = new ResourceLocation("shaders/post/entity_outline.json");
 
     public static void render(MatrixStack ms)
     {
@@ -59,52 +60,49 @@ public class StaffRenderer
 
     public static void renderEntityOutlines(MatrixStack ms)
     {
-        if (outlineShader == null) makeOutlineShader();
-
         Minecraft mc = Minecraft.getInstance();
-        Vec3d view = mc.gameRenderer.getActiveRenderInfo().getProjectedView();
-        EntityRendererManager manager = mc.getRenderManager();
-        outlineShader.createBindFramebuffers(mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight()); // Recalculate framebuffer for this shader so everything is aligned correctly.
-        Framebuffer frameBuffer = outlineShader.getFramebufferRaw("final"); // get the OpenGL shader properties
+        Vec3d view = RenderEvents.getProjectedView();
         float partialTicks = mc.getRenderPartialTicks();
 
-        frameBuffer.framebufferClear(Minecraft.IS_RUNNING_ON_MAC); // clears the frame of existing frame buffers
-        frameBuffer.bindFramebuffer(false); // unsure
-        RenderSystem.setupOutline(); // Sets up the outline rendering
+        if (outlineShader == null) makeOutlineShader();
+        outlineShader.createBindFramebuffers(mc.getMainWindow().getWidth(), mc.getMainWindow().getHeight());
+        Framebuffer frameBuffer = outlineShader.getFramebufferRaw("final");
+        frameBuffer.bindFramebuffer(true);
+
+        EntityRendererManager manager = mc.getRenderManager();
         for (Entity entity : outlineEntitiesQueue)
-        { // interpolate between entity previous to current position for smooth movement, subtract by FOV
+        { // Interp prev pos to current pos for smoother movement
+            RenderSystem.setupOutline();
             double x = MathHelper.lerp(partialTicks, entity.prevPosX, entity.getPosX()) - view.x;
             double y = MathHelper.lerp(partialTicks, entity.prevPosY, entity.getPosY()) - view.y;
             double z = MathHelper.lerp(partialTicks, entity.prevPosZ, entity.getPosZ()) - view.z;
             manager.renderEntityStatic(entity, x, y, z, entity.rotationYaw, partialTicks, ms, outlineLayerBuffer, manager.getPackedLight(entity, partialTicks));
+            RenderSystem.teardownOutline();
         }
-        RenderSystem.teardownOutline();
-        outlineShader.render(partialTicks); // renders the actual shader
-        outlineLayerBuffer.finish(); // this is a custom IRenderTypeBuffer, so we need to finish ourselves.
+        frameBuffer.unbindFramebuffer();
+        outlineShader.render(partialTicks);
+        outlineLayerBuffer.finish();
         outlineEntitiesQueue.clear();
 
         RenderSystem.enableBlend(); // Blending
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
         frameBuffer.framebufferRenderExt(mc.getMainWindow().getFramebufferWidth(), mc.getMainWindow().getFramebufferHeight(), false); // unsure
         RenderSystem.disableBlend();
-        frameBuffer.bindFramebuffer(true); // unsure
+        frameBuffer.bindFramebuffer(false);
     }
 
     private static void makeOutlineShader()
     {
-        if (outlineShader != null) outlineShader.close();
-
         Minecraft mc = Minecraft.getInstance();
-        ResourceLocation resourcelocation = new ResourceLocation("shaders/post/entity_outline.json");
-
+        if (outlineShader != null) outlineShader.close();
         try
         {
-            outlineShader = new ShaderGroup(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), resourcelocation);
+            outlineShader = new ShaderGroup(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), SHADER_LOC);
             outlineShader.createBindFramebuffers(mc.getMainWindow().getFramebufferWidth(), mc.getMainWindow().getFramebufferHeight());
         }
         catch (IOException | JsonSyntaxException ioexception)
         {
-            Wyrmroost.LOG.warn("Failed to load shader: {}", resourcelocation, ioexception);
+            Wyrmroost.LOG.warn("Failed to load shader: {}", SHADER_LOC, ioexception);
             outlineShader = null;
         }
 

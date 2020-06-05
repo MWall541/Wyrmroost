@@ -94,4 +94,10 @@ public class ClientEvents
             public ResourceLocation getEntityTexture(MultiPartEntity entity) { return null; }
         });
     }
+
+    // for class loading issues
+    public static Minecraft getMinecraft() { return Minecraft.getInstance(); }
+
+    // for class loading issues
+    public static PlayerEntity getPlayer() { return Minecraft.getInstance().player; }
 }
