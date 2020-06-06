@@ -190,15 +190,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public int getVariant()
     {
-        try
-        {
-            return dataManager.get(VARIANT);
-        }
-        catch (NullPointerException ignore)
-        {
-            Wyrmroost.LOG.warn("getVariant call on a dragon that doesnt have these, SHALL IT BE 0 THEN SIRE??");
-            return 0;
-        }
+        try { return dataManager.get(VARIANT); }
+        catch (NullPointerException ignore) { return 0; }
     }
 
     public void setVariant(int variant) { dataManager.set(VARIANT, variant); }

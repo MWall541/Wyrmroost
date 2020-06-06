@@ -105,6 +105,5 @@ public class StaffRenderer
             Wyrmroost.LOG.warn("Failed to load shader: {}", SHADER_LOC, ioexception);
             outlineShader = null;
         }
-
     }
 }

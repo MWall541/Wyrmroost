@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRen
 import WolfShotz.Wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRenderer;
+import WolfShotz.Wyrmroost.client.render.entity.royal_red.RoyalRedRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
@@ -86,6 +87,7 @@ public class ClientEvents
         registerEntityRenderingHandler(WREntities.BUTTERFLY_LEVIATHAN.get(), ButterflyLeviathanRenderer::new);
         registerEntityRenderingHandler(WREntities.DRAGON_FRUIT_DRAKE.get(), DragonFruitDrakeRenderer::new);
         registerEntityRenderingHandler(WREntities.CANARI_WYVERN.get(), CanariWyvernRenderer::new);
+        registerEntityRenderingHandler(WREntities.ROYAL_RED.get(), RoyalRedRenderer::new);
 
         registerEntityRenderingHandler(WREntities.DRAGON_EGG.get(), DragonEggRenderer::new);
 
