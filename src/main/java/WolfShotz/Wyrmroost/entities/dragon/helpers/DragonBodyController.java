@@ -33,6 +33,13 @@ public class DragonBodyController extends BodyController
             return;
         }
 
+        if (dragon.canPassengerSteer())
+        {
+            dragon.renderYawOffset = dragon.rotationYaw = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, dragon.getHorizontalFaceSpeed());
+
+            return;
+        }
+
         super.updateRenderAngles();
     }
 }

@@ -12,7 +12,7 @@ public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, Roy
 
     public RoyalRedRenderer(EntityRendererManager manager)
     {
-        super(manager, new RoyalRedModel(), 2f);
+        super(manager, new RoyalRedModel(), 2.5f);
     }
 
     @Override

@@ -48,6 +48,7 @@ public class CommonEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
+        dragon.recalculateSize();
         if (player.isSneaking()) dragon.tame(true, player);
         else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
     }

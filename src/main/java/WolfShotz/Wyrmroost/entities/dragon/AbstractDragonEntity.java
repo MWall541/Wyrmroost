@@ -14,13 +14,14 @@ import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -64,6 +65,8 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
+    public static final IAttribute PROJECTILE_DAMAGE = new RangedAttribute(null, "generic.projectileDamage", 2d, 0, 2048d);
+
     // Common Data Parameters
     public static final DataParameter<Boolean> GENDER = createKey(DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> FLYING = createKey(DataSerializers.BOOLEAN);
@@ -71,22 +74,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Integer> VARIANT = createKey(DataSerializers.VARINT);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = createKey(DataSerializers.OPTIONAL_BLOCK_POS);
 
-    // Dragon Entity Animations
-    public int animationTick;
-    public Animation animation = NO_ANIMATION;
-    @Deprecated
-    public static Animation SLEEP_ANIMATION;
-    @Deprecated
-    public static Animation WAKE_ANIMATION;
-
-    // other delegates
     public final Set<String> immunes = Sets.newHashSet();
     public final Set<EntityDataEntry<?>> dataEntries = Sets.newHashSet();
     public final Optional<DragonInvHandler> invHandler;
     public DragonEggProperties eggProperties;
+    public Animation animation = NO_ANIMATION;
     @Deprecated
     public int shouldFlyThreshold = 3; // todo: should be done based on entity height
     public int sleepCooldown;
+    public int animationTick;
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -246,8 +242,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(SLEEPING, sleep);
         clearAI();
         if (!sleep) sleepCooldown = 350;
-        if (SLEEP_ANIMATION != null && WAKE_ANIMATION != null && noActiveAnimation())
-            NetworkUtils.sendAnimationPacket(this, sleep? SLEEP_ANIMATION : WAKE_ANIMATION);
 
         recalculateSize(); // Change the hitbox for sitting / sleeping
     }
@@ -984,8 +978,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected float getJumpUpwardsMotion()
     {
-        float jump = super.getJumpUpwardsMotion();
-        return canFly()? jump * 1.25f : jump;
+        float jump = getJumpFactor() * 0.175f;
+        return canFly()? jump * getHeight() : jump;
     }
 
     /**

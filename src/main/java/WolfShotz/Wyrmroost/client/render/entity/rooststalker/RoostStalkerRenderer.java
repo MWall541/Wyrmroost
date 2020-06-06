@@ -72,7 +72,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
                     ms.translate(0, -0.8, -1.3);
                 }
 
-                if (stalker.isSleeping() && stalker.getAnimation() != RoostStalkerEntity.WAKE_ANIMATION)
+                if (stalker.isSleeping())
                 {
                     ms.translate(-0.5f - (i * 2.8f), -0.6f - (i * 1.8f), -1.49f);
                     ms.rotate(Vector3f.ZP.rotationDegrees(240));

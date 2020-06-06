@@ -214,7 +214,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION, ATTACK_ANIMATION};
+        return new Animation[] {NO_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION, ATTACK_ANIMATION};
     }
 
     class AvoidGoal extends AvoidEntityGoal<PlayerEntity>

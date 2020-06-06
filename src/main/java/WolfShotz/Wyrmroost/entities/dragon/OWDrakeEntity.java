@@ -512,6 +512,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, SLEEP_ANIMATION, WAKE_ANIMATION, ROAR_ANIMATION};
+        return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
     }
 }
