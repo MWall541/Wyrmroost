@@ -1,8 +1,6 @@
 "Binary-Breaking" 1.15 Changes and plans
 ========================================
 Some these probably won't work, some may. who knows, exactly why theyre plans
-    
-- Make many, MANY more things universal
 
 - massive clean up (util package looks like a dead whale's guts exploded)
 

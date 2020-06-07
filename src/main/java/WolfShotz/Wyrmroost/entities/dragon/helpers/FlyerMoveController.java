@@ -6,6 +6,14 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.Vec3d;
 
+/**
+ * todo
+ * completely reevaluate.
+ * In Wyrmroost (and I assume vanilla), the MoveController is a helper for ai, not as a means to control movement entirely.
+ * In this case what it SHOULD do is check if the position is actually worthy of moving to, fly if its too far, etc.
+ *
+ * @see net.minecraft.entity.LivingEntity#travel(Vec3d)
+ */
 public class FlyerMoveController extends MovementController
 {
     private final AbstractDragonEntity dragon;

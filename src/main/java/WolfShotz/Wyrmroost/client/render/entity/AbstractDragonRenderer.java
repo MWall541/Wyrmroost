@@ -32,6 +32,13 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
     }
 
+    @Override
+    protected void preRenderCallback(T entity, MatrixStack ms, float partialTicks)
+    {
+        float scale = entity.getRenderScale();
+        if (entity.isMale()) ms.scale(scale, scale, scale);
+    }
+
     /**
      * A conditional layer that can only render if certain conditions are met.
      * E.G. is the dragon sleeping, saddled, etc

@@ -174,10 +174,6 @@ public class StaffAction
 
     public StaffAction() { this("default"); }
 
-    // ===
-    // @formatter:off
-    // ===
-
     public boolean clickBlock(AbstractDragonEntity dragon, ItemUseContext context) { return false; }
 
     public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack) { return false; }

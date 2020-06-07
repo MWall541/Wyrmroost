@@ -62,7 +62,9 @@ public class StaffScreen extends Screen
         int x = width / 2;
         int y = height / 2;
 
-        InventoryScreen.drawEntityOnScreen(x, y + 20, 20, x - mouseX, y - mouseY, dragon);
+        int scale = (int) (dragon.getWidth() * dragon.getHeight()) * 2;
+
+        InventoryScreen.drawEntityOnScreen(x, y + 20, scale, x - mouseX, y - mouseY, dragon);
         if (mouseX >= x - 35 && mouseY >= y - 45 && mouseX < x + 35 && mouseY < y + 15)
             renderTooltip(toolTip, mouseX, mouseY);
     }

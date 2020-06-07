@@ -16,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -26,15 +25,15 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
-    public final TickFloat flightTime;
-    public final TickFloat sitTime;
+    public final TickFloat flightTime = new TickFloat().setLimit(0, 1);
+    public final TickFloat sitTime = new TickFloat().setLimit(0, 1);
 
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
 
-        this.flightTime = new TickFloat().setLimit(0, 1);
-        this.sitTime = new TickFloat(isSitting()? 1 : 0).setLimit(0, 1);
+        // because itll act like its doing squats when we re-render if we didnt.
+        sitTime.set(isSitting()? 1 : 0);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
     }
@@ -88,39 +87,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void travel(Vec3d vec3d)
-    {
-        float speed = isFlying()? (float) getAttribute(FLYING_SPEED).getValue() : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.5f;
-
-        if (canPassengerSteer())
-        {
-            LivingEntity entity = (LivingEntity) getControllingPassenger();
-            rotationYawHead = entity.rotationYawHead;
-            rotationPitch = entity.rotationPitch * 0.5f;
-            if (entity.isJumping) setFlying(true);
-            double yMot = vec3d.y;
-            if (isFlying())
-            {
-                if (entity.moveForward != 0) yMot = entity.getLookVec().y * speed * 3.5;
-                else yMot = MathHelper.cos(ticksExisted * 0.25f) * 0.25f;
-            }
-            setAIMoveSpeed(speed);
-            vec3d = new Vec3d(vec3d.x, yMot, entity.moveForward);
-        }
-
-        if (isFlying())
-        {
-            moveRelative(speed, vec3d);
-            move(MoverType.SELF, getMotion());
-            setMotion(getMotion().scale(0.91f));
-
-            return;
-        }
-
-        super.travel(vec3d);
-    }
-
-    @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (super.playerInteraction(player, hand, stack)) return true;
@@ -133,6 +99,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 return true;
             }
 
+            setSit(false);
             player.startRiding(this);
             return true;
         }
@@ -144,15 +111,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     protected boolean canBeRidden(Entity entityIn) { return isTamed(); }
 
     @Override
+    protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 2; }
+
+    @Override
+    public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.75f, index == 0? 0 : -1); }
+
+    @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * 0.8f; }
 
     @Override
-    public EntitySize getSize(Pose poseIn)
-    {
-        EntitySize size = super.getSize(poseIn);
-        if (isSitting() || isSleeping()) size = size.scale(1, 0.5f);
-        return size;
-    }
+    public float getRenderScale() { return isChild()? 0.5f : isMale()? 0.8f : 1f; }
 
     @Override
     public int getHorizontalFaceSpeed() { return isFlying()? 5 : 8; }

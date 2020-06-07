@@ -8,7 +8,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, RoyalRedModel>
 {
-    public static final ResourceLocation TEXTURE = Wyrmroost.rl("textures/entity/dragon/royal_red/body.png");
+    public static final ResourceLocation MALE = Wyrmroost.rl(BASE_PATH + "royal_red/male.png");
+    public static final ResourceLocation FEMALE = Wyrmroost.rl(BASE_PATH + "royal_red/female.png");
 
     public RoyalRedRenderer(EntityRendererManager manager)
     {
@@ -16,5 +17,5 @@ public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, Roy
     }
 
     @Override
-    public ResourceLocation getEntityTexture(RoyalRedEntity entity) { return TEXTURE; }
+    public ResourceLocation getEntityTexture(RoyalRedEntity entity) { return entity.isMale()? MALE : FEMALE; }
 }

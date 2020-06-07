@@ -30,7 +30,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.Collection;
@@ -47,8 +46,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
-
-        shouldFlyThreshold = 2;
 
         moveController = new FlyerMoveController(this, true);
         lookController = new LookController(this);
@@ -159,13 +156,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void travel(Vec3d vec3d)
-    {
-        // Flying is controlled entirely in the move helper
-        if (!isFlying()) super.travel(vec3d);
-    }
-
-    @Override
     public boolean attackEntityAsMob(Entity entity)
     {
         boolean should = super.attackEntityAsMob(entity);
@@ -191,15 +181,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         screen.addAction(StaffAction.TARGETING);
     }
 
-    @Override
-    public boolean canBeCollidedWith() { return super.canBeCollidedWith() && !isRiding(); }
-
-    @Override
-    public boolean isInvulnerableTo(DamageSource source) { return super.isInvulnerableTo(source) || getRidingEntity() != null; }
-
-    /**
-     * Array Containing all of the dragons food items
-     */
     @Override
     public Collection<Item> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
 

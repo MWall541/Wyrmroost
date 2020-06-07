@@ -248,10 +248,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Animation[] getAnimations()
-    {
-        return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION};
-    }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION}; }
 
     class ScavengeGoal extends MoveToBlockGoal
     {

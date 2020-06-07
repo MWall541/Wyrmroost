@@ -27,7 +27,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
@@ -44,8 +43,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
 
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
@@ -78,13 +75,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 ((t, w, s, b, r) -> true));
 //                ((t, w, s, b, r) -> w.getWorldInfo().getDimensionData(DimensionType.OVERWORLD).contains(PortalBlock.DATA_PORTAL_ENTERED)));
     }
-
-//    public static boolean canSpawnHere(EntityType<DragonFruitDrakeEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random random)
-//    {
-//        World world = worldIn.getWorld();
-//
-//        return world.getDimension() instanceof OverworldDimension && WorldCapability.isPortalTriggered(world);
-//    }
 
     // ================================
     //           Entity NBT
@@ -167,69 +157,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         if (getAnimation() == BITE_ANIMATION && animationTick == 7) attackInFront(0);
     }
-
-//    @Override
-//    public void livingTick()
-//    {
-//        super.livingTick();
-//
-//        if (shearCooldownTime > 0) --shearCooldownTime;
-//        sitTimer.add((isSitting() || isSleeping())? 0.5f : -0.5f);
-//
-//        setSprinting(getAttackTarget() != null);
-//
-//        if (getAnimation() == BITE_ANIMATION && animationTick == 7) attackInFront(0);
-//    }
-
-    @Override
-    public void travel(Vec3d vec3d)
-    {
-        if (isSprinting()) vec3d.mul(2f, 0, 2f);
-
-        if (!isBeingRidden())
-        {
-            super.travel(vec3d);
-            return;
-        }
-
-        // We're being ridden, follow rider controls
-        LivingEntity rider = (LivingEntity) getControllingPassenger();
-        if (canPassengerSteer())
-        {
-            float f = rider.moveForward, s = rider.moveStrafing;
-            float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue());
-            boolean moving = (f != 0 || s != 0);
-            Vec3d target = new Vec3d(s, vec3d.y, f);
-
-            setAIMoveSpeed(speed / 2);
-            super.travel(target);
-            if (moving || getAnimation() == BITE_ANIMATION)
-            {
-                prevRotationYaw = rotationYaw = rider.rotationYaw;
-                rotationPitch = rider.rotationPitch * 0.5f;
-                setRotation(rotationYaw, rotationPitch);
-                renderYawOffset = rotationYaw;
-                rotationYawHead = renderYawOffset;
-            }
-        }
-    }
-
-//    @Override
-//    public boolean isNotColliding(IWorldReader worldIn)
-//    {
-//        if (worldIn.checkNoEntityCollision(this) && !worldIn.containsAnyLiquid(getBoundingBox()))
-//        {
-//            BlockPos blockpos = new BlockPos(posX, getBoundingBox().minY, posZ);
-//            return blockpos.getY() < worldIn.getSeaLevel();
-//            if (blockpos.getY() < worldIn.getSeaLevel()) return false;
-//
-//            BlockState blockstate = worldIn.getBlockState(blockpos.down());
-//            Block block = blockstate.getBlock();
-//            return block == Blocks.GRASS_BLOCK || blockstate.isIn(BlockTags.LEAVES);
-//        }
-//
-//        return false;
-//    }
 
     @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn) { return true; }

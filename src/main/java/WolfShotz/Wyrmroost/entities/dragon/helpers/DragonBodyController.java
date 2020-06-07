@@ -7,7 +7,7 @@ import net.minecraft.util.math.MathHelper;
 /**
  * Created by WolfShotz - 8/26/19 - 16:12
  * <p>
- * Class Responsible for disallowing rotation while sitting, sleeping, etc
+ * Disallows rotations while sitting, sleeping, and helps control yaw while controlling
  */
 public class DragonBodyController extends BodyController
 {
@@ -22,24 +22,29 @@ public class DragonBodyController extends BodyController
     @Override
     public void updateRenderAngles()
     {
-        // No rotations while sitting or sleeping
+        // No body rotations while sitting or sleeping
         if (dragon.isSleeping()) return;
 
+        // Clamp the head rotation to 70 degrees while sitting
         if (dragon.isSitting())
         {
-            dragon.renderYawOffset = dragon.rotationYaw;
-            dragon.rotationYawHead = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, (float) dragon.getHorizontalFaceSpeed());
-
+            clampHeadRotation(70f);
             return;
         }
 
+        // If passenger controlling, clamp head rotation to 120 degrees, rotate body according to head rotation speed
         if (dragon.canPassengerSteer())
         {
+            clampHeadRotation(120f);
             dragon.renderYawOffset = dragon.rotationYaw = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, dragon.getHorizontalFaceSpeed());
-
             return;
         }
 
         super.updateRenderAngles();
+    }
+
+    public void clampHeadRotation(float clampDeg)
+    {
+        dragon.rotationYawHead = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, clampDeg);
     }
 }

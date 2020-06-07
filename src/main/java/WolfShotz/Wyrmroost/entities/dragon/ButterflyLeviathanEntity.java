@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonBodyController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
@@ -103,9 +102,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
         registerVariantData(2, true);
     }
-
-    @Override
-    protected net.minecraft.entity.ai.controller.BodyController createBodyController() { return new BodyController(); }
 
     @Override
     protected void registerGoals()
@@ -208,10 +204,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         getAttribute(FOLLOW_RANGE).setBaseValue(28d);
     }
 
-    // ================================
-    //           Entity NBT
-    // ================================
-
     @Override
     protected void registerData()
     {
@@ -244,8 +236,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public boolean hasConduit() { return dataManager.get(HAS_CONDUIT); }
 
-    // =================================
-
     @Override
     public float getBlockPathWeight(BlockPos pos, IWorldReader worldIn)
     {
@@ -264,7 +254,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
             rotationPitch = rider.rotationPitch * 0.5f;
             rotationYawHead = rider.rotationYawHead;
-            rotationYaw = MathHelper.func_219800_b(rotationYawHead, rotationYaw, 8);
             if (isInWater() && (rider.moveForward != 0 || rider.moveStrafing != 0))
             {
                 float yVel = -(MathHelper.sin(rotationPitch * (QuikMaths.PI / 180f))) * (speed * 15);
@@ -499,6 +488,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public boolean isPushedByWater() { return false; }
 
+    @Override
+    public int getHorizontalFaceSpeed() { return 8; }
+
     /**
      * Array Containing all of the dragons food items
      */
@@ -525,28 +517,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public Animation[] getAnimations()
     {
         return new Animation[] {NO_ANIMATION, CONDUIT_ANIMATION, ROAR_ANIMATION, BITE_ANIMATION};
-    }
-
-    class BodyController extends DragonBodyController
-    {
-        public BodyController() { super(ButterflyLeviathanEntity.this); }
-
-        @Override
-        public void updateRenderAngles()
-        {
-            double deltaX = getPosX() - dragon.prevPosX;
-            double deltaZ = getPosZ() - dragon.prevPosZ;
-            double dist = deltaX * deltaX + deltaZ * deltaZ;
-
-            if (!dragon.isInWater() && dist > 0.0001)
-            {
-                super.updateRenderAngles();
-                return;
-            }
-
-            dragon.renderYawOffset = dragon.rotationYaw;
-            dragon.rotationYawHead = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, (float) dragon.getHorizontalFaceSpeed());
-        }
     }
 
     class MoveController extends MovementController
@@ -613,5 +583,4 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         @Override
         protected boolean canNavigate() { return true; }
     }
-
 }

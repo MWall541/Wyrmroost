@@ -35,7 +35,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -275,42 +274,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         return false;
     }
-    
-    /**
-     * Called to handle the movement of the entity
-     */
-    @Override
-    public void travel(Vec3d vec3d)
-    {
-        if (isBeingRidden() && canBeSteered() && isOwner((LivingEntity) getControllingPassenger()))
-        {
-            LivingEntity rider = (LivingEntity) getControllingPassenger();
-            if (canPassengerSteer() && canBeSteered())
-            {
-                float f = rider.moveForward, s = rider.moveStrafing;
-                float speed = (float) (getAttribute(MOVEMENT_SPEED).getValue() * (rider.isSprinting() ? SPRINTING_SPEED_BOOST.getAmount() : 1));
-                boolean moving = (f != 0 || s != 0);
-                Vec3d target = new Vec3d(s, vec3d.y, f);
-
-                setSprinting(rider.isSprinting());
-                setAIMoveSpeed(speed);
-                if (rider.isJumping) jumpController.setJumping();
-                super.travel(target);
-                if (moving || getAnimation() == OWDrakeEntity.HORN_ATTACK_ANIMATION)
-                {
-                    prevRotationYaw = rotationYaw = rider.rotationYaw;
-                    rotationPitch = rider.rotationPitch * 0.5f;
-                    setRotation(rotationYaw, rotationPitch);
-                    renderYawOffset = rotationYaw;
-                    rotationYawHead = renderYawOffset;
-                }
-                
-                return;
-            }
-        }
-        
-        super.travel(vec3d);
-    }
 
     @Override
     public void updatePassenger(Entity passenger)
@@ -368,12 +331,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 && getRNG().nextInt(300) == 0) setSleeping(true);
         else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
     }
-
-    @Override // Needed because sometimes size conflicts when transitioning from sit - stand, so keep it constant.
-    public double getMountedYOffset() { return 1.85; }
-
-    @Override
-    public boolean canBeSteered() { return isSaddled() && isTamed(); }
 
     @Override
     protected boolean canBeRidden(Entity entityIn)
@@ -461,12 +418,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     protected boolean isMovementBlocked() { return super.isMovementBlocked(); }
-
-    @Override
-    public EntitySize getSize(Pose poseIn)
-    {
-        return (isSitting() || isSleeping())? super.getSize(poseIn).scale(1f, 0.7f) : super.getSize(poseIn);
-    }
 
     @Override
     protected int getExperiencePoints(PlayerEntity player) { return 2 + rand.nextInt(3); }
