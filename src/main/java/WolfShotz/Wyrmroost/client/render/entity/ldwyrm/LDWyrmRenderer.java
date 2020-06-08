@@ -11,17 +11,11 @@ import javax.annotation.Nullable;
 
 public class LDWyrmRenderer extends MobRenderer<LDWyrmEntity, EntityModel<LDWyrmEntity>>
 {
-    private ResourceLocation minutus = Wyrmroost.rl("textures/entity/dragon/minutus/body.png");
+    private final ResourceLocation TEXTURE = Wyrmroost.rl("textures/entity/dragon/lesser_desertwyrm/body.png");
 
-    public LDWyrmRenderer(EntityRendererManager manager)
-    {
-        super(manager, new LDWyrmModel(), 0);
-    }
+    public LDWyrmRenderer(EntityRendererManager manager) { super(manager, new LDWyrmModel(), 0); }
 
     @Nullable
     @Override
-    public ResourceLocation getEntityTexture(LDWyrmEntity entity)
-    {
-        return minutus;
-    }
+    public ResourceLocation getEntityTexture(LDWyrmEntity entity) { return TEXTURE; }
 }

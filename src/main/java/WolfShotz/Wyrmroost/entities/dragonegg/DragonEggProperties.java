@@ -1,8 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragonegg;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.entity.EntitySize;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Predicate;
 
@@ -10,7 +8,6 @@ public class DragonEggProperties
 {
     private final float width, height;
     private final int hatchTime;
-    private ResourceLocation texture = Wyrmroost.rl("textures/entity/dragonegg/default.png");
     private Predicate<DragonEggEntity> conditions = e -> true;
 
     /**
@@ -23,16 +20,6 @@ public class DragonEggProperties
         this.width = width;
         this.height = height;
         this.hatchTime = hatchTime;
-    }
-
-    /**
-     * Set a custom egg texture as opposed to the default
-     */
-    public DragonEggProperties setCustomTexture(ResourceLocation customTexture)
-    {
-        this.texture = customTexture;
-
-        return this;
     }
 
     /**
@@ -68,10 +55,4 @@ public class DragonEggProperties
 
         return this;
     }
-
-    /**
-     * Get the texture this egg renders
-     * Default: "textures/entity/dragonegg/default.png"
-     */
-    public ResourceLocation getEggTexture() { return texture; }
 }

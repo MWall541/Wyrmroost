@@ -36,7 +36,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
     protected void preRenderCallback(T entity, MatrixStack ms, float partialTicks)
     {
         float scale = entity.getRenderScale();
-        if (entity.isMale()) ms.scale(scale, scale, scale);
+        ms.scale(scale, scale, scale);
     }
 
     /**

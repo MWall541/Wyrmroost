@@ -373,29 +373,12 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        float scale = entity.isChild()? 0.75f : 1.5f;
-        float offset = entity.isChild()? 0.5f : -0.5f;
-
         ms.push();
-        ms.scale(scale, scale, scale);
-        ms.translate(0, offset, 0);
+        ms.scale(1.5f, 1.5f, 1.5f);
+        ms.translate(0, -0.5f, 0);
         Body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
-//
-//    @Override
-//    public void render(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
-//    {
-//        double size = fruitDrake.isChild()? 0.75d : 1.5d;
-//        double height = fruitDrake.isChild()? 0.5f : -0.5f;
-//
-//        GlStateManager.pushMatrix();
-//        GlStateManager.scaled(size, size, size);
-//        GlStateManager.translated(0, height, 0);
-//        Body1.render(scale);
-//        GlStateManager.popMatrix();
-//    }
-
 
     @Override
     public void setRotationAngles(DragonFruitDrakeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)

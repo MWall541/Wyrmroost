@@ -11,10 +11,7 @@ public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, Roy
     public static final ResourceLocation MALE = Wyrmroost.rl(BASE_PATH + "royal_red/male.png");
     public static final ResourceLocation FEMALE = Wyrmroost.rl(BASE_PATH + "royal_red/female.png");
 
-    public RoyalRedRenderer(EntityRendererManager manager)
-    {
-        super(manager, new RoyalRedModel(), 2.5f);
-    }
+    public RoyalRedRenderer(EntityRendererManager manager) { super(manager, new RoyalRedModel(), 2.5f); }
 
     @Override
     public ResourceLocation getEntityTexture(RoyalRedEntity entity) { return entity.isMale()? MALE : FEMALE; }

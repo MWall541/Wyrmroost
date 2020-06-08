@@ -370,12 +370,8 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        float scale = entity.isChild()? 1f : 2f;
-        float offset = entity.isChild()? 0.7f : 0;
-
         ms.push();
-        ms.scale(scale, scale, scale);
-        ms.translate(0, offset, 0);
+        ms.scale(2f, 2f, 2f);
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }

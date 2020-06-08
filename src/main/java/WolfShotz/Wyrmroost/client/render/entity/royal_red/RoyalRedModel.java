@@ -191,9 +191,9 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         this.tail7.setRotationPoint(0.0F, -0.2F, 4.0F);
         this.tail7.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 5, 0.0F);
         this.arm1L = new WRModelRenderer(this, 0, 36);
-        this.arm1L.setRotationPoint(2.0F, 0.5f, -2.5F);
+        this.arm1L.setRotationPoint(2.0F, 0.0F, -2.5F);
         this.arm1L.addBox(0.0F, 0.0F, -1.5F, 2, 5, 3, 0.0F);
-        this.setRotateAngle(arm1L, 0.7285004297824331F, 0.0F, 0.0F);
+        this.setRotateAngle(arm1L, 0.7285004297824331F, 0.5f, 0.0F);
         this.tailspike3part1 = new WRModelRenderer(this, 0, 15);
         this.tailspike3part1.setRotationPoint(0.0F, 0.0F, 1.0F);
         this.tailspike3part1.addBox(-4.0F, -0.5F, -1.0F, 4, 1, 2, 0.0F);
@@ -750,8 +750,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
             }
         }
 
-        fly(entity.flightTime.get(partialTicks));
-        sit(entity.sitTime.get(partialTicks));
+        fly(entity.flightTimer.get(partialTicks));
+        sit(entity.sitTimer.get(partialTicks));
         idle(frame);
     }
 

@@ -64,7 +64,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public static final Animation ROAR_ANIMATION = new Animation(86);
     public static final Animation TALK_ANIMATION = new Animation(20);
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
@@ -76,6 +75,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         registerVariantData(2, true);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+
+        sitTimer.set(isSitting()? 1 : 0);
     }
 
     @Override
@@ -238,22 +239,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         if (super.playerInteraction(player, hand, stack)) return true;
 
-        // If holding a saddle and this is not a child, Saddle up!
-        if (stack.getItem() == Items.SADDLE && !isSaddled() && !isChild()) // instaceof: for custom saddles (if any)
+        if (stack.getItem() == Items.SADDLE && !isSaddled() && !isChild())
         {
             if (!world.isRemote) setStackInSlot(SADDLE_SLOT, stack);
             consumeItemFromStack(player, stack);
             return true;
         }
 
-        // If Sneaking, Sit
-        if (isOwner(player) && player.isSneaking())
-        {
-            setSit(!isSitting());
-            return true;
-        }
-
-        // If Saddled and not sneaking, start riding
         if (isSaddled() && !isBreedingItem(stack) && !isChild() && ((!isTamed() && !isInWater()) || isOwner(player)))
         {
             setSit(false);
@@ -263,7 +255,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
             return true;
         }
 
-        // If a child, tame it the old fashioned way
         if (isFoodItem(stack) && isChild() && !isTamed())
         {
             tame(getRNG().nextInt(10) == 0, player);
@@ -417,7 +408,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void performGenericAttack() { setAnimation(HORN_ATTACK_ANIMATION); }
 
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked(); }
+    public EntitySize getSize(Pose poseIn)
+    {
+        EntitySize size = getType().getSize().scale(getRenderScale());
+        if (isSitting() || isSleeping()) size = size.scale(1, 0.75f);
+        return size;
+    }
 
     @Override
     protected int getExperiencePoints(PlayerEntity player) { return 2 + rand.nextInt(3); }

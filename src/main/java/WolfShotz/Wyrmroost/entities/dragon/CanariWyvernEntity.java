@@ -133,25 +133,15 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             return true;
         }
 
-        if (isOwner(player))
+        if (isOwner(player) && player.getPassengers().size() < 3)
         {
-            if (player.isSneaking())
-            {
-                setSit(!isSitting());
-
-                return true;
-            }
-
-            if (player.getPassengers().size() < 3)
-            {
-                setSit(true);
-                setFlying(false);
-                clearAI();
-                startRiding(player, true);
-
-                return true;
-            }
+            setSit(true);
+            setFlying(false);
+            clearAI();
+            startRiding(player, true);
+            return true;
         }
+
         return false;
     }
 

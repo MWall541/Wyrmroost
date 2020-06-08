@@ -38,7 +38,6 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class SilverGliderEntity extends AbstractDragonEntity
 {
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat(1).setLimit(0, 1);
 
     public TemptGoal temptGoal;
@@ -51,6 +50,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerVariantData(3, true); // For females, this value is redundant
+
+        sitTimer.set(isSitting()? 1 : 0);
     }
 
     @Override
@@ -174,7 +175,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 && !world.containsAnyLiquid(player.getBoundingBox())
                 && canFly()
                 && player.getPassengers().indexOf(this) == 0
-                && getAltitude(false) - player.getHeight() > 4
+                && getAltitude() - player.getHeight() > 4
                 && player.getMotion().y <= 0;
     }
 

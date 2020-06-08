@@ -389,31 +389,12 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        float scale = entity.isChild()? 0.25f : 0.5f;
-        float offset = entity.isChild()? 4f : 1f;
-
         ms.push();
-        ms.scale(scale, scale, scale);
-        ms.translate(0, offset, 0);
+        ms.scale(0.5f, 0.5f, 0.5f);
+        ms.translate(0, 1, 0);
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
-
-//    @Override
-//    public void render(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
-//    {
-//        double size = canari.isChild()? 0.25d : 0.5d;
-//
-//        GlStateManager.pushMatrix();
-//        GlStateManager.translated(body1.offsetX, body1.offsetY, body1.offsetZ);
-//        GlStateManager.translated(body1.rotationPointX * scale, body1.rotationPointY * scale, body1.rotationPointZ * scale);
-//        GlStateManager.scaled(size, size, size);
-//        GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
-//        GlStateManager.translated(-body1.rotationPointX * scale, -body1.rotationPointY * scale, -body1.rotationPointZ * scale);
-//        if (canari.isChild()) GlStateManager.translated(0, 0.85d, 0);
-//        body1.render(scale);
-//        GlStateManager.popMatrix();
-//    }
 
     @Override
     public void setRotationAngles(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)

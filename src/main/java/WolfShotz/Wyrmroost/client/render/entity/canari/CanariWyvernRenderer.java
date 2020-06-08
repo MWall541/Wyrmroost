@@ -30,14 +30,9 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
             if (name.equals("Lady Everlyn Winklestein") && !canari.isMale()) return EE_LADY;
         }
 
-        String path = "body_" + canari.getVariant();
-        if (canari.isMale()) path += "m";
-        else path += "f";
+        String path = "body_" + canari.getVariant() + (canari.isMale()? "m" : "f");
         return resource(path + ".png");
     }
-    
-    private static ResourceLocation resource(String png)
-    {
-        return Wyrmroost.rl(BASE_PATH + "canari/" + png);
-    }
+
+    private static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "canari_wyvern/" + png); }
 }

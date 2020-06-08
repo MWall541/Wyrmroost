@@ -25,17 +25,17 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
-    public final TickFloat flightTime = new TickFloat().setLimit(0, 1);
-    public final TickFloat sitTime = new TickFloat().setLimit(0, 1);
+    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
 
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
 
-        // because itll act like its doing squats when we re-render if we didnt.
-        sitTime.set(isSitting()? 1 : 0);
-
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+
+        // because itll act like its doing squats when we re-render if we didnt.
+        sitTimer.set(isSitting()? 1 : 0);
     }
 
     @Override
@@ -82,8 +82,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
-        flightTime.add(isFlying()? 0.1f : -0.05f);
-        sitTime.add(isSitting()? 0.1f : -0.1f);
+        flightTimer.add(isFlying()? 0.1f : -0.05f);
+        sitTimer.add(isSitting()? 0.1f : -0.1f);
+        sleepTimer.add(isSleeping()? 0.035f : -0.1f);
     }
 
     @Override
@@ -91,16 +92,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         if (super.playerInteraction(player, hand, stack)) return true;
 
-        if (isOwner(player))
+        if (isOwner(player) && !isChild() && player.startRiding(this))
         {
-            if (player.isSneaking())
-            {
-                setSit(!isSitting());
-                return true;
-            }
-
             setSit(false);
-            player.startRiding(this);
             return true;
         }
 

@@ -15,7 +15,6 @@ import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -59,8 +58,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
     public static final Animation SCAVENGE_ANIMATION = new Animation(35);
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(RoostStalkerEntity.class, DataSerializers.ITEMSTACK);
-
-    public TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
 
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world)
     {

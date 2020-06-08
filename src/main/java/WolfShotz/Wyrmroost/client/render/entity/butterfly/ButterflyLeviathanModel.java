@@ -305,32 +305,12 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     @Override
     public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        float scale = entity.isChild()? 1f : 3f;
-        float offset = entity.isChild()? 0.85f : -0.17f;
-
         ms.push();
-        ms.scale(scale, scale, scale);
-        ms.translate(0, offset, 0);
+        ms.scale(3, 3, 3);
+        ms.translate(0, -0.17f, 0);
         body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }
-
-//    @Override
-//    public void render(ButterflyLeviathanEntity entity, float f, float f1, float f2, float f3, float f4, float f5)
-//    {
-//        double size = entity.isChild()? 1d : 3d;
-//
-//        GlStateManager.pushMatrix();
-////        GlStateManager.translated(body1., body1.offsetY, body1.offsetZ);
-////        GlStateManager.translated(body1.rotationPointX * f5, body1.rotationPointY * f5, body1.rotationPointZ * f5);
-//        GlStateManager.scaled(size, size, size);
-////        GlStateManager.translated(-body1.offsetX, -body1.offsetY, -body1.offsetZ);
-////        GlStateManager.translated(-body1.rotationPointX * f5, -body1.rotationPointY * f5, -body1.rotationPointZ * f5);
-//        if (entity.isChild()) GlStateManager.translated(0, 0.8, 0);
-//        body1.render(f5);
-//        GlStateManager.popMatrix();
-//    }
-
 
     @Override
     public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)

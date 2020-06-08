@@ -287,19 +287,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             return true;
         }
 
-        if (isOwner(player))
+        if (isOwner(player) && isChild())
         {
-            if (player.isSneaking())
-            {
-                setSit(!isSitting());
-                return true;
-            }
-
-            if (!world.isRemote && !isChild())
-            {
-                player.startRiding(this);
-                setSit(false);
-            }
+            player.startRiding(this);
             return true;
         }
 
@@ -490,6 +480,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     @Override
     public int getHorizontalFaceSpeed() { return 8; }
+
+    @Override
+    public int getSpecialChances() { return getRNG().nextInt(50) + 100; }
 
     /**
      * Array Containing all of the dragons food items

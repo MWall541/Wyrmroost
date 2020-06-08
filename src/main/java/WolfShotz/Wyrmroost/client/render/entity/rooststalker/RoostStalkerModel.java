@@ -166,11 +166,8 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        float scale = entity.isChild()? 0.3f : 0.625f;
-
         ms.push();
-        ms.scale(scale, scale, scale);
-        if (entity.isChild()) ms.translate(0, 0.078d, 0);
+        ms.scale(0.625f, 0.625f, 0.625f);
         torso.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.pop();
     }

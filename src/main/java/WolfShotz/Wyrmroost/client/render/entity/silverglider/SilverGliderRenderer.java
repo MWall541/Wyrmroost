@@ -34,7 +34,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
 
-    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "silverglider/" + png); }
+    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "silver_glider/" + png); }
 
     @Nullable
     @Override

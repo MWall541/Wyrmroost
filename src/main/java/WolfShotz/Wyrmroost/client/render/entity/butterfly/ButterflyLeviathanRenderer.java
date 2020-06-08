@@ -14,12 +14,12 @@ import javax.annotation.Nullable;
 
 public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<ButterflyLeviathanEntity, ButterflyLeviathanModel>
 {
-    public static final ResourceLocation BLUE = resource("butterfly_leviathan.png");
-    public static final ResourceLocation PURPLE = resource("butterfly_leviathan_purple.png");
+    public static final ResourceLocation BLUE = resource("body_blue.png");
+    public static final ResourceLocation PURPLE = resource("body_purple.png");
     // Special
-    public static final ResourceLocation ALBINO = resource("butterfly_leviathan_alb.png");
+    public static final ResourceLocation ALBINO = resource("body_albino.png");
     // Glow
-    public static final ResourceLocation GLOW = resource("butterfly_leviathan_activated.png");
+    public static final ResourceLocation GLOW = resource("activated.png");
 
     public ButterflyLeviathanRenderer(EntityRendererManager manager)
     {
@@ -29,7 +29,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
 
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(BASE_PATH + "butterflyleviathan/" + png);
+        return Wyrmroost.rl(BASE_PATH + "butterfly_leviathan/" + png);
     }
 
     @Nullable

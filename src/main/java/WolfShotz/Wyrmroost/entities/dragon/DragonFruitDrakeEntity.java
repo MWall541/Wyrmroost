@@ -50,7 +50,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public static final Animation BITE_ANIMATION = new Animation(15);
 
     public TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    public TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
     private int shearCooldownTime;
     private int napTime;
 
@@ -61,6 +60,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerVariantData(0, true);
+
+        sitTimer.set(isSitting()? 1 : 0);
     }
 
     public static void setSpawnConditions()
@@ -122,7 +123,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         {
             tame(getRNG().nextInt(5) == 0, player);
             eat(stack);
-
             return true;
         }
 
@@ -130,13 +130,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         {
             setSit(false);
             player.startRiding(this);
-
-            return true;
-        }
-
-        if (isOwner(player) && player.isSneaking())
-        {
-            setSit(!isSitting());
 
             return true;
         }

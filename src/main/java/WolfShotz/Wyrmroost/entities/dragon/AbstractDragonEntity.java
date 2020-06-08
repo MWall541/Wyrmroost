@@ -15,6 +15,7 @@ import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.Sets;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -73,6 +74,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public final Set<String> immunes = Sets.newHashSet();
     public final Set<EntityDataEntry<?>> dataEntries = Sets.newHashSet();
     public final Optional<DragonInvHandler> invHandler;
+    public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
     public DragonEggProperties eggProperties;
     public Animation animation = NO_ANIMATION;
     public int sleepCooldown;
@@ -91,6 +93,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS, HOME_POS, Optional.empty());
         invHandler.ifPresent(i -> registerDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
+
+        sleepTimer.set(isSleeping()? 1 : 0);
     }
 
     @Override
@@ -130,8 +134,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
     {
-        if (world.isRemote) return;
-        dataEntries.add(new EntityDataEntry<>(key, type, write, read));
+        if (!world.isRemote) dataEntries.add(new EntityDataEntry<>(key, type, write, read));
     }
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, DataParameter<T> param, T value)
@@ -350,7 +353,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isPassenger(passenger))
         {
             Vec3d offset = getPassengerPosOffset(passenger, getPassengers().indexOf(passenger));
-            passenger.setPosition(getPosX() + offset.x, getPosY() + passenger.getYOffset() + offset.y, getPosZ() + offset.z);
+            Vec3d pos = QuikMaths.calculateYawAngle(renderYawOffset, offset.x, offset.z).add(getPosX(), getPosY() + offset.y + passenger.getYOffset(), getPosZ());
+            passenger.setPosition(pos.x, pos.y, pos.z);
         }
     }
 
@@ -360,36 +364,52 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (stack.interactWithEntity(player, this, hand)) return true;
 
-        if (isBreedingItem(stack) && isTamed() && !player.isSneaking())
+        if (isOwner(player) && player.isSneaking())
         {
-            if (!world.isRemote && getGrowingAge() == 0 && canBreed())
-            {
-                eat(stack);
-                setInLove(player);
-            }
+            setSit(!isSitting());
             return true;
         }
 
-        if (isFoodItem(stack) && isTamed())
+        if (isTamed())
         {
-
-            if (getHealth() < getMaxHealth())
+            if (isBreedingItem(stack))
             {
-                eat(stack);
-
+                if (!world.isRemote && getGrowingAge() == 0 && canBreed())
+                {
+                    eat(stack);
+                    setInLove(player);
+                }
                 return true;
             }
 
-            if (isChild())
+            if (isFoodItem(stack))
             {
-                ageUp((int) ((float) (-getGrowingAge() / 20) * 0.1F), true);
-                eat(stack);
+                boolean flag = getHealth() < getMaxHealth();
+                if (isChild())
+                {
+                    ageUp((int) ((-getGrowingAge() / 20) * 0.1F), true);
+                    flag = true;
+                }
 
-                return true;
+                if (flag)
+                {
+                    eat(stack);
+                    return true;
+                }
             }
         }
 
         return false;
+    }
+
+    // Override to make processInteract way less annoying
+    @Override
+    public boolean processInteract(PlayerEntity player, Hand hand)
+    {
+        if (!playerInteraction(player, hand, player.getHeldItem(hand))) return false;
+
+        setSleeping(false);
+        return true;
     }
 
     @Override
@@ -440,17 +460,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super.travel(vec3d);
     }
 
-    // Override to make processInteract way less annoying
-    @Override
-    public boolean processInteract(PlayerEntity player, Hand hand)
+    public boolean shouldFly()
     {
-        if (!playerInteraction(player, hand, player.getHeldItem(hand))) return false;
-
-        setSleeping(false);
-        return true;
+        if (!canFly()) return false;
+//        if (getControllingPlayer() != null || getRidingEntity() != null) return false;
+        if (isJumping) return false;
+        return getAltitude() > getFlightThreshold();
     }
-
-    public boolean shouldFly() { return canFly() && getAltitude(false) > getHeight() * 2 && getRidingEntity() == null; }
 
     public ItemStack getStackInSlot(int slot)
     {
@@ -570,19 +586,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         this.rotationPitch = pitch % 360.0F;
     }
 
-    public double getAltitude(boolean capThreshold)
+    public double getAltitude()
     {
         BlockPos.Mutable pos = new BlockPos.Mutable(getPosition());
 
-        if (capThreshold)
-        {
-            for (int i = 0; i <= getFlightThreshold() + 1 && !world.getBlockState(pos).getMaterial().isSolid(); ++i)
-                pos.move(0, -1, 0);
-        }
-        else
-        { // cap to the world void (y = 0)
-            while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid()) pos.move(0, -1, 0);
-        }
+        // cap to the world void (y = 0)
+        while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid()) pos.move(0, -1, 0);
         return getPosY() - pos.getY();
     }
 
@@ -828,18 +837,25 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
     }
 
-    /**@deprecated will be merged with {@link #performGenericAttack()}*/
+    /**
+     * @deprecated will be merged with {@link #performGenericAttack()}
+     */
     public void performAltAttack(boolean shouldContinue)
     {
     }
 
-    /** Sort of misleading name. if this is true, then nothing else is ticked (goals, look, etc) */
+    /**
+     * Sort of misleading name. if this is true, then nothing else is ticked (goals, look, etc)
+     * Do not perform any AI actions while: Not Sleeping; not being controlled.
+     */
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping(); }
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || getControllingPlayer() != null; }
 
     public boolean canFly() { return !isChild() && !getLeashed(); }
 
-    /** Get the motion this entity performs when jumping */
+    /**
+     * Get the motion this entity performs when jumping
+     */
     @Override
     protected float getJumpUpwardsMotion()
     {
@@ -915,7 +931,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (eggProperties == null) // This shouldn't happen, lazily fix it if it does tho.
         {
-            Wyrmroost.LOG.warn("{} is missing dragon egg properties! Using default values...", getType().getName().getUnformattedComponentText());
+            Wyrmroost.LOG.warn("{} is missing dragon egg properties! Contact Mod Author. Using default values...", getType().getName().getUnformattedComponentText());
             eggProperties = new DragonEggProperties(2f, 2f, 12000);
         }
         return eggProperties;
