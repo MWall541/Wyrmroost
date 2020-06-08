@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.network;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.client.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.Animation;
+import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
 import WolfShotz.Wyrmroost.network.packets.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;

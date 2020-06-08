@@ -12,6 +12,9 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
+/**
+ * @deprecated Tarrgaon Tome OR JEI?
+ */
 @JeiPlugin
 public class JEIPlugin implements IModPlugin
 {
@@ -20,7 +23,7 @@ public class JEIPlugin implements IModPlugin
     {
         return Wyrmroost.rl("info");
     }
-    
+
     @Override
     public void registerRecipes(IRecipeRegistration registry)
     {
@@ -32,7 +35,7 @@ public class JEIPlugin implements IModPlugin
                                 .applyTextStyle(TextFormatting.OBFUSCATED)
                                 .getFormattedText())
                         .getFormattedText());
-        
+
         registry.addIngredientInfo(new ItemStack(WRItems.SOUL_CRYSTAL.get(), 1), VanillaTypes.ITEM, new StringTextComponent("item.wyrmroost.dragon_egg.jeidesc").getFormattedText());
     }
 }

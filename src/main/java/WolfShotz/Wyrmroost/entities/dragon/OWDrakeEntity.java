@@ -1,13 +1,12 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.items.DragonArmorItem;
@@ -447,11 +446,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public DragonEggProperties createEggProperties()
-    {
-        return new DragonEggProperties(0.65f, 1f, 18000)
-                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/owdrake/egg.png"));
-    }
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.65f, 1f, 18000); }
 
     @Override
     public Collection<Item> getFoodItems() { return new ArrayList<>(Tags.Items.CROPS_WHEAT.getAllElements()); }

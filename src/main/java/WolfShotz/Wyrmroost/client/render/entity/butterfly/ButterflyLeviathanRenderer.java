@@ -24,7 +24,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public ButterflyLeviathanRenderer(EntityRendererManager manager)
     {
         super(manager, new ButterflyLeviathanModel(), 2f);
-        addLayer(new GlowLayer(ButterflyLeviathanRenderer::shouldRenderConduit, d -> GLOW));
+        addLayer(new GlowLayer(d -> GLOW).addCondition(ButterflyLeviathanRenderer::shouldRenderConduit));
     }
 
     public static ResourceLocation resource(String png)

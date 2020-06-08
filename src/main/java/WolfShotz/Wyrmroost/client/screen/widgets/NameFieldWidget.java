@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.client.screen;
+package WolfShotz.Wyrmroost.client.screen.widgets;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;

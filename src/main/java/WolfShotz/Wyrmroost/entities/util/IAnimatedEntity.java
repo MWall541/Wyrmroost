@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.client.animation;
+package WolfShotz.Wyrmroost.entities.util;
 
 public interface IAnimatedEntity
 {

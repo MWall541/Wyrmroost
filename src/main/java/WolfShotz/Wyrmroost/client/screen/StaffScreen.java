@@ -1,6 +1,7 @@
-package WolfShotz.Wyrmroost.client.screen.staff;
+package WolfShotz.Wyrmroost.client.screen;
 
-import WolfShotz.Wyrmroost.client.screen.NameFieldWidget;
+import WolfShotz.Wyrmroost.client.screen.widgets.NameFieldWidget;
+import WolfShotz.Wyrmroost.client.screen.widgets.StaffActionButton;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;

@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.items.staff;
 
-import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;

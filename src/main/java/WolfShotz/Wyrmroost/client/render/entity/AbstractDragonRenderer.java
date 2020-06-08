@@ -56,11 +56,15 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         }
 
         @Override
-        public void render(MatrixStack ms, IRenderTypeBuffer type, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
+        public void render(MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
         {
-            if (!conditions.test(entity)) return;
+            if (conditions.test(entity))
+                renderLayer(ms, buffer, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
+        }
 
-            IVertexBuilder builder = type.getBuffer(this.type.apply(entity));
+        public void renderLayer(MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
+        {
+            IVertexBuilder builder = buffer.getBuffer(type.apply(entity));
             getEntityModel().render(ms, builder, packedLightIn, LivingRenderer.getPackedOverlay(entity, 0.0F), 1, 1, 1, 1);
         }
 
@@ -71,29 +75,22 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         }
     }
 
-    public class GlowLayer extends LayerRenderer<T, M>
+    public class GlowLayer extends ConditionalLayer
     {
         public final Function<T, ResourceLocation> texture;
-        private final Predicate<T> condition;
-
-        public GlowLayer(Predicate<T> condition, Function<T, ResourceLocation> texture)
-        {
-            super(AbstractDragonRenderer.this);
-            this.texture = texture;
-            this.condition = condition;
-        }
 
         public GlowLayer(Function<T, ResourceLocation> texture)
         {
-            this(e -> true, texture);
+            super(e -> true, null);
+            this.texture = texture;
         }
 
         @Override
-        public void render(MatrixStack ms, IRenderTypeBuffer bufferIn, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
+        public void render(MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
         {
-            if (condition.test(entity))
+            if (conditions.test(entity))
             {
-                IVertexBuilder builder = bufferIn.getBuffer(RenderEvents.getGlowType(texture.apply(entity)));
+                IVertexBuilder builder = buffer.getBuffer(RenderEvents.getGlowType(texture.apply(entity)));
                 getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
         }

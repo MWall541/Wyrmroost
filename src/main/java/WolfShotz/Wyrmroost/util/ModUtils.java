@@ -19,11 +19,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -65,14 +63,6 @@ public class ModUtils
         return Minecraft.getInstance().world;
     }
 
-    /**
-     * Get the Server World
-     */
-    public static ServerWorld getServerWorld(PlayerEntity player)
-    {
-        return ServerLifecycleHooks.getCurrentServer().getWorld(player.dimension);
-    }
-
     public static <T extends IForgeRegistryEntry<T>> Set<T> getRegistryEntries(DeferredRegister<T> registry)
     {
         return registry.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet());
@@ -98,6 +88,7 @@ public class ModUtils
      * Get an entity type by a string "key"
      */
     @Nullable
+    @SuppressWarnings("unchecked")
     public static <T extends Entity> EntityType<T> getTypeByString(@Nonnull String key)
     {
         return (EntityType<T>) EntityType.byKey(key).orElse(null);
@@ -127,6 +118,12 @@ public class ModUtils
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
     }
 
+    /**
+     * Get all biomes of defined types.
+     *
+     * @param types The types of biomes
+     * @return a set of all biomes that consist of the defined types.
+     */
     public static Set<Biome> getBiomesByTypes(BiomeDictionary.Type... types)
     {
         Set<Biome> biomes = Sets.newHashSet();

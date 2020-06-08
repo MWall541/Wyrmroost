@@ -1,7 +1,7 @@
-package WolfShotz.Wyrmroost.client.animation;
+package WolfShotz.Wyrmroost.client.model;
 
-import WolfShotz.Wyrmroost.client.model.BoxPosCache;
-import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
+import WolfShotz.Wyrmroost.entities.util.Animation;
+import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
 

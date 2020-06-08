@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.items.staff;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.client.render.StaffRenderer;
-import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.ModUtils;

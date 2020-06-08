@@ -1,11 +1,10 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.FlyerMoveController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.fluids.CausticWaterFluid;
@@ -177,9 +176,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     @Override
     public DragonEggProperties createEggProperties()
     {
-        return new DragonEggProperties(0.25f, 0.35f, 6000)
-                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/canari/egg.png"))
-                .setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == Blocks.JUNGLE_LEAVES);
+        return new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == Blocks.JUNGLE_LEAVES);
     }
 
     @Override

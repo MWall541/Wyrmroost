@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
 
-import WolfShotz.Wyrmroost.client.animation.Animation;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
-import static WolfShotz.Wyrmroost.client.animation.IAnimatedEntity.NO_ANIMATION;
+import static WolfShotz.Wyrmroost.entities.util.IAnimatedEntity.NO_ANIMATION;
 
 /**
  * Class Responsible for eating grass at a positional offset rather than directly below the entity. (Useful for larger mobs)

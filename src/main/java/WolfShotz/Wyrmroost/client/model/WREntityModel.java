@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.client.model;
 
-import WolfShotz.Wyrmroost.client.animation.ModelAnimator;
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;

@@ -1,18 +1,22 @@
 package WolfShotz.Wyrmroost.client.render.entity.dragon_egg;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 
 public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 {
-    private final DragonEggModel EGG_MODEL = new DragonEggModel();
+    public static final ResourceLocation DEFAULT_TEXTURE = Wyrmroost.rl("textures/entity/dragonegg/dragon_egg.png");
+    public static final DragonEggModel MODEL = new DragonEggModel();
 
     public DragonEggRenderer(EntityRendererManager manager) { super(manager); }
 
@@ -22,9 +26,9 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
         ms.push();
         setScale(entityIn, ms);
         ms.translate(0, -1.5, 0);
-        EGG_MODEL.animate(entityIn);
-        IVertexBuilder builder = buffer.getBuffer(EGG_MODEL.getRenderType(getEntityTexture(entityIn)));
-        EGG_MODEL.render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        MODEL.animate(entityIn);
+        IVertexBuilder builder = buffer.getBuffer(MODEL.getRenderType(getEntityTexture(entityIn)));
+        MODEL.render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
         ms.pop();
 
         super.render(entityIn, entityYaw, partialTicks, ms, buffer, packedLightIn);
@@ -34,9 +38,13 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
     protected boolean canRenderName(DragonEggEntity entity) { return false; }
 
     @Override
-    public ResourceLocation getEntityTexture(DragonEggEntity entity)
+    public ResourceLocation getEntityTexture(DragonEggEntity entity) { return getDragonEggTexture(entity.getType()); }
+
+    public static ResourceLocation getDragonEggTexture(EntityType<?> type)
     {
-        return entity.getProperties().getEggTexture();
+        ResourceLocation textureLoc = Wyrmroost.rl(String.format("textures/entity/dragon/%s/egg.png", type.getRegistryName().getPath().replace("wyrmroost:", "")));
+        if (Minecraft.getInstance().getResourceManager().hasResource(textureLoc)) return textureLoc;
+        return DEFAULT_TEXTURE;
     }
 
     /**

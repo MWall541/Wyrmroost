@@ -1,8 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.client.animation.Animation;
-import WolfShotz.Wyrmroost.client.screen.staff.StaffScreen;
+import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
@@ -10,6 +8,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
@@ -238,11 +237,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
 
     @Override
-    public DragonEggProperties createEggProperties()
-    {
-        return new DragonEggProperties(0.25f, 0.35f, 6000)
-                .setCustomTexture(Wyrmroost.rl("textures/entity/dragon/rooststalker/egg.png"));
-    }
+    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
 
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION}; }
