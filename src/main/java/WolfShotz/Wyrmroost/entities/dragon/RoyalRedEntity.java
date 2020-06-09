@@ -105,9 +105,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        if (isSleeping()) return size.scale(1, 0.5f);
-        if (isSitting()) return size.scale(1, 0.9f);
-        return size;
+        float heightFactor = isSleeping()? 0.5f : isSitting()? 0.9f : 1;
+        return size.scale(1, heightFactor);
     }
 
     @Override
