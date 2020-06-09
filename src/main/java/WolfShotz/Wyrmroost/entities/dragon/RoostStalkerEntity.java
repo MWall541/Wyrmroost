@@ -17,8 +17,10 @@ import WolfShotz.Wyrmroost.registry.WRSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -204,6 +206,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.GOLD_NUGGET; }
 
     @Override
+    public EntitySize getSize(Pose poseIn) { return getType().getSize().scale(getRenderScale()); }
+
+    @Override
     public int getSpecialChances() { return 185; }
 
     @Override
@@ -238,7 +243,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
-
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION}; }
 

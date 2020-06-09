@@ -461,6 +461,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     }
 
     @Override
+    public EntitySize getSize(Pose poseIn) { return getType().getSize().scale(getRenderScale()); }
+
+    @Override
     public boolean canFly() { return false; }
 
     @Override

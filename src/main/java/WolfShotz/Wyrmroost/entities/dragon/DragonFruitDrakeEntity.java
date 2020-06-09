@@ -11,6 +11,9 @@ import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.Lists;
+import net.minecraft.block.Block;
+import net.minecraft.block.GrassBlock;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -49,7 +52,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 {
     public static final Animation BITE_ANIMATION = new Animation(15);
 
-    public TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     private int shearCooldownTime;
     private int napTime;
 
@@ -68,18 +71,20 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
                 .stream()
-                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 8, 2, 4)));
+                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 7, 2, 4)));
+
         EntitySpawnPlacementRegistry.register(
                 WREntities.DRAGON_FRUIT_DRAKE.get(),
                 EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING,
-                ((t, w, s, b, r) -> true));
+                ((type, world, reason, pos, rand) ->
+                {
+                    if (world.getLightSubtracted(pos, 0) <= 8) return false;
+                    Block block = world.getBlockState(pos).getBlock();
+                    return block instanceof GrassBlock || block instanceof LeavesBlock;
+                }));
 //                ((t, w, s, b, r) -> w.getWorldInfo().getDimensionData(DimensionType.OVERWORLD).contains(PortalBlock.DATA_PORTAL_ENTERED)));
     }
-
-    // ================================
-    //           Entity NBT
-    // ================================
 
     @Override
     protected void registerGoals()

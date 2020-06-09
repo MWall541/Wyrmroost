@@ -152,20 +152,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         return false;
     }
 
-    @Override
-    public void travel(Vec3d vec3d)
-    {
-        if (!isFlying())
-        {
-            super.travel(vec3d);
-            return;
-        }
-
-        moveRelative(0.1f, vec3d);
-        move(MoverType.SELF, getMotion());
-        setMotion(getMotion().scale(0.8));
-    }
-
     public boolean shouldGlide(PlayerEntity player)
     {
         return player.isJumping
@@ -196,6 +182,14 @@ public class SilverGliderEntity extends AbstractDragonEntity
             double z = getPosZ() + getRNG().nextGaussian();
             world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.1925f, 0);
         }
+    }
+
+    @Override
+    public EntitySize getSize(Pose poseIn)
+    {
+        EntitySize size = getType().getSize().scale(getRenderScale());
+        if (isSitting() || isSleeping()) size = size.scale(1, 0.87f);
+        return size;
     }
 
     @Override

@@ -102,6 +102,15 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    public EntitySize getSize(Pose poseIn)
+    {
+        EntitySize size = getType().getSize().scale(getRenderScale());
+        if (isSleeping()) return size.scale(1, 0.5f);
+        if (isSitting()) return size.scale(1, 0.9f);
+        return size;
+    }
+
+    @Override
     protected boolean canBeRidden(Entity entityIn) { return isTamed(); }
 
     @Override
@@ -118,6 +127,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Override
     public int getHorizontalFaceSpeed() { return isFlying()? 5 : 8; }
+
+    @Override
+    public int getSpecialChances() { return 0; }
 
     @Override
     public Collection<Item> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }

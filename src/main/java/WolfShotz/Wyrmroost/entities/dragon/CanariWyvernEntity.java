@@ -12,9 +12,7 @@ import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.goal.*;
@@ -151,6 +149,14 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         if (should && entity instanceof LivingEntity)
             ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.POISON, 200));
         return should;
+    }
+
+    @Override
+    public EntitySize getSize(Pose poseIn)
+    {
+        EntitySize size = getType().getSize().scale(getRenderScale());
+        if (isSitting() || isSleeping()) size = size.scale(1, 0.95f);
+        return size;
     }
 
     @Override
