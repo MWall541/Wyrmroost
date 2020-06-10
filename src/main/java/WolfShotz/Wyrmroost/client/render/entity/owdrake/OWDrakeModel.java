@@ -69,9 +69,11 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
     public WRModelRenderer claw22R;
     public WRModelRenderer claw12R;
 
-    private WRModelRenderer[] headArray, tailArray, toeArray;
+    private final WRModelRenderer[] headArray;
+    private final WRModelRenderer[] tailArray;
+    private final WRModelRenderer[] toeArray;
 
-    private ModelAnimator animator;
+    private final ModelAnimator animator;
 
     public OWDrakeModel()
     {
@@ -356,7 +358,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
         horn52.addChild(horn53);
         palmL.addChild(claw11L);
 
-        updateDefaultPose();
+        setDefaultPose();
 
         headArray = new WRModelRenderer[] {neck1, neck2, head};
         tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5};
@@ -461,7 +463,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
 
     public void sit(float amount)
     {
-        startTime(amount);
+        startTime(amount, false);
 
         move(body1, 0, 5.5f, 0);
 
@@ -493,7 +495,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
 
     private void sleep(float amount)
     {
-        startTime(amount);
+        startTime(amount, false);
 
         rotate(neck1, 1.2f, 0.4f, 0);
         rotate(neck2, -0.5f, 0.6f, 0);

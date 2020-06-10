@@ -353,7 +353,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         headArray = new WRModelRenderer[] {neck1, neck2, neck3, neck4, head};
         tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8, tail9, tail10};
 
-        updateDefaultPose();
+        setDefaultPose();
     }
 
     @Override
@@ -411,7 +411,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
     public void sit(float amount)
     {
-        startTime(amount);
+        startTime(amount, false);
 
         move(mainBody, 0, 4, 0);
 
@@ -432,7 +432,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
     public void sleep(float amount)
     {
-        startTime(amount);
+        startTime(amount, false);
 
         rotate(neck2, 0.5f, 0, 0);
         rotate(neck4, -0.4f, 0, 0);
@@ -446,7 +446,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
     public void flight(float amount)
     {
-        startTime(amount);
+        startTime(amount, false);
 
         rotate(neck2, -0.5f, 0, 0);
         rotate(neck4, 0.4f, 0, 0);

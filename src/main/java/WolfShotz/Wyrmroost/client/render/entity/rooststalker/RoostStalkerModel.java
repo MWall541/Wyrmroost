@@ -40,6 +40,8 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
     public ModelAnimator animator;
 
+    private final float globalSpeed = 0.5f;
+
     public RoostStalkerModel()
     {
         this.textureWidth = 80;
@@ -158,10 +160,8 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
         animator = ModelAnimator.create();
 
-        updateDefaultPose();
+        setDefaultPose();
     }
-
-    private float globalSpeed = 0.5f;
 
     @Override
     public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
@@ -230,7 +230,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
     public void sleep(float v)
     {
-        startTime(v);
+        startTime(v, false);
 
         rotate(torso, 0, 0, 1.7f);
         move(torso, 0, 3.4f, 0);

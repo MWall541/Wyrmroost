@@ -299,7 +299,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         animator = ModelAnimator.create();
         tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6};
         headArray = new WRModelRenderer[] {neck1, neck2, neck3, head};
-        updateDefaultPose();
+        setDefaultPose();
     }
 
     @Override

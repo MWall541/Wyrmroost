@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.RenderType;
  */
 public class DragonEggModel extends WREntityModel<DragonEggEntity>
 {
-    private ModelAnimator animator;
+    private final ModelAnimator animator;
     public WRModelRenderer base;
     public WRModelRenderer two;
     public WRModelRenderer three;
@@ -41,7 +41,7 @@ public class DragonEggModel extends WREntityModel<DragonEggEntity>
         base.addChild(two);
         two.addChild(three);
 
-        updateDefaultPose();
+        setDefaultPose();
         animator = ModelAnimator.create();
     }
 

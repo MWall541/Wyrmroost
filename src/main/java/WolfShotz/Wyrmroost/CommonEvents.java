@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.items.DrakeArmorItem;
@@ -48,9 +47,11 @@ public class CommonEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-        dragon.recalculateSize();
+//        dragon.recalculateSize();
         if (player.isSneaking()) dragon.tame(true, player);
-        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
+        else dragon.setSleeping(!dragon.isSleeping());
+
+//        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
     }
 
     @SubscribeEvent

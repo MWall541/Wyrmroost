@@ -15,7 +15,7 @@ public class WRModelRenderer extends ModelRenderer
     public float scaleY;
     public float scaleZ;
     public boolean scaleChildren;
-    private WREntityModel<?> model;
+    private final WREntityModel<?> model;
     private WRModelRenderer parent;
 
     public WRModelRenderer(WREntityModel<?> model)
@@ -38,11 +38,8 @@ public class WRModelRenderer extends ModelRenderer
     {
         addBox(offX, offY, offZ, width, height, depth);
     }
-    
-    public void setShouldScaleChildren(boolean scaleChildren)
-    {
-        this.scaleChildren = scaleChildren;
-    }
+
+    public void setShouldScaleChildren(boolean scaleChildren) { this.scaleChildren = scaleChildren; }
     
     public void setScale(float scaleX, float scaleY, float scaleZ)
     {
@@ -50,23 +47,14 @@ public class WRModelRenderer extends ModelRenderer
         this.scaleY = scaleY;
         this.scaleZ = scaleZ;
     }
-    
-    public void setScaleX(float scaleX)
-    {
-        this.scaleX = scaleX;
-    }
-    
-    public void setScaleY(float scaleY)
-    {
-        this.scaleY = scaleY;
-    }
-    
-    public void setScaleZ(float scaleZ)
-    {
-        this.scaleZ = scaleZ;
-    }
-    
-    public void updateDefaultPose()
+
+    public void setScaleX(float scaleX) { this.scaleX = scaleX; }
+
+    public void setScaleY(float scaleY) { this.scaleY = scaleY; }
+
+    public void setScaleZ(float scaleZ) { this.scaleZ = scaleZ; }
+
+    public void setDefaultPose()
     {
         defaultRotationX = rotateAngleX;
         defaultRotationY = rotateAngleY;
@@ -92,49 +80,32 @@ public class WRModelRenderer extends ModelRenderer
         if (child instanceof WRModelRenderer) ((WRModelRenderer) child).setParent(this);
     }
 
-    public WRModelRenderer getParent()
+    public WRModelRenderer getParent() { return parent; }
+
+    public void setParent(WRModelRenderer parent) { this.parent = parent; }
+
+    public void walk(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
     {
-        return parent;
+        float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
+        rotateAngleX += invert? -rotation : rotation;
     }
 
-    public void setParent(WRModelRenderer parent)
+    public void swing(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
     {
-        this.parent = parent;
+        float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
+        rotateAngleY += invert? -rotation : rotation;
     }
 
-    private float calculateRotation(float speed, float degree, boolean invert, float offset, float weight, float f, float f1)
+    public void flap(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
     {
-        float movementScale = model.getMovementScale();
-        float rotation = MathHelper.cos(f * speed * movementScale + offset) * degree * movementScale * f1 + weight * f1;
-        return invert? -rotation : rotation;
+        float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
+        rotateAngleZ += invert? -rotation : rotation;
     }
-    
-    public void walk(float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount)
-    {
-        rotateAngleX += calculateRotation(speed, degree, invert, offset, weight, walk, walkAmount);
-    }
-    
-    public void flap(float speed, float degree, boolean invert, float offset, float weight, float flap, float flapAmount)
-    {
-        rotateAngleZ += calculateRotation(speed, degree, invert, offset, weight, flap, flapAmount);
-    }
-    
-    public void swing(float speed, float degree, boolean invert, float offset, float weight, float swing, float swingAmount)
-    {
-        rotateAngleY += calculateRotation(speed, degree, invert, offset, weight, swing, swingAmount);
-    }
-    
-    public void bob(float speed, float degree, boolean bounce, float f, float f1)
-    {
-        float movementScale = model.getMovementScale();
-        degree *= movementScale;
-        speed *= movementScale;
-        float bob = (float) (Math.sin(f * speed) * (double) f1 * (double) degree - (double) (f1 * degree));
-        if (bounce)
-        {
-            bob = (float) (-Math.abs(Math.sin(f * speed) * (double) f1 * (double) degree));
-        }
 
-        rotationPointY += bob;
+    public void bob(float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
+    {
+        rotationPointY += bounce?
+                -MathHelper.abs(MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree) :
+                MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree - limbSwingAmount * degree;
     }
 }

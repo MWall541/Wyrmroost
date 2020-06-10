@@ -26,7 +26,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         super(manager, new SilverGliderModel(), 1f);
 
         addLayer(new GlowLayer(this::getGlowTexture));
-        if (isChristmas)
+        if (itsChristmasOMG)
         {
             addLayer(new ConditionalLayer(c -> true, d -> RenderType.getEntityCutoutNoCull(XMAS_LAYER)));
             addLayer(new GlowLayer(sg -> XMAS_GLOW));

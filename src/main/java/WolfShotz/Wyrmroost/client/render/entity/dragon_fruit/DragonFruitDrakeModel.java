@@ -72,7 +72,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
     public WRModelRenderer LegfrontL3;
     public WRModelRenderer frontfootL;
 
-    private ModelAnimator animator;
+    private final ModelAnimator animator;
 
     public DragonFruitDrakeModel()
     {
@@ -365,7 +365,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
         headArray = new WRModelRenderer[] {neck2, neck3, neck4, Head};
         tailArray = new WRModelRenderer[] {Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7, TailLeafEND};
 
-        updateDefaultPose();
+        setDefaultPose();
 
         animator = ModelAnimator.create();
     }
@@ -437,7 +437,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
 
     private void sit(float v)
     {
-        startTime(v);
+        startTime(v, false);
 
         move(Body1, 0, 5.6f, 0);
 
@@ -467,7 +467,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
 
     private void sleep(float v)
     {
-        startTime(v);
+        startTime(v, false);
 
         rotate(neck2, 0.78f, 0.3f, 0);
         rotate(neck3, 0.5f, 0.3f, 0);

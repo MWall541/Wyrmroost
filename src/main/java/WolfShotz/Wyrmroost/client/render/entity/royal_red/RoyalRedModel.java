@@ -673,7 +673,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         this.tailParts = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8};
         this.headParts = new WRModelRenderer[] {neck1, neck2, neck3, head};
 
-        updateDefaultPose();
+        setDefaultPose();
     }
 
     @Override
@@ -752,6 +752,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
         fly(entity.flightTimer.get(partialTicks));
         sit(entity.sitTimer.get(partialTicks));
+        sleep(entity.sleepTimer.get(partialTicks));
         idle(frame);
     }
 
@@ -774,7 +775,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
             swing(wingR2, globalSpeed - 0.43f, 0.1f, true, 0, 0, frame, 0.5f);
             swing(palmR_1, globalSpeed - 0.42f, 0.07f, true, 0, 0.25f, frame, 0.5f);
 
-            if (!entity.isSitting())
+            if (!entity.isSleeping())
             {
                 body1.rotateAngleX = MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.075f;
                 walk(arm2R, globalSpeed - 0.45f, 0.25f, false, 0, 0, frame, 0.5f);
@@ -790,7 +791,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     public void fly(float amount)
     {
-        startTime(amount);
+        startTime(amount, false);
 
         rotate(neck1, 0.3f, 0, 0);
         rotate(neck2, 0.5f, 0, 0);
@@ -820,18 +821,58 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     public void sit(float amount)
     {
-        startTime(amount);
+        startTime(amount, false);
+
+        rotate(body2, -0.5f, 0, 0);
+        move(body2, 0, 6.9f, 0);
+
+        rotate(neck3, 0.15f, 0, 0);
+        rotate(head, 0.32f, 0, 0);
+
+        rotate(arm1L, 0, -0.25f, 0);
+        rotate(arm2L, -0.3f, 0, 0);
+        rotate(arm1R, 0, 0.25f, 0);
+        rotate(arm2R, -0.3f, 0, 0);
+
+        rotate(leg1L, -0.7f, 0, 0);
+        rotate(leg2L, 0.5f, 0, 0);
+        rotate(leg3L, -0.55f, 0, 0);
+        rotate(footL, 1.25f, 0, 0);
+        move(footL, 0, 0, -0.8f);
+
+        rotate(leg1R, -0.7f, 0, 0);
+        rotate(leg2R, 0.5f, 0, 0);
+        rotate(leg3R, -0.55f, 0, 0);
+        rotate(footR, 1.25f, 0, 0);
+        move(footR, 0, 0, -0.8f);
+
+        rotate(tail1, 0.3f, 0, 0);
+        rotate(tail2, 0.2f, 0, 0);
+        rotate(tail3, 0.1f, 0, 0);
+        rotate(tail4, 0.1f, 0, 0);
+        rotate(tail6, 0.05f, 0, 0);
+        rotate(tail8, 0.2f, 0, 0);
+    }
+
+    public void sleep(float amount)
+    {
+        startTime(amount, true);
 
         move(body2, 0, 6.9f, 0);
-        rotate(body1, 0.2f, 0, 0);
+        rotate(body1, 0.3f, 0, 0);
 
-        rotate(arm1L, -1.3f, -1f, 0);
+        rotate(neck1, 0.4f, 0.1f, 0);
+        rotate(neck2, 0.7f, 0.2f, 0);
+        rotate(neck3, -0.7f, 0.2f, 0);
+        rotate(head, -0.9f, 0.5f, -0.3f);
+
+        rotate(arm1L, -1.4f, -1f, 0);
         rotate(arm2L, 0.35f, 0.75f, 0);
-        rotate(palmL, 0, -0.3f, 0);
+        rotate(palmL, -0.7f, -0.3f, 0);
 
-        rotate(arm1R, -1.3f, 1f, 0);
+        rotate(arm1R, -1.4f, 1f, 0);
         rotate(arm2R, 0.35f, -0.75f, 0);
-        rotate(palmR, 0, 0.3f, 0);
+        rotate(palmR, -0.7f, 0.3f, 0);
 
         rotate(wingL1, 0.5f, 0, 1f);
         rotate(wingL2, 0.5f, 0, 0.35f);
@@ -851,5 +892,16 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         move(leg3R, 0, 1f, -2.5f);
         rotate(footR, 1.25f, 0, 0);
         move(footR, 0, 0, -0.8f);
+
+        if (amount == 1)
+        {
+            eyeL.rotateAngleY = 2f;
+            eyeL.rotationPointZ = -3f;
+            eyeL.rotationPointX = 2f;
+
+            eyeR.rotateAngleY = -2f;
+            eyeR.rotationPointZ = -3f;
+            eyeR.rotationPointX = -2f;
+        }
     }
 }

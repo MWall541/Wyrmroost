@@ -21,7 +21,8 @@ import java.util.function.Predicate;
 public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M extends WREntityModel<T>> extends MobRenderer<T, M>
 {
     public static final String BASE_PATH = "textures/entity/dragon/";
-    public boolean isChristmas = false;
+
+    public final boolean itsChristmasOMG;
 
     public AbstractDragonRenderer(EntityRendererManager manager, M model, float shadowSize)
     {
@@ -29,7 +30,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
 
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26)) isChristmas = true;
+        this.itsChristmasOMG = calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26);
     }
 
     @Override

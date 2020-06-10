@@ -39,7 +39,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     @Override
     public ResourceLocation getEntityTexture(RoostStalkerEntity entity)
     {
-        if (isChristmas) return BODY_XMAS;
+        if (itsChristmasOMG) return BODY_XMAS;
         return entity.isSpecial()? BODY_SPE : BODY;
     }
 

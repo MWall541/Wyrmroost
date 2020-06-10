@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.client.model;
 
+import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -15,7 +16,6 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 {
     public T entity;
     public float globalSpeed = 0.5f;
-    private float movementScale = 1.0F;
     public final List<ModelRenderer> boxList = Lists.newArrayList();
     public float time;
 
@@ -23,19 +23,23 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
     public WREntityModel(Function<ResourceLocation, RenderType> type) { super(type); }
 
-    public void updateDefaultPose()
+    public void setDefaultPose()
     {
-        boxList.stream()
-                .filter(WRModelRenderer.class::isInstance)
-                .forEach((model) -> ((WRModelRenderer) model).updateDefaultPose());
+        for (ModelRenderer box : boxList) if (box instanceof WRModelRenderer) ((WRModelRenderer) box).setDefaultPose();
     }
-    
+
     public void resetToDefaultPose()
     {
-        boxList.stream()
-                .filter(WRModelRenderer.class::isInstance)
-                .forEach((model) -> ((WRModelRenderer) model).resetToDefaultPose());
         globalSpeed = 0.5f;
+        for (ModelRenderer box : boxList)
+            if (box instanceof WRModelRenderer) ((WRModelRenderer) box).resetToDefaultPose();
+    }
+
+    public void setRotateAngle(WRModelRenderer model, float x, float y, float z)
+    {
+        model.rotateAngleX = x;
+        model.rotateAngleY = y;
+        model.rotateAngleZ = z;
     }
 
     public void faceTarget(float yaw, float pitch, float rotationDivisor, WRModelRenderer... boxes)
@@ -54,58 +58,11 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         }
     }
 
-    public void chainSwing(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
+    public void setScale(float scale)
     {
-        float offset = this.calculateChainOffset(rootOffset, boxes);
-
-        for (int index = 0; index < boxes.length; ++index)
-            boxes[index].rotateAngleY += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
-    }
-
-    public void chainWave(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
-    {
-        float offset = this.calculateChainOffset(rootOffset, boxes);
-
-        for (int index = 0; index < boxes.length; ++index)
-            boxes[index].rotateAngleX += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
-
-    }
-
-    public void chainFlap(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
-    {
-        float offset = this.calculateChainOffset(rootOffset, boxes);
-
-        for (int index = 0; index < boxes.length; ++index)
-        {
-            boxes[index].rotateAngleZ += this.calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
-        }
-
-    }
-    
-    private float calculateChainRotation(float speed, float degree, float swing, float swingAmount, float offset, int boxIndex)
-    {
-        return MathHelper.cos(swing * speed * this.movementScale + offset * (float) boxIndex) * swingAmount * degree * this.movementScale;
-    }
-
-    private float calculateChainOffset(double rootOffset, WRModelRenderer... boxes)
-    {
-        return (float) (rootOffset * 3.141592653589793D / (double) (2 * boxes.length));
-    }
-
-    public float getMovementScale()
-    {
-        return this.movementScale;
-    }
-
-    public void setMovementScale(float movementScale)
-    {
-        this.movementScale = movementScale;
-    }
-
-    public <M extends WREntityModel<T>> M setScale(float scale)
-    {
-        boxList.stream().filter(WRModelRenderer.class::isInstance).forEach(b -> ((WRModelRenderer) b).setScale(scale, scale, scale));
-        return (M) this;
+        boxList.stream()
+                .filter(WRModelRenderer.class::isInstance)
+                .forEach(b -> ((WRModelRenderer) b).setScale(scale, scale, scale));
     }
 
     /**
@@ -132,34 +89,78 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         box.swing(speed, degree, invert, offset, weight, swing, swingAmount);
     }
 
-    public void bob(WRModelRenderer box, float speed, float degree, boolean bounce, float f, float f1)
+    /**
+     * Bob the box up and down
+     *
+     * @param bounce back and forth
+     */
+    public void bob(WRModelRenderer box, float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
     {
-        box.bob(speed, degree, bounce, f, f1);
-    }
-    
-    public float moveBox(float speed, float degree, boolean bounce, float f, float f1)
-    {
-        return bounce? -MathHelper.abs(MathHelper.sin(f * speed) * f1 * degree) : MathHelper.sin(f * speed) * f1 * degree - f1 * degree;
-    }
-
-    public void setRotateAngle(WRModelRenderer model, float x, float y, float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
+        box.bob(speed, degree, bounce, limbSwing, limbSwingAmount);
     }
 
-    public void rotate(ModelAnimator animator, WRModelRenderer model, float x, float y, float z)
+    /**
+     * Chain Wave (rotateAngleX)
+     */
+    public void chainWave(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
     {
-        animator.rotate(model, (float) Math.toRadians(x), (float) Math.toRadians(y), (float) Math.toRadians(z));
+        float offset = calculateChainOffset(rootOffset, boxes);
+        for (int index = 0; index < boxes.length; ++index)
+            boxes[index].rotateAngleX += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
-    public void rotateMinus(ModelAnimator animator, WRModelRenderer model, float x, float y, float z)
+    /**
+     * Chain Swing (rotateAngleY)
+     */
+    public void chainSwing(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
     {
-        animator.rotate(model, (float) Math.toRadians(x) - model.defaultRotationX, (float) Math.toRadians(y) - model.defaultRotationY, (float) Math.toRadians(z) - model.defaultRotationZ);
+        float offset = calculateChainOffset(rootOffset, boxes);
+        for (int index = 0; index < boxes.length; ++index)
+            boxes[index].rotateAngleY += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
-    public void startTime(float x) { this.time = x; }
+    /**
+     * Chain Flap (rotateAngleZ)
+     */
+    public void chainFlap(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
+    {
+        float offset = calculateChainOffset(rootOffset, boxes);
+        for (int index = 0; index < boxes.length; ++index)
+            boxes[index].rotateAngleZ += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
+    }
+
+    private float calculateChainRotation(float speed, float degree, float swing, float swingAmount, float offset, int boxIndex)
+    {
+        return MathHelper.cos(swing * speed + offset * boxIndex) * swingAmount * degree;
+    }
+
+    private float calculateChainOffset(double rootOffset, WRModelRenderer... boxes)
+    {
+        return (float) rootOffset * QuikMaths.PI / (2f * boxes.length);
+    }
+
+    public void startTime(float x, boolean reset)
+    {
+        this.time = x;
+        if (reset) toDefaultPose();
+    }
+
+    public void toDefaultPose()
+    {
+        for (ModelRenderer modelRenderer : boxList)
+        {
+            if (modelRenderer instanceof WRModelRenderer)
+            {
+                WRModelRenderer box = (WRModelRenderer) modelRenderer;
+                box.rotationPointX = QuikMaths.terpLinear(box.rotationPointX, box.defaultPositionX, time);
+                box.rotationPointY = QuikMaths.terpLinear(box.rotationPointY, box.defaultPositionY, time);
+                box.rotationPointZ = QuikMaths.terpLinear(box.rotationPointZ, box.defaultPositionZ, time);
+                box.rotateAngleX = QuikMaths.terpLinear(box.rotateAngleX, box.defaultRotationX, time);
+                box.rotateAngleY = QuikMaths.terpLinear(box.rotateAngleY, box.defaultRotationY, time);
+                box.rotateAngleZ = QuikMaths.terpLinear(box.rotateAngleZ, box.defaultRotationZ, time);
+            }
+        }
+    }
 
     public void move(ModelRenderer box, float x, float y, float z)
     {

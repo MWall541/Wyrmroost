@@ -378,7 +378,7 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         leg1L.addChild(leg2L);
         wing2L.addChild(palmL);
 
-        updateDefaultPose();
+        setDefaultPose();
 
         headArray = new WRModelRenderer[] {head_1, neck1, neck2};
         tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4};

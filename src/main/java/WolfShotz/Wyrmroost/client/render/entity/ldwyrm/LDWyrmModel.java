@@ -29,9 +29,11 @@ public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
     public WRModelRenderer jaw;
     public WRModelRenderer head;
 
-    private WRModelRenderer[] body;
+    private final WRModelRenderer[] body;
 
-    private ModelAnimator animator;
+    private final ModelAnimator animator;
+    private final float globalSpeed = 0.5f;
+    private final float f = 0.5f;
 
     public LDWyrmModel()
     {
@@ -103,16 +105,13 @@ public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
         this.body1.addChild(this.body2);
         this.tail1.addChild(this.tail2);
         this.neck.addChild(this.jaw);
-        
-        updateDefaultPose();
+
+        setDefaultPose();
 
         body = new WRModelRenderer[] {body1, body2, body3, body4, body5, tail1, tail2, tail3};
-        
+
         animator = ModelAnimator.create();
     }
-    
-    private float globalSpeed = 0.5f;
-    private float f = 0.5f;
 
     @Override
     public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
