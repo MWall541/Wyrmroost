@@ -64,7 +64,7 @@ public class Wyrmroost
         WRItems.ITEMS.register(bus);
 //        WRFluids.FLUIDS.register(bus);
         WRIO.CONTAINERS.register(bus);
-        WRSounds.SOUNDS.register(bus);
+        WRSounds.deferred().register(bus);
 //        WRBiomes.BIOMES.register(bus);
 //        WRWorld.FEATURES.register(bus);
 //        bus.addGenericListener(ModDimension.class, (RegistryEvent.Register<ModDimension> e) -> e.getRegistry().register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost")));

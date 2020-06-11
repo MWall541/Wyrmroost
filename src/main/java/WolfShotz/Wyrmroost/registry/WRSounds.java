@@ -1,44 +1,57 @@
 package WolfShotz.Wyrmroost.registry;
 
-import WolfShotz.Wyrmroost.*;
-import net.minecraft.util.*;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.registries.*;
+import WolfShotz.Wyrmroost.Wyrmroost;
+import net.minecraft.util.SoundEvent;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-public class WRSounds
+public enum WRSounds
 {
-    public static final DeferredRegister<SoundEvent> SOUNDS = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
+    WING_FLAP,
 
-    // Entities
-    public static final RegistryObject<SoundEvent> MINUTUS_IDLE = registerEntity("minutus.idle");
-//    public static final RegistryObject<SoundEvent> MINUTUS_SCREECH = registerEntity("minutus.screech");
+    ENTITY_LDWYRM_IDLE,
 
-    public static final RegistryObject<SoundEvent> SILVERGLIDER_IDLE = registerEntity("silverglider.idle");
-    public static final RegistryObject<SoundEvent> SILVERGLIDER_HURT = registerEntity("silverglider.hurt");
-    public static final RegistryObject<SoundEvent> SILVERGLIDER_DEATH = registerEntity("silverglider.death");
+    ENTITY_SILVERGLIDER_IDLE,
+    ENTITY_SILVERGLIDER_HURT,
+    ENTITY_SILVERGLIDER_DEATH,
 
-    public static final RegistryObject<SoundEvent> OWDRAKE_IDLE = registerEntity("owdrake.idle");
-    public static final RegistryObject<SoundEvent> OWDRAKE_ROAR = registerEntity("owdrake.roar");
-    public static final RegistryObject<SoundEvent> OWDRAKE_HURT = registerEntity("owdrake.hurt");
-    public static final RegistryObject<SoundEvent> OWDRAKE_DEATH = registerEntity("owdrake.death");
+    ENTITY_OWDRAKE_IDLE,
+    ENTITY_OWDRAKE_ROAR,
+    ENTITY_OWDRAKE_HURT,
+    ENTITY_OWDRAKE_DEATH,
 
-    public static final RegistryObject<SoundEvent> STALKER_IDLE = registerEntity("rooststalker.idle");
-    public static final RegistryObject<SoundEvent> STALKER_HURT = registerEntity("rooststalker.hurt");
-    public static final RegistryObject<SoundEvent> STALKER_DEATH = registerEntity("rooststalker.death");
+    ENTITY_STALKER_IDLE,
+    ENTITY_STALKER_HURT,
+    ENTITY_STALKER_DEATH,
 
-    public static final RegistryObject<SoundEvent> BFLY_IDLE = registerEntity("bflylevi.idle");
-    public static final RegistryObject<SoundEvent> BFLY_ROAR = registerEntity("bflylevi.roar");
-    public static final RegistryObject<SoundEvent> BFLY_HURT = registerEntity("bflylevi.hurt");
-    public static final RegistryObject<SoundEvent> BFLY_DEATH = registerEntity("bflylevi.death");
+    ENTITY_BFLY_IDLE,
+    ENTITY_BFLY_ROAR,
+    ENTITY_BFLY_HURT,
+    ENTITY_BFLY_DEATH,
 
-    public static final RegistryObject<SoundEvent> CANARI_IDLE = registerEntity("canari.idle");
-    public static final RegistryObject<SoundEvent> CANARI_HURT = registerEntity("canari_hurt");
-    public static final RegistryObject<SoundEvent> CANARI_DEATH = registerEntity("canari_death");
+    ENTITY_CANARI_IDLE,
+    ENTITYCANARI_HURT,
+    ENTITY_CANARI_DEATH;
 
-    private static RegistryObject<SoundEvent> register(String name)
+    private final RegistryObject<SoundEvent> delegate;
+
+    WRSounds()
     {
-        return SOUNDS.register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
+        String name = toString();
+        Wyrmroost.LOG.info(name);
+        this.delegate = deferred().register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
     }
 
-    private static RegistryObject<SoundEvent> registerEntity(String name) { return register("entity." + name); }
+    public SoundEvent get() { return delegate.get(); }
+
+    @Override
+    public String toString() { return name().toLowerCase().replaceAll("_", "."); }
+
+    public static DeferredRegister<SoundEvent> deferred() { return Holder.SOUNDS; }
+
+    private static final class Holder
+    {
+        public static final DeferredRegister<SoundEvent> SOUNDS = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
+    }
 }

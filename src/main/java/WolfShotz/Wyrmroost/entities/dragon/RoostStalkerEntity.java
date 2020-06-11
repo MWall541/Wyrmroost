@@ -220,15 +220,15 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.STALKER_IDLE.get(); }
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_STALKER_IDLE.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.STALKER_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_STALKER_HURT.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.STALKER_DEATH.get(); }
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_STALKER_DEATH.get(); }
 
     /**
      * Array Containing all of the dragons food items

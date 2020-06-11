@@ -153,7 +153,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
         if (getAnimation() == CONDUIT_ANIMATION)
         {
-            if (animationTick == 1) playSound(WRSounds.BFLY_ROAR.get(), 3f, 1f);
+            if (animationTick == 1) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f);
             if (animationTick == 15)
             {
                 playSound(SoundEvents.BLOCK_BEACON_ACTIVATE, 1, 1);
@@ -172,14 +172,14 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
         if (getAnimation() == ROAR_ANIMATION && !world.isRemote)
         {
-            if (animationTick == 1) playSound(WRSounds.BFLY_ROAR.get(), 3, 1);
+            if (animationTick == 1) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3, 1);
             if (animationTick == 15) strikeTarget();
         }
 
         if (getAnimation() == BITE_ANIMATION)
         {
             rotationYaw = rotationYawHead;
-            if (animationTick == 1) playSound(WRSounds.BFLY_HURT.get(), 1, 1);
+            if (animationTick == 1) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1);
             if (animationTick == 10)
             {
                 AxisAlignedBB size = getBoundingBox().shrink(0.3);
@@ -414,15 +414,15 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.BFLY_IDLE.get(); }
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_BFLY_IDLE.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.BFLY_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_BFLY_HURT.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.BFLY_DEATH.get(); }
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_BFLY_DEATH.get(); }
 
     @Override
     public int getTalkInterval() { return 165; }

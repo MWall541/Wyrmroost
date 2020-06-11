@@ -271,7 +271,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.MINUTUS_IDLE.get(); }
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_LDWYRM_IDLE.get(); }
 
 //    @Nullable
 //    @Override
