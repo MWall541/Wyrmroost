@@ -191,13 +191,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void setSleeping(boolean sleep)
     {
-        if (isSleeping() == sleep || world.isRemote) return;
+        if (isSleeping() == sleep) return;
 
         dataManager.set(SLEEPING, sleep);
-        clearAI();
-        if (!sleep) sleepCooldown = 350;
-
-        recalculateSize(); // Change the hitbox for sitting / sleeping
+        if (!world.isRemote)
+        {
+            clearAI();
+            if (!sleep) this.sleepCooldown = 350;
+        }
     }
 
     public void setSit(boolean sitting)
@@ -466,6 +467,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 //        if (getControllingPlayer() != null || getRidingEntity() != null) return false;
         if (isJumping) return false;
         return getAltitude() > getFlightThreshold();
+    }
+
+    @Override
+    public void notifyDataManagerChange(DataParameter<?> key)
+    {
+        super.notifyDataManagerChange(key);
+        if (key == SLEEPING) recalculateSize();
     }
 
     public ItemStack getStackInSlot(int slot)

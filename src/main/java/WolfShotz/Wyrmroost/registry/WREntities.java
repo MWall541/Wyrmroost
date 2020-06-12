@@ -15,6 +15,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static net.minecraftforge.common.BiomeDictionary.Type;
 
@@ -28,18 +29,18 @@ public class WREntities
 {
     public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = register("lesser_desertwyrm", 0xD6BCBC, 0xDEB6C7, creature(LDWyrmEntity::new).size(0.6f, 0.2f));
-    public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = register("overworld_drake", 0x788716, 0x3E623E, creature(OWDrakeEntity::new).size(2.376f, 2.58f));
-    public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER = register("silver_glider", 0xC8C8C8, 0xC4C4C4, creature(SilverGliderEntity::new).size(1.5f, 0.75f));
-    public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = register("roost_stalker", 0x52100D, 0x959595, creature(RoostStalkerEntity::new).size(0.65f, 0.5f));
-    public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN = register("butterfly_leviathan", 0x17283C, 0x7A6F5A, EntityType.Builder.create(ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE).size(4f, 3f));
-    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = register("dragon_fruit_drake", 0xe05c9a, 0x788716, creature(DragonFruitDrakeEntity::new).size(1.5f, 1.9f));
-    public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = register("canari_wyvern", 0x1D1F28, 0x492E0E, creature(CanariWyvernEntity::new).size(0.7f, 0.85f));
-    public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = register("royal_red", 0xff0000, 0x0, creature(RoyalRedEntity::new).size(4f, 5f));
+    public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = register("lesser_desertwyrm", LDWyrmEntity::new, 0xD6BCBC, 0xDEB6C7, b -> b.size(0.6f, 0.2f));
+    public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = register("overworld_drake", OWDrakeEntity::new, 0x788716, 0x3E623E, b -> b.size(2.376f, 2.58f));
+    public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER = register("silver_glider", SilverGliderEntity::new, 0xC8C8C8, 0xC4C4C4, b -> b.size(1.5f, 0.75f));
+    public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = register("roost_stalker", RoostStalkerEntity::new, 0x52100D, 0x959595, b -> b.size(0.65f, 0.5f));
+    public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN = register("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE, 0x17283C, 0x7A6F5A, b -> b.size(4f, 3f));
+    public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = register("dragon_fruit_drake", DragonFruitDrakeEntity::new, 0xe05c9a, 0x788716, b -> b.size(1.5f, 1.9f));
+    public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = register("canari_wyvern", CanariWyvernEntity::new, 0x1D1F28, 0x492E0E, b -> b.size(0.7f, 0.85f));
+    public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = register("royal_red", RoyalRedEntity::new, 0xff0000, 0x0, b -> b.size(3f, 3.9f));
 
-    public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = register("dragon_egg", EntityType.Builder.<DragonEggEntity>create(DragonEggEntity::new, EntityClassification.MISC).disableSummoning());
+    public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = register("dragon_egg", DragonEggEntity::new, EntityClassification.MISC, EntityType.Builder::disableSummoning);
 
-    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART = register("multipart_entity", EntityType.Builder.<MultiPartEntity>create(MultiPartEntity::new, EntityClassification.MISC).disableSummoning().disableSerialization().setShouldReceiveVelocityUpdates(false));
+    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART = register("multipart_entity", MultiPartEntity::new, EntityClassification.MISC, b -> b.disableSummoning().disableSerialization().setShouldReceiveVelocityUpdates(false));
 
     /**
      * Registers World Spawning for entities
@@ -61,14 +62,6 @@ public class WREntities
     //   SetupEntity Helper Functions
     // ================================
 
-    private static <T extends Entity> EntityType.Builder<T> creature(EntityType.IFactory<T> entity)
-    {
-        return EntityType.Builder.create(entity, EntityClassification.CREATURE);
-//                .setTrackingRange(80) created some weird limbSwing problems, look into it later
-//                .setUpdateInterval(4)
-//                .setShouldReceiveVelocityUpdates(true);
-    }
-
     private static <T extends MobEntity> void basicSpawnConditions(EntityType<T> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
     {
         biomes.forEach(b -> b.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
@@ -83,10 +76,24 @@ public class WREntities
         return ENTITIES.register(name, () -> type.build(Wyrmroost.MOD_ID + ":" + name));
     }
 
-    public static <T extends Entity> RegistryObject<EntityType<T>> register(String name, int primColor, int secColor, EntityType.Builder<T> type)
+    public static <T extends Entity> RegistryObject<EntityType<T>> register(String name, EntityType.IFactory<T> entity, EntityClassification classification, int primColor, int secColor, Consumer<EntityType.Builder<T>> consumer)
     {
-        RegistryObject<EntityType<T>> object = register(name, type);
+        EntityType.Builder<T> builder = EntityType.Builder.create(entity, classification);
+        consumer.accept(builder);
+        RegistryObject<EntityType<T>> object = register(name, builder);
         WRItems.register(name + "_egg", () -> new CustomSpawnEggItem(object::get, primColor, secColor));
         return object;
+    }
+
+    public static <T extends Entity> RegistryObject<EntityType<T>> register(String name, EntityType.IFactory<T> entity, int primColor, int secColor, Consumer<EntityType.Builder<T>> consumer)
+    {
+        return register(name, entity, EntityClassification.CREATURE, primColor, secColor, consumer);
+    }
+
+    public static <T extends Entity> RegistryObject<EntityType<T>> register(String name, EntityType.IFactory<T> entity, EntityClassification classification, Consumer<EntityType.Builder<T>> consumer)
+    {
+        EntityType.Builder<T> builder = EntityType.Builder.create(entity, classification);
+        consumer.accept(builder);
+        return register(name, builder);
     }
 }

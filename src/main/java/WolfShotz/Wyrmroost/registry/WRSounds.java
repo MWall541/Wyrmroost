@@ -31,15 +31,19 @@ public enum WRSounds
     ENTITY_BFLY_DEATH,
 
     ENTITY_CANARI_IDLE,
-    ENTITYCANARI_HURT,
-    ENTITY_CANARI_DEATH;
+    ENTITY_CANARI_HURT,
+    ENTITY_CANARI_DEATH,
+
+    ENTITY_ROYALRED_IDLE,
+    ENTITY_ROYALRED_HURT,
+    ENTITY_ROYALRED_ROAR,
+    ENTITY_ROYALRED_DEATH;
 
     private final RegistryObject<SoundEvent> delegate;
 
     WRSounds()
     {
         String name = toString();
-        Wyrmroost.LOG.info(name);
         this.delegate = deferred().register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
     }
 

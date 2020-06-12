@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
@@ -15,10 +16,13 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -49,7 +53,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         getAttribute(FOLLOW_RANGE).setBaseValue(20d);
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d);
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.115d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.0659d);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(3d);
     }
 
@@ -92,9 +96,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         if (super.playerInteraction(player, hand, stack)) return true;
 
-        if (isOwner(player) && !isChild() && player.startRiding(this))
+        if (isTamed() && !isChild())
         {
-            setSit(false);
+            if (!world.isRemote) player.startRiding(this);
+            if (canPassengerSteer()) setSit(false);
             return true;
         }
 
@@ -110,16 +115,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * 1.13f; }
+
+    @Override
     protected boolean canBeRidden(Entity entityIn) { return isTamed(); }
 
     @Override
     protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 2; }
 
     @Override
-    public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.75f, index == 0? 0 : -1); }
-
-    @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * 0.8f; }
+    public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1); }
 
     @Override
     public float getRenderScale() { return isChild()? 0.5f : isMale()? 0.8f : 1f; }
@@ -135,4 +140,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.6f, 1f, 72000); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_ROYALRED_IDLE.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_ROYALRED_HURT.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ROYALRED_DEATH.get(); }
 }

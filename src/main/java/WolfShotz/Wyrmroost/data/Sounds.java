@@ -65,8 +65,13 @@ public class Sounds implements IDataProvider
         new Builder(WRSounds.ENTITY_BFLY_ROAR.get()).subtitle("Butterfly Leviathan Death").sound(Wyrmroost.rl("entity/butterfly_leviathan/death")).build(json);
 
         new Builder(WRSounds.ENTITY_CANARI_IDLE.get()).subtitle("Canari Wyvern Chirps").sounds("wyrmroost:entity/canari_wyvern", "idle1", "idle2", "idle3", "idle4").build(json);
-        new Builder(WRSounds.ENTITYCANARI_HURT.get()).subtitle("Canari Wyvern Hurt").sounds("wyrmroost:entity/canari_wyvern", "hurt1", "hurt2", "hurt3").build(json);
+        new Builder(WRSounds.ENTITY_CANARI_HURT.get()).subtitle("Canari Wyvern Hurt").sounds("wyrmroost:entity/canari_wyvern", "hurt1", "hurt2", "hurt3").build(json);
         new Builder(WRSounds.ENTITY_CANARI_DEATH.get()).subtitle("Canari Wyvern Death").sound(Wyrmroost.rl("entity/canari_wyvern/death")).build(json);
+
+        new Builder(WRSounds.ENTITY_ROYALRED_IDLE.get()).subtitle("Royal Red Grunts").sounds("wyrmroost:entity/royal_red", "idle1", "idle2").build(json);
+        new Builder(WRSounds.ENTITY_ROYALRED_HURT.get()).subtitle("Royal Red Scream").sounds("wyrmroost:entity/royal_red", "hurt1", "hurt2").build(json);
+        new Builder(WRSounds.ENTITY_ROYALRED_DEATH.get()).subtitle("Royal Red Outcry").sound(Wyrmroost.rl("entity/royal_red/death")).build(json);
+        new Builder(WRSounds.ENTITY_ROYALRED_ROAR.get()).subtitle("Royal Red Roar").sound(Wyrmroost.rl("entity/royal_red/roar")).build(json);
     }
 
     @Override
