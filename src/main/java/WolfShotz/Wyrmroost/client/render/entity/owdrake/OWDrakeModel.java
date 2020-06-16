@@ -421,12 +421,6 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
         sit(entity.sitTimer.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
 
-
-//        animator.rotate(neck1, 1.2f, 0.4f, 0);
-//        animator.rotate(neck2, -0.5f, 0.6f, 0);
-//        animator.rotate(head, -0.52f, 0.4f, -0.4f);
-
-        if (animator.setAnimation(OWDrakeEntity.TALK_ANIMATION)) talkAnim();
         if (animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION)) grazeAnim(drake.getAnimationTick(), frame);
 
         if (animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION))
@@ -463,7 +457,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
 
     public void sit(float amount)
     {
-        startTime(amount, false);
+        setTime(amount);
 
         move(body1, 0, 5.5f, 0);
 
@@ -495,7 +489,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
 
     private void sleep(float amount)
     {
-        startTime(amount, false);
+        setTime(amount);
 
         rotate(neck1, 1.2f, 0.4f, 0);
         rotate(neck2, -0.5f, 0.6f, 0);
@@ -617,18 +611,5 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
             
             chainWave(tailArray, globalSpeed + 1.5f, 0.007f, 0, frame, f);
         }
-    }
-    
-    private void talkAnim()
-    {
-        animator.setAnimation(OWDrakeEntity.TALK_ANIMATION);
-        
-        animator.startKeyframe(4);
-        animator.rotate(jaw, 0.5f, 0, 0);
-        animator.endKeyframe();
-        
-        animator.setStaticKeyframe(11);
-        
-        animator.resetKeyframe(4);
     }
 }

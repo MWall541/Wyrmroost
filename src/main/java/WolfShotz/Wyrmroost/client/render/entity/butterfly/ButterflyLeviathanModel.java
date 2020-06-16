@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.tags.FluidTags;
@@ -318,7 +318,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         if (netHeadYaw < -180) netHeadYaw += 360;
         else if (netHeadYaw > 180) netHeadYaw -= 360;
         if (entity.areEyesInFluid(FluidTags.WATER) && !entityIn.isSitting())
-            body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
+            body1.rotateAngleX = headPitch * (Mafs.PI / 180f);
         else faceTarget(netHeadYaw, headPitch, 1, head, neck3, neck2, neck1);
     }
 

@@ -12,11 +12,10 @@ import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Blocks;
@@ -41,7 +40,10 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -183,7 +185,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             if (animationTick == 10)
             {
                 AxisAlignedBB size = getBoundingBox().shrink(0.3);
-                AxisAlignedBB aabb = size.offset(QuikMaths.calculateYawAngle(renderYawOffset, 0, size.getXSize() * 1.5));
+                AxisAlignedBB aabb = size.offset(Mafs.getYawVec(renderYawOffset, 0, size.getXSize() * 1.5));
                 attackInAABB(aabb);
             }
         }
@@ -256,7 +258,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             rotationYawHead = rider.rotationYawHead;
             if (isInWater() && (rider.moveForward != 0 || rider.moveStrafing != 0))
             {
-                float yVel = -(MathHelper.sin(rotationPitch * (QuikMaths.PI / 180f))) * (speed * 15);
+                float yVel = -(MathHelper.sin(rotationPitch * (Mafs.PI / 180f))) * (speed * 15);
                 if (yVel > 0f && !isUnderWater() && getMotion().y < 0.5f) yVel = 0;
                 setMotion(getMotion().x, yVel, getMotion().z);
             }
@@ -341,9 +343,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         Vec3d vec3d = getConduitPos(new Vec3d(getPosX(), getPosY(), getPosZ()));
         for (int i = 0; i < 16; ++i)
         {
-            double motionX = QuikMaths.nextPseudoDouble(rand) * 1.5f;
-            double motionY = QuikMaths.nextPseudoDouble(rand);
-            double motionZ = QuikMaths.nextPseudoDouble(rand) * 1.5f;
+            double motionX = Mafs.nextPseudoDouble(rand) * 1.5f;
+            double motionY = Mafs.nextPseudoDouble(rand);
+            double motionZ = Mafs.nextPseudoDouble(rand) * 1.5f;
             world.addParticle(ParticleTypes.NAUTILUS, vec3d.x, vec3d.y + 2.25, vec3d.z, motionX, motionY, motionZ);
         }
     }
@@ -355,23 +357,23 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         return areEyesInFluid(FluidTags.WATER, true);
     }
 
-    @Override
-    public void performGenericAttack() { swingArm(Hand.MAIN_HAND); }
-
-    @Override
-    public void performAltAttack(boolean shouldContinue)
-    {
-        if (world.isRemote) return;
-        if (!canLightningStrike()) return;
-        PlayerEntity rider = getControllingPlayer();
-        if (rider == null) return;
-        RayTraceResult rtr = QuikMaths.rayTrace(world, rider, 25d, false);
-        if (rtr.getType() != RayTraceResult.Type.ENTITY) return;
-        EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
-        if (!(ertr.getEntity() instanceof LivingEntity)) return;
-        setAttackTarget((LivingEntity) ertr.getEntity());
-        NetworkUtils.sendAnimationPacket(this, ROAR_ANIMATION);
-    }
+//    @Override
+//    public void performGenericAttack() { swingArm(Hand.MAIN_HAND); }
+//
+//    @Override
+//    public void performAltAttack(boolean shouldContinue)
+//    {
+//        if (world.isRemote) return;
+//        if (!canLightningStrike()) return;
+//        PlayerEntity rider = getControllingPlayer();
+//        if (rider == null) return;
+//        RayTraceResult rtr = QuikMaths.rayTrace(world, rider, 25d, false);
+//        if (rtr.getType() != RayTraceResult.Type.ENTITY) return;
+//        EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
+//        if (!(ertr.getEntity() instanceof LivingEntity)) return;
+//        setAttackTarget((LivingEntity) ertr.getEntity());
+//        NetworkUtils.sendAnimationPacket(this, ROAR_ANIMATION);
+//    }
 
     public void strikeTarget()
     {
@@ -442,7 +444,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     public Vec3d getConduitPos(Vec3d offset)
     {
-        return QuikMaths.calculateYawAngle(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
+        return Mafs.getYawVec(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
     }
 
     public static void setSpawnConditions()
@@ -465,6 +467,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
 
     @Override
     public boolean canFly() { return false; }
+
+    @Override
+    public boolean isImmuneToArrows() { return true; }
 
     @Override
     public boolean canBeSteered() { return true; }
@@ -534,7 +539,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                     mob.setMoveForward(0);
                     return;
                 }
-                float f = (float) (MathHelper.atan2(z, x) * (180f / QuikMaths.PI)) - 90f;
+                float f = (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f;
                 mob.rotationYaw = limitAngle(mob.rotationYaw, f, 10f);
                 mob.renderYawOffset = mob.rotationYaw;
                 mob.rotationYawHead = mob.rotationYaw;
@@ -543,11 +548,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
                 {
                     speed = (float) (mob.getAttribute(LivingEntity.SWIM_SPEED).getValue());
                     mob.setAIMoveSpeed(speed);
-                    float f2 = -((float) (MathHelper.atan2(y, MathHelper.sqrt(x * x + z * z)) * (double) (180f / QuikMaths.PI)));
+                    float f2 = -((float) (MathHelper.atan2(y, MathHelper.sqrt(x * x + z * z)) * (double) (180f / Mafs.PI)));
                     f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85f, 85f);
                     mob.rotationPitch = limitAngle(mob.rotationPitch, f2, 5f);
-                    float f3 = MathHelper.cos(mob.rotationPitch * (QuikMaths.PI / 180f));
-                    float f4 = MathHelper.sin(mob.rotationPitch * (QuikMaths.PI / 180f));
+                    float f3 = MathHelper.cos(mob.rotationPitch * (Mafs.PI / 180f));
+                    float f4 = MathHelper.sin(mob.rotationPitch * (Mafs.PI / 180f));
                     mob.moveForward = f3 * (speed * 8);
                     mob.moveVertical = -f4 * (speed * 8);
                 }

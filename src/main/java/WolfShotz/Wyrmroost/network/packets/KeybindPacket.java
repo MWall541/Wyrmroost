@@ -1,10 +1,9 @@
 package WolfShotz.Wyrmroost.network.packets;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.network.IMessage;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -21,48 +20,23 @@ import java.util.function.Supplier;
  */
 public class KeybindPacket implements IMessage
 {
-    public static final int PERFORM_GENERIC_ATTACK = 0;
-    public static final int PERFORM_SPECIAL_ATTACK = 1;
+    public static final int PRIMARY_ATTACK = 1;
+    public static final int SECONDARY_ATTACK = 2;
 
-    private int dragonID;
-    private int key;
+    private final int key;
 
-    public KeybindPacket(AbstractDragonEntity entity, int key)
+    public KeybindPacket(int key)
     {
-        this.dragonID = entity.getEntityId();
         this.key = key;
     }
 
-    public KeybindPacket(PacketBuffer buf)
-    {
-        dragonID = buf.readInt();
-        key = buf.readInt();
-    }
-    
-    public void encode(PacketBuffer buf)
-    {
-        buf.writeInt(dragonID);
-        buf.writeInt(key);
-    }
+    public KeybindPacket(PacketBuffer buf) { key = buf.readInt(); }
+
+    public void encode(PacketBuffer buf) { buf.writeInt(key); }
     
     public void run(Supplier<NetworkEvent.Context> context)
     {
-        World world = context.get().getSender().world;
-        AbstractDragonEntity dragon = (AbstractDragonEntity) world.getEntityByID(dragonID);
-        
-        switch (key)
-        {
-            case 0:
-                dragon.performGenericAttack();
-                break;
-            case 1:
-                dragon.performAltAttack(true);
-                break;
-            case 2:
-                dragon.performAltAttack(false);
-                break;
-            default:
-                Wyrmroost.LOG.error("Unknown KeyPress packet key... wat?");
-        }
+        Entity riding = context.get().getSender().getRidingEntity();
+        if (riding instanceof AbstractDragonEntity) ((AbstractDragonEntity) riding).recievePassengerKeybind(key);
     }
 }

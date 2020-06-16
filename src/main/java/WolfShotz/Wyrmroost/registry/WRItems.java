@@ -51,6 +51,7 @@ public class WRItems
     public static final RegistryObject<Item> BLUE_GEODE_CHESTPLATE = register("blue_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> BLUE_GEODE_LEGGINGS = register("blue_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> BLUE_GEODE_BOOTS = register("blue_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> BLUE_GEODE_ARROW = register("blue_geode_tipped_arrow", () -> new GeodeTippedArrowItem(WREntities.BLUE_GEODE_ARROW));
 
     public static final RegistryObject<Item> RED_GEODE_SWORD = register("red_geode_sword", () -> new SwordItem(ToolMaterialList.RED_GEODE, 2, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> RED_GEODE_PICKAXE = register("red_geode_pickaxe", () -> new PickaxeItem(ToolMaterialList.RED_GEODE, 0, -2.8f, ModUtils.itemBuilder()));
@@ -61,6 +62,7 @@ public class WRItems
     public static final RegistryObject<Item> RED_GEODE_CHESTPLATE = register("red_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> RED_GEODE_LEGGINGS = register("red_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> RED_GEODE_BOOTS = register("red_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> RED_GEODE_ARROW = register("red_geode_tipped_arrow", () -> new GeodeTippedArrowItem(WREntities.RED_GEODE_ARROW));
 
     public static final RegistryObject<Item> PURPLE_GEODE_SWORD = register("purple_geode_sword", () -> new SwordItem(ToolMaterialList.PURPLE_GEODE, 2, -2f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE = register("purple_geode_pickaxe", () -> new PickaxeItem(ToolMaterialList.PURPLE_GEODE, 0, -2.5f, ModUtils.itemBuilder()));
@@ -71,6 +73,7 @@ public class WRItems
     public static final RegistryObject<Item> PURPLE_GEODE_CHESTPLATE = register("purple_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> PURPLE_GEODE_LEGGINGS = register("purple_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> PURPLE_GEODE_BOOTS = register("purple_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> PURPLE_GEODE_ARROW = register("purple_geode_tipped_arrow", () -> new GeodeTippedArrowItem(WREntities.PURPLE_GEODE_ARROW));
 
     public static final RegistryObject<Item> PLATINUM_SWORD = register("platinum_sword", () -> new SwordItem(ToolMaterialList.PLATINUM, 2, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_PICKAXE = register("platinum_pickaxe", () -> new PickaxeItem(ToolMaterialList.PLATINUM, 0, -2.8f, ModUtils.itemBuilder()));
@@ -109,9 +112,9 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragon_armor", () -> new DragonArmorItem(7, ArmorMaterial.GOLD.getEnchantability()));
     public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND = register("diamond_dragon_armor", () -> new DragonArmorItem(11, ArmorMaterial.DIAMOND.getEnchantability()));
     public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterialList.PLATINUM.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("blue_geode_dragon_armor", () -> new DragonArmorItem(11, ArmorMaterialList.BLUE_GEODE.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(12, ArmorMaterialList.RED_GEODE.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(13, ArmorMaterialList.PURPLE_GEODE.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("blue_geode_dragon_armor", () -> new DragonArmorItem(16, ArmorMaterialList.BLUE_GEODE.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterialList.RED_GEODE.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(20, ArmorMaterialList.PURPLE_GEODE.getEnchantability()));
 
     static RegistryObject<Item> register(String name, Supplier<Item> item) { return ITEMS.register(name, item); }
 
@@ -137,11 +140,11 @@ public class WRItems
         public static final Food CANARI_CHERRY = new Food.Builder().hunger(2).saturation(1f).build();
         public static final Food CINIS_ROOT = new Food.Builder().hunger(2).saturation(0.5f).effect(new EffectInstance(Effects.HASTE, 300), 1f).build();
         public static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturation(0.9f).setAlwaysEdible()
-                .effect(new EffectInstance(Effects.GLOWING, 800), 1.0f)
-                .effect(new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
-                .effect(new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
-                .effect(new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
-                .effect(new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
+                .effect(() -> new EffectInstance(Effects.GLOWING, 800), 1.0f)
+                .effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
+                .effect(() -> new EffectInstance(Effects.RESISTANCE, 800), 1.0f)
+                .effect(() -> new EffectInstance(Effects.ABSORPTION, 6000, 2), 1.0f)
+                .effect(() -> new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
                 .build();
     }
 

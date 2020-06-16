@@ -2,9 +2,11 @@ package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.UUID;
 
@@ -23,7 +25,7 @@ public class DragonArmorItem extends Item
 
     @Override
     public int getItemEnchantability() { return enchantability; }
-    
+
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
     {
@@ -33,5 +35,17 @@ public class DragonArmorItem extends Item
     @Override
     public boolean isEnchantable(ItemStack stack) { return true; }
 
-    public int getDmgReduction() { return dmgReduction; }
+    public double getDmgReduction() { return dmgReduction;}
+
+    public static double getDmgReduction(ItemStack stack)
+    {
+        Item item = stack.getItem();
+        if (!(item instanceof DragonArmorItem))
+            throw new AssertionError("uhh this isn't a an armor: " + item.getRegistryName().toString());
+
+        DragonArmorItem armor = (DragonArmorItem) item;
+        double reduction = armor.dmgReduction;
+        double multiplier = EnchantmentHelper.getEnchantments(stack).getOrDefault(Enchantments.PROTECTION, 0) * 1.25;
+        return MathHelper.clamp(reduction * multiplier, reduction, 55d);
+    }
 }

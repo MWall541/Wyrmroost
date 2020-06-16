@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.client.model;
 
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
@@ -25,7 +25,8 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
     public void setDefaultPose()
     {
-        for (ModelRenderer box : boxList) if (box instanceof WRModelRenderer) ((WRModelRenderer) box).setDefaultPose();
+        for (ModelRenderer box : boxList)
+            if (box instanceof WRModelRenderer) ((WRModelRenderer) box).setDefaultPose();
     }
 
     public void resetToDefaultPose()
@@ -136,14 +137,10 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
     private float calculateChainOffset(double rootOffset, WRModelRenderer... boxes)
     {
-        return (float) rootOffset * QuikMaths.PI / (2f * boxes.length);
+        return (float) rootOffset * Mafs.PI / (2f * boxes.length);
     }
 
-    public void startTime(float x, boolean reset)
-    {
-        this.time = x;
-        if (reset) toDefaultPose();
-    }
+    public void setTime(float x) { this.time = x; }
 
     public void toDefaultPose()
     {
@@ -152,12 +149,12 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
             if (modelRenderer instanceof WRModelRenderer)
             {
                 WRModelRenderer box = (WRModelRenderer) modelRenderer;
-                box.rotationPointX = QuikMaths.terpLinear(box.rotationPointX, box.defaultPositionX, time);
-                box.rotationPointY = QuikMaths.terpLinear(box.rotationPointY, box.defaultPositionY, time);
-                box.rotationPointZ = QuikMaths.terpLinear(box.rotationPointZ, box.defaultPositionZ, time);
-                box.rotateAngleX = QuikMaths.terpLinear(box.rotateAngleX, box.defaultRotationX, time);
-                box.rotateAngleY = QuikMaths.terpLinear(box.rotateAngleY, box.defaultRotationY, time);
-                box.rotateAngleZ = QuikMaths.terpLinear(box.rotateAngleZ, box.defaultRotationZ, time);
+                box.rotationPointX = Mafs.terpLinear(box.rotationPointX, box.defaultPositionX, time);
+                box.rotationPointY = Mafs.terpLinear(box.rotationPointY, box.defaultPositionY, time);
+                box.rotationPointZ = Mafs.terpLinear(box.rotationPointZ, box.defaultPositionZ, time);
+                box.rotateAngleX = Mafs.terpLinear(box.rotateAngleX, box.defaultRotationX, time);
+                box.rotateAngleY = Mafs.terpLinear(box.rotateAngleY, box.defaultRotationY, time);
+                box.rotateAngleZ = Mafs.terpLinear(box.rotateAngleZ, box.defaultRotationZ, time);
             }
         }
     }

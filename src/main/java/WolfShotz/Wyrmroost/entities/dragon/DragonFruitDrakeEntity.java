@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.ControlledAttackGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
@@ -9,9 +8,11 @@ import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
+import net.minecraft.block.BushBlock;
 import net.minecraft.block.GrassBlock;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.*;
@@ -29,6 +30,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
@@ -91,7 +93,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         super.registerGoals();
         goalSelector.addGoal(3, new MoveToHomeGoal(this));
-        goalSelector.addGoal(4, new ControlledAttackGoal(this, 1.1, false, 1.5d, AbstractDragonEntity::performGenericAttack));
+//        goalSelector.addGoal(4, new ControlledAttackGoal(this, 1.1, false, 1.5d, AbstractDragonEntity::performGenericAttack));
         goalSelector.addGoal(5, new DragonBreedGoal(this, true));
         goalSelector.addGoal(7, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(8, CommonGoalWrappers.followParent(this, 1));
@@ -153,7 +155,17 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         setSprinting(getAttackTarget() != null);
 
-        if (getAnimation() == BITE_ANIMATION && animationTick == 7) attackInFront(0);
+        if (getAnimation() == BITE_ANIMATION && animationTick == 7)
+        {
+            attackInFront(0);
+            AxisAlignedBB aabb = getBoundingBox().grow(2).offset(Mafs.getYawVec(rotationYawHead, 0, 2));
+            BlockPos.getAllInBox((int) aabb.minX, (int) aabb.minY, (int) aabb.minZ, (int) aabb.maxX, (int) aabb.maxY, (int) aabb.maxZ)
+                    .forEach(pos ->
+                    {
+                        if (world.getBlockState(pos).getBlock() instanceof BushBlock)
+                            world.destroyBlock(pos, false);
+                    });
+        }
     }
 
     @Override
@@ -213,8 +225,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         }
     }
 
-    @Override
-    public void performGenericAttack() { swingArm(Hand.MAIN_HAND); }
+//    @Override
+//    public void performGenericAttack() { swingArm(Hand.MAIN_HAND); }
 
     @Override
     public void swingArm(Hand hand)

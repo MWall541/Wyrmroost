@@ -411,7 +411,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
     public void sit(float amount)
     {
-        startTime(amount, false);
+        setTime(amount);
 
         move(mainBody, 0, 4, 0);
 
@@ -432,7 +432,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
     public void sleep(float amount)
     {
-        startTime(amount, false);
+        setTime(amount);
 
         rotate(neck2, 0.5f, 0, 0);
         rotate(neck4, -0.4f, 0, 0);
@@ -446,7 +446,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
     public void flight(float amount)
     {
-        startTime(amount, false);
+        setTime(amount);
 
         rotate(neck2, -0.5f, 0, 0);
         rotate(neck4, 0.4f, 0, 0);

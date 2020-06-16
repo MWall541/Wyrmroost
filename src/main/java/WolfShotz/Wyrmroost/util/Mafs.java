@@ -17,7 +17,7 @@ import java.util.Random;
  * Half of this shit is just me throwing numbers in and hoping it works,
  * seems to be going well so far!
  */
-public class QuikMaths
+public class Mafs
 {
     /**
      * Float Version of PI.
@@ -36,33 +36,9 @@ public class QuikMaths
     /**
      * A good way to get a position offset by the direction of a yaw angle.
      */
-    public static Vec3d calculateYawAngle(float amount, double xOffset, double zOffset)
+    public static Vec3d getYawVec(float yaw, double xOffset, double zOffset)
     {
-        return new Vec3d(xOffset, 0, zOffset).rotateYaw(-amount * (PI / 180f));
-    }
-
-    /**
-     * Calculate euclidean space distance
-     * Double
-     */
-    public static double getSpaceDistSq(double sourceX, double targetX, double sourceY, double targetY, double sourceZ, double targetZ)
-    {
-        double x = targetX - sourceX;
-        double y = targetY - sourceY;
-        double z = targetZ - sourceZ;
-        return x * x + y * y + z * z;
-    }
-
-    /**
-     * Calculate euclidean space distance
-     * Float
-     */
-    public static float getSpaceDistSq(float sourceX, float targetX, float sourceY, float targetY, float sourceZ, float targetZ)
-    {
-        float x = targetX - sourceX;
-        float y = targetY - sourceY;
-        float z = targetZ - sourceZ;
-        return x * x + y * y + z * z;
+        return new Vec3d(xOffset, 0, zOffset).rotateYaw(-yaw * (PI / 180f));
     }
 
     /**
@@ -95,6 +71,8 @@ public class QuikMaths
      * - Small Cleanup <P>
      * - Includes configurable tamed entity targetting <P>
      * - Changed method name from <code>getMouseOver</code> to <code>rayTrace</code>
+     *
+     * @deprecated Should be replaced with methods in {@link net.minecraft.entity.projectile.ProjectileHelper}
      *
      * @return the block or entity that the player is looking at / targeting with their cursor.  null if no collision
      */
@@ -160,4 +138,6 @@ public class QuikMaths
 
         return targetedBlock;
     }
+
+    public static boolean containsBitwise(int check, int bitMask) { return (check & bitMask) == bitMask; }
 }

@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 {
-    public static final ResourceLocation DEFAULT_TEXTURE = Wyrmroost.rl("textures/entity/dragonegg/dragon_egg.png");
+    public static final ResourceLocation DEFAULT_TEXTURE = Wyrmroost.rl("textures/entity/dragon/dragon_egg.png");
     public static final DragonEggModel MODEL = new DragonEggModel();
 
     public DragonEggRenderer(EntityRendererManager manager) { super(manager); }

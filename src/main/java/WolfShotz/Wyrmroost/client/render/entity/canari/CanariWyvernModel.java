@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.CanariWyvernEntity;
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
@@ -400,7 +400,7 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     public void setRotationAngles(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         if (entity.isFlying() && entityIn.getAnimation() != CanariWyvernEntity.ATTACK_ANIMATION)
-            body1.rotateAngleX = headPitch * (QuikMaths.PI / 180f);
+            body1.rotateAngleX = headPitch * (Mafs.PI / 180f);
         faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, head);
     }
 

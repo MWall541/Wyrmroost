@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public class EntityDataEntry<T>
 {
-    public static final SerializerType<Boolean> BOOLEAN = new SerializerType<>((key, nbt, value) -> nbt.putBoolean(key, value), ((key, nbt) -> nbt.getBoolean(key)));
+    public static final SerializerType<Boolean> BOOLEAN = new SerializerType<>((key, nbt, value) -> nbt.putBoolean(key, value), (key, nbt) -> nbt.getBoolean(key));
     public static final SerializerType<Integer> INTEGER = new SerializerType<>((key, nbt, value) -> nbt.putInt(key, value), (key, nbt) -> nbt.getInt(key));
     public static final SerializerType<CompoundNBT> COMPOUND = new SerializerType<>((key, nbt, value) -> nbt.put(key, value), (key, nbt) -> nbt.getCompound(key));
     public static final SerializerType<Optional<BlockPos>> BLOCK_POS = new SerializerType<>(
@@ -22,8 +22,8 @@ public class EntityDataEntry<T>
                 else return Optional.empty();
             });
 
-    public final String key;
-    public final SerializerType<T> type;
+    private final String key;
+    private final SerializerType<T> type;
     private final Supplier<T> writer;
     private final Consumer<T> reader;
 
@@ -35,15 +35,9 @@ public class EntityDataEntry<T>
         this.reader = read;
     }
 
-    public void write(CompoundNBT nbt)
-    {
-        type.write.accept(key, nbt, writer.get());
-    }
+    public void write(CompoundNBT nbt) { type.write.accept(key, nbt, writer.get()); }
 
-    public void read(CompoundNBT nbt)
-    {
-        reader.accept(type.read.apply(key, nbt));
-    }
+    public void read(CompoundNBT nbt) { reader.accept(type.read.apply(key, nbt)); }
 
     public static class SerializerType<T>
     {

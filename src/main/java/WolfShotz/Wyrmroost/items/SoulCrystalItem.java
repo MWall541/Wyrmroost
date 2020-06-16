@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.QuikMaths;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -56,8 +56,8 @@ public class SoulCrystalItem extends Item
         {
             for (int i = 0; i <= dragon.getWidth() * 25; ++i)
             {
-                double calcX = MathHelper.cos(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
-                double calcZ = MathHelper.sin(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double calcX = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double calcZ = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
                 double x = dragon.getPosX() + calcX;
                 double y = dragon.getPosY() + (dragon.getHeight() * 1.8f);
                 double z = dragon.getPosZ() + calcZ;
@@ -103,8 +103,8 @@ public class SoulCrystalItem extends Item
             double posZ = pos.getZ() + 0.5d;
             for (int i = 0; i < dragon.getWidth() * 25; ++i)
             {
-                double x = MathHelper.cos(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
-                double z = MathHelper.sin(i + 360 / QuikMaths.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double x = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double z = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
                 double xMot = x / 10f;
                 double yMot = dragon.getHeight() / 18f;
                 double zMot = z / 10f;

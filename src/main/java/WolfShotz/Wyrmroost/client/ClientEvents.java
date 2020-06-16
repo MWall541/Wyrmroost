@@ -7,6 +7,8 @@ import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
+import WolfShotz.Wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
+import WolfShotz.Wyrmroost.client.render.entity.projectile.GeodeTippedArrowRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.royal_red.RoyalRedRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
@@ -15,12 +17,15 @@ import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRKeyBinds;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.lwjgl.glfw.GLFW;
 
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
@@ -39,30 +44,23 @@ public class ClientEvents
     {
         if (Minecraft.getInstance().world == null) return; // Dont do anything on the main menu screen
         PlayerEntity player = Minecraft.getInstance().player;
+        Entity riding = player.getRidingEntity();
+        if (!(riding instanceof AbstractDragonEntity)) return;
+        AbstractDragonEntity dragon = (AbstractDragonEntity) riding;
+        if (!dragon.noActiveAnimation()) return;
 
-        // Generic Attack
-        if (WRKeyBinds.genericAttack.isPressed())
-        {
-            if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
-            AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
+        int bind;
 
-            if (dragon.noActiveAnimation())
-            {
-                dragon.performGenericAttack();
-                Wyrmroost.NETWORK.sendToServer(new KeybindPacket(dragon, KeybindPacket.PERFORM_GENERIC_ATTACK));
-            }
-        }
-        if (WRKeyBinds.specialAttack.isPressed())
-        {
-            if (!(player.getRidingEntity() instanceof AbstractDragonEntity)) return;
-            AbstractDragonEntity dragon = (AbstractDragonEntity) player.getRidingEntity();
+        if (WRKeyBinds.genericAttack.isKeyDown() && Mafs.containsBitwise(event.getAction(), GLFW.GLFW_PRESS))
+            bind = KeybindPacket.PRIMARY_ATTACK;
+        else if ((WRKeyBinds.specialAttack.isKeyDown() || getClient().gameSettings.keyBindSneak.isKeyDown()) && Mafs.containsBitwise(event.getAction(), GLFW.GLFW_PRESS | GLFW.GLFW_RELEASE))
+            bind = KeybindPacket.SECONDARY_ATTACK;
+        else return;
 
-            if (dragon.noActiveAnimation())
-            {
-                dragon.performAltAttack(true);
-                Wyrmroost.NETWORK.sendToServer(new KeybindPacket(dragon, KeybindPacket.PERFORM_SPECIAL_ATTACK));
-            }
-        }
+        bind |= event.getModifiers();
+
+        ((AbstractDragonEntity) player.getRidingEntity()).recievePassengerKeybind(bind);
+        Wyrmroost.NETWORK.sendToServer(new KeybindPacket(bind));
     }
 
     /**
@@ -89,6 +87,13 @@ public class ClientEvents
         registerEntityRenderingHandler(WREntities.CANARI_WYVERN.get(), CanariWyvernRenderer::new);
         registerEntityRenderingHandler(WREntities.ROYAL_RED.get(), RoyalRedRenderer::new);
 
+        registerEntityRenderingHandler(WREntities.BLUE_GEODE_ARROW.get(), mgr -> new GeodeTippedArrowRenderer(mgr, Wyrmroost.rl("textures/entity/projectiles/blue_geode_tipped_arrow.png")));
+        registerEntityRenderingHandler(WREntities.RED_GEODE_ARROW.get(), mgr -> new GeodeTippedArrowRenderer(mgr, Wyrmroost.rl("textures/entity/projectiles/red_geode_tipped_arrow.png")));
+        registerEntityRenderingHandler(WREntities.PURPLE_GEODE_ARROW.get(), mgr -> new GeodeTippedArrowRenderer(mgr, Wyrmroost.rl("textures/entity/projectiles/purple_geode_tipped_arrow.png")));
+
+        registerEntityRenderingHandler(WREntities.FIRE_BREATH.get(), BreathWeaponRenderer::new);
+        registerEntityRenderingHandler(WREntities.ROYAL_RED_BREATH.get(), BreathWeaponRenderer::new);
+
         registerEntityRenderingHandler(WREntities.DRAGON_EGG.get(), DragonEggRenderer::new);
 
         registerEntityRenderingHandler(WREntities.MULTIPART.get(), mgr -> new EntityRenderer<MultiPartEntity>(mgr)
@@ -98,7 +103,7 @@ public class ClientEvents
     }
 
     // for class loading issues
-    public static Minecraft getMinecraft() { return Minecraft.getInstance(); }
+    public static Minecraft getClient() { return Minecraft.getInstance(); }
 
     // for class loading issues
     public static PlayerEntity getPlayer() { return Minecraft.getInstance().player; }

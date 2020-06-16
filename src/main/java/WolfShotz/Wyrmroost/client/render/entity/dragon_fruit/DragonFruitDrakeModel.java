@@ -437,7 +437,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
 
     private void sit(float v)
     {
-        startTime(v, false);
+        setTime(v);
 
         move(Body1, 0, 5.6f, 0);
 
@@ -467,7 +467,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
 
     private void sleep(float v)
     {
-        startTime(v, false);
+        setTime(v);
 
         rotate(neck2, 0.78f, 0.3f, 0);
         rotate(neck3, 0.5f, 0.3f, 0);

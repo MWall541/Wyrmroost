@@ -14,3 +14,4 @@ Some of these probably won't work, some may. who knows, exactly why theyre plans
 - Fix Animations to interpolate TO positions, not FROM.
 - Optimize the fuck out of attacks. 
 - Add Model Physics. (tails etc)
+- Better Sleep System

@@ -10,8 +10,8 @@
             {
               "function": "minecraft:set_count",
               "count": {
-                "min": 4.0,
-                "max": 6.0,
+                "min": 6.0,
+                "max": 9.0,
                 "type": "minecraft:uniform"
               }
             },
@@ -107,7 +107,7 @@
           "conditions": [
             {
               "condition": "minecraft:random_chance",
-              "chance": 0.5
+              "chance": 0.1
             }
           ],
           "functions": [
@@ -123,7 +123,7 @@
           "conditions": [
             {
               "condition": "minecraft:random_chance",
-              "chance": 0.5
+              "chance": 0.4
             }
           ],
           "functions": [

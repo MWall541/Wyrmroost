@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.entities.multipart;
 
 import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -36,7 +36,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
         super(WREntities.MULTIPART.get(), host.world);
         this.host = host;
         this.radius = radius;
-        this.angleYaw = (angleYaw + 90f) * (QuikMaths.PI / 180f);
+        this.angleYaw = (angleYaw + 90f) * (Mafs.PI / 180f);
         this.offsetY = offsetY;
         this.damageMultiplier = damageMultiplier;
 
@@ -83,7 +83,7 @@ public class MultiPartEntity extends Entity implements IEntityAdditionalSpawnDat
     public void resizeAndPosition(float radius, float angleYaw, float offsetY, float sizeX, float sizeY)
     {
         this.radius = radius;
-        this.angleYaw = (angleYaw + 90f) * (QuikMaths.PI / 180f);
+        this.angleYaw = (angleYaw + 90f) * (Mafs.PI / 180f);
         this.offsetY = offsetY;
         resize(sizeX, sizeY);
     }

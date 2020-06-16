@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.Vec3d;
@@ -58,9 +58,9 @@ public class FlyerWanderGoal extends Goal
         if (dragon.isInWater()) return RandomPositionGenerator.getLandPos(dragon, 20, 20);
 
         Random rand = dragon.getRNG();
-        double x = dragon.getPosX() + QuikMaths.nextPseudoDouble(rand) * 20d;
-        double y = dragon.getPosY() + QuikMaths.nextPseudoDouble(rand) * 2;
-        double z = dragon.getPosZ() + QuikMaths.nextPseudoDouble(rand) * 20d;
+        double x = dragon.getPosX() + Mafs.nextPseudoDouble(rand) * 20d;
+        double y = dragon.getPosY() + Mafs.nextPseudoDouble(rand) * 2;
+        double z = dragon.getPosZ() + Mafs.nextPseudoDouble(rand) * 20d;
         if (!dragon.isFlying() && y < 0) y = Math.abs(y);
         if (dragon.getAltitude() > 30) y -= 30;
         if (sleepTempted && !dragon.world.isDaytime()) y = Math.max(-Math.abs(y), 0);

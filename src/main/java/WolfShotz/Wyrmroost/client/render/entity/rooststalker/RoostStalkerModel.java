@@ -230,7 +230,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
     public void sleep(float v)
     {
-        startTime(v, false);
+        setTime(v);
 
         rotate(torso, 0, 0, 1.7f);
         move(torso, 0, 3.4f, 0);

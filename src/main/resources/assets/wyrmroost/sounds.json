@@ -42,7 +42,7 @@
     ]
   },
   "entity.silverglider.hurt": {
-    "subtitle": "Silver Glider Hurt",
+    "subtitle": "Silver Glider Screech",
     "sounds": [
       {
         "name": "wyrmroost:entity/silver_glider/hurt"
@@ -50,7 +50,7 @@
     ]
   },
   "entity.silverglider.death": {
-    "subtitle": "Silver Glider Death",
+    "subtitle": "Silver Glider Moan",
     "sounds": [
       {
         "name": "wyrmroost:entity/silver_glider/death"
@@ -72,7 +72,7 @@
     ]
   },
   "entity.owdrake.hurt": {
-    "subtitle": "Overworld Drake Hurt",
+    "subtitle": "Overworld Drake Outcry",
     "sounds": [
       {
         "name": "wyrmroost:entity/overworld_drake/idle1"
@@ -86,10 +86,18 @@
     ]
   },
   "entity.owdrake.death": {
-    "subtitle": "Overworld Drake Death",
+    "subtitle": "Overworld Drake Moan",
     "sounds": [
       {
         "name": "wyrmroost:entity/overworld_drake/death"
+      }
+    ]
+  },
+  "entity.owdrake.roar": {
+    "subtitle": "Overworld Drake Roar",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/overworld_drake/roar"
       }
     ]
   },
@@ -108,7 +116,7 @@
     ]
   },
   "entity.stalker.hurt": {
-    "subtitle": "Rooststalker Hurt",
+    "subtitle": "Rooststalker Screech",
     "sounds": [
       {
         "name": "wyrmroost:entity/roost_stalker/hurt"
@@ -116,7 +124,7 @@
     ]
   },
   "entity.stalker.death": {
-    "subtitle": "Rooststalker Hurt",
+    "subtitle": "Rooststalker Moan",
     "sounds": [
       {
         "name": "wyrmroost:entity/roost_stalker/death"
@@ -138,7 +146,7 @@
     ]
   },
   "entity.bfly.hurt": {
-    "subtitle": "Butterfly Leviathan Hurt",
+    "subtitle": "Butterfly Leviathan Outcry",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterfly_leviathan/hurt1"
@@ -149,6 +157,14 @@
     ]
   },
   "entity.bfly.roar": {
+    "subtitle": "Butterfly Leviathan Ascension",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/roar"
+      }
+    ]
+  },
+  "entity.bfly.death": {
     "subtitle": "Butterfly Leviathan Death",
     "sounds": [
       {
@@ -173,8 +189,8 @@
       }
     ]
   },
-  "entitycanari.hurt": {
-    "subtitle": "Canari Wyvern Hurt",
+  "entity.canari.hurt": {
+    "subtitle": "Canari Wyvern Screech",
     "sounds": [
       {
         "name": "wyrmroost:entity/canari_wyvern/hurt1"
@@ -192,6 +208,44 @@
     "sounds": [
       {
         "name": "wyrmroost:entity/canari_wyvern/death"
+      }
+    ]
+  },
+  "entity.royalred.idle": {
+    "subtitle": "Royal Red Grunts",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/royal_red/idle2"
+      }
+    ]
+  },
+  "entity.royalred.hurt": {
+    "subtitle": "Royal Red Scream",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/royal_red/hurt2"
+      }
+    ]
+  },
+  "entity.royalred.death": {
+    "subtitle": "Royal Red Outcry",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/death"
+      }
+    ]
+  },
+  "entity.royalred.roar": {
+    "subtitle": "Royal Red Roar",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/roar"
       }
     ]
   }

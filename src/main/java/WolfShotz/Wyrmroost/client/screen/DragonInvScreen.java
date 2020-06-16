@@ -8,7 +8,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.items.SlotItemHandler;
 
 public class DragonInvScreen extends ContainerScreen<DragonInvContainer>
 {
@@ -40,7 +39,7 @@ public class DragonInvScreen extends ContainerScreen<DragonInvContainer>
         blit(x, y, 0, 0, xSize, ySize);
 
         for (Slot slot : container.inventorySlots)
-            if (slot.isEnabled() && slot instanceof SlotItemHandler)
+            if (slot.isEnabled())
                 blit((x + slot.xPos) - 1, (y + slot.yPos) - 1, 194, 0, 18, 18);
     }
 

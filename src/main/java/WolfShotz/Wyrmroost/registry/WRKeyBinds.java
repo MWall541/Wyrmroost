@@ -16,11 +16,11 @@ public class WRKeyBinds
         specialAttack = registerKey("key.specialAttack", 71, CATEGORY);
     }
     
-    public static KeyBinding registerKey(String description, int keyCode, String category)
+    private static KeyBinding registerKey(String description, int keyCode, String category)
     {
         KeyBinding key = new KeyBinding(description, keyCode, category);
         ClientRegistry.registerKeyBinding(key);
-        
+
         return key;
     }
 }

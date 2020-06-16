@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.render.entity.butterfly;
 
 import WolfShotz.Wyrmroost.entities.dragon.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.util.QuikMaths;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -33,7 +33,7 @@ public class ConduitRenderer
     public static void render(ButterflyLeviathanEntity entity, float partialTicks, MatrixStack ms, IRenderTypeBuffer buffer, int combinedLightIn, int combinedOverlayIn)
     {
         float f = (float) entity.ticksExisted + partialTicks;
-        float f1 = (f * -0.0375f) * (180f / QuikMaths.PI);
+        float f1 = (f * -0.0375f) * (180f / Mafs.PI);
         float f2 = MathHelper.sin(f * 0.1F) / 2.0F + 0.5F;
         f2 = f2 * f2 + f2;
 

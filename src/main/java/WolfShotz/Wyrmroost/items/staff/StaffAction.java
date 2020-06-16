@@ -6,8 +6,8 @@ import WolfShotz.Wyrmroost.client.render.StaffRenderer;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.ModUtils;
-import WolfShotz.Wyrmroost.util.QuikMaths;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -105,7 +105,7 @@ public class StaffAction
         @Override
         public void render(AbstractDragonEntity dragon, MatrixStack ms)
         {
-            RayTraceResult rtr = ClientEvents.getMinecraft().objectMouseOver;
+            RayTraceResult rtr = ClientEvents.getClient().objectMouseOver;
             if (rtr instanceof BlockRayTraceResult)
                 RenderEvents.drawBlockPos(ms, ((BlockRayTraceResult) rtr).getPos(), dragon.world, 7, 0x4d0000ff);
         }
@@ -132,7 +132,7 @@ public class StaffAction
         @Override
         public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
         {
-            RayTraceResult rtr = QuikMaths.rayTrace(dragon.world, player, TARGET_RANGE, false);
+            RayTraceResult rtr = Mafs.rayTrace(dragon.world, player, TARGET_RANGE, false);
             if (rtr instanceof EntityRayTraceResult)
             {
                 EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
@@ -159,7 +159,7 @@ public class StaffAction
         @Override
         public void render(AbstractDragonEntity dragon, MatrixStack ms)
         {
-            RayTraceResult rtr = QuikMaths.rayTrace(dragon.world, ClientEvents.getPlayer(), TARGET_RANGE, false);
+            RayTraceResult rtr = Mafs.rayTrace(dragon.world, ClientEvents.getPlayer(), TARGET_RANGE, false);
             if (rtr instanceof EntityRayTraceResult)
                 StaffRenderer.outlineEntitiesQueue.add(((EntityRayTraceResult) rtr).getEntity());
         }
