@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.client.render.entity.royal_red;
 
+import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.RoyalRedEntity;
@@ -124,6 +125,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     public WRModelRenderer[] tailParts;
     public WRModelRenderer[] headParts;
+
+    private final ModelAnimator animator;
 
     public RoyalRedModel()
     {
@@ -673,6 +676,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         this.tailParts = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8};
         this.headParts = new WRModelRenderer[] {neck1, neck2, neck3, head};
 
+        this.animator = ModelAnimator.create();
+
         setDefaultPose();
     }
 
@@ -691,11 +696,12 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
     {
         if (netHeadYaw < -180) netHeadYaw += 360;
         else if (netHeadYaw > 180) netHeadYaw -= 360;
-        if (!entity.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headParts);
-        if (entity.isFlying())
+        if (!entity.isSleeping() && entity.getAnimation() != RoyalRedEntity.ROAR_ANIMATION)
+            faceTarget(netHeadYaw, headPitch, 1, headParts);
+        if (entity.flightTimer.get() == 1)
         {
             body2.rotateAngleX = headPitch * ((float) Math.PI / 180F) * 0.75f;
-            body2.rotateAngleZ = -(netHeadYaw * ((float) Math.PI / 180F)) * 0.5f;
+            body2.rotateAngleY = -(netHeadYaw * ((float) Math.PI / 180F)) * 0.5f;
         }
     }
 
@@ -704,16 +710,20 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
     {
         this.entity = entity;
         float frame = entity.ticksExisted + partialTicks;
-        boolean flying = entity.isFlying();
+        boolean flying = entity.flightTimer.get() > 0;
         membraneR2.showModel = membraneL2.showModel = !flying;
 
         resetToDefaultPose();
+        animator.update(entity);
 
         if (!entity.isSitting() && !entity.isSleeping())
         {
             if (flying) // Flight Cycle
             {
+                globalSpeed = 0.5f;
+
                 chainWave(headParts, globalSpeed - 0.3f, 0.05f, 3, limbSwing, limbSwingAmount);
+                chainWave(tailParts, globalSpeed - 0.3f, -0.05f, -3, limbSwing, limbSwingAmount);
 
                 flap(wingR1, globalSpeed - 0.3f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
                 flap(wingR2, globalSpeed - 0.3f, 0.65f, false, -1f, -0.1f, limbSwing, limbSwingAmount);
@@ -724,46 +734,48 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
             }
             else // Walk Cycle
             {
-                bob(body2, globalSpeed, 0.5f, false, limbSwing, limbSwingAmount);
+                bob(body2, globalSpeed + 0.3f, 0.5f, false, limbSwing, limbSwingAmount);
 
-                flap(palmL, globalSpeed, 0.25f, false, 1, 0, limbSwing, limbSwingAmount);
-                flap(palmR, globalSpeed, 0.25f, true, 1, 0, limbSwing, limbSwingAmount);
+                flap(palmL, globalSpeed + 0.3f, 0.25f, false, 1, 0, limbSwing, limbSwingAmount);
+                flap(palmR, globalSpeed + 0.3f, 0.25f, true, 1, 0, limbSwing, limbSwingAmount);
 
-                walk(arm1R, globalSpeed, 0.1f, false, -1, 0, limbSwing, limbSwingAmount);
-                walk(arm2R, globalSpeed, 0.05f, false, -1, 0, limbSwing, limbSwingAmount);
-                walk(arm1L, globalSpeed, 0.1f, false, -1, 0, limbSwing, limbSwingAmount);
-                walk(arm2L, globalSpeed, 0.05f, false, -1, 0, limbSwing, limbSwingAmount);
+                walk(arm1R, globalSpeed + 0.3f, 0.1f, false, -1, 0, limbSwing, limbSwingAmount);
+                walk(arm2R, globalSpeed + 0.3f, 0.05f, false, -1, 0, limbSwing, limbSwingAmount);
+                walk(arm1L, globalSpeed + 0.3f, 0.1f, false, -1, 0, limbSwing, limbSwingAmount);
+                walk(arm2L, globalSpeed + 0.3f, 0.05f, false, -1, 0, limbSwing, limbSwingAmount);
 
-                swing(wingR1, globalSpeed, 0.075f, true, 1, 0, limbSwing, limbSwingAmount);
-                swing(wingR2, globalSpeed, 0.05f, false, 1, 0, limbSwing, limbSwingAmount);
+                swing(wingR1, globalSpeed + 0.3f, 0.075f, true, 1, 0, limbSwing, limbSwingAmount);
+                swing(wingR2, globalSpeed + 0.3f, 0.05f, false, 1, 0, limbSwing, limbSwingAmount);
 
-                swing(wingL1, globalSpeed, 0.075f, false, 1, 0, limbSwing, limbSwingAmount);
-                swing(wingL2, globalSpeed, 0.05f, true, 1, 0, limbSwing, limbSwingAmount);
+                swing(wingL1, globalSpeed + 0.3f, 0.075f, false, 1, 0, limbSwing, limbSwingAmount);
+                swing(wingL2, globalSpeed + 0.3f, 0.05f, true, 1, 0, limbSwing, limbSwingAmount);
 
-                walk(leg1L, globalSpeed - 0.25f, 1.25f, true, 0, 0, limbSwing, limbSwingAmount);
-                walk(leg2L, globalSpeed - 0.25f, 1.25f, false, 0.5f, 0.7f, limbSwing, limbSwingAmount);
-                walk(footL, globalSpeed - 0.25f, 0.75f, false, 0.25f, 0.2f, limbSwing, limbSwingAmount);
+                walk(leg1L, globalSpeed - 0.1f, 1.25f, true, 0, 0, limbSwing, limbSwingAmount);
+                walk(leg2L, globalSpeed - 0.1f, 1.25f, false, 0.5f, 0.7f, limbSwing, limbSwingAmount);
+                walk(footL, globalSpeed - 0.1f, 0.75f, false, 0.25f, 0.2f, limbSwing, limbSwingAmount);
 
-                walk(leg1R, globalSpeed - 0.25f, 1.25f, false, 0, 0, limbSwing, limbSwingAmount);
-                walk(leg2R, globalSpeed - 0.25f, 1.25f, true, 0.5f, -0.7f, limbSwing, limbSwingAmount);
-                walk(footR, globalSpeed - 0.25f, 0.75f, true, 0.25f, -0.2f, limbSwing, limbSwingAmount);
+                walk(leg1R, globalSpeed - 0.1f, 1.25f, false, 0, 0, limbSwing, limbSwingAmount);
+                walk(leg2R, globalSpeed - 0.1f, 1.25f, true, 0.5f, -0.7f, limbSwing, limbSwingAmount);
+                walk(footR, globalSpeed - 0.1f, 0.75f, true, 0.25f, -0.2f, limbSwing, limbSwingAmount);
             }
         }
 
         fly(entity.flightTimer.get(partialTicks));
         sit(entity.sitTimer.get(partialTicks));
         sleep(entity.sleepTimer.get(partialTicks));
-        idle(frame);
+
+        if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation();
+//        idle(frame);
     }
 
     @Override
     public void idle(float frame)
     {
-        if (!entity.isFlying())
+        if (entity.flightTimer.get() == 0)
         {
             chainWave(headParts, globalSpeed - 0.45f, 0.075f, -1.5f, frame, 0.5f);
 
-            jaw.rotateAngleX = MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.1f + 0.1f;
+            jaw.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.1f + 0.1f;
 
             flap(wingL1, globalSpeed - 0.42f, 0.1f, false, 0, 0, frame, 0.5f);
             swing(wingL1, globalSpeed - 0.44f, 0.1f, false, 0, 0, frame, 0.5f);
@@ -777,7 +789,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
             if (!entity.isSleeping())
             {
-                body1.rotateAngleX = MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.075f;
+                body1.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.075f;
                 walk(arm2R, globalSpeed - 0.45f, 0.25f, false, 0, 0, frame, 0.5f);
                 flap(palmR, globalSpeed - 0.45f, 0.5f, true, 0, 0, frame, 0.5f);
                 walk(arm2L, globalSpeed - 0.45f, 0.25f, false, 0, 0, frame, 0.5f);
@@ -791,7 +803,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     public void fly(float amount)
     {
-        startTime(amount, false);
+        setTime(amount);
 
         rotate(neck1, 0.3f, 0, 0);
         rotate(neck2, 0.5f, 0, 0);
@@ -817,11 +829,19 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         rotate(fingerL4part1, 0, 0.1f, 0);
         rotate(membraneL2, 0, -0.6f, 0);
         rotate(membraneL3, 0, 1.35f, 0);
+
+        rotate(leg1L, 1, 0, 0);
+        rotate(leg3L, 0.3f, 0, 0);
+        rotate(footL, 0.7f, 0, 0);
+
+        rotate(leg1R, 1, 0, 0);
+        rotate(leg3R, 0.3f, 0, 0);
+        rotate(footR, 0.7f, 0, 0);
     }
 
     public void sit(float amount)
     {
-        startTime(amount, false);
+        setTime(amount);
 
         rotate(body2, -0.5f, 0, 0);
         move(body2, 0, 6.9f, 0);
@@ -856,7 +876,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     public void sleep(float amount)
     {
-        startTime(amount, true);
+        setTime(amount);
+        toDefaultPose();
 
         move(body2, 0, 6.9f, 0);
         rotate(body1, 0.3f, 0, 0);
@@ -903,5 +924,44 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
             eyeR.rotationPointZ = -3f;
             eyeR.rotationPointX = -2f;
         }
+    }
+
+    private void roarAnimation()
+    {
+        animator.startKeyframe(10);
+
+        if (!entity.isFlying())
+        {
+            animator.rotate(palmL_1, 0, 0.5f, 0);
+            animator.rotate(fingerL1part1, 0, 0.3f, 0);
+            animator.rotate(fingerL3part1, 0, -0.3f, 0);
+            animator.rotate(fingerL4part1, 0, -0.5f, 0);
+
+            animator.rotate(palmR_1, 0, -0.5f, 0);
+            animator.rotate(fingerR1part1, 0, -0.3f, 0);
+            animator.rotate(fingerR3part1, 0, 0.3f, 0);
+            animator.rotate(fingerR4part1, 0, 0.5f, 0);
+        }
+
+        animator.rotate(palmL, 0, 0, -0.3f);
+        animator.rotate(palmR, 0, 0, 0.3f);
+
+        animator.rotate(body1, 0.3f, 0, 0);
+
+        animator.rotate(neck1, 0.3f, 0, 0);
+        animator.rotate(neck2, 0.2f, 0, 0);
+        animator.rotate(neck3, -0.8f, 0, 0);
+        animator.rotate(head, 0.2f, 0, 0);
+
+        animator.rotate(jaw, 0.8f, 0, 0);
+
+        for (WRModelRenderer tailPart : tailParts)
+        {
+            animator.rotate(tailPart, 0.08f, 0, 0);
+        }
+
+        animator.endKeyframe();
+        animator.setStaticKeyframe(50);
+        animator.resetKeyframe(10);
     }
 }

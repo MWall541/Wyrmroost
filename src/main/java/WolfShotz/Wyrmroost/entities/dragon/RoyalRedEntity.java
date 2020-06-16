@@ -5,10 +5,14 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.entities.projectile.breath.RRBreathEntity;
+import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
+import WolfShotz.Wyrmroost.network.NetworkUtils;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
@@ -16,6 +20,11 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -29,14 +38,19 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
+    public static final Animation ROAR_ANIMATION = new Animation(80);
+    public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
+
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat breathTimer = new TickFloat().setLimit(0, 1);
 
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("IsBreathingFire", EntityDataEntry.BOOLEAN, BREATHING_FIRE, true);
 
         // because itll act like its doing squats when we re-render if we didnt.
         sitTimer.set(isSitting()? 1 : 0);
@@ -52,9 +66,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
         getAttribute(FOLLOW_RANGE).setBaseValue(20d);
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d); // 5 hearts
         getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.0659d);
-        getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(3d);
+        getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(4d); // 2 hearts
     }
 
     @Override
@@ -89,6 +103,22 @@ public class RoyalRedEntity extends AbstractDragonEntity
         flightTimer.add(isFlying()? 0.1f : -0.05f);
         sitTimer.add(isSitting()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
+        breathTimer.add(isBreathingFire()? 0.1f : -0.1f);
+
+        if (breathTimer.get() == 1)
+            world.addEntity(new RRBreathEntity(this));
+
+        if (!world.isRemote && !isBreathingFire() && getRNG().nextInt(2000) == 0 && noActiveAnimation())
+            NetworkUtils.sendAnimationPacket(this, ROAR_ANIMATION);
+
+        if (getAnimation() == ROAR_ANIMATION)
+        {
+            for (LivingEntity entity : getEntitiesNearby(7))
+            {
+                if (isAlly(entity))
+                    entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
+            }
+        }
     }
 
     @Override
@@ -104,6 +134,24 @@ public class RoyalRedEntity extends AbstractDragonEntity
         }
 
         return false;
+    }
+
+    @Override
+    public void recievePassengerKeybind(int key)
+    {
+//        if (QuikMaths.containsBitwise(key, KeybindPacket.PRIMARY_ATTACK | GLFW.GLFW_MOD_CONTROL))
+//            setAnimation(ROAR_ANIMATION);
+//
+//        if (QuikMaths.containsBitwise(key, KeybindPacket.SECONDARY_ATTACK))
+//            dataManager.set(BREATHING_FIRE, !isBreathingFire());
+//
+//        Wyrmroost.LOG.info(isBreathingFire());
+    }
+
+    @Override
+    public Vec3d getApproximateMouthPos()
+    {
+        return Mafs.getYawVec(rotationYawHead, 0, getWidth() / 2 + 3.5d);
     }
 
     @Override
@@ -124,7 +172,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 2; }
 
     @Override
-    public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1); }
+    public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.95f, index == 0? 0.5f : -1); }
 
     @Override
     public float getRenderScale() { return isChild()? 0.5f : isMale()? 0.8f : 1f; }
@@ -134,6 +182,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Override
     public int getSpecialChances() { return 0; }
+
+    public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
+
+    @Override
+    public boolean isImmuneToArrows() { return true; }
 
     @Override
     public Collection<Item> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
@@ -152,4 +205,14 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Nullable
     @Override
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ROYALRED_DEATH.get(); }
+
+    @Override
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, ROAR_ANIMATION}; }
+
+    @Override
+    public void setAnimation(Animation animation)
+    {
+        super.setAnimation(animation);
+        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1);
+    }
 }
