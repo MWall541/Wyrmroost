@@ -151,7 +151,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public Vec3d getApproximateMouthPos()
     {
-        return Mafs.getYawVec(rotationYawHead, 0, getWidth() / 2 + 3.5d);
+        Vec3d rot = new Vec3d(0, 0, (getWidth() / 2) + 3.5d).rotatePitch(-rotationPitch * Mafs.PI / 180f).rotateYaw(-renderYawOffset * Mafs.PI / 180f);
+        return rot.add(getPosX(), getPosYEye() - 1, getPosZ());
     }
 
     @Override
@@ -163,7 +164,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * 1.13f; }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * (isFlying()? 0.95f : 1.13f); }
 
     @Override
     protected boolean canBeRidden(Entity entityIn) { return isTamed(); }

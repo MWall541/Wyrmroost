@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.dragon.RoyalRedEntity;
 import WolfShotz.Wyrmroost.entities.multipart.IMultiPartEntity;
@@ -51,9 +50,9 @@ public class CommonEvents
 
 
         if (player.isSneaking())
-//            dragon.tame(true, player);
-            dragon.getDataManager().set(RoyalRedEntity.BREATHING_FIRE, true);
-        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
+            dragon.tame(true, player);
+//        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
+        else dragon.getDataManager().set(RoyalRedEntity.BREATHING_FIRE, !((RoyalRedEntity) dragon).isBreathingFire());
     }
 
     @SubscribeEvent

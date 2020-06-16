@@ -359,7 +359,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (stack.interactWithEntity(player, this, hand)) return true;
 
-        if (isOwner(player) && player.isSneaking())
+        if (isOwner(player) && player.isSneaking() && !isFlying())
         {
             setSit(!isSitting());
             return true;
@@ -474,7 +474,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void notifyDataManagerChange(DataParameter<?> key)
     {
         super.notifyDataManagerChange(key);
-        if (key == SLEEPING) recalculateSize();
+        if (key == SLEEPING || key == FLYING) recalculateSize();
     }
 
     public ItemStack getStackInSlot(int slot)
