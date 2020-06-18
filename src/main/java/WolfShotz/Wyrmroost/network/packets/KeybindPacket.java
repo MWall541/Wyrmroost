@@ -1,8 +1,11 @@
 package WolfShotz.Wyrmroost.network.packets;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.network.IMessage;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -13,30 +16,48 @@ import java.util.function.Supplier;
  * <p>
  * Class Handling the packet sending of keybind inputs.
  * keybinds are assigned an int, and as such follow the following format:
- * 0: Generic Attack
- * 1: Special Attack start
- * 2: Special Attack end
- * 3: Call Dragon
  */
 public class KeybindPacket implements IMessage
 {
-    public static final int PRIMARY_ATTACK = 1;
-    public static final int SECONDARY_ATTACK = 2;
+    public static final int MOUNT_ATTACK = 1;
+    public static final int MOUNT_SPECIAL = 2;
 
     private final int key;
+    private final int modifiers;
 
-    public KeybindPacket(int key)
+    public KeybindPacket(int key, int modifiers)
     {
         this.key = key;
+        this.modifiers = modifiers;
+        handle(ClientEvents.getPlayer()); // handle on the client to
     }
 
-    public KeybindPacket(PacketBuffer buf) { key = buf.readInt(); }
-
-    public void encode(PacketBuffer buf) { buf.writeInt(key); }
-    
-    public void run(Supplier<NetworkEvent.Context> context)
+    public KeybindPacket(PacketBuffer buf)
     {
-        Entity riding = context.get().getSender().getRidingEntity();
-        if (riding instanceof AbstractDragonEntity) ((AbstractDragonEntity) riding).recievePassengerKeybind(key);
+        this.key = buf.readInt();
+        this.modifiers = buf.readInt();
+    }
+
+    public void encode(PacketBuffer buf)
+    {
+        buf.writeInt(key);
+        buf.writeInt(modifiers);
+    }
+
+    public void run(Supplier<NetworkEvent.Context> context) { handle(context.get().getSender()); }
+
+    private void handle(PlayerEntity player)
+    {
+        switch (key)
+        {
+            case MOUNT_ATTACK:
+            case MOUNT_SPECIAL:
+                Entity vehicle = player.getRidingEntity();
+                if (vehicle instanceof AbstractDragonEntity)
+                    ((AbstractDragonEntity) vehicle).recievePassengerKeybind(key, modifiers);
+                break;
+            default:
+                Wyrmroost.LOG.warn(String.format("uhh this is NOT what I was looking for. KeybindPacket with key: %s and modifiers: %s", key, modifiers));
+        }
     }
 }

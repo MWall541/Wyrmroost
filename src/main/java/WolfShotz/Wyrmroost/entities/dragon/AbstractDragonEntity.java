@@ -850,7 +850,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isOnLadder() { return false; }
 
-    public void recievePassengerKeybind(int key)
+    public void recievePassengerKeybind(int key, int modifiers)
     {
     }
 

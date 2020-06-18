@@ -16,14 +16,13 @@ import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.registry.WRKeyBinds;
-import WolfShotz.Wyrmroost.util.Mafs;
+import WolfShotz.Wyrmroost.registry.WRKeybind;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -36,33 +35,33 @@ import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerE
 @SuppressWarnings("unused")
 public class ClientEvents
 {
-    /**
-     * Handles custom keybind pressing
-     */
     @SubscribeEvent
-    public static void onKeyPress(InputEvent.KeyInputEvent event)
+    public static void clientTick(TickEvent.ClientTickEvent evt)
     {
-        if (Minecraft.getInstance().world == null) return; // Dont do anything on the main menu screen
-        PlayerEntity player = Minecraft.getInstance().player;
-        Entity riding = player.getRidingEntity();
-        if (!(riding instanceof AbstractDragonEntity)) return;
-        AbstractDragonEntity dragon = (AbstractDragonEntity) riding;
-        if (!dragon.noActiveAnimation()) return;
-
-        int bind;
-
-        if (WRKeyBinds.genericAttack.isKeyDown() && Mafs.containsBitwise(event.getAction(), GLFW.GLFW_PRESS))
-            bind = KeybindPacket.PRIMARY_ATTACK;
-        else if ((WRKeyBinds.specialAttack.isKeyDown() || getClient().gameSettings.keyBindSneak.isKeyDown()) && Mafs.containsBitwise(event.getAction(), GLFW.GLFW_PRESS | GLFW.GLFW_RELEASE))
-            bind = KeybindPacket.SECONDARY_ATTACK;
-        else return;
-
-        bind |= event.getModifiers();
-
-        ((AbstractDragonEntity) player.getRidingEntity()).recievePassengerKeybind(bind);
-        Wyrmroost.NETWORK.sendToServer(new KeybindPacket(bind));
+        if (evt.phase == TickEvent.Phase.END) handleKeybinds();
     }
 
+    private static void handleKeybinds()
+    {
+        if (getPlayer() == null) return;
+
+        int key = 0;
+
+        if (getPlayer().getRidingEntity() instanceof AbstractDragonEntity)
+        {
+            if (WRKeybind.MOUNT_ATTACK.isActivated()) key = KeybindPacket.MOUNT_ATTACK;
+            if (WRKeybind.MOUNT_SPECIAL.isActivated()) key = KeybindPacket.MOUNT_SPECIAL;
+        }
+
+        if (key != 0)
+        {
+            int modifiers = 0;
+            if (Screen.hasAltDown()) modifiers |= GLFW.GLFW_MOD_ALT;
+            if (Screen.hasControlDown()) modifiers |= GLFW.GLFW_MOD_CONTROL;
+            if (Screen.hasShiftDown()) modifiers |= GLFW.GLFW_MOD_SHIFT;
+            Wyrmroost.NETWORK.sendToServer(new KeybindPacket(key, modifiers));
+        }
+    }
     /**
      * Handles the perspective/position of the camera
      */

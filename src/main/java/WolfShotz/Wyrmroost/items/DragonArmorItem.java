@@ -35,7 +35,7 @@ public class DragonArmorItem extends Item
     @Override
     public boolean isEnchantable(ItemStack stack) { return true; }
 
-    public double getDmgReduction() { return dmgReduction;}
+    public double getDmgReduction() { return dmgReduction; }
 
     public static double getDmgReduction(ItemStack stack)
     {

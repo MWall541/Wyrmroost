@@ -6,10 +6,12 @@ import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
 import WolfShotz.Wyrmroost.network.packets.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 public class NetworkUtils
 {
@@ -18,13 +20,13 @@ public class NetworkUtils
     public static void registerPackets()
     {
         register(AnimationPacket.class);
-        register(KeybindPacket.class);
+        register(KeybindPacket.class, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         register(HatchEggPacket.class);
         register(RenameEntityPacket.class);
         register(StaffActionPacket.class);
     }
 
-    public static <T extends IMessage> void register(Class<T> clazz)
+    public static <T extends IMessage> void register(Class<T> clazz, Optional<NetworkDirection> dir)
     {
         ++messageIndex;
         Wyrmroost.NETWORK.registerMessage(messageIndex,
@@ -37,8 +39,10 @@ public class NetworkUtils
                     {
                         throw new RuntimeException(String.format("Invalid/Missing Constructor in packet class: %s [] %s", clazz.toString(), e));
                     }
-                }, T::handle);
+                }, T::handle, dir);
     }
+
+    public static <T extends IMessage> void register(Class<T> clazz) { register(clazz, Optional.empty()); }
 
     public static <T extends Entity & IAnimatedEntity> void sendAnimationPacket(T entity, Animation animation)
     {

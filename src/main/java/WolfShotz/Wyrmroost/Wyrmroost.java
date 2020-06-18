@@ -83,7 +83,7 @@ public class Wyrmroost
     public void clientSetup(final FMLClientSetupEvent event)
     {
         ClientEvents.registerEntityRenders();
-        WRKeyBinds.registerKeys();
+        WRKeybind.registerKeys();
         WRIO.screenSetup();
     }
 

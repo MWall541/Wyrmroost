@@ -339,12 +339,13 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_OWDRAKE_DEATH.get(); }
 
     @Override
-    public void recievePassengerKeybind(int key)
+    public void recievePassengerKeybind(int key, int modifiers)
     {
-        if (Mafs.containsBitwise(key, KeybindPacket.PRIMARY_ATTACK | GLFW.GLFW_MOD_CONTROL))
-            setAnimation(ROAR_ANIMATION);
-        else if (Mafs.containsBitwise(key, KeybindPacket.PRIMARY_ATTACK))
-            setAnimation(HORN_ATTACK_ANIMATION);
+        if (key == KeybindPacket.MOUNT_ATTACK && noActiveAnimation())
+        {
+            if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
+            else setAnimation(HORN_ATTACK_ANIMATION);
+        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
@@ -30,6 +31,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -103,12 +105,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
         flightTimer.add(isFlying()? 0.1f : -0.05f);
         sitTimer.add(isSitting()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
-        breathTimer.add(isBreathingFire()? 0.1f : -0.1f);
+        breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
 
-        if (breathTimer.get() == 1)
-            world.addEntity(new RRBreathEntity(this));
+        if (isBreathingFire() && getControllingPlayer() == null && getAttackTarget() == null) setBreathingFire(false);
 
-        if (!world.isRemote && !isBreathingFire() && getRNG().nextInt(2000) == 0 && noActiveAnimation())
+        if (breathTimer.get() == 1) world.addEntity(new RRBreathEntity(this));
+
+        if (!world.isRemote && !isBreathingFire() && getRNG().nextInt(1500) == 0 && noActiveAnimation())
             NetworkUtils.sendAnimationPacket(this, ROAR_ANIMATION);
 
         if (getAnimation() == ROAR_ANIMATION)
@@ -137,15 +140,14 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void recievePassengerKeybind(int key)
+    public void recievePassengerKeybind(int key, int modifiers)
     {
-//        if (QuikMaths.containsBitwise(key, KeybindPacket.PRIMARY_ATTACK | GLFW.GLFW_MOD_CONTROL))
-//            setAnimation(ROAR_ANIMATION);
-//
-//        if (QuikMaths.containsBitwise(key, KeybindPacket.SECONDARY_ATTACK))
-//            dataManager.set(BREATHING_FIRE, !isBreathingFire());
-//
-//        Wyrmroost.LOG.info(isBreathingFire());
+        if (key == KeybindPacket.MOUNT_ATTACK && noActiveAnimation())
+        {
+            if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
+//            else setAnimation(Melee_attack_Animation ???
+        }
+        else if (key == KeybindPacket.MOUNT_SPECIAL) setBreathingFire(!isBreathingFire());
     }
 
     @Override
@@ -185,6 +187,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public int getSpecialChances() { return 0; }
 
     public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
+
+    public void setBreathingFire(boolean b) { dataManager.set(BREATHING_FIRE, b); }
 
     @Override
     public boolean isImmuneToArrows() { return true; }

@@ -141,5 +141,5 @@ public final class Mafs
         return targetedBlock;
     }
 
-    public static boolean containsBitwise(int check, int bitMask) { return (check & bitMask) == bitMask; }
+    public static boolean containsBitwise(int mask, int bitMask) { return (mask & bitMask) == bitMask; }
 }

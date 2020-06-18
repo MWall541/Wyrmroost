@@ -762,6 +762,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         }
 
         fly(entity.flightTimer.get(partialTicks));
+        breath(entity.breathTimer.get(partialTicks));
         sit(entity.sitTimer.get(partialTicks));
         sleep(entity.sleepTimer.get(partialTicks));
 
@@ -838,6 +839,16 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         rotate(leg1R, 1, 0, 0);
         rotate(leg3R, 0.3f, 0, 0);
         rotate(footR, 0.7f, 0, 0);
+    }
+
+    private void breath(float amount)
+    {
+        setTime(amount);
+
+        rotate(neck1, 0.3f, 0, 0);
+        rotate(neck2, 0.5f, 0, 0);
+        rotate(neck3, -0.5f, 0, 0);
+        rotate(head, -0.35f, 0, 0);
     }
 
     public void sit(float amount)
@@ -933,11 +944,15 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
         if (!entity.isFlying())
         {
+            animator.rotate(wingL1, -0.6f, 0.5f, 0.5f);
+            animator.rotate(wingL2, 0, -1f, 0);
             animator.rotate(palmL_1, 0, 0.5f, 0);
             animator.rotate(fingerL1part1, 0, 0.3f, 0);
             animator.rotate(fingerL3part1, 0, -0.3f, 0);
             animator.rotate(fingerL4part1, 0, -0.5f, 0);
 
+            animator.rotate(wingR1, -0.6f, -0.5f, -0.5f);
+            animator.rotate(wingR2, 0, 1f, 0);
             animator.rotate(palmR_1, 0, -0.5f, 0);
             animator.rotate(fingerR1part1, 0, -0.3f, 0);
             animator.rotate(fingerR3part1, 0, 0.3f, 0);
@@ -951,8 +966,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
         animator.rotate(neck1, 0.3f, 0, 0);
         animator.rotate(neck2, 0.2f, 0, 0);
-        animator.rotate(neck3, -0.8f, 0, 0);
-        animator.rotate(head, 0.2f, 0, 0);
+        animator.rotate(neck3, -0.5f, 0, 0);
+        animator.rotate(head, -0.4f, 0, 0);
 
         animator.rotate(jaw, 0.8f, 0, 0);
 

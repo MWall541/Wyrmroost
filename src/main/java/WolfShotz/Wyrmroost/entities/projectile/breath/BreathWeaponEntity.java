@@ -17,6 +17,8 @@ public abstract class BreathWeaponEntity extends DamagingProjectileEntity
 {
     public double life;
     public boolean hasCollided;
+    public float growthRate = 1.05f;
+    public float maxSize = 3.5f;
 
     public BreathWeaponEntity(EntityType<? extends DamagingProjectileEntity> type, World world) { super(type, world); }
 
@@ -57,7 +59,7 @@ public abstract class BreathWeaponEntity extends DamagingProjectileEntity
             Entity entity = ((EntityRayTraceResult) result).getEntity();
             if (entity instanceof LivingEntity) onEntityImpact((LivingEntity) entity);
         }
-        else if (type == RayTraceResult.Type.BLOCK && !world.isRemote)
+        else if (type == RayTraceResult.Type.BLOCK && !world.isRemote && !noClip)
         {
             accelerationX += Mafs.nextPseudoDouble(rand) * 0.05d;
             accelerationY = 0;
@@ -75,7 +77,9 @@ public abstract class BreathWeaponEntity extends DamagingProjectileEntity
     @Override
     public EntitySize getSize(Pose poseIn)
     {
-        return EntitySize.flexible(Math.min(getWidth(), 3), Math.min(getHeight(), 3)).scale(1.03f);
+        if (growthRate == 1) return getType().getSize();
+        float size = Math.min(getWidth() * growthRate, maxSize);
+        return EntitySize.flexible(size, size);
     }
 
     public abstract void onEntityImpact(LivingEntity entity);

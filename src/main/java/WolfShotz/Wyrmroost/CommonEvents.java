@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.entities.dragon.RoyalRedEntity;
 import WolfShotz.Wyrmroost.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.items.DrakeArmorItem;
 import com.google.common.collect.Streams;
@@ -48,11 +48,8 @@ public class CommonEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-
-        if (player.isSneaking())
-            dragon.tame(true, player);
-//        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
-        else dragon.getDataManager().set(RoyalRedEntity.BREATHING_FIRE, !((RoyalRedEntity) dragon).isBreathingFire());
+        if (player.isSneaking()) dragon.tame(true, player);
+        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
     }
 
     @SubscribeEvent

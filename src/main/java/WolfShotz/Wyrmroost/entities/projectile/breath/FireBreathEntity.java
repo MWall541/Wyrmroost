@@ -44,10 +44,13 @@ public class FireBreathEntity extends BreathWeaponEntity
     @Override
     public void onEntityImpact(LivingEntity entity)
     {
-        if (!world.isRemote && entity != shootingEntity && !entity.isImmuneToFire())
-        {
-            entity.setFire(8);
-            entity.attackEntityFrom(DamageSource.IN_FIRE, (float) shootingEntity.getAttribute(AbstractDragonEntity.PROJECTILE_DAMAGE).getValue());
-        }
+        if (shootingEntity instanceof AbstractDragonEntity && ((AbstractDragonEntity) shootingEntity).isAlly(entity))
+            return;
+        if (entity == shootingEntity) return;
+        if (entity.isImmuneToFire()) return;
+        if (world.isRemote) return;
+
+        entity.setFire(8);
+        entity.attackEntityFrom(DamageSource.IN_FIRE, (float) shootingEntity.getAttribute(AbstractDragonEntity.PROJECTILE_DAMAGE).getValue());
     }
 }
