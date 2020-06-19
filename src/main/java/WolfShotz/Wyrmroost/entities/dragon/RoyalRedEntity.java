@@ -9,7 +9,7 @@ import WolfShotz.Wyrmroost.entities.projectile.breath.RRBreathEntity;
 import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
@@ -112,7 +112,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         if (breathTimer.get() == 1) world.addEntity(new RRBreathEntity(this));
 
         if (!world.isRemote && !isBreathingFire() && getRNG().nextInt(1500) == 0 && noActiveAnimation())
-            NetworkUtils.sendAnimationPacket(this, ROAR_ANIMATION);
+            AnimationPacket.send(this, ROAR_ANIMATION);
 
         if (getAnimation() == ROAR_ANIMATION)
         {

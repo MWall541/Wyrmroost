@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.HatchEggPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
@@ -203,7 +203,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     public void crack(boolean sendPacket)
     {
         playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1f, 1f);
-        if (sendPacket) NetworkUtils.sendAnimationPacket(this, WIGGLE_ANIMATION);
+        if (sendPacket) AnimationPacket.send(this, WIGGLE_ANIMATION);
         else setAnimation(WIGGLE_ANIMATION);
     }
     

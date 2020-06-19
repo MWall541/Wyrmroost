@@ -1,20 +1,24 @@
 package WolfShotz.Wyrmroost.network.packets;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
-import WolfShotz.Wyrmroost.network.IMessage;
+import WolfShotz.Wyrmroost.network.IPacket;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.function.Supplier;
 
-public class AnimationPacket implements IMessage
+public class AnimationPacket implements IPacket
 {
-    private int entityID;
-    private int animationIndex;
+    private final int entityID, animationIndex;
 
     public AnimationPacket(int entityID, int index)
     {
@@ -34,7 +38,7 @@ public class AnimationPacket implements IMessage
         buf.writeInt(entityID);
         buf.writeInt(animationIndex);
     }
-    
+
     @Override
     public void run(Supplier<NetworkEvent.Context> context)
     {
@@ -43,5 +47,12 @@ public class AnimationPacket implements IMessage
 
         if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
         else entity.setAnimation(entity.getAnimations()[animationIndex]);
+    }
+
+    public static <T extends Entity & IAnimatedEntity> void send(T entity, Animation animation)
+    {
+        entity.setAnimation(animation);
+        Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),
+                new AnimationPacket(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
     }
 }

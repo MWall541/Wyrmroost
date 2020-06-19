@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.IMessage;
+import WolfShotz.Wyrmroost.network.IPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,7 +12,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class StaffActionPacket implements IMessage
+public class StaffActionPacket implements IPacket
 {
     public final StaffAction action;
 

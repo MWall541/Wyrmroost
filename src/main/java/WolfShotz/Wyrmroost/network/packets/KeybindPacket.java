@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.network.packets;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.network.IMessage;
+import WolfShotz.Wyrmroost.network.IPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * Class Handling the packet sending of keybind inputs.
  * keybinds are assigned an int, and as such follow the following format:
  */
-public class KeybindPacket implements IMessage
+public class KeybindPacket implements IPacket
 {
     public static final int MOUNT_ATTACK = 1;
     public static final int MOUNT_SPECIAL = 2;

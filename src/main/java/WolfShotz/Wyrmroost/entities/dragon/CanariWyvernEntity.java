@@ -9,7 +9,7 @@ import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import com.google.common.collect.Lists;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -166,7 +166,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public void swingArm(Hand hand)
     {
         super.swingArm(hand);
-        NetworkUtils.sendAnimationPacket(this, ATTACK_ANIMATION);
+        AnimationPacket.send(this, ATTACK_ANIMATION);
     }
 
     @Override
@@ -209,7 +209,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         public void startExecuting()
         {
             super.startExecuting();
-            NetworkUtils.sendAnimationPacket(CanariWyvernEntity.this, CanariWyvernEntity.THREAT_ANIMATION);
+            AnimationPacket.send(CanariWyvernEntity.this, THREAT_ANIMATION);
         }
     }
 }

@@ -2,7 +2,10 @@ package WolfShotz.Wyrmroost.entities.projectile.breath;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.Mafs;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.DamageSource;
@@ -54,11 +57,7 @@ public abstract class BreathWeaponEntity extends DamagingProjectileEntity
     {
         super.onImpact(result);
         RayTraceResult.Type type = result.getType();
-        if (type == RayTraceResult.Type.ENTITY)
-        {
-            Entity entity = ((EntityRayTraceResult) result).getEntity();
-            if (entity instanceof LivingEntity) onEntityImpact((LivingEntity) entity);
-        }
+        if (type == RayTraceResult.Type.ENTITY) onEntityImpact(((EntityRayTraceResult) result).getEntity());
         else if (type == RayTraceResult.Type.BLOCK && !world.isRemote && !noClip)
         {
             accelerationX += Mafs.nextPseudoDouble(rand) * 0.05d;
@@ -75,14 +74,17 @@ public abstract class BreathWeaponEntity extends DamagingProjectileEntity
     }
 
     @Override
-    public EntitySize getSize(Pose poseIn)
+    public EntitySize getSize(Pose pose)
     {
         if (growthRate == 1) return getType().getSize();
         float size = Math.min(getWidth() * growthRate, maxSize);
         return EntitySize.flexible(size, size);
     }
 
-    public abstract void onEntityImpact(LivingEntity entity);
+    public abstract void onEntityImpact(Entity entity);
+
+    @Override
+    public float getCollisionBorderSize() { return getWidth(); }
 
     @Override // Overriding because we have a better way of rendering fire. Mojang defines middle finger
     public boolean canRenderOnFire() { return false; }

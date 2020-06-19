@@ -11,7 +11,7 @@ import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import net.minecraft.block.Block;
@@ -285,7 +285,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 if (!isHandEmpty()) return;
 
                 if (getAnimation() != animation)
-                    NetworkUtils.sendAnimationPacket(RoostStalkerEntity.this, SCAVENGE_ANIMATION);
+                    AnimationPacket.send(RoostStalkerEntity.this, SCAVENGE_ANIMATION);
 
                 if (chest == null) return;
                 if (chest instanceof ChestTileEntity && ((ChestTileEntity) chest).numPlayersUsing == 0)

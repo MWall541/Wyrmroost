@@ -1,9 +1,12 @@
 package WolfShotz.Wyrmroost.registry;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import com.google.common.collect.Lists;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
-import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -18,81 +21,41 @@ public class WRKeybind extends KeyBinding
 {
     public static final List<KeyBinding> KEYS = Lists.newArrayList(); // used to register them later, could be used for something else idfk
 
-    public static WRKeybind MOUNT_ATTACK = new Builder("key.mountAttack", GLFW.GLFW_KEY_V).build();
-    public static WRKeybind MOUNT_SPECIAL = new Builder("key.mountSpecial", GLFW.GLFW_KEY_G).setHoldToToggle().build();
+    public static WRKeybind MOUNT_ATTACK = new WRKeybind("key.mountAttack", GLFW.GLFW_KEY_V, KeybindPacket.MOUNT_ATTACK);
+    public static WRKeybind MOUNT_SPECIAL = new WRKeybind("key.mountSpecial", GLFW.GLFW_KEY_G, KeybindPacket.MOUNT_SPECIAL, true);
 
     private final boolean hold;
-    public boolean prevIsDown;
+    private final int id;
+    private boolean prevIsPressed;
 
-    public WRKeybind(String description, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, boolean hold, InputMappings.Input keyCode, String category)
+    public WRKeybind(String name, int keyCode, int packetId)
     {
-        super(description, keyConflictContext, keyModifier, keyCode, category);
-        this.hold = hold;
+        this(name, keyCode, packetId, false);
+    }
+
+    public WRKeybind(String name, int keyCode, int packetId, boolean holdable)
+    {
+        super(name, KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM.getOrMakeInput(keyCode), "keyCategory.wyrmroost");
+        this.hold = holdable;
+        this.id = packetId;
         KEYS.add(this);
     }
 
     @Override
-    public boolean isKeyDown() { return prevIsDown = super.isKeyDown(); }
-
-    public boolean isActivated()
+    public void setPressed(boolean pressed)
     {
-        boolean prev = prevIsDown;
-        boolean down = isKeyDown();
-        if (!hold && !down) return false;
-        return prev != down;
+        super.setPressed(pressed);
+
+        if ((hold || isKeyDown()) && Minecraft.getInstance().player != null && prevIsPressed != pressed)
+        {
+            int modifiers = 0;
+            if (Screen.hasAltDown()) modifiers |= GLFW.GLFW_MOD_ALT;
+            if (Screen.hasControlDown()) modifiers |= GLFW.GLFW_MOD_CONTROL;
+            if (Screen.hasShiftDown()) modifiers |= GLFW.GLFW_MOD_SHIFT;
+            Wyrmroost.NETWORK.sendToServer(new KeybindPacket(id, modifiers));
+            prevIsPressed = pressed;
+        }
     }
 
     public static void registerKeys() { KEYS.forEach(ClientRegistry::registerKeyBinding); }
-
-    public static class Builder
-    {
-        private final int keyCode;
-        private final String name;
-        private InputMappings.Type type = InputMappings.Type.KEYSYM;
-        private String category = "keyCategory.wyrmroost";
-        private IKeyConflictContext conflictContext = KeyConflictContext.IN_GAME;
-        private KeyModifier modifier = KeyModifier.NONE;
-        private boolean hold = false;
-
-        public Builder(String name, int keyCode)
-        {
-            this.keyCode = keyCode;
-            this.name = name;
-        }
-
-        public Builder setCategory(String category)
-        {
-            this.category = category;
-            return this;
-        }
-
-        public Builder setInputType(InputMappings.Type type)
-        {
-            this.type = type;
-            return this;
-        }
-
-        public Builder setConflictContext(IKeyConflictContext context)
-        {
-            this.conflictContext = context;
-            return this;
-        }
-
-        public Builder setModifier(KeyModifier modifier)
-        {
-            this.modifier = modifier;
-            return this;
-        }
-
-        public Builder setHoldToToggle()
-        {
-            this.hold = true;
-            return this;
-        }
-
-        public WRKeybind build()
-        {
-            return new WRKeybind(name, conflictContext, modifier, hold, type.getOrMakeInput(keyCode), category);
-        }
-    }
 }

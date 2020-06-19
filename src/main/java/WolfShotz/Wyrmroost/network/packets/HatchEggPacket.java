@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
-import WolfShotz.Wyrmroost.network.IMessage;
+import WolfShotz.Wyrmroost.network.IPacket;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
@@ -11,9 +11,9 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class HatchEggPacket implements IMessage
+public class HatchEggPacket implements IPacket
 {
-    private int entityID;
+    private final int entityID;
 
     public HatchEggPacket(DragonEggEntity entity)
     {

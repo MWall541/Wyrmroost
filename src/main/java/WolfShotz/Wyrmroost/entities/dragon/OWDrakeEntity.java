@@ -11,7 +11,7 @@ import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
@@ -84,7 +84,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.registerGoals();
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
-        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, 2.1, d -> NetworkUtils.sendAnimationPacket(d, HORN_ATTACK_ANIMATION)));
+        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, 2.1, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(7, new DragonBreedGoal(this, true));
         goalSelector.addGoal(8, new GrazeGoal(this, 2, GRAZE_ANIMATION));
@@ -307,7 +307,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (target != null && getAttackTarget() != target)
         {
             if (!isTamed() && getAnimation() != OWDrakeEntity.ROAR_ANIMATION)
-                NetworkUtils.sendAnimationPacket(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
+                AnimationPacket.send(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
         }
         super.setAttackTarget(target);
     }

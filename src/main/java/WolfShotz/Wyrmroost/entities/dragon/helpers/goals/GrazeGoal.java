@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.Animation;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -25,8 +25,9 @@ public class GrazeGoal extends Goal
     private static final Predicate<BlockState> IS_GRASS = BlockStateMatcher.forBlock(Blocks.GRASS);
     private final AbstractDragonEntity herbivore;
     private final World world;
-    private int eatingGrassTimer, blockPosOffset;
-    private Animation animation;
+    private final int blockPosOffset;
+    private final Animation animation;
+    private int eatingGrassTimer;
 
     public GrazeGoal(AbstractDragonEntity herbivoreIn, int blockPosOffset, Animation animation)
     {
@@ -104,7 +105,7 @@ public class GrazeGoal extends Goal
                     world.destroyBlock(blockpos, false);
 
                 herbivore.eatGrassBonus();
-                NetworkUtils.sendAnimationPacket(herbivore, animation);
+                AnimationPacket.send(herbivore, animation);
 
             }
             else
@@ -119,7 +120,7 @@ public class GrazeGoal extends Goal
                     }
 
                     herbivore.eatGrassBonus();
-                    NetworkUtils.sendAnimationPacket(herbivore, animation);
+                    AnimationPacket.send(herbivore, animation);
                 }
             }
         }

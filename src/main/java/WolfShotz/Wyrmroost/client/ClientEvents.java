@@ -12,19 +12,12 @@ import WolfShotz.Wyrmroost.client.render.entity.projectile.GeodeTippedArrowRende
 import WolfShotz.Wyrmroost.client.render.entity.rooststalker.RoostStalkerRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.royal_red.RoyalRedRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
-import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
-import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.registry.WRKeybind;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.lwjgl.glfw.GLFW;
 
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
@@ -35,33 +28,6 @@ import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerE
 @SuppressWarnings("unused")
 public class ClientEvents
 {
-    @SubscribeEvent
-    public static void clientTick(TickEvent.ClientTickEvent evt)
-    {
-        if (evt.phase == TickEvent.Phase.END) handleKeybinds();
-    }
-
-    private static void handleKeybinds()
-    {
-        if (getPlayer() == null) return;
-
-        int key = 0;
-
-        if (getPlayer().getRidingEntity() instanceof AbstractDragonEntity)
-        {
-            if (WRKeybind.MOUNT_ATTACK.isActivated()) key = KeybindPacket.MOUNT_ATTACK;
-            if (WRKeybind.MOUNT_SPECIAL.isActivated()) key = KeybindPacket.MOUNT_SPECIAL;
-        }
-
-        if (key != 0)
-        {
-            int modifiers = 0;
-            if (Screen.hasAltDown()) modifiers |= GLFW.GLFW_MOD_ALT;
-            if (Screen.hasControlDown()) modifiers |= GLFW.GLFW_MOD_CONTROL;
-            if (Screen.hasShiftDown()) modifiers |= GLFW.GLFW_MOD_SHIFT;
-            Wyrmroost.NETWORK.sendToServer(new KeybindPacket(key, modifiers));
-        }
-    }
     /**
      * Handles the perspective/position of the camera
      */

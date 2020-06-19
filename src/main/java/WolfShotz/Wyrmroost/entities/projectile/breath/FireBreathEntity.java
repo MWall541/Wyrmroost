@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.entities.projectile.breath;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.Mafs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
@@ -42,13 +43,15 @@ public class FireBreathEntity extends BreathWeaponEntity
     }
 
     @Override
-    public void onEntityImpact(LivingEntity entity)
+    public void onEntityImpact(Entity entity)
     {
-        if (shootingEntity instanceof AbstractDragonEntity && ((AbstractDragonEntity) shootingEntity).isAlly(entity))
-            return;
+        if (world.isRemote) return;
         if (entity == shootingEntity) return;
         if (entity.isImmuneToFire()) return;
-        if (world.isRemote) return;
+        if (shootingEntity instanceof AbstractDragonEntity
+                && entity instanceof LivingEntity
+                && ((AbstractDragonEntity) shootingEntity).isAlly(((LivingEntity) entity))) return;
+
 
         entity.setFire(8);
         entity.attackEntityFrom(DamageSource.IN_FIRE, (float) shootingEntity.getAttribute(AbstractDragonEntity.PROJECTILE_DAMAGE).getValue());

@@ -3,13 +3,15 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
-import WolfShotz.Wyrmroost.network.NetworkUtils;
+import WolfShotz.Wyrmroost.network.IPacket;
+import WolfShotz.Wyrmroost.network.packets.*;
 import WolfShotz.Wyrmroost.registry.*;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -25,10 +27,15 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
@@ -73,12 +80,7 @@ public class Wyrmroost
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.ClientConfig.CLIENT_SPEC);
     }
 
-    public void commonSetup(final FMLCommonSetupEvent event)
-    {
-        DeferredWorkQueue.runLater(WRWorld::setupWorld);
-        DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
-        NetworkUtils.registerPackets();
-    }
+    private static int packetIndex;
 
     public void clientSetup(final FMLClientSetupEvent event)
     {
@@ -102,6 +104,26 @@ public class Wyrmroost
         CustomSpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
     }
 
+    public void commonSetup(final FMLCommonSetupEvent event)
+    {
+        DeferredWorkQueue.runLater(WRWorld::setupWorld);
+        DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
+        registerPackets();
+    }
+
+    private static void registerPackets()
+    {
+        packet(AnimationPacket.class, AnimationPacket::new, NetworkDirection.PLAY_TO_CLIENT);
+        packet(KeybindPacket.class, KeybindPacket::new, NetworkDirection.PLAY_TO_SERVER);
+        packet(HatchEggPacket.class, HatchEggPacket::new, NetworkDirection.PLAY_TO_CLIENT);
+        packet(RenameEntityPacket.class, RenameEntityPacket::new, NetworkDirection.PLAY_TO_SERVER);
+        packet(StaffActionPacket.class, StaffActionPacket::new, NetworkDirection.PLAY_TO_SERVER);
+    }
+
+    private static <T extends IPacket> void packet(Class<T> clazz, Function<PacketBuffer, T> decoder) { packet(clazz, decoder, null); }
+
+    private static <T extends IPacket> void packet(Class<T> clazz, Function<PacketBuffer, T> decoder, @Nullable NetworkDirection dir) { NETWORK.registerMessage(++packetIndex, clazz, T::encode, decoder, T::handle, Optional.ofNullable(dir)); }
+
     /**
      * Register a new Wyrmroost Specific Resource Location. <P>
      * Don't bash me for the method name it makes total sense ffs: <P>
@@ -113,7 +135,7 @@ public class Wyrmroost
     public static ResourceLocation rl(String path) { return new ResourceLocation(MOD_ID, path); }
 
     /**
-     * Its still <b>Creative Tab</b>. Idc what anyone says.
+     * C R E A T I V E  T A B. F U C K  Y O U.
      */
     static class WRItemGroup extends ItemGroup
     {
