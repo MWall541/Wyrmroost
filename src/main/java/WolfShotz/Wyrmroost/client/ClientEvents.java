@@ -57,7 +57,6 @@ public class ClientEvents
         registerEntityRenderingHandler(WREntities.PURPLE_GEODE_ARROW.get(), mgr -> new GeodeTippedArrowRenderer(mgr, Wyrmroost.rl("textures/entity/projectiles/purple_geode_tipped_arrow.png")));
 
         registerEntityRenderingHandler(WREntities.FIRE_BREATH.get(), BreathWeaponRenderer::new);
-        registerEntityRenderingHandler(WREntities.ROYAL_RED_BREATH.get(), BreathWeaponRenderer::new);
 
         registerEntityRenderingHandler(WREntities.DRAGON_EGG.get(), DragonEggRenderer::new);
 

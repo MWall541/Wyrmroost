@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.entities.projectile.breath.RRBreathEntity;
+import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
@@ -109,7 +109,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         if (isBreathingFire() && getControllingPlayer() == null && getAttackTarget() == null) setBreathingFire(false);
 
-        if (breathTimer.get() == 1) world.addEntity(new RRBreathEntity(this));
+        if (breathTimer.get() == 1) world.addEntity(new FireBreathEntity(this));
 
         if (!world.isRemote && !isBreathingFire() && getRNG().nextInt(1500) == 0 && noActiveAnimation())
             AnimationPacket.send(this, ROAR_ANIMATION);

@@ -76,8 +76,9 @@ public class Wyrmroost
 //        WRWorld.FEATURES.register(bus);
 //        bus.addGenericListener(ModDimension.class, (RegistryEvent.Register<ModDimension> e) -> e.getRegistry().register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost")));
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.CommonConfig.COMMON_SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.ClientConfig.CLIENT_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.Common.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.Client.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, WRConfig.Server.SPEC);
     }
 
     private static int packetIndex;
@@ -91,10 +92,9 @@ public class Wyrmroost
 
     public void configLoad(ModConfig.ModConfigEvent evt)
     {
-        if (evt.getConfig().getSpec() == WRConfig.CommonConfig.COMMON_SPEC)
-            WRConfig.CommonConfig.reload();
-        if (evt.getConfig().getSpec() == WRConfig.ClientConfig.CLIENT_SPEC)
-            WRConfig.ClientConfig.reload();
+        if (evt.getConfig().getSpec() == WRConfig.Common.SPEC) WRConfig.Common.reload();
+        if (evt.getConfig().getSpec() == WRConfig.Client.SPEC) WRConfig.Client.reload();
+        if (evt.getConfig().getSpec() == WRConfig.Server.SPEC) WRConfig.Server.reload();
     }
 
     public void registerItemColors(ColorHandlerEvent.Item evt)
