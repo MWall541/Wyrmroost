@@ -30,10 +30,7 @@ public final class Mafs
     /**
      * Returns a new pseudo random double value constrained to the values of {@code (-1.0d)} and {@code (1.0d)}
      */
-    public static double nextPseudoDouble(Random rand)
-    {
-        return 2 * rand.nextDouble() - 1;
-    }
+    public static double nextDouble(Random rand) { return 2 * rand.nextDouble() - 1; }
 
     /**
      * A good way to get a position offset by the direction of a yaw angle.
@@ -73,8 +70,6 @@ public final class Mafs
      * - Small Cleanup <P>
      * - Includes configurable tamed entity targetting <P>
      * - Changed method name from <code>getMouseOver</code> to <code>rayTrace</code>
-     *
-     * @deprecated Should be replaced with methods in {@link net.minecraft.entity.projectile.ProjectileHelper}
      *
      * @return the block or entity that the player is looking at / targeting with their cursor.  null if no collision
      */
@@ -140,6 +135,4 @@ public final class Mafs
 
         return targetedBlock;
     }
-
-    public static boolean containsBitwise(int mask, int bitMask) { return (mask & bitMask) == bitMask; }
 }

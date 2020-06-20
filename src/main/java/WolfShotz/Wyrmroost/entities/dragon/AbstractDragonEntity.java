@@ -96,7 +96,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         stepHeight = 1;
 
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS, HOME_POS, Optional.empty());
+        registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
         invHandler.ifPresent(i -> registerDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
 
         sleepTimer.set(isSleeping()? 1 : 0);
@@ -850,9 +850,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isOnLadder() { return false; }
 
-    public void recievePassengerKeybind(int key, int modifiers)
-    {
-    }
+    public void recievePassengerKeybind(int key, int modifiers) {}
 
     /**
      * Sort of misleading name. if this is true, then nothing else is ticked (goals, look, etc)

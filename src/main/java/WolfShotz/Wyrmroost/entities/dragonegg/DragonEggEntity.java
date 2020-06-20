@@ -62,7 +62,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     @Override
     public void readAdditional(CompoundNBT compound)
     {
-        containedDragon = ModUtils.getTypeByString(compound.getString(DATA_DRAGON_TYPE));
+        containedDragon = ModUtils.entityTypeByKey(compound.getString(DATA_DRAGON_TYPE));
         hatchTime = compound.getInt(DATA_HATCH_TIME);
     }
     
@@ -279,7 +279,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     @Override
     public void readSpawnData(PacketBuffer buffer)
     {
-        this.containedDragon = ModUtils.getTypeByString(buffer.readString());
+        this.containedDragon = ModUtils.entityTypeByKey(buffer.readString());
     }
 
     // === Animation ===

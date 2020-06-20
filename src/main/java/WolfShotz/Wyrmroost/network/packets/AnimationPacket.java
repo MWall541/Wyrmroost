@@ -1,15 +1,13 @@
 package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
 import WolfShotz.Wyrmroost.network.IPacket;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -42,7 +40,7 @@ public class AnimationPacket implements IPacket
     @Override
     public void run(Supplier<NetworkEvent.Context> context)
     {
-        World world = DistExecutor.callWhenOn(Dist.CLIENT, () -> ModUtils::getClientWorld);
+        World world = ClientEvents.getClient().world;
         IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(entityID);
 
         if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);

@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.entities.projectile.GeodeTippedArrowEntity;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
-import WolfShotz.Wyrmroost.entities.projectile.breath.RRBreathEntity;
 import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.items.GeodeTippedArrowItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -48,7 +47,6 @@ public class WREntities
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> PURPLE_GEODE_ARROW = register("purple_geode_tipped_arrow", (t, w) -> new GeodeTippedArrowEntity(t, 4d, (GeodeTippedArrowItem) WRItems.PURPLE_GEODE_ARROW.get(), w), EntityClassification.MISC, b -> b.size(0.5f, 0.5f));
 
     public static final RegistryObject<EntityType<FireBreathEntity>> FIRE_BREATH = register("fire_breath", FireBreathEntity::new, EntityClassification.MISC, b -> b.size(0.75f, 0.75f).disableSerialization().disableSummoning());
-    public static final RegistryObject<EntityType<FireBreathEntity>> ROYAL_RED_BREATH = register("royal_red_breath", RRBreathEntity::new, EntityClassification.MISC, b -> b.size(0.75f, 0.75f).disableSerialization().disableSummoning());
 
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = register("dragon_egg", DragonEggEntity::new, EntityClassification.MISC, EntityType.Builder::disableSummoning);
 

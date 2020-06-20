@@ -27,7 +27,7 @@ public class Recipes extends RecipeProvider
     static // Uncraftables
     {
         REGISTERED = Sets.newHashSet(WRItems.DRAGON_EGG.get(), WRItems.DRAKE_BACKPLATE.get(), WRItems.LDWYRM.get());
-        REGISTERED.addAll(ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(CustomSpawnEggItem.class::isInstance).collect(Collectors.toSet()));
+        REGISTERED.addAll(ModUtils.streamRegistry(WRItems.ITEMS).filter(CustomSpawnEggItem.class::isInstance).collect(Collectors.toSet()));
     }
 
     private Consumer<IFinishedRecipe> consumer;

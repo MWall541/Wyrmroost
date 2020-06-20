@@ -171,7 +171,7 @@ public class Models
                 itemBare(fluid.getFilledBucket()).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"));
 
             // All items that do not require custom attention
-            ModUtils.getRegistryEntries(WRItems.ITEMS).stream().filter(e -> !REGISTERED.contains(e)).forEach(this::item);
+            ModUtils.streamRegistry(WRItems.ITEMS).filter(e -> !REGISTERED.contains(e)).forEach(this::item);
 
             if (!MISSING_TEXTURES.isEmpty())
                 Wyrmroost.LOG.error("Items are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());

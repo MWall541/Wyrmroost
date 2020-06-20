@@ -5,8 +5,6 @@ import com.google.common.collect.Sets;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,8 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -29,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -55,17 +52,14 @@ public class ModUtils
         return properties;
     }
 
-    /**
-     * Get the Client World
-     */
-    public static ClientWorld getClientWorld()
+    public static <T extends IForgeRegistryEntry<T>> Stream<T> streamRegistry(DeferredRegister<T> registry)
     {
-        return Minecraft.getInstance().world;
+        return registry.getEntries().stream().map(RegistryObject::get);
     }
 
     public static <T extends IForgeRegistryEntry<T>> Set<T> getRegistryEntries(DeferredRegister<T> registry)
     {
-        return registry.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet());
+        return streamRegistry(registry).collect(Collectors.toSet());
     }
 
     /**
@@ -89,19 +83,9 @@ public class ModUtils
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    public static <T extends Entity> EntityType<T> getTypeByString(@Nonnull String key)
+    public static <T extends Entity> EntityType<T> entityTypeByKey(@Nonnull String key)
     {
         return (EntityType<T>) EntityType.byKey(key).orElse(null);
-    }
-
-    /**
-     * Creates a new TranslationTextComponent appended with the passed strings
-     */
-    public static ITextComponent appendableTextTranslation(String... strings)
-    {
-        TranslationTextComponent translation = new TranslationTextComponent(strings[0]);
-        for (int i = 1; i < strings.length; ++i) translation.appendSibling(new TranslationTextComponent(strings[i]));
-        return translation;
     }
 
     /**

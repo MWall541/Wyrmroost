@@ -343,9 +343,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
         Vec3d vec3d = getConduitPos(new Vec3d(getPosX(), getPosY(), getPosZ()));
         for (int i = 0; i < 16; ++i)
         {
-            double motionX = Mafs.nextPseudoDouble(rand) * 1.5f;
-            double motionY = Mafs.nextPseudoDouble(rand);
-            double motionZ = Mafs.nextPseudoDouble(rand) * 1.5f;
+            double motionX = Mafs.nextDouble(rand) * 1.5f;
+            double motionY = Mafs.nextDouble(rand);
+            double motionZ = Mafs.nextDouble(rand) * 1.5f;
             world.addParticle(ParticleTypes.NAUTILUS, vec3d.x, vec3d.y + 2.25, vec3d.z, motionX, motionY, motionZ);
         }
     }

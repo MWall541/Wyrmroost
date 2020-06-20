@@ -1,10 +1,10 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.screen.DragonInvScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
@@ -34,7 +34,7 @@ public class WRIO
     {
         return IForgeContainerType.create(((windowId, inv, data) ->
         {
-            AbstractDragonEntity dragon = (AbstractDragonEntity) ModUtils.getClientWorld().getEntityByID(data.readInt());
+            AbstractDragonEntity dragon = (AbstractDragonEntity) ClientEvents.getClient().world.getEntityByID(data.readInt());
             return new DragonInvContainer(dragon.getInvHandler(), inv, windowId);
         }));
     }

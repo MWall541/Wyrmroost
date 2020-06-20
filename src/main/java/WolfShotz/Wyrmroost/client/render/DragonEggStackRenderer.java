@@ -27,7 +27,7 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
         CompoundNBT tag = stack.getTag();
         if (tag != null && tag.contains(DragonEggEntity.DATA_DRAGON_TYPE))
         {
-            EntityType<?> type = ModUtils.getTypeByString(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE));
+            EntityType<?> type = ModUtils.entityTypeByKey(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE));
             if (type != null) return DragonEggRenderer.getDragonEggTexture(type);
         }
 

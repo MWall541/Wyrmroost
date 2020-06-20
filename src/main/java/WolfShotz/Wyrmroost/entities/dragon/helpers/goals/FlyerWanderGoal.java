@@ -58,9 +58,9 @@ public class FlyerWanderGoal extends Goal
         if (dragon.isInWater()) return RandomPositionGenerator.getLandPos(dragon, 20, 20);
 
         Random rand = dragon.getRNG();
-        double x = dragon.getPosX() + Mafs.nextPseudoDouble(rand) * 20d;
-        double y = dragon.getPosY() + Mafs.nextPseudoDouble(rand) * 2;
-        double z = dragon.getPosZ() + Mafs.nextPseudoDouble(rand) * 20d;
+        double x = dragon.getPosX() + Mafs.nextDouble(rand) * 20d;
+        double y = dragon.getPosY() + Mafs.nextDouble(rand) * 2;
+        double z = dragon.getPosZ() + Mafs.nextDouble(rand) * 20d;
         if (!dragon.isFlying() && y < 0) y = Math.abs(y);
         if (dragon.getAltitude() > 30) y -= 30;
         if (sleepTempted && !dragon.world.isDaytime()) y = Math.max(-Math.abs(y), 0);
