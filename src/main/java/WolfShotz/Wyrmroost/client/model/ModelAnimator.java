@@ -14,8 +14,8 @@ public class ModelAnimator
     private boolean correctAnimation = false;
     private IAnimatedEntity entity;
     private boolean keyFrameInverted = false;
-    private HashMap<WRModelRenderer, BoxPosCache> boxPosCache = new HashMap<>();
-    private HashMap<WRModelRenderer, BoxPosCache> prevPosCache = new HashMap<>();
+    private final HashMap<WRModelRenderer, BoxPosCache> boxPosCache = new HashMap<>();
+    private final HashMap<WRModelRenderer, BoxPosCache> prevPosCache = new HashMap<>();
 
     private ModelAnimator() {}
 

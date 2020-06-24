@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.entities.dragon.helpers;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class DragonInvHandler extends ItemStackHandler
@@ -37,4 +38,6 @@ public class DragonInvHandler extends ItemStackHandler
         }
         return stacks.stream().filter(s -> stacks.indexOf(s) > slot).allMatch(ItemStack::isEmpty);
     }
+
+    public NonNullList<ItemStack> getStacks() { return stacks; }
 }

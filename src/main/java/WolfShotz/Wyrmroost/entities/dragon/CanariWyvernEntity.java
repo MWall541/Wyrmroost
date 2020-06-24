@@ -132,7 +132,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
         if (isOwner(player) && player.getPassengers().size() < 3)
         {
-            setSit(true);
+            setSitting(true);
             setFlying(false);
             clearAI();
             startRiding(player, true);

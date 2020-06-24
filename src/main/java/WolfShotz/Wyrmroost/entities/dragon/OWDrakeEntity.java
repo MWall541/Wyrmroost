@@ -45,7 +45,6 @@ import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -170,7 +169,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (getAnimation() == ROAR_ANIMATION && getAnimationTick() == 15)
         {
-            for (LivingEntity e : getEntitiesNearby(15, e -> !isAlly(e))) // Dont get too close now ;)
+            for (LivingEntity e : getEntitiesNearby(15, e -> !isOnSameTeam(e))) // Dont get too close now ;)
             {
                 e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 200));
                 if (getDistanceSq(e) <= 5)
@@ -212,10 +211,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (isSaddled() && !isChild() && (!isTamed() || isOwner(player)))
         {
-            setSit(false);
             if (!world.isRemote) player.startRiding(this);
-            setHomePos(Optional.empty());
-
             return true;
         }
 
@@ -230,6 +226,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
         return false;
     }
 
+    /**
+     * todo
+     */
     @Override
     public void updatePassenger(Entity passenger)
     {
@@ -242,7 +241,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (passenger instanceof PlayerEntity && rand == 0) tame(true, (PlayerEntity) passenger);
             else if (rand % 20 == 0 && EntityPredicates.CAN_AI_TARGET.test(passenger))
                 setAttackTarget((LivingEntity) passenger);
-            return;
         }
     }
 
@@ -391,8 +389,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public void setAnimation(Animation animation)
     {
         super.setAnimation(animation);
-        if (animation == ROAR_ANIMATION)
-            playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f);
+        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f);
     }
 
     @Override

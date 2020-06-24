@@ -31,7 +31,7 @@ public class BreathWeaponEntity extends Entity implements IEntityAdditionalSpawn
     public boolean hasCollided;
 
     /**
-     * @deprecated this is used for registration
+     * Don't use this, it is for registration
      */
     public BreathWeaponEntity(EntityType<?> type, World world) { super(type, world); }
 

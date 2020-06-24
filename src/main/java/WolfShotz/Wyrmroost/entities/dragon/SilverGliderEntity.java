@@ -135,7 +135,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             // sit
             if (player.isSneaking())
             {
-                setSit(!isSitting());
+                setSitting(!isSitting());
                 return true;
             }
 
@@ -143,7 +143,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             if (player.getPassengers().size() == 0)
             {
                 startRiding(player, true);
-                setSit(false);
+                setSitting(false);
                 clearAI();
                 return true;
             }

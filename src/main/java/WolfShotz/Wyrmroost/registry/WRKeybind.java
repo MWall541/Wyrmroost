@@ -46,15 +46,15 @@ public class WRKeybind extends KeyBinding
     {
         super.setPressed(pressed);
 
-        if ((hold || isKeyDown()) && Minecraft.getInstance().player != null && prevIsPressed != pressed)
+        if (Minecraft.getInstance().player != null && prevIsPressed != pressed && (hold || isKeyDown()))
         {
             int modifiers = 0;
             if (Screen.hasAltDown()) modifiers |= GLFW.GLFW_MOD_ALT;
             if (Screen.hasControlDown()) modifiers |= GLFW.GLFW_MOD_CONTROL;
             if (Screen.hasShiftDown()) modifiers |= GLFW.GLFW_MOD_SHIFT;
             Wyrmroost.NETWORK.sendToServer(new KeybindPacket(id, modifiers));
-            prevIsPressed = pressed;
         }
+        prevIsPressed = pressed;
     }
 
     public static void registerKeys() { KEYS.forEach(ClientRegistry::registerKeyBinding); }

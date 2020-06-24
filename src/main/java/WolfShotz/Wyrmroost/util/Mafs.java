@@ -12,20 +12,20 @@ import java.util.Optional;
 import java.util.Random;
 
 /**
- * Math utility class to make my life like way easier.
+ * Maf utility class to make my life like way easier.
  * <p>
  * Half of this shit is just me throwing numbers in and hoping it works,
  * seems to be going well so far!
  */
 public final class Mafs
 {
+    private Mafs() {/* good try */}
+
     /**
      * Float Version of PI.
      * Why? so we don't have to cast the fucking official one 314159265358979323846 (heh) times
      */
     public static final float PI = (float) Math.PI;
-
-    private Mafs() {/* good try */}
 
     /**
      * Returns a new pseudo random double value constrained to the values of {@code (-1.0d)} and {@code (1.0d)}

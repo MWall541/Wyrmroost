@@ -52,10 +52,10 @@ public class StaffRenderer
             return;
         }
 
-        dragon.getHomePos().ifPresent(p -> RenderEvents.drawBlockPos(ms, p, dragon.world, 4, 0xff0000ff));
         outlineEntitiesQueue.add(dragon);
         DragonStaffItem.getAction(stack).render(dragon, ms);
-        renderEntityOutlines(ms);
+//        renderEntityOutlines(ms);
+        RenderEvents.drawBlockPos(ms, dragon.getHomePosition(), dragon.world, 4, 0xff0000ff);
     }
 
     public static void renderEntityOutlines(MatrixStack ms)

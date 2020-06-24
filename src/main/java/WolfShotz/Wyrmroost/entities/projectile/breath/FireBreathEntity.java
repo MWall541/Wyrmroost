@@ -77,7 +77,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (world.isRemote) return;
         if (entity == shooter) return;
         if (entity.isImmuneToFire()) return;
-        if (entity instanceof LivingEntity && shooter.isAlly(((LivingEntity) entity))) return;
+        if (entity instanceof LivingEntity && shooter.isOnSameTeam(entity)) return;
 
         float damage = (float) shooter.getAttribute(AbstractDragonEntity.PROJECTILE_DAMAGE).getValue();
         if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;
@@ -91,4 +91,7 @@ public class FireBreathEntity extends BreathWeaponEntity
 
     @Override
     public boolean isBurning() { return true; }
+
+    @Override
+    protected float getMotionFactor() { return 1f; }
 }

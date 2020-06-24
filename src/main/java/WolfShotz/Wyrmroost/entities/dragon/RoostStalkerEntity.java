@@ -157,14 +157,14 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         {
             if (player.isSneaking())
             {
-                setSit(!isSitting());
+                setSitting(!isSitting());
                 
                 return true;
             }
 
             if (stack.isEmpty() && heldItem.isEmpty() && player.getPassengers().size() < 3)
             {
-                setSit(false);
+                setSitting(false);
                 startRiding(player, true);
 
                 return true;

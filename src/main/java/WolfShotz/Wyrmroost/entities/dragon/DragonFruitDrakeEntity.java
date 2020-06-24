@@ -135,7 +135,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         if (isOwner(player) && !isChild() && !player.isSneaking())
         {
-            setSit(false);
+            setSitting(false);
             player.startRiding(this);
 
             return true;

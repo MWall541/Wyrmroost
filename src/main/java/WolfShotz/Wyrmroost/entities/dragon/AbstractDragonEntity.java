@@ -41,18 +41,15 @@ import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -208,26 +205,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
-    public void setSit(boolean sitting)
+    @Override
+    public void setSitting(boolean sitting)
     {
-        if (isSitting() == sitting) return;
         setSleeping(false);
         if (!world.isRemote)
         {
             sitGoal.setSitting(sitting);
             clearAI();
         }
-
         super.setSitting(sitting);
-
-        recalculateSize(); // Change the hitbox for sitting / sleeping
     }
-
-    public void setHomePos(Optional<BlockPos> homePos) { dataManager.set(HOME_POS, homePos); }
-
-    public Optional<BlockPos> getHomePos() { return dataManager.get(HOME_POS); }
-
-    public void setHomePos(BlockPos homePos) { setHomePos(Optional.of(homePos)); }
 
     public DragonInvHandler getInvHandler()
     {
@@ -361,7 +349,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (isOwner(player) && player.isSneaking() && !isFlying())
         {
-            setSit(!isSitting());
+            setSitting(!isSitting());
             return true;
         }
 
@@ -474,7 +462,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void notifyDataManagerChange(DataParameter<?> key)
     {
         super.notifyDataManagerChange(key);
-        if (key == SLEEPING || key == FLYING) recalculateSize();
+        if (key == SLEEPING || key == FLYING || key == TAMED) recalculateSize();
     }
 
     public ItemStack getStackInSlot(int slot)
@@ -492,7 +480,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void setStackInSlot(int slot, ItemStack stack) { invHandler.ifPresent(i -> i.setStackInSlot(slot, stack)); }
 
-    public void attackInFront(int radius)
+    public void attackInFront(double radius)
     {
         AxisAlignedBB size = getBoundingBox();
         AxisAlignedBB aabb = size.offset(Mafs.getYawVec(renderYawOffset, 0, size.getXSize())).grow(radius);
@@ -518,7 +506,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override // We shouldnt be targetting pets...
-    public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) { return !isAlly(target); }
+    public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) { return !isOnSameTeam(target); }
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
@@ -538,7 +526,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         setSleeping(false);
-        if (getOwner() != null) setSit(false);
+        if (getOwner() != null) setSitting(false);
         return super.attackEntityFrom(source, amount);
     }
 
@@ -554,19 +542,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    protected void spawnDrops(DamageSource src)
-    {
-        invHandler.ifPresent(i ->
-        {
-            for (int index = 0; index < i.getSlots(); ++index) entityDropItem(i.getStackInSlot(index));
-        });
-        super.spawnDrops(src);
-    }
+    protected void dropInventory() { invHandler.ifPresent(i -> i.getStacks().forEach(this::entityDropItem)); }
 
     public void tryTeleportToOwner()
     {
         if (getOwner() == null) return;
-        final int CONSTRAINT = (int) (getWidth() * 0.5) + 2;
+        final int CONSTRAINT = (int) (getWidth() * 0.5) + 1;
         BlockPos pos = getOwner().getPosition();
         BlockPos.Mutable potentialPos = new BlockPos.Mutable();
 
@@ -582,14 +563,31 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean trySafeTeleport(BlockPos pos)
     {
-        BlockPos blockpos = pos.subtract(getPosition());
-        if (world.hasNoCollisions(this, getBoundingBox().offset(blockpos)))
+        if (world.hasNoCollisions(this, getBoundingBox().offset(pos.subtract(getPosition()))))
         {
             setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), rotationYaw, rotationPitch);
             return true;
         }
         return false;
     }
+
+    @Override
+    public BlockPos getHomePosition() { return getHomePos().orElse(BlockPos.ZERO); }
+
+    public Optional<BlockPos> getHomePos() { return dataManager.get(HOME_POS); }
+
+    public void setHomePos(@Nullable BlockPos pos) { setHomePos(Optional.ofNullable(pos)); }
+
+    public void setHomePos(Optional<BlockPos> pos) { dataManager.set(HOME_POS, pos); }
+
+    @Override
+    public boolean detachHome() { return getHomePos().isPresent(); }
+
+    @Override
+    public float getMaximumHomeDistance() { return WRConfig.homeRadius; }
+
+    @Override
+    public void setHomePosAndDistance(BlockPos pos, int distance) { setHomePos(pos); }
 
     @Override
     public boolean isWithinHomeDistanceCurrentPosition() { return isWithinHomeDistanceFromPosition(getPosition()); }
@@ -615,36 +613,28 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return getPosY() - pos.getY();
     }
 
-    public void eat(@Nullable ItemStack stack)
-    {
-        if (stack != null && !stack.isEmpty())
-        {
-            stack.shrink(1);
-            if (getHealth() < getMaxHealth()) heal(Math.max((int) getMaxHealth() / 5, 6));
-            if (stack.getItem().isFood())
-            {
-                try
-                { // Surrounding in try catch block. checking for null doesnt seem to work...
-                    List<Pair<EffectInstance, Float>> effects = Objects.requireNonNull(stack.getItem().getFood()).getEffects();
-                    if (!effects.isEmpty() && effects.stream().noneMatch(e -> e.getLeft() == null)) // Apply food effects if it has any
-                        effects.forEach(e -> addPotionEffect(e.getLeft()));
-                }
-                catch (Exception ignore) {}
-            }
-            playSound(SoundEvents.ENTITY_GENERIC_EAT, 1f, 1f);
-            if (world.isRemote)
-            {
-                Vec3d mouth = getApproximateMouthPos();
+    // overload because... WHY IS `World` A PARAMETER WTF THE FIELD IS LITERALLY PUBLIC
+    public void eat(ItemStack stack) { onFoodEaten(world, stack); }
 
-                for (int i = 0; i < 11; ++i)
-                {
-                    Vec3d vec3d1 = new Vec3d(((double) rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) rand.nextFloat() - 0.5D) * 0.1D);
-                    vec3d1 = vec3d1.rotatePitch(-rotationPitch * (Mafs.PI / 180f));
-                    vec3d1 = vec3d1.rotateYaw(-rotationYaw * (Mafs.PI / 180f));
-                    world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), mouth.x, mouth.y, mouth.z, vec3d1.x, vec3d1.y, vec3d1.z);
-                }
+    @Override
+    public ItemStack onFoodEaten(World world, ItemStack stack)
+    {
+        float max = getMaxHealth();
+        if (getHealth() < max) heal(Math.max((int) max / 5, 4)); // Base healing on max health, minumum 2 hearts.
+
+        if (world.isRemote)
+        {
+            Vec3d mouth = getApproximateMouthPos();
+            for (int i = 0; i < 11; ++i)
+            {
+                Vec3d vec3d1 = new Vec3d(((double) rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) rand.nextFloat() - 0.5D) * 0.1D);
+                vec3d1 = vec3d1.rotatePitch(-rotationPitch * (Mafs.PI / 180f));
+                vec3d1 = vec3d1.rotateYaw(-rotationYaw * (Mafs.PI / 180f));
+                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), mouth.x, mouth.y, mouth.z, vec3d1.x, vec3d1.y, vec3d1.z);
             }
         }
+
+        return super.onFoodEaten(world, stack);
     }
 
     public boolean tame(boolean tame, @Nullable PlayerEntity tamer)
@@ -726,7 +716,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void addPassenger(Entity passenger)
     {
         super.addPassenger(passenger);
-        if (getControllingPassenger() == passenger) clearAI();
+        if (getControllingPassenger() == passenger)
+        {
+            clearAI();
+            setSitting(false);
+            setHomePos(BlockPos.ZERO);
+        }
     }
 
     /**
@@ -783,13 +778,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), filter.and(e -> e != this && !getPassengers().contains(e)));
     }
 
-    public List<LivingEntity> getEntitiesNearby(double radius) { return getEntitiesNearby(radius, e -> true); }
-
-    public boolean isAlly(LivingEntity entity)
+    public List<LivingEntity> getEntitiesNearby(double radius)
     {
-        if (isOwner(entity)) return true;
+        return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), e -> e != this && !getPassengers().contains(e));
+    }
+
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    public boolean isOnSameTeam(Entity entity)
+    {
+        if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
         if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return true;
-        return entity.getClass() == getClass();
+        if (entity.isOnScoreboardTeam(getTeam())) return true;
+        return entity.getType().equals(getType());
     }
 
     public void addMotion(Vec3d vec3d) { setMotion(getMotion().add(vec3d)); }
@@ -842,10 +843,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Nullable
     @Override
-    public Entity getControllingPassenger()
-    {
-        return this.getPassengers().isEmpty()? null : this.getPassengers().get(0);
-    }
+    public Entity getControllingPassenger() { return this.getPassengers().isEmpty()? null : this.getPassengers().get(0); }
 
     @Override
     public boolean isOnLadder() { return false; }
@@ -867,8 +865,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected float getJumpUpwardsMotion()
     {
-        float jump = getJumpFactor() * 0.175f;
-        return canFly()? jump * getHeight() : jump;
+        if (canFly()) return (getJumpFactor() * 0.175f) * getHeight();
+        else return super.getJumpUpwardsMotion();
     }
 
     public boolean liftOff()
@@ -879,7 +877,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         for (int i = 1; i < (getFlightThreshold() / 2.5f) + 1; ++i)
             if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement())
                 return false;
-        setSit(false);
+        setSitting(false);
         setSleeping(false);
         jump();
 

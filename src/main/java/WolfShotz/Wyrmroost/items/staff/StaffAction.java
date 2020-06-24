@@ -57,7 +57,7 @@ public class StaffAction
         @Override
         public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
         {
-            dragon.setSit(!dragon.isSitting());
+            dragon.setSitting(!dragon.isSitting());
             DragonStaffItem.setAction(DEFAULT, player, stack);
         }
 
@@ -126,7 +126,7 @@ public class StaffAction
         public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
         {
             dragon.clearAI();
-            dragon.setSit(false);
+            dragon.setSitting(false);
         }
 
         @Override

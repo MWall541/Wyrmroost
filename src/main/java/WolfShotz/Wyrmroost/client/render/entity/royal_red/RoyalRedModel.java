@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.RoyalRedEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
@@ -688,6 +689,11 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         ms.scale(3.5f, 3.5f, 3.5f);
         ms.translate(0, 0.825f, -0.23f);
         body2.render(ms, buffer, packedLightIn, packedOverlayIn);
+//        if (isChild)
+//        {
+//            wingL1.setScale(0.5f, 0.5f ,0.5f);
+//            wingR1.setScale(0.5f, 0.5f ,0.5f);
+//        }
         ms.pop();
     }
 
@@ -698,12 +704,15 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         else if (netHeadYaw > 180) netHeadYaw -= 360;
         if (entity.flightTimer.get() == 1)
         {
-            body2.rotateAngleX = headPitch * ((float) Math.PI / 180F) * 0.75f;
-            body2.rotateAngleZ = -(netHeadYaw * ((float) Math.PI / 180F)) * 0.5f;
+            body2.rotateAngleX = headPitch * (Mafs.PI / 180F) * 0.75f;
+            body2.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.5f;
             headPitch *= 0.2f;
         }
         if (!entity.isSleeping() && entity.getAnimation() != RoyalRedEntity.ROAR_ANIMATION)
+        {
             faceTarget(netHeadYaw, headPitch, 1, headParts);
+            head.rotateAngleZ += MathHelper.clamp(netHeadYaw / 59f, -0.7f, 0.7f);
+        }
     }
 
     @Override
@@ -767,6 +776,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         sleep(entity.sleepTimer.get(partialTicks));
 
         if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation();
+        if (animator.setAnimation(RoyalRedEntity.MELEE_ATTACK_ANIMATION)) meleeAttackAnim();
         idle(frame);
     }
 
@@ -805,6 +815,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     public void fly(float amount)
     {
+        if (amount == 0) return;
         setTime(amount);
 
         rotate(neck1, 0.3f, 0, 0);
@@ -843,16 +854,19 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     private void breath(float amount)
     {
+        if (amount == 0) return;
         setTime(amount);
 
         rotate(neck1, 0.3f, 0, 0);
         rotate(neck2, 0.5f, 0, 0);
         rotate(neck3, -0.5f, 0, 0);
         rotate(head, -0.35f, 0, 0);
+        rotate(jaw, 0.65f, 0, 0);
     }
 
     public void sit(float amount)
     {
+        if (amount == 0) return;
         setTime(amount);
 
         rotate(body2, -0.5f, 0, 0);
@@ -888,6 +902,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
     public void sleep(float amount)
     {
+        if (amount == 0) return;
         setTime(amount);
         toDefaultPose();
 
@@ -971,13 +986,81 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
         animator.rotate(jaw, 0.8f, 0, 0);
 
-        for (WRModelRenderer tailPart : tailParts)
-        {
-            animator.rotate(tailPart, 0.08f, 0, 0);
-        }
+        for (WRModelRenderer tailPart : tailParts) animator.rotate(tailPart, 0.08f, 0, 0);
 
         animator.endKeyframe();
         animator.setStaticKeyframe(50);
         animator.resetKeyframe(10);
+    }
+
+    private void meleeAttackAnim()
+    {
+        animator.startKeyframe(7);
+        keepStanceMeleeAttack();
+        animator.rotate(arm1R, -0.8f, 0.3f, 1f);
+        animator.rotate(arm2R, 0.5f, 0, 0.5f);
+        animator.rotate(body1, 0, 0, 0.3f);
+        animator.rotate(head, 0, 0, -0.3f);
+        animator.rotate(leg1R, -0.6f, 0, 0);
+        animator.rotate(leg2R, 0.9f, 0, 0);
+        animator.rotate(footR, 0.9f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepStanceMeleeAttack();
+        animator.rotate(arm1R, -0.8f, 0.3f, 1f);
+        animator.rotate(arm2R, 0.5f, 0, 0.5f);
+        animator.rotate(body1, 0, 0, 0.3f);
+        animator.rotate(head, 0, 0, -0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepStanceMeleeAttack();
+        animator.rotate(arm2R, 0f, 0f, -0.5f);
+        animator.rotate(body1, 0, 0, -0.3f);
+        animator.rotate(head, 0, 0, 0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepStanceMeleeAttack();
+        animator.rotate(arm1L, -0.8f, -0.3f, -1f);
+        animator.rotate(arm2L, 0.5f, 0, -0.5f);
+        animator.rotate(body1, 0, 0, -0.3f);
+        animator.rotate(head, 0, 0, 0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepStanceMeleeAttack();
+        animator.rotate(arm2L, 0f, 0f, 0.5f);
+        animator.rotate(body1, 0, 0, 0.3f);
+        animator.rotate(head, 0, 0, -0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.setStaticKeyframe(1);
+        animator.resetKeyframe(10);
+    }
+
+    private void keepStanceMeleeAttack()
+    {
+        animator.rotate(body2, -0.5f, 0, 0);
+        animator.move(body2, 0, -0.2f, -3f);
+        animator.rotate(leg1L, 1.2f, 0, 0);
+        animator.rotate(leg2L, -0.5f, 0, 0);
+        animator.rotate(footL, -0.2f, 0, 0);
+
+        for (WRModelRenderer tailPart : tailParts) animator.rotate(tailPart, 0.1f, 0, 0);
+        for (WRModelRenderer headPart : headParts) animator.rotate(headPart, 0.4f, 0, 0);
     }
 }
