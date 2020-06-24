@@ -130,7 +130,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 if (isOnSameTeam(entity)) entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
         }
 
-        if (anim == MELEE_ATTACK_ANIMATION && getAnimationTick() == 10) attackInFront(0);
+        if (anim == MELEE_ATTACK_ANIMATION && (getAnimationTick() == 10 || getAnimationTick() == 15))
+            attackInFront(0);
     }
 
     @Override
@@ -160,8 +161,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public void meleeAttack()
     {
-        if (!isFlying() || rand.nextBoolean()) setAnimation(BITE_ATTACK_ANIMATION);
-        else setAnimation(MELEE_ATTACK_ANIMATION);
+        /*if (!isFlying() || rand.nextBoolean()) setAnimation(BITE_ATTACK_ANIMATION);
+        else*/
+        setAnimation(MELEE_ATTACK_ANIMATION);
     }
 
     @Override
