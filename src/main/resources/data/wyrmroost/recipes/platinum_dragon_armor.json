@@ -7,7 +7,7 @@
   ],
   "key": {
     "X": {
-      "item": "wyrmroost:platinum_ingot"
+      "tag": "forge:ingots/platinum"
     },
     "#": {
       "item": "wyrmroost:platinum_block"
