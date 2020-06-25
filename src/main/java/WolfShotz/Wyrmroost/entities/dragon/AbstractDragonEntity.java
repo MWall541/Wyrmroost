@@ -789,19 +789,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
         if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return true;
-        if (entity.isOnScoreboardTeam(getTeam())) return true;
+        if (isOnScoreboardTeam(entity.getTeam())) return true;
         return entity.getType().equals(getType());
-    }
-
-    public void addMotion(Vec3d vec3d) { setMotion(getMotion().add(vec3d)); }
-
-    public void addMotion(double x, double y, double z) { setMotion(getMotion().add(x, y, z)); }
-
-    public boolean isMoving()
-    {
-        double d0 = getPosX() - prevPosX;
-        double d1 = getPosZ() - prevPosZ;
-        return d0 * d0 + d1 * d1 > 2.5000003E-7d;
     }
 
     @Override

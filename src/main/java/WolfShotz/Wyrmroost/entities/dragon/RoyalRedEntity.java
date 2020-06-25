@@ -41,7 +41,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class RoyalRedEntity extends AbstractDragonEntity
 {
     public static final Animation ROAR_ANIMATION = new Animation(80);
-    public static final Animation MELEE_ATTACK_ANIMATION = new Animation(30);
+    public static final Animation SLAP_ATTACK_ANIMATION = new Animation(30);
     public static final Animation BITE_ATTACK_ANIMATION = new Animation(20);
     public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
 
@@ -54,7 +54,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
         super(dragon, world);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
-        registerDataEntry("IsBreathingFire", EntityDataEntry.BOOLEAN, BREATHING_FIRE, false);
 
         // because itll act like its doing squats when we re-render if we didnt.
         sitTimer.set(isSitting()? 1 : 0);
@@ -76,13 +75,21 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(BREATHING_FIRE, false);
+    }
+
+    @Override
     protected void registerGoals()
     {
         super.registerGoals();
 
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, 2.1, d ->
-        {}));
+        {
+        }));
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(7, new DragonBreedGoal(this, true));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
@@ -104,8 +111,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
-        if (isAIDisabled()) return;
-
         flightTimer.add(isFlying()? 0.1f : -0.05f);
         sitTimer.add(isSitting()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
@@ -130,8 +135,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 if (isOnSameTeam(entity)) entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
         }
 
-        if (anim == MELEE_ATTACK_ANIMATION && (getAnimationTick() == 10 || getAnimationTick() == 15))
-            attackInFront(0);
+        if (anim == SLAP_ATTACK_ANIMATION && (getAnimationTick() == 10 || getAnimationTick() == 15))
+            attackInFront(0.2);
+        else if (anim == BITE_ATTACK_ANIMATION && getAnimationTick() == 4)
+            attackInFront(-0.3);
     }
 
     @Override
@@ -161,9 +168,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public void meleeAttack()
     {
-        /*if (!isFlying() || rand.nextBoolean()) setAnimation(BITE_ATTACK_ANIMATION);
-        else*/
-        setAnimation(MELEE_ATTACK_ANIMATION);
+        if (world.isRemote) return;
+
+        Animation anim = BITE_ATTACK_ANIMATION;
+        if (rand.nextBoolean() && !isFlying()) anim = SLAP_ATTACK_ANIMATION;
+        AnimationPacket.send(this, anim);
     }
 
     @Override
@@ -228,7 +237,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ROYALRED_DEATH.get(); }
 
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, ROAR_ANIMATION, MELEE_ATTACK_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION}; }
 
     @Override
     public void setAnimation(Animation animation)

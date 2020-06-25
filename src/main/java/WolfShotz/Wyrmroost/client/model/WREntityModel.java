@@ -25,8 +25,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
     public void setDefaultPose()
     {
-        for (ModelRenderer box : boxList)
-            if (box instanceof WRModelRenderer) ((WRModelRenderer) box).setDefaultPose();
+        for (ModelRenderer box : boxList) if (box instanceof WRModelRenderer) ((WRModelRenderer) box).setDefaultPose();
     }
 
     public void resetToDefaultPose()
@@ -48,14 +47,11 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         float actualRotationDivisor = rotationDivisor * (float) boxes.length;
         float yawAmount = yaw / 57.295776F / actualRotationDivisor;
         float pitchAmount = pitch / 57.295776F / actualRotationDivisor;
-        WRModelRenderer[] var8 = boxes;
-        int var9 = boxes.length;
 
-        for (int var10 = 0; var10 < var9; ++var10)
+        for (WRModelRenderer box : boxes)
         {
-            WRModelRenderer box = var8[var10];
-            box.rotateAngleY += yawAmount;
             box.rotateAngleX += pitchAmount;
+            box.rotateAngleY += yawAmount;
         }
     }
 

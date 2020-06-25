@@ -709,10 +709,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
             headPitch *= 0.2f;
         }
         if (!entity.isSleeping() && entity.getAnimation() != RoyalRedEntity.ROAR_ANIMATION)
-        {
             faceTarget(netHeadYaw, headPitch, 1, headParts);
-            head.rotateAngleZ += MathHelper.clamp(netHeadYaw / 59f, -0.7f, 0.7f);
-        }
     }
 
     @Override
@@ -776,7 +773,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         sleep(entity.sleepTimer.get(partialTicks));
 
         if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation();
-        if (animator.setAnimation(RoyalRedEntity.MELEE_ATTACK_ANIMATION)) meleeAttackAnim();
+        if (animator.setAnimation(RoyalRedEntity.SLAP_ATTACK_ANIMATION)) slapAttackAnim();
+        if (animator.setAnimation(RoyalRedEntity.BITE_ATTACK_ANIMATION)) biteAttackAnim();
         idle(frame);
     }
 
@@ -993,10 +991,10 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.resetKeyframe(10);
     }
 
-    private void meleeAttackAnim()
+    private void slapAttackAnim()
     {
         animator.startKeyframe(7);
-        keepStanceMeleeAttack();
+        keepStanceSlapAttack();
         animator.rotate(arm1R, -0.8f, 0.3f, 1f);
         animator.rotate(arm2R, 0.5f, 0, 0.5f);
         animator.rotate(body1, 0, 0, 0.3f);
@@ -1007,7 +1005,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.endKeyframe();
 
         animator.startKeyframe(3);
-        keepStanceMeleeAttack();
+        keepStanceSlapAttack();
         animator.rotate(arm1R, -0.8f, 0.3f, 1f);
         animator.rotate(arm2R, 0.5f, 0, 0.5f);
         animator.rotate(body1, 0, 0, 0.3f);
@@ -1018,8 +1016,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.endKeyframe();
 
         animator.startKeyframe(3);
-        keepStanceMeleeAttack();
-        animator.rotate(arm2R, 0f, 0f, -0.5f);
+        keepStanceSlapAttack();
         animator.rotate(body1, 0, 0, -0.3f);
         animator.rotate(head, 0, 0, 0.3f);
         animator.rotate(leg1R, -0.1f, 0, 0);
@@ -1028,7 +1025,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.endKeyframe();
 
         animator.startKeyframe(3);
-        keepStanceMeleeAttack();
+        keepStanceSlapAttack();
         animator.rotate(arm1L, -0.8f, -0.3f, -1f);
         animator.rotate(arm2L, 0.5f, 0, -0.5f);
         animator.rotate(body1, 0, 0, -0.3f);
@@ -1039,7 +1036,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.endKeyframe();
 
         animator.startKeyframe(3);
-        keepStanceMeleeAttack();
+        keepStanceSlapAttack();
         animator.rotate(arm2L, 0f, 0f, 0.5f);
         animator.rotate(body1, 0, 0, 0.3f);
         animator.rotate(head, 0, 0, -0.3f);
@@ -1052,7 +1049,30 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.resetKeyframe(10);
     }
 
-    private void keepStanceMeleeAttack()
+    private void biteAttackAnim()
+    {
+        animator.startKeyframe(5);
+        animator.rotate(body1, -0.25f, 0, 0);
+        animator.rotate(neck1, -0.3f, 0, 0);
+        animator.rotate(neck2, 0.1f, 0, 0);
+        animator.rotate(neck3, 0.4f, 0, 0);
+        animator.rotate(head, 0.55f, 0, 0);
+        animator.rotate(jaw, 0.8f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(4);
+        animator.rotate(neck1, 0.5f, 0, 0);
+        animator.rotate(neck2, 0.25f, 0, 0);
+        animator.rotate(neck3, 0.25f, 0, 0);
+        animator.rotate(head, 0.35f, 0, 0);
+        animator.endKeyframe();
+
+        animator.resetKeyframe(6);
+
+        animator.setStaticKeyframe(9999);
+    }
+
+    private void keepStanceSlapAttack()
     {
         animator.rotate(body2, -0.5f, 0, 0);
         animator.move(body2, 0, -0.2f, -3f);
@@ -1062,5 +1082,10 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
         for (WRModelRenderer tailPart : tailParts) animator.rotate(tailPart, 0.1f, 0, 0);
         for (WRModelRenderer headPart : headParts) animator.rotate(headPart, 0.4f, 0, 0);
+    }
+
+    private void keepStanceBiteAttack()
+    {
+
     }
 }
