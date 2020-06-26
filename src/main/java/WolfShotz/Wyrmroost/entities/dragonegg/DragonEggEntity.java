@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.entities.dragonegg;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.entities.util.Animation;
-import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.Animation;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.HatchEggPacket;

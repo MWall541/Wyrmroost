@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.entities.util.Animation;
-import WolfShotz.Wyrmroost.entities.util.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.Animation;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.items.LDWyrmItem;
 import WolfShotz.Wyrmroost.registry.WREntities;

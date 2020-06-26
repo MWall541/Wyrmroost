@@ -6,9 +6,9 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
-import WolfShotz.Wyrmroost.entities.util.Animation;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
+import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
@@ -40,14 +40,16 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
-    public static final Animation ROAR_ANIMATION = new Animation(80);
+    public static final Animation ROAR_ANIMATION = new Animation(70);
     public static final Animation SLAP_ATTACK_ANIMATION = new Animation(30);
-    public static final Animation BITE_ATTACK_ANIMATION = new Animation(20);
+    public static final Animation BITE_ATTACK_ANIMATION = new Animation(15);
+    public static final Animation GRAB_ANIMATION = new Animation(50);
     public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
 
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat breathTimer = new TickFloat().setLimit(0, 1);
+    public LivingEntity grabbedEntity;
 
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -134,11 +136,17 @@ public class RoyalRedEntity extends AbstractDragonEntity
             for (LivingEntity entity : getEntitiesNearby(10))
                 if (isOnSameTeam(entity)) entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
         }
-
-        if (anim == SLAP_ATTACK_ANIMATION && (getAnimationTick() == 10 || getAnimationTick() == 15))
+        else if (anim == SLAP_ATTACK_ANIMATION && (getAnimationTick() == 10 || getAnimationTick() == 15))
             attackInFront(0.2);
-        else if (anim == BITE_ATTACK_ANIMATION && getAnimationTick() == 4)
-            attackInFront(-0.3);
+        else if (anim == BITE_ATTACK_ANIMATION && getAnimationTick() == 4) attackInFront(-0.3);
+        else if (anim == GRAB_ANIMATION)
+        {
+            if (grabbedEntity != null)
+            {
+                setAnimation(NO_ANIMATION);
+                return;
+            }
+        }
     }
 
     @Override
@@ -163,7 +171,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
             if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
             else meleeAttack();
         }
-        else if (key == KeybindPacket.MOUNT_SPECIAL) setBreathingFire(!isBreathingFire());
+        else if (key == KeybindPacket.MOUNT_SPECIAL)
+        {
+            if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(GRAB_ANIMATION);
+            else setBreathingFire(!isBreathingFire());
+        }
     }
 
     public void meleeAttack()
