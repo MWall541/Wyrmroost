@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.ControlledAttackGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
@@ -29,6 +30,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
@@ -118,16 +120,26 @@ public class RoyalRedEntity extends AbstractDragonEntity
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
         breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
 
-        if (isBreathingFire() && getControllingPlayer() == null && getAttackTarget() == null) setBreathingFire(false);
-
-        if (breathTimer.get() == 1)
+        if (!world.isRemote)
         {
-            world.addEntity(new FireBreathEntity(this));
-            if (ticksExisted % 10 == 0) playSound(WRSounds.ENTITY_ROYALRED_BREATH.get(), 1, 0.5f);
-        }
+            if (isBreathingFire() && getControllingPlayer() == null && getAttackTarget() == null)
+                setBreathingFire(false);
 
-        if (!world.isRemote && !isSleeping() && !isBreathingFire() && !isChild() && getRNG().nextInt(1500) == 0 && noActiveAnimation())
-            AnimationPacket.send(this, ROAR_ANIMATION);
+            if (breathTimer.get() == 1)
+            {
+                world.addEntity(new FireBreathEntity(this));
+                if (ticksExisted % 10 == 0) playSound(WRSounds.ENTITY_ROYALRED_BREATH.get(), 1, 0.5f);
+            }
+
+            if (grabbedEntity != null)
+            {
+                Vec3d vec3d = Mafs.getYawVec(renderYawOffset, 0, 2).add(getPositionVec());
+                grabbedEntity.setPositionAndRotation(vec3d.x, vec3d.y, vec3d.z, renderYawOffset, grabbedEntity.rotationPitch);
+            }
+
+            if (!world.isRemote && !isSleeping() && !isBreathingFire() && !isChild() && getRNG().nextInt(1500) == 0 && noActiveAnimation())
+                AnimationPacket.send(this, ROAR_ANIMATION);
+        }
 
         Animation anim = getAnimation();
 
@@ -145,6 +157,15 @@ public class RoyalRedEntity extends AbstractDragonEntity
             {
                 setAnimation(NO_ANIMATION);
                 return;
+            }
+
+            if (getAnimationTick() == 10 /*todo*/)
+            {
+                final float GRAB_SIZE = 3f;
+                Vec3d vec3d = Mafs.getYawVec(rotationYaw, 0, 3).add(getPosX(), getPosY() + 2, getPosZ());
+                AxisAlignedBB aabb = new AxisAlignedBB(vec3d.x - (GRAB_SIZE / 2), vec3d.y, vec3d.z - (GRAB_SIZE / 2), vec3d.x + (GRAB_SIZE / 2), vec3d.y + GRAB_SIZE, vec3d.z + (GRAB_SIZE / 2));
+                if (world.isRemote) RenderEvents.queueRenderBox(aabb); // todo: remove
+                this.grabbedEntity = (LivingEntity) world.getEntitiesInAABBexcluding(this, aabb, LivingEntity.class::isInstance).stream().findFirst().orElse(null);
             }
         }
     }
