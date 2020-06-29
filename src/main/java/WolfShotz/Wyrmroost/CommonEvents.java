@@ -46,11 +46,6 @@ public class CommonEvents
         Entity entity = evt.getTarget();
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-
-        dragon.rotationYawHead = 95f;
-
-//        if (player.isSneaking()) dragon.tame(true, player);
-//        else if (evt.getWorld().isRemote) DebugScreen.open(dragon);
     }
 
     @SubscribeEvent

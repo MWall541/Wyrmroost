@@ -83,8 +83,11 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;
 
         entity.setFire(8);
-        entity.attackEntityFrom(DamageSource.IN_FIRE, damage);
+        entity.attackEntityFrom(getDamageSource("fireBreath"), damage);
     }
+
+    @Override
+    public DamageSource getDamageSource(String name) { return super.getDamageSource(name).setFireDamage(); }
 
     @Override // Because we do it better.
     public boolean canRenderOnFire() { return false; }

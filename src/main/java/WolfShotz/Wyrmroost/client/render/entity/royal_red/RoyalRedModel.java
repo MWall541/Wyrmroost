@@ -689,11 +689,6 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         ms.scale(3.5f, 3.5f, 3.5f);
         ms.translate(0, 0.825f, -0.23f);
         body2.render(ms, buffer, packedLightIn, packedOverlayIn);
-//        if (isChild)
-//        {
-//            wingL1.setScale(0.5f, 0.5f ,0.5f);
-//            wingR1.setScale(0.5f, 0.5f ,0.5f);
-//        }
         ms.pop();
     }
 

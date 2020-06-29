@@ -289,9 +289,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
             return true;
         }
 
-        if (isOwner(player) && isChild())
+        if (isOwner(player) && !isChild())
         {
-            player.startRiding(this);
+            if (!world.isRemote) player.startRiding(this);
             return true;
         }
 

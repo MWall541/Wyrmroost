@@ -784,12 +784,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     public boolean isOnSameTeam(Entity entity)
     {
         if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
         if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return true;
-        if (isOnScoreboardTeam(entity.getTeam())) return true;
+        if (entity.getTeam() != null && isOnScoreboardTeam(entity.getTeam())) return true;
         return entity.getType().equals(getType());
     }
 
@@ -837,7 +836,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isOnLadder() { return false; }
 
-    public void recievePassengerKeybind(int key, int modifiers) {}
+    public void recievePassengerKeybind(int key, int context) {}
 
     /**
      * Sort of misleading name. if this is true, then nothing else is ticked (goals, look, etc)

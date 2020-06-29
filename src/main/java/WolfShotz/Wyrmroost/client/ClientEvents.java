@@ -18,6 +18,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
@@ -28,6 +30,16 @@ import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerE
 @SuppressWarnings("unused")
 public class ClientEvents
 {
+    public static final ResourceLocation RR_BREATH_0 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0");
+    public static final ResourceLocation RR_BREATH_1 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_1");
+
+    @SubscribeEvent
+    public static void stitchTextures(TextureStitchEvent.Pre evt)
+    {
+        evt.addSprite(RR_BREATH_0);
+        evt.addSprite(RR_BREATH_1);
+    }
+
     /**
      * Handles the perspective/position of the camera
      */
@@ -41,6 +53,7 @@ public class ClientEvents
 //
 //        if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
 //    }
+//
     public static void registerEntityRenders()
     {
         registerEntityRenderingHandler(WREntities.OVERWORLD_DRAKE.get(), OWDrakeRenderer::new);

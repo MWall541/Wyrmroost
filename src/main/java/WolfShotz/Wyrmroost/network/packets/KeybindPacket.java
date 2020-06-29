@@ -19,29 +19,29 @@ import java.util.function.Supplier;
  */
 public class KeybindPacket implements IPacket
 {
-    public static final int MOUNT_ATTACK = 1;
-    public static final int MOUNT_SPECIAL = 2;
+    public static final int MOUNT_KEY1 = 1;
+    public static final int MOUNT_KEY2 = 1 << 1;
 
     private final int key;
-    private final int modifiers;
+    private final int context;
 
-    public KeybindPacket(int key, int modifiers)
+    public KeybindPacket(int key, int context)
     {
         this.key = key;
-        this.modifiers = modifiers;
+        this.context = context;
         handle(ClientEvents.getPlayer()); // handle on the client to
     }
 
     public KeybindPacket(PacketBuffer buf)
     {
         this.key = buf.readInt();
-        this.modifiers = buf.readInt();
+        this.context = buf.readInt();
     }
 
     public void encode(PacketBuffer buf)
     {
         buf.writeInt(key);
-        buf.writeInt(modifiers);
+        buf.writeInt(context);
     }
 
     public void run(Supplier<NetworkEvent.Context> context) { handle(context.get().getSender()); }
@@ -50,14 +50,14 @@ public class KeybindPacket implements IPacket
     {
         switch (key)
         {
-            case MOUNT_ATTACK:
-            case MOUNT_SPECIAL:
+            case MOUNT_KEY1:
+            case MOUNT_KEY2:
                 Entity vehicle = player.getRidingEntity();
                 if (vehicle instanceof AbstractDragonEntity)
-                    ((AbstractDragonEntity) vehicle).recievePassengerKeybind(key, modifiers);
+                    ((AbstractDragonEntity) vehicle).recievePassengerKeybind(key, context);
                 break;
             default:
-                Wyrmroost.LOG.warn(String.format("uhh this is NOT what I was looking for. KeybindPacket with key: %s and modifiers: %s", key, modifiers));
+                Wyrmroost.LOG.warn(String.format("uhh this is NOT what I was looking for. KeybindPacket with key: %s and context: %s", key, context));
         }
     }
 }

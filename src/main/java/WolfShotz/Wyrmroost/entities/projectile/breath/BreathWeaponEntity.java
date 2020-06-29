@@ -15,6 +15,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.World;
@@ -40,7 +41,7 @@ public class BreathWeaponEntity extends Entity implements IEntityAdditionalSpawn
         super(type, shooter.world);
 
         Vec3d mouth = shooter.getApproximateMouthPos();
-        Vec3d acceleration = shooter.getLookVec().add(rand.nextGaussian() * 0.15d, rand.nextGaussian() * 0.15d, rand.nextGaussian() * 0.15d);
+        Vec3d acceleration = shooter.getLookVec().add(rand.nextGaussian() * 0.12d, rand.nextGaussian() * 0.12d, rand.nextGaussian() * 0.12d);
         double sqrt = MathHelper.sqrt(acceleration.x * acceleration.x + acceleration.y * acceleration.y + acceleration.z * acceleration.z);
 
         setLocationAndAngles(mouth.x, mouth.y, mouth.z, rotationYaw, rotationPitch);
@@ -136,6 +137,8 @@ public class BreathWeaponEntity extends Entity implements IEntityAdditionalSpawn
         d0 *= 64;
         return distance < d0 * d0;
     }
+
+    public DamageSource getDamageSource(String name) { return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setDifficultyScaled(); }
 
     protected float getMotionFactor() { return 0.95f; }
 

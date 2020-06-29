@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.ControlledAttackGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
@@ -30,7 +29,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
@@ -51,13 +49,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat breathTimer = new TickFloat().setLimit(0, 1);
-    public LivingEntity grabbedEntity;
 
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerVariantData(0, true);
 
         // because itll act like its doing squats when we re-render if we didnt.
         sitTimer.set(isSitting()? 1 : 0);
@@ -68,7 +66,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         super.registerAttributes();
 
-        getAttribute(MAX_HEALTH).setBaseValue(100d);
+        getAttribute(MAX_HEALTH).setBaseValue(100d); // 50 hearts
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.22d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
         getAttribute(FOLLOW_RANGE).setBaseValue(20d);
@@ -131,13 +129,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 if (ticksExisted % 10 == 0) playSound(WRSounds.ENTITY_ROYALRED_BREATH.get(), 1, 0.5f);
             }
 
-            if (grabbedEntity != null)
-            {
-                Vec3d vec3d = Mafs.getYawVec(renderYawOffset, 0, 2).add(getPositionVec());
-                grabbedEntity.setPositionAndRotation(vec3d.x, vec3d.y, vec3d.z, renderYawOffset, grabbedEntity.rotationPitch);
-            }
-
-            if (!world.isRemote && !isSleeping() && !isBreathingFire() && !isChild() && getRNG().nextInt(1500) == 0 && noActiveAnimation())
+            if (!world.isRemote && !isSleeping() && !isBreathingFire() && !isChild() && getRNG().nextInt(2250) == 0 && noActiveAnimation())
                 AnimationPacket.send(this, ROAR_ANIMATION);
         }
 
@@ -151,23 +143,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
         else if (anim == SLAP_ATTACK_ANIMATION && (getAnimationTick() == 10 || getAnimationTick() == 15))
             attackInFront(0.2);
         else if (anim == BITE_ATTACK_ANIMATION && getAnimationTick() == 4) attackInFront(-0.3);
-        else if (anim == GRAB_ANIMATION)
-        {
-            if (grabbedEntity != null)
-            {
-                setAnimation(NO_ANIMATION);
-                return;
-            }
-
-            if (getAnimationTick() == 10 /*todo*/)
-            {
-                final float GRAB_SIZE = 3f;
-                Vec3d vec3d = Mafs.getYawVec(rotationYaw, 0, 3).add(getPosX(), getPosY() + 2, getPosZ());
-                AxisAlignedBB aabb = new AxisAlignedBB(vec3d.x - (GRAB_SIZE / 2), vec3d.y, vec3d.z - (GRAB_SIZE / 2), vec3d.x + (GRAB_SIZE / 2), vec3d.y + GRAB_SIZE, vec3d.z + (GRAB_SIZE / 2));
-                if (world.isRemote) RenderEvents.queueRenderBox(aabb); // todo: remove
-                this.grabbedEntity = (LivingEntity) world.getEntitiesInAABBexcluding(this, aabb, LivingEntity.class::isInstance).stream().findFirst().orElse(null);
-            }
-        }
     }
 
     @Override
@@ -185,18 +160,18 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void recievePassengerKeybind(int key, int modifiers)
+    public void recievePassengerKeybind(int key, int context)
     {
-        if (key == KeybindPacket.MOUNT_ATTACK && noActiveAnimation())
+        boolean pressed = (context & 1) == 1;
+        if (!noActiveAnimation()) return;
+
+        if (key == KeybindPacket.MOUNT_KEY1 && pressed)
         {
-            if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
+            if ((context & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
             else meleeAttack();
         }
-        else if (key == KeybindPacket.MOUNT_SPECIAL)
-        {
-            if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(GRAB_ANIMATION);
-            else setBreathingFire(!isBreathingFire());
-        }
+
+        if (key == KeybindPacket.MOUNT_KEY2) setBreathingFire(pressed);
     }
 
     public void meleeAttack()
