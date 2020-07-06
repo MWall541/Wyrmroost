@@ -14,19 +14,16 @@ public class DataCreator
     {
         DataGenerator gen = event.getGenerator();
 
-        if (event.includeServer())
-        {
-//            gen.addProvider(new Tags.BlockTagsData(gen));
-//            gen.addProvider(new Tags.ItemTagsData(gen));
-//            gen.addProvider(new Tags.FluidTagsData(gen));
+//        if (event.includeServer())
+//        {
+//            Tags.provide(gen);
 //            gen.addProvider(new Recipes(gen));
 //            gen.addProvider(new LootTables(gen));
-        }
+//        }
         if (event.includeClient())
         {
-//            gen.addProvider(new Models.BlockModels(gen, event.getExistingFileHelper()));
-//            gen.addProvider(new Models.ItemModels(gen, event.getExistingFileHelper()));
-            gen.addProvider(new Sounds(gen, event.getExistingFileHelper()));
+            Models.provide(gen, event.getExistingFileHelper());
+//            gen.addProvider(new Sounds(gen, event.getExistingFileHelper()));
         }
     }
 }

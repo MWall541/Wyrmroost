@@ -3,13 +3,13 @@
   "pattern": [
     "X",
     "X",
-    "#"
+    "|"
   ],
   "key": {
     "X": {
-      "item": "wyrmroost:platinum_ingot"
+      "tag": "forge:ingots/platinum"
     },
-    "#": {
+    "|": {
       "item": "minecraft:stick"
     }
   },

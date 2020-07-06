@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.data;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
-import WolfShotz.Wyrmroost.registry.WRFluids;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.google.common.collect.Lists;
@@ -11,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.TieredItem;
 import net.minecraft.resources.ResourcePackType;
@@ -21,49 +19,30 @@ import net.minecraftforge.client.model.generators.*;
 import java.util.List;
 
 @SuppressWarnings("ConstantConditions")
-public class Models
+class Models
 {
-    public static class BlockModels extends BlockStateProvider
+    private static ExistingFileHelper theGOODExistingFileHelper;
+
+    static void provide(DataGenerator gen, ExistingFileHelper fileHelper)
     {
-        public final ExistingFileHelper theGOODexistingFileHelper;
+        theGOODExistingFileHelper = fileHelper;
+
+        gen.addProvider(new Blocks(gen));
+        gen.addProvider(new Items(gen));
+    }
+
+    private static class Blocks extends BlockStateProvider
+    {
         private final List<String> MISSING_TEXTURES = Lists.newArrayList();
 
-        public BlockModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public Blocks(DataGenerator generator)
         {
-            super(generator, Wyrmroost.MOD_ID, existingFileHelper);
-            this.theGOODexistingFileHelper = existingFileHelper;
+            super(generator, Wyrmroost.MOD_ID, theGOODExistingFileHelper);
         }
 
         @Override
         protected void registerStatesAndModels()
         {
-//            logBlock((LogBlock) WRBlocks.ASH_LOG.get());
-//
-//            logBlock((LogBlock) WRBlocks.CANARI_LOG.get());
-//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_CANARI.get());
-//            simpleBlock(WRBlocks.CANARI_WOOD.get(), "canari_log"); // The all sided bark blocks. its called "wood" in vanilla so idgaf
-//
-//            ModelFile leaves = getExistingFile(mcLoc(BLOCK_FOLDER + "/leaves"));
-//            getVariantBuilder(WRBlocks.CANARI_LEAVES.get()) // This took a stupid amount of time to figure out please help me
-//                    .partialState()
-//                    .with(CanariLeavesBlock.BERRIES, true)
-//                    .modelForState().modelFile(cubeAll("canari_leaves_berries", modLoc("block/canari_leaves_berries")).parent(leaves)).addModel()
-//                    .partialState()
-//                    .with(CanariLeavesBlock.BERRIES, false)
-//                    .modelForState().modelFile(cubed(WRBlocks.CANARI_LEAVES.get()).parent(leaves)).addModel();
-//
-//            logBlock((LogBlock) WRBlocks.BLUE_CORIN_LOG.get());
-//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_BLUE_CORIN_LOG.get());
-//            simpleBlock(WRBlocks.BLUE_CORIN_WOOD.get(), "blue_corin_log");
-//
-//            logBlock((LogBlock) WRBlocks.TEAL_CORIN_LOG.get());
-//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_TEAL_CORIN_LOG.get());
-//            simpleBlock(WRBlocks.TEAL_CORIN_WOOD.get(), "teal_corin_log");
-//
-//            logBlock((LogBlock) WRBlocks.RED_CORIN_LOG.get());
-//            simpleBlock(WRBlocks.RED_CORIN_WOOD.get(), "red_corin_log");
-//            axisBlock((RotatedPillarBlock) WRBlocks.STRIPPED_RED_CORIN_LOG.get());
-
             // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
             // If this is unwanted, it is important to define so above
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS))
@@ -72,7 +51,7 @@ public class Models
                 if (block instanceof FlowingFluidBlock) continue;
 
                 ResourceLocation name = block.getRegistryName();
-                if (!theGOODexistingFileHelper.exists(new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+                if (!theGOODExistingFileHelper.exists(new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
                     MISSING_TEXTURES.add(name.getPath().replace("block/", ""));
                 else simpleBlock(block);
             }
@@ -82,16 +61,14 @@ public class Models
         }
     }
 
-    public static class ItemModels extends ItemModelProvider
+    private static class Items extends ItemModelProvider
     {
-        final ExistingFileHelper theGOODExistingFileHelper;
         private final List<Item> REGISTERED = Lists.newArrayList();
         private final List<String> MISSING_TEXTURES = Lists.newArrayList();
 
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public Items(DataGenerator generator)
         {
-            super(generator, Wyrmroost.MOD_ID, existingFileHelper);
-            this.theGOODExistingFileHelper = existingFileHelper;
+            super(generator, Wyrmroost.MOD_ID, theGOODExistingFileHelper);
         }
 
         private static ResourceLocation resource(String path)
@@ -160,15 +137,15 @@ public class Models
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS)) // All Standard ItemBlocks
             {
                 if (REGISTERED.contains(block.asItem())) continue;
-                if (block instanceof FlowingFluidBlock) continue;
+                if (block instanceof FlowingFluidBlock) // Buckets
+                {
+                    itemBare(((FlowingFluidBlock) block).getFluid().getFilledBucket()).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"));
+                    continue;
+                }
 
                 ResourceLocation path = block.getRegistryName();
                 itemBare(block.asItem()).parent(new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath()));
             }
-
-            // Buckets
-            for (Fluid fluid : ModUtils.getRegistryEntries(WRFluids.FLUIDS))
-                itemBare(fluid.getFilledBucket()).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"));
 
             // All items that do not require custom attention
             ModUtils.streamRegistry(WRItems.ITEMS).filter(e -> !REGISTERED.contains(e)).forEach(this::item);

@@ -2,14 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XX",
-    "X#",
-    " #"
+    "X|",
+    " |"
   ],
   "key": {
     "X": {
-      "item": "wyrmroost:platinum_ingot"
+      "tag": "forge:ingots/platinum"
     },
-    "#": {
+    "|": {
       "item": "minecraft:stick"
     }
   },

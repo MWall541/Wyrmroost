@@ -1,18 +1,29 @@
 package WolfShotz.Wyrmroost.data;
 
 import WolfShotz.Wyrmroost.registry.WRBlocks;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.EntityTypeTagsProvider;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.Items;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 
 public class Tags
 {
-    public static class ItemTagsData extends ItemTagsProvider
+    // note block tags need to run before item tags
+    static void provide(DataGenerator gen)
     {
-        public ItemTagsData(DataGenerator generatorIn)
+        gen.addProvider(new BlockData(gen));
+        gen.addProvider(new ItemData(gen));
+        gen.addProvider(new EntityData(gen));
+    }
+
+    private static class ItemData extends ItemTagsProvider
+    {
+        public ItemData(DataGenerator generatorIn)
         {
             super(generatorIn);
         }
@@ -31,9 +42,9 @@ public class Tags
         }
     }
 
-    public static class BlockTagsData extends BlockTagsProvider
+    private static class BlockData extends BlockTagsProvider
     {
-        public BlockTagsData(DataGenerator generatorIn)
+        public BlockData(DataGenerator generatorIn)
         {
             super(generatorIn);
         }
@@ -42,14 +53,19 @@ public class Tags
         protected void registerTags()
         {
             getBuilder(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).add(WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
-//            getBuilder(net.minecraftforge.common.Tags.Blocks).add(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).add(WRBlocks.PLATINUM_BLOCK.get());
+            getBuilder(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM).add(WRBlocks.PLATINUM_BLOCK.get());
+            getBuilder(net.minecraftforge.common.Tags.Blocks.STORAGE_BLOCKS).add(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
+        }
+    }
 
-//            getBuilder(WRBlocks.Tags.CANARI_LOGS).add(WRBlocks.CANARI_LOG.get(), WRBlocks.CANARI_WOOD.get(), WRBlocks.STRIPPED_CANARI.get());
-//            getBuilder(WRBlocks.Tags.BLUE_CORIN_LOGS).add(WRBlocks.BLUE_CORIN_LOG.get(), WRBlocks.BLUE_CORIN_WOOD.get(), WRBlocks.STRIPPED_BLUE_CORIN_LOG.get());
-//            getBuilder(WRBlocks.Tags.TEAL_CORIN_LOGS).add(WRBlocks.TEAL_CORIN_LOG.get(), WRBlocks.TEAL_CORIN_WOOD.get(), WRBlocks.STRIPPED_TEAL_CORIN_LOG.get());
-//            getBuilder(WRBlocks.Tags.RED_CORIN_LOGS).add(WRBlocks.RED_CORIN_LOG.get(), WRBlocks.RED_CORIN_WOOD.get(), WRBlocks.STRIPPED_RED_CORIN_LOG.get());
-//            getBuilder(BlockTags.LOGS).add(WRBlocks.Tags.CANARI_LOGS, WRBlocks.Tags.BLUE_CORIN_LOGS, WRBlocks.Tags.TEAL_CORIN_LOGS, WRBlocks.Tags.RED_CORIN_LOGS);
-//            getBuilder(BlockTags.PLANKS).add(WRBlocks.CANARI_PLANKS.get(), WRBlocks.BLUE_CORIN_PLANKS.get(), WRBlocks.TEAL_CORIN_PLANKS.get(), WRBlocks.RED_CORIN_PLANKS.get());
+    private static class EntityData extends EntityTypeTagsProvider
+    {
+        private EntityData(DataGenerator generatorIn) { super(generatorIn); }
+
+        @Override
+        protected void registerTags()
+        {
+            getBuilder(EntityTypeTags.ARROWS).add(WREntities.BLUE_GEODE_ARROW.get(), WREntities.RED_GEODE_ARROW.get(), WREntities.PURPLE_GEODE_ARROW.get());
         }
     }
 

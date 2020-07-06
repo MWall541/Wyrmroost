@@ -3,13 +3,13 @@
   "pattern": [
     "X",
     "X",
-    "#"
+    "|"
   ],
   "key": {
     "X": {
       "item": "wyrmroost:red_geode"
     },
-    "#": {
+    "|": {
       "item": "minecraft:stick"
     }
   },

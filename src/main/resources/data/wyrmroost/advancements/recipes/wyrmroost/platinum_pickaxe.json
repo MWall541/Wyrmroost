@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_platinum_ingot": {
+    "has_material": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "wyrmroost:platinum_ingot"
+            "tag": "forge:ingots/platinum"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_platinum_ingot",
+      "has_material",
       "has_the_recipe"
     ]
   ]

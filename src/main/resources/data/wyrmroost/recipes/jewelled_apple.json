@@ -1,16 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " X ",
-    "X#X",
-    " X "
+    " G ",
+    "GAG",
+    " G "
   ],
   "key": {
-    "X": {
-      "item": "wyrmroost:blue_geode"
-    },
-    "#": {
+    "A": {
       "item": "minecraft:apple"
+    },
+    "G": {
+      "tag": "wyrmroost:geodes"
     }
   },
   "result": {

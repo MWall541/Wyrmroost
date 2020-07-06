@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "blue_geode": {
+    "has_blue_geode_block": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "wyrmroost:blue_geode"
+            "item": "wyrmroost:blue_geode_block"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "blue_geode",
+      "has_blue_geode_block",
       "has_the_recipe"
     ]
   ]

@@ -15,7 +15,6 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.data.loot.EntityLootTables;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -24,13 +23,11 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.conditions.EntityHasProperty;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraft.world.storage.loot.conditions.KilledByPlayer;
 import net.minecraft.world.storage.loot.conditions.RandomChance;
-import net.minecraft.world.storage.loot.functions.ApplyBonus;
 import net.minecraft.world.storage.loot.functions.LootingEnchantBonus;
 import net.minecraft.world.storage.loot.functions.SetCount;
 import net.minecraft.world.storage.loot.functions.Smelt;
@@ -43,59 +40,35 @@ import java.util.function.Supplier;
 
 import static WolfShotz.Wyrmroost.registry.WRBlocks.*;
 
-public class LootTables extends LootTableProvider
+class LootTables extends LootTableProvider
 {
-    private final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> tables = ImmutableList.of(
-            Pair.of(BlockLoot::new, LootParameterSets.BLOCK),
-            Pair.of(EntityLoot::new, LootParameterSets.ENTITY)
-    );
-
-    public LootTables(DataGenerator gen)
-    {
-        super(gen);
-    }
+    LootTables(DataGenerator gen) { super(gen); }
 
     @Override
     protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables()
     {
-        return tables;
+        return ImmutableList.of(
+                Pair.of(Blocks::new, LootParameterSets.BLOCK),
+                Pair.of(Entities::new, LootParameterSets.ENTITY)
+        );
     }
 
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {}
 
-    public static class BlockLoot extends BlockLootTables
+    private static class Blocks extends BlockLootTables
     {
-        public static final LootFunction.Builder<?> FORTUNE = ApplyBonus.uniformBonusCount(Enchantments.FORTUNE);
-
         public final Map<Block, LootTable.Builder> lootTables = Maps.newHashMap();
 
         @Override
         @SuppressWarnings("ConstantConditions")
         protected void addTables()
         {
-//            registerLootTable(ASH.get(), block -> droppingWithSilkTouchOrRandomly(block, WRItems.ASH_PILE.get(), RandomValueRange.of(3f, 5f)));
-
             registerOre(BLUE_GEODE_ORE.get(), WRItems.BLUE_GEODE.get());
             registerOre(RED_GEODE_ORE.get(), WRItems.RED_GEODE.get());
             registerOre(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
 
-//            registerOre(BLUE_CRYSTAL_ORE.get(), WRItems.BLUE_SHARD.get());
-//            registerLootTable(BLUE_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.BLUE_SHARD.get(), 1).acceptFunction(FORTUNE))));
-//
-//            registerOre(GREEN_CRYSTAL_ORE.get(), WRItems.GREEN_SHARD.get());
-//            registerLootTable(GREEN_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.GREEN_SHARD.get(), 1).acceptFunction(FORTUNE))));
-//
-//            registerOre(ORANGE_CRYSTAL_ORE.get(), WRItems.ORANGE_SHARD.get());
-//            registerLootTable(ORANGE_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.ORANGE_SHARD.get(), 1).acceptFunction(FORTUNE))));
-//
-//            registerOre(YELLOW_CRYSTAL_ORE.get(), WRItems.YELLOW_SHARD.get());
-//            registerLootTable(YELLOW_CRYSTAL.get(), crystal -> droppingWithSilkTouch(crystal, withExplosionDecay(crystal, item(WRItems.YELLOW_SHARD.get(), 1).acceptFunction(FORTUNE))));
-//
-//            registerSilkTouch(CANARI_LEAVES.get());
-
-            // All blocks that have not been given special treatment above, drop themselves!
-            for (Block block : getKnownBlocks())
+            for (Block block : getKnownBlocks()) // All blocks that have not been given special treatment above, drop themselves!
             {
                 if (!lootTables.containsKey(block) && block.getLootTable() != net.minecraft.world.storage.loot.LootTables.EMPTY) // Loottable is already set to not have one, ignore.
                     registerDropSelfLootTable(block);
@@ -103,37 +76,19 @@ public class LootTables extends LootTableProvider
         }
 
         @Override
-        public void accept(BiConsumer<ResourceLocation, LootTable.Builder> consumer)
-        {
-            addTables();
-
-            for (Block block : getKnownBlocks())
-            {
-                ResourceLocation loot = block.getLootTable();
-                if (loot == net.minecraft.world.storage.loot.LootTables.EMPTY)
-                    continue; // Loottable is already set to not have one, ignore.
-                if (!lootTables.containsKey(block))
-                    throw new IllegalStateException(String.format("Missing loottable '%s' for '%s', How the fuck did this happen?", loot, Registry.BLOCK.getKey(block)));
-                consumer.accept(loot, lootTables.remove(block));
-            }
-
-            if (!lootTables.isEmpty())
-                throw new IllegalStateException("Created block loot tables for non-blocks: " + lootTables.keySet());
-        }
-
-        @Override
         protected Iterable<Block> getKnownBlocks() { return ModUtils.getRegistryEntries(BLOCKS); }
 
-        private void registerOre(Block ore, Item output)
-        {
-            registerLootTable(ore, block -> droppingItemWithFortune(block, output));
-        }
+        private void registerOre(Block ore, Item output) { registerLootTable(ore, block -> droppingItemWithFortune(block, output)); }
 
         @Override
-        protected void registerLootTable(Block blockIn, LootTable.Builder table) { lootTables.put(blockIn, table); }
+        protected void registerLootTable(Block blockIn, LootTable.Builder table)
+        {
+            super.registerLootTable(blockIn, table);
+            lootTables.put(blockIn, table);
+        }
     }
 
-    public static class EntityLoot extends EntityLootTables
+    private static class Entities extends EntityLootTables
     {
         private static final ILootCondition.IBuilder UNTAMED_AND_ADULT = EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(new EntityFlagsPredicate(null, null, null, null, false)).nbt(new NBTPredicate(Util.make(new CompoundNBT(), c -> c.putString("OwnerUUID", "")))));
         private static final LootFunction.Builder<?> ON_FIRE_SMELT = Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build())));
@@ -211,7 +166,7 @@ public class LootTables extends LootTableProvider
 
             registerLootTable(WREntities.ROOSTSTALKER.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 3, 1, 3)))
-                    .addLootPool(singleRollPool().addEntry(item(Items.GOLD_NUGGET, 0, 2)).acceptCondition(KilledByPlayer.builder())));
+                    .addLootPool(singleRollPool().addEntry(item(Items.GOLD_NUGGET, 0, 2))));
 
             registerLootTable(WREntities.DRAGON_FRUIT_DRAKE.get(), LootTable.builder().addLootPool(singleRollPool().addEntry(item(Items.APPLE, 0, 6))));
 

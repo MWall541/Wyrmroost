@@ -6,7 +6,7 @@
     ]
   },
   "criteria": {
-    "platinum_ingot": {
+    "has_platinum": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "platinum_ingot",
+      "has_platinum",
       "has_the_recipe"
     ]
   ]

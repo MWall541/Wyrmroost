@@ -2,14 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XXX",
-    " # ",
-    " # "
+    " | ",
+    " | "
   ],
   "key": {
     "X": {
       "item": "wyrmroost:blue_geode"
     },
-    "#": {
+    "|": {
       "item": "minecraft:stick"
     }
   },
