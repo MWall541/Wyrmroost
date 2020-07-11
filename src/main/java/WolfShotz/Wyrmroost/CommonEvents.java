@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.entities.multipart.IMultiPartEntity;
 import WolfShotz.Wyrmroost.items.DrakeArmorItem;
 import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
@@ -11,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -50,17 +48,6 @@ public class CommonEvents
 
         if (player.isSneaking()) dragon.tame(true, player);
         else DebugScreen.open(dragon);
-    }
-
-    @SubscribeEvent
-    public static void onEntityTrack(PlayerEvent.StartTracking evt)
-    {
-        Entity target = evt.getTarget();
-        if (target instanceof IMultiPartEntity)
-        {
-            IMultiPartEntity entity = (IMultiPartEntity) target;
-            entity.iterateParts().forEach(target.world::addEntity);
-        }
     }
 
     @SubscribeEvent

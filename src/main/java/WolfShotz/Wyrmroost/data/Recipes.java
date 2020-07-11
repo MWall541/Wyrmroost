@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.data;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -127,7 +127,7 @@ class Recipes extends RecipeProvider
     {
         this.consumer = consumer;
 
-        REGISTERED.addAll(ModUtils.streamRegistry(WRItems.ITEMS).filter(CustomSpawnEggItem.class::isInstance).collect(Collectors.toSet()));
+        REGISTERED.addAll(ModUtils.streamRegistry(WRItems.ITEMS).filter(LazySpawnEggItem.class::isInstance).collect(Collectors.toSet()));
         Collections.addAll(REGISTERED,
                 WRItems.DRAGON_EGG.get(), WRItems.DRAKE_BACKPLATE.get(), WRItems.LDWYRM.get(),
                 WRItems.RAW_LOWTIER_MEAT.get(), WRItems.RAW_COMMON_MEAT.get(), WRItems.RAW_APEX_MEAT.get(), WRItems.RAW_BEHEMOTH_MEAT.get(),

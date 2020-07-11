@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.data;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -130,7 +130,7 @@ class Models
             item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
 
             // SpawnEggs
-            CustomSpawnEggItem.EGG_TYPES.forEach(i -> itemBare(i).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg"))));
+            LazySpawnEggItem.EGG_TYPES.forEach(i -> itemBare(i).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg"))));
 
             // Item Blocks
 //            item(WRBlocks.CINIS_ROOT.get().asItem());

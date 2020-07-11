@@ -5,10 +5,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,13 +28,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class CustomSpawnEggItem extends Item
+public class LazySpawnEggItem extends Item
 {
-    public static List<CustomSpawnEggItem> EGG_TYPES = Lists.newArrayList();
+    public static List<LazySpawnEggItem> EGG_TYPES = Lists.newArrayList();
     public final Supplier<EntityType<?>> type;
     private final int PRIMARY_COLOR, SECONDARY_COLOR;
 
-    public CustomSpawnEggItem(Supplier<EntityType<?>> type, int primaryColor, int secondaryColor)
+    public LazySpawnEggItem(Supplier<EntityType<? extends Entity>> type, int primaryColor, int secondaryColor)
     {
         super(ModUtils.itemBuilder());
 
@@ -46,7 +43,7 @@ public class CustomSpawnEggItem extends Item
         this.SECONDARY_COLOR = secondaryColor;
         EGG_TYPES.add(this);
     }
-    
+
     public ActionResultType onItemUse(ItemUseContext context)
     {
         World world = context.getWorld();
@@ -113,17 +110,14 @@ public class CustomSpawnEggItem extends Item
     @Override
     public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
     {
-        if (target == null || !target.isAlive()) return false;
         if (!(target instanceof AgeableEntity)) return false;
+        if (!target.isAlive()) return false;
         if (target.getType() != type.get()) return false;
-        
+
         ((AgeableEntity) target).createChild((AgeableEntity) target);
         
         return true;
     }
-    
-    public int getColors(int index)
-    {
-        return index == 0? PRIMARY_COLOR : SECONDARY_COLOR;
-    }
+
+    public int getColors(int index) { return index == 0? PRIMARY_COLOR : SECONDARY_COLOR; }
 }

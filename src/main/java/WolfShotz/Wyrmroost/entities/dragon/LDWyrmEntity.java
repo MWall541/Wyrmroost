@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
-import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.items.LDWyrmItem;
+import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
@@ -77,21 +77,11 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
         goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 1));
     }
 
-    public static void setSpawnConditions()
+    @Override
+    public ItemStack getPickedResult(RayTraceResult target)
     {
-        BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY)
-                .stream()
-                .filter(b -> !BiomeDictionary.getTypes(b).containsAll(ImmutableList.of(BiomeDictionary.Type.MESA, BiomeDictionary.Type.BEACH)))
-                .forEach(b -> b.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 14, 3, 6)));
-        EntitySpawnPlacementRegistry.register(WREntities.LESSER_DESERTWYRM.get(),
-                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                (wyrm, world, reason, pos, rng) ->
-                {
-                    if (reason == SpawnReason.SPAWNER) return true;
-                    Block block = world.getBlockState(pos.down()).getBlock();
-                    return block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
-                });
+        Optional<LazySpawnEggItem> egg = LazySpawnEggItem.EGG_TYPES.stream().filter(e -> getType().equals(e.type.get())).findFirst();
+        return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
 
     // ================================
@@ -256,11 +246,21 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
         }
     }
 
-    @Override
-    public ItemStack getPickedResult(RayTraceResult target)
+    public static void setSpawnPlacements()
     {
-        Optional<CustomSpawnEggItem> egg = CustomSpawnEggItem.EGG_TYPES.stream().filter(e -> getType().equals(e.type.get())).findFirst();
-        return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
+        BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY)
+                .stream()
+                .filter(b -> !BiomeDictionary.getTypes(b).containsAll(ImmutableList.of(BiomeDictionary.Type.MESA, BiomeDictionary.Type.BEACH)))
+                .forEach(b -> b.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 14, 3, 6)));
+        EntitySpawnPlacementRegistry.register(WREntities.LESSER_DESERTWYRM.get(),
+                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                (wyrm, world, reason, pos, rng) ->
+                {
+                    if (reason == SpawnReason.SPAWNER) return true;
+                    Block block = world.getBlockState(pos.down()).getBlock();
+                    return block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
+                });
     }
 
     @Override

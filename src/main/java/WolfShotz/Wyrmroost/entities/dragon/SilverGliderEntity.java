@@ -210,7 +210,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.4f, 0.65f, 12000); }
 
-    public static void setSpawnConditions()
+    public static void setSpawnPlacements()
     {
         ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN, BiomeDictionary.Type.BEACH)
                 .forEach(b -> b.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.SILVER_GLIDER.get(), 10, 1, 4)));

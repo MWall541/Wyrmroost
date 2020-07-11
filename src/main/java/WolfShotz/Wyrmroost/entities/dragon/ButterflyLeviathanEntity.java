@@ -7,8 +7,6 @@ import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.entities.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
@@ -57,7 +55,7 @@ import java.util.List;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
-public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IMultiPartEntity
+public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements IMultiPartEntity*/
 {
     public static final int CONDUIT_SLOT = 0;
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.createKey(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
@@ -67,12 +65,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     public static final Animation BITE_ANIMATION = new Animation(20);
 
     // Multipart
-    public MultiPartEntity headPart;
-    public MultiPartEntity wingLeftPart;
-    public MultiPartEntity wingRightPart;
-    public MultiPartEntity tail1Part;
-    public MultiPartEntity tail2Part;
-    public MultiPartEntity tail3Part;
+//    public MultiPartEntity headPart;
+//    public MultiPartEntity wingLeftPart;
+//    public MultiPartEntity wingRightPart;
+//    public MultiPartEntity tail1Part;
+//    public MultiPartEntity tail2Part;
+//    public MultiPartEntity tail3Part;
 
     public RandomWalkingGoal moveGoal;
     public int lightningAttackCooldown;
@@ -429,11 +427,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity implements IM
     @Override
     public int getTalkInterval() { return 165; }
 
-    @Override
-    public MultiPartEntity[] getParts()
-    {
-        return new MultiPartEntity[]{headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part};
-    }
+//    @Override
+//    public MultiPartEntity[] getParts()
+//    {
+//        return new MultiPartEntity[]{headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part};
+//    }
 
     @Override
     public void setMountCameraAngles(boolean backView)

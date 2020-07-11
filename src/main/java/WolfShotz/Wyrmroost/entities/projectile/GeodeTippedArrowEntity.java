@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.items.GeodeTippedArrowItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -15,11 +16,11 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
 {
     private final GeodeTippedArrowItem item;
 
-    public GeodeTippedArrowEntity(EntityType<? extends AbstractArrowEntity> type, double damage, GeodeTippedArrowItem item, World worldIn)
+    public GeodeTippedArrowEntity(EntityType<? extends AbstractArrowEntity> type, double damage, Item item, World worldIn)
     {
         super(type, worldIn);
         setDamage(damage);
-        this.item = item;
+        this.item = (GeodeTippedArrowItem) item;
     }
 
     @Override

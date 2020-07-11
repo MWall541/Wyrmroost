@@ -11,8 +11,8 @@ import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
-import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
+import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.Mafs;
@@ -775,7 +775,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
-        Optional<CustomSpawnEggItem> egg = CustomSpawnEggItem.EGG_TYPES.stream().filter(e -> getType().equals(e.type.get())).findFirst();
+        Optional<LazySpawnEggItem> egg = LazySpawnEggItem.EGG_TYPES.stream().filter(e -> getType().equals(e.type.get())).findFirst();
         return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
     }
 

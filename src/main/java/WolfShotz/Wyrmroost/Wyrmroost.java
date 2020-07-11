@@ -2,9 +2,10 @@ package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
-import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
+import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.network.packets.*;
 import WolfShotz.Wyrmroost.registry.*;
+import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemGroup;
@@ -15,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -31,6 +33,8 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
 {
@@ -38,6 +42,7 @@ public class Wyrmroost
     public static final Logger LOG = LogManager.getLogger(MOD_ID);
     public static final ItemGroup ITEM_GROUP = new WRItemGroup();
     public static final SimpleChannel NETWORK = buildChannel();
+    public static final List<Runnable> COMMON_CALLBACKS = Lists.newArrayList();
 
     public Wyrmroost()
     {
@@ -46,7 +51,7 @@ public class Wyrmroost
         MinecraftForge.EVENT_BUS.register(CommonEvents.class);
         bus.addListener(this::commonSetup);
         bus.addListener(this::configLoad);
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
         {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
             MinecraftForge.EVENT_BUS.addListener(RenderEvents::renderWorld);
@@ -72,29 +77,30 @@ public class Wyrmroost
 
     public void clientSetup(final FMLClientSetupEvent event)
     {
-        ClientEvents.registerEntityRenders();
+        for (Runnable callBack : ClientEvents.CALL_BACKS) callBack.run();
         WRKeybind.registerKeys();
         WRIO.screenSetup();
     }
 
     public void configLoad(ModConfig.ModConfigEvent evt)
     {
-        if (evt.getConfig().getSpec() == WRConfig.Common.SPEC) WRConfig.Common.reload();
-        if (evt.getConfig().getSpec() == WRConfig.Client.SPEC) WRConfig.Client.reload();
-        if (evt.getConfig().getSpec() == WRConfig.Server.SPEC) WRConfig.Server.reload();
+        ForgeConfigSpec spec = evt.getConfig().getSpec();
+        if (spec == WRConfig.Common.SPEC) WRConfig.Common.reload();
+        else if (spec == WRConfig.Client.SPEC) WRConfig.Client.reload();
+        else if (spec == WRConfig.Server.SPEC) WRConfig.Server.reload();
     }
 
     public void registerItemColors(ColorHandlerEvent.Item evt)
     {
         ItemColors handler = evt.getItemColors();
-        IItemColor eggColor = (stack, tintIndex) -> ((CustomSpawnEggItem) stack.getItem()).getColors(tintIndex);
-        CustomSpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
+        IItemColor eggColor = (stack, tintIndex) -> ((LazySpawnEggItem) stack.getItem()).getColors(tintIndex);
+        LazySpawnEggItem.EGG_TYPES.forEach(e -> handler.register(eggColor, e));
     }
 
     public void commonSetup(final FMLCommonSetupEvent event)
     {
+        for (Runnable runnable : COMMON_CALLBACKS) runnable.run();
         DeferredWorkQueue.runLater(WRWorld::setupWorld);
-        DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
     }
 
     private static SimpleChannel buildChannel()

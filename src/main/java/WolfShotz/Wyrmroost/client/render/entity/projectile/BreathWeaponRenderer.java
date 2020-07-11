@@ -26,7 +26,6 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
         if (entity.isBurning())
         {
             renderFire(ms, typeBuffer, entity);
-//            return;
         }
     }
 
