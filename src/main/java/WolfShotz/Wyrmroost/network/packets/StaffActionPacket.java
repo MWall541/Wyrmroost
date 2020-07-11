@@ -2,7 +2,6 @@ package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.network.IPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,7 +11,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class StaffActionPacket implements IPacket
+public class StaffActionPacket
 {
     public final StaffAction action;
 
@@ -20,16 +19,17 @@ public class StaffActionPacket implements IPacket
 
     public StaffActionPacket(PacketBuffer buf) { action = StaffAction.ACTIONS.get(buf.readInt()); }
 
-    @Override
     public void encode(PacketBuffer buf) { buf.writeInt(StaffAction.ACTIONS.indexOf(action)); }
 
-    @Override
-    public void run(Supplier<NetworkEvent.Context> context)
+    public boolean handle(Supplier<NetworkEvent.Context> context)
     {
         ServerPlayerEntity player = context.get().getSender();
-        if (player == null) return;
-        ItemStack stack = ModUtils.getHeldStack(context.get().getSender(), WRItems.DRAGON_STAFF.get());
-        if (stack.getItem() == WRItems.DRAGON_STAFF.get())
+        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
+        if (stack != null)
+        {
             DragonStaffItem.setAction(action, player, stack);
+            return true;
+        }
+        return false;
     }
 }

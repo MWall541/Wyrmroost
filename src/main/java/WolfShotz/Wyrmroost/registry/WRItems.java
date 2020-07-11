@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 public class WRItems
 {
-    public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
 
     //    public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
     public static final RegistryObject<Item> LDWYRM = register("desert_wyrm", LDWyrmItem::new);

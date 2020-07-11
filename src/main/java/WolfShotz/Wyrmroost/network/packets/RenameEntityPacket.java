@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.network.packets;
 
-import WolfShotz.Wyrmroost.network.IPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.ITextComponent;
@@ -9,7 +8,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class RenameEntityPacket implements IPacket
+public class RenameEntityPacket
 {
     private final UUID entity;
     private final ITextComponent text;
@@ -26,16 +25,15 @@ public class RenameEntityPacket implements IPacket
         this.text = buf.readTextComponent();
     }
     
-    @Override
     public void encode(PacketBuffer buf)
     {
         buf.writeUniqueId(entity);
         buf.writeTextComponent(text);
     }
-    
-    @Override
-    public void run(Supplier<NetworkEvent.Context> context)
+
+    public boolean handle(Supplier<NetworkEvent.Context> context)
     {
         context.get().getSender().getServerWorld().getEntityByUuid(entity).setCustomName(text);
+        return true;
     }
 }

@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
-import WolfShotz.Wyrmroost.network.IPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
@@ -14,7 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.function.Supplier;
 
-public class AnimationPacket implements IPacket
+public class AnimationPacket
 {
     private final int entityID, animationIndex;
 
@@ -30,21 +29,20 @@ public class AnimationPacket implements IPacket
         animationIndex = buf.readInt();
     }
     
-    @Override
     public void encode(PacketBuffer buf)
     {
         buf.writeInt(entityID);
         buf.writeInt(animationIndex);
     }
 
-    @Override
-    public void run(Supplier<NetworkEvent.Context> context)
+    public boolean handle(Supplier<NetworkEvent.Context> context)
     {
         World world = ClientEvents.getClient().world;
         IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(entityID);
 
         if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
         else entity.setAnimation(entity.getAnimations()[animationIndex]);
+        return true;
     }
 
     public static <T extends Entity & IAnimatedEntity> void send(T entity, Animation animation)

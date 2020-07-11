@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 public class WRBlocks
 {
-    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
 
 //    public static final RegistryObject<Block> PORTAL_BLOCK = register("wyrmroost_portal", new PortalBlock());
 

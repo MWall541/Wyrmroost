@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.network.packets;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.network.IPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -17,7 +16,7 @@ import java.util.function.Supplier;
  * Class Handling the packet sending of keybind inputs.
  * keybinds are assigned an int, and as such follow the following format:
  */
-public class KeybindPacket implements IPacket
+public class KeybindPacket
 {
     public static final byte MOUNT_KEY1 = 1;
     public static final byte MOUNT_KEY2 = 2;
@@ -48,9 +47,9 @@ public class KeybindPacket implements IPacket
         buf.writeBoolean(pressed);
     }
 
-    public void run(Supplier<NetworkEvent.Context> context) { handle(context.get().getSender()); }
+    public void handle(Supplier<NetworkEvent.Context> context) { handle(context.get().getSender()); }
 
-    private void handle(PlayerEntity player)
+    private boolean handle(PlayerEntity player)
     {
         switch (key)
         {
@@ -65,6 +64,8 @@ public class KeybindPacket implements IPacket
                 break;
             default:
                 Wyrmroost.LOG.warn(String.format("Recieved invalid keybind code: %s How tf did u break this", key));
+                return false;
         }
+        return true;
     }
 }

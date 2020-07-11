@@ -31,7 +31,7 @@ import static net.minecraftforge.common.BiomeDictionary.Type;
  */
 public class WREntities
 {
-    public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = register("lesser_desertwyrm", LDWyrmEntity::new, 0xD6BCBC, 0xDEB6C7, b -> b.size(0.6f, 0.2f));
     public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = register("overworld_drake", OWDrakeEntity::new, 0x788716, 0x3E623E, b -> b.size(2.376f, 2.58f));

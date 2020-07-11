@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  */
 public class WRFluids
 {
-    public static final DeferredRegister<Fluid> FLUIDS = new DeferredRegister<>(ForgeRegistries.FLUIDS, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, Wyrmroost.MOD_ID);
 
 //    public static final FluidRegistry CAUSTIC_WATER = register("caustic_water", CausticWaterFluid::create, CausticWaterFluid.Block::new);
 //    public static final FluidRegistry BRINE = register("brine", BrineFluid::create, BrineFluid.Block::new);

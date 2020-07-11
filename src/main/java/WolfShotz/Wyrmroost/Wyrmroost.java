@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.items.CustomSpawnEggItem;
-import WolfShotz.Wyrmroost.network.IPacket;
 import WolfShotz.Wyrmroost.network.packets.*;
 import WolfShotz.Wyrmroost.registry.*;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -11,7 +10,6 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
@@ -33,23 +31,13 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.function.Function;
-
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
     public static final Logger LOG = LogManager.getLogger(MOD_ID);
     public static final ItemGroup ITEM_GROUP = new WRItemGroup();
-    private static final String PROTOCOL_VERSION = "1.0";
-    public static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
-            .named(rl("network"))
-            .clientAcceptedVersions(PROTOCOL_VERSION::equals)
-            .serverAcceptedVersions(PROTOCOL_VERSION::equals)
-            .networkProtocolVersion(() -> PROTOCOL_VERSION)
-            .simpleChannel();
+    public static final SimpleChannel NETWORK = buildChannel();
 
     public Wyrmroost()
     {
@@ -58,7 +46,7 @@ public class Wyrmroost
         MinecraftForge.EVENT_BUS.register(CommonEvents.class);
         bus.addListener(this::commonSetup);
         bus.addListener(this::configLoad);
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
         {
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
             MinecraftForge.EVENT_BUS.addListener(RenderEvents::renderWorld);
@@ -81,8 +69,6 @@ public class Wyrmroost
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.Client.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, WRConfig.Server.SPEC);
     }
-
-    private static int packetIndex;
 
     public void clientSetup(final FMLClientSetupEvent event)
     {
@@ -109,21 +95,26 @@ public class Wyrmroost
     {
         DeferredWorkQueue.runLater(WRWorld::setupWorld);
         DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
-        registerPackets();
     }
 
-    private static void registerPackets()
+    private static SimpleChannel buildChannel()
     {
-        packet(AnimationPacket.class, AnimationPacket::new, NetworkDirection.PLAY_TO_CLIENT);
-        packet(KeybindPacket.class, KeybindPacket::new, NetworkDirection.PLAY_TO_SERVER);
-        packet(HatchEggPacket.class, HatchEggPacket::new, NetworkDirection.PLAY_TO_CLIENT);
-        packet(RenameEntityPacket.class, RenameEntityPacket::new, NetworkDirection.PLAY_TO_SERVER);
-        packet(StaffActionPacket.class, StaffActionPacket::new, NetworkDirection.PLAY_TO_SERVER);
+        final String PROTOCOL_VERSION = "1.0";
+        final SimpleChannel network = NetworkRegistry.ChannelBuilder
+                .named(rl("network")).clientAcceptedVersions(PROTOCOL_VERSION::equals)
+                .serverAcceptedVersions(PROTOCOL_VERSION::equals)
+                .networkProtocolVersion(() -> PROTOCOL_VERSION)
+                .simpleChannel();
+
+        int index = 1;
+        network.messageBuilder(AnimationPacket.class, index, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
+        network.messageBuilder(KeybindPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(KeybindPacket::encode).decoder(KeybindPacket::new).consumer(KeybindPacket::handle).add();
+        network.messageBuilder(HatchEggPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(HatchEggPacket::encode).decoder(HatchEggPacket::new).consumer(HatchEggPacket::handle).add();
+        network.messageBuilder(RenameEntityPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(RenameEntityPacket::encode).decoder(RenameEntityPacket::new).consumer(RenameEntityPacket::handle).add();
+        network.messageBuilder(StaffActionPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(StaffActionPacket::encode).decoder(StaffActionPacket::new).consumer(StaffActionPacket::handle).add();
+
+        return network;
     }
-
-    private static <T extends IPacket> void packet(Class<T> clazz, Function<PacketBuffer, T> decoder) { packet(clazz, decoder, null); }
-
-    private static <T extends IPacket> void packet(Class<T> clazz, Function<PacketBuffer, T> decoder, @Nullable NetworkDirection dir) { NETWORK.registerMessage(++packetIndex, clazz, T::encode, decoder, T::handle, Optional.ofNullable(dir)); }
 
     /**
      * Register a new Wyrmroost Specific Resource Location. <P>
