@@ -118,7 +118,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
             }
         }
         
-        EntitySize size = getProperties().getSize();
+        EntitySize size = getSize();
         if (getWidth() != size.width || getHeight() != size.height) recalculateSize();
         
         if (getAnimation() != NO_ANIMATION)
@@ -244,31 +244,20 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
 
         return properties;
     }
-    
+
     @Override
-    public ItemStack getPickedResult(RayTraceResult target)
-    {
-        return DragonEggItem.createNew(containedDragon, hatchTime);
-    }
+    public ItemStack getPickedResult(RayTraceResult target) { return DragonEggItem.createNew(containedDragon, hatchTime); }
 
     @Override
     public EntitySize getSize(Pose poseIn) { return getProperties().getSize(); }
-    
-    @Override
-    public boolean canBePushed()
-    {
-        return false;
-    }
+
+    public EntitySize getSize() { return getProperties().getSize(); }
 
     @Override
-    public boolean canBeCollidedWith()
-    {
-        return true;
-    }
+    public boolean canBePushed() { return false; }
 
-    // This is needed because it seems to be ignored on server world...
     @Override
-    public void onKillCommand() { remove(); }
+    public boolean canBeCollidedWith() { return true; }
 
     @Override
     public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }

@@ -16,13 +16,13 @@ import org.lwjgl.glfw.GLFW;
  */
 public class WRKeybind extends KeyBinding
 {
-    private final int id;
+    private final byte id;
     private boolean prevIsPressed;
 
-    public WRKeybind(String name, int keyCode, int packetId)
+    public WRKeybind(String name, int keyCode, byte packetKeyID)
     {
         super(name, KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM.getOrMakeInput(keyCode), "keyCategory.wyrmroost");
-        this.id = packetId;
+        this.id = packetKeyID;
     }
 
     @Override
@@ -32,11 +32,11 @@ public class WRKeybind extends KeyBinding
 
         if (Minecraft.getInstance().player != null && prevIsPressed != pressed)
         {
-            int context = pressed? 1 : 0;
-            if (Screen.hasAltDown()) context |= GLFW.GLFW_MOD_ALT;
-            if (Screen.hasControlDown()) context |= GLFW.GLFW_MOD_CONTROL;
-            if (Screen.hasShiftDown()) context |= GLFW.GLFW_MOD_SHIFT;
-            Wyrmroost.NETWORK.sendToServer(new KeybindPacket(id, context));
+            byte mods = 0;
+            if (Screen.hasAltDown()) mods |= GLFW.GLFW_MOD_ALT;
+            if (Screen.hasControlDown()) mods |= GLFW.GLFW_MOD_CONTROL;
+            if (Screen.hasShiftDown()) mods |= GLFW.GLFW_MOD_SHIFT;
+            Wyrmroost.NETWORK.sendToServer(new KeybindPacket(id, mods, pressed));
         }
         prevIsPressed = pressed;
     }

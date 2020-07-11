@@ -43,7 +43,10 @@ public class FireBreathEntity extends BreathWeaponEntity
         }
 
         Vec3d motion = getMotion();
-        world.addParticle(ParticleTypes.SMOKE, getPosX() + motion.x, getPosY() + motion.y + 0.5d, getPosZ() + motion.z, 0, 0, 0);
+        double x = getPosX() + motion.x + (rand.nextGaussian() * 0.2);
+        double y = getPosY() + motion.y + (rand.nextGaussian() * 0.2) + 0.5d;
+        double z = getPosZ() + motion.z + (rand.nextGaussian() * 0.2);
+        world.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class FireBreathEntity extends BreathWeaponEntity
             Direction face = result.getFace();
             BlockPos offset = pos.offset(face);
 
-            if (world.getBlockState(offset).isAir(world, offset) && rand.nextInt(flammability) < Math.max(25, state.getFlammability(world, pos, face)))
+            if ((world.getBlockState(offset).isAir(world, offset)) && rand.nextInt(flammability) < Math.max(25, state.getFlammability(world, pos, face)))
                 world.setBlockState(offset, ((FireBlock) Blocks.FIRE).getStateForPlacement(world, offset), 11);
         }
     }

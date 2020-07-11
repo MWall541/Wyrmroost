@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
-    private final float width, height;
+    private final EntitySize size;
     private final int hatchTime;
     private Predicate<DragonEggEntity> conditions = e -> true;
 
@@ -17,15 +17,14 @@ public class DragonEggProperties
      */
     public DragonEggProperties(float width, float height, int hatchTime)
     {
-        this.width = width;
-        this.height = height;
+        this.size = EntitySize.fixed(width, height);
         this.hatchTime = hatchTime;
     }
 
     /**
      * Get the size of the egg
      */
-    public EntitySize getSize() { return EntitySize.flexible(width, height); }
+    public EntitySize getSize() { return size; }
 
     /**
      * Get the hatch time of the egg
@@ -34,11 +33,9 @@ public class DragonEggProperties
 
     /**
      * Gets the growth time for the dragon
-     * This is typically just doubled the hatch time as a negative value (for some reaon non adults are defined as non-positives)
-     *
-     * @return
+     * This is typically just doubled the hatch time as a negative value (for some reason non adults are defined as non-positives)
      */
-    public int getGrowthTime() { return -(hatchTime * 2); }
+    public int getGrowthTime() { return -hatchTime * 2; }
 
     /**
      * Get the conditions the egg has to be under to continue hatching

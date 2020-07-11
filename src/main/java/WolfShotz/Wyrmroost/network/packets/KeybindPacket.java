@@ -19,29 +19,33 @@ import java.util.function.Supplier;
  */
 public class KeybindPacket implements IPacket
 {
-    public static final int MOUNT_KEY1 = 1;
-    public static final int MOUNT_KEY2 = 1 << 1;
+    public static final byte MOUNT_KEY1 = 1;
+    public static final byte MOUNT_KEY2 = 2;
 
-    private final int key;
-    private final int context;
+    private final byte key;
+    private final int mods;
+    private final boolean pressed;
 
-    public KeybindPacket(int key, int context)
+    public KeybindPacket(byte key, int mods, boolean pressed)
     {
         this.key = key;
-        this.context = context;
+        this.mods = mods;
+        this.pressed = pressed;
         handle(ClientEvents.getPlayer()); // handle on the client to
     }
 
     public KeybindPacket(PacketBuffer buf)
     {
-        this.key = buf.readInt();
-        this.context = buf.readInt();
+        this.key = buf.readByte();
+        this.mods = buf.readInt();
+        this.pressed = buf.readBoolean();
     }
 
     public void encode(PacketBuffer buf)
     {
-        buf.writeInt(key);
-        buf.writeInt(context);
+        buf.writeByte(key);
+        buf.writeInt(mods);
+        buf.writeBoolean(pressed);
     }
 
     public void run(Supplier<NetworkEvent.Context> context) { handle(context.get().getSender()); }
@@ -54,10 +58,13 @@ public class KeybindPacket implements IPacket
             case MOUNT_KEY2:
                 Entity vehicle = player.getRidingEntity();
                 if (vehicle instanceof AbstractDragonEntity)
-                    ((AbstractDragonEntity) vehicle).recievePassengerKeybind(key, context);
+                {
+                    AbstractDragonEntity dragon = ((AbstractDragonEntity) vehicle);
+                    if (dragon.getControllingPlayer() == player) dragon.recievePassengerKeybind(key, mods, pressed);
+                }
                 break;
             default:
-                Wyrmroost.LOG.warn(String.format("uhh this is NOT what I was looking for. KeybindPacket with key: %s and context: %s", key, context));
+                Wyrmroost.LOG.warn(String.format("Recieved invalid keybind code: %s How tf did u break this", key));
         }
     }
 }

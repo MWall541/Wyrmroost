@@ -95,6 +95,7 @@ public class WRBlocks
         public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCK_TAGS = Maps.newHashMap();
 
         public static final Tag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
+        public static final Tag<Block> STORAGE_BLOCKS_PLATINUM = tag(new ResourceLocation("forge", "storage_blocks/platinum"));
 //        public static final Tag<Block> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
 //        public static final Tag<Block> BLUE_CORIN_LOGS = tag(new ResourceLocation("logs/blue_corin_logs"));
 //        public static final Tag<Block> TEAL_CORIN_LOGS = tag(new ResourceLocation("logs/teal_corin_logs"));

@@ -770,7 +770,6 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation();
         if (animator.setAnimation(RoyalRedEntity.SLAP_ATTACK_ANIMATION)) slapAttackAnim();
         if (animator.setAnimation(RoyalRedEntity.BITE_ATTACK_ANIMATION)) biteAttackAnim();
-        if (animator.setAnimation(RoyalRedEntity.GRAB_ANIMATION)) grabAnim();
         idle(frame);
     }
 
@@ -1064,14 +1063,6 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.endKeyframe();
 
         animator.resetKeyframe(6);
-    }
-
-    private void grabAnim()
-    {
-        animator.startKeyframe(5);
-
-
-        animator.endKeyframe();
     }
 
     private void keepStanceSlapAttack()

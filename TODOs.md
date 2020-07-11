@@ -15,6 +15,7 @@ Some of these probably won't work, some may. who knows, exactly why theyre plans
 - Optimize the fuck out of attacks. 
 - Add Model Physics. (tails etc)
 - Better Sleep System
+- Optimize Texture rendering (cache textures instead of creating new RL's every frame)
 
 1.16
 ====

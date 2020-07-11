@@ -138,7 +138,7 @@ public class WRItems
         public static final Food BLUEBERRIES = new Food.Builder().hunger(2).saturation(0.1f).build();
         public static final Food COOKED_DESERTWYRM = new Food.Builder().hunger(6).saturation(0.7f).meat().build();
         public static final Food CANARI_CHERRY = new Food.Builder().hunger(2).saturation(1f).build();
-        public static final Food CINIS_ROOT = new Food.Builder().hunger(2).saturation(0.5f).effect(new EffectInstance(Effects.HASTE, 300), 1f).build();
+        public static final Food CINIS_ROOT = new Food.Builder().hunger(2).saturation(0.5f).effect(() -> new EffectInstance(Effects.HASTE, 300), 1f).build();
         public static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturation(0.9f).setAlwaysEdible()
                 .effect(() -> new EffectInstance(Effects.GLOWING, 800), 1.0f)
                 .effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)
@@ -149,17 +149,14 @@ public class WRItems
     }
 
 
-    public static class Tags
+    public static class Tags extends Tag<Item>
     {
+        public Tags(ResourceLocation resourceLocationIn) { super(resourceLocationIn); }
+
         public static final Tag<Item> GEODES = tag("geodes");
         public static final Tag<Item> MEATS = forgeTag("meats");
         public static final Tag<Item> DRAGON_MEATS = tag("dragon_meats");
         public static final Tag<Item> PLATINUM = forgeTag("ingots/platinum");
-
-//        public static final Tag<Item> CANARI_LOGS = itemBlockTag(new ResourceLocation("logs/canari_logs"), WRBlocks.Tags.CANARI_LOGS);
-//        public static final Tag<Item> BLUE_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/blue_corin_logs"), WRBlocks.Tags.BLUE_CORIN_LOGS);
-//        public static final Tag<Item> TEAL_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/teal_corin_logs"), WRBlocks.Tags.TEAL_CORIN_LOGS);
-//        public static final Tag<Item> RED_CORIN_LOGS = itemBlockTag(new ResourceLocation("logs/red_corin_logs"), WRBlocks.Tags.RED_CORIN_LOGS);
 
         private static Tag<Item> tag(String name) { return new ItemTags.Wrapper(Wyrmroost.rl(name)); }
 

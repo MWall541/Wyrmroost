@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.client.render.entity.projectile;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.projectile.breath.BreathWeaponEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -36,8 +36,8 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
     private void renderFire(MatrixStack ms, IRenderTypeBuffer typeBuffer, Entity entity)
     {
         Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        TextureAtlasSprite fireSprite1 = func.apply(Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0"));
-        TextureAtlasSprite fireSprite2 = func.apply(Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_1"));
+        TextureAtlasSprite fireSprite1 = func.apply(ClientEvents.RR_BREATH_0);
+        TextureAtlasSprite fireSprite2 = func.apply(ClientEvents.RR_BREATH_1);
         ms.push();
         float width = entity.getWidth() * 1.4F;
         ms.scale(width, width, width);
@@ -64,10 +64,10 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
                 minU = prevMaxU;
             }
 
-            fireVertex(msEntry, vertex, x - 0, 0 - y, z, maxU, maxV);
-            fireVertex(msEntry, vertex, -x - 0, 0 - y, z, minU, maxV);
-            fireVertex(msEntry, vertex, -x - 0, 1.4f - y, z, minU, minV);
-            fireVertex(msEntry, vertex, x - 0, 1.4f - y, z, maxU, minV);
+            vertex(msEntry, vertex, x - 0, 0 - y, z, maxU, maxV);
+            vertex(msEntry, vertex, -x - 0, 0 - y, z, minU, maxV);
+            vertex(msEntry, vertex, -x - 0, 1.4f - y, z, minU, minV);
+            vertex(msEntry, vertex, x - 0, 1.4f - y, z, maxU, minV);
             height -= 0.45f;
             y -= 0.45f;
             x *= 0.9f;
@@ -77,7 +77,7 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
         ms.pop();
     }
 
-    private static void fireVertex(MatrixStack.Entry msEntry, IVertexBuilder bufferIn, float x, float y, float z, float texU, float texV)
+    private static void vertex(MatrixStack.Entry msEntry, IVertexBuilder bufferIn, float x, float y, float z, float texU, float texV)
     {
         bufferIn.pos(msEntry.getMatrix(), x, y, z).color(255, 255, 255, 255).tex(texU, texV).overlay(0, 10).lightmap(240).normal(msEntry.getNormal(), 0.0F, 1.0F, 0.0F).endVertex();
     }

@@ -6,6 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;
 
+/**
+ * todo: hold slots here and have the container work with them from here
+ */
 public class DragonInvHandler extends ItemStackHandler
 {
     public final AbstractDragonEntity dragon;
@@ -33,7 +36,7 @@ public class DragonInvHandler extends ItemStackHandler
         if (stacks.isEmpty()) return true;
         if (slot > stacks.size())
         {
-            Wyrmroost.LOG.error("slot's too high but ok..");
+            Wyrmroost.LOG.warn("slot's too high but ok..");
             return true;
         }
         return stacks.stream().filter(s -> stacks.indexOf(s) > slot).allMatch(ItemStack::isEmpty);

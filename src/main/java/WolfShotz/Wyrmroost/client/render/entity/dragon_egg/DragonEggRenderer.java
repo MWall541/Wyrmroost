@@ -53,7 +53,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
      */
     private void setScale(DragonEggEntity entity, MatrixStack ms)
     {
-        EntitySize size = entity.getSize(entity.getPose());
+        EntitySize size = entity.getSize();
         if (size == null) return;
         ms.scale(size.width * 2.95f, -(size.height * 2), -(size.width * 2.95f));
     }

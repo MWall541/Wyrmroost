@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.items.staff;
 
 import WolfShotz.Wyrmroost.client.ClientEvents;
+import WolfShotz.Wyrmroost.client.render.EntityOutlineTesting;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
-import WolfShotz.Wyrmroost.client.render.StaffRenderer;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
@@ -103,11 +103,15 @@ public class StaffAction
         }
 
         @Override
-        public void render(AbstractDragonEntity dragon, MatrixStack ms)
+        public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks)
         {
             RayTraceResult rtr = ClientEvents.getClient().objectMouseOver;
             if (rtr instanceof BlockRayTraceResult)
-                RenderEvents.drawBlockPos(ms, ((BlockRayTraceResult) rtr).getPos(), dragon.world, 7, 0x4d0000ff);
+                RenderEvents.drawBlockPos(ms,
+                        ((BlockRayTraceResult) rtr).getPos(),
+                        dragon.world,
+                        Math.cos((dragon.ticksExisted + partialTicks) * 0.2) * 4.5 + 4.5,
+                        0x4d0000ff);
         }
 
         @Override
@@ -157,11 +161,11 @@ public class StaffAction
         }
 
         @Override
-        public void render(AbstractDragonEntity dragon, MatrixStack ms)
+        public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks)
         {
             RayTraceResult rtr = Mafs.rayTrace(dragon.world, ClientEvents.getPlayer(), TARGET_RANGE, false);
             if (rtr instanceof EntityRayTraceResult)
-                StaffRenderer.outlineEntitiesQueue.add(((EntityRayTraceResult) rtr).getEntity());
+                EntityOutlineTesting.render(((EntityRayTraceResult) rtr).getEntity(), ms, partialTicks);
         }
     };
     public final String name;
@@ -180,7 +184,7 @@ public class StaffAction
 
     public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack) {}
 
-    public void render(AbstractDragonEntity dragon, MatrixStack ms) {}
+    public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks) {}
 
     public String getTranslateKey(@Nullable AbstractDragonEntity dragon) { return "item.wyrmroost.dragon_staff.action." + name; }
 }

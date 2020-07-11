@@ -63,6 +63,7 @@ public class Wyrmroost
             MinecraftForge.EVENT_BUS.register(ClientEvents.class);
             MinecraftForge.EVENT_BUS.addListener(RenderEvents::renderWorld);
             bus.addListener(this::clientSetup);
+            bus.addListener(ClientEvents::stitchTextures);
             bus.addListener(this::registerItemColors);
         });
 

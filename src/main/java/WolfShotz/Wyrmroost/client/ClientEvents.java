@@ -16,10 +16,10 @@ import WolfShotz.Wyrmroost.entities.multipart.MultiPartEntity;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
@@ -33,11 +33,13 @@ public class ClientEvents
     public static final ResourceLocation RR_BREATH_0 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0");
     public static final ResourceLocation RR_BREATH_1 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_1");
 
-    @SubscribeEvent
     public static void stitchTextures(TextureStitchEvent.Pre evt)
     {
-        evt.addSprite(RR_BREATH_0);
-        evt.addSprite(RR_BREATH_1);
+        if (evt.getMap().getTextureLocation() == AtlasTexture.LOCATION_BLOCKS_TEXTURE)
+        {
+            evt.addSprite(RR_BREATH_0);
+            evt.addSprite(RR_BREATH_1);
+        }
     }
 
     /**

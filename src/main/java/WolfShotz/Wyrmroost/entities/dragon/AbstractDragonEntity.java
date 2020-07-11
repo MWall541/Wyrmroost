@@ -48,6 +48,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -259,7 +261,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (isSpecial()) doSpecialEffects();
         }
     }
-
 
     /**
      * Not to be confused with {@link #updatePassenger(Entity)}, as this is called when were riding something
@@ -541,9 +542,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
-    @Override
-    protected void dropInventory() { invHandler.ifPresent(i -> i.getStacks().forEach(this::entityDropItem)); }
-
     public void tryTeleportToOwner()
     {
         if (getOwner() == null) return;
@@ -597,6 +595,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         return getHomePos().map(home -> home.distanceSq(pos) <= WRConfig.homeRadius * WRConfig.homeRadius).orElse(true);
     }
+
+    @Override
+    protected void dropInventory() { invHandler.ifPresent(i -> i.getStacks().forEach(this::entityDropItem)); }
 
     public void setRotation(float yaw, float pitch)
     {
@@ -680,10 +681,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public int getHorizontalFaceSpeed()
-    {
-        return isFlying()? 10 : super.getHorizontalFaceSpeed();
-    }
+    public int getHorizontalFaceSpeed() { return isFlying()? 10 : super.getHorizontalFaceSpeed(); }
 
     public boolean isRiding() { return getRidingEntity() != null; }
 
@@ -698,6 +696,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         world.addEntity(eggItem);
 
         return null;
+    }
+
+    @Override
+    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+    {
+
+
+        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
     public void handleSleep()
@@ -788,7 +794,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
         if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return true;
-        if (entity.getTeam() != null && isOnScoreboardTeam(entity.getTeam())) return true;
+        if (entity.isOnScoreboardTeam(getTeam())) return true;
         return entity.getType().equals(getType());
     }
 
@@ -836,7 +842,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isOnLadder() { return false; }
 
-    public void recievePassengerKeybind(int key, int context) {}
+    /**
+     * Recieve the keybind message from the current controlling passenger.
+     *
+     * @param key     shut up
+     * @param mods    the modifiers that is pressed when this key was pressed (e.g. shift was held, ctrl etc {@link org.lwjgl.glfw.GLFW})
+     * @param pressed true if pressed, false if released. pretty straight forward idk why ur fucking asking.
+     */
+    public void recievePassengerKeybind(int key, int mods, boolean pressed) {}
 
     /**
      * Sort of misleading name. if this is true, then nothing else is ticked (goals, look, etc)

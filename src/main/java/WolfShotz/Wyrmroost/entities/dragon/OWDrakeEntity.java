@@ -54,6 +54,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
+    // inventory slot const's
     public static final int SADDLE_SLOT = 0;
     public static final int ARMOR_SLOT = 1;
     public static final int CHEST_SLOT = 2;
@@ -337,11 +338,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_OWDRAKE_DEATH.get(); }
 
     @Override
-    public void recievePassengerKeybind(int key, int context)
+    public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (key == KeybindPacket.MOUNT_KEY1 && noActiveAnimation())
+        if (key == KeybindPacket.MOUNT_KEY1 && pressed && noActiveAnimation())
         {
-            if ((context & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
+            if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
             else setAnimation(HORN_ATTACK_ANIMATION);
         }
     }

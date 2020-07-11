@@ -53,11 +53,11 @@ public class RenderEvents extends RenderType
     public static void renderWorld(RenderWorldLastEvent evt)
     {
         MatrixStack ms = evt.getMatrixStack();
-        StaffRenderer.render(ms);
+        StaffRenderer.render(ms, evt.getPartialTicks());
         renderDebugBox(ms);
     }
 
-    public static void renderDebugBox(MatrixStack ms)
+    private static void renderDebugBox(MatrixStack ms)
     {
         if (!WRConfig.debugMode) return;
         if (debugBox == null) return;

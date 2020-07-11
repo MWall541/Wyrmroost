@@ -36,7 +36,7 @@ public class DragonEggItem extends Item
         super(ModUtils.itemBuilder().maxStackSize(1).setISTER(() -> DragonEggStackRenderer::new));
     }
 
-    public static ItemStack createNew(EntityType<AbstractDragonEntity> type, int hatchTime)
+    public static ItemStack createNew(EntityType<? extends AbstractDragonEntity> type, int hatchTime)
     {
         ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
         CompoundNBT tag = new CompoundNBT();

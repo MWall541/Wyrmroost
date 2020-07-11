@@ -43,7 +43,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public static final Animation ROAR_ANIMATION = new Animation(70);
     public static final Animation SLAP_ATTACK_ANIMATION = new Animation(30);
     public static final Animation BITE_ATTACK_ANIMATION = new Animation(15);
-    public static final Animation GRAB_ANIMATION = new Animation(50);
     public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
 
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
@@ -56,9 +55,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerVariantData(0, true);
-
-        // because itll act like its doing squats when we re-render if we didnt.
-        sitTimer.set(isSitting()? 1 : 0);
     }
 
     @Override
@@ -68,11 +64,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         getAttribute(MAX_HEALTH).setBaseValue(100d); // 50 hearts
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.22d);
-        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
-        getAttribute(FOLLOW_RANGE).setBaseValue(20d);
-        getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10); // No Knockback
+        getAttribute(FOLLOW_RANGE).setBaseValue(20d); // 20 blocks (?)
+        getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d); // normal * 2.25
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d); // 5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.0651d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.0425d);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(4d); // 2 hearts
     }
 
@@ -160,14 +156,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void recievePassengerKeybind(int key, int context)
+    public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        boolean pressed = (context & 1) == 1;
         if (!noActiveAnimation()) return;
 
         if (key == KeybindPacket.MOUNT_KEY1 && pressed)
         {
-            if ((context & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
+            if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
             else meleeAttack();
         }
 
@@ -186,7 +181,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public Vec3d getApproximateMouthPos()
     {
-        Vec3d rot = new Vec3d(0, 0, (getWidth() / 2) + 3.5d).rotatePitch(-rotationPitch * Mafs.PI / 180f).rotateYaw(-renderYawOffset * Mafs.PI / 180f);
+        Vec3d rot = new Vec3d(0, 0, (getWidth() / 2) + 3.5d).rotatePitch(-rotationPitch * Mafs.PI / 180f).rotateYaw(-rotationYaw * Mafs.PI / 180f);
         return rot.add(getPosX(), getPosYEye() - 1, getPosZ());
     }
 
