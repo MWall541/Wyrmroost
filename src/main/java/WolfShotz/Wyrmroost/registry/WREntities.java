@@ -72,7 +72,6 @@ public class WREntities
             .spawnPlacement(t -> basicSpawnConditions(t, 7, 2, 9, ModUtils.getBiomesByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN)))
             .build(b -> b.size(0.65f, 0.5f));
 
-
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN = Builder.withClassification("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE)
             .spawnEgg(0x17283C, 0x7A6F5A)
             .renderer(ButterflyLeviathanRenderer::new)
