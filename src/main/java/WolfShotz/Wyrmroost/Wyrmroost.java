@@ -3,7 +3,10 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
-import WolfShotz.Wyrmroost.network.packets.*;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
+import WolfShotz.Wyrmroost.network.packets.RenameEntityPacket;
+import WolfShotz.Wyrmroost.network.packets.StaffActionPacket;
 import WolfShotz.Wyrmroost.registry.*;
 import WolfShotz.Wyrmroost.util.CallbackHandler;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -113,7 +116,6 @@ public class Wyrmroost
         int index = 1;
         network.messageBuilder(AnimationPacket.class, index, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
         network.messageBuilder(KeybindPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(KeybindPacket::encode).decoder(KeybindPacket::new).consumer(KeybindPacket::handle).add();
-        network.messageBuilder(HatchEggPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(HatchEggPacket::encode).decoder(HatchEggPacket::new).consumer(HatchEggPacket::handle).add();
         network.messageBuilder(RenameEntityPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(RenameEntityPacket::encode).decoder(RenameEntityPacket::new).consumer(RenameEntityPacket::handle).add();
         network.messageBuilder(StaffActionPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(StaffActionPacket::encode).decoder(StaffActionPacket::new).consumer(StaffActionPacket::handle).add();
 
