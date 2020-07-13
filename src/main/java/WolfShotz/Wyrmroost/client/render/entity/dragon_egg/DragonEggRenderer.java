@@ -46,7 +46,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 
     public static ResourceLocation getDragonEggTexture(EntityType<?> type)
     {
-        ResourceLocation textureLoc = Wyrmroost.rl(String.format("textures/entity/dragon/%s/egg.png", type.getRegistryName().getPath().replace("wyrmroost:", "")));
+        ResourceLocation textureLoc = Wyrmroost.rl(String.format("textures/entity/dragon/%s/egg.png", type.getRegistryName().getPath()));
         if (Minecraft.getInstance().getResourceManager().hasResource(textureLoc)) return textureLoc;
         return DEFAULT_TEXTURE;
     }

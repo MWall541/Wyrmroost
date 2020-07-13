@@ -95,6 +95,10 @@ public class WREntities
             .renderer(RoyalRedRenderer::new)
             .build(b -> b.size(3f, 3.9f).immuneToFire());
 
+    public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = Builder.creature("coin_dragon", CoinDragonEntity::new)
+            .spawnEgg(0xf, 0x0)// todo
+            .build(b -> b.size(0.5f, 0.5f));
+
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("blue_geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
             .renderer(GeodeTippedArrowRenderer::new)
             .build(b -> b.size(0.5f, 0.5f));

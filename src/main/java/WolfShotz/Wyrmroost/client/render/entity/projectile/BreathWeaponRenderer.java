@@ -43,7 +43,7 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
         float x = 0.5F;
         float height = entity.getHeight() / width;
         float y = 0.0F;
-        ms.rotate(renderManager.getCameraOrientation()); // Literally right here, is the only thing I changed. So stupid.
+        ms.rotate(renderManager.getCameraOrientation());
         ms.translate(0, 0, (-0.3f + (float) ((int) height) * 0.02f));
         float z = 0;
         int i = 0;
