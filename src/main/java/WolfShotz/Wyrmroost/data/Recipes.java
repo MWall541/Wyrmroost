@@ -34,7 +34,7 @@ class Recipes extends RecipeProvider
         super.act(cache);
 
         Set<Item> registered = REGISTERED.stream().map(IItemProvider::asItem).collect(Collectors.toSet());
-        for (Item item : ModUtils.getRegistryEntries(WRItems.ITEMS))
+        for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY))
         {
             if (!registered.contains(item))
                 Wyrmroost.LOG.warn("Item '{}' does not have a recipe associated with it!", item.getRegistryName());
@@ -127,7 +127,7 @@ class Recipes extends RecipeProvider
     {
         this.consumer = consumer;
 
-        REGISTERED.addAll(ModUtils.streamRegistry(WRItems.ITEMS).filter(LazySpawnEggItem.class::isInstance).collect(Collectors.toSet()));
+        REGISTERED.addAll(ModUtils.streamRegistry(WRItems.REGISTRY).filter(LazySpawnEggItem.class::isInstance).collect(Collectors.toSet()));
         Collections.addAll(REGISTERED,
                 WRItems.DRAGON_EGG.get(), WRItems.DRAKE_BACKPLATE.get(), WRItems.LDWYRM.get(),
                 WRItems.RAW_LOWTIER_MEAT.get(), WRItems.RAW_COMMON_MEAT.get(), WRItems.RAW_APEX_MEAT.get(), WRItems.RAW_BEHEMOTH_MEAT.get(),

@@ -1,14 +1,12 @@
 package WolfShotz.Wyrmroost.client;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import com.google.common.collect.Lists;
+import WolfShotz.Wyrmroost.util.CallbackHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
-
-import java.util.List;
 
 /**
  * EventBus listeners on CLIENT distribution
@@ -17,7 +15,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class ClientEvents
 {
-    public static final List<Runnable> CALL_BACKS = Lists.newArrayList();
+    public static final CallbackHandler<?> CLIENT_CALLBACK = new CallbackHandler<>();
 
     public static final ResourceLocation RR_BREATH_0 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0");
     public static final ResourceLocation RR_BREATH_1 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_1");

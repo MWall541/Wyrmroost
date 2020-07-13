@@ -2,14 +2,11 @@ package WolfShotz.Wyrmroost.entities.dragonegg;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
-import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
-import WolfShotz.Wyrmroost.network.packets.HatchEggPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -20,6 +17,7 @@ import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.RayTraceResult;
@@ -27,22 +25,22 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Objects;
 
-public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityAdditionalSpawnData
+public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnData
 {
+    public static final int HATCH_ID = 1; // 1 << 0;
+    public static final int WIGGLE_ID = 2; // 1 << 1;
     public static final String DATA_HATCH_TIME = "HatchTime";
     public static final String DATA_DRAGON_TYPE = "DragonType";
-    public static final Animation WIGGLE_ANIMATION = new Animation(10);
 
     public EntityType<AbstractDragonEntity> containedDragon;
     public int hatchTime;
     public DragonEggProperties properties;
-    public boolean wiggleInvert, wiggleInvert2;
-    private int animationTick;
-    private Animation animation = NO_ANIMATION;
+    public boolean wiggling = false;
+    public Direction wiggleDirection = Direction.NORTH;
+    public TickFloat wiggleTime = new TickFloat().setLimit(0, 1);
 
     public DragonEggEntity(EntityType<? extends DragonEggEntity> type, World world) { super(type, world);}
 
@@ -101,31 +99,22 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
                     double z = getPosZ() + rand.nextGaussian() * 0.2d;
                     world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
                 }
+                wiggleTime.add(wiggling? 0.4f : -0.4f);
+                if (wiggleTime.get() == 1) wiggling = false;
             }
             else
             {
                 if (--hatchTime <= 0)
                 {
-                    Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), new HatchEggPacket(this));
+                    world.setEntityState(this, (byte) HATCH_ID); // notify client
                     hatch();
-                    return;
                 }
-                
-                int bounds = Math.max(hatchTime / 2, 3);
-                
-                if (hatchTime < getProperties().getHatchTime() / 2 && rand.nextInt(bounds) == 0 && getAnimation() != WIGGLE_ANIMATION)
-                    crack(true);
+                else if (rand.nextInt(Math.max(hatchTime / 2, 5)) == 0) world.setEntityState(this, (byte) WIGGLE_ID);
             }
         }
         
         EntitySize size = getSize();
         if (getWidth() != size.width || getHeight() != size.height) recalculateSize();
-        
-        if (getAnimation() != NO_ANIMATION)
-        {
-            ++animationTick;
-            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
-        }
     }
 
     @Override
@@ -133,7 +122,7 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     {
         if (distance > 3)
         {
-            crack(false);
+            crack(5);
             return true;
         }
         return false;
@@ -152,17 +141,33 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
             double d2;
             if (flag && Math.abs(vec3d2.y - 0.005D) >= 0.003D && Math.abs(vec3d2.y - d0 / 16.0D) < 0.003D) d2 = -0.003D;
             else d2 = vec3d2.y - d0 / 16.0D;
-            
+
             setMotion(vec3d2.x, d2, vec3d2.z);
         }
-        
+
         Vec3d vec3d6 = getMotion();
         if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - getPosY() + d1, vec3d6.z))
         {
             setMotion(vec3d6.x, 0.3F, vec3d6.z);
         }
     }
-    
+
+    @Override
+    public void handleStatusUpdate(byte id)
+    {
+        switch (id)
+        {
+            case HATCH_ID:
+                hatch();
+                break;
+            case WIGGLE_ID:
+                wiggle();
+                break;
+            default:
+                super.handleStatusUpdate(id);
+        }
+    }
+
     /**
      * Called to hatch the dragon egg
      * Usage: <P>
@@ -188,25 +193,33 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
         }
         else
         {
-            for (int i = 0; i < getWidth() * 25; ++i)
-            {
-                double x = rand.nextGaussian() * 0.2f;
-                double y = rand.nextDouble() * 0.45f;
-                double z = rand.nextGaussian() * 0.2f;
-                world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(WRItems.DRAGON_EGG.get())), getPosX(), getPosY(), getPosZ(), x, y, z);
-            }
+            crack(25);
+            world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
         }
-        world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
         remove();
     }
 
-    public void crack(boolean sendPacket)
+    public void crack(int intensity)
     {
-        playSound(SoundEvents.ENTITY_TURTLE_EGG_CRACK, 1f, 1f);
-        if (sendPacket) AnimationPacket.send(this, WIGGLE_ANIMATION);
-        else setAnimation(WIGGLE_ANIMATION);
+        world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_CRACK, SoundCategory.BLOCKS, 1, 1, false);
+        float width = getWidth();
+        for (int i = 0; i < width * intensity; ++i)
+        {
+            double xMot = rand.nextGaussian() * 0.2f;
+            double yMot = rand.nextDouble() * 0.45f;
+            double zMot = rand.nextGaussian() * 0.2f;
+            world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(WRItems.DRAGON_EGG.get())), getPosX(), getPosY(), getPosZ(), xMot, yMot, zMot);
+        }
     }
-    
+
+    public void wiggle()
+    {
+        if (wiggleTime.get() > 0) return;
+        wiggleDirection = Direction.Plane.HORIZONTAL.random(rand);
+        wiggling = true;
+        crack(5);
+    }
+
     /**
      * Called When the dragon type of the egg is not what it should be.
      */
@@ -266,49 +279,5 @@ public class DragonEggEntity extends Entity implements IAnimatedEntity, IEntityA
     public void writeSpawnData(PacketBuffer buffer) { buffer.writeString(getDragonKey()); }
 
     @Override
-    public void readSpawnData(PacketBuffer buffer)
-    {
-        this.containedDragon = ModUtils.entityTypeByKey(buffer.readString());
-    }
-
-    // === Animation ===
-    @Override
-    public int getAnimationTick()
-    {
-        return animationTick;
-    }
-    
-    @Override
-    public void setAnimationTick(int i)
-    {
-        animationTick = i;
-    }
-    
-    @Override
-    public Animation getAnimation()
-    {
-        return animation;
-    }
-    
-    @Override
-    public void setAnimation(Animation animation)
-    {
-        this.animation = animation;
-        setAnimationTick(0);
-        
-        
-        if (world.isRemote && animation == WIGGLE_ANIMATION)
-        {
-            wiggleInvert = rand.nextBoolean();
-            wiggleInvert2 = rand.nextBoolean();
-        }
-    }
-    
-    @Override
-    public Animation[] getAnimations()
-    {
-        return new Animation[]{NO_ANIMATION, WIGGLE_ANIMATION};
-    }
-    
-    // ================
+    public void readSpawnData(PacketBuffer buffer) { this.containedDragon = ModUtils.entityTypeByKey(buffer.readString()); }
 }

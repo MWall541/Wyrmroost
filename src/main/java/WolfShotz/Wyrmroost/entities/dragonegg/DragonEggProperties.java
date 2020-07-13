@@ -1,11 +1,17 @@
 package WolfShotz.Wyrmroost.entities.dragonegg;
 
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.google.common.collect.Maps;
 import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
 
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
+    public static final Map<EntityType<? extends AbstractDragonEntity>, DragonEggProperties> PROPERTIES_MAP = Maps.newHashMap();
+
     private final EntitySize size;
     private final int hatchTime;
     private Predicate<DragonEggEntity> conditions = e -> true;

@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.client.render.RenderEvents;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.network.packets.*;
 import WolfShotz.Wyrmroost.registry.*;
-import com.google.common.collect.Lists;
+import WolfShotz.Wyrmroost.util.CallbackHandler;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemGroup;
@@ -33,8 +33,6 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
-
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
 {
@@ -42,7 +40,7 @@ public class Wyrmroost
     public static final Logger LOG = LogManager.getLogger(MOD_ID);
     public static final ItemGroup ITEM_GROUP = new WRItemGroup();
     public static final SimpleChannel NETWORK = buildChannel();
-    public static final List<Runnable> COMMON_CALLBACKS = Lists.newArrayList();
+    public static final CallbackHandler<?> CALLBACK = new CallbackHandler<>();
 
     public Wyrmroost()
     {
@@ -60,9 +58,9 @@ public class Wyrmroost
             bus.addListener(this::registerItemColors);
         });
 
-        WREntities.ENTITIES.register(bus);
-        WRBlocks.BLOCKS.register(bus);
-        WRItems.ITEMS.register(bus);
+        WREntities.REGISTRY.register(bus);
+        WRBlocks.REGISTRY.register(bus);
+        WRItems.REGISTRY.register(bus);
 //        WRFluids.FLUIDS.register(bus);
         WRIO.CONTAINERS.register(bus);
         WRSounds.deferred().register(bus);
@@ -77,7 +75,7 @@ public class Wyrmroost
 
     public void clientSetup(final FMLClientSetupEvent event)
     {
-        for (Runnable callBack : ClientEvents.CALL_BACKS) callBack.run();
+        ClientEvents.CLIENT_CALLBACK.acceptAndClear(null);
         WRKeybind.registerKeys();
         WRIO.screenSetup();
     }
@@ -99,7 +97,7 @@ public class Wyrmroost
 
     public void commonSetup(final FMLCommonSetupEvent event)
     {
-        for (Runnable runnable : COMMON_CALLBACKS) runnable.run();
+        DeferredWorkQueue.runLater(() -> CALLBACK.acceptAndClear(null));
         DeferredWorkQueue.runLater(WRWorld::setupWorld);
     }
 

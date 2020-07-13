@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.client.model;
 
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
@@ -33,14 +34,21 @@ public class WRModelRenderer extends ModelRenderer
         this(model);
         setTextureOffset(textureOffsetX, textureOffsetY);
     }
-    
+
+    public WRModelRenderer(Model model, int textureOffsetX, int textureOffsetY)
+    {
+        super(model);
+        this.model = null;
+        setTextureOffset(textureOffsetX, textureOffsetY);
+    }
+
     public void addBox(float offX, float offY, float offZ, int width, int height, int depth, float scaleFactor)
     {
         addBox(offX, offY, offZ, width, height, depth);
     }
 
     public void setShouldScaleChildren(boolean scaleChildren) { this.scaleChildren = scaleChildren; }
-    
+
     public void setScale(float scaleX, float scaleY, float scaleZ)
     {
         this.scaleX = scaleX;

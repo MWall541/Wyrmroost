@@ -76,7 +76,7 @@ class LootTables extends LootTableProvider
         }
 
         @Override
-        protected Iterable<Block> getKnownBlocks() { return ModUtils.getRegistryEntries(BLOCKS); }
+        protected Iterable<Block> getKnownBlocks() { return ModUtils.getRegistryEntries(REGISTRY); }
 
         private void registerOre(Block ore, Item output) { registerLootTable(ore, block -> droppingItemWithFortune(block, output)); }
 
@@ -117,7 +117,7 @@ class LootTables extends LootTableProvider
         @Override
         protected Iterable<EntityType<?>> getKnownEntities()
         {
-            return ModUtils.getRegistryEntries(WREntities.ENTITIES);
+            return ModUtils.getRegistryEntries(WREntities.REGISTRY);
         }
 
         /**

@@ -18,13 +18,13 @@ import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.entities.projectile.GeodeTippedArrowEntity;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
+import WolfShotz.Wyrmroost.util.CallbackHandler;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.entity.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -46,7 +46,7 @@ import static net.minecraftforge.common.BiomeDictionary.Type;
  */
 public class WREntities
 {
-    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = Builder.creature("lesser_desertwyrm", LDWyrmEntity::new)
             .spawnEgg(0xD6BCBC, 0xDEB6C7)
@@ -95,14 +95,8 @@ public class WREntities
             .renderer(RoyalRedRenderer::new)
             .build(b -> b.size(3f, 3.9f).immuneToFire());
 
-    public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> BLUE_GEODE_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("blue_geode_tipped_arrow", (t, w) -> new GeodeTippedArrowEntity(t, 3d, WRItems.BLUE_GEODE_ARROW.get(), w), EntityClassification.MISC)
-            .renderer(manager -> new GeodeTippedArrowRenderer(manager, Wyrmroost.rl("textures/entity/projectiles/blue_geode_tipped_arrow.png")))
-            .build(b -> b.size(0.5f, 0.5f));
-    public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> RED_GEODE_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("red_geode_tipped_arrow", (t, w) -> new GeodeTippedArrowEntity(t, 3.5d, WRItems.RED_GEODE_ARROW.get(), w), EntityClassification.MISC)
-            .renderer(manager -> new GeodeTippedArrowRenderer(manager, Wyrmroost.rl("textures/entity/projectiles/red_geode_tipped_arrow.png")))
-            .build(b -> b.size(0.5f, 0.5f));
-    public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> PURPLE_GEODE_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("purple_geode_tipped_arrow", (t, w) -> new GeodeTippedArrowEntity(t, 4d, WRItems.PURPLE_GEODE_ARROW.get(), w), EntityClassification.MISC)
-            .renderer(manager -> new GeodeTippedArrowRenderer(manager, Wyrmroost.rl("textures/entity/projectiles/purple_geode_tipped_arrow.png")))
+    public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("blue_geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
+            .renderer(GeodeTippedArrowRenderer::new)
             .build(b -> b.size(0.5f, 0.5f));
 
     public static final RegistryObject<EntityType<FireBreathEntity>> FIRE_BREATH = Builder.<FireBreathEntity>withClassification("fire_breath", FireBreathEntity::new, EntityClassification.MISC)
@@ -117,7 +111,8 @@ public class WREntities
 
     private static <T extends MobEntity> void basicSpawnConditions(EntityType<T> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
     {
-        biomes.forEach(b -> b.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount)));
+        for (Biome b : biomes)
+            b.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount));
         EntitySpawnPlacementRegistry.register(entity,
                 EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
@@ -130,8 +125,7 @@ public class WREntities
         private final String name;
         private final EntityType.IFactory<T> factory;
         private final EntityClassification classification;
-        private Consumer<Supplier<EntityType<T>>> builderCallback = i ->
-        {};
+        private final CallbackHandler<Supplier<EntityType<T>>> builderCallback = new CallbackHandler<>();
 
         public Builder(String name, EntityType.IFactory<T> factory, EntityClassification classification)
         {
@@ -142,13 +136,13 @@ public class WREntities
 
         private Builder<T> spawnEgg(int primColor, int secColor)
         {
-            this.builderCallback = builderCallback.andThen(t -> WRItems.register(name + "_egg", () -> new LazySpawnEggItem(t::get, primColor, secColor)));
+            builderCallback.then(t -> WRItems.register(name + "_egg", () -> new LazySpawnEggItem(t::get, primColor, secColor)));
             return this;
         }
 
         private Builder<T> renderer(IRenderFactory<T> renderFactory)
         {
-            this.builderCallback = builderCallback.andThen(t -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CALL_BACKS.add(() -> RenderingRegistry.registerEntityRenderingHandler(t.get(), renderFactory))));
+            builderCallback.then(t -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CLIENT_CALLBACK.then(i -> RenderingRegistry.registerEntityRenderingHandler(t.get(), renderFactory))));
             return this;
         }
 
@@ -158,7 +152,7 @@ public class WREntities
          */
         private Builder<T> spawnPlacement(Consumer<EntityType<T>> consumer)
         {
-            this.builderCallback = builderCallback.andThen(t -> Wyrmroost.COMMON_CALLBACKS.add(() -> DeferredWorkQueue.runLater(() -> consumer.accept(t.get()))));
+            builderCallback.then(t -> Wyrmroost.CALLBACK.then(i -> consumer.accept(t.get())));
             return this;
         }
 
@@ -167,8 +161,8 @@ public class WREntities
             EntityType.Builder<T> builder = EntityType.Builder.create(factory, classification);
             consumer.accept(builder);
 
-            RegistryObject<EntityType<T>> object = ENTITIES.register(name, () -> builder.build(Wyrmroost.MOD_ID + ":" + name));
-            if (builderCallback != null) builderCallback.accept(object);
+            RegistryObject<EntityType<T>> object = REGISTRY.register(name, () -> builder.build(Wyrmroost.MOD_ID + ":" + name));
+            builderCallback.accept(object);
 
             return object;
         }

@@ -1,6 +1,8 @@
 package WolfShotz.Wyrmroost.entities.projectile;
 
 import WolfShotz.Wyrmroost.items.GeodeTippedArrowItem;
+import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
@@ -16,12 +18,20 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
 {
     private final GeodeTippedArrowItem item;
 
-    public GeodeTippedArrowEntity(EntityType<? extends AbstractArrowEntity> type, double damage, Item item, World worldIn)
+    public GeodeTippedArrowEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn)
     {
         super(type, worldIn);
+        this.item = (GeodeTippedArrowItem) WRItems.BLUE_GEODE_ARROW.get();
+    }
+
+    public GeodeTippedArrowEntity(World worldIn, double damage, Item item)
+    {
+        super(WREntities.GEODE_TIPPED_ARROW.get(), worldIn);
         setDamage(damage);
         this.item = (GeodeTippedArrowItem) item;
     }
+
+    public GeodeTippedArrowItem getItem() { return item; }
 
     @Override
     protected ItemStack getArrowStack() { return new ItemStack(item); }

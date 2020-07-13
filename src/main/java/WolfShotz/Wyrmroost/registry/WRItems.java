@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 public class WRItems
 {
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
 
     //    public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
     public static final RegistryObject<Item> LDWYRM = register("desert_wyrm", LDWyrmItem::new);
@@ -51,7 +51,7 @@ public class WRItems
     public static final RegistryObject<Item> BLUE_GEODE_CHESTPLATE = register("blue_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> BLUE_GEODE_LEGGINGS = register("blue_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> BLUE_GEODE_BOOTS = register("blue_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.FEET));
-    public static final RegistryObject<Item> BLUE_GEODE_ARROW = register("blue_geode_tipped_arrow", () -> new GeodeTippedArrowItem(WREntities.BLUE_GEODE_ARROW));
+    public static final RegistryObject<Item> BLUE_GEODE_ARROW = register("blue_geode_tipped_arrow", () -> new GeodeTippedArrowItem(3));
 
     public static final RegistryObject<Item> RED_GEODE_SWORD = register("red_geode_sword", () -> new SwordItem(ToolMaterialList.RED_GEODE, 2, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> RED_GEODE_PICKAXE = register("red_geode_pickaxe", () -> new PickaxeItem(ToolMaterialList.RED_GEODE, 0, -2.8f, ModUtils.itemBuilder()));
@@ -62,7 +62,7 @@ public class WRItems
     public static final RegistryObject<Item> RED_GEODE_CHESTPLATE = register("red_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> RED_GEODE_LEGGINGS = register("red_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> RED_GEODE_BOOTS = register("red_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.FEET));
-    public static final RegistryObject<Item> RED_GEODE_ARROW = register("red_geode_tipped_arrow", () -> new GeodeTippedArrowItem(WREntities.RED_GEODE_ARROW));
+    public static final RegistryObject<Item> RED_GEODE_ARROW = register("red_geode_tipped_arrow", () -> new GeodeTippedArrowItem(3.5));
 
     public static final RegistryObject<Item> PURPLE_GEODE_SWORD = register("purple_geode_sword", () -> new SwordItem(ToolMaterialList.PURPLE_GEODE, 2, -2f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE = register("purple_geode_pickaxe", () -> new PickaxeItem(ToolMaterialList.PURPLE_GEODE, 0, -2.5f, ModUtils.itemBuilder()));
@@ -73,7 +73,7 @@ public class WRItems
     public static final RegistryObject<Item> PURPLE_GEODE_CHESTPLATE = register("purple_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.CHEST));
     public static final RegistryObject<Item> PURPLE_GEODE_LEGGINGS = register("purple_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> PURPLE_GEODE_BOOTS = register("purple_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.FEET));
-    public static final RegistryObject<Item> PURPLE_GEODE_ARROW = register("purple_geode_tipped_arrow", () -> new GeodeTippedArrowItem(WREntities.PURPLE_GEODE_ARROW));
+    public static final RegistryObject<Item> PURPLE_GEODE_ARROW = register("purple_geode_tipped_arrow", () -> new GeodeTippedArrowItem(4));
 
     public static final RegistryObject<Item> PLATINUM_SWORD = register("platinum_sword", () -> new SwordItem(ToolMaterialList.PLATINUM, 2, -2.4f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_PICKAXE = register("platinum_pickaxe", () -> new PickaxeItem(ToolMaterialList.PLATINUM, 0, -2.8f, ModUtils.itemBuilder()));
@@ -116,9 +116,9 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterialList.RED_GEODE.getEnchantability()));
     public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(20, ArmorMaterialList.PURPLE_GEODE.getEnchantability()));
 
-    static RegistryObject<Item> register(String name, Supplier<Item> item) { return ITEMS.register(name, item); }
+    static RegistryObject<Item> register(String name, Supplier<Item> item) { return REGISTRY.register(name, item); }
 
-    static RegistryObject<Item> register(String name) { return ITEMS.register(name, () -> new Item(ModUtils.itemBuilder())); }
+    static RegistryObject<Item> register(String name) { return REGISTRY.register(name, () -> new Item(ModUtils.itemBuilder())); }
 
     //  ===========================
     //          Food List

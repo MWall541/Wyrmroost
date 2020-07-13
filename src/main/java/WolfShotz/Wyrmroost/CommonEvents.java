@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.client.screen.DebugScreen;
-import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.items.DrakeArmorItem;
 import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
@@ -43,11 +42,13 @@ public class CommonEvents
         evt.setCancellationResult(ActionResultType.SUCCESS);
 
         Entity entity = evt.getTarget();
-        if (!(entity instanceof AbstractDragonEntity)) return;
-        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-        if (player.isSneaking()) dragon.tame(true, player);
-        else DebugScreen.open(dragon);
+        ((DragonEggEntity) entity).wiggle();
+//        if (!(entity instanceof AbstractDragonEntity)) return;
+//        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+//
+//        if (player.isSneaking()) dragon.tame(true, player);
+//        else DebugScreen.open(dragon);
     }
 
     @SubscribeEvent

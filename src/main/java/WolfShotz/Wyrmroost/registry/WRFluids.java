@@ -34,8 +34,8 @@ public class WRFluids
     {
         RegistryObject<FlowingFluid> s = FLUIDS.register(name, fluidFunc.apply(true));
         RegistryObject<FlowingFluid> f = FLUIDS.register("flowing_" + name, fluidFunc.apply(false));
-        RegistryObject<FlowingFluidBlock> b = WRBlocks.BLOCKS.register(name, block);
-        RegistryObject<BucketItem> bu = WRItems.ITEMS.register(name + "_bucket", () -> new BucketItem(s, ModUtils.itemBuilder().containerItem(Items.BUCKET).maxStackSize(1)));
+        RegistryObject<FlowingFluidBlock> b = WRBlocks.REGISTRY.register(name, block);
+        RegistryObject<BucketItem> bu = WRItems.REGISTRY.register(name + "_bucket", () -> new BucketItem(s, ModUtils.itemBuilder().containerItem(Items.BUCKET).maxStackSize(1)));
         return new FluidRegistry(s, f, b, bu);
     }
 

@@ -8,13 +8,13 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonBodyController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
+import WolfShotz.Wyrmroost.entities.projectile.GeodeTippedArrowEntity;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.Sets;
@@ -29,8 +29,6 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.SpectralArrowEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -517,12 +515,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             Entity attackSource = source.getImmediateSource();
             if (attackSource instanceof AbstractArrowEntity)
             {
-                EntityType<?> type = attackSource.getType();
-                if (type == WREntities.BLUE_GEODE_ARROW.get()) amount *= 0.25f;
-                else if (type == WREntities.RED_GEODE_ARROW.get()) amount *= 0.5f;
-                else if (type == WREntities.PURPLE_GEODE_ARROW.get()) amount *= 0.75f;
-                else if (attackSource instanceof ArrowEntity || attackSource instanceof SpectralArrowEntity)
-                    return false;
+                if (attackSource instanceof GeodeTippedArrowEntity) amount *= 0.5f;
+                else return false;
             }
         }
 

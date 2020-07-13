@@ -45,7 +45,7 @@ class Models
         {
             // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
             // If this is unwanted, it is important to define so above
-            for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS))
+            for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
             {
                 if (registeredBlocks.containsKey(block)) continue;
                 if (block instanceof FlowingFluidBlock) continue;
@@ -134,7 +134,7 @@ class Models
 
             // Item Blocks
 //            item(WRBlocks.CINIS_ROOT.get().asItem());
-            for (Block block : ModUtils.getRegistryEntries(WRBlocks.BLOCKS)) // All Standard ItemBlocks
+            for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY)) // All Standard ItemBlocks
             {
                 if (REGISTERED.contains(block.asItem())) continue;
                 if (block instanceof FlowingFluidBlock) // Buckets
@@ -148,7 +148,7 @@ class Models
             }
 
             // All items that do not require custom attention
-            ModUtils.streamRegistry(WRItems.ITEMS).filter(e -> !REGISTERED.contains(e)).forEach(this::item);
+            ModUtils.streamRegistry(WRItems.REGISTRY).filter(e -> !REGISTERED.contains(e)).forEach(this::item);
 
             if (!MISSING_TEXTURES.isEmpty())
                 Wyrmroost.LOG.error("Items are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());

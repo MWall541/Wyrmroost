@@ -65,7 +65,7 @@ public class Tags
         @Override
         protected void registerTags()
         {
-            getBuilder(EntityTypeTags.ARROWS).add(WREntities.BLUE_GEODE_ARROW.get(), WREntities.RED_GEODE_ARROW.get(), WREntities.PURPLE_GEODE_ARROW.get());
+            getBuilder(EntityTypeTags.ARROWS).add(WREntities.GEODE_TIPPED_ARROW.get());
         }
     }
 
