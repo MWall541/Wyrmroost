@@ -13,7 +13,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
-//TODO UNTESTED!!!!
 public class CoinDragonItem extends Item
 {
     public static final String DATA_ENTITY = "CoinDragonData";
