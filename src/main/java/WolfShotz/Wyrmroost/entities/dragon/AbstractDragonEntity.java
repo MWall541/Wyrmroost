@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
@@ -78,7 +79,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public final Set<EntityDataEntry<?>> dataEntries = Sets.newHashSet();
     public final Optional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
-    public DragonEggProperties eggProperties; // cache for speed
     public Animation animation = NO_ANIMATION;
     public int sleepCooldown;
     public int animationTick;
@@ -88,7 +88,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super(dragon, world);
 
         invHandler = Optional.ofNullable(createInv());
-        eggProperties = DragonEggProperties.MAP.get(dragon);
         stepHeight = 1;
 
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
@@ -693,7 +692,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public DragonEggProperties getEggProperties()
     {
-        return
+        return DragonEggProperties.MAP.computeIfAbsent((EntityType<? extends AbstractDragonEntity>) getType(), t ->
+        {
+            Wyrmroost.LOG.warn("{} is missing egg properties! Contact Mod Author. Using default values...", getType().getName().getUnformattedComponentText());
+            return new DragonEggProperties(2f, 2f, 12000);
+        });
     }
 
     @Override

@@ -1,34 +1,28 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
-import WolfShotz.Wyrmroost.items.DrakeArmorItem;
+import WolfShotz.Wyrmroost.items.base.FullSetBonusArmorItem;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.CallbackHandler;
-import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-
-import java.util.function.Supplier;
 
 /**
  * Reflection is shit and we shouldn't use it
@@ -44,21 +38,10 @@ public class CommonEvents
 
         bus.addListener(ModBus::commonSetup);
         bus.addListener(ModBus::configLoad);
-        bus.addListener(VillagerHelper::registerVillagersAndTrades);
+        bus.addGenericListener(VillagerProfession.class, VillagerHelper::registerVillagersAndTrades);
 
         MinecraftForge.EVENT_BUS.addListener(ForgeBus::debugStick);
         MinecraftForge.EVENT_BUS.addListener(ForgeBus::onChangeEquipment);
-    }
-
-    public static <T extends IForgeRegistryEntry<T>> RegistryObject<T> registerObject(Class<T> type, String name, Supplier<T> sup)
-    {
-        ResourceLocation rl = Wyrmroost.rl(name);
-        FMLJavaModLoadingContext.get().getModEventBus().<RegistryEvent.Register<T>, T>addGenericListener(type,
-                EventPriority.NORMAL,
-                false,
-                e -> e.getRegistry().register(sup.get().setRegistryName(rl)));
-
-        return RegistryObject.of(rl, () -> type);
     }
 
     private static class ModBus
@@ -117,13 +100,14 @@ public class CommonEvents
         @SubscribeEvent
         public static void onChangeEquipment(LivingEquipmentChangeEvent evt)
         {
-            if (!(evt.getEntity() instanceof PlayerEntity)) return;
-            Iterable<ItemStack> armor = evt.getEntity().getArmorInventoryList();
-            boolean full = Streams.stream(armor).allMatch(k -> k.getItem() instanceof DrakeArmorItem);
-            Streams.stream(armor)
-                    .filter(i -> i.getItem() instanceof DrakeArmorItem)
-                    .map(i -> (DrakeArmorItem) i.getItem())
-                    .forEach(i -> i.setFullSet(full));
+            FullSetBonusArmorItem initial = evt.getTo().getItem() instanceof FullSetBonusArmorItem? (FullSetBonusArmorItem) evt.getTo().getItem()
+                    : evt.getFrom().getItem() instanceof FullSetBonusArmorItem? (FullSetBonusArmorItem) evt.getFrom().getItem() : null;
+
+            if (initial != null)
+            {
+                LivingEntity entity = evt.getEntityLiving();
+                initial.applyFullSetBonus(entity, FullSetBonusArmorItem.hasFullSet(entity));
+            }
         }
     }
 }

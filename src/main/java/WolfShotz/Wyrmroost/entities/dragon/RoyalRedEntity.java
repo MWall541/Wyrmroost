@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.ControlledAttackGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
@@ -223,9 +222,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Override
     public Collection<Item> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
-
-    @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.6f, 1f, 72000); }
 
     @Nullable
     @Override

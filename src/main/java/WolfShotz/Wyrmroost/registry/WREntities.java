@@ -97,6 +97,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = Builder.creature("royal_red", RoyalRedEntity::new)
             .spawnEgg(0x8a0900, 0x0)
+            .dragonEgg(new DragonEggProperties(0.6f, 1f, 72000))
             .renderer(RoyalRedRenderer::new)
             .build(b -> b.size(3f, 3.9f).immuneToFire());
 
@@ -104,7 +105,7 @@ public class WREntities
             .spawnEgg(0xf, 0x0)// todo
             .build(b -> b.size(0.5f, 0.5f));
 
-    public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("blue_geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
+    public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
             .renderer(GeodeTippedArrowRenderer::new)
             .build(b -> b.size(0.5f, 0.5f));
 

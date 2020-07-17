@@ -42,7 +42,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
     protected boolean canRenderName(DragonEggEntity entity) { return false; }
 
     @Override
-    public ResourceLocation getEntityTexture(DragonEggEntity entity) { return getDragonEggTexture(entity.getType()); }
+    public ResourceLocation getEntityTexture(DragonEggEntity entity) { return getDragonEggTexture(entity.containedDragon); }
 
     public static ResourceLocation getDragonEggTexture(EntityType<?> type)
     {

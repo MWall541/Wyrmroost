@@ -31,10 +31,10 @@ public class VillagerHelper
 
     public static void registerVillagersAndTrades(RegistryEvent.Register<VillagerProfession> evt)
     {
-        VillagerProfession prof = new VillagerProfession(CD_TRADER_RL.getPath(), PointOfInterestType.NITWIT, ImmutableSet.of(), ImmutableSet.of(), null);
-        evt.getRegistry().register(prof.setRegistryName(CD_TRADER_RL));
+        VillagerProfession prof = new VillagerProfession(CD_TRADER_RL.getPath(), PointOfInterestType.NITWIT, ImmutableSet.of(), ImmutableSet.of(), null).setRegistryName(CD_TRADER_RL);
+        evt.getRegistry().register(prof);
 
-        VillagerTrades.VILLAGER_DEFAULT_TRADES.put(PROFESSION_COIN_DRAGON_TRADER.get(), new Int2ObjectOpenHashMap<>(ImmutableMap.of(
+        VillagerTrades.VILLAGER_DEFAULT_TRADES.put(prof, new Int2ObjectOpenHashMap<>(ImmutableMap.of(
                 1, new ITrade[] {
                         new ItemsForCDTrade(WRItems.BLUE_GEODE.get(), 8, 2, 2),
                         new ItemsForCDTrade(WRItems.RED_GEODE.get(), 5, 4, 3),

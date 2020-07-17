@@ -1,27 +1,19 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.items.base.ArmorMaterialList;
-import WolfShotz.Wyrmroost.items.base.ItemArmorBase;
-import com.google.common.collect.Multimap;
-import net.minecraft.client.util.ITooltipFlag;
+import WolfShotz.Wyrmroost.items.base.FullSetBonusArmorItem;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
-import java.util.List;
 import java.util.UUID;
 
-public class DrakeArmorItem extends ItemArmorBase
+public class DrakeArmorItem extends FullSetBonusArmorItem
 {
-    private static final UUID ARMOR_KNOCKBACK_RESISTANCE = UUID.fromString("eaa010aa-299d-4c76-9f02-a1283c9e890b");
-
-    private boolean fullSet = false;
+    private static final UUID KB_RESISTANCE_ID = UUID.fromString("eaa010aa-299d-4c76-9f02-a1283c9e890b");
+    private static final AttributeModifier KB_RESISTANCE = new AttributeModifier(KB_RESISTANCE_ID, "Drake armor knockback resistance", 10, AttributeModifier.Operation.ADDITION);
 
     public DrakeArmorItem(EquipmentSlotType equipType)
     {
@@ -29,30 +21,10 @@ public class DrakeArmorItem extends ItemArmorBase
     }
 
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
-    { // Todo better handle this
-        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot);
-
-        if (fullSet)
-        {
-            if (slot == this.slot)
-            {
-//                multimap.put(SharedMonsterAttributes.ATTACK_KNOCKBACK.getName(), new AttributeModifier(WEAPON_KNOCKBACK_MODIFER, "Weapon modifier", 1000d, AttributeModifier.Operation.MULTIPLY_TOTAL));
-                multimap.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getName(), new AttributeModifier(ARMOR_KNOCKBACK_RESISTANCE, "Armor modifier", 10, AttributeModifier.Operation.ADDITION));
-            }
-//            else fullSet = false;
-        }
-
-        return multimap;
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> lines, ITooltipFlag flag)
+    public void applyFullSetBonus(LivingEntity entity, boolean hasFullSet)
     {
-        super.addInformation(stack, world, lines, flag);
-        lines.add(new StringTextComponent(""));
-        lines.add(new TranslationTextComponent("item.wyrmroost.armors.drakedesc"));
+        IAttributeInstance attribute = entity.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
+        if (attribute.hasModifier(KB_RESISTANCE)) attribute.removeModifier(KB_RESISTANCE);
+        if (hasFullSet) attribute.applyModifier(KB_RESISTANCE);
     }
-
-    public void setFullSet(boolean flag) { this.fullSet = flag; }
 }

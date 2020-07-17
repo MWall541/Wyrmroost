@@ -45,23 +45,12 @@ public class DragonEggItem extends Item
         if (!(entity instanceof AbstractDragonEntity)) return false;
 
         CompoundNBT nbt = new CompoundNBT();
-        int hatchTime = DragonEggProperties.MAP.get(entity).getHatchTime();
-
         nbt.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(entity.getType()).toString());
-        nbt.putInt(DragonEggEntity.DATA_HATCH_TIME, hatchTime);
+        nbt.putInt(DragonEggEntity.DATA_HATCH_TIME, DragonEggProperties.MAP.get(entity.getType()).getHatchTime());
         stack.setTag(nbt);
+
         player.sendStatusMessage(getDisplayName(stack), true);
         return true;
-    }
-
-    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type, int hatchTime)
-    {
-        ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
-        CompoundNBT tag = new CompoundNBT();
-        tag.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(type).toString());
-        tag.putInt(DragonEggEntity.DATA_HATCH_TIME, hatchTime);
-        stack.setTag(tag);
-        return stack;
     }
 
     @Override
@@ -88,11 +77,6 @@ public class DragonEggItem extends Item
         
         return ActionResultType.SUCCESS;
     }
-
-    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type)
-    {
-        return getStack(type, DragonEggProperties.MAP.get(type).getHatchTime());
-    }
     
     @Override
     public ITextComponent getDisplayName(ItemStack stack)
@@ -104,7 +88,7 @@ public class DragonEggItem extends Item
         if (type.isPresent())
         {
             String dragonTranslation = type.get().getName().getUnformattedComponentText();
-            return new TranslationTextComponent(dragonTranslation).appendSibling(getName());
+            return new TranslationTextComponent(dragonTranslation + " ").appendSibling(getName());
         }
         
         return super.getDisplayName(stack);
@@ -121,5 +105,20 @@ public class DragonEggItem extends Item
         PlayerEntity player = Minecraft.getInstance().player;
         if (player != null && player.isCreative())
             tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.creativetooltip").applyTextStyle(TextFormatting.GRAY));
+    }
+
+    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type)
+    {
+        return getStack(type, DragonEggProperties.MAP.get(type).getHatchTime());
+    }
+
+    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type, int hatchTime)
+    {
+        ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
+        CompoundNBT tag = new CompoundNBT();
+        tag.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(type).toString());
+        tag.putInt(DragonEggEntity.DATA_HATCH_TIME, hatchTime);
+        stack.setTag(tag);
+        return stack;
     }
 }

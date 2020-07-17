@@ -253,19 +253,22 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     
     public DragonEggProperties getProperties()
     {
+        DragonEggProperties dummy = new DragonEggProperties(1f, 1f, 12000);
+        if (containedDragon == null) return dummy;
+
         if (properties == null) // This shouldn't happen, lazily fix it if it does tho.
         {
             properties = DragonEggProperties.MAP.computeIfAbsent(containedDragon, t ->
             {
-                Wyrmroost.LOG.warn("{} is missing egg properties! Contact Mod Author. Using default values...", getType().getName().getUnformattedComponentText());
-                return new DragonEggProperties(2f, 2f, 12000);
+                Wyrmroost.LOG.warn("{} is missing egg properties! Contact Mod Author. Using default values...", containedDragon.getName().getUnformattedComponentText());
+                return dummy;
             });
         }
         return properties;
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) { return DragonEggItem.getStack(containedDragon, hatchTime); }
+    public ItemStack getPickedResult(RayTraceResult target) { return DragonEggItem.getStack(containedDragon); }
 
     @Override
     public EntitySize getSize(Pose poseIn) { return getProperties().getSize(); }
