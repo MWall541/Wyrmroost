@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.client.render.entity.projectile;
 
-import WolfShotz.Wyrmroost.client.ClientEvents;
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.projectile.breath.BreathWeaponEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -18,6 +18,9 @@ import java.util.function.Function;
 
 public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
 {
+    public static final ResourceLocation RR_BREATH_0 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0");
+    public static final ResourceLocation RR_BREATH_1 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_1");
+
     public BreathWeaponRenderer(EntityRendererManager renderManager) { super(renderManager); }
 
     @Override
@@ -35,8 +38,8 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
     private void renderFire(MatrixStack ms, IRenderTypeBuffer typeBuffer, Entity entity)
     {
         Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        TextureAtlasSprite fireSprite1 = func.apply(ClientEvents.RR_BREATH_0);
-        TextureAtlasSprite fireSprite2 = func.apply(ClientEvents.RR_BREATH_1);
+        TextureAtlasSprite fireSprite1 = func.apply(RR_BREATH_0);
+        TextureAtlasSprite fireSprite2 = func.apply(RR_BREATH_1);
         ms.push();
         float width = entity.getWidth() * 1.4F;
         ms.scale(width, width, width);

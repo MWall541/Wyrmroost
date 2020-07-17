@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
-    public static final Map<EntityType<? extends AbstractDragonEntity>, DragonEggProperties> PROPERTIES_MAP = Maps.newHashMap();
+    public static final Map<EntityType<? extends AbstractDragonEntity>, DragonEggProperties> MAP = Maps.newHashMap();
 
     private final EntitySize size;
     private final int hatchTime;

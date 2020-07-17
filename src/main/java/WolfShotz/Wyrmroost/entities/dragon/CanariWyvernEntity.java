@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.entities.dragon;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.FlyerMoveController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -11,7 +10,6 @@ import WolfShotz.Wyrmroost.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import com.google.common.collect.Lists;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.LookController;
@@ -178,12 +176,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
     @Override
     public Collection<Item> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
-
-    @Override
-    public DragonEggProperties createEggProperties()
-    {
-        return new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == Blocks.JUNGLE_LEAVES);
-    }
 
     @Override
     public Animation[] getAnimations()

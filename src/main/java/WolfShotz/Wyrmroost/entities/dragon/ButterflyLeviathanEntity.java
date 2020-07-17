@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
@@ -505,12 +504,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
 
     @Override
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
-    
-    @Override
-    public DragonEggProperties createEggProperties()
-    {
-        return new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater);
-    }
 
     @Override
     public Animation[] getAnimations()

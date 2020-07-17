@@ -2,7 +2,7 @@ package WolfShotz.Wyrmroost.items.staff;
 
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.EntityOutlineTesting;
-import WolfShotz.Wyrmroost.client.render.RenderEvents;
+import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
@@ -107,7 +107,7 @@ public class StaffAction
         {
             RayTraceResult rtr = ClientEvents.getClient().objectMouseOver;
             if (rtr instanceof BlockRayTraceResult)
-                RenderEvents.drawBlockPos(ms,
+                RenderHelper.drawBlockPos(ms,
                         ((BlockRayTraceResult) rtr).getPos(),
                         dragon.world,
                         Math.cos((dragon.ticksExisted + partialTicks) * 0.2) * 4.5 + 4.5,

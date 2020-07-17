@@ -130,5 +130,8 @@
   "item.wyrmroost.dragon_staff.action.sit.come": "Follow",
   "item.wyrmroost.dragon_staff.action.sit.stay": "Stay",
 
-  "item.wyrmroost.drake_backplate": "Drake Backplate"
+  "item.wyrmroost.drake_backplate": "Drake Backplate",
+
+  "item.wyrmroost.trumpet": "Trumpet",
+  "item.wyrmroost.trumpet.desc": "The Blissful Sounds of the Butterfly Leviathan can be replicated with such a divine device"
 }

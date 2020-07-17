@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.client.render;
 
 import WolfShotz.Wyrmroost.WRConfig;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -16,12 +17,12 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import java.util.OptionalDouble;
 
-public class RenderEvents extends RenderType
+public class RenderHelper extends RenderType
 {
     // == [Render Types] ==
 
     @SuppressWarnings("ConstantConditions")
-    private RenderEvents() { super(null, null, 0, 0, false, false, null, null); } // dummy
+    private RenderHelper() { super(null, null, 0, 0, false, false, null, null); } // dummy
 
     public static RenderType getGlowType(ResourceLocation locationIn)
     {
@@ -44,7 +45,6 @@ public class RenderEvents extends RenderType
                         .build(false));
     }
 
-
     // == [Rendering] ==
 
     public static AxisAlignedBB debugBox;
@@ -62,7 +62,7 @@ public class RenderEvents extends RenderType
         if (!WRConfig.debugMode) return;
         if (debugBox == null) return;
 
-        Vec3d view = getProjectedView();
+        Vec3d view = ClientEvents.getProjectedView();
         double x = view.x;
         double y = view.y;
         double z = view.z;
@@ -100,13 +100,13 @@ public class RenderEvents extends RenderType
 
     public static void drawBlockPos(MatrixStack ms, BlockPos pos, World world, double lineThickness, int argb)
     {
-        Vec3d view = getProjectedView();
+        Vec3d view = ClientEvents.getProjectedView();
         double x = pos.getX() - view.x;
         double y = pos.getY() - view.y;
         double z = pos.getZ() - view.z;
 
         IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        RenderEvents.drawShape(ms,
+        RenderHelper.drawShape(ms,
                 impl.getBuffer(getThiccLines(lineThickness)),
                 world.getBlockState(pos).getShape(world, pos),
                 x, y, z,
@@ -114,6 +114,4 @@ public class RenderEvents extends RenderType
 
         impl.finish();
     }
-
-    public static Vec3d getProjectedView() { return Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView(); }
 }

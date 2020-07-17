@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.items;
 import WolfShotz.Wyrmroost.client.render.DragonEggStackRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
+import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
@@ -36,7 +37,24 @@ public class DragonEggItem extends Item
         super(ModUtils.itemBuilder().maxStackSize(1).setISTER(() -> DragonEggStackRenderer::new));
     }
 
-    public static ItemStack createNew(EntityType<? extends AbstractDragonEntity> type, int hatchTime)
+    @Override
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
+    {
+        if (!player.isCreative()) return false;
+        if (!entity.isAlive()) return false;
+        if (!(entity instanceof AbstractDragonEntity)) return false;
+
+        CompoundNBT nbt = new CompoundNBT();
+        int hatchTime = DragonEggProperties.MAP.get(entity).getHatchTime();
+
+        nbt.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(entity.getType()).toString());
+        nbt.putInt(DragonEggEntity.DATA_HATCH_TIME, hatchTime);
+        stack.setTag(nbt);
+        player.sendStatusMessage(getDisplayName(stack), true);
+        return true;
+    }
+
+    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type, int hatchTime)
     {
         ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
         CompoundNBT tag = new CompoundNBT();
@@ -70,22 +88,10 @@ public class DragonEggItem extends Item
         
         return ActionResultType.SUCCESS;
     }
-    
-    @Override
-    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
+
+    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type)
     {
-        if (!player.isCreative()) return false;
-        if (!entity.isAlive()) return false;
-        if (!(entity instanceof AbstractDragonEntity)) return false;
-
-        CompoundNBT nbt = new CompoundNBT();
-        int hatchTime = ((AbstractDragonEntity) entity.getType().create(player.world)).getEggProperties().getHatchTime();
-
-        nbt.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(entity.getType()).toString());
-        nbt.putInt(DragonEggEntity.DATA_HATCH_TIME, hatchTime);
-        stack.setTag(nbt);
-        player.sendStatusMessage(getDisplayName(stack), true);
-        return true;
+        return getStack(type, DragonEggProperties.MAP.get(type).getHatchTime());
     }
     
     @Override

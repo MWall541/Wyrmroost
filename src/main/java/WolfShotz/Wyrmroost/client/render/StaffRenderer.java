@@ -10,7 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 /**
- * @deprecated - Needs cleaning up and merged with {@link RenderEvents}
+ * @deprecated - Needs cleaning up and merged with {@link RenderHelper}
  */
 public class StaffRenderer
 {
@@ -24,6 +24,6 @@ public class StaffRenderer
         if (dragon == null) return;
         DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
         EntityOutlineTesting.render(dragon, ms, partialTicks);
-        dragon.getHomePos().ifPresent(pos -> RenderEvents.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
+        dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
     }
 }

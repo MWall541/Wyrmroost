@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.render.entity;
 
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
-import WolfShotz.Wyrmroost.client.render.RenderEvents;
+import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -91,7 +91,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         {
             if (conditions.test(entity))
             {
-                IVertexBuilder builder = buffer.getBuffer(RenderEvents.getGlowType(texture.apply(entity)));
+                IVertexBuilder builder = buffer.getBuffer(RenderHelper.getGlowType(texture.apply(entity)));
                 getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
         }

@@ -26,18 +26,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-import java.util.Objects;
-
 public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnData
 {
-    public static final int HATCH_ID = 1; // 1 << 0;
-    public static final int WIGGLE_ID = 2; // 1 << 1;
+    private static final int HATCH_ID = 1; // 1 << 0;
+    private static final int WIGGLE_ID = 2; // 1 << 1;
     public static final String DATA_HATCH_TIME = "HatchTime";
     public static final String DATA_DRAGON_TYPE = "DragonType";
+    private static final int UPDATE_CONDITIONS_INTERVAL = 50; // in ticks, this is for performance reasons
 
     public EntityType<AbstractDragonEntity> containedDragon;
     public int hatchTime;
-    public DragonEggProperties properties;
+    public DragonEggProperties properties; // cache for speed
+    public boolean correctConditions = false;
     public boolean wiggling = false;
     public Direction wiggleDirection = Direction.NORTH;
     public TickFloat wiggleTime = new TickFloat().setLimit(0, 1);
@@ -49,6 +49,13 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         super(WREntities.DRAGON_EGG.get(), world);
         this.containedDragon = type;
         this.hatchTime = hatchTime;
+    }
+
+    @Override
+    public void onAddedToWorld()
+    {
+        super.onAddedToWorld();
+        correctConditions = getProperties().getConditions().test(this);
     }
 
     // ================================
@@ -83,12 +90,17 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
             safeError();
             return;
         }
-        
+
         super.tick();
-        
         updateMotion();
 
-        if (getProperties().getConditions().test(this))
+        if (ticksExisted % UPDATE_CONDITIONS_INTERVAL == 0)
+        {
+            boolean correctConditions = getProperties().getConditions().test(this);
+            if (correctConditions != this.correctConditions) this.correctConditions = correctConditions;
+        }
+
+        if (correctConditions)
         {
             if (world.isRemote)
             {
@@ -187,7 +199,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
                 return;
             }
             newDragon.setPosition(getPosX(), getPosY(), getPosZ());
-            newDragon.setGrowingAge(newDragon.getEggProperties().getGrowthTime());
+            newDragon.setGrowingAge(getProperties().getGrowthTime());
             newDragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
             world.addEntity(newDragon);
         }
@@ -232,7 +244,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        ItemStack stack = DragonEggItem.createNew(containedDragon, hatchTime);
+        ItemStack stack = DragonEggItem.getStack(containedDragon, hatchTime);
         InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), stack);
         remove();
 
@@ -241,25 +253,19 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     
     public DragonEggProperties getProperties()
     {
-        if (properties == null) // get properties lazily
+        if (properties == null) // This shouldn't happen, lazily fix it if it does tho.
         {
-            try
+            properties = DragonEggProperties.MAP.computeIfAbsent(containedDragon, t ->
             {
-                return properties = Objects.requireNonNull(containedDragon.create(world)).getEggProperties();
-
-            }
-            catch (NullPointerException e)
-            {
-                Wyrmroost.LOG.warn("Unknown Dragon Type!!!");
-                return properties = new DragonEggProperties(0.65f, 1f, 12000);
-            }
+                Wyrmroost.LOG.warn("{} is missing egg properties! Contact Mod Author. Using default values...", getType().getName().getUnformattedComponentText());
+                return new DragonEggProperties(2f, 2f, 12000);
+            });
         }
-
         return properties;
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) { return DragonEggItem.createNew(containedDragon, hatchTime); }
+    public ItemStack getPickedResult(RayTraceResult target) { return DragonEggItem.getStack(containedDragon, hatchTime); }
 
     @Override
     public EntitySize getSize(Pose poseIn) { return getProperties().getSize(); }

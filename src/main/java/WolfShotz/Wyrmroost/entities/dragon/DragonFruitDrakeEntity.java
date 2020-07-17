@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.entities.dragon;
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -176,7 +175,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
     {
         if (getRNG().nextDouble() <= WRConfig.dfdBabyChance) setGrowingAge(getEggProperties().getGrowthTime());
-
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
@@ -269,9 +267,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     @Override
     public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.APPLE; }
-
-    @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.45f, 0.75f, 9600); }
 
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, BITE_ANIMATION}; }

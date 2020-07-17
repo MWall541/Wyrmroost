@@ -30,6 +30,7 @@ public class WRItems
     public static final RegistryObject<Item> SOUL_CRYSTAL = register("soul_crystal", SoulCrystalItem::new);
     public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", DragonStaffItem::new);
     public static final RegistryObject<Item> COIN_DRAGON = register("coin_dragon", CoinDragonItem::new);
+    public static final RegistryObject<Item> TRUMPET = register("trumpet", TrumpetItem::new);
 
     public static final RegistryObject<Item> BLUE_GEODE = register("blue_geode");
     public static final RegistryObject<Item> RED_GEODE = register("red_geode");

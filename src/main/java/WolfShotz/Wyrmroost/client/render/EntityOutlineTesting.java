@@ -33,7 +33,7 @@ public class EntityOutlineTesting
         EntityRenderer<? super Entity> renderer = ClientEvents.getClient().getRenderManager().getRenderer(entity);
 
         Vec3d offset = renderer.getRenderOffset(entity, partialTicks);
-        Vec3d view = RenderEvents.getProjectedView();
+        Vec3d view = ClientEvents.getProjectedView();
         double x = MathHelper.lerp(partialTicks, entity.prevPosX, entity.getPosX()) - view.x + offset.x;
         double y = MathHelper.lerp(partialTicks, entity.prevPosY, entity.getPosY()) - view.y + offset.y;
         double z = MathHelper.lerp(partialTicks, entity.prevPosZ, entity.getPosZ()) - view.z + offset.z;

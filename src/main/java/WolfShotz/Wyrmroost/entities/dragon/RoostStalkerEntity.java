@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
@@ -241,8 +240,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
 
-    @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.25f, 0.35f, 6000); }
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, SCAVENGE_ANIMATION}; }
 

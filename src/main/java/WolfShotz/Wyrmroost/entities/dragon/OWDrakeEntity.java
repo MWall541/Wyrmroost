@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -392,9 +391,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.setAnimation(animation);
         if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f);
     }
-
-    @Override
-    public DragonEggProperties createEggProperties() { return new DragonEggProperties(0.65f, 1f, 18000); }
 
     @Override
     public Collection<Item> getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements(); }

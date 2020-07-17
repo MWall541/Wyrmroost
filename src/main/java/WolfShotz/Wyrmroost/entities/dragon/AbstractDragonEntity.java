@@ -1,8 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
-import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.client.render.RenderEvents;
+import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonBodyController;
@@ -79,7 +78,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public final Set<EntityDataEntry<?>> dataEntries = Sets.newHashSet();
     public final Optional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
-    public DragonEggProperties eggProperties;
+    public DragonEggProperties eggProperties; // cache for speed
     public Animation animation = NO_ANIMATION;
     public int sleepCooldown;
     public int animationTick;
@@ -89,7 +88,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super(dragon, world);
 
         invHandler = Optional.ofNullable(createInv());
-        eggProperties = createEggProperties();
+        eggProperties = DragonEggProperties.MAP.get(dragon);
         stepHeight = 1;
 
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
@@ -490,7 +489,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
 
-        if (WRConfig.debugMode && world.isRemote) RenderEvents.queueRenderBox(aabb);
+        if (WRConfig.debugMode && world.isRemote) RenderHelper.queueRenderBox(aabb);
         if (livingEntities.isEmpty()) return;
         livingEntities.forEach(this::attackEntityAsMob);
     }
@@ -683,13 +682,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public AgeableEntity createChild(AgeableEntity ageable)
     {
-        ItemStack eggStack = DragonEggItem.createNew((EntityType<AbstractDragonEntity>) getType(), getEggProperties().getHatchTime());
+        ItemStack eggStack = DragonEggItem.getStack((EntityType<? extends AbstractDragonEntity>) getType());
         ItemEntity eggItem = new ItemEntity(world, getPosX(), getPosY(), getPosZ(), eggStack);
 
         eggItem.setMotion(0, getHeight() / 3, 0);
         world.addEntity(eggItem);
 
         return null;
+    }
+
+    public DragonEggProperties getEggProperties()
+    {
+        return
     }
 
     @Override
@@ -930,18 +934,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     public abstract Collection<Item> getFoodItems();
-
-    public DragonEggProperties getEggProperties()
-    {
-        if (eggProperties == null) // This shouldn't happen, lazily fix it if it does tho.
-        {
-            Wyrmroost.LOG.warn("{} is missing dragon egg properties! Contact Mod Author. Using default values...", getType().getName().getUnformattedComponentText());
-            eggProperties = new DragonEggProperties(2f, 2f, 12000);
-        }
-        return eggProperties;
-    }
-
-    public abstract DragonEggProperties createEggProperties();
 
     // ================================
     //        Entity Animation

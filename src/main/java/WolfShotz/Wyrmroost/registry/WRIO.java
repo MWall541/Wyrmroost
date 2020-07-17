@@ -15,14 +15,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class WRIO
 {
-    public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<ContainerType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<ContainerType<DragonInvContainer>> DRAGON_INVENTORY = register("dragon_inventory", getDragonInvContainer());
 
 
     public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, ContainerType<T> type)
     {
-        return CONTAINERS.register(name, () -> type);
+        return REGISTRY.register(name, () -> type);
     }
 
     public static void screenSetup()
