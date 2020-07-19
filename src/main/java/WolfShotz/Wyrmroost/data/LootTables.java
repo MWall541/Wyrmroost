@@ -139,21 +139,6 @@ class LootTables extends LootTableProvider
             lootTables.put(type, table);
         }
 
-        private static LootingEnchantBonus.Builder looting(float min, float max)
-        {
-            return LootingEnchantBonus.builder(RandomValueRange.of(min, max));
-        }
-
-        private static ItemLootEntry.Builder<?> item(IItemProvider itemIn, float minIn, float maxIn)
-        {
-            return ItemLootEntry.builder(itemIn).acceptFunction(SetCount.builder(RandomValueRange.of(minIn, maxIn)));
-        }
-
-        private static ItemLootEntry.Builder<?> item(IItemProvider itemIn, int amount)
-        {
-            return ItemLootEntry.builder(itemIn).acceptFunction(SetCount.builder(ConstantRange.of(amount)));
-        }
-
         @Override
         protected void addTables()
         {
@@ -184,13 +169,31 @@ class LootTables extends LootTableProvider
             registerLootTable(WREntities.ROYAL_RED.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_APEX_MEAT.get(), 4, 8, 3, 5))));
 
+            registerLootTable(WREntities.COIN_DRAGON.get(), LootTable.builder().addLootPool(singleRollPool()
+                    .addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 1, 0, 1))
+                    .addEntry(item(Items.GOLD_NUGGET, 4))));
         }
+
+        private static LootingEnchantBonus.Builder looting(float min, float max)
+        {
+            return LootingEnchantBonus.builder(RandomValueRange.of(min, max));
+        }
+
+        private static ItemLootEntry.Builder<?> item(IItemProvider itemIn, float minIn, float maxIn)
+        {
+            return ItemLootEntry.builder(itemIn).acceptFunction(SetCount.builder(RandomValueRange.of(minIn, maxIn)));
+        }
+
+        private static ItemLootEntry.Builder<?> item(IItemProvider itemIn, int amount)
+        {
+            return ItemLootEntry.builder(itemIn).acceptFunction(SetCount.builder(ConstantRange.of(amount)));
+        }
+
+        private static LootPool.Builder singleRollPool() { return LootPool.builder().rolls(ConstantRange.of(1)); }
 
         private static ItemLootEntry.Builder<?> meat(IItemProvider itemIn, int minAmount, int maxAmount, int lootingMin, int lootingMax)
         {
             return item(itemIn, minAmount, maxAmount).acceptFunction(ON_FIRE_SMELT).acceptFunction(looting(lootingMin, lootingMax));
         }
-
-        private static LootPool.Builder singleRollPool() { return LootPool.builder().rolls(ConstantRange.of(1)); }
     }
 }

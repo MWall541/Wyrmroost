@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -19,7 +20,6 @@ public class WRConfig
     public static int fireBreathFlammability = 100;
     public static int homeRadius = 16;
     public static double dfdBabyChance = 0.4d;
-
 
     /**
      * Config Spec on COMMON Dist
@@ -125,5 +125,13 @@ public class WRConfig
             WRConfig.dfdBabyChance = INSTANCE.dfdBabyChance.get();
             WRConfig.fireBreathFlammability = INSTANCE.breathFlammability.get();
         }
+    }
+
+    public static void configLoad(ModConfig.ModConfigEvent evt)
+    {
+        ForgeConfigSpec spec = evt.getConfig().getSpec();
+        if (spec == Common.SPEC) Common.reload();
+        else if (spec == Client.SPEC) Client.reload();
+        else if (spec == Server.SPEC) Server.reload();
     }
 }

@@ -95,6 +95,7 @@
   },
   "entity.owdrake.roar": {
     "subtitle": "Overworld Drake Roar",
+    "category": "hostile",
     "sounds": [
       {
         "name": "wyrmroost:entity/overworld_drake/roar"

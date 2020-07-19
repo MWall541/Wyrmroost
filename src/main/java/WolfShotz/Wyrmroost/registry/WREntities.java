@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
+import WolfShotz.Wyrmroost.client.render.entity.coin_dragon.CoinDragonRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
@@ -102,7 +103,7 @@ public class WREntities
             .build(b -> b.size(3f, 3.9f).immuneToFire());
 
     public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = Builder.creature("coin_dragon", CoinDragonEntity::new)
-            .spawnEgg(0xf, 0x0)// todo
+            .renderer(CoinDragonRenderer::new)
             .build(b -> b.size(0.5f, 0.5f));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)

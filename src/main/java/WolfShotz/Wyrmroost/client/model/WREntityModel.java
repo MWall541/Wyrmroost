@@ -35,7 +35,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
             if (box instanceof WRModelRenderer) ((WRModelRenderer) box).resetToDefaultPose();
     }
 
-    public void setRotateAngle(WRModelRenderer model, float x, float y, float z)
+    public void setRotateAngle(ModelRenderer model, float x, float y, float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

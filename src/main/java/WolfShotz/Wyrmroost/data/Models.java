@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.data;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.items.CoinDragonItem;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRBlocks;
 import WolfShotz.Wyrmroost.registry.WRItems;
@@ -17,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 @SuppressWarnings("ConstantConditions")
 class Models
@@ -105,7 +107,6 @@ class Models
         @SuppressWarnings("ConstantConditions")
         protected void registerModels()
         {
-            // Dragon Egg
             itemBare(WRItems.DRAGON_EGG.get())
                     .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
                     .guiLight(BlockModel.GuiLight.FRONT)
@@ -117,7 +118,6 @@ class Models
                     .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
                     .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
 
-            // Minutus
             getBuilder("desert_wyrm_alive")
                     .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
                     .texture("layer0", resource("desert_wyrm_alive"));
@@ -126,14 +126,21 @@ class Models
                     .predicate(Wyrmroost.rl("is_alive"), 1f)
                     .model(new ModelFile.UncheckedModelFile(resource("desert_wyrm_alive")));
 
-            // Dragon Staff
-            item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
+            final ItemModelBuilder cdBuilder = item(WRItems.COIN_DRAGON.get());
+            IntStream.range(1, 5).forEach(i ->
+            {
+                String path = "coin_dragon" + i;
+                getBuilder(path)
+                        .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+                        .texture("layer0", resource(path));
+                cdBuilder.override()
+                        .predicate(CoinDragonItem.VARIANT_OVERRIDE, i)
+                        .model(new ModelFile.UncheckedModelFile(resource(path)));
+            });
 
-            // SpawnEggs
+            item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
             LazySpawnEggItem.EGG_TYPES.forEach(i -> itemBare(i).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg"))));
 
-            // Item Blocks
-//            item(WRBlocks.CINIS_ROOT.get().asItem());
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY)) // All Standard ItemBlocks
             {
                 if (REGISTERED.contains(block.asItem())) continue;

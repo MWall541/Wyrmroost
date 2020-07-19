@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.data;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -40,8 +41,8 @@ public class Sounds implements IDataProvider
     {
         JsonObject json = new JsonObject();
         registerSounds(json);
-        for (WRSounds value : WRSounds.values())
-            if (!registered.contains(value.get()))
+        for (SoundEvent value : ModUtils.getRegistryEntries(WRSounds.deferred()))
+            if (!registered.contains(value))
                 throw new IllegalArgumentException("Unregistered Sound event: " + value.toString());
         IDataProvider.save(GSON, cache, json, generator.getOutputFolder().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
     }
@@ -59,7 +60,7 @@ public class Sounds implements IDataProvider
         new Builder(WRSounds.ENTITY_OWDRAKE_IDLE.get()).subtitle("Overworld Drake Snorts").sounds(s -> Wyrmroost.rl("entity/overworld_drake" + s), "idle1", "idle2", "idle3").build(json);
         new Builder(WRSounds.ENTITY_OWDRAKE_HURT.get()).subtitle("Overworld Drake Outcry").sounds(s -> Wyrmroost.rl("entity/overworld_drake" + s), "idle1", "idle2", "idle3").build(json);
         new Builder(WRSounds.ENTITY_OWDRAKE_DEATH.get()).subtitle("Overworld Drake Moan").sound(Wyrmroost.rl("entity/overworld_drake/death")).build(json);
-        new Builder(WRSounds.ENTITY_OWDRAKE_ROAR.get()).subtitle("Overworld Drake Roar").sound(Wyrmroost.rl("entity/overworld_drake/roar")).build(json);
+        new Builder(WRSounds.ENTITY_OWDRAKE_ROAR.get()).subtitle("Overworld Drake Roar").category(SoundCategory.HOSTILE).sound(Wyrmroost.rl("entity/overworld_drake/roar")).build(json);
 
         new Builder(WRSounds.ENTITY_STALKER_IDLE.get()).subtitle("Rooststalker Clicks").sounds(s -> Wyrmroost.rl("entity/roost_stalker" + s), "idle1", "idle2", "idle3").build(json);
         new Builder(WRSounds.ENTITY_STALKER_HURT.get()).subtitle("Rooststalker Screech").sound(Wyrmroost.rl("entity/roost_stalker/hurt")).build(json);
