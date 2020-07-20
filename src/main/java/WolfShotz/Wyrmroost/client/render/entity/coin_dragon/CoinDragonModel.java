@@ -1,10 +1,11 @@
 package WolfShotz.Wyrmroost.client.render.entity.coin_dragon;
 
+import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.entities.dragon.CoinDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -13,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * Created using Tabula 8.0.0
  */
 @OnlyIn(Dist.CLIENT)
-public class CoinDragonModel extends EntityModel<CoinDragonEntity>
+public class CoinDragonModel extends WREntityModel<CoinDragonEntity>
 {
     public ModelRenderer body1;
     public ModelRenderer body2;
@@ -33,6 +34,7 @@ public class CoinDragonModel extends EntityModel<CoinDragonEntity>
     public ModelRenderer head;
     public ModelRenderer eyeL;
     public ModelRenderer eyeR;
+    public final ModelRenderer[] tails;
 
     public CoinDragonModel()
     {
@@ -128,24 +130,26 @@ public class CoinDragonModel extends EntityModel<CoinDragonEntity>
         body1.addChild(wingL);
         legR.addChild(footR);
         legL.addChild(footL);
+
+        tails = new ModelRenderer[] {tail1, tail2, tail3};
     }
 
     @Override
-    public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        body1.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        ms.translate(0, -0.02f, 0);
+        body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
     @Override
     public void setRotationAngles(CoinDragonEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
+        float flap = MathHelper.cos(ageInTicks * 3f) * 0.6f + 0.75f;
+        wingL.rotateAngleZ = flap;
+        wingR.rotateAngleZ = -flap;
 
-    }
-
-    public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z)
-    {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+        for (int i = 1; i < tails.length + 1; i++)
+            tails[i - 1].rotateAngleX = MathHelper.cos(ageInTicks * 0.2f + 0.8f * -i) * 0.1f + 0.4f;
+        tail1.rotateAngleX += 0.4f; // adjust first tail a little
     }
 }

@@ -3,10 +3,7 @@ package WolfShotz.Wyrmroost.entities.dragon;
 import WolfShotz.Wyrmroost.items.CoinDragonItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,10 +29,7 @@ public class CoinDragonEntity extends MobEntity
     public CoinDragonEntity(EntityType<? extends CoinDragonEntity> type, World worldIn) { super(type, worldIn); }
 
     @Override
-    protected void registerGoals()
-    {
-        goalSelector.addGoal(0, new LookAtGoal(this, PlayerEntity.class, 4));
-    }
+    protected void registerGoals() { goalSelector.addGoal(0, new LookAtGoal(this, PlayerEntity.class, 4)); }
 
     @Override
     protected void registerData()
@@ -67,14 +61,15 @@ public class CoinDragonEntity extends MobEntity
     {
         super.registerAttributes();
         getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(4);
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4);
+        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.02);
     }
 
     // move up if too low, move down if too high, else, just bob up and down
     @Override
     public void travel(Vec3d positionIn)
     {
-        double moveSpeed = 0.02d; // getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue();
+        if (isAIDisabled()) return;
+        double moveSpeed = getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue();
         double yMot;
         double altitiude = getAltitude();
         if (altitiude < 1.5) yMot = moveSpeed;
@@ -100,6 +95,9 @@ public class CoinDragonEntity extends MobEntity
         remove();
         return true;
     }
+
+    @Override
+    protected float getStandingEyeHeight(Pose pose, EntitySize size) { return size.height * 0.8645f; }
 
     @Override
     public ItemStack getPickedResult(RayTraceResult target) { return getItemStack(); }

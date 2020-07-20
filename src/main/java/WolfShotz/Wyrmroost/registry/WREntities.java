@@ -104,7 +104,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = Builder.creature("coin_dragon", CoinDragonEntity::new)
             .renderer(CoinDragonRenderer::new)
-            .build(b -> b.size(0.5f, 0.5f));
+            .build(b -> b.size(0.35f, 0.435f));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
             .renderer(GeodeTippedArrowRenderer::new)

@@ -42,13 +42,13 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         model.rotateAngleZ = z;
     }
 
-    public void faceTarget(float yaw, float pitch, float rotationDivisor, WRModelRenderer... boxes)
+    public void faceTarget(float yaw, float pitch, float rotationDivisor, ModelRenderer... boxes)
     {
         float actualRotationDivisor = rotationDivisor * (float) boxes.length;
         float yawAmount = yaw / 57.295776F / actualRotationDivisor;
         float pitchAmount = pitch / 57.295776F / actualRotationDivisor;
 
-        for (WRModelRenderer box : boxes)
+        for (ModelRenderer box : boxes)
         {
             box.rotateAngleX += pitchAmount;
             box.rotateAngleY += yawAmount;
@@ -131,7 +131,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         return MathHelper.cos(swing * speed + offset * boxIndex) * swingAmount * degree;
     }
 
-    private float calculateChainOffset(double rootOffset, WRModelRenderer... boxes)
+    private float calculateChainOffset(double rootOffset, ModelRenderer... boxes)
     {
         return (float) rootOffset * Mafs.PI / (2f * boxes.length);
     }

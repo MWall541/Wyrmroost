@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.CallbackHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -21,7 +20,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Reflection is shit and we shouldn't use it
@@ -72,11 +70,12 @@ public class CommonEvents
         evt.setCancellationResult(ActionResultType.SUCCESS);
 
         Entity entity = evt.getTarget();
+//        entity.recalculateSize();
 
-        ((VillagerEntity) entity).setVillagerData(((VillagerEntity) entity)
-                .getVillagerData()
-                .withLevel(2)
-                .withProfession(ForgeRegistries.PROFESSIONS.getValue(Wyrmroost.rl("coin_dragon_trader"))));
+//        ((VillagerEntity) entity).setVillagerData(((VillagerEntity) entity)
+//                .getVillagerData()
+//                .withLevel(2)
+//                .withProfession(ForgeRegistries.PROFESSIONS.getValue(Wyrmroost.rl("coin_dragon_trader"))));
 
 //        if (!(entity instanceof AbstractDragonEntity)) return;
 //        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;

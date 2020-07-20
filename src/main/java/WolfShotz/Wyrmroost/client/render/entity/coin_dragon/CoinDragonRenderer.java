@@ -12,7 +12,7 @@ public class CoinDragonRenderer extends MobRenderer<CoinDragonEntity, CoinDragon
 
     static
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < TEXTURES.length; i++)
             TEXTURES[i] = Wyrmroost.rl("textures/entity/dragon/coin_dragon/body_" + i + ".png");
     }
 
