@@ -1,13 +1,14 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.data.DataGatherer;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
 import WolfShotz.Wyrmroost.items.base.FullSetBonusArmorItem;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import WolfShotz.Wyrmroost.util.CallbackHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -34,14 +35,15 @@ public class CommonEvents
     public static void register()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         bus.addListener(CommonEvents::commonSetup);
         bus.addListener(WRConfig::configLoad);
         bus.addListener(DataGatherer::gather);
-        bus.addGenericListener(VillagerProfession.class, VillagerHelper::registerVillagersAndTrades);
 
-        MinecraftForge.EVENT_BUS.addListener(CommonEvents::debugStick);
-        MinecraftForge.EVENT_BUS.addListener(CommonEvents::onChangeEquipment);
+        forgeBus.addListener(CommonEvents::debugStick);
+        forgeBus.addListener(CommonEvents::onChangeEquipment);
+        forgeBus.addListener(VillagerHelper::addWandererTrades);
     }
 
     // ====================
@@ -77,11 +79,11 @@ public class CommonEvents
 //                .withLevel(2)
 //                .withProfession(ForgeRegistries.PROFESSIONS.getValue(Wyrmroost.rl("coin_dragon_trader"))));
 
-//        if (!(entity instanceof AbstractDragonEntity)) return;
-//        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-//
-//        if (player.isSneaking()) dragon.tame(true, player);
-//        else DebugScreen.open(dragon);
+        if (!(entity instanceof AbstractDragonEntity)) return;
+        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+
+        if (player.isSneaking()) dragon.tame(true, player);
+        else DebugScreen.open(dragon);
     }
 
 //        @SubscribeEvent

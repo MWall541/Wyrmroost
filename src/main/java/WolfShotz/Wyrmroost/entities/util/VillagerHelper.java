@@ -1,127 +1,91 @@
 package WolfShotz.Wyrmroost.entities.util;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.merchant.villager.VillagerProfession;
-import net.minecraft.entity.merchant.villager.VillagerTrades;
-import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.MerchantOffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.village.PointOfInterestType;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.event.village.WandererTradesEvent;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
+
+import static net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
 
 public class VillagerHelper
 {
-    private static final ResourceLocation CD_TRADER_RL = Wyrmroost.rl("coin_dragon_trader");
-    public static final RegistryObject<VillagerProfession> PROFESSION_COIN_DRAGON_TRADER = RegistryObject.of(CD_TRADER_RL, ForgeRegistries.PROFESSIONS);
-
-    public static void registerVillagersAndTrades(RegistryEvent.Register<VillagerProfession> evt)
+    public static void addWandererTrades(WandererTradesEvent evt)
     {
-        VillagerProfession prof = new VillagerProfession(CD_TRADER_RL.getPath(), PointOfInterestType.NITWIT, ImmutableSet.of(), ImmutableSet.of(), null).setRegistryName(CD_TRADER_RL);
-        evt.getRegistry().register(prof);
+        List<ITrade> list = evt.getGenericTrades();
 
-        VillagerTrades.VILLAGER_DEFAULT_TRADES.put(prof, new Int2ObjectOpenHashMap<>(ImmutableMap.of(
-                1, new ITrade[] {
-                        new ItemsForCDTrade(WRItems.BLUE_GEODE.get(), 8, 2, 2),
-                        new ItemsForCDTrade(WRItems.RED_GEODE.get(), 5, 4, 3),
-                        new ItemsForCDTrade(WRItems.PURPLE_GEODE.get(), 3, 6, 4),
-                        new CDForItemsTrade(new ItemStack(WRItems.LDWYRM.get(), 64), 1, 3)
-                },
-                2, new ITrade[] {
-                }
-
-        )));
+        list.add(cdForItems(WRItems.BLUE_GEODE.get(), 12, 1, 3));
+        list.add(cdForItems(WRItems.RED_GEODE.get(), 6, 1, 4));
+        list.add(cdForItems(WRItems.PURPLE_GEODE.get(), 3, 1, 5));
+        list.add(cdForItems(WRItems.TRUMPET.get(), 1, 4, 2));
+        list.add(cdForItems(WRItems.JEWELLED_APPLE.get(), 2, 3, 1));
+        list.add(new ItemsForItemsTrade(new ItemStack(Items.EMERALD, 6), new ItemStack(WRItems.BLUE_GEODE.get(), 4), 4, 1, 10));
     }
 
-    public static ITrade CDForEgg(EntityType<? extends AbstractDragonEntity> dragon, int maxUses, int xp)
+    private static ITrade cdForItems(ItemStack selling, int maxUses, int xp)
     {
-        ItemStack stack = DragonEggItem.getStack(dragon);
-        return new CDForItemsTrade(stack, maxUses, xp);
+        return new ItemsForItemsTrade(new ItemStack(WRItems.COIN_DRAGON.get()), selling, maxUses, xp, 0);
     }
 
-    private static class ItemForItemTrade implements ITrade
+    private static ITrade cdForItems(Item item, int count, int maxUses, int xp)
     {
-        private final ItemStack buyingItem1, buyingItem2, sellingItem;
+        return cdForItems(new ItemStack(item, count), maxUses, xp);
+    }
+
+    private static class ItemsForItemsTrade implements ITrade
+    {
+        private final ItemStack buying1, buying2, selling;
         private final int maxUses, xp;
-        private final float multiplier;
+        private final float priceMultiplier;
 
-        public ItemForItemTrade(ItemStack buyingItem1, ItemStack buyingItem2, ItemStack sellingItem, int maxUses, int xp, float multiplier)
+        public ItemsForItemsTrade(ItemStack buying1, ItemStack buying2, ItemStack selling, int maxUses, int xp, float priceMultiplier)
         {
-            this.buyingItem1 = buyingItem1;
-            this.buyingItem2 = buyingItem2;
-            this.sellingItem = sellingItem;
-            this.maxUses = maxUses;
-            this.xp = xp;
-            this.multiplier = multiplier;
-        }
-
-        @Nullable
-        @Override
-        public MerchantOffer getOffer(Entity trader, Random rand)
-        {
-            return new MerchantOffer(buyingItem1, buyingItem2, sellingItem, maxUses, xp, multiplier);
-        }
-    }
-
-    private static class CDForItemsTrade implements ITrade
-    {
-        private final ItemStack selling;
-        private final int maxUses, xp;
-
-        public CDForItemsTrade(ItemStack selling, int maxUses, int xp)
-        {
+            this.buying1 = buying1;
+            this.buying2 = buying2;
             this.selling = selling;
             this.maxUses = maxUses;
             this.xp = xp;
+            this.priceMultiplier = priceMultiplier;
         }
 
-        public CDForItemsTrade(Item item, int amount, int maxUses, int xp)
+        public ItemsForItemsTrade(ItemStack buying1, ItemStack selling, int maxUses, int xp, float priceMultiplier)
         {
-            this.selling = new ItemStack(item, amount);
-            this.maxUses = maxUses;
-            this.xp = xp;
+            this(buying1, ItemStack.EMPTY, selling, maxUses, xp, priceMultiplier);
         }
 
         @Nullable
         @Override
         public MerchantOffer getOffer(Entity trader, Random rand)
         {
-            return new MerchantOffer(selling, new ItemStack(WRItems.COIN_DRAGON.get()), maxUses, xp, 0);
+            return new MerchantOffer(buying1, buying2, selling, maxUses, xp, priceMultiplier);
         }
     }
 
-    private static class ItemsForCDTrade implements ITrade
-    {
-        private final Item buying;
-        private final int amount, maxUses, xp;
-
-        public ItemsForCDTrade(Item buying, int amount, int maxUses, int xp)
-        {
-            this.buying = buying;
-            this.amount = amount;
-            this.maxUses = maxUses;
-            this.xp = xp;
-        }
-
-        @Nullable
-        @Override
-        public MerchantOffer getOffer(Entity trader, Random rand)
-        {
-            return new MerchantOffer(new ItemStack(buying, amount), new ItemStack(WRItems.COIN_DRAGON.get()), maxUses, xp, 0.15f);
-        }
-    }
+//    private static class CDForMapTrade implements ITrade
+//    {
+//        private final String structureName;
+//        private final MapDecoration.Type type;
+//
+//        @Nullable
+//        public MerchantOffer getOffer(Entity trader, Random rand)
+//        {
+//            if (trader.world.isRemote) return null;
+//
+//            ServerWorld world = (ServerWorld) trader.world;
+//            BlockPos blockPos = world.findNearestStructure(structureName, new BlockPos(trader), 100, true);
+//            if (blockPos == null) return null;
+//
+//            ItemStack itemstack = FilledMapItem.setupNewMap(world, blockPos.getX(), blockPos.getZ(), (byte) 2, true, true);
+//            FilledMapItem.func_226642_a_(world, itemstack);
+//            MapData.addTargetDecoration(itemstack, blockPos, "+", type);
+//            itemstack.setDisplayName(new TranslationTextComponent("filled_map." + structureName.toLowerCase(Locale.ROOT)));
+//            return new MerchantOffer(new ItemStack(WRItems.COIN_DRAGON.get(), 1), new ItemStack(Items.COMPASS), itemstack, 1, 5, 0.2f);
+//        }
+//    }
 }

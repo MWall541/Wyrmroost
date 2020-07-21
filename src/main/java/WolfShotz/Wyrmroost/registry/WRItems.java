@@ -122,10 +122,6 @@ public class WRItems
 
     static RegistryObject<Item> register(String name) { return REGISTRY.register(name, () -> new Item(ModUtils.itemBuilder())); }
 
-    //  ===========================
-    //          Food List
-    //  ===========================
-
     public static class WRFoods
     {
         public static final Food RAW_LOWTIER_MEAT = new Food.Builder().hunger(2).saturation(0.25f).meat().build();
@@ -149,7 +145,6 @@ public class WRItems
                 .effect(() -> new EffectInstance(Effects.NIGHT_VISION, 800), 1.0f)
                 .build();
     }
-
 
     public static class Tags extends Tag<Item>
     {

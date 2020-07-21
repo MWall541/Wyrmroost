@@ -69,7 +69,7 @@ public class CoinDragonEntity extends MobEntity
     public void travel(Vec3d positionIn)
     {
         if (isAIDisabled()) return;
-        double moveSpeed = getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue();
+        double moveSpeed = 0.02;
         double yMot;
         double altitiude = getAltitude();
         if (altitiude < 1.5) yMot = moveSpeed;
@@ -100,7 +100,7 @@ public class CoinDragonEntity extends MobEntity
     protected float getStandingEyeHeight(Pose pose, EntitySize size) { return size.height * 0.8645f; }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) { return getItemStack(); }
+    public ItemStack getPickedResult(RayTraceResult target) { return new ItemStack(WRItems.COIN_DRAGON.get()); }
 
     @Override
     public boolean isOnLadder() { return false; }

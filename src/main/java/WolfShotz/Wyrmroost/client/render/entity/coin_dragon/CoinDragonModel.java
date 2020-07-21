@@ -6,138 +6,138 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * WRCoinDragon - Ukan
  * Created using Tabula 8.0.0
  */
-@OnlyIn(Dist.CLIENT)
 public class CoinDragonModel extends WREntityModel<CoinDragonEntity>
 {
-    public ModelRenderer body1;
-    public ModelRenderer body2;
-    public ModelRenderer armL;
-    public ModelRenderer armR;
-    public ModelRenderer wingL;
-    public ModelRenderer wingR;
-    public ModelRenderer neck1;
-    public ModelRenderer coin;
-    public ModelRenderer tail1;
-    public ModelRenderer legL;
-    public ModelRenderer legR;
-    public ModelRenderer tail2;
-    public ModelRenderer tail3;
-    public ModelRenderer footL;
-    public ModelRenderer footR;
-    public ModelRenderer head;
-    public ModelRenderer eyeL;
-    public ModelRenderer eyeR;
+    public final ModelRenderer body1;
+    public final ModelRenderer body2;
+    public final ModelRenderer armL;
+    public final ModelRenderer armR;
+    public final ModelRenderer wingL;
+    public final ModelRenderer wingR;
+    public final ModelRenderer neck1;
+    public final ModelRenderer coin;
+    public final ModelRenderer tail1;
+    public final ModelRenderer legL;
+    public final ModelRenderer legR;
+    public final ModelRenderer tail2;
+    public final ModelRenderer tail3;
+    public final ModelRenderer footL;
+    public final ModelRenderer footR;
+    public final ModelRenderer head;
+    public final ModelRenderer eyeL;
+    public final ModelRenderer eyeR;
     public final ModelRenderer[] tails;
 
     public CoinDragonModel()
     {
-        textureWidth = 50;
-        textureHeight = 15;
-        eyeL = new ModelRenderer(this, 31, 4);
-        eyeL.setRotationPoint(0.7F, -0.4F, -0.7F);
-        eyeL.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(eyeL, 0.6829473549475088F, 0.3186971254089062F, 0.0F);
-        coin = new ModelRenderer(this, 30, 5);
-        coin.mirror = true;
-        coin.setRotationPoint(0.0F, 3.17F, 1.0F);
-        coin.addBox(-2.5F, 0.0F, -2.5F, 5.0F, 0.5F, 5.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(coin, -0.4185299466387569F, 3.141592653589793F, 0.0F);
-        legR = new ModelRenderer(this, 0, 6);
-        legR.mirror = true;
-        legR.setRotationPoint(-1.0F, -0.5F, 2.0F);
-        legR.addBox(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(legR, 0.9046041832665941F, 0.0F, 0.0F);
-        eyeR = new ModelRenderer(this, 31, 4);
-        eyeR.mirror = true;
-        eyeR.setRotationPoint(-0.7F, -0.4F, -0.7F);
-        eyeR.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(eyeR, 0.6829473549475088F, -0.3186971254089062F, 0.0F);
-        body2 = new ModelRenderer(this, 11, 0);
-        body2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        body2.addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 3.0F, 0.1F, 0.1F, 0.0F);
-        setRotateAngle(body2, -0.500909508638178F, 0.0F, 0.0F);
-        tail3 = new ModelRenderer(this, 22, 0);
-        tail3.setRotationPoint(0.01F, 0.01F, 2.5F);
-        tail3.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
-        body1 = new ModelRenderer(this, 0, 0);
-        body1.setRotationPoint(0.0F, 20.5F, 0.0F);
-        body1.addBox(-1.0F, -1.0F, -1.5F, 2.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(body1, -0.4098033003787853F, 0.0F, 0.0F);
-        armR = new ModelRenderer(this, 11, 6);
-        armR.mirror = true;
-        armR.setRotationPoint(-0.4F, 0.0F, -0.8F);
-        armR.addBox(-1.0F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(armR, 0.2275909337942703F, 0.0F, 0.0F);
-        wingR = new ModelRenderer(this, 17, 1);
-        wingR.setRotationPoint(-0.7F, -0.7F, -0.8F);
-        wingR.addBox(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(wingR, 0.3186971254089062F, 0.0F, -0.956091342937205F);
-        tail1 = new ModelRenderer(this, 22, 0);
-        tail1.setRotationPoint(0.0F, -0.1F, 2.5F);
-        tail1.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(tail1, 0.8529423868075012F, 0.0F, 0.0F);
-        tail2 = new ModelRenderer(this, 22, 0);
-        tail2.mirror = true;
-        tail2.setRotationPoint(0.01F, 0.01F, 2.51F);
-        tail2.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
-        head = new ModelRenderer(this, 36, 0);
-        head.setRotationPoint(0.0F, 0.0F, -1.7F);
-        head.addBox(-1.0F, -0.5F, -2.0F, 2.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(head, 0.7494443568379152F, 0.0F, 0.0F);
-        neck1 = new ModelRenderer(this, 30, 0);
-        neck1.setRotationPoint(0.0F, -0.3F, -1.3F);
-        neck1.addBox(-0.5F, -0.5F, -2.0F, 1.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(neck1, -0.27611108233918075F, 0.0F, 0.0F);
-        armL = new ModelRenderer(this, 11, 6);
-        armL.setRotationPoint(0.4F, 0.0F, -0.8F);
-        armL.addBox(0.0F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(armL, 0.2275909337942703F, 0.0F, 0.0F);
-        legL = new ModelRenderer(this, 0, 6);
-        legL.setRotationPoint(1.0F, -0.5F, 2.0F);
-        legL.addBox(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(legL, 0.9046041832665941F, 0.0F, 0.0F);
-        wingL = new ModelRenderer(this, 17, 1);
-        wingL.setRotationPoint(0.7F, -0.7F, -0.8F);
-        wingL.addBox(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
-        setRotateAngle(wingL, 0.3186971254089062F, 0.0F, 0.956091342937205F);
-        footR = new ModelRenderer(this, 6, 6);
-        footR.setRotationPoint(0.0F, 2.0F, -2.0F);
-        footR.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
-        footL = new ModelRenderer(this, 6, 6);
-        footL.setRotationPoint(0.0F, 2.0F, -2.0F);
-        footL.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
-        head.addChild(eyeL);
-        body1.addChild(coin);
-        body2.addChild(legR);
-        head.addChild(eyeR);
-        body1.addChild(body2);
-        tail2.addChild(tail3);
-        body1.addChild(armR);
-        body1.addChild(wingR);
-        body2.addChild(tail1);
-        tail1.addChild(tail2);
-        neck1.addChild(head);
-        body1.addChild(neck1);
-        body1.addChild(armL);
-        body2.addChild(legL);
-        body1.addChild(wingL);
-        legR.addChild(footR);
-        legL.addChild(footL);
+        this.textureWidth = 50;
+        this.textureHeight = 15;
+        this.body1 = new ModelRenderer(this, 0, 0);
+        this.body1.setRotationPoint(0.0F, 19.1F, 0.0F);
+        this.body1.addBox(-1.0F, -1.0F, -1.5F, 2.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(body1, -0.6981317007977318F, 0.0F, 0.0F);
+        this.armR = new ModelRenderer(this, 11, 6);
+        this.armR.mirror = true;
+        this.armR.setRotationPoint(-1.0F, 0.0F, -0.8F);
+        this.armR.addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(armR, -0.5235987755982988F, -0.6981317007977318F, 0.5235987755982988F);
+        this.eyeL = new ModelRenderer(this, 31, 4);
+        this.eyeL.setRotationPoint(0.7F, -0.4F, -0.7F);
+        this.eyeL.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(eyeL, 0.6829473549475088F, 0.3186971254089062F, 0.0F);
+        this.legR = new ModelRenderer(this, 0, 6);
+        this.legR.mirror = true;
+        this.legR.setRotationPoint(-1.0F, -0.5F, 2.0F);
+        this.legR.addBox(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(legR, 1.5707963267948966F, 0.0F, 0.0F);
+        this.armL = new ModelRenderer(this, 11, 6);
+        this.armL.setRotationPoint(1.0F, 0.0F, -0.8F);
+        this.armL.addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(armL, -0.5235987755982988F, 0.6981317007977318F, -0.5235987755982988F);
+        this.head = new ModelRenderer(this, 36, 0);
+        this.head.setRotationPoint(0.0F, 0.0F, -1.7F);
+        this.head.addBox(-1.0F, -0.5F, -2.0F, 2.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(head, 0.9773843811168246F, 0.0F, 0.0F);
+        this.wingL = new ModelRenderer(this, 17, 1);
+        this.wingL.setRotationPoint(0.7F, -0.7F, -0.8F);
+        this.wingL.addBox(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(wingL, 0.3186971254089062F, 0.0F, 0.956091342937205F);
+        this.neck1 = new ModelRenderer(this, 30, 0);
+        this.neck1.setRotationPoint(0.0F, -0.3F, -1.3F);
+        this.neck1.addBox(-0.5F, -0.5F, -2.0F, 1.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(neck1, -0.17453292519943295F, 0.0F, 0.0F);
+        this.tail3 = new ModelRenderer(this, 22, 0);
+        this.tail3.setRotationPoint(0.01F, 0.01F, 2.5F);
+        this.tail3.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(tail3, 0.17453292519943295F, 0.0F, 0.0F);
+        this.legL = new ModelRenderer(this, 0, 6);
+        this.legL.setRotationPoint(1.0F, -0.5F, 2.0F);
+        this.legL.addBox(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(legL, 1.5707963267948966F, 0.0F, 0.0F);
+        this.footL = new ModelRenderer(this, 6, 6);
+        this.footL.setRotationPoint(0.0F, 2.0F, -2.0F);
+        this.footL.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(footL, 0.3490658503988659F, 0.0F, 0.0F);
+        this.body2 = new ModelRenderer(this, 11, 0);
+        this.body2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.body2.addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 3.0F, 0.1F, 0.1F, 0.0F);
+        this.setRotateAngle(body2, -0.3490658503988659F, 0.0F, 0.0F);
+        this.eyeR = new ModelRenderer(this, 31, 4);
+        this.eyeR.mirror = true;
+        this.eyeR.setRotationPoint(-0.7F, -0.4F, -0.7F);
+        this.eyeR.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(eyeR, 0.6829473549475088F, -0.3186971254089062F, 0.0F);
+        this.wingR = new ModelRenderer(this, 17, 1);
+        this.wingR.setRotationPoint(-0.7F, -0.7F, -0.8F);
+        this.wingR.addBox(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(wingR, 0.3186971254089062F, 0.0F, -0.956091342937205F);
+        this.coin = new ModelRenderer(this, 30, 5);
+        this.coin.mirror = true;
+        this.coin.setRotationPoint(0.0F, 1.0F, -1.2F);
+        this.coin.addBox(-2.5F, 0.0F, 0.0F, 5.0F, 0.5F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(coin, -0.8726646259971648F, 0.0F, 0.0F);
+        this.footR = new ModelRenderer(this, 6, 6);
+        this.footR.setRotationPoint(0.0F, 2.0F, -2.0F);
+        this.footR.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(footR, 0.3490658503988659F, 0.0F, 0.0F);
+        this.tail1 = new ModelRenderer(this, 22, 0);
+        this.tail1.setRotationPoint(0.0F, -0.1F, 2.5F);
+        this.tail1.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(tail1, 0.8726646259971648F, 0.0F, 0.0F);
+        this.tail2 = new ModelRenderer(this, 22, 0);
+        this.tail2.mirror = true;
+        this.tail2.setRotationPoint(0.01F, 0.01F, 2.51F);
+        this.tail2.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(tail2, 0.17453292519943295F, 0.0F, 0.0F);
+        this.body1.addChild(this.armR);
+        this.head.addChild(this.eyeL);
+        this.body2.addChild(this.legR);
+        this.body1.addChild(this.armL);
+        this.neck1.addChild(this.head);
+        this.body1.addChild(this.wingL);
+        this.body1.addChild(this.neck1);
+        this.tail2.addChild(this.tail3);
+        this.body2.addChild(this.legL);
+        this.legL.addChild(this.footL);
+        this.body1.addChild(this.body2);
+        this.head.addChild(this.eyeR);
+        this.body1.addChild(this.wingR);
+        this.body1.addChild(this.coin);
+        this.legR.addChild(this.footR);
+        this.body2.addChild(this.tail1);
+        this.tail1.addChild(this.tail2);
 
-        tails = new ModelRenderer[] {tail1, tail2, tail3};
+        this.tails = new ModelRenderer[] {tail1, tail2, tail3};
     }
 
     @Override
     public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        ms.translate(0, -0.02f, 0);
         body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
@@ -148,8 +148,11 @@ public class CoinDragonModel extends WREntityModel<CoinDragonEntity>
         wingL.rotateAngleZ = flap;
         wingR.rotateAngleZ = -flap;
 
-        for (int i = 1; i < tails.length + 1; i++)
-            tails[i - 1].rotateAngleX = MathHelper.cos(ageInTicks * 0.2f + 0.8f * -i) * 0.1f + 0.4f;
-        tail1.rotateAngleX += 0.4f; // adjust first tail a little
+        legR.rotateAngleX = legL.rotateAngleX = MathHelper.cos(ageInTicks * 0.15f + 1) * 0.05f + 1.75f;
+
+        for (int i = 1; i < tails.length + 1; i++) // move the tail a bit
+            tails[i - 1].rotateAngleX = MathHelper.cos(ageInTicks * 0.2f + 0.8f * -i) * 0.1f + 0.35f;
+
+        coin.rotateAngleX = MathHelper.cos(ageInTicks * 0.15f) * 0.08f - 0.875f;
     }
 }
