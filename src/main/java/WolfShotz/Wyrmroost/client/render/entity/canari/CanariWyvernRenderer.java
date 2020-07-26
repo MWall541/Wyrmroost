@@ -11,8 +11,10 @@ import javax.annotation.Nullable;
 public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEntity, CanariWyvernModel>
 {
     // Easter egg
-    private static final ResourceLocation EE_LADY = resource("lady.png");
-    private static final ResourceLocation EE_RUDY = resource("rudy.png");
+    private static final ResourceLocation LADY = resource("lady.png");
+    private static final ResourceLocation RUDY = resource("rudy.png");
+
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[10];
 
     public CanariWyvernRenderer(EntityRendererManager manager)
     {
@@ -26,12 +28,14 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
         if (canari.hasCustomName())
         {
             String name = canari.getCustomName().getUnformattedComponentText();
-            if (name.equals("Rudy")) return EE_RUDY;
-            if (name.equals("Lady Everlyn Winklestein") && !canari.isMale()) return EE_LADY;
+            if (name.equals("Rudy")) return RUDY;
+            else if (name.equals("Lady Everlyn Winklestein") && !canari.isMale()) return LADY;
         }
 
-        String path = "body_" + canari.getVariant() + (canari.isMale()? "m" : "f");
-        return resource(path + ".png");
+        int texture = canari.isMale()? 0 : 5 + canari.getVariant();
+        if (TEXTURES[texture] == null)
+            return TEXTURES[texture] = resource("body_" + canari.getVariant() + (canari.isMale()? "m" : "f") + ".png");
+        return TEXTURES[texture];
     }
 
     private static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "canari_wyvern/" + png); }

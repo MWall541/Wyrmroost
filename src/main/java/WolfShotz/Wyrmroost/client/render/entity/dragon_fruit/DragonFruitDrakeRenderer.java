@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruitDrakeEntity, DragonFruitDrakeModel>
 {
     public static final ResourceLocation CHILD = resource("child.png");
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[4];
 
     public DragonFruitDrakeRenderer(EntityRendererManager manager)
     {
@@ -22,9 +23,16 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
     public ResourceLocation getEntityTexture(DragonFruitDrakeEntity entity)
     {
         if (entity.isChild()) return CHILD;
-        String path = entity.isMale()? "male" : "female";
-        if (entity.isSpecial()) path += "_s";
-        return resource(path + ".png");
+
+        int texture = entity.isMale()? 0 : 2;
+        if (entity.isSpecial()) texture += 1;
+        if (TEXTURES[texture] == null)
+        {
+            String path = entity.isMale()? "male" : "female";
+            if (entity.isSpecial()) path += "_s";
+            return TEXTURES[texture] = resource(path + ".png");
+        }
+        return TEXTURES[texture];
     }
 
     public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "dragon_fruit_drake/" + png); }

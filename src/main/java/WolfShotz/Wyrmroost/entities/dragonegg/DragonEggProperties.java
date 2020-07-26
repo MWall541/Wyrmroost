@@ -9,7 +9,6 @@ import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
-    public static final DragonEggProperties DEFAULT = new DragonEggProperties(1f, 1f, 12000);
     public static final Map<EntityType<?>, DragonEggProperties> MAP = Maps.newHashMap();
 
     private final EntitySize size;
@@ -55,7 +54,6 @@ public class DragonEggProperties
     public DragonEggProperties setConditions(Predicate<DragonEggEntity> conditions)
     {
         this.conditions = conditions;
-
         return this;
     }
 

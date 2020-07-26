@@ -5,8 +5,8 @@ import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.OWDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexBuilderUtils;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -17,6 +17,8 @@ import javax.annotation.Nullable;
 
 public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDrakeModel>
 {
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[64]; // some indexes will be left unused
+
     // Easter Egg
     public static final ResourceLocation DAISY = resource("daisy.png");
     public static final ResourceLocation JEB_ = resource("jeb.png");
@@ -49,10 +51,20 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
             if (name.equalsIgnoreCase("Jeb_")) return JEB_;
         }
 
-        String path = drake.isChild()? "child" : drake.isMale()? "male" : "female";
-        if (drake.isSpecial()) return resource(path + "_spe.png");
-        if (drake.getVariant() == 1) return resource(path + "_sav.png");
-        return resource(path + "_com.png");
+        int index = 0;
+        if (drake.isChild()) index |= 1;
+        else if (!drake.isMale()) index |= 2;
+        if (drake.isSpecial()) index |= 4;
+        else if (drake.getVariant() == 1) index |= 8;
+
+        if (TEXTURES[index] == null)
+        {
+            String path = (index & 1) != 0? "child" : (index & 2) != 0? "female" : "male";
+            if ((index & 4) != 0) path += "_spe";
+            else if ((index & 8) != 0) path += "_sav";
+            return TEXTURES[index] = resource(path + ".png");
+        }
+        return TEXTURES[index];
     }
 
     class ArmorLayer extends LayerRenderer<OWDrakeEntity, OWDrakeModel>
@@ -64,7 +76,9 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
         {
             if (entity.isArmored())
             {
-                IVertexBuilder builder = ItemRenderer.getBuffer(type, RenderType.getEntityCutoutNoCull(getArmorTexture(entity)), false, entity.getStackInSlot(OWDrakeEntity.ARMOR_SLOT).hasEffect());
+                IVertexBuilder builder = type.getBuffer(RenderType.getEntityCutoutNoCull(getArmorTexture(entity)));
+                if (entity.getStackInSlot(OWDrakeEntity.ARMOR_SLOT).hasEffect())
+                    builder = VertexBuilderUtils.newDelegate(type.getBuffer(RenderType.getEntityGlint()), builder);
                 getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
         }

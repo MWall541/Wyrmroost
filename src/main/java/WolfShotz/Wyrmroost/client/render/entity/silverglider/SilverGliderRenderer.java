@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEntity, SilverGliderModel>
 {
+    public static final ResourceLocation[] MALE_TEXTURES = new ResourceLocation[6]; // includes glow
     // Constant textures
     public static final ResourceLocation FEMALE = resource("female.png");
     public static final ResourceLocation FEMALE_GLOW = resource("female_glow.png");
@@ -42,13 +43,17 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     {
         if (sg.isSpecial()) return BODY_SPE;
         if (!sg.isMale()) return FEMALE;
-        return resource("male_" + sg.getVariant() + ".png");
+        int index = sg.getVariant();
+        if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = resource("male_" + index + ".png");
+        return MALE_TEXTURES[index];
     }
 
     private ResourceLocation getGlowTexture(SilverGliderEntity sg)
     {
         if (sg.isSpecial()) return BODY_SPE_GLOW;
         if (!sg.isMale()) return FEMALE_GLOW;
-        return resource("male_" + sg.getVariant() + "_glow.png");
+        int index = sg.getVariant() + 3;
+        if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = resource("male_" + index + ".png");
+        return MALE_TEXTURES[index];
     }
 }
