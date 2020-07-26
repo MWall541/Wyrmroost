@@ -107,12 +107,12 @@ public class DragonEggItem extends Item
             tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.creativetooltip").applyTextStyle(TextFormatting.GRAY));
     }
 
-    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type)
+    public static ItemStack getStack(EntityType<?> type)
     {
         return getStack(type, DragonEggProperties.MAP.get(type).getHatchTime());
     }
 
-    public static ItemStack getStack(EntityType<? extends AbstractDragonEntity> type, int hatchTime)
+    public static ItemStack getStack(EntityType<?> type, int hatchTime)
     {
         ItemStack stack = new ItemStack(WRItems.DRAGON_EGG.get());
         CompoundNBT tag = new CompoundNBT();

@@ -26,7 +26,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -154,7 +156,8 @@ public class WREntities
 
         private Builder<T> renderer(IRenderFactory<T> renderFactory)
         {
-            ClientEvents.CALLBACK.then(i -> RenderingRegistry.registerEntityRenderingHandler(registered.get(), renderFactory));
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                    () -> () -> ClientEvents.CALLBACKS.add(() -> RenderingRegistry.registerEntityRenderingHandler(registered.get(), renderFactory)));
             return this;
         }
 
@@ -164,23 +167,13 @@ public class WREntities
          */
         private Builder<T> spawnPlacement(Consumer<EntityType<T>> consumer)
         {
-            CommonEvents.CALLBACK.then(i -> consumer.accept(registered.get()));
+            CommonEvents.CALLBACKS.add(() -> consumer.accept(registered.get()));
             return this;
         }
 
         private Builder<T> dragonEgg(DragonEggProperties props)
         {
-            CommonEvents.CALLBACK.then(t ->
-            {
-                try
-                {
-                    DragonEggProperties.MAP.put((EntityType<? extends AbstractDragonEntity>) registered.get(), props);
-                }
-                catch (ClassCastException e)
-                {
-                    Wyrmroost.LOG.fatal("Cannot apply DragonEggProperties to non-dragon entity. %s", e);
-                }
-            });
+            CommonEvents.CALLBACKS.add(() -> DragonEggProperties.MAP.put(registered.get(), props));
             return this;
         }
 

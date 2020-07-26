@@ -92,10 +92,6 @@ public class WRItems
     public static final RegistryObject<Item> DRAKE_LEGGINGS = register("drake_leggings", () -> new DrakeArmorItem(EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> DRAKE_BOOTS = register("drake_boots", () -> new DrakeArmorItem(EquipmentSlotType.FEET));
 
-//    public static final RegistryObject<Item> CANARI_HELMET = register("canari_helmet", () -> new CanariArmorItem(EquipmentSlotType.HEAD));
-//    public static final RegistryObject<Item> CANARI_CHESTPLATE = register("canari_chestplate", () -> new CanariArmorItem(EquipmentSlotType.CHEST));
-//    public static final RegistryObject<Item> CANARI_BOOTS = register("canari_boots", () -> new CanariArmorItem(EquipmentSlotType.FEET));
-
     public static final RegistryObject<Item> RAW_LOWTIER_MEAT = register("raw_lowtier_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_LOWTIER_MEAT)));
     public static final RegistryObject<Item> RAW_COMMON_MEAT = register("raw_common_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_COMMON_MEAT)));
     public static final RegistryObject<Item> RAW_APEX_MEAT = register("raw_apex_meat", () -> new Item(ModUtils.itemBuilder().food(WRFoods.RAW_APEX_MEAT)));

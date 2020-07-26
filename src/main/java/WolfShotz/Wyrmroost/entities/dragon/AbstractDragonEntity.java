@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
-import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
@@ -681,7 +680,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public AgeableEntity createChild(AgeableEntity ageable)
     {
-        ItemStack eggStack = DragonEggItem.getStack((EntityType<? extends AbstractDragonEntity>) getType());
+        ItemStack eggStack = DragonEggItem.getStack(getType());
         ItemEntity eggItem = new ItemEntity(world, getPosX(), getPosY(), getPosZ(), eggStack);
 
         eggItem.setMotion(0, getHeight() / 3, 0);
@@ -690,14 +689,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return null;
     }
 
-    public DragonEggProperties getEggProperties()
-    {
-        return DragonEggProperties.MAP.computeIfAbsent((EntityType<? extends AbstractDragonEntity>) getType(), t ->
-        {
-            Wyrmroost.LOG.warn("{} is missing egg properties! Contact Mod Author. Using default values...", getType().getName().getUnformattedComponentText());
-            return new DragonEggProperties(2f, 2f, 12000);
-        });
-    }
+    public DragonEggProperties getEggProperties() { return DragonEggProperties.get(getType()); }
 
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)

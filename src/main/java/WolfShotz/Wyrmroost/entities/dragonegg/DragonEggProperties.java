@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.entities.dragonegg;
 
-import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -10,7 +9,8 @@ import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
-    public static final Map<EntityType<? extends AbstractDragonEntity>, DragonEggProperties> MAP = Maps.newHashMap();
+    public static final DragonEggProperties DEFAULT = new DragonEggProperties(1f, 1f, 12000);
+    public static final Map<EntityType<?>, DragonEggProperties> MAP = Maps.newHashMap();
 
     private final EntitySize size;
     private final int hatchTime;
@@ -57,5 +57,13 @@ public class DragonEggProperties
         this.conditions = conditions;
 
         return this;
+    }
+
+    public static DragonEggProperties get(EntityType<?> type)
+    {
+        DragonEggProperties props = MAP.get(type);
+        if (props == null)
+            throw new NullPointerException(String.format("Missing Egg Properties for key: %s, Wolf did a hickup go scream at him", type.getName().getUnformattedComponentText()));
+        return props;
     }
 }

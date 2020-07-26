@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
 import WolfShotz.Wyrmroost.items.base.FullSetBonusArmorItem;
 import WolfShotz.Wyrmroost.registry.WRWorld;
-import WolfShotz.Wyrmroost.util.CallbackHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,6 +21,9 @@ import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Reflection is shit and we shouldn't use it
  * - Some communist coding wyrmroost 2020
@@ -30,7 +32,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  */
 public class CommonEvents
 {
-    public static final CallbackHandler<?> CALLBACK = new CallbackHandler<>();
+    public static final List<Runnable> CALLBACKS = new ArrayList<>();
 
     public static void register()
     {
@@ -52,7 +54,8 @@ public class CommonEvents
 
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        DeferredWorkQueue.runLater(() -> CALLBACK.acceptAndClear(null));
+        DeferredWorkQueue.runLater(() ->
+        { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
         DeferredWorkQueue.runLater(WRWorld::setupWorld);
     }
 
