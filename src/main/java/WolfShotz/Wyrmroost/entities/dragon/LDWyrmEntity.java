@@ -44,6 +44,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
@@ -246,21 +247,24 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
         }
     }
 
-    public static void setSpawnPlacements()
+    public static Consumer<EntityType<LDWyrmEntity>> getSpawnPlacements()
     {
-        BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY)
-                .stream()
-                .filter(b -> !BiomeDictionary.getTypes(b).containsAll(ImmutableList.of(BiomeDictionary.Type.MESA, BiomeDictionary.Type.BEACH)))
-                .forEach(b -> b.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 14, 3, 6)));
-        EntitySpawnPlacementRegistry.register(WREntities.LESSER_DESERTWYRM.get(),
-                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                (wyrm, world, reason, pos, rng) ->
-                {
-                    if (reason == SpawnReason.SPAWNER) return true;
-                    Block block = world.getBlockState(pos.down()).getBlock();
-                    return block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
-                });
+        return t ->
+        {
+            BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY)
+                    .stream()
+                    .filter(b -> !BiomeDictionary.getTypes(b).containsAll(ImmutableList.of(BiomeDictionary.Type.MESA, BiomeDictionary.Type.BEACH)))
+                    .forEach(b -> b.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 14, 3, 6)));
+            EntitySpawnPlacementRegistry.register(WREntities.LESSER_DESERTWYRM.get(),
+                    EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
+                    Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                    (wyrm, world, reason, pos, rng) ->
+                    {
+                        if (reason == SpawnReason.SPAWNER) return true;
+                        Block block = world.getBlockState(pos.down()).getBlock();
+                        return block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
+                    });
+        };
     }
 
     @Override

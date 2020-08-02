@@ -51,7 +51,6 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     @Override
     protected double getAttackReachSqr(LivingEntity attackTarget)
     {
-//        return (this.attacker.getWidth() * 2.0F * this.attacker.getWidth() * 2.0F + attackTarget.getWidth());
-        return (dragon.getWidth() * dragon.getWidth()) * reach + (attackTarget.getWidth() * 0.5) * 2;
+        return (attacker.getWidth() * 2.0F * attacker.getWidth() * 2.0F + attackTarget.getWidth());
     }
 }

@@ -22,6 +22,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -30,6 +31,7 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -204,22 +206,24 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public int getHorizontalFaceSpeed() { return isFlying()? 5 : 75; }
 
     @Override
-    public Collection<Item> getFoodItems() { return ItemTags.FISHES.getAllElements(); }
+    public Collection<? extends IItemProvider> getFoodItems() { return ItemTags.FISHES.getAllElements(); }
 
-    public static void setSpawnPlacements()
+    public static Consumer<EntityType<SilverGliderEntity>> getSpawnPlacements()
     {
-        ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN, BiomeDictionary.Type.BEACH)
-                .forEach(b -> b.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.SILVER_GLIDER.get(), 10, 1, 4)));
-        EntitySpawnPlacementRegistry.register(WREntities.SILVER_GLIDER.get(),
-                EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
-                Heightmap.Type.MOTION_BLOCKING,
-                (glider, world, reason, pos, rand) ->
-                {
-                    if (reason == SpawnReason.SPAWNER) return true;
-                    Block block = world.getBlockState(pos.down(1)).getBlock();
-                    return block == Blocks.AIR || block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
-                }
-        );
+        return t ->
+        {
+            ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN, BiomeDictionary.Type.BEACH)
+                    .forEach(b -> b.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.SILVER_GLIDER.get(), 10, 1, 4)));
+            EntitySpawnPlacementRegistry.register(WREntities.SILVER_GLIDER.get(),
+                    EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
+                    Heightmap.Type.MOTION_BLOCKING,
+                    (glider, world, reason, pos, rand) ->
+                    {
+                        if (reason == SpawnReason.SPAWNER) return true;
+                        Block block = world.getBlockState(pos.down(1)).getBlock();
+                        return block == Blocks.AIR || block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
+                    });
+        };
     }
 
     class MoveController extends MovementController

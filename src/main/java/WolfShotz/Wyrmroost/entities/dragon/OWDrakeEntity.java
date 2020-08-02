@@ -22,7 +22,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -109,7 +108,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         
         getAttribute(MAX_HEALTH).setBaseValue(50d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.20989d);
-        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1); // no knockback
         getAttribute(FOLLOW_RANGE).setBaseValue(20d);
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(3.2d);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(5d);
@@ -393,7 +392,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Collection<Item> getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements(); }
+    public Collection<? extends IItemProvider> getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements(); }
 
     @Override
     public Animation[] getAnimations()

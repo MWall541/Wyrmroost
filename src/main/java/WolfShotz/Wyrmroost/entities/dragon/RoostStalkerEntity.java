@@ -36,10 +36,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -233,7 +230,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    public Collection<Item> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
+    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
     
     public boolean canPickUpStack(ItemStack stack) { return stack.getItem() != Items.GOLD_NUGGET; }
 

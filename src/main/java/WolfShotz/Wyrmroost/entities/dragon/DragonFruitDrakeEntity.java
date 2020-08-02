@@ -20,15 +20,11 @@ import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
@@ -46,6 +42,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -68,23 +65,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         sitTimer.set(isSitting()? 1 : 0);
     }
 
-    public static void setSpawnConditions()
+    @Override
+    public Collection<? extends IItemProvider> getFoodItems()
     {
-        BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
-                .stream()
-                .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 7, 2, 4)));
-
-        EntitySpawnPlacementRegistry.register(
-                WREntities.DRAGON_FRUIT_DRAKE.get(),
-                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                Heightmap.Type.MOTION_BLOCKING,
-                ((type, world, reason, pos, rand) ->
-                {
-                    if (world.getLightSubtracted(pos, 0) <= 8) return false;
-                    Block block = world.getBlockState(pos).getBlock();
-                    return block instanceof GrassBlock || block instanceof LeavesBlock;
-                }));
-//                ((t, w, s, b, r) -> w.getWorldInfo().getDimensionData(DimensionType.OVERWORLD).contains(PortalBlock.DATA_PORTAL_ENTERED)));
+        Collection<IItemProvider> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
+        Collections.addAll(foods, Items.APPLE, Items.SWEET_BERRIES);
+        return foods;
     }
 
     @Override
@@ -251,12 +237,26 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     protected float getSoundPitch() { return super.getSoundPitch() * 0.5f; }
 
-    @Override
-    public Collection<Item> getFoodItems()
+    public static Consumer<EntityType<DragonFruitDrakeEntity>> getSpawnConditions()
     {
-        List<Item> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
-        Collections.addAll(foods, Items.APPLE, Items.SWEET_BERRIES);
-        return foods;
+        return t ->
+        {
+            BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
+                    .stream()
+                    .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 7, 2, 4)));
+
+            EntitySpawnPlacementRegistry.register(
+                    WREntities.DRAGON_FRUIT_DRAKE.get(),
+                    EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
+                    Heightmap.Type.MOTION_BLOCKING,
+                    ((type, world, reason, pos, rand) ->
+                    {
+                        if (world.getLightSubtracted(pos, 0) <= 8) return false;
+                        Block block = world.getBlockState(pos).getBlock();
+                        return block instanceof GrassBlock || block instanceof LeavesBlock;
+                    }));
+//                ((t, w, s, b, r) -> w.getWorldInfo().getDimensionData(DimensionType.OVERWORLD).contains(PortalBlock.DATA_PORTAL_ENTERED)));
+        };
     }
 
     //    @Override

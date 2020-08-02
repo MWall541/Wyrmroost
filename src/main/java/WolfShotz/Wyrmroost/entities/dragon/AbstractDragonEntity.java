@@ -38,9 +38,8 @@ import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -49,6 +48,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -249,7 +249,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             boolean flying = shouldFly();
             if (flying != isFlying()) setFlying(flying);
 
-            handleSleep();
+            if (!isAIDisabled()) handleSleep();
         }
         else
         {
@@ -375,6 +375,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     eat(stack);
                     return true;
                 }
+            }
+
+            if (canBeRidden(player) && !isChild())
+            {
+                if (!world.isRemote) player.startRiding(this);
+                return true;
             }
         }
 
@@ -614,9 +620,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         float max = getMaxHealth();
         if (getHealth() < max) heal(Math.max((int) max / 5, 4)); // Base healing on max health, minumum 2 hearts.
 
+        Vec3d mouth = getApproximateMouthPos();
+
         if (world.isRemote)
         {
-            Vec3d mouth = getApproximateMouthPos();
             for (int i = 0; i < 11; ++i)
             {
                 Vec3d vec3d1 = new Vec3d(((double) rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) rand.nextFloat() - 0.5D) * 0.1D);
@@ -626,7 +633,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
 
-        return super.onFoodEaten(world, stack);
+        world.playSound(null, getPosX(), getPosY(), getPosZ(), getEatSound(stack), SoundCategory.NEUTRAL, 1f, 1f + (rand.nextFloat() - rand.nextFloat()) * 0.4f);
+        Item item = stack.getItem();
+        if (item.isFood())
+        {
+            for (Pair<EffectInstance, Float> pair : item.getFood().getEffects())
+                if (!world.isRemote && pair.getLeft() != null && rand.nextFloat() < pair.getRight())
+                    addPotionEffect(new EffectInstance(pair.getLeft()));
+        }
+        if (item.hasContainerItem(stack)) entityDropItem(item.getContainerItem(stack), (float) mouth.y);
+        stack.shrink(1);
+
+        return stack;
     }
 
     public boolean tame(boolean tame, @Nullable PlayerEntity tamer)
@@ -830,7 +848,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Nullable
     @Override
-    public Entity getControllingPassenger() { return this.getPassengers().isEmpty()? null : this.getPassengers().get(0); }
+    public Entity getControllingPassenger()
+    {
+        List<Entity> passengers = getPassengers();
+        return passengers.isEmpty()? null : passengers.get(0);
+    }
+
+    @Override
+    protected boolean canBeRidden(Entity entityIn) { return false; }
 
     @Override
     public boolean isOnLadder() { return false; }
@@ -923,12 +948,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean isFoodItem(ItemStack stack)
     {
-        if (getFoodItems() == null || getFoodItems().size() == 0) return false;
-        if (stack.isEmpty()) return false;
-        return getFoodItems().contains(stack.getItem());
+        Item food = stack.getItem();
+        for (IItemProvider wrapper : getFoodItems()) if (wrapper.asItem() == food) return true;
+        return false;
     }
 
-    public abstract Collection<Item> getFoodItems();
+    public abstract Collection<? extends IItemProvider> getFoodItems();
 
     // ================================
     //        Entity Animation

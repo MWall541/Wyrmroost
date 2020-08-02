@@ -21,7 +21,6 @@ import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -33,10 +32,7 @@ import net.minecraft.pathfinding.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -51,6 +47,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -198,7 +195,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
         getAttribute(MAX_HEALTH).setBaseValue(100d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.08d); // On land speed
         getAttribute(SWIM_SPEED).setBaseValue(0.1d);
-        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(10);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1); // no knockback
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8d);
         getAttribute(FOLLOW_RANGE).setBaseValue(28d);
     }
@@ -283,12 +280,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
             int chances = isFoodItem? 3 : 7;
             tame(getRNG().nextInt(chances) == 0, player);
             eat(stack);
-            return true;
-        }
-
-        if (isOwner(player) && !isChild())
-        {
-            if (!world.isRemote) player.startRiding(this);
             return true;
         }
 
@@ -444,20 +435,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
         return Mafs.getYawVec(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
     }
 
-    public static void setSpawnConditions()
-    {
-        BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
-                .forEach(b -> b.getSpawns(EntityClassification.WATER_CREATURE)
-                        .add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1)));
-        EntitySpawnPlacementRegistry.register(WREntities.BUTTERFLY_LEVIATHAN.get(),
-                EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
-                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                (bfly, world, reason, pos, rng) ->
-                {
-                    if (reason == SpawnReason.SPAWNER) return true;
-                    return rng.nextInt(10) == 0 && world.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
-                });
-    }
+    /**
+     * Array Containing all of the dragons food items
+     */
+    @Override
+    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.Tags.DRAGON_MEATS.getAllElements(); }
 
     @Override
     public EntitySize getSize(Pose poseIn) { return getType().getSize().scale(getRenderScale()); }
@@ -489,11 +471,23 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     @Override
     public int getSpecialChances() { return getRNG().nextInt(50) + 100; }
 
-    /**
-     * Array Containing all of the dragons food items
-     */
-    @Override
-    public Collection<Item> getFoodItems() { return WRItems.Tags.DRAGON_MEATS.getAllElements(); }
+    public static Consumer<EntityType<ButterflyLeviathanEntity>> getSpawnConditions()
+    {
+        return t ->
+        {
+            BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
+                    .forEach(b -> b.getSpawns(EntityClassification.WATER_CREATURE)
+                            .add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1)));
+            EntitySpawnPlacementRegistry.register(WREntities.BUTTERFLY_LEVIATHAN.get(),
+                    EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
+                    Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                    (bfly, world, reason, pos, rng) ->
+                    {
+                        if (reason == SpawnReason.SPAWNER) return true;
+                        return rng.nextInt(10) == 0 && world.getBlockState(pos).getFluidState().isTagged(FluidTags.WATER);
+                    });
+        };
+    }
 
     @Override
     public boolean isBreedingItem(ItemStack stack)

@@ -18,15 +18,13 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -141,20 +139,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
-    {
-        if (super.playerInteraction(player, hand, stack)) return true;
-
-        if (isTamed() && !isChild())
-        {
-            if (!world.isRemote) player.startRiding(this);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
         if (!noActiveAnimation()) return;
@@ -196,10 +180,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * (isFlying()? 0.95f : 1.13f); }
 
     @Override
-    protected boolean canBeRidden(Entity entityIn) { return isTamed(); }
+    protected boolean canBeRidden(Entity entityIn) { return true; }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 2; }
+    protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 3; }
 
     @Override
     public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.95f, index == 0? 0.5f : -1); }
@@ -221,7 +205,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public boolean isImmuneToArrows() { return true; }
 
     @Override
-    public Collection<Item> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
+    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
 
     @Nullable
     @Override

@@ -15,7 +15,6 @@ import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.LookController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.pathfinding.FlyingPathNavigator;
@@ -24,6 +23,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
@@ -175,7 +175,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Collection<Item> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
+    public Collection<? extends IItemProvider> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
 
     @Override
     public Animation[] getAnimations()

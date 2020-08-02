@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.registry;
 import WolfShotz.Wyrmroost.CommonEvents;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
+import WolfShotz.Wyrmroost.client.render.entity.alpine.AlpineRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.coin_dragon.CoinDragonRenderer;
@@ -53,7 +54,7 @@ public class WREntities
     public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = Builder.creature("lesser_desertwyrm", LDWyrmEntity::new)
             .spawnEgg(0xD6BCBC, 0xDEB6C7)
             .renderer(LDWyrmRenderer::new)
-            .spawnPlacement(t -> LDWyrmEntity.setSpawnPlacements())
+            .spawnPlacement(LDWyrmEntity.getSpawnPlacements())
             .build(b -> b.size(0.6f, 0.2f));
 
     public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = Builder.creature("overworld_drake", OWDrakeEntity::new)
@@ -67,7 +68,7 @@ public class WREntities
             .spawnEgg(0xC8C8C8, 0xC4C4C4)
             .dragonEgg(new DragonEggProperties(0.4f, 0.65f, 12000))
             .renderer(SilverGliderRenderer::new)
-            .spawnPlacement(t -> SilverGliderEntity.setSpawnPlacements())
+            .spawnPlacement(SilverGliderEntity.getSpawnPlacements())
             .build(b -> b.size(1.5f, 0.75f));
 
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = Builder.creature("roost_stalker", RoostStalkerEntity::new)
@@ -81,14 +82,14 @@ public class WREntities
             .spawnEgg(0x17283C, 0x7A6F5A)
             .dragonEgg(new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater))
             .renderer(ButterflyLeviathanRenderer::new)
-            .spawnPlacement(t -> ButterflyLeviathanEntity.setSpawnConditions())
+            .spawnPlacement(ButterflyLeviathanEntity.getSpawnConditions())
             .build(b -> b.size(4f, 3f));
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = Builder.creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)
             .spawnEgg(0xe05c9a, 0x788716)
             .dragonEgg(new DragonEggProperties(0.45f, 0.75f, 9600))
             .renderer(DragonFruitDrakeRenderer::new)
-            .spawnPlacement(t -> DragonFruitDrakeEntity.setSpawnConditions())
+            .spawnPlacement(DragonFruitDrakeEntity.getSpawnConditions())
             .build(b -> b.size(1.5f, 1.9f));
 
     public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = Builder.creature("canari_wyvern", CanariWyvernEntity::new)
@@ -107,6 +108,12 @@ public class WREntities
     public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = Builder.creature("coin_dragon", CoinDragonEntity::new)
             .renderer(CoinDragonRenderer::new)
             .build(b -> b.size(0.35f, 0.435f));
+
+    public static final RegistryObject<EntityType<AlpineEntity>> ALPINE = Builder.creature("alpine", AlpineEntity::new)
+            .spawnEgg(0xe3f8ff, 0xa8e9ff)
+            .dragonEgg(new DragonEggProperties(1, 1, 12000))
+            .renderer(AlpineRenderer::new)
+            .build(b -> b.size(2.25f, 2f));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
             .renderer(GeodeTippedArrowRenderer::new)

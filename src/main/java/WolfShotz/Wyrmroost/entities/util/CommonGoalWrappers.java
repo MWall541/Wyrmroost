@@ -1,12 +1,14 @@
 package WolfShotz.Wyrmroost.entities.util;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.EntityPredicates;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.EnumSet;
 import java.util.function.Predicate;
@@ -138,6 +140,11 @@ public class CommonGoalWrappers
     public static <T extends LivingEntity> NonTamedTargetGoal<T> nonTamedTarget(TameableEntity tameable, Class<T> targetClass, boolean asChild)
     {
         return nonTamedTarget(tameable, targetClass, asChild, true, EntityPredicates.CAN_AI_TARGET::test);
+    }
+
+    public static <T extends LivingEntity> NonTamedTargetGoal<T> nonTamedTarget(TameableEntity tameable, Class<T> clazz, boolean asChild, EntityType<T>... types)
+    {
+        return nonTamedTarget(tameable, clazz, asChild, true, EntityPredicates.CAN_AI_TARGET.and(entity -> ArrayUtils.contains(types, entity.getType()))::test);
     }
 
     /**
