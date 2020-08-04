@@ -99,7 +99,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     /**
      * Chain Wave (rotateAngleX)
      */
-    public void chainWave(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
+    public void chainWave(ModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
@@ -109,7 +109,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     /**
      * Chain Swing (rotateAngleY)
      */
-    public void chainSwing(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
+    public void chainSwing(ModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
@@ -119,7 +119,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     /**
      * Chain Flap (rotateAngleZ)
      */
-    public void chainFlap(WRModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
+    public void chainFlap(ModelRenderer[] boxes, float speed, float degree, double rootOffset, float swing, float swingAmount)
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
@@ -169,7 +169,5 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         box.rotateAngleZ += time * z;
     }
 
-    public void idle(float frame)
-    {
-    }
+    public void idle(float frame) {}
 }
