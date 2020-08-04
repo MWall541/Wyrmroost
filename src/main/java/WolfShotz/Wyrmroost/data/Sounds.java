@@ -80,6 +80,8 @@ public class Sounds implements IDataProvider
         new Builder(WRSounds.ENTITY_ROYALRED_DEATH.get()).subtitle("Royal Red Outcry").sound(Wyrmroost.rl("entity/royal_red/death")).build(json);
         new Builder(WRSounds.ENTITY_ROYALRED_ROAR.get()).subtitle("Royal Red Roar").sound(Wyrmroost.rl("entity/royal_red/roar")).build(json);
         new Builder(WRSounds.ENTITY_ROYALRED_BREATH.get()).subtitle("Royal Red Breathes Fire").sound(Wyrmroost.rl("entity/royal_red/scree")).build(json);
+
+        new Builder(WRSounds.ENTITY_ALPINE_ROAR.get()).subtitle("Alpine Roar").sounds(s -> Wyrmroost.rl("entity/alpine" + s), "roar", "roar1").build(json);
     }
 
     @Override

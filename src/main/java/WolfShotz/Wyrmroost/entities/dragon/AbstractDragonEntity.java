@@ -65,6 +65,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED;
  */
 public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
 {
+    public static final byte HEAL_PARTICLES_DATA_ID = 8;
     public static final IAttribute PROJECTILE_DAMAGE = new RangedAttribute(null, "generic.projectileDamage", 2d, 0, 2048d);
 
     // Common Data Parameters
@@ -93,7 +94,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
         invHandler.ifPresent(i -> registerDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
 
-        sleepTimer.set(isSleeping()? 1 : 0);
         setTamed(false);
     }
 
@@ -130,6 +130,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.readAdditional(nbt);
         dataEntries.forEach(e -> e.read(nbt));
+        sleepTimer.set(isSleeping()? 1 : 0);
     }
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
@@ -250,6 +251,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (flying != isFlying()) setFlying(flying);
 
             if (!isAIDisabled()) handleSleep();
+
+            if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(200) == 0)
+            {
+                heal(1);
+            }
         }
         else
         {
@@ -376,12 +382,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     return true;
                 }
             }
+        }
 
-            if (canBeRidden(player) && !isChild())
-            {
-                if (!world.isRemote) player.startRiding(this);
-                return true;
-            }
+        if (canBeRidden(player))
+        {
+            if (!world.isRemote) player.startRiding(this);
+            return true;
         }
 
         return false;
@@ -467,6 +473,32 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (key == SLEEPING || key == FLYING || key == TAMED) recalculateSize();
     }
 
+    @Override
+    public void handleStatusUpdate(byte id)
+    {
+        // if/when we need more, introduce switch
+//        switch (id)
+//        {
+//            case HEAL_PARTICLES_DATA_ID:
+//                { ... }
+//                break;
+//            default:
+//                super.handleStatusUpdate(id);
+//        }
+
+        if (id == HEAL_PARTICLES_DATA_ID)
+        {
+            for (int i = 0; i < getWidth() * getHeight(); ++i)
+            {
+                double x = getPosX() + (getRNG().nextGaussian() * (getWidth() + 2));
+                double y = getPosY() + getRNG().nextDouble() * getHeight();
+                double z = getPosZ() + (getRNG().nextGaussian() * (getWidth() + 2));
+                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
+            }
+        }
+        else super.handleStatusUpdate(id);
+    }
+
     public ItemStack getStackInSlot(int slot)
     {
         return invHandler.map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
@@ -501,9 +533,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override // Dont damage owners other pets!
     public boolean attackEntityAsMob(Entity entity)
     {
-        if (entity == getOwner()) return false;
-        if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return false;
-
+        if (isOnSameTeam(entity)) return false;
         return super.attackEntityAsMob(entity);
     }
 
@@ -607,7 +637,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         BlockPos.Mutable pos = new BlockPos.Mutable(getPosition());
 
         // cap to the world void (y = 0)
-        while (pos.getY() > 0 && !world.getBlockState(pos).getMaterial().isSolid()) pos.move(0, -1, 0);
+        while (pos.getY() > 0 && !world.getBlockState(pos.down()).getMaterial().isSolid()) pos.move(0, -1, 0);
         return getPosY() - pos.getY();
     }
 
@@ -657,10 +687,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             navigator.clearPath();
             setAttackTarget(null);
             setHealth(getMaxHealth());
-            world.setEntityState(this, (byte) 7);
+            world.setEntityState(this, (byte) 7); // heart particles
             return true;
         }
-        else world.setEntityState(this, (byte) 6);
+        else world.setEntityState(this, (byte) 6); // black particles
 
         return false;
     }
@@ -669,17 +699,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void heal(float healAmount)
     {
         super.heal(healAmount);
-
-        if (world.isRemote)
-        {
-            for (int i = 0; i < getWidth() * 5; ++i)
-            {
-                double x = getPosX() + (getRNG().nextGaussian() * getWidth()) / 1.5d;
-                double y = getPosY() + getRNG().nextDouble() * (getRNG().nextDouble() + 2d);
-                double z = getPosZ() + (getRNG().nextGaussian() * getWidth()) / 1.5d;
-                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
-            }
-        }
+        world.setEntityState(this, HEAL_PARTICLES_DATA_ID);
     }
 
     @Override

@@ -47,6 +47,7 @@ public class DebugScreen extends Screen
         drawCenteredString(font, "variant: " + dragon.getVariant(), (width / 2) - 50, 100, 0xffffff);
         drawCenteredString(font, "gender: " + gender, (width / 2) + 50, 100, 0xffffff);
         drawCenteredString(font, "health: " + dragon.getHealth() + " / " + dragon.getMaxHealth(), (width / 2) - 50, 125, 0xffffff);
+        drawCenteredString(font, "noAI: " + dragon.isAIDisabled(), (width / 2) + 50, 125, 0xffffff);
         drawCenteredString(font, "position: " + dragon.getPositionVec(), (width / 2), 150, 0xffffff);
         drawCenteredString(font, "motion: " + dragon.getMotion(), (width / 2), 175, 0xffffff);
         drawCenteredString(font, "moveTo position: " + dragon.getNavigator().getPath(), (width / 2), 200, 0xffffff);

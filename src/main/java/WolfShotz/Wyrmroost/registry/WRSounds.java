@@ -38,7 +38,9 @@ public enum WRSounds
     ENTITY_ROYALRED_HURT,
     ENTITY_ROYALRED_ROAR,
     ENTITY_ROYALRED_DEATH,
-    ENTITY_ROYALRED_BREATH;
+    ENTITY_ROYALRED_BREATH,
+
+    ENTITY_ALPINE_ROAR;
 
     private final RegistryObject<SoundEvent> delegate;
 

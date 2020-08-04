@@ -75,7 +75,7 @@ public class CommonEvents
         evt.setCancellationResult(ActionResultType.SUCCESS);
 
         Entity entity = evt.getTarget();
-//        entity.recalculateSize();
+        entity.recalculateSize();
 
 //        ((VillagerEntity) entity).setVillagerData(((VillagerEntity) entity)
 //                .getVillagerData()

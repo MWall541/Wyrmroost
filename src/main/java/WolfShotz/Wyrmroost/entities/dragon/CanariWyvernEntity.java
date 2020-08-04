@@ -9,7 +9,6 @@ import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
-import com.google.common.collect.Lists;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.controller.LookController;
@@ -28,6 +27,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -175,7 +175,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return Lists.newArrayList(Items.SWEET_BERRIES); }
+    public Collection<? extends IItemProvider> getFoodItems() { return Collections.singleton(Items.SWEET_BERRIES); }
 
     @Override
     public Animation[] getAnimations()
