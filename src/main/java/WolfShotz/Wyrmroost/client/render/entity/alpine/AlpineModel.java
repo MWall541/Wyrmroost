@@ -662,6 +662,20 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         this.entity = entity;
         resetToDefaultPose();
 
+        limbSwing = tick;
+        limbSwingAmount = 0.42f;
+        // walk cycle
+        walk(leg1L, globalSpeed - 0.28f, 1.1f, false, 0, 0.2f, limbSwing, limbSwingAmount);
+        walk(leg2L, globalSpeed - 0.28f, -1f, false, -1.2f, -1f, limbSwing, limbSwingAmount);
+        walk(foot1L, globalSpeed - 0.28f, 0.3f, false, -1.2f, 0.5f, limbSwing, limbSwingAmount);
+        walk(foot2L, globalSpeed - 0.28f, 1f, false, -1.2f, 1.3f, limbSwing, limbSwingAmount);
+
+        walk(leg1R, globalSpeed - 0.28f, 1.1f, true, 0, 0.2f, limbSwing, limbSwingAmount);
+        walk(leg2R, globalSpeed - 0.28f, -1f, true, -1.2f, 1f, limbSwing, limbSwingAmount);
+        walk(foot1R, globalSpeed - 0.28f, 0.3f, true, -1.2f, -0.5f, limbSwing, limbSwingAmount);
+        walk(foot2R, globalSpeed - 0.28f, 1f, true, -1.2f, -1.3f, limbSwing, limbSwingAmount);
+
+
         idle(tick);
         sit(entity.sitTime.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
@@ -673,6 +687,12 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         chainWave(headArray, globalSpeed - 0.45f, 0.04f, -1, frame, 0.5f);
         if (!entity.isSitting()) chainWave(tailArray, globalSpeed - 0.45f, 0.08f, -3, frame, 0.5f);
         chainSwing(tailArray, globalSpeed - 0.42f, 0.08f, -3, frame, 0.5f);
+        flap(wing1L, globalSpeed - 0.4f, 0.05f, false, 0, 0, frame, 0.5f);
+        swing(wing1L, globalSpeed - 0.42f, 0.04f, false, 0, 0, frame, 0.5f);
+        swing(wing2L, globalSpeed - 0.44f, 0.05f, false, 0, 0, frame, 0.5f);
+        flap(wing1R, globalSpeed - 0.4f, 0.05f, true, 0, 0, frame, 0.5f);
+        swing(wing1R, globalSpeed - 0.42f, 0.04f, true, 0, 0, frame, 0.5f);
+        swing(wing2R, globalSpeed - 0.44f, 0.05f, true, 0, 0, frame, 0.5f);
     }
 
     public void sit(float frame)

@@ -67,7 +67,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     @Override
     public void readAdditional(CompoundNBT compound)
     {
-        containedDragon = ModUtils.entityTypeByKey(compound.getString(DATA_DRAGON_TYPE));
+        containedDragon = ModUtils.getEntityTypeByKey(compound.getString(DATA_DRAGON_TYPE));
         hatchTime = compound.getInt(DATA_HATCH_TIME);
     }
     
@@ -121,7 +121,8 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
                     world.setEntityState(this, (byte) HATCH_ID); // notify client
                     hatch();
                 }
-                else if (rand.nextInt(Math.max(hatchTime / 2, 5)) == 0) world.setEntityState(this, (byte) WIGGLE_ID);
+                else if (rand.nextInt(Math.max(hatchTime / 2, 5)) == 0)
+                    world.setEntityState(this, (byte) WIGGLE_ID);
             }
         }
         
@@ -278,5 +279,5 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public void writeSpawnData(PacketBuffer buffer) { buffer.writeString(getDragonKey()); }
 
     @Override
-    public void readSpawnData(PacketBuffer buffer) { this.containedDragon = ModUtils.entityTypeByKey(buffer.readString()); }
+    public void readSpawnData(PacketBuffer buffer) { this.containedDragon = ModUtils.getEntityTypeByKey(buffer.readString()); }
 }

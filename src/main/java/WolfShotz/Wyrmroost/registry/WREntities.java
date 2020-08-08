@@ -113,7 +113,7 @@ public class WREntities
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
             .dragonEgg(new DragonEggProperties(1, 1, 12000))
             .renderer(AlpineRenderer::new)
-            .build(b -> b.size(2f, 1.9f));
+            .build(b -> b.size(2f, 2f));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
             .renderer(GeodeTippedArrowRenderer::new)

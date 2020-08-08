@@ -52,7 +52,7 @@ public class AlpineEntity extends AbstractDragonEntity
 
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
-        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1, 13, 5));
+        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.1, 13, 5));
         goalSelector.addGoal(7, new DragonBreedGoal(this, false));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(9, CommonGoalWrappers.lookAt(this, 10f));
@@ -97,5 +97,5 @@ public class AlpineEntity extends AbstractDragonEntity
     public Collection<? extends IItemProvider> getFoodItems() { return Sets.newHashSet(Items.HONEYCOMB, Items.HONEY_BOTTLE); }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height * 1.35f; }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height * 1.25f; }
 }

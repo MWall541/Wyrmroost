@@ -83,7 +83,7 @@ public class ModUtils
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    public static <T extends Entity> EntityType<T> entityTypeByKey(@Nonnull String key)
+    public static <T extends Entity> EntityType<T> getEntityTypeByKey(@Nonnull String key)
     {
         return (EntityType<T>) EntityType.byKey(key).orElse(null);
     }

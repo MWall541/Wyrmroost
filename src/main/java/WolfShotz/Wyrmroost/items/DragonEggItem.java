@@ -69,7 +69,7 @@ public class DragonEggItem extends Item
         if (!world.getEntitiesWithinAABB(DragonEggEntity.class, new AxisAlignedBB(pos)).isEmpty())
             return ActionResultType.FAIL;
 
-        DragonEggEntity eggEntity = new DragonEggEntity(ModUtils.entityTypeByKey(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE)), tag.getInt(DragonEggEntity.DATA_HATCH_TIME), world);
+        DragonEggEntity eggEntity = new DragonEggEntity(ModUtils.getEntityTypeByKey(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE)), tag.getInt(DragonEggEntity.DATA_HATCH_TIME), world);
         eggEntity.setPosition(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d);
 
         if (!world.isRemote) world.addEntity(eggEntity);
