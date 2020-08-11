@@ -690,7 +690,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
 
         sit(entity.sitTime.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
-//        idle(tick);
+        idle(tick);
     }
 
     @Override
