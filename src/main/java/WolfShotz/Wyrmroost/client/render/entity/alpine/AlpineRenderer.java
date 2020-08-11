@@ -10,7 +10,7 @@ public class AlpineRenderer extends AbstractDragonRenderer<AlpineEntity, AlpineM
 {
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
 
-    public AlpineRenderer(EntityRendererManager manager) { super(manager, new AlpineModel(), 2.5f); }
+    public AlpineRenderer(EntityRendererManager manager) { super(manager, new AlpineModel(), 2f); }
 
     @Override
     public ResourceLocation getEntityTexture(AlpineEntity entity)

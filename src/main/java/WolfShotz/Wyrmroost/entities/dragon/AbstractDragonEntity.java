@@ -44,8 +44,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.apache.commons.lang3.tuple.Pair;
@@ -728,14 +726,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     public DragonEggProperties getEggProperties() { return DragonEggProperties.get(getType()); }
-
-    @Override
-    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
-    {
-
-
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
-    }
 
     public void handleSleep()
     {

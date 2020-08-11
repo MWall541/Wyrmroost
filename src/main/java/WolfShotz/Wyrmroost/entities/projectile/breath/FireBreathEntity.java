@@ -64,7 +64,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         }
 
         int flammability = WRConfig.fireBreathFlammability;
-        if (world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) && world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) && flammability != 999) // respect game rules
+        if (world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) && WRConfig.canGrief(world) && flammability != 999) // respect game rules
         {
             Direction face = result.getFace();
             BlockPos offset = pos.offset(face);

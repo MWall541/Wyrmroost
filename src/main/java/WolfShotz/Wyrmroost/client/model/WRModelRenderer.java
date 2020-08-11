@@ -82,6 +82,7 @@ public class WRModelRenderer extends ModelRenderer
         rotationPointZ = defaultPositionZ;
     }
 
+    @Override
     public void addChild(ModelRenderer child)
     {
         super.addChild(child);
@@ -113,7 +114,7 @@ public class WRModelRenderer extends ModelRenderer
     public void bob(float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
     {
         rotationPointY += bounce?
-                -MathHelper.abs(MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree) :
+                -Math.abs(MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree) :
                 MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree - limbSwingAmount * degree;
     }
 }

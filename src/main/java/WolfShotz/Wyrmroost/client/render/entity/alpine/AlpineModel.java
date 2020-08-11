@@ -662,30 +662,43 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         this.entity = entity;
         resetToDefaultPose();
 
-        limbSwing = tick;
-        limbSwingAmount = 0.42f;
+        limbSwing = tick * 0.5f;
+        limbSwingAmount = 0.417f;
+
         // walk cycle
-        walk(leg1L, globalSpeed - 0.28f, 1.1f, false, 0, 0.2f, limbSwing, limbSwingAmount);
-        walk(leg2L, globalSpeed - 0.28f, -1f, false, -1.2f, -1f, limbSwing, limbSwingAmount);
-        walk(foot1L, globalSpeed - 0.28f, 0.3f, false, -1.2f, 0.5f, limbSwing, limbSwingAmount);
-        walk(foot2L, globalSpeed - 0.28f, 1f, false, -1.2f, 1.3f, limbSwing, limbSwingAmount);
+        walk(leg1L, globalSpeed, 1.1f, false, 0, 0.2f, limbSwing, limbSwingAmount);
+        walk(leg2L, globalSpeed, -1f, false, -1.6f, -1f, limbSwing, limbSwingAmount);
+        walk(foot1L, globalSpeed, 0.3f, false, -1.6f, 0.5f, limbSwing, limbSwingAmount);
+        walk(foot2L, globalSpeed, 1.5f, false, -2f, 1.3f, limbSwing, limbSwingAmount);
 
-        walk(leg1R, globalSpeed - 0.28f, 1.1f, true, 0, 0.2f, limbSwing, limbSwingAmount);
-        walk(leg2R, globalSpeed - 0.28f, -1f, true, -1.2f, 1f, limbSwing, limbSwingAmount);
-        walk(foot1R, globalSpeed - 0.28f, 0.3f, true, -1.2f, -0.5f, limbSwing, limbSwingAmount);
-        walk(foot2R, globalSpeed - 0.28f, 1f, true, -1.2f, -1.3f, limbSwing, limbSwingAmount);
+        walk(leg1R, globalSpeed, 1.1f, true, 0, -0.2f, limbSwing, limbSwingAmount);
+        walk(leg2R, globalSpeed, -1f, true, -1.6f, 1f, limbSwing, limbSwingAmount);
+        walk(foot1R, globalSpeed, 0.3f, true, -1.6f, -0.5f, limbSwing, limbSwingAmount);
+        walk(foot2R, globalSpeed, 1.5f, true, -2f, -1.3f, limbSwing, limbSwingAmount);
 
+        walk(backleg1L, globalSpeed, -1.25f, false, 0, 0.5f, limbSwing, limbSwingAmount);
+        walk(backleg2L, globalSpeed, 2f, false, 0.4f, 0.2f, limbSwing, limbSwingAmount);
+        walk(backleg3L, globalSpeed, -2.2f, false, 0.4f, 0f, limbSwing, limbSwingAmount);
+        walk(backfoot1L, globalSpeed, 1f, false, 0.4f, 0, limbSwing, limbSwingAmount);
+        walk(backfoot2L, globalSpeed, 1.25f, false, 0.6f, 0.6f, limbSwing, limbSwingAmount);
 
-        idle(tick);
+        walk(backleg1R, globalSpeed, -1.25f, true, 0, -0.5f, limbSwing, limbSwingAmount);
+        walk(backleg2R, globalSpeed, 2f, true, 0.4f, -0.2f, limbSwing, limbSwingAmount);
+        walk(backleg3R, globalSpeed, -2.2f, true, 0.4f, 0f, limbSwing, limbSwingAmount);
+        walk(backfoot1R, globalSpeed, 1f, true, 0.4f, 0, limbSwing, limbSwingAmount);
+        walk(backfoot2R, globalSpeed, 1.25f, true, 0.6f, -0.6f, limbSwing, limbSwingAmount);
+
         sit(entity.sitTime.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
+//        idle(tick);
     }
 
     @Override
     public void idle(float frame)
     {
         chainWave(headArray, globalSpeed - 0.45f, 0.04f, -1, frame, 0.5f);
-        if (!entity.isSitting()) chainWave(tailArray, globalSpeed - 0.45f, 0.08f, -3, frame, 0.5f);
+        if (!entity.isSitting() && !entity.isSleeping())
+            chainWave(tailArray, globalSpeed - 0.45f, 0.08f, -3, frame, 0.5f);
         chainSwing(tailArray, globalSpeed - 0.42f, 0.08f, -3, frame, 0.5f);
         flap(wing1L, globalSpeed - 0.4f, 0.05f, false, 0, 0, frame, 0.5f);
         swing(wing1L, globalSpeed - 0.42f, 0.04f, false, 0, 0, frame, 0.5f);
@@ -729,6 +742,14 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
 
     public void sleep(float frame)
     {
+        setTime(frame);
+        if (frame == 1)
+        {
+            eyeL.rotateAngleY += 3.1f;
+            eyeR.rotateAngleY -= 3.1f;
+        }
 
+        for (WRModelRenderer part : headArray) rotate(part, 0.08f, 0.3f, 0);
+        for (WRModelRenderer part : tailArray) rotate(part, 0, -0.35f, -0.035f);
     }
 }
