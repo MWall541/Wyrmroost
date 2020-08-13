@@ -475,9 +475,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     {
         return t ->
         {
-            BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN)
-                    .forEach(b -> b.getSpawns(EntityClassification.WATER_CREATURE)
-                            .add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1)));
+            for (Biome biome : BiomeDictionary.getBiomes(BiomeDictionary.Type.OCEAN))
+                biome.getSpawns(EntityClassification.WATER_CREATURE).add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1));
             EntitySpawnPlacementRegistry.register(WREntities.BUTTERFLY_LEVIATHAN.get(),
                     EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
                     Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,

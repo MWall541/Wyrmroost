@@ -57,9 +57,9 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
     public void setScale(float scale)
     {
-        boxList.stream()
-                .filter(WRModelRenderer.class::isInstance)
-                .forEach(b -> ((WRModelRenderer) b).setScale(scale, scale, scale));
+        for (ModelRenderer box : boxList)
+            if (box instanceof WRModelRenderer)
+                ((WRModelRenderer) box).setScale(scale, scale, scale);
     }
 
     /**

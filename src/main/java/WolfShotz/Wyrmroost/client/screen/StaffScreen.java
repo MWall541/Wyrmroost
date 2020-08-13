@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -59,7 +60,7 @@ public class StaffScreen extends Screen
     public void render(int mouseX, int mouseY, float partialTicks)
     {
         renderBackground();
-        buttons.forEach(b -> b.render(mouseX, mouseY, partialTicks));
+        for (Widget b : buttons) b.render(mouseX, mouseY, partialTicks);
         int x = width / 2;
         int y = height / 2;
 

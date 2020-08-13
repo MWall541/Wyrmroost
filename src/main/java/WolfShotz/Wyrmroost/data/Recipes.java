@@ -16,6 +16,7 @@ import net.minecraft.util.IItemProvider;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -122,19 +123,14 @@ class Recipes extends RecipeProvider
     private void smelt(IItemProvider ingredient, IItemProvider result, float experience, int time) { smelt(ingredient, result, experience, time, false); }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
     {
         this.consumer = consumer;
 
-        REGISTERED.addAll(ModUtils.streamRegistry(WRItems.REGISTRY).filter(LazySpawnEggItem.class::isInstance).collect(Collectors.toSet()));
-        Collections.addAll(REGISTERED,
-                WRItems.DRAGON_EGG.get(), WRItems.DRAKE_BACKPLATE.get(), WRItems.LDWYRM.get(),
+        exempt(LazySpawnEggItem.class);
+        exempt(WRItems.DRAGON_EGG.get(), WRItems.DRAKE_BACKPLATE.get(), WRItems.LDWYRM.get(),
                 WRItems.RAW_LOWTIER_MEAT.get(), WRItems.RAW_COMMON_MEAT.get(), WRItems.RAW_APEX_MEAT.get(), WRItems.RAW_BEHEMOTH_MEAT.get(),
-                WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get(), WRBlocks.PLATINUM_ORE.get()
-
-
-        );
+                WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get(), WRBlocks.PLATINUM_ORE.get());
 
         // Misc stuff
         shaped(WRItems.SOUL_CRYSTAL.get()).key('X', WRItems.BLUE_GEODE.get()).key('#', Items.ENDER_EYE).patternLine(" X ").patternLine("X#X").patternLine(" X ").addCriterion("has_eye", hasItem(Items.ENDER_EYE)).build(consumer);
@@ -188,5 +184,14 @@ class Recipes extends RecipeProvider
         shaped(WRItems.DRAGON_ARMOR_BLUE_GEODE.get()).key('X', WRItems.BLUE_GEODE.get()).key('#', WRBlocks.BLUE_GEODE_BLOCK.get()).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_blue_geode", hasItem(WRItems.BLUE_GEODE.get())).build(consumer);
         shaped(WRItems.DRAGON_ARMOR_RED_GEODE.get()).key('X', WRItems.RED_GEODE.get()).key('#', WRBlocks.RED_GEODE_BLOCK.get()).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_red_geode", hasItem(WRItems.RED_GEODE.get())).build(consumer);
         shaped(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get()).key('X', WRItems.PURPLE_GEODE.get()).key('#', WRBlocks.PURPLE_GEODE_BLOCK.get()).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_purple_geode", hasItem(WRItems.PURPLE_GEODE.get())).build(consumer);
+    }
+
+    private static void exempt(IItemProvider... exempts) { Collections.addAll(REGISTERED, exempts); }
+
+    private static void exempt(Class<? extends IItemProvider> exemptClass)
+    {
+        Set<IItemProvider> set = new HashSet<>();
+        for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY)) if (exemptClass.isInstance(item)) set.add(item);
+        REGISTERED.addAll(set);
     }
 }

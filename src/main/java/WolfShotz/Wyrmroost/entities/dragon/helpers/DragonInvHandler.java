@@ -23,12 +23,16 @@ public class DragonInvHandler extends ItemStackHandler
     protected void onContentsChanged(int slot) { dragon.onInvContentsChanged(slot, dragon.getStackInSlot(slot), false); }
 
     @Override
-    protected void onLoad() { stacks.forEach(s -> dragon.onInvContentsChanged(stacks.indexOf(s), s, true)); }
+    protected void onLoad()
+    {
+        for (ItemStack stack : stacks) dragon.onInvContentsChanged(stacks.indexOf(stack), stack, true);
+    }
 
     public boolean isEmpty()
     {
         if (stacks.isEmpty()) return true;
-        return stacks.stream().allMatch(ItemStack::isEmpty);
+        for (ItemStack stack : stacks) if (!stack.isEmpty()) return false;
+        return true;
     }
 
     public boolean isEmptyAfter(int slot)
@@ -39,7 +43,8 @@ public class DragonInvHandler extends ItemStackHandler
             Wyrmroost.LOG.warn("slot's too high but ok..");
             return true;
         }
-        return stacks.stream().filter(s -> stacks.indexOf(s) > slot).allMatch(ItemStack::isEmpty);
+        for (ItemStack stack : stacks) if (stacks.indexOf(stack) > slot && !stack.isEmpty()) return false;
+        return true;
     }
 
     public NonNullList<ItemStack> getStacks() { return stacks; }

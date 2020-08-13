@@ -23,9 +23,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -52,14 +51,11 @@ public class ModUtils
         return properties;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Stream<T> streamRegistry(DeferredRegister<T> registry)
-    {
-        return registry.getEntries().stream().map(RegistryObject::get);
-    }
-
     public static <T extends IForgeRegistryEntry<T>> Set<T> getRegistryEntries(DeferredRegister<T> registry)
     {
-        return streamRegistry(registry).collect(Collectors.toSet());
+        Set<T> entries = new HashSet<>();
+        for (RegistryObject<T> entry : registry.getEntries()) entries.add(entry.get());
+        return entries;
     }
 
     /**

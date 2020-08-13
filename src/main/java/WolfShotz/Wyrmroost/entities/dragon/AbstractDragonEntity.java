@@ -120,15 +120,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void writeAdditional(CompoundNBT nbt)
     {
         super.writeAdditional(nbt);
-        dataEntries.forEach(e -> e.write(nbt));
+        for (EntityDataEntry<?> entry : dataEntries) entry.write(nbt);
     }
 
     @Override
     public void readAdditional(CompoundNBT nbt)
     {
         super.readAdditional(nbt);
-        dataEntries.forEach(e -> e.read(nbt));
-        sleepTimer.set(isSleeping()? 1 : 0);
+        for (EntityDataEntry<?> entry : dataEntries) entry.read(nbt);
     }
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
@@ -521,11 +520,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void attackInAABB(AxisAlignedBB aabb)
     {
-        List<LivingEntity> livingEntities = world.getEntitiesWithinAABB(LivingEntity.class, aabb, found -> found != this && getPassengers().stream().noneMatch(found::equals));
-
+        List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
         if (WRConfig.debugMode && world.isRemote) RenderHelper.queueRenderBox(aabb);
-        if (livingEntities.isEmpty()) return;
-        livingEntities.forEach(this::attackEntityAsMob);
+        for (LivingEntity attacking : attackables) attackEntityAsMob(attacking);
     }
 
     @Override // Dont damage owners other pets!
@@ -536,7 +533,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override // We shouldnt be targetting pets...
-    public boolean shouldAttackEntity(LivingEntity target, LivingEntity owner) { return !isOnSameTeam(target); }
+    public boolean shouldAttackEntity(LivingEntity target, @Nullable LivingEntity owner) { return !isOnSameTeam(target); }
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
@@ -794,11 +791,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target)
-    {
-        Optional<LazySpawnEggItem> egg = LazySpawnEggItem.EGG_TYPES.stream().filter(e -> getType().equals(e.type.get())).findFirst();
-        return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
-    }
+    public ItemStack getPickedResult(RayTraceResult target) { return new ItemStack(LazySpawnEggItem.getEggFor(getType())); }
 
     public List<LivingEntity> getEntitiesNearby(double radius, Predicate<LivingEntity> filter)
     {

@@ -41,6 +41,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -79,11 +80,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target)
-    {
-        Optional<LazySpawnEggItem> egg = LazySpawnEggItem.EGG_TYPES.stream().filter(e -> getType().equals(e.type.get())).findFirst();
-        return egg.map(ItemStack::new).orElse(ItemStack.EMPTY);
-    }
+    public ItemStack getPickedResult(RayTraceResult target) { return new ItemStack(LazySpawnEggItem.getEggFor(getType())); }
 
     // ================================
     //           Entity NBT
@@ -172,7 +169,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
         List<Entity> entities = world.getEntitiesInAABBexcluding(this, aabb, predicateFilter);
         if (entities.isEmpty()) return;
 
-        Optional<Entity> closest = entities.stream().min((entity1, entity2) -> Float.compare(entity1.getDistance(this), entity2.getDistance(this)));
+        Optional<Entity> closest = entities.stream().min(Comparator.comparingDouble(entity -> entity.getDistance(this)));
         Entity entity = closest.get();
         if (entity instanceof FishingBobberEntity)
         {

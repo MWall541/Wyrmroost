@@ -13,17 +13,16 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.spawner.AbstractSpawner;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -115,9 +114,20 @@ public class LazySpawnEggItem extends Item
         if (target.getType() != type.get()) return false;
 
         ((AgeableEntity) target).createChild((AgeableEntity) target);
-        
+
         return true;
     }
 
     public int getColors(int index) { return index == 0? PRIMARY_COLOR : SECONDARY_COLOR; }
+
+    /**
+     * Do note that using this method is entirely dependent on the provided EntityType's registry name with addition to:
+     * "_egg"
+     */
+    @Nullable
+    public static Item getEggFor(EntityType<?> type)
+    {
+        ResourceLocation loc = type.getRegistryName();
+        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(loc.getNamespace(), loc.getPath() + "_egg"));
+    }
 }

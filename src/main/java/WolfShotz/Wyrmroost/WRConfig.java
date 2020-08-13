@@ -27,8 +27,15 @@ public class WRConfig
 
     public static boolean canGrief(World world)
     {
-        if (respectMobGriefing) return world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
-        return dragonGriefing;
+        return respectMobGriefing? world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) : dragonGriefing;
+    }
+
+    public static void configLoad(ModConfig.ModConfigEvent evt)
+    {
+        ForgeConfigSpec spec = evt.getConfig().getSpec();
+        if (spec == Common.SPEC) Common.reload();
+        else if (spec == Client.SPEC) Client.reload();
+        else if (spec == Server.SPEC) Server.reload();
     }
 
     /**
@@ -94,14 +101,6 @@ public class WRConfig
         }
     }
 
-    public static void configLoad(ModConfig.ModConfigEvent evt)
-    {
-        ForgeConfigSpec spec = evt.getConfig().getSpec();
-        if (spec == Common.SPEC) Common.reload();
-        else if (spec == Client.SPEC) Client.reload();
-        else if (spec == Server.SPEC) Server.reload();
-    }
-
     public static class Server
     {
         public static final Server INSTANCE;
@@ -136,7 +135,7 @@ public class WRConfig
             respectMobGriefing = builder.comment("If True, Dragons will respect the Minecraft MobGriefing Gamerule. Else, follow \"dragonGriefing\" option")
                     .translation("config.wyrmroost.respectMobGriefing")
                     .define("respectMobGriefing", true);
-            dragonGriefing = builder.comment("If True Dragons will grief regardless of MobGriefing rules")
+            dragonGriefing = builder.comment("If true and not respecting MobGriefing rules, allow dragons to grief")
                     .translation("config.wyrmroost.dragonGriefing")
                     .define("dragonGriefing", true);
             builder.pop();

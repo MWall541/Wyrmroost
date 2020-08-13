@@ -83,16 +83,15 @@ class Models
             ItemModelBuilder builder = itemBare(item);
 
             // model
-            String parent = (item instanceof TieredItem) ? "item/handheld" : "item/generated";
+            String parent = (item instanceof TieredItem)? "item/handheld" : "item/generated";
             builder.parent(new ModelFile.UncheckedModelFile(parent));
 
             // texture
             ResourceLocation texture = resource(item.getRegistryName().getPath());
-            if (!theGOODExistingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
-            {
-                MISSING_TEXTURES.add(texture.getPath().replace("item/", ""));
-            }
-            else builder.texture("layer0", texture);
+            if (theGOODExistingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+                builder.texture("layer0", texture);
+            else
+                Wyrmroost.LOG.warn("Missing Texture for Item: {} , model will not be registered.", texture.getPath().replace("item/", ""));
 
             return builder;
         }
@@ -139,7 +138,8 @@ class Models
             });
 
             item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
-            LazySpawnEggItem.EGG_TYPES.forEach(i -> itemBare(i).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg"))));
+            for (LazySpawnEggItem i : LazySpawnEggItem.EGG_TYPES)
+                itemBare(i).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
 
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY)) // All Standard ItemBlocks
             {
@@ -155,10 +155,7 @@ class Models
             }
 
             // All items that do not require custom attention
-            ModUtils.streamRegistry(WRItems.REGISTRY).filter(e -> !REGISTERED.contains(e)).forEach(this::item);
-
-            if (!MISSING_TEXTURES.isEmpty())
-                Wyrmroost.LOG.error("Items are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
+            for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY)) if (!REGISTERED.contains(item)) item(item);
         }
 
         @Override

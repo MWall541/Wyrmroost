@@ -1,29 +1,25 @@
 package WolfShotz.Wyrmroost.blocks.base;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.block.OreBlock;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.Random;
-import java.util.function.Function;
 
 /**
  * Blockbase - Helper Class allowing for easier block registration
  */
-public class EXPBlock extends Block
+public class EXPBlock extends OreBlock
 {
-    private final Function<Random, Integer> xpAmount;
-    
-    public EXPBlock(Function<Random, Integer> xpAmount, Block.Properties properties)
+    private final int minXp, maxXp;
+
+    public EXPBlock(int minXp, int maxXp, Block.Properties properties)
     {
         super(properties);
-        this.xpAmount = xpAmount;
+        this.minXp = minXp;
+        this.maxXp = maxXp;
     }
-    
+
     @Override
-    public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch)
-    {
-        return xpAmount != null && silktouch == 0? xpAmount.apply(RANDOM) : 0;
-    }
+    protected int getExperience(Random rand) { return MathHelper.nextInt(rand, minXp, maxXp); }
 }
