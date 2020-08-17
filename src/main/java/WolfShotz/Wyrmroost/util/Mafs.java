@@ -49,13 +49,13 @@ public final class Mafs
     }
 
     /**
-     * Interpolation Linear
+     * Clamped Linear Interpolation (Float version)
      */
-    public static float terpLinear(float a, float b, float x)
+    public static float linTerp(float a, float b, float x)
     {
         if (x <= 0) return a;
         if (x >= 1) return b;
-        return a * (1 - x) + b * x;
+        return a + x * (b - a);
     }
 
     /**

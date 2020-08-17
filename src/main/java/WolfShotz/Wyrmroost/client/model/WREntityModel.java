@@ -145,12 +145,12 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
             if (modelRenderer instanceof WRModelRenderer)
             {
                 WRModelRenderer box = (WRModelRenderer) modelRenderer;
-                box.rotationPointX = Mafs.terpLinear(box.rotationPointX, box.defaultPositionX, time);
-                box.rotationPointY = Mafs.terpLinear(box.rotationPointY, box.defaultPositionY, time);
-                box.rotationPointZ = Mafs.terpLinear(box.rotationPointZ, box.defaultPositionZ, time);
-                box.rotateAngleX = Mafs.terpLinear(box.rotateAngleX, box.defaultRotationX, time);
-                box.rotateAngleY = Mafs.terpLinear(box.rotateAngleY, box.defaultRotationY, time);
-                box.rotateAngleZ = Mafs.terpLinear(box.rotateAngleZ, box.defaultRotationZ, time);
+                box.rotationPointX = Mafs.linTerp(box.rotationPointX, box.defaultPositionX, time);
+                box.rotationPointY = Mafs.linTerp(box.rotationPointY, box.defaultPositionY, time);
+                box.rotationPointZ = Mafs.linTerp(box.rotationPointZ, box.defaultPositionZ, time);
+                box.rotateAngleX = Mafs.linTerp(box.rotateAngleX, box.defaultRotationX, time);
+                box.rotateAngleY = Mafs.linTerp(box.rotateAngleY, box.defaultRotationY, time);
+                box.rotateAngleZ = Mafs.linTerp(box.rotateAngleZ, box.defaultRotationZ, time);
             }
         }
     }

@@ -933,7 +933,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void addContainerInfo(DragonInvContainer container)
     {
-        container.buildPlayerSlots(container.playerInv, 17, 136);
+        container.makePlayerSlots(container.playerInv, 17, 136);
     }
 
     public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad) {}

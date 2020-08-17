@@ -23,7 +23,7 @@ public class TickFloat
         return this;
     }
 
-    public float get(float x) { return Mafs.terpLinear(previous, current, x); }
+    public float get(float x) { return Mafs.linTerp(previous, current, x); }
 
     public float get() { return current; }
 

@@ -41,16 +41,16 @@ public class StaffActionButton extends AbstractButton
     }
 
     @Override
-    public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float partialTick)
+    public void renderButton(int mouseX, int mouseY, float partialTick)
     {
-        focusTime.add(isHovered? 1 : -1);
-
         if (wasHovered != isHovered)
         {
             onFocusedChanged(isHovered);
             wasHovered = isHovered;
         }
 
+        float time = 2 * partialTick; // adjust speed for framerate
+        focusTime.add(isHovered? time : -time);
         drawCenteredString(Minecraft.getInstance().fontRenderer,
                 getMessage(),
                 x + width / 2,

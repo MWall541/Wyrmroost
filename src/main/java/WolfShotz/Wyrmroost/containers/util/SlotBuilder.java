@@ -1,6 +1,8 @@
 package WolfShotz.Wyrmroost.containers.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IItemProvider;
@@ -8,9 +10,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class SlotBuilder extends SlotItemHandler
 {
@@ -18,7 +20,7 @@ public class SlotBuilder extends SlotItemHandler
     public static final int CENTER_Y = 60;
 
     private int limit = super.getSlotStackLimit();
-    private Supplier<Boolean> isEnabled = () -> true;
+    private BooleanSupplier isEnabled = () -> true;
     private Predicate<ItemStack> isItemValid = super::isItemValid;
     private Predicate<PlayerEntity> canTakeStack = super::canTakeStack;
     private Consumer<SlotBuilder> onSlotUpdate = s ->
@@ -31,7 +33,7 @@ public class SlotBuilder extends SlotItemHandler
 
     public SlotBuilder(IItemHandler handler, int index) { this(handler, index, CENTER_X, CENTER_Y); }
 
-    public SlotBuilder condition(Supplier<Boolean> isEnabled)
+    public SlotBuilder condition(BooleanSupplier isEnabled)
     {
         this.isEnabled = isEnabled;
         return this;
@@ -51,7 +53,18 @@ public class SlotBuilder extends SlotItemHandler
 
     public SlotBuilder only(Item item) { return only(s -> s.getItem() == item); }
 
-    public SlotBuilder only(Class<? extends IItemProvider> clazz) { return only(s -> clazz.isInstance(s.getItem())); }
+    public SlotBuilder only(Class<? extends IItemProvider> clazz)
+    {
+        if (Block.class.isAssignableFrom(clazz))
+        {
+            return only(s ->
+            {
+                Item item = s.getItem();
+                return item instanceof BlockItem && clazz.isInstance(((BlockItem) item).getBlock());
+            });
+        }
+        else return only(s -> clazz.isInstance(s.getItem()));
+    }
 
     public SlotBuilder canTake(Predicate<PlayerEntity> canTakeStack)
     {
@@ -68,13 +81,13 @@ public class SlotBuilder extends SlotItemHandler
     // ===
 
     @Override
-    public boolean isEnabled() { return isEnabled.get(); }
+    public boolean isEnabled() { return isEnabled.getAsBoolean(); }
 
     @Override
     public void onSlotChanged() { this.onSlotUpdate.accept(this); }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) { return isItemValid.test(stack); }
+    public boolean isItemValid(@Nonnull ItemStack stack) { return isEnabled() && isItemValid.test(stack); }
 
     @Override
     public boolean canTakeStack(PlayerEntity playerIn) { return this.canTakeStack.test(playerIn); }
