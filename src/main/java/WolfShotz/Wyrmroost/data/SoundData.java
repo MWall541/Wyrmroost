@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.function.Function;
 
-public class Sounds implements IDataProvider
+public class SoundData implements IDataProvider
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Set<SoundEvent> registered = Sets.newHashSet();
@@ -30,7 +30,7 @@ public class Sounds implements IDataProvider
     private final DataGenerator generator;
     private final ExistingFileHelper existingFileHelper;
 
-    public Sounds(DataGenerator generator, ExistingFileHelper existingFileHelper)
+    public SoundData(DataGenerator generator, ExistingFileHelper existingFileHelper)
     {
         this.generator = generator;
         this.existingFileHelper = existingFileHelper;

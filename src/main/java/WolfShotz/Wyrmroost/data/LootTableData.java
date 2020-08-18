@@ -40,9 +40,9 @@ import java.util.function.Supplier;
 
 import static WolfShotz.Wyrmroost.registry.WRBlocks.*;
 
-class LootTables extends LootTableProvider
+class LootTableData extends LootTableProvider
 {
-    LootTables(DataGenerator gen) { super(gen); }
+    LootTableData(DataGenerator gen) { super(gen); }
 
     @Override
     protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables()

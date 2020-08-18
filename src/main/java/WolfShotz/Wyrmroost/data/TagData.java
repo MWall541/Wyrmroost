@@ -11,7 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 
-public class Tags
+public class TagData
 {
     // note block tags need to run before item tags
     static void provide(DataGenerator gen)

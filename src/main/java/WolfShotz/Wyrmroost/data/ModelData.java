@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @SuppressWarnings("ConstantConditions")
-class Models
+class ModelData
 {
     private static ExistingFileHelper theGOODExistingFileHelper;
 

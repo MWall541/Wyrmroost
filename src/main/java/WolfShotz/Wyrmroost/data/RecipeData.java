@@ -21,13 +21,13 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-class Recipes extends RecipeProvider
+class RecipeData extends RecipeProvider
 {
     private static final Set<IItemProvider> REGISTERED = Sets.newHashSet();
 
     private Consumer<IFinishedRecipe> consumer;
 
-    Recipes(DataGenerator generatorIn) { super(generatorIn); }
+    RecipeData(DataGenerator generatorIn) { super(generatorIn); }
 
     @Override
     public void act(DirectoryCache cache) throws IOException

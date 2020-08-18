@@ -19,14 +19,14 @@ public class DataGatherer
 
         if (event.includeServer())
         {
-            Tags.provide(gen);
-            gen.addProvider(new Recipes(gen));
-            gen.addProvider(new LootTables(gen));
+            TagData.provide(gen);
+            gen.addProvider(new RecipeData(gen));
+            gen.addProvider(new LootTableData(gen));
         }
         if (event.includeClient())
         {
-            Models.provide(gen, event.getExistingFileHelper());
-            gen.addProvider(new Sounds(gen, event.getExistingFileHelper()));
+            ModelData.provide(gen, event.getExistingFileHelper());
+            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
         }
     }
 }
