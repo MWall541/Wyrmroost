@@ -7,16 +7,14 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -39,8 +37,8 @@ public class SoulCrystalItem extends Item
     {
         World world = player.world;
         if (containsDragon(stack)) return false;
-        if (!(target instanceof AbstractDragonEntity)) return false;
-        AbstractDragonEntity dragon = (AbstractDragonEntity) target;
+        if (!isSuitableEntity(target)) return false;
+        TameableEntity dragon = (TameableEntity) target;
         if (dragon.getOwner() != player) return false;
 
         if (!dragon.getPassengers().isEmpty()) dragon.removePassengers();
@@ -158,5 +156,12 @@ public class SoulCrystalItem extends Item
         AbstractDragonEntity dragon = (AbstractDragonEntity) type.create(world);
         dragon.deserializeNBT(tag);
         return dragon;
+    }
+
+    private static boolean isSuitableEntity(LivingEntity entity)
+    {
+        if (entity instanceof AbstractDragonEntity) return true;
+        ResourceLocation name = entity.getType().getRegistryName();
+        return name.getNamespace().equals("dragonmounts") && name.getPath().contains("dragon");
     }
 }
