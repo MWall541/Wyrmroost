@@ -6,9 +6,6 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.Random;
 
-/**
- * Blockbase - Helper Class allowing for easier block registration
- */
 public class EXPBlock extends OreBlock
 {
     private final int minXp, maxXp;
