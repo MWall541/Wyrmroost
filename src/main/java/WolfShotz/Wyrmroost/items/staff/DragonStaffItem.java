@@ -27,7 +27,7 @@ import java.util.List;
 public class DragonStaffItem extends Item
 {
     public static final String DATA_DRAGON_ID = "BoundDragon"; // int
-    public static final String DATA_ACTION = "Action"; // int
+    public static final String DATA_ACTION = "Action";
 
     public DragonStaffItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
 
@@ -49,12 +49,6 @@ public class DragonStaffItem extends Item
         if (dragon != null && getAction(stack).rightClick(dragon, player, stack))
             return ActionResult.resultSuccess(stack);
         return ActionResult.resultPass(stack);
-    }
-
-    public static void assertStaff(ItemStack stack)
-    {
-        if (!(stack.getItem() instanceof DragonStaffItem))
-            throw new AssertionError(String.format("This isnt a staff wtf? [%s] Please contact the mod author", stack.getItem().getRegistryName()));
     }
 
     /**
@@ -150,7 +144,7 @@ public class DragonStaffItem extends Item
     {
         assertStaff(stack);
         CompoundNBT tag = stack.getOrCreateTag();
-        tag.putInt(DATA_ACTION, StaffAction.ACTIONS.indexOf(action));
+        tag.putInt(DATA_ACTION, action.ordinal());
         getAction(stack).onSelected(getBoundDragon(player.world, stack), player, stack);
     }
 
@@ -160,7 +154,7 @@ public class DragonStaffItem extends Item
         if (stack.hasTag())
         {
             CompoundNBT tag = stack.getTag();
-            if (tag.contains(DATA_ACTION)) return StaffAction.ACTIONS.get(tag.getInt(DATA_ACTION));
+            if (tag.contains(DATA_ACTION)) return StaffAction.VALUES[tag.getInt(DATA_ACTION)];
         }
         return StaffAction.DEFAULT;
     }
@@ -186,5 +180,11 @@ public class DragonStaffItem extends Item
             }
         }
         return null;
+    }
+
+    public static void assertStaff(ItemStack stack)
+    {
+        if (!(stack.getItem() instanceof DragonStaffItem))
+            throw new AssertionError(String.format("This isnt a staff wtf? [%s] Please contact the mod author", stack.getItem().getRegistryName()));
     }
 }

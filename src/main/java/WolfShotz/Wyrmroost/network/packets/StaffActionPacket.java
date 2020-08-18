@@ -17,9 +17,9 @@ public class StaffActionPacket
 
     public StaffActionPacket(StaffAction action) { this.action = action; }
 
-    public StaffActionPacket(PacketBuffer buf) { action = StaffAction.ACTIONS.get(buf.readInt()); }
+    public StaffActionPacket(PacketBuffer buf) { action = StaffAction.VALUES[buf.readInt()]; }
 
-    public void encode(PacketBuffer buf) { buf.writeInt(StaffAction.ACTIONS.indexOf(action)); }
+    public void encode(PacketBuffer buf) { buf.writeInt(action.ordinal()); }
 
     public boolean handle(Supplier<NetworkEvent.Context> context)
     {

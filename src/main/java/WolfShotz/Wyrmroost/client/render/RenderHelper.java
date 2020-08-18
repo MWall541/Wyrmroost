@@ -2,14 +2,24 @@ package WolfShotz.Wyrmroost.client.render;
 
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.ClientEvents;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
+import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
@@ -47,46 +57,52 @@ public class RenderHelper extends RenderType
 
     // == [Rendering] ==
 
-    public static AxisAlignedBB debugBox;
-    public static int boxTime;
-
     public static void renderWorld(RenderWorldLastEvent evt)
     {
         MatrixStack ms = evt.getMatrixStack();
-        StaffRenderer.render(ms, evt.getPartialTicks());
-        renderDebugBox(ms);
+        float partialTicks = evt.getPartialTicks();
+
+        renderDragonStaff(ms, partialTicks);
+        DebugBox.INSTANCE.render(ms);
     }
 
-    private static void renderDebugBox(MatrixStack ms)
+    private static void renderDragonStaff(MatrixStack ms, float partialTicks)
     {
-        if (!WRConfig.debugMode) return;
-        if (debugBox == null) return;
+        Minecraft mc = Minecraft.getInstance();
+        PlayerEntity player = mc.player;
+        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
+        if (stack == null) return;
+        AbstractDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.world, stack);
+        if (dragon == null) return;
 
-        Vec3d view = ClientEvents.getProjectedView();
-        double x = view.x;
-        double y = view.y;
-        double z = view.z;
-
-        IRenderTypeBuffer.Impl type = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        WorldRenderer.drawBoundingBox(
-                ms, type.getBuffer(RenderType.getLines()),
-                debugBox.minX - x,
-                debugBox.minY - y,
-                debugBox.minZ - z,
-                debugBox.maxX - x,
-                debugBox.maxY - y,
-                debugBox.maxZ - z,
-                1, 0, 0, 1);
-        type.finish();
-
-        if (--boxTime <= 0) debugBox = null;
+        DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
+        renderEntityOutline(dragon, ms, partialTicks, 0, 255, 255, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
+        LivingEntity target = dragon.getAttackTarget();
+        if (target != null) renderEntityOutline(target, ms, partialTicks, 255, 0, 0, 100);
+        dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
     }
 
-    public static void queueRenderBox(AxisAlignedBB aabb)
+    public static void renderEntityOutline(Entity entity, MatrixStack ms, float partialTicks, int red, int green, int blue, int alpha)
     {
-        debugBox = aabb;
-        boxTime = 500;
+        Minecraft mc = ClientEvents.getClient();
+        OutlineLayerBuffer buffer = mc.getRenderTypeBuffers().getOutlineBufferSource();
+        EntityRenderer<Entity> renderer = (EntityRenderer<Entity>) mc.getRenderManager().getRenderer(entity);
+        Vec3d cam = ClientEvents.getProjectedView();
+        Vec3d offset = renderer.getRenderOffset(entity, partialTicks);
+        double x = MathHelper.lerp(partialTicks, entity.lastTickPosX, entity.getPosX()) - cam.x + offset.x;
+        double y = MathHelper.lerp(partialTicks, entity.lastTickPosY, entity.getPosY()) - cam.y + offset.y;
+        double z = MathHelper.lerp(partialTicks, entity.lastTickPosZ, entity.getPosZ()) - cam.z + offset.z;
+        float yaw = MathHelper.lerp(partialTicks, entity.prevRotationYaw, entity.rotationYaw);
+
+        buffer.setColor(red, green, blue, alpha);
+        ms.push();
+        ms.translate(x, y, z);
+        renderer.render(entity, yaw, partialTicks, ms, buffer, mc.getRenderManager().getPackedLight(entity, partialTicks));
+        buffer.finish();
+        ms.pop();
     }
+
+    public static void queueDebugBoxRendering(AxisAlignedBB aabb) { DebugBox.INSTANCE.queue(aabb); }
 
     public static void drawShape(MatrixStack ms, IVertexBuilder buffer, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
     {
@@ -113,5 +129,60 @@ public class RenderHelper extends RenderType
                 ((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >> 24) & 0xFF) / 255f);
 
         impl.finish();
+    }
+
+    public enum DebugBox
+    {
+        INSTANCE;
+
+        private int time = 0;
+        private AxisAlignedBB aabb = null;
+        private int color = 0xff0000ff;
+
+        public void queue(AxisAlignedBB aabb)
+        {
+            this.aabb = aabb;
+            this.time = 550;
+        }
+
+        public void setColor(int color)
+        {
+            this.color = color;
+        }
+
+        public void reset()
+        {
+            this.aabb = null;
+            this.time = 0;
+            this.color = 0xff0000ff;
+        }
+
+        public void render(MatrixStack ms)
+        {
+            if (!WRConfig.debugMode) return;
+            if (aabb == null) return;
+
+            Vec3d view = ClientEvents.getProjectedView();
+            double x = view.x;
+            double y = view.y;
+            double z = view.z;
+
+            IRenderTypeBuffer.Impl type = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+            WorldRenderer.drawBoundingBox(
+                    ms, type.getBuffer(RenderType.getLines()),
+                    aabb.minX - x,
+                    aabb.minY - y,
+                    aabb.minZ - z,
+                    aabb.maxX - x,
+                    aabb.maxY - y,
+                    aabb.maxZ - z,
+                    ((color >> 16) & 0xff) / 255f,
+                    ((color >> 8) & 0xff) / 255f,
+                    (color & 0xff) / 255f,
+                    ((color >> 24) & 0xff) / 255f);
+            type.finish();
+
+            if (--time <= 0) aabb = null;
+        }
     }
 }

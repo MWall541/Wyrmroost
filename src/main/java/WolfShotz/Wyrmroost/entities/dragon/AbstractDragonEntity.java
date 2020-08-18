@@ -521,7 +521,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void attackInAABB(AxisAlignedBB aabb)
     {
         List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
-        if (WRConfig.debugMode && world.isRemote) RenderHelper.queueRenderBox(aabb);
+        if (WRConfig.debugMode && world.isRemote) RenderHelper.queueDebugBoxRendering(aabb);
         for (LivingEntity attacking : attackables) attackEntityAsMob(attacking);
     }
 
@@ -924,7 +924,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void addScreenInfo(StaffScreen screen)
     {
-        screen.addAction(StaffAction.HOME_POS);
+        screen.addAction(StaffAction.HOME);
         screen.addAction(StaffAction.SIT);
 
         screen.toolTip.add("Owner: " + getOwner().getName().getUnformattedComponentText());

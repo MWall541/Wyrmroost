@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.client.screen.widgets.StaffActionButton;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
-import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
@@ -14,13 +13,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StaffScreen extends Screen
 {
     public final AbstractDragonEntity dragon;
-    public final List<String> toolTip = Lists.newArrayList();
-    public final List<StaffAction> actions = Lists.newArrayList();
+    public final List<String> toolTip = new ArrayList<>();
+    public final List<StaffAction> actions = new ArrayList<>();
 
     public StaffScreen(AbstractDragonEntity dragon)
     {

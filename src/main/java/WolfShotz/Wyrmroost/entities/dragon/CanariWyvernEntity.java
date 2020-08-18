@@ -171,7 +171,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public void addScreenInfo(StaffScreen screen)
     {
         super.addScreenInfo(screen);
-        screen.addAction(StaffAction.TARGETING);
+        screen.addAction(StaffAction.TARGET);
     }
 
     @Override
