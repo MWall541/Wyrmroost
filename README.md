@@ -10,6 +10,6 @@ Thats great but not really! You can report it by submitting an issue on the issu
 Thats sweet! By all means go for it, just edit the [`en_us.lang`](src/main/resources/assets/wyrmroost/lang) and submit a pull request with the correct language and file name!
 
 ## Licensing
-Wyrmroost is licensed under the GNU Lesser General Public License v2.1
-To sum it up, you have permission from me to borrow my code for ur own personal uses so long as you don't claim it as your own and that you have the code publicly visible. kthx!
+Wyrmroost is licensed under the GNU Lesser General Public License v3.0
+To sum it up, you have permission from me to borrow my code for ur own personal uses so long as you don't claim it as your own and that you have the code publicly visible. Everything is subject to copyright (this includes forms of artwork done in the project such as models, textures, and sounds) kthxbai!
 
