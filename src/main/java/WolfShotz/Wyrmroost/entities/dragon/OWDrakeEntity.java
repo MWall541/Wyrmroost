@@ -88,7 +88,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(7, new DragonBreedGoal(this, true));
         goalSelector.addGoal(8, new GrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 10f));
+        goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
@@ -286,12 +286,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean canBeRidden(Entity entityIn)
-    {
-        if (isTamed() && isSaddled()) return true;
-        if (getAnimation() == ROAR_ANIMATION) return false;
-        return super.canBeRidden(entityIn);
-    }
+    protected boolean canBeRidden(Entity entityIn) { return isSaddled(); }
 
     @Override
     public boolean canFly() { return false; }

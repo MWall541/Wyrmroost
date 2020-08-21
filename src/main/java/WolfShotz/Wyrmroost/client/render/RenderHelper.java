@@ -188,9 +188,9 @@ public class RenderHelper extends RenderType
                     aabb.maxX - x,
                     aabb.maxY - y,
                     aabb.maxZ - z,
-                    ((color >> 16) & 0xff) / 255f,
-                    ((color >> 8) & 0xff) / 255f,
                     (color & 0xff) / 255f,
+                    ((color >> 8) & 0xff) / 255f,
+                    ((color >> 16) & 0xff) / 255f,
                     ((color >> 24) & 0xff) / 255f);
             type.finish();
 

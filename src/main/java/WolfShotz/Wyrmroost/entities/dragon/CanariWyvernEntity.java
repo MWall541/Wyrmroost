@@ -62,7 +62,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         goalSelector.addGoal(6, new DragonBreedGoal(this, true));
         goalSelector.addGoal(7, new AvoidGoal());
         goalSelector.addGoal(7, new FlyerWanderGoal(this, true));
-        goalSelector.addGoal(8, CommonGoalWrappers.lookAt(this, 8f));
+        goalSelector.addGoal(8, new LookAtGoal(this, LivingEntity.class, 5f));
         goalSelector.addGoal(9, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));

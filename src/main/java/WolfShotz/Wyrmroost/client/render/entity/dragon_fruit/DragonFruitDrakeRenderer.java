@@ -15,7 +15,7 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
 
     public DragonFruitDrakeRenderer(EntityRendererManager manager)
     {
-        super(manager, new DragonFruitDrakeModel(), 1.5f);
+        super(manager, new DragonFruitDrakeModel(), 1.15f);
     }
 
     @Nullable

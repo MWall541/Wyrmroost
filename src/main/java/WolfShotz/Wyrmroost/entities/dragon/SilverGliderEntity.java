@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.MovementController;
+import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
@@ -73,7 +74,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new DragonBreedGoal(this, true));
         goalSelector.addGoal(6, new FlyerFollowOwnerGoal(this, 10, 2f, 10, false));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(9, CommonGoalWrappers.lookAt(this, 10f));
+        goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 7f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
         goalSelector.addGoal(7, new FlyerWanderGoal(this, true)

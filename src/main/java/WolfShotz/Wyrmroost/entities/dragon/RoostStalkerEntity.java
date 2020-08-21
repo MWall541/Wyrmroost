@@ -78,7 +78,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(10, new DragonBreedGoal(this, false));
         goalSelector.addGoal(11, new ScavengeGoal(1.1d));
         goalSelector.addGoal(12, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(13, CommonGoalWrappers.lookAt(this, 5f));
+        goalSelector.addGoal(13, new LookAtGoal(this, LivingEntity.class, 5f));
         goalSelector.addGoal(14, new LookRandomlyGoal(this));
         goalSelector.addGoal(9, new AvoidEntityGoal<PlayerEntity>(this, PlayerEntity.class, 7f, 1.15f, 1f)
         {

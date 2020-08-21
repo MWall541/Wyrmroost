@@ -6,20 +6,17 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.Mafs;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
-import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
-import net.minecraft.block.BushBlock;
-import net.minecraft.block.GrassBlock;
-import net.minecraft.block.LeavesBlock;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.block.*;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.TemptGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
@@ -27,32 +24,38 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
 {
+    private static final int CROP_GROWTH_RADIUS = 5;
+    private static final int CROP_GROWTH_TIME = 1200; // 1 minute
     public static final Animation BITE_ANIMATION = new Animation(15);
 
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    private int shearCooldownTime;
-    private int napTime;
+    private int shearCooldownTime, napTime, growCropsTime;
+    private TemptGoal temptGoal;
 
     public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world)
     {
@@ -68,28 +71,30 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public Collection<? extends IItemProvider> getFoodItems()
     {
-        Collection<IItemProvider> foods = Tags.Items.CROPS.getAllElements().stream().filter(i -> i.getItem() != Items.NETHER_WART).collect(Collectors.toList());
-        Collections.addAll(foods, Items.APPLE, Items.SWEET_BERRIES);
-        return foods;
+        return ImmutableSet.<Item>builder()
+                .addAll(Tags.Items.CROPS.getAllElements())
+                .add(Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE)
+                .build();
     }
 
     @Override
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(3, new MoveToHomeGoal(this));
-//        goalSelector.addGoal(4, new ControlledAttackGoal(this, 1.1, false, 1.5d, AbstractDragonEntity::performGenericAttack));
+        goalSelector.addGoal(3, new MoveToCropsGoal());
+        goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new DragonBreedGoal(this, true));
-        goalSelector.addGoal(7, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
-        goalSelector.addGoal(8, CommonGoalWrappers.followParent(this, 1));
-        goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 7f));
-        goalSelector.addGoal(11, new LookRandomlyGoal(this));
-        goalSelector.addGoal(6, new TemptGoal(this, 1, false, Ingredient.fromItems(Items.APPLE))
+        goalSelector.addGoal(6, new MeleeAttackGoal(this, 2, false));
+        goalSelector.addGoal(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.fromItems(Items.APPLE))
         {
             @Override
             public boolean shouldExecute() { return !isTamed() && isChild() && super.shouldExecute(); }
         });
+        goalSelector.addGoal(8, CommonGoalWrappers.followOwner(this, 1.1d, 12f, 3f));
+        goalSelector.addGoal(9, CommonGoalWrappers.followParent(this, 1));
+        goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
+        goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 7f));
+        goalSelector.addGoal(12, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
@@ -107,8 +112,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (super.playerInteraction(player, hand, stack)) return true;
-        if (stack.getItem() == Items.SHEARS)
+        if (stack.getItem() == Items.SHEARS && canBeSteered())
             return true; // Shears return false on entity interactions. bad, but workaround for it.
 
         if (!isTamed() && isChild() && isFoodItem(stack))
@@ -118,15 +122,14 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             return true;
         }
 
-        if (isOwner(player) && !isChild() && !player.isSneaking())
+        if (isTamed() && stack.getItem() == Items.GLISTERING_MELON_SLICE && growCropsTime <= 0)
         {
-            setSitting(false);
-            player.startRiding(this);
-
+            eat(stack);
+            growCropsTime = CROP_GROWTH_TIME;
             return true;
         }
 
-        return false;
+        return super.playerInteraction(player, hand, stack);
     }
 
     @Override
@@ -136,21 +139,50 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         if (shearCooldownTime > 0) --shearCooldownTime;
         sitTimer.add((isSitting() || isSleeping())? 0.1f : -0.1f);
-        sleepTimer.add(isSleeping()? 0.035f : -0.1f);
+        sleepTimer.add(isSleeping()? 0.05f : -0.1f);
 
         setSprinting(getAttackTarget() != null);
 
-        if (getAnimation() == BITE_ANIMATION && animationTick == 7)
+        if (!world.isRemote && growCropsTime >= 0)
+        {
+            --growCropsTime;
+            if (getRNG().nextBoolean())
+            {
+                AxisAlignedBB aabb = getBoundingBox().grow(CROP_GROWTH_RADIUS);
+                int x = MathHelper.nextInt(getRNG(), (int) aabb.minX, (int) aabb.maxX);
+                int y = MathHelper.nextInt(getRNG(), (int) aabb.minY, (int) aabb.maxY);
+                int z = MathHelper.nextInt(getRNG(), (int) aabb.minZ, (int) aabb.maxZ);
+                BlockPos pos = new BlockPos(x, y, z);
+                BlockState state = world.getBlockState(pos);
+                Block block = state.getBlock();
+                if (block instanceof IGrowable && !(block instanceof GrassBlock))
+                {
+                    IGrowable plant = (IGrowable) block;
+                    if (plant.canGrow(world, pos, state, false))
+                    {
+                        plant.grow((ServerWorld) world, getRNG(), pos, state);
+                        world.playEvent(Constants.WorldEvents.BONEMEAL_PARTICLES, pos, 0);
+                    }
+                }
+            }
+        }
+
+        if (getAnimation() == BITE_ANIMATION && animationTick == 7 && canPassengerSteer())
         {
             attackInFront(0);
             AxisAlignedBB aabb = getBoundingBox().grow(2).offset(Mafs.getYawVec(rotationYawHead, 0, 2));
-            BlockPos.getAllInBox((int) aabb.minX, (int) aabb.minY, (int) aabb.minZ, (int) aabb.maxX, (int) aabb.maxY, (int) aabb.maxZ)
-                    .forEach(pos ->
-                    {
-                        if (world.getBlockState(pos).getBlock() instanceof BushBlock)
-                            world.destroyBlock(pos, false);
-                    });
+            for (BlockPos pos : ModUtils.getBlockPosesInAABB(aabb))
+            {
+                if (world.getBlockState(pos).getBlock() instanceof BushBlock)
+                    world.destroyBlock(pos, true, this);
+            }
         }
+    }
+
+    @Override
+    public void recievePassengerKeybind(int key, int mods, boolean pressed)
+    {
+        if (key == KeybindPacket.MOUNT_KEY1 && pressed) setAnimation(BITE_ANIMATION);
     }
 
     @Override
@@ -163,9 +195,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         if (getRNG().nextDouble() <= WRConfig.dfdBabyChance) setGrowingAge(getEggProperties().getGrowthTime());
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
-
-    @Override
-    public boolean canBeSteered() { return true; }
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return 1.8f; }
@@ -185,7 +214,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
-        return Lists.newArrayList(new ItemStack(Items.APPLE, 1));
+        return Collections.singletonList(new ItemStack(Items.APPLE, 1 + fortune + getRNG().nextInt(2)));
     }
 
     @Override // These bois are lazy, can sleep during the day
@@ -209,9 +238,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         }
     }
 
-//    @Override
-//    public void performGenericAttack() { swingArm(Hand.MAIN_HAND); }
-
     @Override
     public void swingArm(Hand hand)
     {
@@ -221,6 +247,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     @Override
     public boolean canFly() { return false; }
+
+    @Override
+    protected boolean canBeRidden(Entity passenger)
+    {
+        return passenger instanceof LivingEntity && isOwner((LivingEntity) passenger);
+    }
 
     @Nullable
     @Override
@@ -241,9 +273,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     {
         return t ->
         {
-            BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE)
-                    .stream()
-                    .forEach(b -> b.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 7, 2, 4)));
+            for (Biome biome : BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE))
+                biome.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 7, 2, 4));
 
             EntitySpawnPlacementRegistry.register(
                     WREntities.DRAGON_FRUIT_DRAKE.get(),
@@ -255,19 +286,56 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                         Block block = world.getBlockState(pos).getBlock();
                         return block instanceof GrassBlock || block instanceof LeavesBlock;
                     }));
-//                ((t, w, s, b, r) -> w.getWorldInfo().getDimensionData(DimensionType.OVERWORLD).contains(PortalBlock.DATA_PORTAL_ENTERED)));
         };
     }
-
-    //    @Override
-//    public boolean isBreedingItem(ItemStack stack)
-//    {
-//        return stack.getItem() == WRItems.DRAGON_FRUIT.get();
-//    }
 
     @Override
     public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.APPLE; }
 
     @Override
     public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, BITE_ANIMATION}; }
+
+    public static boolean isCrop(Block block)
+    {
+        return block instanceof IGrowable && !(block instanceof GrassBlock);
+    }
+
+    // todo: completely remake this so it instead looks for random block in range instead of closest,and checks to see if block is in range rather than being directly ontop of it
+    private class MoveToCropsGoal extends MoveToBlockGoal
+    {
+        public MoveToCropsGoal()
+        {
+            super(DragonFruitDrakeEntity.this, 1, CROP_GROWTH_RADIUS * 2);
+            setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
+        }
+
+        @Override
+        public boolean shouldExecute() { return growCropsTime >= 0 && searchForDestination(); }
+
+        @Override
+        protected int getRunDelay(CreatureEntity creature) { return 100; }
+
+        @Override
+        public boolean shouldContinueExecuting() { return growCropsTime >= 0; }
+
+        @Override
+        public void tick()
+        {
+            super.tick();
+            getLookController().setLookPosition(new Vec3d(destinationBlock));
+            if (timeoutCounter >= 200 && getRNG().nextInt(timeoutCounter) >= 100)
+            {
+                timeoutCounter = 0;
+                searchForDestination();
+            }
+        }
+
+        @Override
+        protected boolean shouldMoveTo(IWorldReader world, BlockPos pos)
+        {
+            BlockState state = world.getBlockState(pos);
+            Block block = state.getBlock();
+            return !pos.equals(destinationBlock) && isCrop(block) && ((IGrowable) block).canGrow(world, pos, state, false);
+        }
+    }
 }

@@ -6,10 +6,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,7 +52,7 @@ public class AlpineEntity extends AbstractDragonEntity
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.1, 13, 5));
         goalSelector.addGoal(7, new DragonBreedGoal(this, false));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(9, CommonGoalWrappers.lookAt(this, 10f));
+        goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));

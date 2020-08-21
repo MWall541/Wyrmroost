@@ -108,7 +108,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
 //        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
         goalSelector.addGoal(4, new DragonBreedGoal(this, false));
         goalSelector.addGoal(5, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
-        goalSelector.addGoal(6, CommonGoalWrappers.lookAt(this, 10f));
+        goalSelector.addGoal(6, new LookAtGoal(this, LivingEntity.class, 12f));
         goalSelector.addGoal(7, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));

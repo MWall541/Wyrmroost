@@ -344,8 +344,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (stack.interactWithEntity(player, this, hand)) return true;
-
         if (isOwner(player) && player.isSneaking() && !isFlying())
         {
             setSitting(!isSitting());
@@ -381,7 +379,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
 
-        if (canBeRidden(player) && !player.isSneaking())
+        if (canBeRidden(player))
         {
             if (!world.isRemote) player.startRiding(this);
             return true;
@@ -394,7 +392,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean processInteract(PlayerEntity player, Hand hand)
     {
-        if (playerInteraction(player, hand, player.getHeldItem(hand)))
+        ItemStack stack = player.getHeldItem(hand);
+        if (stack.interactWithEntity(player, this, hand)) return true;
+        if (playerInteraction(player, hand, stack))
         {
             setSleeping(false);
             return true;
@@ -473,27 +473,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void handleStatusUpdate(byte id)
     {
-        // if/when we need more, introduce switch
-//        switch (id)
-//        {
-//            case HEAL_PARTICLES_DATA_ID:
-//                { ... }
-//                break;
-//            default:
-//                super.handleStatusUpdate(id);
-//        }
-
-        if (id == HEAL_PARTICLES_DATA_ID)
+        switch (id)
         {
-            for (int i = 0; i < getWidth() * getHeight(); ++i)
-            {
-                double x = getPosX() + (getRNG().nextGaussian() * (getWidth() + 2));
-                double y = getPosY() + getRNG().nextDouble() * getHeight();
-                double z = getPosZ() + (getRNG().nextGaussian() * (getWidth() + 2));
-                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
-            }
+            default:
+                super.handleStatusUpdate(id);
+            case HEAL_PARTICLES_DATA_ID:
+                for (int i = 0; i < getWidth() * getHeight(); ++i)
+                {
+                    double x = getPosX() + Mafs.nextDouble(getRNG()) * getWidth() + 0.4d;
+                    double y = getPosY() + getRNG().nextDouble() * getHeight();
+                    double z = getPosZ() + Mafs.nextDouble(getRNG()) * getWidth() + 0.4d;
+                    world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
+                }
+                break;
         }
-        else super.handleStatusUpdate(id);
     }
 
     public ItemStack getStackInSlot(int slot)
@@ -617,7 +610,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isWithinHomeDistanceFromPosition(BlockPos pos)
     {
-        return getHomePos().map(home -> home.distanceSq(pos) <= WRConfig.homeRadius * WRConfig.homeRadius).orElse(true);
+        Optional<BlockPos> home = getHomePos();
+        return home.map(h -> h.distanceSq(pos) <= WRConfig.homeRadius * WRConfig.homeRadius).orElse(true);
     }
 
     @Override
@@ -746,7 +740,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         {
             clearAI();
             setSitting(false);
-            setHomePos(BlockPos.ZERO);
+            clearHome();
         }
     }
 

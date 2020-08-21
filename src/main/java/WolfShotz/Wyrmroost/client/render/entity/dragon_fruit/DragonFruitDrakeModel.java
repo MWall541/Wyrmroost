@@ -371,12 +371,12 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
     }
 
     @Override
-    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public void render(MatrixStack ms, IVertexBuilder buffer, int light, int overlay, float red, float green, float blue, float alpha)
     {
         ms.push();
         ms.scale(1.5f, 1.5f, 1.5f);
         ms.translate(0, -0.5f, 0);
-        Body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+        Body1.render(ms, buffer, light, overlay, red, green, blue, alpha);
         ms.pop();
     }
 

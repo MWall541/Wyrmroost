@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.entities.util;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.item.crafting.Ingredient;
@@ -22,38 +21,6 @@ import java.util.function.Predicate;
  */
 public class CommonGoalWrappers
 {
-    /**
-     * Look at random entities. Do this while NOT sleeping
-     *
-     * @param entity   goal Owner
-     * @param toLookat Entity Class to look at
-     * @param distance distance to look at entites
-     */
-    public static LookAtGoal lookAt(MobEntity entity, Class<LivingEntity> toLookat, float distance)
-    {
-        return new LookAtGoal(entity, toLookat, distance)
-        {
-            @Override
-            public boolean shouldExecute()
-            {
-                return super.shouldExecute() && !entity.getPassengers().contains(closestEntity);
-            }
-        };
-    }
-
-    /**
-     * Simplified version of {@link #lookAt(MobEntity, float)}
-     * Goal Owner will look at everything extending off of {@link LivingEntity}
-     *
-     * @param entity   Goal Owner
-     * @param distance distance to at entities
-     * @return
-     */
-    public static LookAtGoal lookAt(MobEntity entity, float distance)
-    {
-        return lookAt(entity, LivingEntity.class, distance);
-    }
-
     /**
      * Have the goal owner be tempted to players holding items (walk towards them)
      *
@@ -80,14 +47,13 @@ public class CommonGoalWrappers
      */
     public static FollowParentGoal followParent(TameableEntity animal, double speed)
     {
-        FollowParentGoal goal = new FollowParentGoal(animal, speed)
+        return new FollowParentGoal(animal, speed)
         {
             { setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK)); }
 
             @Override
             public boolean shouldExecute() { return !animal.isTamed() && super.shouldExecute(); }
         };
-        return goal;
     }
 
     /**

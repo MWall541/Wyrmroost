@@ -88,7 +88,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
         goalSelector.addGoal(7, new DragonBreedGoal(this, true));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(10, CommonGoalWrappers.lookAt(this, 10f));
+        goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
