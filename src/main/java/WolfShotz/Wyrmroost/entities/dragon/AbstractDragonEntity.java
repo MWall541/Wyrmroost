@@ -45,6 +45,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -477,6 +478,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         {
             default:
                 super.handleStatusUpdate(id);
+                break;
             case HEAL_PARTICLES_DATA_ID:
                 for (int i = 0; i < getWidth() * getHeight(); ++i)
                 {
@@ -869,11 +871,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void recievePassengerKeybind(int key, int mods, boolean pressed) {}
 
     /**
-     * Sort of misleading name. if this is true, then nothing else is ticked (goals, look, etc)
-     * Do not perform any AI actions while: Not Sleeping; not being controlled.
+     * Sort of misleading name. if this is true, then {@link MobEntity#updateEntityActionState()} is not ticked:
+     * which tl;dr does not update any AI including Goal Selectors, Pathfinding, Moving, etc.
+     * Do not perform any AI actions while: Not Sleeping; not being controlled, etc.
      */
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || getControllingPlayer() != null; }
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || canPassengerSteer(); }
 
     public boolean canFly() { return !isChild() && !getLeashed(); }
 
@@ -892,13 +895,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (!canFly()) return false;
         if (!onGround) return true; // We can't lift off the ground in the air...
 
-        for (int i = 1; i < (getFlightThreshold() / 2.5f) + 1; ++i)
-            if (world.getBlockState(getPosition().up((int) getHeight() + i)).getMaterial().blocksMovement())
-                return false;
+        int heightDiff = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) getPosX(), (int) getPosZ()) - (int) getPosY();
+        if (heightDiff > 0 && heightDiff < getFlightThreshold())
+            return false; // position has too low of a ceiling, can't fly here.
+
         setSitting(false);
         setSleeping(false);
         jump();
-
         return true;
     }
 
@@ -909,7 +912,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return super.onLivingFall(distance, damageMultiplier);
     }
 
-    public double getFlightThreshold() { return getHeight(); }
+    public int getFlightThreshold() { return (int) getHeight(); }
 
     /**
      * todo make a forge patch to allow this to actually work

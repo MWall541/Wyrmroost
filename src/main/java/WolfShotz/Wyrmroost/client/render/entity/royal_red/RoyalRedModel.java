@@ -766,6 +766,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         breath(entity.breathTimer.get(partialTicks));
         sit(entity.sitTimer.get(partialTicks));
         sleep(entity.sleepTimer.get(partialTicks));
+        knockout(entity.knockOutTimer.get(partialTicks));
 
         if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation();
         if (animator.setAnimation(RoyalRedEntity.SLAP_ATTACK_ANIMATION)) slapAttackAnim();
@@ -773,36 +774,57 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         idle(frame);
     }
 
+
     @Override
     public void idle(float frame)
     {
         if (entity.flightTimer.get() == 0)
         {
-            chainWave(headParts, globalSpeed - 0.45f, 0.075f, -1.5f, frame, 0.5f);
-
-            jaw.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.1f + 0.1f;
-
-            flap(wingL1, globalSpeed - 0.42f, 0.1f, false, 0, 0, frame, 0.5f);
-            swing(wingL1, globalSpeed - 0.44f, 0.1f, false, 0, 0, frame, 0.5f);
-            swing(wingL2, globalSpeed - 0.43f, 0.1f, false, 0, 0, frame, 0.5f);
-            swing(palmL_1, globalSpeed - 0.42f, 0.07f, false, 0, 0.25f, frame, 0.5f);
-
-            flap(wingR1, globalSpeed - 0.42f, 0.1f, true, 0, 0, frame, 0.5f);
-            swing(wingR1, globalSpeed - 0.44f, 0.1f, true, 0, 0, frame, 0.5f);
-            swing(wingR2, globalSpeed - 0.43f, 0.1f, true, 0, 0, frame, 0.5f);
-            swing(palmR_1, globalSpeed - 0.42f, 0.07f, true, 0, 0.25f, frame, 0.5f);
-
-            if (!entity.isSleeping())
+            if (entity.isKnockedOut())
             {
-                body1.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.075f;
-                walk(arm2R, globalSpeed - 0.45f, 0.25f, false, 0, 0, frame, 0.5f);
-                flap(palmR, globalSpeed - 0.45f, 0.5f, true, 0, 0, frame, 0.5f);
-                walk(arm2L, globalSpeed - 0.45f, 0.25f, false, 0, 0, frame, 0.5f);
-                flap(palmL, globalSpeed - 0.45f, 0.5f, false, 0, 0, frame, 0.5f);
-            }
+                chainWave(headParts, globalSpeed - 0.48f, 0.04f, -1.5f, frame, 0.5f);
+                jaw.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.48f)) * 0.1f + 0.1f;
 
-            chainWave(tailParts, globalSpeed - 0.45f, 0.1f, -1.5f, frame, 0.5f);
-            chainSwing(tailParts, globalSpeed - 0.46f, 0.075f, -2f, frame, 0.5f);
+                flap(wingL1, globalSpeed - 0.45f, 0.1f, false, 0, 0, frame, 0.5f);
+                swing(wingL1, globalSpeed - 0.47f, 0.1f, false, 0, 0, frame, 0.5f);
+                swing(wingL2, globalSpeed - 0.46f, 0.1f, false, 0, 0, frame, 0.5f);
+                swing(palmL_1, globalSpeed - 0.45f, 0.03f, false, 0, 0.25f, frame, 0.5f);
+
+                flap(wingR1, globalSpeed - 0.45f, 0.1f, true, 0, 0, frame, 0.5f);
+                swing(wingR1, globalSpeed - 0.47f, 0.1f, true, 0, 0, frame, 0.5f);
+                swing(wingR2, globalSpeed - 0.46f, 0.1f, true, 0, 0, frame, 0.5f);
+                swing(palmR_1, globalSpeed - 0.45f, 0.03f, true, 0, 0.25f, frame, 0.5f);
+
+                chainSwing(tailParts, globalSpeed - 0.48f, 0.06f, -2f, frame, 0.5f);
+            }
+            else
+            {
+                chainWave(headParts, globalSpeed - 0.45f, 0.075f, -1.5f, frame, 0.5f);
+
+                jaw.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.1f + 0.1f;
+
+                flap(wingL1, globalSpeed - 0.42f, 0.1f, false, 0, 0, frame, 0.5f);
+                swing(wingL1, globalSpeed - 0.44f, 0.1f, false, 0, 0, frame, 0.5f);
+                swing(wingL2, globalSpeed - 0.43f, 0.1f, false, 0, 0, frame, 0.5f);
+                swing(palmL_1, globalSpeed - 0.42f, 0.07f, false, 0, 0.25f, frame, 0.5f);
+
+                flap(wingR1, globalSpeed - 0.42f, 0.1f, true, 0, 0, frame, 0.5f);
+                swing(wingR1, globalSpeed - 0.44f, 0.1f, true, 0, 0, frame, 0.5f);
+                swing(wingR2, globalSpeed - 0.43f, 0.1f, true, 0, 0, frame, 0.5f);
+                swing(palmR_1, globalSpeed - 0.42f, 0.07f, true, 0, 0.25f, frame, 0.5f);
+
+                if (!entity.isSleeping())
+                {
+                    body1.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.075f;
+                    walk(arm2R, globalSpeed - 0.45f, 0.25f, false, 0, 0, frame, 0.5f);
+                    flap(palmR, globalSpeed - 0.45f, 0.5f, true, 0, 0, frame, 0.5f);
+                    walk(arm2L, globalSpeed - 0.45f, 0.25f, false, 0, 0, frame, 0.5f);
+                    flap(palmL, globalSpeed - 0.45f, 0.5f, false, 0, 0, frame, 0.5f);
+                }
+
+                chainWave(tailParts, globalSpeed - 0.45f, 0.1f, -1.5f, frame, 0.5f);
+                chainSwing(tailParts, globalSpeed - 0.46f, 0.075f, -2f, frame, 0.5f);
+            }
         }
     }
 
@@ -946,6 +968,59 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         }
     }
 
+    private void knockout(float frame)
+    {
+        setTime(frame);
+        toDefaultPose();
+
+        move(body2, 0, 9.8f, 0);
+        rotate(body1, 0.2f, 0, 0);
+
+        rotate(neck1, 0.3f, 0, 0);
+        rotate(neck2, 0.7f, 0, 0);
+        rotate(neck3, -0.75f, 0, 0);
+        rotate(head, -0.6f, 0, 0);
+
+        rotate(wingR1, 0.2f, 0, -1.1f);
+        rotate(wingR2, 0.3f, 0.4f, 0);
+
+        rotate(wingL1, 0.2f, 0, 1.1f);
+        rotate(wingL2, 0.3f, -0.4f, 0);
+
+        rotate(arm1R, -1f, 0.5f, 0.8f);
+        rotate(arm2R, 0.2f, -0.2f, 0.8f);
+        rotate(claw1R, 0, 0, 0.4f);
+        rotate(claw2R, 0, 0, 0.4f);
+        rotate(claw3R, 0, 0, 0.4f);
+
+        rotate(arm1L, -1f, -0.5f, -0.8f);
+        rotate(arm2L, 0.2f, 0.2f, -0.8f);
+        rotate(claw1L, 0, 0, -0.4f);
+        rotate(claw2L, 0, 0, -0.4f);
+        rotate(claw3L, 0, 0, -0.4f);
+
+        rotate(leg1R, 1.35f, -0.6f, 0);
+        rotate(leg2R, -0.25f, 0, -0.2f);
+        rotate(leg3R, 0.5f, 0, 0);
+        rotate(footR, 1.3f, 0, 0);
+
+        rotate(leg1L, 1.35f, 0.6f, 0);
+        rotate(leg2L, -0.25f, 0, 0.2f);
+        rotate(leg3L, 0.5f, 0, 0);
+        rotate(footL, 1.3f, 0, 0);
+
+        if (frame == 1)
+        {
+            eyeL.rotateAngleY = 2f;
+            eyeL.rotationPointZ = -3f;
+            eyeL.rotationPointX = 2f;
+
+            eyeR.rotateAngleY = -2f;
+            eyeR.rotationPointZ = -3f;
+            eyeR.rotationPointX = -2f;
+        }
+    }
+
     private void roarAnimation()
     {
         animator.startKeyframe(10);
@@ -986,63 +1061,6 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.resetKeyframe(10);
     }
 
-    private void slapAttackAnim()
-    {
-        animator.startKeyframe(7);
-        keepStanceSlapAttack();
-        animator.rotate(arm1R, -0.8f, 0.3f, 1f);
-        animator.rotate(arm2R, 0.5f, 0, 0.5f);
-        animator.rotate(body1, 0, 0, 0.3f);
-        animator.rotate(head, 0, 0, -0.3f);
-        animator.rotate(leg1R, -0.6f, 0, 0);
-        animator.rotate(leg2R, 0.9f, 0, 0);
-        animator.rotate(footR, 0.9f, 0, 0);
-        animator.endKeyframe();
-
-        animator.startKeyframe(3);
-        keepStanceSlapAttack();
-        animator.rotate(arm1R, -0.8f, 0.3f, 1f);
-        animator.rotate(arm2R, 0.5f, 0, 0.5f);
-        animator.rotate(body1, 0, 0, 0.3f);
-        animator.rotate(head, 0, 0, -0.3f);
-        animator.rotate(leg1R, -0.1f, 0, 0);
-        animator.rotate(leg2R, 0.3f, 0, 0);
-        animator.rotate(leg3R, 0.3f, 0, 0);
-        animator.endKeyframe();
-
-        animator.startKeyframe(3);
-        keepStanceSlapAttack();
-        animator.rotate(body1, 0, 0, -0.3f);
-        animator.rotate(head, 0, 0, 0.3f);
-        animator.rotate(leg1R, -0.1f, 0, 0);
-        animator.rotate(leg2R, 0.3f, 0, 0);
-        animator.rotate(leg3R, 0.3f, 0, 0);
-        animator.endKeyframe();
-
-        animator.startKeyframe(3);
-        keepStanceSlapAttack();
-        animator.rotate(arm1L, -0.8f, -0.3f, -1f);
-        animator.rotate(arm2L, 0.5f, 0, -0.5f);
-        animator.rotate(body1, 0, 0, -0.3f);
-        animator.rotate(head, 0, 0, 0.3f);
-        animator.rotate(leg1R, -0.1f, 0, 0);
-        animator.rotate(leg2R, 0.3f, 0, 0);
-        animator.rotate(leg3R, 0.3f, 0, 0);
-        animator.endKeyframe();
-
-        animator.startKeyframe(3);
-        keepStanceSlapAttack();
-        animator.rotate(arm2L, 0f, 0f, 0.5f);
-        animator.rotate(body1, 0, 0, 0.3f);
-        animator.rotate(head, 0, 0, -0.3f);
-        animator.rotate(leg1R, -0.1f, 0, 0);
-        animator.rotate(leg2R, 0.3f, 0, 0);
-        animator.rotate(leg3R, 0.3f, 0, 0);
-        animator.endKeyframe();
-
-        animator.setStaticKeyframe(1);
-        animator.resetKeyframe(10);
-    }
 
     private void biteAttackAnim()
     {
@@ -1065,7 +1083,65 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.resetKeyframe(6);
     }
 
-    private void keepStanceSlapAttack()
+    private void slapAttackAnim()
+    {
+        animator.startKeyframe(7);
+        keepSlapStance();
+        animator.rotate(arm1R, -0.8f, 0.3f, 1f);
+        animator.rotate(arm2R, 0.5f, 0, 0.5f);
+        animator.rotate(body1, 0, 0, 0.3f);
+        animator.rotate(head, 0, 0, -0.3f);
+        animator.rotate(leg1R, -0.6f, 0, 0);
+        animator.rotate(leg2R, 0.9f, 0, 0);
+        animator.rotate(footR, 0.9f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepSlapStance();
+        animator.rotate(arm1R, -0.8f, 0.3f, 1f);
+        animator.rotate(arm2R, 0.5f, 0, 0.5f);
+        animator.rotate(body1, 0, 0, 0.3f);
+        animator.rotate(head, 0, 0, -0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepSlapStance();
+        animator.rotate(body1, 0, 0, -0.3f);
+        animator.rotate(head, 0, 0, 0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepSlapStance();
+        animator.rotate(arm1L, -0.8f, -0.3f, -1f);
+        animator.rotate(arm2L, 0.5f, 0, -0.5f);
+        animator.rotate(body1, 0, 0, -0.3f);
+        animator.rotate(head, 0, 0, 0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        keepSlapStance();
+        animator.rotate(arm2L, 0f, 0f, 0.5f);
+        animator.rotate(body1, 0, 0, 0.3f);
+        animator.rotate(head, 0, 0, -0.3f);
+        animator.rotate(leg1R, -0.1f, 0, 0);
+        animator.rotate(leg2R, 0.3f, 0, 0);
+        animator.rotate(leg3R, 0.3f, 0, 0);
+        animator.endKeyframe();
+
+        animator.setStaticKeyframe(1);
+        animator.resetKeyframe(10);
+    }
+
+    private void keepSlapStance()
     {
         animator.rotate(body2, -0.5f, 0, 0);
         animator.move(body2, 0, -0.2f, -3f);

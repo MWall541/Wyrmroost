@@ -18,12 +18,14 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
@@ -37,20 +39,25 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
+    public static final DataParameter<Boolean> KNOCKED_OUT = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
     public static final Animation ROAR_ANIMATION = new Animation(70);
     public static final Animation SLAP_ATTACK_ANIMATION = new Animation(30);
     public static final Animation BITE_ATTACK_ANIMATION = new Animation(15);
     public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
+    private static final int MAX_KNOCKOUT_TIME = 3600; // 3 minutes
 
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat breathTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat knockOutTimer = new TickFloat().setLimit(0, 1);
+    private int knockOutTime = 0;
 
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("KnockOutTime", EntityDataEntry.INTEGER, () -> knockOutTime, this::setKnockoutTime);
         registerVariantData(0, true);
     }
 
@@ -65,7 +72,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         getAttribute(FOLLOW_RANGE).setBaseValue(20d); // 20 blocks (?)
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d); // normal * 2.25
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d); // 5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.0425d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.06d);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(4d); // 2 hearts
     }
 
@@ -74,6 +81,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         super.registerData();
         dataManager.register(BREATHING_FIRE, false);
+        dataManager.register(KNOCKED_OUT, false);
     }
 
     @Override
@@ -110,6 +118,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         sitTimer.add(isSitting()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
         breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
+        knockOutTimer.add(isKnockedOut()? 0.05f : -0.1f);
 
         if (!world.isRemote)
         {
@@ -122,8 +131,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 if (ticksExisted % 10 == 0) playSound(WRSounds.ENTITY_ROYALRED_BREATH.get(), 1, 0.5f);
             }
 
-            if (!world.isRemote && !isSleeping() && !isBreathingFire() && !isChild() && getRNG().nextInt(2250) == 0 && noActiveAnimation())
+            if (noActiveAnimation() && !isKnockedOut() && !isSleeping() && !isBreathingFire() && !isChild() && getRNG().nextInt(2250) == 0)
                 AnimationPacket.send(this, ROAR_ANIMATION);
+
+            if (--knockOutTime <= 0) setKnockedOut(false);
         }
 
         Animation anim = getAnimation();
@@ -136,6 +147,63 @@ public class RoyalRedEntity extends AbstractDragonEntity
         else if (anim == SLAP_ATTACK_ANIMATION && (getAnimationTick() == 10 || getAnimationTick() == 15))
             attackInFront(0.2);
         else if (anim == BITE_ATTACK_ANIMATION && getAnimationTick() == 4) attackInFront(-0.3);
+    }
+
+    @Override
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    {
+        if (!isTamed() && isKnockedOut() && isFoodItem(stack))
+        {
+            if (!world.isRemote)
+            {
+                if (knockOutTime <= (MAX_KNOCKOUT_TIME / 2))
+                {
+                    // base taming chances on consciousness; the closer it is to waking up the better the chances
+                    if (tame(getRNG().nextInt(knockOutTime) < MAX_KNOCKOUT_TIME * 0.25d, player))
+                    {
+                        setKnockedOut(false);
+                        AnimationPacket.send(this, ROAR_ANIMATION);
+                    }
+                    else knockOutTime += 600; // add 30 seconds to knockout time
+                    eat(stack);
+                    return true;
+                }
+            }
+            else
+                return true; //client is not aware of the knockout timer. todo in 1.16: take advantage of ActionResultType
+        }
+
+        return super.playerInteraction(player, hand, stack);
+    }
+
+    @Override
+    public void onDeath(DamageSource cause)
+    {
+        if (isTamed() || isKnockedOut()) super.onDeath(cause);
+        else // knockout RR's instead of killing them
+        {
+            setHealth(getMaxHealth() * 0.25f); // reset to 25% health
+            setKnockedOut(true);
+        }
+    }
+
+    @Override
+    public void handleSleep()
+    {
+        if (isSleeping())
+        {
+            if (world.isDaytime() && getRNG().nextInt(300) == 0) setSleeping(false);
+        }
+        else
+        {
+            if (--sleepCooldown > 0) return;
+            if (world.isDaytime()) return;
+            if (isKnockedOut()) return;
+            if (!isIdling()) return;
+            if (isTamed() && (!isSitting() || !isWithinHomeDistanceCurrentPosition())) return;
+            setSleeping(getRNG().nextInt(300) == 0);
+        }
+
     }
 
     @Override
@@ -155,10 +223,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public void meleeAttack()
     {
         if (world.isRemote) return;
-
-        Animation anim = BITE_ATTACK_ANIMATION;
-        if (rand.nextBoolean() && !isFlying()) anim = SLAP_ATTACK_ANIMATION;
-        AnimationPacket.send(this, anim);
+        AnimationPacket.send(this, isFlying() || getRNG().nextBoolean()? BITE_ATTACK_ANIMATION : SLAP_ATTACK_ANIMATION);
     }
 
     @Override
@@ -177,10 +242,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isKnockedOut(); }
+
+    @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * (isFlying()? 0.95f : 1.13f); }
 
     @Override
-    protected boolean canBeRidden(Entity entityIn) { return true; }
+    protected boolean canBeRidden(Entity entity) { return entity instanceof LivingEntity && isOwner((LivingEntity) entity); }
 
     @Override
     protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 3; }
@@ -200,6 +268,31 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
 
     public void setBreathingFire(boolean b) { dataManager.set(BREATHING_FIRE, b); }
+
+    public boolean isKnockedOut() { return dataManager.get(KNOCKED_OUT); }
+
+    public void setKnockedOut(boolean b)
+    {
+        dataManager.set(KNOCKED_OUT, b);
+        if (!world.isRemote)
+        {
+            knockOutTime = b? MAX_KNOCKOUT_TIME : 0;
+            if (b)
+            {
+                clearAI();
+                setFlying(false);
+            }
+        }
+    }
+
+    public void setKnockoutTime(int i)
+    {
+        knockOutTime = Math.max(0, i);
+        if (i > 0 && !isKnockedOut()) dataManager.set(KNOCKED_OUT, true);
+    }
+
+    @Override
+    public boolean shouldFly() { return super.shouldFly() && !isKnockedOut(); }
 
     @Override
     public boolean isImmuneToArrows() { return true; }
