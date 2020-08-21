@@ -72,6 +72,7 @@ public final class Mafs
      * - Changed method name from <code>getMouseOver</code> to <code>rayTrace</code>
      *
      * @return the block or entity that the player is looking at / targeting with their cursor.  null if no collision
+     * @deprecated use {@link net.minecraft.entity.projectile.ProjectileHelper}
      */
     public static RayTraceResult rayTrace(World world, PlayerEntity player, double range, boolean targetTamed)
     {

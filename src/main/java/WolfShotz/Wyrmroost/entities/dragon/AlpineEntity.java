@@ -5,7 +5,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.util.TickFloat;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -94,7 +94,7 @@ public class AlpineEntity extends AbstractDragonEntity
     protected boolean canBeRidden(Entity entityIn) { return true; }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return Sets.newHashSet(Items.HONEYCOMB, Items.HONEY_BOTTLE); }
+    public Collection<? extends IItemProvider> getFoodItems() { return ImmutableSet.of(Items.HONEYCOMB, Items.HONEY_BOTTLE); }
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height * 1.25f; }

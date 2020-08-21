@@ -10,7 +10,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -23,8 +23,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.OptionalDouble;
 
 public class RenderHelper extends RenderType
@@ -66,6 +70,29 @@ public class RenderHelper extends RenderType
         DebugBox.INSTANCE.render(ms);
     }
 
+    private static final Map<Entity, Color> ENTITY_OUTLINE_MAP = new HashMap<>();
+
+    public static void renderEntities(RenderLivingEvent.Pre<? super LivingEntity, ?> event)
+    {
+        LivingEntity entity = event.getEntity();
+        Color color = ENTITY_OUTLINE_MAP.remove(entity);
+        if (color != null)
+        {
+            event.setCanceled(true);
+
+            Minecraft mc = ClientEvents.getClient();
+            OutlineLayerBuffer buffer = mc.getRenderTypeBuffers().getOutlineBufferSource();
+            MatrixStack ms = event.getMatrixStack();
+            LivingRenderer<? super LivingEntity, ?> renderer = event.getRenderer();
+            float partialTicks = event.getPartialRenderTick();
+            float yaw = MathHelper.lerp(partialTicks, entity.prevRotationYaw, entity.rotationYaw);
+
+            buffer.setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+            renderer.render(entity, yaw, partialTicks, ms, buffer, event.getLight());
+            buffer.finish();
+        }
+    }
+
     private static void renderDragonStaff(MatrixStack ms, float partialTicks)
     {
         Minecraft mc = Minecraft.getInstance();
@@ -76,30 +103,15 @@ public class RenderHelper extends RenderType
         if (dragon == null) return;
 
         DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
-        renderEntityOutline(dragon, ms, partialTicks, 0, 255, 255, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
+        renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
         LivingEntity target = dragon.getAttackTarget();
-        if (target != null) renderEntityOutline(target, ms, partialTicks, 255, 0, 0, 100);
+        if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
         dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
     }
 
-    public static void renderEntityOutline(Entity entity, MatrixStack ms, float partialTicks, int red, int green, int blue, int alpha)
+    public static void renderEntityOutline(Entity entity, int red, int green, int blue, int alpha)
     {
-        Minecraft mc = ClientEvents.getClient();
-        OutlineLayerBuffer buffer = mc.getRenderTypeBuffers().getOutlineBufferSource();
-        EntityRenderer<Entity> renderer = (EntityRenderer<Entity>) mc.getRenderManager().getRenderer(entity);
-        Vec3d cam = ClientEvents.getProjectedView();
-        Vec3d offset = renderer.getRenderOffset(entity, partialTicks);
-        double x = MathHelper.lerp(partialTicks, entity.lastTickPosX, entity.getPosX()) - cam.x + offset.x;
-        double y = MathHelper.lerp(partialTicks, entity.lastTickPosY, entity.getPosY()) - cam.y + offset.y;
-        double z = MathHelper.lerp(partialTicks, entity.lastTickPosZ, entity.getPosZ()) - cam.z + offset.z;
-        float yaw = MathHelper.lerp(partialTicks, entity.prevRotationYaw, entity.rotationYaw);
-
-        buffer.setColor(red, green, blue, alpha);
-        ms.push();
-        ms.translate(x, y, z);
-        renderer.render(entity, yaw, partialTicks, ms, buffer, mc.getRenderManager().getPackedLight(entity, partialTicks));
-        buffer.finish();
-        ms.pop();
+        ENTITY_OUTLINE_MAP.put(entity, new Color(red, green, blue, alpha));
     }
 
     public static void queueDebugBoxRendering(AxisAlignedBB aabb) { DebugBox.INSTANCE.queue(aabb); }
@@ -107,10 +119,10 @@ public class RenderHelper extends RenderType
     public static void drawShape(MatrixStack ms, IVertexBuilder buffer, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
     {
         Matrix4f matrix4f = ms.getLast().getMatrix();
-        shapeIn.forEachEdge((p_230013_12_, p_230013_14_, p_230013_16_, p_230013_18_, p_230013_20_, p_230013_22_) ->
+        shapeIn.forEachEdge((x1, y1, z1, x2, y2, z2) ->
         {
-            buffer.pos(matrix4f, (float) (p_230013_12_ + xIn), (float) (p_230013_14_ + yIn), (float) (p_230013_16_ + zIn)).color(red, green, blue, alpha).endVertex();
-            buffer.pos(matrix4f, (float) (p_230013_18_ + xIn), (float) (p_230013_20_ + yIn), (float) (p_230013_22_ + zIn)).color(red, green, blue, alpha).endVertex();
+            buffer.pos(matrix4f, (float) (x1 + xIn), (float) (y1 + yIn), (float) (z1 + zIn)).color(red, green, blue, alpha).endVertex();
+            buffer.pos(matrix4f, (float) (x2 + xIn), (float) (y2 + yIn), (float) (z2 + zIn)).color(red, green, blue, alpha).endVertex();
         });
     }
 

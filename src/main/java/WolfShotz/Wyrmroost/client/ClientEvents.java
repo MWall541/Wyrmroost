@@ -42,6 +42,7 @@ public class ClientEvents
         bus.addListener(ClientEvents::itemColors);
 
         MinecraftForge.EVENT_BUS.addListener(RenderHelper::renderWorld);
+        MinecraftForge.EVENT_BUS.addListener(RenderHelper::renderEntities);
 //        MinecraftForge.EVENT_BUS.addListener(ForgeBus::cameraPerspective);
     }
 

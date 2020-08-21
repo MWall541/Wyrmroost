@@ -124,7 +124,7 @@ public class SoulCrystalItem extends Item
         if (dragon != null)
         {
             tooltip.add(new StringTextComponent(dragon.getName().getUnformattedComponentText()));
-            tooltip.add(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.DARK_RED)
+            tooltip.add(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.RED)
                     .appendSibling(new StringTextComponent(String.format(" %s / %s", (int) (dragon.getHealth() / 2), (int) dragon.getMaxHealth() / 2))));
             tooltip.add(new StringTextComponent("Tamed by " + dragon.getOwner().getName().getUnformattedComponentText()));
         }

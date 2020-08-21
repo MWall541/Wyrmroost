@@ -381,7 +381,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
 
-        if (canBeRidden(player))
+        if (canBeRidden(player) && !player.isSneaking())
         {
             if (!world.isRemote) player.startRiding(this);
             return true;
@@ -599,6 +599,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setHomePos(@Nullable BlockPos pos) { setHomePos(Optional.ofNullable(pos)); }
 
     public void setHomePos(Optional<BlockPos> pos) { dataManager.set(HOME_POS, pos); }
+
+    public void clearHome() { setHomePos(Optional.empty()); }
 
     @Override
     public boolean detachHome() { return getHomePos().isPresent(); }

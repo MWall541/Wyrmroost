@@ -21,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public enum StaffAction
 {
@@ -70,7 +69,7 @@ public enum StaffAction
                 {
                     if (dragon.getHomePos().isPresent())
                     {
-                        dragon.setHomePos(Optional.empty());
+                        dragon.clearHome();
                         DragonStaffItem.setAction(DEFAULT, player, stack);
                     }
                 }
@@ -120,7 +119,7 @@ public enum StaffAction
 
     TARGET
             {
-                private static final int TARGET_RANGE = 20;
+                private static final int TARGET_RANGE = 40;
 
                 @Override
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
@@ -163,13 +162,7 @@ public enum StaffAction
                     {
                         Entity target = ((EntityRayTraceResult) rtr).getEntity();
                         if (target != dragon.getAttackTarget())
-                            RenderHelper.renderEntityOutline(target,
-                                    ms,
-                                    partialTicks,
-                                    255,
-                                    0,
-                                    0,
-                                    (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
+                            RenderHelper.renderEntityOutline(target, 255, 0, 0, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
                     }
                 }
             };

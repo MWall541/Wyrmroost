@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -111,4 +112,16 @@ public class ModUtils
         return biomes;
     }
 
+    /**
+     * Get all (approximate) {@link BlockPos}'s in an {@link AxisAlignedBB}
+     * <p>
+     * Iterable Version - for statements ftw
+     *
+     * @param aabb please tell me your not asking what this is for
+     * @return an iterable of block pos's and not a damned stream
+     */
+    public static Iterable<BlockPos> getBlockPosesInAABB(AxisAlignedBB aabb)
+    {
+        return BlockPos.getAllInBoxMutable((int) aabb.minX, (int) aabb.minY, (int) aabb.minZ, (int) aabb.maxX, (int) aabb.maxY, (int) aabb.maxZ);
+    }
 }
