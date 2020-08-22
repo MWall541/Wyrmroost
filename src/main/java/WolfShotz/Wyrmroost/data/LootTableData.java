@@ -172,6 +172,9 @@ class LootTableData extends LootTableProvider
             registerLootTable(WREntities.COIN_DRAGON.get(), LootTable.builder().addLootPool(singleRollPool()
                     .addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 1, 0, 1))
                     .addEntry(item(Items.GOLD_NUGGET, 4))));
+
+            registerLootTable(WREntities.ALPINE.get(), LootTable.builder().addLootPool(singleRollPool()
+                    .addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6))));
         }
 
         private static LootingEnchantBonus.Builder looting(float min, float max)

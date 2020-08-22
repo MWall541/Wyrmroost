@@ -34,6 +34,16 @@
             }
           ],
           "name": "wyrmroost:raw_lowtier_meat"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": 4
+            }
+          ],
+          "name": "minecraft:gold_nugget"
         }
       ]
     }

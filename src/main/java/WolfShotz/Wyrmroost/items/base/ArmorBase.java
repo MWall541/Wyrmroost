@@ -1,8 +1,12 @@
 package WolfShotz.Wyrmroost.items.base;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -13,22 +17,34 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class FullSetBonusArmorItem extends ItemArmorBase
+/**
+ * Helper class used to help register playerArmor items
+ */
+public class ArmorBase extends ArmorItem
 {
-    public FullSetBonusArmorItem(ArmorMaterialList material, EquipmentSlotType equipType)
+    public ArmorBase(ArmorMaterialList material, EquipmentSlotType equipType)
     {
-        super(material, equipType);
+        super(material, equipType, ModUtils.itemBuilder().rarity(material.getRarity()));
     }
 
-    public abstract void applyFullSetBonus(LivingEntity entity, boolean hasFullSet);
+    @Nullable
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type)
+    {
+        int layer = slot == EquipmentSlotType.LEGS? 2 : 1;
+        return Wyrmroost.MOD_ID + ":textures/models/armor/" + material.getName() + "_layer_" + layer + ".png";
+    }
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> lines, ITooltipFlag flags)
     {
         super.addInformation(stack, world, lines, flags);
+        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + material.getName()).applyTextStyle(((ArmorMaterialList) material).getRarity().color)));
         lines.add(new StringTextComponent(""));
         lines.add(new TranslationTextComponent(String.format("item.wyrmroost.armors.%s.desc", material.getName().toLowerCase())));
     }
+
+    public void applyFullSetBonus(LivingEntity entity, boolean hasFullSet) {}
 
     public static boolean hasFullSet(LivingEntity entity)
     {
@@ -36,8 +52,7 @@ public abstract class FullSetBonusArmorItem extends ItemArmorBase
         for (ItemStack itemStack : entity.getArmorInventoryList())
         {
             Item item = itemStack.getItem();
-            if (item instanceof FullSetBonusArmorItem && (prev == null || item.getClass() == prev.getClass()))
-                prev = item;
+            if (prev == null || item.getClass() == prev.getClass()) prev = item;
             else return false;
         }
         return true;

@@ -18,6 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -43,11 +45,20 @@ public class LazySpawnEggItem extends Item
         EGG_TYPES.add(this);
     }
 
+    @Override
+    public ITextComponent getDisplayName(ItemStack stack)
+    {
+        ResourceLocation regName = type.get().getRegistryName();
+        return new TranslationTextComponent("entity." + regName.getNamespace() + "." + regName.getPath())
+                .appendText(" ")
+                .appendSibling(new TranslationTextComponent("item.wyrmroost.spawn_egg"));
+    }
+
     public ActionResultType onItemUse(ItemUseContext context)
     {
         World world = context.getWorld();
         if (world.isRemote) return ActionResultType.SUCCESS;
-        
+
         ItemStack itemstack = context.getItem();
         BlockPos blockpos = context.getPos();
         Direction direction = context.getFace();

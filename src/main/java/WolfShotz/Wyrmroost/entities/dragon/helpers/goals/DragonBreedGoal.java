@@ -15,23 +15,30 @@ import java.util.List;
 
 public class DragonBreedGoal extends Goal
 {
-    public final AbstractDragonEntity dragon;
-    public final boolean straight;
-    private final EntityPredicate predicate;
+    protected final AbstractDragonEntity dragon;
+    protected final boolean straight;
+    protected final int limit;
+    protected final EntityPredicate predicate;
     protected AbstractDragonEntity targetMate;
-    private int spawnBabyDelay;
+    protected int spawnBabyDelay;
 
-    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight)
+    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight, int limit)
     {
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         this.dragon = dragon;
         this.straight = straight;
+        this.limit = limit;
         this.predicate = new EntityPredicate()
                 .setDistance(dragon.getWidth() * 8)
                 .allowInvulnerable()
                 .allowFriendlyFire()
                 .setLineOfSiteRequired()
                 .setCustomPredicate(e -> ((AbstractDragonEntity) e).canMateWith(dragon));
+    }
+
+    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight)
+    {
+        this(dragon, straight, 0);
     }
 
     /**
@@ -41,8 +48,7 @@ public class DragonBreedGoal extends Goal
     public boolean shouldExecute()
     {
         if (!dragon.isInLove()) return false;
-        if ((targetMate = getNearbyMate()) == null)
-            return false;
+        if ((targetMate = getNearbyMate()) == null) return false;
         if (straight) return dragon.isMale() != targetMate.isMale();
         return true;
     }
@@ -52,7 +58,7 @@ public class DragonBreedGoal extends Goal
      */
     public boolean shouldContinueExecuting()
     {
-        return targetMate.isAlive() && targetMate.isInLove() && spawnBabyDelay < 60;
+        return targetMate.isAlive() && targetMate.isInLove() && dragon.isInLove() && spawnBabyDelay < 60;
     }
 
     /**
@@ -90,6 +96,7 @@ public class DragonBreedGoal extends Goal
      * Spawns an egg item at the dragons location when bred.
      * Forge breed events are taking in <code>AgeableEntity</code> as a param, thus, they cannot be posted.
      * Mod Makers: Feel free to PR a workaround if you need this!
+     * todo in 1.16: with the new breed methods, fix this
      */
     public void spawnBaby()
     {

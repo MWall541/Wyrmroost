@@ -14,6 +14,9 @@
   "entity.wyrmroost.butterfly_leviathan": "Butterfly Leviathan",
   "entity.wyrmroost.dragon_fruit_drake": "Dragon Fruit Drake",
   "entity.wyrmroost.canari_wyvern": "Canari Wyvern",
+  "entity.wyrmroost.coin_dragon": "Coin Dragon",
+  "entity.wyrmroost.royal_red": "Royal Red",
+  "entity.wyrmroost.alpine": "Alpine",
 
   "_comment": "Items",
   "item.wyrmroost.armors.blue_geode": "Blue Geode",
@@ -89,13 +92,7 @@
   "item.wyrmroost.red_geode_dragon_armor": "Red Geode Dragon Armor",
   "item.wyrmroost.purple_geode_dragon_armor": "Purple Geode Dragon Armor",
 
-  "item.wyrmroost.overworld_drake_egg": "Overworld Drake Spawn Egg",
-  "item.wyrmroost.lesser_desertwyrm_egg": "Lesser Desertwyrm Spawn Egg",
-  "item.wyrmroost.silver_glider_egg": "Silver Glider Spawn Egg",
-  "item.wyrmroost.roost_stalker_egg": "Rooststalker Spawn Egg",
-  "item.wyrmroost.butterfly_leviathan_egg": "Butterfly Leviathan Spawn Egg",
-  "item.wyrmroost.dragon_fruit_drake_egg": "Dragonfruit Drake Spawn Egg",
-  "item.wyrmroost.canari_wyvern_egg": "Canari Wyvern Spawn Egg",
+  "item.wyrmroost.spawn_egg": "Spawn Egg",
 
   "item.wyrmroost.jewelled_apple": "Jewelled Apple",
   "item.wyrmroost.dragon_fruit": "Dragon Fruit",

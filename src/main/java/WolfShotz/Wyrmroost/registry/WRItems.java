@@ -2,8 +2,8 @@ package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.items.*;
+import WolfShotz.Wyrmroost.items.base.ArmorBase;
 import WolfShotz.Wyrmroost.items.base.ArmorMaterialList;
-import WolfShotz.Wyrmroost.items.base.ItemArmorBase;
 import WolfShotz.Wyrmroost.items.base.ToolMaterialList;
 import WolfShotz.Wyrmroost.items.staff.DragonStaffItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -49,10 +49,10 @@ public class WRItems
     public static final RegistryObject<Item> BLUE_GEODE_AXE = register("blue_geode_axe", () -> new AxeItem(ToolMaterialList.BLUE_GEODE, 3.5f, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> BLUE_GEODE_SHOVEL = register("blue_geode_shovel", () -> new ShovelItem(ToolMaterialList.BLUE_GEODE, 1f, -3f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> BLUE_GEODE_HOE = register("blue_geode_hoe", () -> new HoeItem(ToolMaterialList.BLUE_GEODE, 1f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> BLUE_GEODE_HELMET = register("blue_geode_helmet", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.HEAD));
-    public static final RegistryObject<Item> BLUE_GEODE_CHESTPLATE = register("blue_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.CHEST));
-    public static final RegistryObject<Item> BLUE_GEODE_LEGGINGS = register("blue_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.LEGS));
-    public static final RegistryObject<Item> BLUE_GEODE_BOOTS = register("blue_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> BLUE_GEODE_HELMET = register("blue_geode_helmet", () -> new ArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.HEAD));
+    public static final RegistryObject<Item> BLUE_GEODE_CHESTPLATE = register("blue_geode_chestplate", () -> new ArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.CHEST));
+    public static final RegistryObject<Item> BLUE_GEODE_LEGGINGS = register("blue_geode_leggings", () -> new ArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.LEGS));
+    public static final RegistryObject<Item> BLUE_GEODE_BOOTS = register("blue_geode_boots", () -> new ArmorBase(ArmorMaterialList.BLUE_GEODE, EquipmentSlotType.FEET));
     public static final RegistryObject<Item> BLUE_GEODE_ARROW = register("blue_geode_tipped_arrow", () -> new GeodeTippedArrowItem(3));
 
     public static final RegistryObject<Item> RED_GEODE_SWORD = register("red_geode_sword", () -> new SwordItem(ToolMaterialList.RED_GEODE, 2, -2.4f, ModUtils.itemBuilder()));
@@ -60,10 +60,10 @@ public class WRItems
     public static final RegistryObject<Item> RED_GEODE_AXE = register("red_geode_axe", () -> new AxeItem(ToolMaterialList.RED_GEODE, 3.5f, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> RED_GEODE_SHOVEL = register("red_geode_shovel", () -> new ShovelItem(ToolMaterialList.RED_GEODE, 1f, -3f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> RED_GEODE_HOE = register("red_geode_hoe", () -> new HoeItem(ToolMaterialList.RED_GEODE, 2f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> RED_GEODE_HELMET = register("red_geode_helmet", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.HEAD));
-    public static final RegistryObject<Item> RED_GEODE_CHESTPLATE = register("red_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.CHEST));
-    public static final RegistryObject<Item> RED_GEODE_LEGGINGS = register("red_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.LEGS));
-    public static final RegistryObject<Item> RED_GEODE_BOOTS = register("red_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> RED_GEODE_HELMET = register("red_geode_helmet", () -> new ArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.HEAD));
+    public static final RegistryObject<Item> RED_GEODE_CHESTPLATE = register("red_geode_chestplate", () -> new ArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.CHEST));
+    public static final RegistryObject<Item> RED_GEODE_LEGGINGS = register("red_geode_leggings", () -> new ArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.LEGS));
+    public static final RegistryObject<Item> RED_GEODE_BOOTS = register("red_geode_boots", () -> new ArmorBase(ArmorMaterialList.RED_GEODE, EquipmentSlotType.FEET));
     public static final RegistryObject<Item> RED_GEODE_ARROW = register("red_geode_tipped_arrow", () -> new GeodeTippedArrowItem(3.5));
 
     public static final RegistryObject<Item> PURPLE_GEODE_SWORD = register("purple_geode_sword", () -> new SwordItem(ToolMaterialList.PURPLE_GEODE, 2, -2f, ModUtils.itemBuilder()));
@@ -71,10 +71,10 @@ public class WRItems
     public static final RegistryObject<Item> PURPLE_GEODE_AXE = register("purple_geode_axe", () -> new AxeItem(ToolMaterialList.PURPLE_GEODE, 3.5f, -2.6f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PURPLE_GEODE_SHOVEL = register("purple_geode_shovel", () -> new ShovelItem(ToolMaterialList.PURPLE_GEODE, 1f, -2.7f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PURPLE_GEODE_HOE = register("purple_geode_hoe", () -> new HoeItem(ToolMaterialList.PURPLE_GEODE, 3f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_HELMET = register("purple_geode_helmet", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.HEAD));
-    public static final RegistryObject<Item> PURPLE_GEODE_CHESTPLATE = register("purple_geode_chestplate", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.CHEST));
-    public static final RegistryObject<Item> PURPLE_GEODE_LEGGINGS = register("purple_geode_leggings", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.LEGS));
-    public static final RegistryObject<Item> PURPLE_GEODE_BOOTS = register("purple_geode_boots", () -> new ItemArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> PURPLE_GEODE_HELMET = register("purple_geode_helmet", () -> new ArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.HEAD));
+    public static final RegistryObject<Item> PURPLE_GEODE_CHESTPLATE = register("purple_geode_chestplate", () -> new ArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.CHEST));
+    public static final RegistryObject<Item> PURPLE_GEODE_LEGGINGS = register("purple_geode_leggings", () -> new ArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.LEGS));
+    public static final RegistryObject<Item> PURPLE_GEODE_BOOTS = register("purple_geode_boots", () -> new ArmorBase(ArmorMaterialList.PURPLE_GEODE, EquipmentSlotType.FEET));
     public static final RegistryObject<Item> PURPLE_GEODE_ARROW = register("purple_geode_tipped_arrow", () -> new GeodeTippedArrowItem(4));
 
     public static final RegistryObject<Item> PLATINUM_SWORD = register("platinum_sword", () -> new SwordItem(ToolMaterialList.PLATINUM, 2, -2.4f, ModUtils.itemBuilder()));
@@ -82,10 +82,10 @@ public class WRItems
     public static final RegistryObject<Item> PLATINUM_AXE = register("platinum_axe", () -> new AxeItem(ToolMaterialList.PLATINUM, 3.5f, -2.8f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_SHOVEL = register("platinum_shovel", () -> new ShovelItem(ToolMaterialList.PLATINUM, 1f, -3f, ModUtils.itemBuilder()));
     public static final RegistryObject<Item> PLATINUM_HOE = register("platinum_hoe", () -> new HoeItem(ToolMaterialList.PLATINUM, -0.5f, ModUtils.itemBuilder()));
-    public static final RegistryObject<Item> PLATINUM_HELMET = register("platinum_helmet", () -> new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.HEAD));
-    public static final RegistryObject<Item> PLATINUM_CHESTPLATE = register("platinum_chestplate", () -> new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.CHEST));
-    public static final RegistryObject<Item> PLATINUM_LEGGINGS = register("platinum_leggings", () -> new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS));
-    public static final RegistryObject<Item> PLATINUM_BOOTS = register("platinum_boots", () -> new ItemArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET));
+    public static final RegistryObject<Item> PLATINUM_HELMET = register("platinum_helmet", () -> new ArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.HEAD));
+    public static final RegistryObject<Item> PLATINUM_CHESTPLATE = register("platinum_chestplate", () -> new ArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.CHEST));
+    public static final RegistryObject<Item> PLATINUM_LEGGINGS = register("platinum_leggings", () -> new ArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.LEGS));
+    public static final RegistryObject<Item> PLATINUM_BOOTS = register("platinum_boots", () -> new ArmorBase(ArmorMaterialList.PLATINUM, EquipmentSlotType.FEET));
 
     public static final RegistryObject<Item> DRAKE_HELMET = register("drake_helmet", () -> new DrakeArmorItem(EquipmentSlotType.HEAD));
     public static final RegistryObject<Item> DRAKE_CHESTPLATE = register("drake_chestplate", () -> new DrakeArmorItem(EquipmentSlotType.CHEST));

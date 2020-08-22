@@ -24,17 +24,20 @@ public class CommonGoalWrappers
     /**
      * Have the goal owner be tempted to players holding items (walk towards them)
      *
-     * @param dragon           Goal Owner
+     * @param tameable         Goal Owner
      * @param speed            speed to "walk towards" at
      * @param scaredByMovement should fast movement reset this task
      * @param temptedItems     the items to temp the goal owner
      */
-    public static TemptGoal nonTamedTemptGoal(TameableEntity dragon, double speed, boolean scaredByMovement, Ingredient temptedItems)
+    public static TemptGoal nonTamedTemptGoal(TameableEntity tameable, double speed, boolean scaredByMovement, Ingredient temptedItems)
     {
-        return new TemptGoal(dragon, speed, scaredByMovement, temptedItems)
+        return new TemptGoal(tameable, speed, scaredByMovement, temptedItems)
         {
             @Override
-            public boolean shouldExecute() { return !((TameableEntity) creature).isTamed() && super.shouldExecute(); }
+            public boolean shouldExecute() { return !tameable.isTamed() && super.shouldExecute(); }
+
+            @Override
+            public boolean shouldContinueExecuting() { return !tameable.isTamed() && super.shouldContinueExecuting(); }
         };
     }
 
@@ -49,7 +52,7 @@ public class CommonGoalWrappers
     {
         return new FollowParentGoal(animal, speed)
         {
-            { setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK)); }
+            { setMutexFlags(EnumSet.of(Flag.MOVE)); }
 
             @Override
             public boolean shouldExecute() { return !animal.isTamed() && super.shouldExecute(); }

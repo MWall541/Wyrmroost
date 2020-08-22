@@ -47,8 +47,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super(dragon, world);
 
-        moveController = new MoveController();
-
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerVariantData(3, true); // For females, this value is redundant
 

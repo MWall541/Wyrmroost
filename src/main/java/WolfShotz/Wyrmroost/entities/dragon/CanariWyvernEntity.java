@@ -1,12 +1,10 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.FlyerMoveController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.fluids.CausticWaterFluid;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import net.minecraft.entity.*;
@@ -42,10 +40,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super(dragon, world);
 
-        moveController = new FlyerMoveController(this, true);
         lookController = new LookController(this);
 
-        setImmune(CausticWaterFluid.CAUSTIC_WATER);
         setImmune(DamageSource.MAGIC);
 
         registerVariantData(5, false);

@@ -47,7 +47,7 @@ public class KeybindPacket
         buf.writeBoolean(pressed);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> context) { handle(context.get().getSender()); }
+    public boolean handle(Supplier<NetworkEvent.Context> context) { return handle(context.get().getSender()); }
 
     private boolean handle(PlayerEntity player)
     {

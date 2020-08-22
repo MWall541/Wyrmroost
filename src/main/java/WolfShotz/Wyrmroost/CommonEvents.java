@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.data.DataGatherer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
-import WolfShotz.Wyrmroost.items.base.FullSetBonusArmorItem;
+import WolfShotz.Wyrmroost.items.base.ArmorBase;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -77,11 +77,6 @@ public class CommonEvents
         Entity entity = evt.getTarget();
         entity.recalculateSize();
 
-//        ((VillagerEntity) entity).setVillagerData(((VillagerEntity) entity)
-//                .getVillagerData()
-//                .withLevel(2)
-//                .withProfession(ForgeRegistries.PROFESSIONS.getValue(Wyrmroost.rl("coin_dragon_trader"))));
-
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
@@ -89,24 +84,15 @@ public class CommonEvents
         else DebugScreen.open(dragon);
     }
 
-//        @SubscribeEvent
-//        @SuppressWarnings("ConstantConditions")
-//        public static void registerDimension(RegisterDimensionsEvent evt)
-//        {
-//            if (ModUtils.getDimensionInstance() == null)
-//                DimensionManager.registerDimension(Wyrmroost.rl("wyrmroost"), WyrmroostDimension.WYRMROOST_DIM, null, true);
-//        }
-
     @SubscribeEvent
     public static void onChangeEquipment(LivingEquipmentChangeEvent evt)
     {
-        FullSetBonusArmorItem initial = evt.getTo().getItem() instanceof FullSetBonusArmorItem? (FullSetBonusArmorItem) evt.getTo().getItem()
-                : evt.getFrom().getItem() instanceof FullSetBonusArmorItem? (FullSetBonusArmorItem) evt.getFrom().getItem() : null;
+        ArmorBase initial;
+        if (evt.getTo().getItem() instanceof ArmorBase) initial = (ArmorBase) evt.getTo().getItem();
+        else if (evt.getFrom().getItem() instanceof ArmorBase) initial = (ArmorBase) evt.getFrom().getItem();
+        else return;
 
-        if (initial != null)
-        {
-            LivingEntity entity = evt.getEntityLiving();
-            initial.applyFullSetBonus(entity, FullSetBonusArmorItem.hasFullSet(entity));
-        }
+        LivingEntity entity = evt.getEntityLiving();
+        initial.applyFullSetBonus(entity, ArmorBase.hasFullSet(entity));
     }
 }

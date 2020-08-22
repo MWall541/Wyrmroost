@@ -257,5 +257,16 @@
         "name": "wyrmroost:entity/royal_red/scree"
       }
     ]
+  },
+  "entity.alpine.roar": {
+    "subtitle": "Alpine Roar",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/roar"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/roar1"
+      }
+    ]
   }
 }

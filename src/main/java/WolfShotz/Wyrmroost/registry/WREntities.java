@@ -155,10 +155,9 @@ public class WREntities
             this.registered = RegistryObject.of(Wyrmroost.rl(name), ForgeRegistries.ENTITIES);
         }
 
-        // todo: for 1.16 change "_egg" to "_spawn_egg"
         private Builder<T> spawnEgg(int primColor, int secColor)
         {
-            WRItems.register(name + "_egg", () -> new LazySpawnEggItem(registered::get, primColor, secColor));
+            WRItems.register(name + "_spawn_egg", () -> new LazySpawnEggItem(registered::get, primColor, secColor));
             return this;
         }
 
