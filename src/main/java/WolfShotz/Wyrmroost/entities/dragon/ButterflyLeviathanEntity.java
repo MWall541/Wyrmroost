@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.registry.WREntities;
@@ -23,7 +24,6 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -60,14 +60,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     public static final Animation ROAR_ANIMATION = new Animation(46);
     public static final Animation BITE_ANIMATION = new Animation(20);
 
-    // Multipart
-//    public MultiPartEntity headPart;
-//    public MultiPartEntity wingLeftPart;
-//    public MultiPartEntity wingRightPart;
-//    public MultiPartEntity tail1Part;
-//    public MultiPartEntity tail2Part;
-//    public MultiPartEntity tail3Part;
-
     public RandomWalkingGoal moveGoal;
     public int lightningAttackCooldown;
     private boolean prevInWater;
@@ -84,19 +76,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
         // therefore, the creature won't have a means of moving in ai.
         setPathPriority(PathNodeType.WATER, 0f);
 
-//        if (!world.isRemote)
-//        {
-//            headPart = createPart(this, 4.2f, 0, 0.75f, 2.25f, 1.75f);
-//            wingLeftPart = createPart(this, 5f, -90, 0.35f, 2.25f, 3.15f);
-//            wingRightPart = createPart(this, 5f, 90, 0.35f, 2.25f, 3.15f);
-//            tail1Part = createPart(this, 4.5f, 180, 0.35f, 2.25f, 2.25f, 0.85f);
-//            tail2Part = createPart(this, 8f, 180, 0.35f, 2.25f, 2.25f, 0.75f);
-//            tail3Part = createPart(this, 12f, 180, 0.5f, 2f, 2f, 0.5f);
-//        }
-//        setImmune(BrineFluid.BRINE_WATER);
         setImmune(DamageSource.LIGHTNING_BOLT);
-
-        registerVariantData(2, true);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
 
     @Override
@@ -127,8 +108,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     @Override
     public void tick()
     {
-        //        tickParts();
-
         boolean isInWater = isInWater();
         if (isInWater != prevInWater) onWaterChange(isInWater());
         prevInWater = isInWater;
@@ -205,13 +184,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     {
         super.registerData();
         dataManager.register(HAS_CONDUIT, false);
-    }
-
-    @Override
-    public void readAdditional(CompoundNBT nbt)
-    {
-        super.readAdditional(nbt);
-        dataManager.set(HAS_CONDUIT, invHandler.map(i -> i.getStackInSlot(0).getItem() == Items.CONDUIT).orElse(false)); // bcus effects shouldnt be done on load
     }
 
     public void setHasConduit(boolean flag, boolean playEffects)
@@ -469,7 +441,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     public int getHorizontalFaceSpeed() { return 8; }
 
     @Override
-    public int getSpecialChances() { return getRNG().nextInt(50) + 100; }
+    public int getVariantForSpawn() { return getRNG().nextInt(150) == 0? -1 : getRNG().nextInt(2); }
 
     public static Consumer<EntityType<ButterflyLeviathanEntity>> getSpawnConditions()
     {

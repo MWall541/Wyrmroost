@@ -54,7 +54,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
         int index = 0;
         if (drake.isChild()) index |= 1;
         else if (!drake.isMale()) index |= 2;
-        if (drake.isSpecial()) index |= 4;
+        if (drake.getVariant() == -1) index |= 4;
         else if (drake.getVariant() == 1) index |= 8;
 
         if (TEXTURES[index] == null)

@@ -25,7 +25,6 @@ import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -34,17 +33,13 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Tags;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Set;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -72,8 +67,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super(drake, world);
 
-        registerVariantData(2, true);
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
 
         sitTimer.set(isSitting()? 1 : 0);
     }
@@ -150,7 +146,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean isArmored() { return dataManager.get(ARMOR).getItem() instanceof DragonArmorItem; }
 
     @Override
-    public int getSpecialChances() { return 100; }
+    public int getVariantForSpawn()
+    {
+        if (getRNG().nextInt(100) == 0) return -1;
+        if (BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA).contains(world.getBiome(getPosition()))) return 1;
+        return 0;
+    }
 
     @Override
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 24); }
@@ -254,19 +255,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         }
 
         if (slot == ARMOR_SLOT) setArmored(stack);
-    }
-
-    @Nullable
-    @Override
-    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
-    {
-        Biome biome = worldIn.getBiome(new BlockPos(this));
-        Set<Biome> biomes = BiomeDictionary.getBiomes(BiomeDictionary.Type.SAVANNA);
-
-        if (biomes.contains(biome)) setVariant(1);
-        else setVariant(0);
-
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
     }
 
     @Override

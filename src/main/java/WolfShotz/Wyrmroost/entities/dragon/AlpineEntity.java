@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.*;
@@ -25,8 +26,8 @@ public class AlpineEntity extends AbstractDragonEntity
     public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
-
-        registerVariantData(6, false);
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
 
     @Override
@@ -63,6 +64,13 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(FLYING, false);
+    }
+
+    @Override
     public void livingTick()
     {
         super.livingTick();
@@ -86,6 +94,9 @@ public class AlpineEntity extends AbstractDragonEntity
         }
         return flag;
     }
+
+    @Override
+    public int getVariantForSpawn() { return getRNG().nextInt(6); }
 
     @Override
     protected boolean canBeRidden(Entity entityIn) { return true; }

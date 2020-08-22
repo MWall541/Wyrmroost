@@ -41,7 +41,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     @Override
     public ResourceLocation getEntityTexture(SilverGliderEntity sg)
     {
-        if (sg.isSpecial()) return BODY_SPE;
+        if (sg.getVariant() == -1) return BODY_SPE;
         if (!sg.isMale()) return FEMALE;
         int index = sg.getVariant();
         if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = resource("male_" + index + ".png");
@@ -50,7 +50,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
 
     private ResourceLocation getGlowTexture(SilverGliderEntity sg)
     {
-        if (sg.isSpecial()) return BODY_SPE_GLOW;
+        if (sg.getVariant() == -1) return BODY_SPE_GLOW;
         if (!sg.isMale()) return FEMALE_GLOW;
         int index = sg.getVariant() + 3;
         if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = resource("male_" + index + "_glow.png");

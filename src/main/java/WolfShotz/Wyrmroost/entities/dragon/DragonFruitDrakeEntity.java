@@ -63,9 +63,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
         registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
-        registerVariantData(0, true);
-
-        sitTimer.set(isSitting()? 1 : 0);
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
     }
 
     @Override
@@ -247,6 +245,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     @Override
     public boolean canFly() { return false; }
+
+    @Override
+    public int getVariantForSpawn() { return getRNG().nextInt(500) == 0? -1 : 0; }
 
     @Override
     protected boolean canBeRidden(Entity passenger)

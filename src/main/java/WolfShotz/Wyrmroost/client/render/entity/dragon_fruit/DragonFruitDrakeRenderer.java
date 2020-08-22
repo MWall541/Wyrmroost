@@ -25,11 +25,11 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
         if (entity.isChild()) return CHILD;
 
         int texture = entity.isMale()? 0 : 2;
-        if (entity.isSpecial()) texture += 1;
+        if (entity.getVariant() == -1) texture += 1;
         if (TEXTURES[texture] == null)
         {
             String path = entity.isMale()? "male" : "female";
-            if (entity.isSpecial()) path += "_s";
+            if (entity.getVariant() == -1) path += "_s";
             return TEXTURES[texture] = resource(path + ".png");
         }
         return TEXTURES[texture];

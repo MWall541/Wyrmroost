@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
@@ -34,6 +35,7 @@ import net.minecraft.item.Items;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -64,7 +66,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
         setImmune(DamageSource.DROWN);
 
-        registerVariantData(0, true);
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
     
     @Override
@@ -170,11 +173,23 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             {
                 setStackInSlot(0, stack);
                 player.setHeldItem(hand, heldItem);
-                
+
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public void doSpecialEffects()
+    {
+        if (getVariant() == -1 && ticksExisted % 25 == 0)
+        {
+            double x = getPosX() * (getRNG().nextGaussian() * 0.5d) + 1;
+            double y = getPosY() * (getRNG().nextDouble()) + 1;
+            double z = getPosZ() * (getRNG().nextGaussian() * 0.5d) + 1;
+            world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
+        }
     }
 
     @Override
@@ -205,7 +220,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn) { return getType().getSize().scale(getRenderScale()); }
 
     @Override
-    public int getSpecialChances() { return 185; }
+    public int getVariantForSpawn()
+    {
+        return getRNG().nextInt(185) == 0? -1 : 0;
+    }
 
     @Override
     // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P

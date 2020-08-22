@@ -36,7 +36,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     @Override
     public ResourceLocation getEntityTexture(ButterflyLeviathanEntity entity)
     {
-        if (entity.isSpecial()) return ALBINO;
+        if (entity.getVariant() == -1) return ALBINO;
         switch (entity.getVariant())
         {
             default: // Fall back: WHAT VARIANT IS THIS?!

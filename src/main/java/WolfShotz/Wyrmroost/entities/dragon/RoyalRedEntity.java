@@ -39,11 +39,13 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
-    public static final DataParameter<Boolean> KNOCKED_OUT = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
     public static final Animation ROAR_ANIMATION = new Animation(70);
     public static final Animation SLAP_ATTACK_ANIMATION = new Animation(30);
     public static final Animation BITE_ATTACK_ANIMATION = new Animation(15);
+
     public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> KNOCKED_OUT = EntityDataManager.createKey(RoyalRedEntity.class, DataSerializers.BOOLEAN);
+
     private static final int MAX_KNOCKOUT_TIME = 3600; // 3 minutes
 
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
@@ -58,7 +60,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerDataEntry("KnockOutTime", EntityDataEntry.INTEGER, () -> knockOutTime, this::setKnockoutTime);
-        registerVariantData(0, true);
     }
 
     @Override
@@ -82,6 +83,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         super.registerData();
         dataManager.register(BREATHING_FIRE, false);
         dataManager.register(KNOCKED_OUT, false);
+        dataManager.register(FLYING, false);
     }
 
     @Override
@@ -261,9 +263,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Override
     public int getHorizontalFaceSpeed() { return isFlying()? 5 : 8; }
-
-    @Override
-    public int getSpecialChances() { return 0; }
 
     public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
 

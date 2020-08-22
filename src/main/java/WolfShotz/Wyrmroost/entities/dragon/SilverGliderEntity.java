@@ -48,9 +48,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
         super(dragon, world);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
-        registerVariantData(3, true); // For females, this value is redundant
-
-        sitTimer.set(isSitting()? 1 : 0);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
     }
 
     @Override
@@ -90,6 +89,13 @@ public class SilverGliderEntity extends AbstractDragonEntity
                 return vec3d;
             }
         });
+    }
+
+    @Override
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(FLYING, false);
     }
 
     @Override
@@ -175,7 +181,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public void doSpecialEffects()
     {
-        if (ticksExisted % 5 == 0)
+        if (getVariant() == -1 && ticksExisted % 5 == 0)
         {
             double x = getPosX() + getRNG().nextGaussian();
             double y = getPosY() + getRNG().nextDouble();
@@ -193,7 +199,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getSpecialChances() { return 500; }
+    public int getVariantForSpawn()
+    {
+        if (getRNG().nextInt(500) == 0) return -1;
+        return getRNG().nextInt(3);
+    }
 
     @Override
     public Vec3d getRidingPosOffset(int passengerIndex) { return new Vec3d(0, 1.81, 0.5d); }

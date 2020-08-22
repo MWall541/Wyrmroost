@@ -31,7 +31,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     {
         super(manager, new RoostStalkerModel(), 0.5f);
         addLayer(new MouthItemLayer());
-        addLayer(new GlowLayer(stalker -> stalker.isSpecial()? BODY_SPE_GLOW : BODY_GLOW));
+        addLayer(new GlowLayer(stalker -> stalker.getVariant() == -1? BODY_SPE_GLOW : BODY_GLOW));
         addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
 
@@ -40,7 +40,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     public ResourceLocation getEntityTexture(RoostStalkerEntity entity)
     {
         if (itsChristmasOMG) return BODY_XMAS;
-        return entity.isSpecial()? BODY_SPE : BODY;
+        return entity.getVariant() == -1? BODY_SPE : BODY;
     }
 
     public static ResourceLocation resource(String png)

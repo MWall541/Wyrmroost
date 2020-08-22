@@ -44,8 +44,9 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
         setImmune(DamageSource.MAGIC);
 
-        registerVariantData(5, false);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
 
     @Override
@@ -91,7 +92,11 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     protected BodyController createBodyController() { return new BodyController(this); }
 
     @Override
-    public int getSpecialChances() { return 0; }
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(FLYING, false);
+    }
 
     @Override
     public void livingTick()
@@ -154,9 +159,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected void setupTamedAI() { getAttribute(FOLLOW_RANGE).setBaseValue(16d); }
-
-    @Override
     public void swingArm(Hand hand)
     {
         super.swingArm(hand);
@@ -169,6 +171,9 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         super.addScreenInfo(screen);
         screen.addAction(StaffAction.TARGET);
     }
+
+    @Override
+    public int getVariantForSpawn() { return getRNG().nextInt(5); }
 
     @Override
     public Collection<? extends IItemProvider> getFoodItems() { return Collections.singleton(Items.SWEET_BERRIES); }
