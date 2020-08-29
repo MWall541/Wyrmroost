@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
+package WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.SitGoal;

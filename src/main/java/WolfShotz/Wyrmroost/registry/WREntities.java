@@ -125,7 +125,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = Builder.<DragonEggEntity>withClassification("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
             .renderer(DragonEggRenderer::new)
-            .build(EntityType.Builder::disableSummoning);
+            .build(b -> b.disableSummoning().setCustomClientFactory(DragonEggEntity::new));
 
 //    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART = register("multipart_entity", MultiPartEntity::new, EntityClassification.MISC, b -> b.disableSummoning().disableSerialization().setShouldReceiveVelocityUpdates(false));
 

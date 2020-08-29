@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DefendHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.util.TickFloat;

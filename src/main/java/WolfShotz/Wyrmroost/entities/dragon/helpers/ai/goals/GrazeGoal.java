@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
+package WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;

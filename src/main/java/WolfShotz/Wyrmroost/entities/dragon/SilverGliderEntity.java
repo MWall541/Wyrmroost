@@ -1,8 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.FlyerFollowOwnerGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.FlyerWanderGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.registry.WREntities;
@@ -12,10 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.MovementController;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.TemptGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -69,26 +65,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(3, temptGoal = CommonGoalWrappers.nonTamedTemptGoal(this, 0.8d, true, Ingredient.fromItems(getFoodItems().toArray(new Item[0]))));
         goalSelector.addGoal(4, CommonGoalWrappers.nonTamedAvoidGoal(this, PlayerEntity.class, 8f, 1f));
         goalSelector.addGoal(5, new DragonBreedGoal(this, true));
-        goalSelector.addGoal(6, new FlyerFollowOwnerGoal(this, 10, 2f, 10, false));
+        goalSelector.addGoal(6, new FollowOwnerGoal(this, 10, 2f, 10, false));
+        goalSelector.addGoal(7, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 7f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
-
-        goalSelector.addGoal(7, new FlyerWanderGoal(this, true)
-        {
-            @Override
-            public Vec3d getPosition()
-            {
-                Vec3d vec3d = super.getPosition();
-                if (vec3d != null && isFlying())
-                {
-                    for (int i = 1; i < 4; i++) // avoid water: y value is always positive
-                        if (world.getBlockState(SilverGliderEntity.this.getPosition().down(i)).getMaterial().isLiquid())
-                            return new Vec3d(vec3d.x, Math.abs(vec3d.y), vec3d.z);
-                }
-                return vec3d;
-            }
-        });
     }
 
     @Override

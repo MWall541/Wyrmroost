@@ -1,10 +1,12 @@
-package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
+package WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals;
 
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.TargetGoal;
+import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.util.math.AxisAlignedBB;
 
@@ -16,16 +18,16 @@ import java.util.function.Predicate;
  */
 public class DefendHomeGoal extends TargetGoal
 {
-    private static final Predicate<LivingEntity> FILTER = e -> e instanceof IMob && !e.getName().getUnformattedComponentText().equalsIgnoreCase("Ignore Me");
+    private static final Predicate<LivingEntity> FILTER = e -> e instanceof IMob && !(e instanceof CreeperEntity) && !e.getName().getUnformattedComponentText().equalsIgnoreCase("Ignore Me");
 
     private final AbstractDragonEntity defender;
-    private final Predicate<LivingEntity> additionalFilters;
+    private final EntityPredicate predicate;
 
     public DefendHomeGoal(AbstractDragonEntity defender, Predicate<LivingEntity> additionalFilters)
     {
         super(defender, false, false);
         this.defender = defender;
-        this.additionalFilters = additionalFilters;
+        this.predicate = new EntityPredicate().setCustomPredicate(FILTER.and(additionalFilters));
         setMutexFlags(EnumSet.of(Flag.TARGET));
     }
 
@@ -35,35 +37,36 @@ public class DefendHomeGoal extends TargetGoal
     public boolean shouldExecute()
     {
         if (!defender.getHomePos().isPresent()) return false;
-        return (target = findPotentialTarget()) != null;
+        return defender.getRNG().nextInt(5) == 0 && (target = findPotentialTarget()) != null;
     }
 
     @Override
     public void startExecuting()
     {
         super.startExecuting();
-        defender.setAttackTarget(target);
+
+        defender.world.getEntitiesWithinAABB(MobEntity.class, defender.getBoundingBox().grow(WRConfig.homeRadius), defender::isOnSameTeam)
+                .forEach(e -> e.setAttackTarget(target));
     }
 
     @Override
     public boolean shouldContinueExecuting()
     {
-        return defender.getHomePos().map(pos -> target.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) > getTargetDistance() && super.shouldContinueExecuting()).orElse(true);
+        return defender.isWithinHomeDistanceFromPosition(target.getPosition()) && super.shouldContinueExecuting();
     }
 
     @Override
-    protected double getTargetDistance() { return WRConfig.homeRadius; }
+    protected double getTargetDistance() { return defender.getMaximumHomeDistance(); }
 
     public LivingEntity findPotentialTarget()
     {
         return defender.world.func_225318_b(
                 LivingEntity.class,
-                new EntityPredicate().setCustomPredicate(FILTER.and(additionalFilters)),
+                predicate,
                 defender,
                 defender.getPosX(),
                 defender.getPosY() + defender.getEyeHeight(),
                 defender.getPosZ(),
-                new AxisAlignedBB(defender.getHomePos().get()).grow(WRConfig.homeRadius)
-        );
+                new AxisAlignedBB(defender.getHomePosition()).grow(WRConfig.homeRadius));
     }
 }

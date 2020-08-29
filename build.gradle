@@ -9,19 +9,6 @@ buildscript {
     }
 }
 
-repositories {
-    maven {
-        // location of the maven that hosts JEI API
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
-    }
-}
-
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle'
@@ -46,11 +33,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-//            property 'forge.logging.markers', 'CONFIG'
-//            property 'forge.logging.console.level', 'debug'
-
             mods {
-                dummy {
+                wyrmroost {
                     sources sourceSets.main
                 }
             }
@@ -60,7 +44,7 @@ minecraft {
             workingDirectory project.file('run')
 
             mods {
-                dummy {
+                wyrmroost {
                     sources sourceSets.main
                 }
             }
@@ -72,7 +56,7 @@ minecraft {
             args '--mod', 'wyrmroost', '--all', '--output', file('src/main/generated_resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                dummy {
+                wyrmroost {
                     sources sourceSets.main
                 }
             }
@@ -81,11 +65,7 @@ minecraft {
 }
 
 dependencies {
-
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 }
 
 jar {

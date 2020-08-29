@@ -96,6 +96,9 @@ public class CommonGoalWrappers
         {
             @Override
             public boolean shouldExecute() { return (asChild || !tameable.isChild()) && super.shouldExecute(); }
+
+            @Override
+            public boolean shouldContinueExecuting() { return !tameable.isTamed() && super.shouldContinueExecuting(); }
         };
     }
 

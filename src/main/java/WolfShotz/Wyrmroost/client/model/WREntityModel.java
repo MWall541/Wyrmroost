@@ -55,13 +55,6 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         }
     }
 
-    public void setScale(float scale)
-    {
-        for (ModelRenderer box : boxList)
-            if (box instanceof WRModelRenderer)
-                ((WRModelRenderer) box).setScale(scale, scale, scale);
-    }
-
     /**
      * Rotate Angle X
      */

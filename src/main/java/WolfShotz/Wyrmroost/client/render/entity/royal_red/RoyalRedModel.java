@@ -4,7 +4,6 @@ import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.RoyalRedEntity;
-import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
@@ -697,12 +696,12 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
     {
         if (netHeadYaw < -180) netHeadYaw += 360;
         else if (netHeadYaw > 180) netHeadYaw -= 360;
-        if (entity.flightTimer.get() == 1)
-        {
-            body2.rotateAngleX = headPitch * (Mafs.PI / 180F) * 0.75f;
-            body2.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.5f;
-            headPitch *= 0.2f;
-        }
+//        if (entity.flightTimer.get() == 1)
+//        {
+//            body2.rotateAngleX = headPitch * (Mafs.PI / 180F) * 0.75f;
+//            body2.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.5f;
+//            headPitch *= 0.2f;
+//        }
         if (!entity.isSleeping() && entity.getAnimation() != RoyalRedEntity.ROAR_ANIMATION)
             faceTarget(netHeadYaw, headPitch, 1, headParts);
     }
@@ -799,7 +798,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
             }
             else
             {
-                chainWave(headParts, globalSpeed - 0.45f, 0.075f, -1.5f, frame, 0.5f);
+                if (entity.isBreathingFire()) chainWave(headParts, 0.3f, 0.4f, 3f, frame, 0.1f);
+                else chainWave(headParts, globalSpeed - 0.45f, 0.075f, -1.5f, frame, 0.5f);
 
                 jaw.rotateAngleX += MathHelper.cos(frame * (globalSpeed - 0.45f)) * 0.1f + 0.1f;
 
@@ -872,10 +872,13 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         if (amount == 0) return;
         setTime(amount);
 
-        rotate(neck1, 0.3f, 0, 0);
-        rotate(neck2, 0.5f, 0, 0);
-        rotate(neck3, -0.5f, 0, 0);
-        rotate(head, -0.35f, 0, 0);
+        if (!entity.isFlying())
+        {
+            rotate(neck1, 0.3f, 0, 0);
+            rotate(neck2, 0.5f, 0, 0);
+            rotate(neck3, -0.5f, 0, 0);
+            rotate(head, -0.35f, 0, 0);
+        }
         rotate(jaw, 0.65f, 0, 0);
     }
 
@@ -977,9 +980,9 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         rotate(body1, 0.2f, 0, 0);
 
         rotate(neck1, 0.3f, 0, 0);
-        rotate(neck2, 0.7f, 0, 0);
-        rotate(neck3, -0.75f, 0, 0);
-        rotate(head, -0.6f, 0, 0);
+        rotate(neck2, 0.6f, 0, 0);
+        rotate(neck3, -0.8f, 0, 0);
+        rotate(head, -0.8f, 0, 0);
 
         rotate(wingR1, 0.2f, 0, -1.1f);
         rotate(wingR2, 0.3f, 0.4f, 0);

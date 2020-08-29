@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.entities.dragon.helpers;
+package WolfShotz.Wyrmroost.entities.dragon.helpers.ai;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.controller.BodyController;
@@ -32,8 +32,8 @@ public class DragonBodyController extends BodyController
             return;
         }
 
-        // If passenger controlling, clamp head rotation to 120 degrees, rotate body according to head rotation speed
-        if (dragon.canPassengerSteer())
+        // clamp head to 120 degrees, rotate body according to head
+        if (dragon.canPassengerSteer() || dragon.isFlying())
         {
             clampHeadRotation(120f);
             dragon.renderYawOffset = dragon.rotationYaw = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, dragon.getHorizontalFaceSpeed());

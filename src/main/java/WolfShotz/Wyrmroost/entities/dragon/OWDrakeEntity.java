@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.goals.*;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;

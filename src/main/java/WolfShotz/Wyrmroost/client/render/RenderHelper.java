@@ -154,7 +154,7 @@ public class RenderHelper extends RenderType
         public void queue(AxisAlignedBB aabb)
         {
             this.aabb = aabb;
-            this.time = 550;
+            this.time = Integer.MAX_VALUE;
         }
 
         public void setColor(int color)

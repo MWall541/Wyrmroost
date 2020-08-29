@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.text.StringTextComponent;
 
 public class DebugScreen extends Screen
@@ -25,7 +26,8 @@ public class DebugScreen extends Screen
             for (int i = 0; i < dragon.getAnimations().length; i++)
             {
                 Animation anim = dragon.getAnimations()[i];
-                addButton(new Button((i * 50) + (width / 2) - (dragon.getAnimations().length * 25), 225, 50, 12, "Anim: " + i, b -> {
+                addButton(new Button((i * 50) + (width / 2) - (dragon.getAnimations().length * 25), 300, 50, 12, "Anim: " + i, b ->
+                {
                     dragon.setAnimation(anim);
                     onClose();
                 }));
@@ -38,7 +40,10 @@ public class DebugScreen extends Screen
         renderBackground();
         super.render(p_render_1_, p_render_2_, p_render_3_);
         String gender = dragon.isMale()? "male" : "female";
-        
+        String moveTo = dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getCurrentPos().toString();
+        MovementController movement = dragon.getMoveHelper();
+        String forceMoving = movement.getX() + " " + movement.getY() + " " + movement.getZ();
+
         drawCenteredString(font, dragon.getDisplayName().getUnformattedComponentText(), (width / 2), 15, 0xffffff);
         drawCenteredString(font, "isSleeping: " + dragon.isSleeping(), (width / 2) + 50, 50, 0xffffff);
         drawCenteredString(font, "isTamed: " + dragon.isTamed(), (width / 2) - 50, 50, 0xffffff);
@@ -50,7 +55,8 @@ public class DebugScreen extends Screen
         drawCenteredString(font, "noAI: " + dragon.isAIDisabled(), (width / 2) + 50, 125, 0xffffff);
         drawCenteredString(font, "position: " + dragon.getPositionVec(), (width / 2), 150, 0xffffff);
         drawCenteredString(font, "motion: " + dragon.getMotion(), (width / 2), 175, 0xffffff);
-        drawCenteredString(font, "moveTo position: " + dragon.getNavigator().getPath(), (width / 2), 200, 0xffffff);
+        drawCenteredString(font, "moveTo position: " + moveTo, (width / 2), 200, 0xffffff);
+        drawCenteredString(font, "Moving to: " + movement.getClass().getSimpleName() + ": " + forceMoving, (width / 2), 225, 0xffffff);
     }
 
     @Override

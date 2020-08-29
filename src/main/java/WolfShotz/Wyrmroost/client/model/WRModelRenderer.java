@@ -12,20 +12,11 @@ public class WRModelRenderer extends ModelRenderer
     public float defaultPositionX;
     public float defaultPositionY;
     public float defaultPositionZ;
-    public float scaleX;
-    public float scaleY;
-    public float scaleZ;
-    public boolean scaleChildren;
-    private final WREntityModel<?> model;
     private WRModelRenderer parent;
 
     public WRModelRenderer(WREntityModel<?> model)
     {
         super(model);
-        scaleX = 1.0F;
-        scaleY = 1.0F;
-        scaleZ = 1.0F;
-        this.model = model;
         model.boxList.add(this);
     }
 
@@ -38,7 +29,6 @@ public class WRModelRenderer extends ModelRenderer
     public WRModelRenderer(Model model, int textureOffsetX, int textureOffsetY)
     {
         super(model);
-        this.model = null;
         setTextureOffset(textureOffsetX, textureOffsetY);
     }
 
@@ -46,21 +36,6 @@ public class WRModelRenderer extends ModelRenderer
     {
         addBox(offX, offY, offZ, width, height, depth);
     }
-
-    public void setShouldScaleChildren(boolean scaleChildren) { this.scaleChildren = scaleChildren; }
-
-    public void setScale(float scaleX, float scaleY, float scaleZ)
-    {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.scaleZ = scaleZ;
-    }
-
-    public void setScaleX(float scaleX) { this.scaleX = scaleX; }
-
-    public void setScaleY(float scaleY) { this.scaleY = scaleY; }
-
-    public void setScaleZ(float scaleZ) { this.scaleZ = scaleZ; }
 
     public void setDefaultPose()
     {

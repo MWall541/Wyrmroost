@@ -45,11 +45,11 @@ public final class Mafs
      */
     public static double getAngle(double x1, double x2, double z1, double z2)
     {
-        return Math.atan2(z2 - z1, x2 - x1) * (180 / Math.PI) + 90;
+        return MathHelper.atan2(z2 - z1, x2 - x1) * 180 / Math.PI + 180;
     }
 
     /**
-     * Clamped Linear Interpolation (Float version)
+     * Clamped (0-1) Linear Interpolation (Float version)
      */
     public static float linTerp(float a, float b, float x)
     {

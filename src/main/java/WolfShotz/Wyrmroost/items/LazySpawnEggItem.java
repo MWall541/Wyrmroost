@@ -133,12 +133,12 @@ public class LazySpawnEggItem extends Item
 
     /**
      * Do note that using this method is entirely dependent on the provided EntityType's registry name with addition to:
-     * "_egg"
+     * "_spawn_egg"
      */
     @Nullable
     public static Item getEggFor(EntityType<?> type)
     {
         ResourceLocation loc = type.getRegistryName();
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(loc.getNamespace(), loc.getPath() + "_egg"));
+        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(loc.getNamespace(), loc.getPath() + "_spawn_egg"));
     }
 }

@@ -1,4 +1,4 @@
-package WolfShotz.Wyrmroost.entities.dragon.helpers.goals;
+package WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals;
 
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
@@ -40,7 +40,7 @@ public class MoveToHomeGoal extends Goal
             dragon.trySafeTeleport(dragon.getHomePosition().up());
         else
         {
-            Vec3d movePos = RandomPositionGenerator.findRandomTargetBlockTowards(dragon, WRConfig.homeRadius / 2, 10, home);
+            Vec3d movePos = RandomPositionGenerator.findRandomTargetBlockTowards(dragon, WRConfig.homeRadius, 10, home);
 
             if (dragon.getNavigator().noPath() && movePos != null)
                 dragon.getNavigator().tryMoveToXYZ(movePos.x, movePos.y, movePos.y, 1.1);

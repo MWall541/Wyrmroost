@@ -24,23 +24,24 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnData
 {
-    private static final int HATCH_ID = 1; // 1 << 0;
-    private static final int WIGGLE_ID = 2; // 1 << 1;
+    private static final int HATCH_ID = 1;
+    private static final int WIGGLE_ID = 2;
     public static final String DATA_HATCH_TIME = "HatchTime";
     public static final String DATA_DRAGON_TYPE = "DragonType";
     private static final int UPDATE_CONDITIONS_INTERVAL = 50; // in ticks, this is for performance reasons
 
     public EntityType<AbstractDragonEntity> containedDragon;
-    public int hatchTime;
     public DragonEggProperties properties; // cache for speed
-    public boolean correctConditions = false;
-    public boolean wiggling = false;
     public Direction wiggleDirection = Direction.NORTH;
     public TickFloat wiggleTime = new TickFloat().setLimit(0, 1);
+    public boolean correctConditions = false;
+    public boolean wiggling = false;
+    public int hatchTime;
 
     public DragonEggEntity(EntityType<? extends DragonEggEntity> type, World world) { super(type, world);}
 
@@ -49,6 +50,12 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         super(WREntities.DRAGON_EGG.get(), world);
         this.containedDragon = type;
         this.hatchTime = hatchTime;
+    }
+
+    public DragonEggEntity(FMLPlayMessages.SpawnEntity packet, World world)
+    {
+        super(WREntities.DRAGON_EGG.get(), world);
+        this.containedDragon = ModUtils.getEntityTypeByKey(packet.getAdditionalData().readString());
     }
 
     @Override
@@ -96,8 +103,8 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
 
         if (ticksExisted % UPDATE_CONDITIONS_INTERVAL == 0)
         {
-            boolean correctConditions = getProperties().getConditions().test(this);
-            if (correctConditions != this.correctConditions) this.correctConditions = correctConditions;
+            boolean flag = getProperties().getConditions().test(this);
+            if (flag != correctConditions) this.correctConditions = flag;
         }
 
         if (correctConditions)
@@ -279,5 +286,5 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public void writeSpawnData(PacketBuffer buffer) { buffer.writeString(getDragonKey()); }
 
     @Override
-    public void readSpawnData(PacketBuffer buffer) { this.containedDragon = ModUtils.getEntityTypeByKey(buffer.readString()); }
+    public void readSpawnData(PacketBuffer buffer) {}
 }

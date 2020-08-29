@@ -1,17 +1,19 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.data.DataGatherer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
 import WolfShotz.Wyrmroost.items.base.ArmorBase;
 import WolfShotz.Wyrmroost.registry.WRWorld;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -52,12 +54,13 @@ public class CommonEvents
     //       Mod Bus
     // ====================
 
+    // @formatter:off
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        DeferredWorkQueue.runLater(() ->
-        { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
+        DeferredWorkQueue.runLater(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
         DeferredWorkQueue.runLater(WRWorld::setupWorld);
     }
+    // @formatter: on
 
     // =====================
     //      Forge Bus
@@ -80,8 +83,15 @@ public class CommonEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-        if (player.isSneaking()) dragon.tame(true, player);
-        else DebugScreen.open(dragon);
+        Vec3d vec3d = RandomPositionGenerator.findAirTarget(dragon, 20, 7, null, Mafs.PI / 2, 2, 1);
+        if (vec3d != null)
+        {
+            dragon.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 2);
+            Wyrmroost.LOG.info(String.format("Moving: %s, %s, %s", vec3d.x, vec3d.y, vec3d.z));
+        }
+
+//        if (player.isSneaking()) dragon.tame(true, player);
+//        else DebugScreen.open(dragon);
     }
 
     @SubscribeEvent

@@ -41,20 +41,23 @@ public class BreathWeaponEntity extends Entity implements IEntityAdditionalSpawn
         super(type, shooter.world);
 
         Vec3d mouth = shooter.getApproximateMouthPos();
-        Vec3d acceleration = shooter.getLookVec().add(rand.nextGaussian() * 0.12d, rand.nextGaussian() * 0.12d, rand.nextGaussian() * 0.12d);
-        double sqrt = MathHelper.sqrt(acceleration.x * acceleration.x + acceleration.y * acceleration.y + acceleration.z * acceleration.z);
-
         setLocationAndAngles(mouth.x, mouth.y, mouth.z, rotationYaw, rotationPitch);
+
+        Vec3d acceleration = shooter.getLookVec().add(rand.nextGaussian() * 0.115d, rand.nextGaussian() * 0.115d, rand.nextGaussian() * 0.115d);
+        double length = acceleration.length();
+        this.accelerationX = acceleration.x / length * 0.1d;
+        this.accelerationY = acceleration.y / length * 0.1d;
+        this.accelerationZ = acceleration.z / length * 0.1d;
+
         this.shooter = shooter;
-        this.accelerationX = acceleration.x / sqrt * 0.1d;
-        this.accelerationY = acceleration.y / sqrt * 0.1d;
-        this.accelerationZ = acceleration.z / sqrt * 0.1d;
         this.life = 50;
     }
 
     @Override
     public void tick()
     {
+        Vec3d mouth = shooter.getApproximateMouthPos();
+
         if ((!world.isRemote && (!shooter.isAlive() || ticksExisted > life || ticksExisted > 150)) || !world.isBlockLoaded(getPosition()))
         {
             remove();
