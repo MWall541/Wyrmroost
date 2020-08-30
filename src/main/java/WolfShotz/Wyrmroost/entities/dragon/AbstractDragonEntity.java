@@ -45,6 +45,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -908,8 +910,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         screen.addAction(StaffAction.HOME);
         screen.addAction(StaffAction.SIT);
 
-        screen.toolTip.add("Owner: " + getOwner().getName().getUnformattedComponentText());
-        screen.toolTip.add(String.format("Health: %s / %s", (int) getHealth(), (int) getMaxHealth()));
+        screen.addTooltip(new StringTextComponent(Character.toString('\u2764'))
+                .applyTextStyle(TextFormatting.RED)
+                .appendSibling(new StringTextComponent(String.format(" %s / %s", (int) (getHealth() / 2), (int) getMaxHealth() / 2)).applyTextStyle(TextFormatting.WHITE))
+                .getFormattedText());
+        if (hasDataEntry(GENDER))
+        {
+            boolean isMale = isMale();
+            screen.addTooltip(new StringTextComponent(isMale? "M" : "F")
+                    .applyTextStyle(isMale? TextFormatting.DARK_AQUA : TextFormatting.RED)
+                    .getFormattedText());
+        }
     }
 
     public void addContainerInfo(DragonInvContainer container)

@@ -11,7 +11,6 @@ import java.util.EnumSet;
 public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
 {
     private final AbstractDragonEntity dragon;
-    private Vec3d vec3d;
 
     public FlyerWanderGoal(AbstractDragonEntity dragon, double speed)
     {
@@ -25,7 +24,8 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     public boolean shouldExecute()
     {
         if (dragon.isSleeping()) return false;
-        if (dragon.isFlying() && getPosition() != null)
+        Vec3d vec3d;
+        if (dragon.isFlying() && (vec3d = getPosition()) != null)
         {
             this.x = vec3d.x;
             this.y = vec3d.y;
@@ -40,7 +40,7 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     @Override
     public void tick()
     {
-        dragon.getLookController().setLookPosition(vec3d.x, vec3d.y, vec3d.z, 90, 90);
+        dragon.getLookController().setLookPosition(x, y, z, 90, 90);
     }
 
     public Vec3d getPosition()

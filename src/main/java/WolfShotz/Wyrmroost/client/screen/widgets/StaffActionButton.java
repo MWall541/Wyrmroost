@@ -18,7 +18,7 @@ import net.minecraft.util.math.MathHelper;
 public class StaffActionButton extends AbstractButton
 {
     public final StaffAction action;
-    public final TickFloat focusTime = new TickFloat().setLimit(0, 6);
+    public final TickFloat focusTime = new TickFloat().setLimit(0, 1);
     public boolean wasHovered = false;
 
     public StaffActionButton(int xIn, int yIn, String msg, StaffAction action)
@@ -49,13 +49,14 @@ public class StaffActionButton extends AbstractButton
             wasHovered = isHovered;
         }
 
-        float time = 2 * partialTick; // adjust speed for framerate
+        float time = 0.5f * partialTick; // adjust speed for framerate
         focusTime.add(isHovered? time : -time);
+        float amount = focusTime.get(partialTick) * 6;
         drawCenteredString(Minecraft.getInstance().fontRenderer,
                 getMessage(),
                 x + width / 2,
-                (y + (height - 8) / 2) + (int) -focusTime.get(partialTick),
-                (int) MathHelper.lerp(focusTime.get(partialTick), 0xffffff, 0xfffd8a));
+                (y + (height - 8) / 2) - (int) amount,
+                (int) MathHelper.lerp(amount, 0xffffff, 0xfffd8a));
     }
 
     @Override

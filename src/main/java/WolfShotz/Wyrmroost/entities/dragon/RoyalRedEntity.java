@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
@@ -8,6 +9,7 @@ import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
+import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
@@ -259,6 +261,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
         EntitySize size = getType().getSize().scale(getRenderScale());
         float heightFactor = isSleeping()? 0.5f : isSitting()? 0.9f : 1;
         return size.scale(1, heightFactor);
+    }
+
+    @Override
+    public void addScreenInfo(StaffScreen screen)
+    {
+        super.addScreenInfo(screen);
+        screen.addAction(StaffAction.TARGET);
     }
 
     @Override

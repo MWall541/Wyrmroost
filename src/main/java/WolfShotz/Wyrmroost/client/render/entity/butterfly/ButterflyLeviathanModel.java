@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * butterfly leviathan - Kingdomall
@@ -315,8 +316,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     @Override
     public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (netHeadYaw < -180) netHeadYaw += 360;
-        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         if (entity.areEyesInFluid(FluidTags.WATER) && !entityIn.isSitting())
             body1.rotateAngleX = headPitch * (Mafs.PI / 180f);
         else faceTarget(netHeadYaw, headPitch, 1, head, neck3, neck2, neck1);

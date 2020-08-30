@@ -16,8 +16,6 @@ public class NameFieldWidget extends TextFieldWidget
         setText(getMessage());
         setCanLoseFocus(true);
         changeFocus(true);
-        setTextColor(0xffffff);
-        setDisabledTextColour(0xffffff);
         setEnableBackgroundDrawing(false);
         setMaxStringLength(35);
         setResponder(s ->

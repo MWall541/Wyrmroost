@@ -14,6 +14,7 @@ import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -185,9 +186,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     {
         if (getVariant() == -1 && ticksExisted % 25 == 0)
         {
-            double x = getPosX() * (getRNG().nextGaussian() * 0.5d) + 1;
-            double y = getPosY() * (getRNG().nextDouble()) + 1;
-            double z = getPosZ() * (getRNG().nextGaussian() * 0.5d) + 1;
+            double x = getPosX() + (Mafs.nextDouble(getRNG()) * 0.7d);
+            double y = getPosY() + (getRNG().nextDouble() * 0.5d);
+            double z = getPosZ() + (Mafs.nextDouble(getRNG()) * 0.7d);
             world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
         }
     }

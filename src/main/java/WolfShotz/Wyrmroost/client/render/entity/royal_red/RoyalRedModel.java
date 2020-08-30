@@ -694,8 +694,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
     @Override
     public void setRotationAngles(RoyalRedEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (netHeadYaw < -180) netHeadYaw += 360;
-        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
 //        if (entity.flightTimer.get() == 1)
 //        {
 //            body2.rotateAngleX = headPitch * (Mafs.PI / 180F) * 0.75f;
