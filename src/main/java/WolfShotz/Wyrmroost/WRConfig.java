@@ -19,7 +19,7 @@ public class WRConfig
     public static boolean disableFrustumCheck = true;
 
     // Server
-    public static int fireBreathFlammability = 100;
+    public static double fireBreathFlammability = 1.0f;
     public static int homeRadius = 16;
     public static double dfdBabyChance = 0.4d;
     private static boolean respectMobGriefing;
@@ -115,7 +115,7 @@ public class WRConfig
 
         public final ForgeConfigSpec.IntValue homeRadius;
         public final ForgeConfigSpec.DoubleValue dfdBabyChance;
-        public final ForgeConfigSpec.IntValue breathFlammability;
+        public final ForgeConfigSpec.DoubleValue breathFlammability;
         public final ForgeConfigSpec.BooleanValue respectMobGriefing;
         public final ForgeConfigSpec.BooleanValue dragonGriefing;
 
@@ -128,9 +128,9 @@ public class WRConfig
             dfdBabyChance = builder.comment("Chances for a Dragon Fruit Drake to spawn as a baby. 0 = No Chance, 1 = (practically) Guaranteed. Higher values are better chances")
                     .translation("config.wyrmroost.dfdbabychance")
                     .defineInRange("dfdBabyChance", 0.3d, 0, 1d);
-            breathFlammability = builder.comment("Base Flammability for Dragon Fire Breath. (Note that this is a base value and that flammability is also influenced by blocks) A value of 999 will disable fire block damage completely.")
+            breathFlammability = builder.comment("Base Flammability for Dragon Fire Breath. A value of 0 will disable fire block damage completely.")
                     .translation("config.wyrmroost.breathFlammability")
-                    .defineInRange("breathFlammability", 100, 25, 999);
+                    .defineInRange("breathFlammability", 1.0, 0.0, 1.0);
             builder.push("griefing");
             respectMobGriefing = builder.comment("If True, Dragons will respect the Minecraft MobGriefing Gamerule. Else, follow \"dragonGriefing\" option")
                     .translation("config.wyrmroost.respectMobGriefing")

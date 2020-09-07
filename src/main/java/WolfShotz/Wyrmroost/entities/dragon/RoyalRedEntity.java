@@ -32,6 +32,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -80,7 +81,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         getAttribute(FOLLOW_RANGE).setBaseValue(60d);
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d); // normal * 2.25
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d); // 5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.06d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.09d);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(4d); // 2 hearts
     }
 
@@ -101,7 +102,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new AttackGoal());
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(7, new DragonBreedGoal(this, 2));
         goalSelector.addGoal(9, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
@@ -232,7 +233,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         if (!noActiveAnimation()) return;
 
-        if (key == KeybindPacket.MOUNT_KEY1 && pressed)
+        if (key == KeybindPacket.MOUNT_KEY1 && pressed && !isBreathingFire())
         {
             if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
             else meleeAttack();
@@ -271,6 +272,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
+    {
+        if (backView) event.getInfo().movePosition(-8.5d, 3d, 0);
+        else event.getInfo().movePosition(-5, -0.75, 0);
+    }
+
+    @Override
     protected boolean isMovementBlocked() { return super.isMovementBlocked() || isKnockedOut(); }
 
     @Override
@@ -283,7 +291,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 3; }
 
     @Override
-    public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.95f, index == 0? 0.5f : -1); }
+    public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1); }
 
     @Override
     public float getRenderScale() { return isChild()? 0.3f : isMale()? 0.8f : 1f; }
@@ -338,14 +346,20 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ROYALRED_DEATH.get(); }
 
+//    @Override
+//    protected float getSoundVolume() { return 3; }
+
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION}; }
+    public Animation[] getAnimations()
+    {
+        return new Animation[] {NO_ANIMATION, ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION};
+    }
 
     @Override
     public void setAnimation(Animation animation)
     {
         super.setAnimation(animation);
-        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1);
+        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1, true);
     }
 
     class AttackGoal extends Goal

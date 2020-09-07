@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.RoyalRedEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
@@ -695,12 +696,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
     public void setRotationAngles(RoyalRedEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-//        if (entity.flightTimer.get() == 1)
-//        {
-//            body2.rotateAngleX = headPitch * (Mafs.PI / 180F) * 0.75f;
-//            body2.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.5f;
-//            headPitch *= 0.2f;
-//        }
+        if (entity.flightTimer.get() == 1) body2.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.3f;
         if (!entity.isSleeping() && entity.getAnimation() != RoyalRedEntity.ROAR_ANIMATION)
             faceTarget(netHeadYaw, headPitch, 1, headParts);
     }
@@ -725,12 +721,20 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
                 chainWave(headParts, globalSpeed - 0.3f, 0.05f, 3, limbSwing, limbSwingAmount);
                 chainWave(tailParts, globalSpeed - 0.3f, -0.05f, -3, limbSwing, limbSwingAmount);
 
-                flap(wingR1, globalSpeed - 0.3f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+                flap(wingR1, globalSpeed - 0.3f, 0.75f, false, 0, 0, limbSwing, limbSwingAmount);
+                walk(wingR1, globalSpeed - 0.3f, 0.3f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(wingR2, globalSpeed - 0.3f, 0.65f, false, -1f, -0.1f, limbSwing, limbSwingAmount);
+                walk(wingR2, globalSpeed - 0.3f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(palmR_1, globalSpeed - 0.3f, 0.4f, false, -1.5f, 0, limbSwing, limbSwingAmount);
-                flap(wingL1, globalSpeed - 0.3f, 0.5f, true, 0, 0, limbSwing, limbSwingAmount);
+                flap(wingL1, globalSpeed - 0.3f, 0.75f, true, 0, 0, limbSwing, limbSwingAmount);
+                walk(wingL1, globalSpeed - 0.3f, 0.3f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(wingL2, globalSpeed - 0.3f, 0.65f, true, -1f, -0.1f, limbSwing, limbSwingAmount);
+                walk(wingL2, globalSpeed - 0.3f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(palmL_1, globalSpeed - 0.3f, 0.4f, true, -1.5f, 0, limbSwing, limbSwingAmount);
+
+                boolean wingsDown = wingR1.rotateAngleZ < 1.5;
+                if (!entity.wingsDown && wingsDown) entity.flapWings();
+                entity.wingsDown = wingsDown;
             }
             else // Walk Cycle
             {

@@ -35,7 +35,7 @@ public class FireBreathEntity extends BreathWeaponEntity
 
         if (isInWater())
         {
-            if (rand.nextInt(4) == 0) playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 1);
+            if (rand.nextDouble() <= 0.25d) playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 1);
             for (int i = 0; i < 15; i++)
                 world.addParticle(ParticleTypes.SMOKE, getPosX(), getPosY(), getPosZ(), Mafs.nextDouble(rand) * 0.2f, rand.nextDouble() * 0.08f, Mafs.nextDouble(rand) * 0.2f);
             remove();
@@ -63,13 +63,13 @@ public class FireBreathEntity extends BreathWeaponEntity
             return;
         }
 
-        int flammability = WRConfig.fireBreathFlammability;
-        if (world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) && WRConfig.canGrief(world) && flammability != 999) // respect game rules
+        double flammability = WRConfig.fireBreathFlammability;
+        if (world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) && WRConfig.canGrief(world) && flammability != 0) // respect game rules
         {
             Direction face = result.getFace();
             BlockPos offset = pos.offset(face);
 
-            if ((world.getBlockState(offset).isAir(world, offset)) && rand.nextInt(flammability) < Math.max(25, state.getFlammability(world, pos, face)))
+            if (world.getBlockState(offset).isAir(world, offset) && (flammability == 1 || rand.nextDouble() <= flammability))
                 world.setBlockState(offset, ((FireBlock) Blocks.FIRE).getStateForPlacement(world, offset), 11);
         }
     }

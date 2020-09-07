@@ -43,7 +43,7 @@ public class BreathWeaponEntity extends Entity implements IEntityAdditionalSpawn
         Vec3d mouth = shooter.getApproximateMouthPos();
         setLocationAndAngles(mouth.x, mouth.y, mouth.z, rotationYaw, rotationPitch);
 
-        Vec3d acceleration = shooter.getLookVec().add(rand.nextGaussian() * 0.115d, rand.nextGaussian() * 0.115d, rand.nextGaussian() * 0.115d);
+        Vec3d acceleration = Vec3d.fromPitchYaw(shooter.rotationPitch, shooter.rotationYawHead).add(rand.nextGaussian() * 0.1d, rand.nextGaussian() * 0.1d, rand.nextGaussian() * 0.1d);
         double length = acceleration.length();
         this.accelerationX = acceleration.x / length * 0.1d;
         this.accelerationY = acceleration.y / length * 0.1d;
