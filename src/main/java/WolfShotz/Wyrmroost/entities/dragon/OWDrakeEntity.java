@@ -15,7 +15,6 @@ import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.entity.*;
@@ -28,12 +27,15 @@ import net.minecraft.item.Items;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.play.server.SEntityVelocityPacket;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerChunkProvider;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Tags;
 import org.lwjgl.glfw.GLFW;
@@ -53,15 +55,17 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public static final int ARMOR_SLOT = 1;
     public static final int CHEST_SLOT = 2;
 
+    // Dragon Entity Data
+    private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<ItemStack> ARMOR = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.ITEMSTACK);
+
     // Dragon Entity Animations
     public static final Animation GRAZE_ANIMATION = new Animation(35);
     public static final Animation HORN_ATTACK_ANIMATION = new Animation(15);
     public static final Animation ROAR_ANIMATION = new Animation(86);
-    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
 
-    // Dragon Entity Data
-    private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<ItemStack> ARMOR = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.ITEMSTACK);
+    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public LivingEntity thrownPassenger;
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world)
     {
@@ -79,9 +83,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.registerGoals();
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
-        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, 2.1, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
+        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(7, new DragonBreedGoal(this, 2));
         goalSelector.addGoal(8, new GrazeGoal(this, 2, GRAZE_ANIMATION));
         goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
@@ -164,9 +168,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
         sitTimer.add((isSitting() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.04f : -0.1f);
 
-        LivingEntity target = getAttackTarget();
-        boolean shouldSprint = target != null && target.isAlive();
-        if (shouldSprint != isSprinting()) setSprinting(shouldSprint);
+        if (thrownPassenger != null)
+        {
+            thrownPassenger.setMotion(Mafs.nextDouble(getRNG()), 0.1 + getRNG().nextDouble(), Mafs.nextDouble(getRNG()));
+            ((ServerChunkProvider) world.getChunkProvider()).sendToTrackingAndSelf(thrownPassenger, new SEntityVelocityPacket(thrownPassenger)); // notify client
+            thrownPassenger = null;
+        }
 
         if (getAnimation() == ROAR_ANIMATION && getAnimationTick() == 15)
         {
@@ -188,9 +195,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
             prevRotationYaw = renderYawOffset = rotationYaw = rotationYawHead;
             if (getAnimationTick() == 8)
             {
-                playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f);
-                world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.AMBIENT, 1f, 0.5f, false);
-                AxisAlignedBB size = getBoundingBox().shrink(0.2);
+                playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f, true);
+                AxisAlignedBB size = getBoundingBox().shrink(0.15);
                 AxisAlignedBB aabb = size.offset(Mafs.getYawVec(renderYawOffset, 0, size.getXSize() * 1.2));
                 attackInAABB(aabb);
             }
@@ -205,18 +211,15 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (stack.getItem() == Items.SADDLE && !isSaddled() && !isChild())
         {
-            if (!world.isRemote) setStackInSlot(SADDLE_SLOT, stack);
-            consumeItemFromStack(player, stack);
+            if (!world.isRemote)
+            {
+                getInvHandler().insertItem(SADDLE_SLOT, stack.copy(), false);
+                consumeItemFromStack(player, stack);
+            }
             return true;
         }
 
-        if (isSaddled() && !isChild() && (!isTamed() || isOwner(player)))
-        {
-            if (!world.isRemote) player.startRiding(this);
-            return true;
-        }
-
-        if (isFoodItem(stack) && isChild() && !isTamed())
+        if (!isTamed() && isChild() && isFoodItem(stack))
         {
             tame(getRNG().nextInt(10) == 0, player);
             consumeItemFromStack(player, stack);
@@ -231,17 +234,27 @@ public class OWDrakeEntity extends AbstractDragonEntity
      * todo
      */
     @Override
-    public void updatePassenger(Entity passenger)
+    public void updatePassenger(Entity entity)
     {
-        super.updatePassenger(passenger);
+        super.updatePassenger(entity);
 
-        if (!world.isRemote && !isTamed() && passenger instanceof LivingEntity)
+        if (entity instanceof LivingEntity)
         {
-            int rand = getRNG().nextInt(100);
+            LivingEntity passenger = ((LivingEntity) entity);
+            if (isTamed()) setSprinting(passenger.isSprinting());
+            else if (!world.isRemote && passenger instanceof PlayerEntity)
+            {
+                double rng = getRNG().nextDouble();
 
-            if (passenger instanceof PlayerEntity && rand == 0) tame(true, (PlayerEntity) passenger);
-            else if (rand % 20 == 0 && EntityPredicates.CAN_AI_TARGET.test(passenger))
-                setAttackTarget((LivingEntity) passenger);
+                if (rng < 0.01) tame(true, (PlayerEntity) passenger);
+                else if (rng <= 0.1)
+                {
+                    setAttackTarget(passenger);
+                    rideCooldown = 60;
+                    removePassengers();
+                    thrownPassenger = passenger; // needs to be queued for next tick otherwise some voodoo shit breaks the throwing off logic >.>
+                }
+            }
         }
     }
 
@@ -256,68 +269,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (slot == ARMOR_SLOT) setArmored(stack);
     }
-
-    @Override
-    public void handleSleep()
-    {
-        if (!isSleeping()
-                && --sleepCooldown <= 0
-                && !world.isDaytime()
-                && (!isTamed() || isSitting())
-                && !isBeingRidden()
-                && getAttackTarget() == null
-                && getNavigator().noPath()
-                && !isInWaterOrBubbleColumn()
-                && !isFlying()
-                && getRNG().nextInt(300) == 0) setSleeping(true);
-        else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
-    }
-
-    @Override
-    protected boolean canBeRidden(Entity entityIn) { return isSaddled(); }
-
-    @Override
-    public boolean canFly() { return false; }
-
-    @Override
-    public boolean onLivingFall(float distance, float damageMultiplier) { return super.onLivingFall(distance - 2, damageMultiplier); }
-
-    @Override
-    public void setAttackTarget(@Nullable LivingEntity target)
-    {
-        if (target != null && getAttackTarget() != target)
-        {
-            if (!isTamed() && getAnimation() != OWDrakeEntity.ROAR_ANIMATION)
-                AnimationPacket.send(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
-        }
-        super.setAttackTarget(target);
-    }
-    
-    @Override
-    public void eatGrassBonus()
-    {
-        if (isChild()) addGrowth(60);
-        if (getHealth() < getMaxHealth()) heal(4f);
-    }
-    
-    @Override
-    protected void playStepSound(BlockPos pos, BlockState blockIn)
-    {
-        playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1f);
-        super.playStepSound(pos, blockIn);
-    }
-
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_OWDRAKE_IDLE.get(); }
-
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_OWDRAKE_HURT.get(); }
-
-    @Nullable
-    @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_OWDRAKE_DEATH.get(); }
 
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
@@ -336,9 +287,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (isSitting() || isSleeping()) size = size.scale(1, 0.75f);
         return size;
     }
-
-    @Override
-    protected int getExperiencePoints(PlayerEntity player) { return 2 + rand.nextInt(3); }
 
     @Override
     public void addScreenInfo(StaffScreen screen)
@@ -362,21 +310,76 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void setMountCameraAngles(boolean backView)
+    public void setAttackTarget(@Nullable LivingEntity target)
     {
-        if (backView) GlStateManager.translated(0, -0.5d, 0.5d);
-        else GlStateManager.translated(0, 0, -3d);
+        super.setAttackTarget(target);
+
+        boolean flag = getAttackTarget() != null;
+        setSprinting(flag);
+
+        if (flag && !isTamed() && noActiveAnimation())
+            AnimationPacket.send(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
     }
+
+    @Override
+    public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
+    {
+        if (backView) event.getInfo().movePosition(-0.5d, 0.75d, 0);
+        else event.getInfo().movePosition(-3, 0.3, 0);
+    }
+
+    @Override
+    public void eatGrassBonus()
+    {
+        if (isChild()) addGrowth(60);
+        if (getHealth() < getMaxHealth()) heal(4f);
+    }
+
+    @Override
+    protected boolean canBeRidden(Entity entity)
+    {
+        return isSaddled() && !isChild() && (isOwner((LivingEntity) entity) || (!isTamed() && rideCooldown <= 0));
+    }
+
+    @Override
+    protected float getTravelSpeed()
+    {
+        float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
+        if (isSprinting()) speed += 0.1;
+        return speed;
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState blockIn)
+    {
+        playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1f);
+        super.playStepSound(pos, blockIn);
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_OWDRAKE_IDLE.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_OWDRAKE_HURT.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_OWDRAKE_DEATH.get(); }
+
+    @Override
+    public boolean canFly() { return false; }
+
+    @Override
+    public Collection<? extends IItemProvider> getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements(); }
 
     @Override
     public void setAnimation(Animation animation)
     {
         super.setAnimation(animation);
-        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f);
+        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f, true);
     }
-
-    @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements(); }
 
     @Override
     public Animation[] getAnimations()
