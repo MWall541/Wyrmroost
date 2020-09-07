@@ -9,13 +9,11 @@ import java.util.function.Consumer;
 public class ControlledAttackGoal extends MeleeAttackGoal
 {
     private final AbstractDragonEntity dragon;
-    private final double reach;
     private final Consumer<AbstractDragonEntity> attack;
 
-    public ControlledAttackGoal(AbstractDragonEntity dragon, double speed, boolean longMemory, double reach, Consumer<AbstractDragonEntity> attack)
+    public ControlledAttackGoal(AbstractDragonEntity dragon, double speed, boolean longMemory, Consumer<AbstractDragonEntity> attack)
     {
         super(dragon, speed, longMemory);
-        this.reach = reach;
         this.attack = attack;
         this.dragon = dragon;
     }
@@ -40,8 +38,8 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
     {
-        double d0 = getAttackReachSqr(enemy);
-        if (distToEnemySqr <= d0 && attackTick <= 0 && !dragon.isRidingOrBeingRiddenBy(enemy) && dragon.noActiveAnimation())
+        double reach = getAttackReachSqr(enemy);
+        if (distToEnemySqr <= reach && attackTick <= 0 && !dragon.isRidingOrBeingRiddenBy(enemy) && dragon.noActiveAnimation())
         {
             attack.accept(dragon);
             attackTick = 10;
@@ -51,6 +49,6 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     @Override
     protected double getAttackReachSqr(LivingEntity attackTarget)
     {
-        return (attacker.getWidth() * 2.0F * attacker.getWidth() * 2.0F + attackTarget.getWidth());
+        return attacker.getWidth() * 2 * attacker.getWidth() * 2 + attackTarget.getWidth();
     }
 }

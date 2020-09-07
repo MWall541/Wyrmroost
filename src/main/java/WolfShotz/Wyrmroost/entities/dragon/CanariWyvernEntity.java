@@ -59,7 +59,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         goalSelector.addGoal(3, new MoveToHomeGoal(this));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.2, true));
         goalSelector.addGoal(5, new FollowOwnerGoal(this, 7, 1, 4, true));
-        goalSelector.addGoal(6, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(6, new DragonBreedGoal(this, 0));
         goalSelector.addGoal(7, new AvoidGoal());
         goalSelector.addGoal(7, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(8, new LookAtGoal(this, LivingEntity.class, 5f));
@@ -114,8 +114,9 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
         if (getAnimation() == FLAP_WINGS_ANIMATION)
         {
-            if (animationTick == 5 || animationTick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.7f, 2, true);
-            if (animationTick == 9 && getRNG().nextInt(25) == 0)
+            int tick = getAnimationTick();
+            if (tick == 5 || tick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.7f, 2, true);
+            if (tick == 9 && getRNG().nextInt(25) == 0)
                 entityDropItem(new ItemStack(Items.FEATHER), 0.5f);
         }
     }

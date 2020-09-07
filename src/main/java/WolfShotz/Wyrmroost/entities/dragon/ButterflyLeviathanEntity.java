@@ -15,7 +15,6 @@ import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.controller.MovementController;
@@ -42,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
@@ -85,9 +85,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     {
         goalSelector.addGoal(1, sitGoal = new WaterSitGoal(this));
         goalSelector.addGoal(2, new MoveToHomeGoal(this));
-        goalSelector.addGoal(3, new ControlledAttackGoal(this, 1, true, 3.4, b -> swingArm(Hand.MAIN_HAND)));
+        goalSelector.addGoal(3, new ControlledAttackGoal(this, 1, true, b -> swingArm(Hand.MAIN_HAND)));
 //        goalSelector.addGoal(3, CommonGoalWrappers.followOwner(this, 1.2d, 20f, 3f));
-        goalSelector.addGoal(4, new DragonBreedGoal(this, false));
+        goalSelector.addGoal(4, new DragonBreedGoal(this, 1));
         goalSelector.addGoal(5, moveGoal = new RandomSwimmingGoal(this, 1d, 10));
         goalSelector.addGoal(6, new LookAtGoal(this, LivingEntity.class, 12f));
         goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -126,16 +126,18 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
             }
         }
 
+        int tick = getAnimationTick();
+
         if (getAnimation() == CONDUIT_ANIMATION)
         {
-            if (animationTick == 1) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f);
-            if (animationTick == 15)
+            if (tick == 1) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f);
+            if (tick == 15)
             {
                 playSound(SoundEvents.BLOCK_BEACON_ACTIVATE, 1, 1);
                 if (!world.isRemote)
                     ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, getPosX(), getPosY(), getPosZ(), true));
 
-                Vec3d vec3d = getConduitPos(new Vec3d(getPosX(), getPosY(), getPosZ()));
+                Vec3d vec3d = getConduitPos(getPosX(), getPosY(), getPosZ());
                 for (int i = 0; i < 26; ++i)
                 {
                     double velX = Math.cos(i);
@@ -147,15 +149,15 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
 
         if (getAnimation() == ROAR_ANIMATION && !world.isRemote)
         {
-            if (animationTick == 1) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3, 1);
-            if (animationTick == 15) strikeTarget();
+            if (tick == 1) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3, 1);
+            if (tick == 15) strikeTarget();
         }
 
         if (getAnimation() == BITE_ANIMATION)
         {
             rotationYaw = rotationYawHead;
-            if (animationTick == 1) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1);
-            if (animationTick == 10)
+            if (tick == 1) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1);
+            if (tick == 10)
             {
                 AxisAlignedBB size = getBoundingBox().shrink(0.3);
                 AxisAlignedBB aabb = size.offset(Mafs.getYawVec(renderYawOffset, 0, size.getXSize() * 1.5));
@@ -300,7 +302,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     private void spawnConduitParticles()
     {
         if (rand.nextInt(35) != 0) return;
-        Vec3d vec3d = getConduitPos(new Vec3d(getPosX(), getPosY(), getPosZ()));
+        Vec3d vec3d = getConduitPos(getPosX(), getPosY(), getPosZ());
         for (int i = 0; i < 16; ++i)
         {
             double motionX = Mafs.nextDouble(rand) * 1.5f;
@@ -389,22 +391,16 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity/* implements 
     @Override
     public int getTalkInterval() { return 165; }
 
-//    @Override
-//    public MultiPartEntity[] getParts()
-//    {
-//        return new MultiPartEntity[]{headPart, wingLeftPart, wingRightPart, tail1Part, tail2Part, tail3Part};
-//    }
-
     @Override
-    public void setMountCameraAngles(boolean backView)
+    public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) GlStateManager.translated(0, -1d, -10d);
-        else GlStateManager.translated(0, -1, -7d);
+        if (backView) event.getInfo().movePosition(-5, 1, 0);
+        else event.getInfo().movePosition(-4, 1, 0);
     }
 
-    public Vec3d getConduitPos(Vec3d offset)
+    public Vec3d getConduitPos(double xOff, double yOff, double zOff)
     {
-        return Mafs.getYawVec(rotationYawHead, 0, 4.2).add(offset.x, offset.y + getEyeHeight() + 2, offset.z);
+        return Mafs.getYawVec(rotationYawHead, 0, 4.2).add(xOff, yOff + getEyeHeight() + 2, zOff);
     }
 
     /**

@@ -16,17 +16,15 @@ import java.util.List;
 public class DragonBreedGoal extends Goal
 {
     protected final AbstractDragonEntity dragon;
-    protected final boolean straight;
     protected final int limit;
     protected final EntityPredicate predicate;
     protected AbstractDragonEntity targetMate;
     protected int spawnBabyDelay;
 
-    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight, int limit)
+    public DragonBreedGoal(AbstractDragonEntity dragon, int limit)
     {
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         this.dragon = dragon;
-        this.straight = straight;
         this.limit = limit;
         this.predicate = new EntityPredicate()
                 .setDistance(dragon.getWidth() * 8)
@@ -36,20 +34,16 @@ public class DragonBreedGoal extends Goal
                 .setCustomPredicate(e -> ((AbstractDragonEntity) e).canMateWith(dragon));
     }
 
-    public DragonBreedGoal(AbstractDragonEntity dragon, boolean straight)
-    {
-        this(dragon, straight, 0);
-    }
-
     /**
      * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
      * method as well.
      */
     public boolean shouldExecute()
     {
+        if (limit > 0 && dragon.breedCount >= limit) return false;
         if (!dragon.isInLove()) return false;
         if ((targetMate = getNearbyMate()) == null) return false;
-        if (straight) return dragon.isMale() != targetMate.isMale();
+        if (dragon.hasDataEntry(AbstractDragonEntity.GENDER)) return dragon.isMale() != targetMate.isMale();
         return true;
     }
 
@@ -86,7 +80,7 @@ public class DragonBreedGoal extends Goal
      * valid mate found.
      */
     @Nullable
-    private AbstractDragonEntity getNearbyMate()
+    protected AbstractDragonEntity getNearbyMate()
     {
         List<AbstractDragonEntity> potentialMates = dragon.world.getTargettableEntitiesWithinAABB(dragon.getClass(), predicate, dragon, dragon.getBoundingBox().grow(dragon.getWidth() * 8));
         return potentialMates.stream().min(Comparator.comparingDouble(dragon::getDistanceSq)).orElse(null);
@@ -100,6 +94,7 @@ public class DragonBreedGoal extends Goal
      */
     public void spawnBaby()
     {
+        dragon.breedCount++;
         dragon.createChild(targetMate);
         ServerPlayerEntity serverplayerentity = dragon.getLoveCause();
 

@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 
 import java.util.Collection;
 
@@ -21,7 +22,8 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class AlpineEntity extends AbstractDragonEntity
 {
-    public final TickFloat sitTime = new TickFloat().setLimit(0, 1);
+    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
 
     public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -38,8 +40,8 @@ public class AlpineEntity extends AbstractDragonEntity
         getAttribute(MAX_HEALTH).setBaseValue(40d); // 20 hearts
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.22d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1); // no knockback
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(5d); // 2.5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.08);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d); // 1.5 hearts
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.15);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(1d); // 0.5 hearts
     }
 
@@ -51,7 +53,7 @@ public class AlpineEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
         goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.1, 13, 5));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, false));
+        goalSelector.addGoal(7, new DragonBreedGoal(this, 4));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
@@ -74,8 +76,9 @@ public class AlpineEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
-        sitTime.add(isSitting() || isSleeping()? 0.1f : -0.1f);
+        sitTimer.add(isSitting() || isSleeping()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
+        flightTimer.add(isFlying()? 0.1f : -0.05f);
     }
 
     @Override
@@ -93,6 +96,13 @@ public class AlpineEntity extends AbstractDragonEntity
             }
         }
         return flag;
+    }
+
+    @Override
+    public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
+    {
+        if (backView) event.getInfo().movePosition(-0.5d, 0.75d, 0);
+        else event.getInfo().movePosition(-3, 0.3, 0);
     }
 
     @Override
