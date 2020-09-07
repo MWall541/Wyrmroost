@@ -43,7 +43,7 @@ public class ClientEvents
 
         MinecraftForge.EVENT_BUS.addListener(RenderHelper::renderWorld);
         MinecraftForge.EVENT_BUS.addListener(RenderHelper::renderEntities);
-//        MinecraftForge.EVENT_BUS.addListener(ForgeBus::cameraPerspective);
+        MinecraftForge.EVENT_BUS.addListener(ClientEvents::cameraPerspective);
     }
 
     // ====================
@@ -85,7 +85,7 @@ public class ClientEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         int i1 = mc.gameSettings.thirdPersonView;
 
-        if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1);
+        if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1, event);
     }
 
     // =====================
