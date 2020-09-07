@@ -12,8 +12,9 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.item.BlockItem;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.TieredItem;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -59,34 +60,31 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
 
             if (!stack.isEmpty())
             {
-                float i = stalker.isChild()? 1f : 0;
-
                 ms.push();
-
-                ms.rotate(Vector3f.YP.rotationDegrees(netHeadYaw / 3f));
-                ms.rotate(Vector3f.XP.rotationDegrees(90));
-
-                if (stack.getItem() instanceof BlockItem)
-                {
-                    ms.scale(0.5f, 0.5f, 0.5f);
-                    ms.translate(0, -0.8, -1.3);
-                }
 
                 if (stalker.isSleeping())
                 {
-                    ms.translate(-0.5f - (i * 2.8f), -0.6f - (i * 1.8f), -1.49f);
-                    ms.rotate(Vector3f.ZP.rotationDegrees(240));
+                    // just set the item on the ground
+                    ms.translate(-0.4, 1.47, 0.1);
+                    ms.rotate(Vector3f.YP.rotationDegrees(135));
                 }
                 else
                 {
-                    ms.translate(0, -0.5f - (i * -0.4f), (stalker.isSitting()? -1.3f : -1.2f) - (i * 0.135f));
-                    ms.rotate(Vector3f.XP.rotationDegrees(headPitch / (1.7f - (i * -1f))));
-                    ms.translate(0, -0.3f, 0);
+                    ModelRenderer head = getEntityModel().head;
+                    ms.translate(head.rotationPointX / 8, -(head.rotationPointY * 2.4), head.rotationPointZ / 8); // translate to heads rotation point (rough estimate) to allow for the same rotations while rotating; fixes connection issues
+                    ms.rotate(Vector3f.YP.rotationDegrees(netHeadYaw)); // rotate to match head rotations
+                    ms.rotate(Vector3f.XP.rotationDegrees(headPitch));
+                    ms.translate(0, stalker.isSitting()? 0.11 : 0.03, -0.4); // offset
+                    if (stack.getItem() instanceof TieredItem) // offsets for tools, looks way fucking better
+                    {
+                        ms.translate(0.1, 0, 0);
+                        ms.rotate(Vector3f.YP.rotationDegrees(45));
+                    }
                 }
-                if (stalker.isChild()) ms.scale(0.45f, 0.45f, 0.45f);
+
+                ms.rotate(Vector3f.XP.rotationDegrees(90)); // flip the item
 
                 Minecraft.getInstance().getFirstPersonRenderer().renderItemSide(stalker, stack, ItemCameraTransforms.TransformType.GROUND, false, ms, bufferIn, packedLightIn);
-
                 ms.pop();
             }
         }

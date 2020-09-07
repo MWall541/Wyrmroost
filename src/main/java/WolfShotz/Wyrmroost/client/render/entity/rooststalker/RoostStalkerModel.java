@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.entities.dragon.RoostStalkerEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.item.BlockItem;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * Roost stalker - nova
@@ -92,7 +93,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         this.neck = new WRModelRenderer(this, 45, 0);
         this.neck.setRotationPoint(0.0F, -0.5F, -6.5F);
         this.neck.addBox(-2.0F, -2.5F, -4.0F, 4, 5, 4, 0.0F);
-        this.setRotateAngle(neck, -0.18203784098300857F, 0.0F, 0.0F);
+        this.setRotateAngle(neck, 0, 0, 0);
         this.jaw = new WRModelRenderer(this, 35, 60);
         this.jaw.setRotationPoint(0.0F, 1.0F, 0.0F);
         this.jaw.addBox(-2.51F, 0.0F, -10.0F, 5, 2, 10, 0.0F);
@@ -103,7 +104,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         this.head = new WRModelRenderer(this, 35, 40);
         this.head.setRotationPoint(0.0F, -0.5F, -3.0F);
         this.head.addBox(-2.5F, -3.0F, -10.0F, 5, 4, 10, 0.0F);
-        this.setRotateAngle(head, 0.18203784098300857F, 0.0F, 0.0F);
+        this.setRotateAngle(head, 0, 0, 0);
         this.legl2 = new WRModelRenderer(this, 20, 72);
         this.legl2.setRotationPoint(-3.0F, 0.0F, 0.0F);
         this.legl2.addBox(-5.0F, -1.5F, -1.5F, 5, 3, 3, 0.0F);
@@ -155,11 +156,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         this.legr2.addChild(footl2_1);
         this.torso.addChild(legr3);
         this.torso.addChild(legr1);
-
         tailSegments = new WRModelRenderer[] {tail1, tail2, tail3};
-
-        animator = ModelAnimator.create();
-
         setDefaultPose();
     }
 
@@ -175,10 +172,12 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
     @Override
     public void setRotationAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (netHeadYaw < -180) netHeadYaw += 360;
-        else if (netHeadYaw > 180) netHeadYaw -= 360;
-        if (stalker.getAnimation() != RoostStalkerEntity.SCAVENGE_ANIMATION && !stalker.isSleeping())
-            faceTarget(netHeadYaw, headPitch, 2, head);
+        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
+        if (!stalker.isSleeping())
+        {
+            head.rotateAngleX = headPitch * ((float) Math.PI / 180F);
+            head.rotateAngleY = netHeadYaw * ((float) Math.PI / 180F);
+        }
     }
     
     @Override
@@ -187,7 +186,6 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         this.entity = stalker;
         float frame = stalker.ticksExisted + partialTick;
 
-        animator.update(stalker);
         resetToDefaultPose();
 
         if (!stalker.isSitting())
@@ -201,11 +199,12 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
             swing(legr3, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
         }
 
+        if (stalker.isScavenging())
+            walk(neck, globalSpeed + 0.5f, 0.4f, false, 0, 1.5f, frame, 0.5f);
+
+
         if (stalker.isSitting() && !stalker.isSleeping()) sit();
         sleep(stalker.sleepTimer.get(partialTick));
-
-        if (animator.setAnimation(RoostStalkerEntity.SCAVENGE_ANIMATION))
-            scavengeAnim(stalker.getAnimationTick(), frame);
 
         boolean flag = stalker.getItem().isEmpty() || stalker.isSleeping();
         idle(frame, flag);
@@ -267,21 +266,5 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         footl1_1.rotateAngleZ = -legAngle;
         footl2_1.rotateAngleZ = -legAngle;
         footl3_1.rotateAngleZ = -legAngle;
-    }
-    
-    /**
-     * Bob the head up and down: makes it look like its "ruffling through a chest"
-     */
-    private void scavengeAnim(int animationTick, float frame)
-    {
-        animator.startKeyframe(5);
-        animator.rotate(neck, 1.5f, 0, 0);
-        animator.endKeyframe();
-        
-        if (animationTick > 5) walk(neck, globalSpeed + 0.5f, 0.4f, false, 0, 0, frame, 0.5f);
-        
-        animator.setStaticKeyframe(25);
-        
-        animator.resetKeyframe(5);
     }
 }
