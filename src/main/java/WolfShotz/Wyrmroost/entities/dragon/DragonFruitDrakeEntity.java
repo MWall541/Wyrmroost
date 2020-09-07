@@ -33,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.Tags;
@@ -81,7 +82,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.registerGoals();
         goalSelector.addGoal(3, new MoveToCropsGoal());
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
-        goalSelector.addGoal(5, new DragonBreedGoal(this, true));
+        goalSelector.addGoal(5, new DragonBreedGoal(this, 0));
         goalSelector.addGoal(6, new MeleeAttackGoal(this, 2, false));
         goalSelector.addGoal(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.fromItems(Items.APPLE))
         {
@@ -165,7 +166,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             }
         }
 
-        if (getAnimation() == BITE_ANIMATION && animationTick == 7 && canPassengerSteer())
+        if (getAnimation() == BITE_ANIMATION && getAnimationTick() == 7 && canPassengerSteer())
         {
             attackInFront(0);
             AxisAlignedBB aabb = getBoundingBox().grow(2).offset(Mafs.getYawVec(rotationYawHead, 0, 2));
@@ -234,6 +235,13 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             setSleeping(true);
             this.napTime = 150 * getRNG().nextInt(9);
         }
+    }
+
+    @Override
+    public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
+    {
+        if (backView) event.getInfo().movePosition(-0.25d, 0.5d, 0);
+        else event.getInfo().movePosition(-1.5, 0.15, 0);
     }
 
     @Override
