@@ -10,7 +10,7 @@ Some of these probably won't work, some may. who knows, exactly why theyre plans
         - Modules that entities can have to store data, read, write, and logic.
 - Fix All flyers ai and movements
 - Fix Animations to interpolate TO positions, not FROM.
-- Optimize the fuck out of attacks. 
+- Optimize the fuck out of attacks.
 - Add Model Physics. (tails etc)
 - Better Sleep System
 

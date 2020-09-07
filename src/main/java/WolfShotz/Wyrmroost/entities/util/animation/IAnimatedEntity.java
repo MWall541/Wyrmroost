@@ -2,7 +2,11 @@ package WolfShotz.Wyrmroost.entities.util.animation;
 
 public interface IAnimatedEntity
 {
-    Animation NO_ANIMATION = new Animation(0);
+    Animation NO_ANIMATION = new Animation(0)
+    {
+        @Override
+        public String toString() { return "NO_ANIMATION"; }
+    };
 
     int getAnimationTick();
 

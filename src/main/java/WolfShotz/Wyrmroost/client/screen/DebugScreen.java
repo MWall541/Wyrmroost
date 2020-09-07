@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -22,23 +22,28 @@ public class DebugScreen extends Screen
     @Override
     protected void init()
     {
-        if (dragon.getAnimations() != null && dragon.getAnimations().length > 0)
-            for (int i = 0; i < dragon.getAnimations().length; i++)
+        Animation[] animations = dragon.getAnimations();
+        if (animations != null && animations.length > 0)
+            for (int i = 0; i < animations.length; i++)
             {
-                Animation anim = dragon.getAnimations()[i];
-                addButton(new Button((i * 50) + (width / 2) - (dragon.getAnimations().length * 25), 300, 50, 12, "Anim: " + i, b ->
+                Animation animation = animations[i];
+                addButton(new AbstractButton((i * 50) + (width / 2) - (animations.length * 25), 300, 50, 12, "Anim: " + i)
                 {
-                    dragon.setAnimation(anim);
-                    onClose();
-                }));
+                    @Override
+                    public void onPress()
+                    {
+                        dragon.setAnimation(animation);
+                        onClose();
+                    }
+                });
             }
     }
-    
+
     @Override
-    public void render(int p_render_1_, int p_render_2_, float p_render_3_)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         renderBackground();
-        super.render(p_render_1_, p_render_2_, p_render_3_);
+        super.render(mouseX, mouseY, partialTicks);
         String gender = dragon.isMale()? "male" : "female";
         String moveTo = dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getCurrentPos().toString();
         MovementController movement = dragon.getMoveHelper();

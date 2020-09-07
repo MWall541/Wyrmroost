@@ -14,8 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-import javax.annotation.Nullable;
-
 public class DragonInvContainer extends Container
 {
     public static final int MAX_PLAYER_SLOTS = 36;
@@ -101,7 +99,6 @@ public class DragonInvContainer extends Container
             @Override
             public ITextComponent getDisplayName() { return new StringTextComponent("Dragon Inventory"); }
 
-            @Nullable
             @Override
             public Container createMenu(int id, PlayerInventory playersInv, PlayerEntity player)
             {

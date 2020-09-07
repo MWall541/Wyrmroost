@@ -3,13 +3,13 @@
     "subtitle": "Dragon Wing Flap",
     "sounds": [
       {
-        "name": "wyrmroost:entity/wings/flap1"
+        "name": "wyrmroost:entity/other/wings/flap1"
       },
       {
-        "name": "wyrmroost:entity/wings/flap2"
+        "name": "wyrmroost:entity/other/wings/flap2"
       },
       {
-        "name": "wyrmroost:entity/wings/flap3"
+        "name": "wyrmroost:entity/other/wings/flap3"
       }
     ]
   },

@@ -49,7 +49,7 @@ public class SoundData implements IDataProvider
 
     public void registerSounds(JsonObject json)
     {
-        new Builder(WRSounds.WING_FLAP.get()).subtitle("Dragon Wing Flap").sounds(s -> Wyrmroost.rl("entity/wings" + s), "flap1", "flap2", "flap3").build(json);
+        new Builder(WRSounds.WING_FLAP.get()).subtitle("Dragon Wing Flap").sounds(s -> Wyrmroost.rl("entity/other/wings" + s), "flap1", "flap2", "flap3").build(json);
 
         new Builder(WRSounds.ENTITY_LDWYRM_IDLE.get()).subtitle("Desertwyrm Click").sounds(s -> Wyrmroost.rl("entity/lesser_desertwyrm" + s), "idle1", "idle2").build(json);
 

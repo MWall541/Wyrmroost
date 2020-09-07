@@ -82,7 +82,7 @@ public class CommonEvents
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
         if (player.isSneaking()) dragon.tame(true, player);
-        else DebugScreen.open(dragon);
+        else if (dragon.world.isRemote) DebugScreen.open(dragon);
     }
 
     @SubscribeEvent

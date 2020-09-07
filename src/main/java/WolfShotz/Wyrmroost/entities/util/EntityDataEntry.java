@@ -46,10 +46,8 @@ public class EntityDataEntry<T>
 
         public SerializerType<Optional<T>> optional()
         {
-            return new SerializerType<>(
-                    (key, nbt, value) -> value.ifPresent(j -> write.accept(key, nbt, j)),
-                    (key, nbt) -> nbt.contains(key)? Optional.of(read.apply(key, nbt)) : Optional.empty()
-            );
+            return new SerializerType<>((key, nbt, value) -> value.ifPresent(j -> write.accept(key, nbt, j)),
+                    (key, nbt) -> nbt.contains(key)? Optional.of(read.apply(key, nbt)) : Optional.empty());
         }
     }
 }

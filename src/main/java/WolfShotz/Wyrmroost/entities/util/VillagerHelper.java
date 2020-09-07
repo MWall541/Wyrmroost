@@ -66,26 +66,4 @@ public class VillagerHelper
             return new MerchantOffer(buying1, buying2, selling, maxUses, xp, priceMultiplier);
         }
     }
-
-//    private static class CDForMapTrade implements ITrade
-//    {
-//        private final String structureName;
-//        private final MapDecoration.Type type;
-//
-//        @Nullable
-//        public MerchantOffer getOffer(Entity trader, Random rand)
-//        {
-//            if (trader.world.isRemote) return null;
-//
-//            ServerWorld world = (ServerWorld) trader.world;
-//            BlockPos blockPos = world.findNearestStructure(structureName, new BlockPos(trader), 100, true);
-//            if (blockPos == null) return null;
-//
-//            ItemStack itemstack = FilledMapItem.setupNewMap(world, blockPos.getX(), blockPos.getZ(), (byte) 2, true, true);
-//            FilledMapItem.func_226642_a_(world, itemstack);
-//            MapData.addTargetDecoration(itemstack, blockPos, "+", type);
-//            itemstack.setDisplayName(new TranslationTextComponent("filled_map." + structureName.toLowerCase(Locale.ROOT)));
-//            return new MerchantOffer(new ItemStack(WRItems.COIN_DRAGON.get(), 1), new ItemStack(Items.COMPASS), itemstack, 1, 5, 0.2f);
-//        }
-//    }
 }
