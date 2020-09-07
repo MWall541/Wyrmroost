@@ -17,6 +17,7 @@ import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
@@ -47,10 +48,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -79,13 +82,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.VARINT);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS);
 
-    public final Set<String> immunes = new HashSet<>();
-    public final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
+    private final Set<String> immunes = new HashSet<>();
+    private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
     public final Optional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
-    public Animation animation = NO_ANIMATION;
+    public boolean wingsDown;
     public int sleepCooldown;
-    public int animationTick;
+    public int breedCount;
+    private Animation animation = NO_ANIMATION;
+    private int animationTick;
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -101,9 +106,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
+        registerDataEntry("BreedCount", EntityDataEntry.INTEGER, () -> breedCount, i -> breedCount = i);
         invHandler.ifPresent(i -> registerDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
-
-        setTamed(false);
     }
 
     @Override
@@ -383,7 +387,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void travel(Vec3d vec3d)
     {
-        float speed = isFlying()? (float) getAttribute(FLYING_SPEED).getValue() : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
+        float speed = getTravelSpeed();
 
         if (canPassengerSteer()) // Were being controlled
         {
@@ -413,11 +417,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (isFlying())
         {
-            moveVertical *= 0.98f;
             // Move relative to rotationYaw
             moveRelative(speed, vec3d);
             move(MoverType.SELF, getMotion());
-            setMotion(getMotion().scale(0.91f));
+            setMotion(getMotion().scale(0.8f));
 
             Vec3d motion = getMotion();
             if (motion.length() < 0.04f) // Not Moving, just hover
@@ -439,6 +442,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         super.travel(vec3d);
+    }
+
+    protected float getTravelSpeed()
+    {
+        return isFlying()? (float) getAttribute(FLYING_SPEED).getValue()
+                : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
     }
 
     public boolean shouldFly() { return canFly() && getAltitude() > getFlightThreshold(); }
@@ -666,10 +675,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean canMateWith(AnimalEntity otherAnimal)
+    public boolean canMateWith(AnimalEntity mate)
     {
-        if (!super.canMateWith(otherAnimal)) return false;
-        return !isSitting() && !((AbstractDragonEntity) otherAnimal).isSitting();
+        if (isSitting() || ((AbstractDragonEntity) mate).isSitting()) return false;
+        return super.canMateWith(mate);
     }
 
     @Override
@@ -694,21 +703,25 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void handleSleep()
     {
-        if (!isSleeping()
-                && --sleepCooldown <= 0
-                && !world.isDaytime()
-                && (!isTamed() || (isSitting() && isWithinHomeDistanceCurrentPosition()))
-                && isIdling()
-                && !isInWaterOrBubbleColumn()
-                && getRNG().nextInt(300) == 0) setSleeping(true);
-        else if (isSleeping() && world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
+        if (isSleeping())
+        {
+            if (world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
+        }
+        else
+        {
+            if (--sleepCooldown > 0) return;
+            if (world.isDaytime()) return;
+            if (isTamed() && (!isSitting() || !isWithinHomeDistanceCurrentPosition())) return;
+            if (!isIdling()) return;
+            if (getRNG().nextInt(300) == 0) setSleeping(true);
+        }
     }
 
     @Override
     protected void addPassenger(Entity passenger)
     {
         super.addPassenger(passenger);
-        if (getControllingPassenger() == passenger)
+        if (getControllingPassenger() == passenger && isOwner((LivingEntity) passenger))
         {
             clearAI();
             setSitting(false);
@@ -779,8 +792,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (entity == this) return true;
         if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
         if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return true;
-        if (entity.isOnScoreboardTeam(getTeam())) return true;
-        return entity.getType().equals(getType());
+        return entity.isOnScoreboardTeam(getTeam());
     }
 
     @Override
@@ -799,6 +811,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Override
     public void playAmbientSound() { if (!isSleeping()) super.playAmbientSound(); }
+
+    public void flapWings() { playSound(WRSounds.WING_FLAP.get(), 3, 1, true); }
 
     public void setImmune(DamageSource source) { immunes.add(source.getDamageType()); }
 
@@ -870,7 +884,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected float getJumpUpwardsMotion()
     {
-        if (canFly()) return (getJumpFactor() * 0.175f) * getHeight();
+        if (canFly()) return (getHeight() * getJumpFactor()) * 0.6f;
         else return super.getJumpUpwardsMotion();
     }
 
@@ -880,7 +894,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (!onGround) return true; // We can't lift off the ground in the air...
 
         int heightDiff = world.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) getPosX(), (int) getPosZ()) - (int) getPosY();
-        if (heightDiff > 0 && heightDiff < getFlightThreshold())
+        if (heightDiff > 0 && heightDiff <= getFlightThreshold())
             return false; // position has too low of a ceiling, can't fly here.
 
         setSitting(false);
@@ -893,7 +907,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean onLivingFall(float distance, float damageMultiplier)
     {
         if (canFly()) return false;
-        return super.onLivingFall(distance, damageMultiplier);
+        return super.onLivingFall(distance - (int) (getHeight() * 0.8), damageMultiplier);
     }
 
     public int getFlightThreshold() { return (int) getHeight(); }
@@ -901,7 +915,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * todo make a forge patch to allow this to actually work
      */
-    public void setMountCameraAngles(boolean backView) {}
+    public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event) {}
 
     public boolean isImmuneToArrows() { return false; }
 
@@ -917,7 +931,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (hasDataEntry(GENDER))
         {
             boolean isMale = isMale();
-            screen.addTooltip(new StringTextComponent(isMale? "M" : "F")
+            screen.addTooltip(new TranslationTextComponent("entity.wyrmroost.dragons.gender." + (isMale? "male" : "female"))
                     .applyTextStyle(isMale? TextFormatting.DARK_AQUA : TextFormatting.RED)
                     .getFormattedText());
         }
@@ -936,6 +950,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         EntitySize size = getType().getSize().scale(getRenderScale());
         if (isSitting() || isSleeping()) size = size.scale(1, 0.5f);
         return size;
+    }
+
+    @Override
+    protected int getExperiencePoints(PlayerEntity player)
+    {
+        return Math.max((int) ((getWidth() * getHeight()) * 0.25) + getRNG().nextInt(3), super.getExperiencePoints(player));
     }
 
     @Override
@@ -966,7 +986,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void setAnimation(Animation animation)
     {
-        if (animation == null) animation = NO_ANIMATION;
+        if (animation == null)
+            animation = NO_ANIMATION;
         setAnimationTick(0);
         this.animation = animation;
     }

@@ -25,13 +25,14 @@ public class DragonInvHandler extends ItemStackHandler
     @Override
     protected void onLoad()
     {
-        for (ItemStack stack : stacks) dragon.onInvContentsChanged(stacks.indexOf(stack), stack, true);
+        for (int i = 0; i < stacks.size(); i++) dragon.onInvContentsChanged(i, stacks.get(i), true);
     }
 
     public boolean isEmpty()
     {
         if (stacks.isEmpty()) return true;
         for (ItemStack stack : stacks) if (!stack.isEmpty()) return false;
+        stacks.clear(); // shouldn't even have empty stacks?
         return true;
     }
 
