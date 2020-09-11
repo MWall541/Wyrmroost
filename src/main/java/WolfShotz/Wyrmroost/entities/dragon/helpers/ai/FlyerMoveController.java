@@ -78,10 +78,13 @@ public class FlyerMoveController extends MovementController
 
             IAttribute attribute = dragon.isFlying()? SharedMonsterAttributes.FLYING_SPEED : SharedMonsterAttributes.MOVEMENT_SPEED;
             float speed = (float) (this.speed * mob.getAttribute(attribute).getValue());
-            float rot = (float) (MathHelper.atan2(lengthZ, lengthX) * (double) (180F / (float) Math.PI)) - 90.0F;
-            mob.rotationYaw = this.limitAngle(this.mob.rotationYaw, rot, 90f);
+            if (!dragon.isFlying())
+            {
+                float rot = (float) (MathHelper.atan2(lengthZ, lengthX) * (double) (180F / (float) Math.PI)) - 90.0F;
+                mob.rotationYaw = this.limitAngle(this.mob.rotationYaw, rot, 90f);
+            }
             mob.setAIMoveSpeed(speed);
-            mob.setMoveVertical(speed);
+            mob.setMoveVertical(lengthY > 0? speed : -speed);
 
             // handle jumping
             BlockPos blockpos = new BlockPos(mob);

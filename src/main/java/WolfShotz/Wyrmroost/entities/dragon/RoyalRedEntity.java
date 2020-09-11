@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
@@ -68,6 +69,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         setPathPriority(PathNodeType.DANGER_FIRE, 0);
         setPathPriority(PathNodeType.DAMAGE_FIRE, 0);
+
+        ignoreFrustumCheck = WRConfig.disableFrustumCheck;
     }
 
     @Override

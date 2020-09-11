@@ -106,7 +106,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
     public ItemStack getItem() { return dataManager.get(ITEM); }
 
-    private boolean hasItem() { return getItem() == ItemStack.EMPTY; }
+    private boolean hasItem() { return getItem() != ItemStack.EMPTY; }
 
     public void setItem(ItemStack item)
     {

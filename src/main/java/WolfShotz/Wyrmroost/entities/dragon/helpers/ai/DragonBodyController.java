@@ -25,7 +25,7 @@ public class DragonBodyController extends BodyController
         // No body rotations while sitting or sleeping
         if (dragon.isSleeping()) return;
 
-        // Clamp the head rotation to 70 degrees while sitting
+        // Clamp the head rotation to 70 degrees while
         if (dragon.isSitting())
         {
             clampHeadRotation(70f);

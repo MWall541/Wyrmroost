@@ -416,23 +416,10 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
 
         if (canari.isFlying())
         {
-            if (canari.getMotion().y >= 0 || canari.getMotion().normalize().length() < 1)
-            {
-                flap(wing1L, globalSpeed, 1.5f, false, 0, 0, frame, 0.5f);
-                flap(wing2L, globalSpeed, 1.2f, false, -1f, 0.6f, frame, 0.5f);
-                flap(wing1R, globalSpeed, 1.5f, true, 0, 0, frame, 0.5f);
-                flap(wing2R, globalSpeed, 1.2f, true, -1f, 0.6f, frame, 0.5f);
-            }
-            else
-            {
-                float lookY = (float) canari.getLookVec().y;
-
-                wing1L.rotateAngleY = lookY;
-                wing2L.rotateAngleY = -lookY;
-
-                wing1R.rotateAngleY = -lookY;
-                wing2R.rotateAngleY = lookY;
-            }
+            flap(wing1L, globalSpeed, 1f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(wing2L, globalSpeed, 0.75f, false, -1.5f, 0, limbSwing, limbSwingAmount);
+            flap(wing1R, globalSpeed, 1f, true, 0, 0, limbSwing, limbSwingAmount);
+            flap(wing2R, globalSpeed, 0.75f, true, -1.5f, 0, limbSwing, limbSwingAmount);
         }
         else
         {

@@ -97,7 +97,7 @@ public class WREntities
             .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == Blocks.JUNGLE_LEAVES))
             .renderer(CanariWyvernRenderer::new)
             .spawnPlacement(t -> basicSpawnConditions(t, 9, 2, 5, BiomeDictionary.getBiomes(Type.SWAMP)))
-            .build(b -> b.size(0.7f, 0.85f));
+            .build(b -> b.size(0.65f, 0.85f));
 
     public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = Builder.creature("royal_red", RoyalRedEntity::new)
             .spawnEgg(0x8a0900, 0x0)
@@ -117,7 +117,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
             .renderer(GeodeTippedArrowRenderer::new)
-            .build(b -> b.size(0.5f, 0.5f));
+            .build(b -> b.size(0.5f, 0.5f).setCustomClientFactory(GeodeTippedArrowEntity::new));
 
     public static final RegistryObject<EntityType<FireBreathEntity>> FIRE_BREATH = Builder.<FireBreathEntity>withClassification("fire_breath", FireBreathEntity::new, EntityClassification.MISC)
             .renderer(BreathWeaponRenderer::new)

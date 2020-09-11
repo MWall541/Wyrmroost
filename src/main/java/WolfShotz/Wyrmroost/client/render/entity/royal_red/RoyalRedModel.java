@@ -697,7 +697,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         if (entity.flightTimer.get() == 1) body2.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.3f;
-        if (!entity.isSleeping() && entity.getAnimation() != RoyalRedEntity.ROAR_ANIMATION)
+        if (!entity.isSleeping() && entity.getAnimation() != RoyalRedEntity.ROAR_ANIMATION && !entity.isKnockedOut())
             faceTarget(netHeadYaw, headPitch, 1, headParts);
     }
 
@@ -984,8 +984,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
         rotate(neck1, 0.3f, 0, 0);
         rotate(neck2, 0.6f, 0, 0);
-        rotate(neck3, -0.8f, 0, 0);
-        rotate(head, -0.8f, 0, 0);
+        rotate(neck3, -0.6f, 0, 0);
+        rotate(head, -0.6f, 0, 0);
 
         rotate(wingR1, 0.2f, 0, -1.1f);
         rotate(wingR2, 0.3f, 0.4f, 0);

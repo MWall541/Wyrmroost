@@ -10,13 +10,13 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerPathNavigator;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
-import WolfShotz.Wyrmroost.entities.projectile.GeodeTippedArrowEntity;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
@@ -30,7 +30,6 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -521,14 +520,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (isImmuneToArrows())
+        if (!world.isRemote && isImmuneToArrows())
         {
-            Entity attackSource = source.getImmediateSource();
-            if (attackSource instanceof AbstractArrowEntity)
-            {
-                if (attackSource instanceof GeodeTippedArrowEntity) amount *= 0.5f;
-                else return false;
-            }
+            EntityType<?> attackSource = source.getImmediateSource().getType();
+            if (attackSource == EntityType.ARROW) return false;
+            else if (attackSource == WREntities.GEODE_TIPPED_ARROW.get()) amount *= 0.5f;
         }
 
         setSleeping(false);
