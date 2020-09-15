@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
+import WolfShotz.Wyrmroost.util.FloatBuffer;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.*;
@@ -13,6 +14,7 @@ import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 
@@ -24,6 +26,7 @@ public class AlpineEntity extends AbstractDragonEntity
 {
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
+    public final FloatBuffer yawPhysics = new FloatBuffer(8);
 
     public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -79,6 +82,7 @@ public class AlpineEntity extends AbstractDragonEntity
         sitTimer.add(isSitting() || isSleeping()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
+        yawPhysics.next(MathHelper.wrapDegrees(prevRenderYawOffset - renderYawOffset));
     }
 
     @Override
@@ -101,7 +105,7 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) event.getInfo().movePosition(-0.5d, 0.75d, 0);
+        if (backView) event.getInfo().movePosition(-5d, 0.75d, 0);
         else event.getInfo().movePosition(-3, 0.3, 0);
     }
 

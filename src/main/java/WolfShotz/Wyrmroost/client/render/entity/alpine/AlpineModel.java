@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.client.render.entity.alpine;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AlpineEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
@@ -651,10 +652,11 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
     }
 
     @Override
-    public void setRotationAngles(AlpineEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setRotationAngles(AlpineEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         faceTarget(netHeadYaw, headPitch, 1, headArray);
+        if (this.entity.flightTimer.get() == 1) body1.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.4f;
     }
 
     @Override
@@ -668,7 +670,25 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         {
             if (entity.isFlying()) // flight
             {
+                chainWave(headArray, globalSpeed - 0.25f, 0.05f, 3, limbSwing, limbSwingAmount);
+                chainWave(tailArray, globalSpeed - 0.25f, -0.05f, -3, limbSwing, limbSwingAmount);
 
+                flap(wing1R, globalSpeed - 0.25f, 0.9f, false, 0, -0.6f, limbSwing, limbSwingAmount);
+                walk(wing1R, globalSpeed - 0.25f, 0.4f, false, 0.6f, 0, limbSwing, limbSwingAmount);
+                flap(wing2R, globalSpeed - 0.25f, 0.65f, false, -1f, 0.1f, limbSwing, limbSwingAmount);
+                walk(wing2R, globalSpeed - 0.25f, 0.15f, false, 0.6f, 0, limbSwing, limbSwingAmount);
+                flap(wing3R, globalSpeed - 0.25f, 0.3f, false, -1.5f, -0.2f, limbSwing, limbSwingAmount);
+                walk(wing3R, globalSpeed - 0.25f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
+                flap(wing1L, globalSpeed - 0.25f, 0.9f, true, 0, -0.6f, limbSwing, limbSwingAmount);
+                walk(wing1L, globalSpeed - 0.25f, 0.3f, false, 0.6f, 0, limbSwing, limbSwingAmount);
+                flap(wing2L, globalSpeed - 0.25f, 0.65f, true, -1f, 0.1f, limbSwing, limbSwingAmount);
+                walk(wing2L, globalSpeed - 0.25f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
+                flap(wing3L, globalSpeed - 0.25f, 0.4f, true, -1.5f, -0.2f, limbSwing, limbSwingAmount);
+                walk(wing3L, globalSpeed - 0.25f, 0.15f, false, 0.6f, 0, limbSwing, limbSwingAmount);
+
+                boolean wingsDown = wing1R.rotateAngleZ < 0.8;
+                if (!entity.wingsDown && wingsDown) entity.flapWings();
+                entity.wingsDown = wingsDown;
             }
             else // walk cycle
             {
@@ -696,8 +716,15 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
             }
         }
 
+        for (int i = 0; i < tailArray.length; i++)
+        {
+            tailArray[i].rotateAngleY = MathHelper.lerp(partialTick, entity.yawPhysics.get(i - 1), entity.yawPhysics.get(i)) * 0.01f;
+        }
+
         sit(entity.sitTimer.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
+        flight(entity.flightTimer.get(partialTick));
+
         idle(tick);
     }
 
@@ -759,5 +786,33 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
 
         for (WRModelRenderer part : headArray) rotate(part, 0.08f, 0.3f, 0);
         for (WRModelRenderer part : tailArray) rotate(part, 0, -0.35f, -0.035f);
+    }
+
+
+    private void flight(float v)
+    {
+        setTime(v);
+
+        rotate(neck1, 0.4f, 0, 0);
+        rotate(neck2, 0.48f, 0, 0);
+        rotate(neck3, 0.41f, 0, 0);
+        rotate(neck4, -0.14f, 0, 0);
+        rotate(neck5, -0.45f, 0, 0);
+        rotate(neck6, -0.5f, 0, 0);
+        rotate(head, -0.28f, 0, 0);
+
+        rotate(wing1L, 0, 1f, 0.15f);
+        rotate(wing2L, 0, -2.5f, 0.2f);
+        rotate(wing3L, 0, 2.8f, -0.3f);
+        move(feathers1L, 0, 0, 7.5f);
+        move(feathers2L, 0, 0, 7.5f);
+        move(feathers3L, 0, 0, 7.5f);
+
+        rotate(wing1R, 0, -1f, -0.15f);
+        rotate(wing2R, 0, 2.5f, -0.2f);
+        rotate(wing3R, 0, -2.8f, 0.3f);
+        move(feathers1R, 0, 0, 7.5f);
+        move(feathersR, 0, 0, 7.5f);
+        move(feathers3R, 0, 0, 7.5f);
     }
 }

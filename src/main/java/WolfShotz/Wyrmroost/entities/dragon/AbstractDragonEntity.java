@@ -678,7 +678,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public int getHorizontalFaceSpeed() { return isFlying()? 10 : super.getHorizontalFaceSpeed(); }
+    public int getHorizontalFaceSpeed() { return isFlying()? 6 : super.getHorizontalFaceSpeed(); }
 
     public boolean isRiding() { return getRidingEntity() != null; }
 
