@@ -8,7 +8,6 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.DragonBodyController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerMoveController;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerPathNavigator;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -38,6 +37,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.*;
@@ -181,7 +181,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (fly)
         {
             // make sure NOT to switch the navigator if liftoff fails
-            if (liftOff()) navigator = new FlyerPathNavigator(this);
+            if (liftOff()) navigator = new FlyingPathNavigator(this, world);
         }
         else navigator = new GroundPathNavigator(this, world);
     }

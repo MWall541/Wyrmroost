@@ -258,6 +258,31 @@
       }
     ]
   },
+  "entity.alpine.idle": {
+    "subtitle": "Alpine Growls",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/idle2"
+      }
+    ]
+  },
+  "entity.alpine.hurt": {
+    "subtitle": "Alpine Whine",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/hurt2"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/hurt3"
+      }
+    ]
+  },
   "entity.alpine.roar": {
     "subtitle": "Alpine Roar",
     "sounds": [
@@ -266,6 +291,9 @@
       },
       {
         "name": "wyrmroost:entity/alpine/roar1"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/roar2"
       }
     ]
   }

@@ -44,7 +44,7 @@ public class Wyrmroost
         WRBlocks.REGISTRY.register(bus);
         WRItems.REGISTRY.register(bus);
         WRIO.REGISTRY.register(bus);
-        WRSounds.deferred().register(bus);
+        WRSounds.REGISTRY.register(bus);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.Common.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.Client.SPEC);

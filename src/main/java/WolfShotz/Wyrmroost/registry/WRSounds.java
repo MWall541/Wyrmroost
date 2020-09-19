@@ -6,59 +6,54 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public enum WRSounds
+public class WRSounds
 {
-    WING_FLAP,
+    public static final DeferredRegister<SoundEvent> REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
 
-    ENTITY_LDWYRM_IDLE,
 
-    ENTITY_SILVERGLIDER_IDLE,
-    ENTITY_SILVERGLIDER_HURT,
-    ENTITY_SILVERGLIDER_DEATH,
+    public static final RegistryObject<SoundEvent> WING_FLAP = register("wing_flap");
 
-    ENTITY_OWDRAKE_IDLE,
-    ENTITY_OWDRAKE_ROAR,
-    ENTITY_OWDRAKE_HURT,
-    ENTITY_OWDRAKE_DEATH,
+    public static final RegistryObject<SoundEvent> ENTITY_LDWYRM_IDLE = entity("ldwyrm_idle");
 
-    ENTITY_STALKER_IDLE,
-    ENTITY_STALKER_HURT,
-    ENTITY_STALKER_DEATH,
+    public static final RegistryObject<SoundEvent> ENTITY_SILVERGLIDER_IDLE = entity("silverglider_idle");
+    public static final RegistryObject<SoundEvent> ENTITY_SILVERGLIDER_HURT = entity("silverglider_hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_SILVERGLIDER_DEATH = entity("silverglider_death");
 
-    ENTITY_BFLY_IDLE,
-    ENTITY_BFLY_ROAR,
-    ENTITY_BFLY_HURT,
-    ENTITY_BFLY_DEATH,
+    public static final RegistryObject<SoundEvent> ENTITY_OWDRAKE_IDLE = entity("owdrake_idle");
+    public static final RegistryObject<SoundEvent> ENTITY_OWDRAKE_ROAR = entity("owdrake_roar");
+    public static final RegistryObject<SoundEvent> ENTITY_OWDRAKE_HURT = entity("owdrake_hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_OWDRAKE_DEATH = entity("owdrake_death");
 
-    ENTITY_CANARI_IDLE,
-    ENTITY_CANARI_HURT,
-    ENTITY_CANARI_DEATH,
+    public static final RegistryObject<SoundEvent> ENTITY_STALKER_IDLE = entity("stalker_idle");
+    public static final RegistryObject<SoundEvent> ENTITY_STALKER_HURT = entity("stalker_hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_STALKER_DEATH = entity("stalker_death");
 
-    ENTITY_ROYALRED_IDLE,
-    ENTITY_ROYALRED_HURT,
-    ENTITY_ROYALRED_ROAR,
-    ENTITY_ROYALRED_DEATH,
-    ENTITY_ROYALRED_BREATH,
+    public static final RegistryObject<SoundEvent> ENTITY_BFLY_IDLE = entity("bfly_idle");
+    public static final RegistryObject<SoundEvent> ENTITY_BFLY_ROAR = entity("bfly_roar");
+    public static final RegistryObject<SoundEvent> ENTITY_BFLY_HURT = entity("bfly_hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_BFLY_DEATH = entity("bfly_death");
 
-    ENTITY_ALPINE_ROAR;
+    public static final RegistryObject<SoundEvent> ENTITY_CANARI_IDLE = entity("canari_idle");
+    public static final RegistryObject<SoundEvent> ENTITY_CANARI_HURT = entity("canari_hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_CANARI_DEATH = entity("canari_death");
 
-    private final RegistryObject<SoundEvent> delegate;
+    public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_IDLE = entity("royalred_idle");
+    public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_HURT = entity("royalred_hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_ROAR = entity("royalred_roar");
+    public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_DEATH = entity("royalred_death");
+    public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_BREATH = entity("royalred_breath");
 
-    WRSounds()
+    public static final RegistryObject<SoundEvent> ENTITY_ALPINE_IDLE = entity("alpine_idle");
+    public static final RegistryObject<SoundEvent> ENTITY_ALPINE_HURT = entity("alpine_hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_ALPINE_ROAR = entity("alpine_roar");
+
+    public static RegistryObject<SoundEvent> register(String name)
     {
-        String name = toString();
-        this.delegate = deferred().register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
+        return REGISTRY.register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
     }
 
-    public SoundEvent get() { return delegate.get(); }
-
-    @Override
-    public String toString() { return name().toLowerCase().replaceAll("_", "."); }
-
-    public static DeferredRegister<SoundEvent> deferred() { return Holder.SOUNDS; }
-
-    private static final class Holder
+    public static RegistryObject<SoundEvent> entity(String name)
     {
-        public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
+        return register("entity_" + name);
     }
 }

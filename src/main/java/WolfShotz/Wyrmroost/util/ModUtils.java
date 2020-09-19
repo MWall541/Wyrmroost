@@ -31,7 +31,7 @@ import java.util.Set;
  * Created by WolfShotz 7/9/19 - 00:31
  * Utility Class to help with Internationalization, ResourceLocations, etc.
  */
-public class ModUtils
+public final class ModUtils
 {
     private ModUtils() {} // NU CONSTRUCTOR
 
@@ -39,7 +39,7 @@ public class ModUtils
      * Item Properties builder
      */
     public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.ITEM_GROUP); }
-    
+
     /**
      * Block Properties builder
      */
