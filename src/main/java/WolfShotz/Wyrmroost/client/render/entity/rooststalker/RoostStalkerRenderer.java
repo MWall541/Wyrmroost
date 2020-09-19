@@ -2,12 +2,10 @@ package WolfShotz.Wyrmroost.client.render.entity.rooststalker;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.dragon.RoostStalkerEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -26,22 +24,20 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     public static final ResourceLocation BODY_XMAS = resource("body_christmas.png");
     public static final ResourceLocation BODY_GLOW = resource("body_glow.png");
     public static final ResourceLocation BODY_SPE_GLOW = resource("body_spe_glow.png");
-    public static final ResourceLocation SLEEP = resource("sleep.png");
 
     public RoostStalkerRenderer(EntityRendererManager manager)
     {
         super(manager, new RoostStalkerModel(), 0.5f);
         addLayer(new MouthItemLayer());
         addLayer(new GlowLayer(stalker -> stalker.getVariant() == -1? BODY_SPE_GLOW : BODY_GLOW));
-        addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
 
     @Nullable
     @Override
     public ResourceLocation getEntityTexture(RoostStalkerEntity entity)
     {
-        if (itsChristmasOMG) return BODY_XMAS;
-        return entity.getVariant() == -1? BODY_SPE : BODY;
+        if (entity.getVariant() == -1) return BODY_SPE;
+        return itsChristmasOMG? BODY_XMAS : BODY;
     }
 
     public static ResourceLocation resource(String png)
