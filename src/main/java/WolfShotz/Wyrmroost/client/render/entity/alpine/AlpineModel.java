@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.client.render.entity.alpine;
 
+import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AlpineEntity;
@@ -16,6 +17,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
 {
     public final WRModelRenderer[] headArray;
     public final WRModelRenderer[] tailArray;
+    private final ModelAnimator animator;
     public WRModelRenderer body1;
     public WRModelRenderer body2;
     public WRModelRenderer neck1;
@@ -635,8 +637,11 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         this.neck6.addChild(this.fin1);
         this.tail5.addChild(this.tailfin5L);
         this.tail7.addChild(this.fin14);
+
         this.headArray = new WRModelRenderer[] {neck1, neck2, neck3, neck4, neck5, neck6, head};
         this.tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8};
+
+        animator = ModelAnimator.create();
 
         setDefaultPose();
     }
@@ -655,7 +660,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
     public void setRotationAngles(AlpineEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        faceTarget(netHeadYaw, headPitch, 1, headArray);
+        if (entity.getAnimation() != AlpineEntity.ROAR_ANIMATION) faceTarget(netHeadYaw, headPitch, 1, headArray);
         if (this.entity.flightTimer.get() == 1) body1.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.4f;
     }
 
@@ -664,6 +669,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
     {
         float tick = entity.ticksExisted + partialTick;
         this.entity = entity;
+        animator.update(entity);
         resetToDefaultPose();
 
         if (!entity.isSleeping() && !entity.isSitting())
@@ -685,6 +691,12 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
                 walk(wing2L, globalSpeed - 0.25f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(wing3L, globalSpeed - 0.25f, 0.4f, true, -1.5f, -0.2f, limbSwing, limbSwingAmount);
                 walk(wing3L, globalSpeed - 0.25f, 0.15f, false, 0.6f, 0, limbSwing, limbSwingAmount);
+
+                walk(leg1L, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
+                walk(leg1R, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
+                walk(backleg1L, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
+                walk(backleg1R, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
+
 
                 boolean wingsDown = wing1R.rotateAngleZ < 0.8;
                 if (!entity.wingsDown && wingsDown) entity.flapWings();
@@ -716,14 +728,11 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
             }
         }
 
-        for (int i = 0; i < tailArray.length; i++)
-        {
-            tailArray[i].rotateAngleY = MathHelper.lerp(partialTick, entity.yawPhysics.get(i - 1), entity.yawPhysics.get(i)) * 0.01f;
-        }
-
         sit(entity.sitTimer.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
         flight(entity.flightTimer.get(partialTick));
+
+        if (animator.setAnimation(AlpineEntity.ROAR_ANIMATION)) roarAnim(tick);
 
         idle(tick);
     }
@@ -814,5 +823,68 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         move(feathers1R, 0, 0, 7.5f);
         move(feathersR, 0, 0, 7.5f);
         move(feathers3R, 0, 0, 7.5f);
+
+        rotate(leg1L, 0.3f, 0, 0);
+        rotate(leg2L, 0.1f, 0, 0);
+        rotate(foot1L, 1.25f, 0, 0);
+        rotate(foot2L, 0.8f, 0, 0);
+
+        rotate(backleg1L, 1f, 0, 0);
+        rotate(backleg2L, -0.5f, 0, 0);
+        rotate(backleg3L, 0.2f, 0, 0);
+        rotate(backfoot1L, 1f, 0, 0);
+        rotate(backfoot2L, 0.9f, 0, 0);
+
+        rotate(leg1R, 0.3f, 0, 0);
+        rotate(leg2R, 0.1f, 0, 0);
+        rotate(foot1R, 1.25f, 0, 0);
+        rotate(foot2R, 0.8f, 0, 0);
+
+        rotate(backleg1R, 1f, 0, 0);
+        rotate(backleg2R, -0.5f, 0, 0);
+        rotate(backleg3R, 0.2f, 0, 0);
+        rotate(backfoot1R, 1f, 0, 0);
+        rotate(backfoot2R, 0.9f, 0, 0);
+    }
+
+    private void roarAnim(float frame)
+    {
+        animator.startKeyframe(12);
+
+        if (!entity.isFlying())
+        {
+            animator.rotate(neck1, -0.1f, 0, 0);
+            animator.rotate(neck2, 0.35f, 0, 0);
+            animator.rotate(neck3, 0.35f, 0, 0);
+            animator.rotate(neck4, -0.15f, 0, 0);
+            animator.rotate(neck5, -0.5f, 0, 0);
+            animator.rotate(neck6, -0.4f, 0, 0);
+            animator.rotate(head, -0.3f, 0, 0);
+
+            animator.rotate(wing1L, -1, 1f, 0);
+            animator.rotate(wing2L, 0, -2f, 0);
+            animator.rotate(wing3L, 0, 3f, 0);
+            animator.move(feathers1L, 0, 0, 7.5f);
+            animator.move(feathers2L, 0, 0, 7.5f);
+            animator.move(feathers3L, 0, 0, 7.5f);
+
+            animator.rotate(wing1R, -1, -1f, 0);
+            animator.rotate(wing2R, 0, 2f, 0);
+            animator.rotate(wing3R, 0, -3f, 0);
+            animator.move(feathersR, 0, 0, 7.5f);
+            animator.move(feathers1R, 0, 0, 7.5f);
+            animator.move(feathers3R, 0, 0, 7.5f);
+        }
+
+        animator.rotate(jaw, 0.8f, 0, 0);
+        int tick = entity.getAnimationTick();
+        if (tick < 71)
+        {
+            chainFlap(headArray, globalSpeed, 0.1f, 2.5, frame, 0.5f);
+            chainSwing(headArray, globalSpeed, 0.035f, 1, frame, 0.5f);
+        }
+        animator.endKeyframe();
+        animator.setStaticKeyframe(60);
+        animator.resetKeyframe(12);
     }
 }

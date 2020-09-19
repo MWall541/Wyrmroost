@@ -5,7 +5,10 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
-import WolfShotz.Wyrmroost.util.FloatBuffer;
+import WolfShotz.Wyrmroost.entities.util.animation.Animation;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
+import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.*;
@@ -13,20 +16,23 @@ import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.IItemProvider;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class AlpineEntity extends AbstractDragonEntity
 {
+    public static final Animation ROAR_ANIMATION = new Animation(84);
+
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
-    public final FloatBuffer yawPhysics = new FloatBuffer(8);
 
     public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -79,10 +85,31 @@ public class AlpineEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
+
         sitTimer.add(isSitting() || isSleeping()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
-        yawPhysics.next(MathHelper.wrapDegrees(prevRenderYawOffset - renderYawOffset));
+
+        if (!world.isRemote && noActiveAnimation() && !isSleeping() && !isChild() && getRNG().nextDouble() < 0.005)
+            AnimationPacket.send(this, ROAR_ANIMATION);
+
+        if (getAnimation() == ROAR_ANIMATION)
+        {
+            int tick = getAnimationTick();
+            switch (tick)
+            {
+                case 0:
+                    playSound(WRSounds.ENTITY_ALPINE_ROAR.get(), 3f, 1f);
+                    break;
+                case 25:
+                    for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get() && ((AlpineEntity) e).noActiveAnimation()))
+                        ((AlpineEntity) entity).setAnimation(ROAR_ANIMATION);
+                    break;
+                default:
+                    break;
+            }
+
+        }
     }
 
     @Override
@@ -113,11 +140,22 @@ public class AlpineEntity extends AbstractDragonEntity
     public int getVariantForSpawn() { return getRNG().nextInt(6); }
 
     @Override
-    protected boolean canBeRidden(Entity entityIn) { return true; }
+    protected boolean canBeRidden(Entity entity) { return entity instanceof LivingEntity && isOwner((LivingEntity) entity); }
 
     @Override
     public Collection<? extends IItemProvider> getFoodItems() { return ImmutableSet.of(Items.HONEYCOMB, Items.HONEY_BOTTLE); }
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height * 1.25f; }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_ALPINE_IDLE.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_ALPINE_ROAR.get(); }
+
+    @Override
+    public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION}; }
 }
