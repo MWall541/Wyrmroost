@@ -770,7 +770,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         sleep(entity.sleepTimer.get(partialTicks));
         knockout(entity.knockOutTimer.get(partialTicks));
 
-        if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation();
+        if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation(frame);
         if (animator.setAnimation(RoyalRedEntity.SLAP_ATTACK_ANIMATION)) slapAttackAnim();
         if (animator.setAnimation(RoyalRedEntity.BITE_ATTACK_ANIMATION)) biteAttackAnim();
         idle(frame);
@@ -1027,7 +1027,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         }
     }
 
-    private void roarAnimation()
+    private void roarAnimation(float frame)
     {
         animator.startKeyframe(10);
 
@@ -1046,20 +1046,26 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
             animator.rotate(fingerR1part1, 0, -0.3f, 0);
             animator.rotate(fingerR3part1, 0, 0.3f, 0);
             animator.rotate(fingerR4part1, 0, 0.5f, 0);
+
+            animator.rotate(body1, 0.3f, 0, 0);
+
+            animator.rotate(neck1, 0.3f, 0, 0);
+            animator.rotate(neck2, 0.2f, 0, 0);
+            animator.rotate(neck3, -0.5f, 0, 0);
+            animator.rotate(head, -0.4f, 0, 0);
         }
 
         animator.rotate(palmL, 0, 0, -0.3f);
         animator.rotate(palmR, 0, 0, 0.3f);
 
-        animator.rotate(body1, 0.3f, 0, 0);
-
-        animator.rotate(neck1, 0.3f, 0, 0);
-        animator.rotate(neck2, 0.2f, 0, 0);
-        animator.rotate(neck3, -0.5f, 0, 0);
-        animator.rotate(head, -0.4f, 0, 0);
-
         animator.rotate(jaw, 0.8f, 0, 0);
 
+        int tick = entity.getAnimationTick();
+        if (tick > 5 && tick < 60)
+        {
+            chainFlap(headParts, globalSpeed, 0.2f, 2.5, frame, 0.5f);
+            chainSwing(headParts, globalSpeed, 0.065f, 1, frame, 0.5f);
+        }
         for (WRModelRenderer tailPart : tailParts) animator.rotate(tailPart, 0.08f, 0, 0);
 
         animator.endKeyframe();
