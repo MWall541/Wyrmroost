@@ -110,9 +110,18 @@ public class BreathWeaponEntity extends Entity implements IEntityAdditionalSpawn
 
             Direction dir = result.getFace();
 
-            if (dir.getAxis() == Direction.Axis.X) accelerationX = 0;
-            else if (dir.getAxis() == Direction.Axis.Y) accelerationY = 0;
-            else if (dir.getAxis() == Direction.Axis.Z) accelerationZ = 0;
+            switch (dir.getAxis())
+            {
+                case X:
+                    accelerationX = 0;
+                    break;
+                case Y:
+                    accelerationY = 0;
+                    break;
+                case Z:
+                    accelerationZ = 0;
+                    break;
+            }
 
             setMotion(Vec3d.ZERO);
 

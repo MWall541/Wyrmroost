@@ -127,7 +127,7 @@ public class CommonGoalWrappers
      * @param filter    if the mob needs to be specific bcus were picky
      * @param distance  distance to check
      * @param nearSpeed walk away speed
-     * @param farSpeed  OMG HE'S CLOSE RUN FASTER
+     * @param farSpeed  OMG THEYRE CLOSE RUN FASTER
      */
     public static <T extends LivingEntity> AvoidEntityGoal<T> nonTamedAvoidGoal(TameableEntity tameable, Class<T> avoiding, Predicate<LivingEntity> filter, float distance, float nearSpeed, float farSpeed)
     {

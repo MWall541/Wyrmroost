@@ -147,7 +147,7 @@ public class SoundData implements IDataProvider
 
         public void build(JsonObject soundsFile)
         {
-            soundsFile.add(sound.getName().getPath().replace("_", "."), json);
+            soundsFile.add(sound.getName().getPath(), json);
             registered.add(sound);
         }
     }

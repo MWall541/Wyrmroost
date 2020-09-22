@@ -51,7 +51,7 @@ public class SlotBuilder extends SlotItemHandler
         return this;
     }
 
-    public SlotBuilder only(Item item) { return only(s -> s.getItem() == item); }
+    public SlotBuilder only(IItemProvider item) { return only(s -> s.getItem() == item); }
 
     public SlotBuilder only(Class<? extends IItemProvider> clazz)
     {

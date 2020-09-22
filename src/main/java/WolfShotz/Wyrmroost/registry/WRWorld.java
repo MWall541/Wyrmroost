@@ -15,15 +15,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class WRWorld
 {
-//    public static final DeferredRegister<Feature<?>> FEATURES = new DeferredRegister<>(ForgeRegistries.FEATURES, Wyrmroost.MOD_ID);
-
-//    public static final RegistryObject<Feature<NoFeatureConfig>> CANARI_TREE_FEATURE = feature("canari_tree_structure", () -> new TreeFeature(NoFeatureConfig::deserialize, true, 3, WRBlocks.CANARI_LOG.get().getDefaultState(), WRBlocks.CANARI_LEAVES.get().getDefaultState(), false));
-
-//    public static final RegistryObject<Structure<NoFeatureConfig>> CANARI_TREE_STRUCTURE = feature("canari_tree", CanariTreeStructure::new);
-
-    // Structure Pieces are not a forge registry, so we don't have to be IMC slave bitches and register on vanilla accord:
-//    public static final IStructurePieceType CANARI_TREE_PIECE = structurePiece("canari_tree", CanariTreePiece::new);
-
     public static void setupWorld()
     {
         for (Biome biome : ForgeRegistries.BIOMES)
@@ -37,7 +28,7 @@ public class WRWorld
             if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.END)) // end features
             {
                 oreFeature(biome, Feature.EMERALD_ORE, new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState()), Placement.RANDOM_COUNT_RANGE, new CountRangeConfig(1, 0, 0, 256));
-                return;
+                continue;
             }
 
             // overworld features

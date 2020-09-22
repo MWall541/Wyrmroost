@@ -82,7 +82,7 @@ public class WREntities
             .spawnEgg(0x17283C, 0x7A6F5A)
             .dragonEgg(new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater))
             .renderer(ButterflyLeviathanRenderer::new)
-            .spawnPlacement(ButterflyLeviathanEntity.getSpawnConditions())
+//            .spawnPlacement(ButterflyLeviathanEntity.getSpawnConditions())
             .build(b -> b.size(4f, 3f));
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = Builder.creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)

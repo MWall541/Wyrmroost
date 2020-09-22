@@ -19,7 +19,7 @@ public class WRConfig
     public static boolean disableFrustumCheck = true;
 
     // Server
-    public static double fireBreathFlammability = 1.0f;
+    public static double fireBreathFlammability = 0.8d;
     public static int homeRadius = 16;
     public static double dfdBabyChance = 0.4d;
     private static boolean respectMobGriefing;
@@ -130,7 +130,7 @@ public class WRConfig
                     .defineInRange("dfdBabyChance", 0.3d, 0, 1d);
             breathFlammability = builder.comment("Base Flammability for Dragon Fire Breath. A value of 0 will disable fire block damage completely.")
                     .translation("config.wyrmroost.breathFlammability")
-                    .defineInRange("breathFlammability", 1.0, 0.0, 1.0);
+                    .defineInRange("breathFlammability", 0.8, 0.0, 1.0);
             builder.push("griefing");
             respectMobGriefing = builder.comment("If True, Dragons will respect the Minecraft MobGriefing Gamerule. Else, follow \"dragonGriefing\" option")
                     .translation("config.wyrmroost.respectMobGriefing")

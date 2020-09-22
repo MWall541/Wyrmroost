@@ -561,6 +561,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
 
+    public boolean isOwner(Entity entity) { return entity instanceof LivingEntity && entity == getOwner(); }
+
     @Override
     public BlockPos getHomePosition() { return getHomePos().orElse(BlockPos.ZERO); }
 

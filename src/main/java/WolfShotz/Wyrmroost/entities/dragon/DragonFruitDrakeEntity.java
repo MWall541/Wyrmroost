@@ -189,10 +189,11 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     @Nullable
     @Override
-    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag)
     {
-        if (getRNG().nextDouble() <= WRConfig.dfdBabyChance) setGrowingAge(getEggProperties().getGrowthTime());
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        if (spawnData == null) spawnData = new AgeableData();
+        ((AgeableData) spawnData).setBabySpawnProbability((float) WRConfig.dfdBabyChance);
+        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnData, dataTag);
     }
 
     @Override

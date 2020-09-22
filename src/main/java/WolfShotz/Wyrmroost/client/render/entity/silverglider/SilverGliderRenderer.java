@@ -53,7 +53,8 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         if (sg.getVariant() == -1) return BODY_SPE_GLOW;
         if (!sg.isMale()) return FEMALE_GLOW;
         int index = sg.getVariant() + 3;
-        if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = resource("male_" + index + "_glow.png");
+        if (MALE_TEXTURES[index] == null)
+            return MALE_TEXTURES[index] = resource("male_" + sg.getVariant() + "_glow.png");
         return MALE_TEXTURES[index];
     }
 }

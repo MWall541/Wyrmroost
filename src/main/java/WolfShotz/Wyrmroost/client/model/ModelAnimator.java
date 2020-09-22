@@ -2,10 +2,13 @@ package WolfShotz.Wyrmroost.client.model;
 
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ModelAnimator
 {
@@ -13,7 +16,6 @@ public class ModelAnimator
     private int prevTempTick;
     private boolean correctAnimation = false;
     private IAnimatedEntity entity;
-    private boolean keyFrameInverted = false;
     private final HashMap<WRModelRenderer, BoxPosCache> boxPosCache = new HashMap<>();
     private final HashMap<WRModelRenderer, BoxPosCache> prevPosCache = new HashMap<>();
 
@@ -48,11 +50,6 @@ public class ModelAnimator
         }
     }
 
-    public void invertKeyframe(boolean invert)
-    {
-        keyFrameInverted = invert;
-    }
-
     public void setStaticKeyframe(int duration)
     {
         startKeyframe(duration);
@@ -67,23 +64,11 @@ public class ModelAnimator
 
     public void rotate(WRModelRenderer box, float x, float y, float z)
     {
-        if (keyFrameInverted)
-        {
-            x = -x;
-            y = -y;
-            z = -z;
-        }
         if (correctAnimation) getPosCache(box).addRotation(x, y, z);
     }
 
     public void move(WRModelRenderer box, float x, float y, float z)
     {
-        if (keyFrameInverted)
-        {
-            x = -x;
-            y = -y;
-            z = -z;
-        }
         if (correctAnimation) getPosCache(box).addOffset(x, y, z);
     }
 
@@ -95,7 +80,6 @@ public class ModelAnimator
     public void endKeyframe()
     {
         endKeyframe(false);
-        keyFrameInverted = false;
     }
     
     private void endKeyframe(boolean stationary)
@@ -107,9 +91,10 @@ public class ModelAnimator
             {
                 if (stationary)
                 {
-                    for (WRModelRenderer box : prevPosCache.keySet())
+                    for (Map.Entry<WRModelRenderer, BoxPosCache> entry : prevPosCache.entrySet())
                     {
-                        BoxPosCache cache = prevPosCache.get(box);
+                        ModelRenderer box = entry.getKey();
+                        BoxPosCache cache = entry.getValue();
                         box.rotateAngleX += cache.getRotationX();
                         box.rotateAngleY += cache.getRotationY();
                         box.rotateAngleZ += cache.getRotationZ();
@@ -120,13 +105,14 @@ public class ModelAnimator
                 }
                 else
                 {
-                    float tick = ((float) (animationTick - prevTempTick) + Minecraft.getInstance().getRenderPartialTicks()) / (float) (tempTick - prevTempTick);
-                    float inc = MathHelper.sin((float) ((double) tick * 3.141592653589793D / 2.0D));
+                    float tick = ((float) (animationTick - prevTempTick) + Minecraft.getInstance().getRenderPartialTicks()) / (tempTick - prevTempTick);
+                    float inc = MathHelper.sin(tick * Mafs.PI / 2f);
                     float dec = 1.0F - inc;
 
-                    for (WRModelRenderer box : prevPosCache.keySet())
+                    for (Map.Entry<WRModelRenderer, BoxPosCache> entry : prevPosCache.entrySet())
                     {
-                        BoxPosCache cache = prevPosCache.get(box);
+                        ModelRenderer box = entry.getKey();
+                        BoxPosCache cache = entry.getValue();
                         box.rotateAngleX += dec * cache.getRotationX();
                         box.rotateAngleY += dec * cache.getRotationY();
                         box.rotateAngleZ += dec * cache.getRotationZ();
@@ -135,9 +121,10 @@ public class ModelAnimator
                         box.rotationPointZ += dec * cache.getOffsetZ();
                     }
 
-                    for (WRModelRenderer box : boxPosCache.keySet())
+                    for (Map.Entry<WRModelRenderer, BoxPosCache> entry : boxPosCache.entrySet())
                     {
-                        BoxPosCache cache = boxPosCache.get(box);
+                        ModelRenderer box = entry.getKey();
+                        BoxPosCache cache = entry.getValue();
                         box.rotateAngleX += inc * cache.getRotationX();
                         box.rotateAngleY += inc * cache.getRotationY();
                         box.rotateAngleZ += inc * cache.getRotationZ();

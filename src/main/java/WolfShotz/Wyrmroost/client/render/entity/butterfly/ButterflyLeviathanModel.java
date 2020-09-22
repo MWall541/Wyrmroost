@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.entities.dragon.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -16,7 +15,6 @@ import net.minecraft.util.math.MathHelper;
  */
 public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEntity>
 {
-    private final WRModelRenderer[] headArray;
     public WRModelRenderer body1;
     public WRModelRenderer body2;
     public WRModelRenderer neck1;
@@ -67,7 +65,9 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     public WRModelRenderer bottomWingFinMembraneL1;
     public WRModelRenderer bottomWingFinMembraneL2;
     public WRModelRenderer bottomWingFinMembraneL3;
+
     public WRModelRenderer[] tailArray;
+    public final WRModelRenderer[] headArray;
 
     public ModelAnimator animator;
 
@@ -314,192 +314,84 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     }
 
     @Override
-    public void setRotationAngles(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setRotationAngles(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (entity.areEyesInFluid(FluidTags.WATER) && !entityIn.isSitting())
+        if (entity.canSwim())
+        {
             body1.rotateAngleX = headPitch * (Mafs.PI / 180f);
-        else faceTarget(netHeadYaw, headPitch, 1, head, neck3, neck2, neck1);
+            headPitch = 0;
+        }
+        faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
 
-    private float globalSpeed = 0.5f;
-    private float globalDegree = 0.5f;
-
     @Override
-    public void setLivingAnimations(ButterflyLeviathanEntity entityIn, float limbSwing, float limbSwingAmount, float partialTick)
+    public void setLivingAnimations(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float partialTick)
     {
-        entity = entityIn;
-        float frame = entity.ticksExisted + partialTick;
-        globalDegree = 0.5f;
-        globalSpeed = 0.5f;
-
+        this.entity = entity;
         resetToDefaultPose();
-        animator.update(entityIn);
-        setInitialPositions();
+        animator.update(entity);
 
-        if (!entity.isSitting())
-        {
-            if (entity.isInWater())
-            {
-                chainSwing(tailArray, globalSpeed - 0.1f, globalDegree - 0.4f, -2, limbSwing, limbSwingAmount);
-                chainSwing(headArray, globalSpeed - 0.2f, globalDegree - 0.4f, 3f, limbSwing, limbSwingAmount);
-                walk(legThighL1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
-                walk(legThighR1, globalSpeed - 0.4f, 0.1f, false, 0, 0, limbSwing, limbSwingAmount);
+        if (animator.setAnimation(ButterflyLeviathanEntity.ROAR_ANIMATION)) roarAnim(partialTick);
+        if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION)) conduitAnim(partialTick);
 
-                float wingSpeed = globalSpeed - 0.37f;
-
-                flap(topWingFinPhalangeL1, wingSpeed, globalDegree + 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
-                flap(topWingFinPhalangeL2, wingSpeed, globalDegree - 0.1f, false, 1, -0.2f, limbSwing, limbSwingAmount);
-                flap(topWingFinMembrane3L, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
-
-                flap(bottomWingFinPhalangeL1, wingSpeed, globalDegree - 0.1f, false, 0, 0.25f, limbSwing, limbSwingAmount);
-                flap(bottomWingFinPhalangeL2, wingSpeed, globalDegree - 0.1f, true, 1, 0.2f, limbSwing, limbSwingAmount);
-                flap(bottomWingFinMembraneL3, wingSpeed, globalDegree - 0.35f, true, 2, 0, limbSwing, limbSwingAmount);
-
-                flap(topWingFinPhalangeR1, wingSpeed, globalDegree + 0.1f, true, 0, 0.25f, limbSwing, limbSwingAmount);
-                flap(topWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, -0.2f, limbSwing, limbSwingAmount);
-                flap(topWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
-
-                flap(bottomWingFinPhalangeR1, wingSpeed, globalDegree - 0.1f, true, 0, 0.25f, limbSwing, limbSwingAmount);
-                flap(bottomWingFinPhalangeR2, wingSpeed, globalDegree - 0.1f, false, 1, 0, limbSwing, limbSwingAmount);
-                flap(bottomWingFinMembraneR3, wingSpeed, globalDegree - 0.35f, false, 2, 0, limbSwing, limbSwingAmount);
-            }
-            else if (Math.abs(entity.getMotion().y) < 0.09)
-            {
-                flap(bottomWingFinPhalangeL1, globalSpeed - 0.1f, 0.5f, true, 0.75f, -0.25f, limbSwing, limbSwingAmount);
-                swing(bottomWingFinPhalangeL1, globalSpeed - 0.1f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
-                flap(bottomWingFinPhalangeL2, globalSpeed - 0.1f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
-                walk(bottomWingFinPhalangeL2, globalSpeed - 0.1f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
-
-                flap(bottomWingFinPhalangeR1, globalSpeed - 0.1f, 0.5f, true, 0.75f, 0.25f, limbSwing, limbSwingAmount);
-                swing(bottomWingFinPhalangeR1, globalSpeed - 0.1f, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
-                flap(bottomWingFinPhalangeR2, globalSpeed - 0.1f, 1f, false, 0.5f, 0, limbSwing, limbSwingAmount);
-                walk(bottomWingFinPhalangeR2, globalSpeed - 0.1f, 0, false, 0.5f, 0.5f, limbSwing, limbSwingAmount);
-            }
-        }
-
-        if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION) || animator.setAnimation(ButterflyLeviathanEntity.ROAR_ANIMATION))
-            roarAnim();
-        if (animator.setAnimation(ButterflyLeviathanEntity.BITE_ANIMATION)) biteAnim();
-
-        idle(frame);
+        beach(entity.beachedTimer.get(partialTick));
     }
 
-    private void setInitialPositions()
+    private void roarAnim(float partialTick)
     {
-        if (!entity.isUnderWater())
-        {
-            neck1.rotateAngleX = -0.6f;
-            neck2.rotateAngleX = 0.15f;
-            neck3.rotateAngleX = 0.2f;
-            head.rotateAngleX = 0.3f;
-
-            topWingFinPhalangeL1.rotateAngleY = 4.25f;
-            topWingFinPhalangeL2.rotateAngleY = 0.5f;
-            bottomWingFinPhalangeL1.rotateAngleY = -0.5f;
-            bottomWingFinPhalangeL1.rotateAngleZ = -0.6f;
-            bottomWingFinPhalangeL2.rotateAngleY = 0.7f;
-            bottomWingFinPhalangeL2.rotateAngleZ = 0.6f;
-            bottomWingFinPhalangeL2.rotateAngleX = 0.2f;
-
-            topWingFinPhalangeR1.rotateAngleY = -1.05f;
-            topWingFinPhalangeR2.rotateAngleY = -0.5f;
-            bottomWingFinPhalangeR1.rotateAngleY = 0.5f;
-            bottomWingFinPhalangeR1.rotateAngleZ = 0.6f;
-            bottomWingFinPhalangeR2.rotateAngleY = -0.7f;
-            bottomWingFinPhalangeR2.rotateAngleZ = -0.6f;
-            bottomWingFinPhalangeR2.rotateAngleX = 0.2f;
-        }
-
-        if (!entity.isInWater())
-        {
-            legThighL1.rotateAngleX = -1.55f;
-            legThighL1.rotateAngleY = 0.5f;
-            legSegmentL1.rotateAngleX = 1.6f;
-            legSegmentL2.rotateAngleX = -1.6f;
-            footL.rotateAngleX = 0f;
-
-            legThighR1.rotateAngleX = -1.55f;
-            legThighR1.rotateAngleY = -0.5f;
-            legSegmentR1.rotateAngleX = 1.6f;
-            legSegmentR2.rotateAngleX = -1.6f;
-            footR.rotateAngleX = 0f;
-
-            if (entity.isSitting())
-            {
-                bottomWingFinPhalangeL1.rotateAngleY = 0.75f;
-                bottomWingFinPhalangeL2.rotateAngleX = 0.1f;
-                bottomWingFinPhalangeL2.rotateAngleZ = -0.1f;
-
-                bottomWingFinPhalangeR1.rotateAngleY = -0.75f;
-                bottomWingFinPhalangeR2.rotateAngleX = 0.1f;
-                bottomWingFinPhalangeR2.rotateAngleZ = 0.1f;
-            }
-        }
+        animator.startKeyframe(10);
+        animator.rotate(neck1, -0.3f, 0, 0);
+        animator.rotate(neck2, 0.1f, 0, 0);
+        animator.rotate(neck3, 0.2f, 0, 0);
+        animator.rotate(head, 0.1f, 0, 0);
+        animator.endKeyframe();
+        animator.startKeyframe(5);
+        animator.rotate(neck1, -0.3f, 0, 0);
+        animator.rotate(mouthTop, -0.3f, 0, 0);
+        animator.rotate(mouthBottom, 0.3f, 0, 0);
+        animator.endKeyframe();
+        animator.setStaticKeyframe(43);
+        if (entity.getAnimationTick() > 11)
+            chainSwing(headArray, globalSpeed - 0.4f, 0.2f, -2, entity.getAnimationTick() - 12 + partialTick, 0.5f);
+        animator.resetKeyframe(6);
     }
 
-    @Override
-    public void idle(float frame)
-    {
-        if (!entity.isUnderWater())
-        {
-            flap(topWingFinPhalangeL1, 0.05f, 0.1f, false, 0, 0, frame, 0.5f);
-            swing(topWingFinPhalangeL1, 0.045f, 0.025f, false, 0.5f, 0, frame, 0.5f);
-            swing(topWingFinPhalangeL2, 0.045f, 0.05f, false, 0.75f, 0, frame, 0.5f);
-
-            flap(topWingFinPhalangeR1, 0.05f, 0.1f, true, 0, 0, frame, 0.5f);
-            swing(topWingFinPhalangeR1, 0.045f, 0.025f, true, 0.5f, 0, frame, 0.5f);
-            swing(topWingFinPhalangeR2, 0.045f, 0.05f, true, 0.75f, 0, frame, 0.5f);
-
-            swing(bottomWingFinPhalangeL1, globalSpeed - 0.45f, 0.05f, false, 0, 0, frame, 0.5f);
-            swing(bottomWingFinPhalangeL2, globalSpeed - 0.45f, -0.1f, false, 0, 0, frame, 0.5f);
-            walk(bottomWingFinPhalangeL2, globalSpeed - 0.45f, -0.05f, false, 0, 0, frame, 0.5f);
-
-            swing(bottomWingFinPhalangeR1, 0.05f, 0.05f, true, 0, 0, frame, 0.5f);
-            swing(bottomWingFinPhalangeR2, 0.05f, -0.1f, true, 0, 0, frame, 0.5f);
-            walk(bottomWingFinPhalangeR2, 0.05f, -0.05f, false, 0, 0, frame, 0.5f);
-        }
-
-        globalDegree = 0.5f;
-        chainWave(headArray, globalSpeed - 0.45f, globalDegree - 0.46f, entity.isUnderWater()? 3 : -3, frame, 0.5f);
-        walk(mouthBottom, globalSpeed - 0.45f, 0.15f, false, -0.6f, 0.15f, frame, 0.5f);
-
-        float degree = entity.isInWater()? 0.1f : 0.6f;
-        chainSwing(tailArray, globalSpeed - 0.47f, degree, -2, frame, 0.5f);
-        chainWave(tailArray, globalSpeed - 0.47f, 0.05f, -2, frame, 0.5f);
-
-    }
-
-    public void roarAnim() // 46
+    private void conduitAnim(float partialTick)
     {
         animator.startKeyframe(8);
-        for (WRModelRenderer box : headArray)
-        {
-            animator.rotate(box, -0.15f, 0, 0);
-        }
-        animator.rotate(mouthBottom, 0.5f, 0, 0);
-        animator.rotate(topWingFinPhalangeL1, 0, -0.2f, 0);
-        animator.rotate(topWingFinPhalangeL2, 0, 0, -0.5f);
-        animator.rotate(topWingFinPhalangeR1, 0, 0.2f, 0);
-        animator.rotate(topWingFinPhalangeR2, 0, 0, -0.5f);
-        animator.rotate(headFrillL, 0, 0, 0.8f);
-        animator.rotate(headFrillR, 0, 0, -0.8f);
+        animator.rotate(neck1, -0.3f, 0, 0);
+        animator.rotate(mouthTop, -0.3f, 0, 0);
+        animator.rotate(mouthBottom, 0.3f, 0, 0);
         animator.endKeyframe();
-        animator.setStaticKeyframe(30);
+        animator.setStaticKeyframe(43);
+        chainSwing(headArray, globalSpeed - 0.4f, 0.2f, -2, entity.getAnimationTick() - 1 + partialTick, 0.5f);
         animator.resetKeyframe(8);
     }
 
-    public void biteAnim() // 20
+    private void beach(float v)
     {
-        animator.startKeyframe(10);
-        animator.rotate(neck1, -0.4f, 0, 0);
-        animator.rotate(head, 0.4f, 0, 0);
-        animator.rotate(mouthBottom, 0.65f, 0, 0);
-        animator.endKeyframe();
-        animator.startKeyframe(4);
-        animator.rotate(neck1, 0.4f, 0, 0);
-        animator.endKeyframe();
-        animator.resetKeyframe(5);
-    }
+        setTime(v);
 
+        rotate(neck1, -0.6f, 0, 0);
+        rotate(neck2, 0.15f, 0, 0);
+        rotate(neck3, 0.2f, 0, 0);
+        rotate(head, 0.3f, 0, 0);
+
+        rotate(topWingFinPhalangeL1, 0, 4.25f, 0);
+        rotate(topWingFinPhalangeL2, 0, 0.5f, 0);
+        rotate(bottomWingFinPhalangeL1, 0, -0.5f, 0);
+        rotate(bottomWingFinPhalangeL1, 0, 0, -0.6f);
+        rotate(bottomWingFinPhalangeL2, 0, 0.7f, 0);
+        rotate(bottomWingFinPhalangeL2, 0, 0, 0.6f);
+        rotate(bottomWingFinPhalangeL2, 0.2f, 0, 0);
+
+        rotate(topWingFinPhalangeR1, 0, -1.05f, 0);
+        rotate(topWingFinPhalangeR2, 0, 0.5f, 0);
+        rotate(bottomWingFinPhalangeR1, 0, 0.5f, 0);
+        rotate(bottomWingFinPhalangeR1, 0, 0, 0.6f);
+        rotate(bottomWingFinPhalangeR2, 0, -0.7f, 0);
+        rotate(bottomWingFinPhalangeR2, 0, 0, -0.6f);
+        rotate(bottomWingFinPhalangeR2, 0.2f, 0, 0);
+    }
 }
