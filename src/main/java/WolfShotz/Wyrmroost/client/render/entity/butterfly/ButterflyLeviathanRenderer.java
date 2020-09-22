@@ -42,12 +42,6 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         addLayer(new ConduitLayer());
     }
 
-    @Override
-    protected void preRenderCallback(ButterflyLeviathanEntity entity, MatrixStack ms, float partialTicks)
-    {
-        super.preRenderCallback(entity, ms, partialTicks);
-    }
-
     @Nullable
     @Override
     public ResourceLocation getEntityTexture(ButterflyLeviathanEntity entity)
