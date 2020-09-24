@@ -8,6 +8,8 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
@@ -15,6 +17,7 @@ import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.datasync.DataParameter;
@@ -28,6 +31,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -39,11 +43,13 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class ButterflyLeviathanEntity extends AbstractDragonEntity
 {
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.createKey(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
-    public static final Animation ROAR_ANIMATION = new Animation(64);
+    public static final Animation LIGHTNING_ANIMATION = new Animation(64);
     public static final Animation CONDUIT_ANIMATION = new Animation(59);
+    public static final Animation BITE_ANIMATION = new Animation(0);
     public static final int CONDUIT_SLOT = 0;
 
     public final TickFloat beachedTimer = new TickFloat().setLimit(0, 1);
+    public int lightningCooldown;
 
     public ButterflyLeviathanEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -53,6 +59,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
         setPathPriority(PathNodeType.WATER, 0);
         setImmune(DamageSource.LIGHTNING_BOLT);
+        setImmune(DamageSource.IN_FIRE);
 
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
@@ -81,6 +88,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
+        if (lightningCooldown > 0) --lightningCooldown;
 
 //        boolean beached = !isInWater() && ;
 //        beachedTimer.add(beached? 0.1f : -0.1f);
@@ -88,7 +96,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         Vec3d conduitPos = getConduitPos();
         if (hasConduit())
         {
-            if (world.isRemote && getRNG().nextDouble() <= 0.1)
+            if (world.isRemote && isWet() && getRNG().nextDouble() <= 0.1)
             {
                 for (int i = 0; i < 16; ++i)
                 {
@@ -104,7 +112,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                 boolean attacked = false;
                 for (LivingEntity entity : getEntitiesNearby(35, Entity::isWet))
                 {
-                    entity.addPotionEffect(new EffectInstance(Effects.CONDUIT_POWER, 220, 0, true, true));
+                    if (entity != getAttackTarget() && (entity instanceof PlayerEntity || isOnSameTeam(entity)))
+                        entity.addPotionEffect(new EffectInstance(Effects.CONDUIT_POWER, 220, 0, true, true));
+
                     if (!attacked && entity instanceof IMob)
                     {
                         attacked = true;
@@ -122,18 +132,19 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         Animation animation = getAnimation();
         int animTick = getAnimationTick();
 
-        if (animation == ROAR_ANIMATION)
+        if (animation == LIGHTNING_ANIMATION)
         {
+            lightningCooldown += 6;
             if (animTick == 10) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f, true);
-            if (!world.isRemote)
+            if (!world.isRemote && isWet() && animTick >= 10)
             {
                 LivingEntity target = getAttackTarget();
                 if (target != null)
                 {
                     if (hasConduit())
                     {
-                        if (animTick % 4 == 0)
-                            ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.getPosX() * Mafs.nextDouble(getRNG()), target.getPosY(), target.getPosZ() * Mafs.nextDouble(getRNG()), false));
+                        if (animTick % 10 == 0)
+                            ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.getPosX() + Mafs.nextDouble(getRNG()), target.getPosY(), target.getPosZ() + Mafs.nextDouble(getRNG()), false));
                     }
                     else if (animTick == 10)
                         ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.getPosX(), target.getPosY(), target.getPosZ(), false));
@@ -157,7 +168,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                     world.addParticle(ParticleTypes.CLOUD, conduitPos.x, conduitPos.y + 0.8, conduitPos.z, velX, 0, velZ);
                 }
             }
-
         }
     }
 
@@ -217,12 +227,30 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
     {
-        if (slot == CONDUIT_SLOT && !onLoad)
+        if (slot == CONDUIT_SLOT)
         {
             boolean flag = stack.getItem() == Items.CONDUIT;
             boolean hadConduit = hasConduit();
             dataManager.set(HAS_CONDUIT, flag);
-            if (flag && !hadConduit) setAnimation(CONDUIT_ANIMATION);
+            if (!onLoad && flag && !hadConduit) setAnimation(CONDUIT_ANIMATION);
+        }
+    }
+
+    @Override
+    public void recievePassengerKeybind(int key, int mods, boolean pressed)
+    {
+        if (pressed)
+        {
+            if (key == KeybindPacket.MOUNT_KEY1) setAnimation(BITE_ANIMATION);
+            else if (key == KeybindPacket.MOUNT_KEY2 && !world.isRemote && isWet() && lightningCooldown <= 0)
+            {
+                EntityRayTraceResult ertr = Mafs.rayTraceEntities(getControllingPlayer(), 40, e -> e instanceof LivingEntity && e != this);
+                if (ertr != null)
+                {
+                    setAttackTarget((LivingEntity) ertr.getEntity());
+                    AnimationPacket.send(this, LIGHTNING_ANIMATION);
+                }
+            }
         }
     }
 
@@ -279,7 +307,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public Collection<? extends IItemProvider> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
 
     @Override
-    public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION, CONDUIT_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {LIGHTNING_ANIMATION, CONDUIT_ANIMATION}; }
 
     @Override
     public void setAnimation(Animation animation)

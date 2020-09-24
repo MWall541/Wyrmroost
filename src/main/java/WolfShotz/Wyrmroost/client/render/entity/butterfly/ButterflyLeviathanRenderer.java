@@ -4,12 +4,14 @@ import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.ButterflyLeviathanEntity;
-import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Quaternion;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.model.Material;
@@ -48,13 +50,13 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     {
         switch (entity.getVariant())
         {
-            case -1:
-                return ALBINO;
             default:
             case 0:
                 return BLUE;
             case 1:
                 return PURPLE;
+            case -1:
+                return ALBINO;
         }
     }
 
@@ -73,35 +75,28 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         @Override
         public void render(MatrixStack ms, IRenderTypeBuffer buffer, int packedLight, ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
         {
-            Animation anim = entity.getAnimation();
-            if (anim == ButterflyLeviathanEntity.ROAR_ANIMATION || anim == ButterflyLeviathanEntity.CONDUIT_ANIMATION)
-            {
-                // alpha calculations for the glow layer.
-                float delta = (float) entity.getAnimationTick() / (float) anim.getDuration();
-                float alpha = MathHelper.clamp(MathHelper.sin(delta * Mafs.PI) * 1.41f, 0, 1f);
-
-                IVertexBuilder builder = buffer.getBuffer(RenderHelper.getTranslucentGlow(GLOW));
-                getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
-            }
+            float alpha = MathHelper.clamp(entity.lightningCooldown, 1, 255);
+            IVertexBuilder builder = buffer.getBuffer(RenderHelper.getTranslucentGlow(GLOW));
+            getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
         }
     }
 
     public class ConduitLayer extends LayerRenderer<ButterflyLeviathanEntity, ButterflyLeviathanModel>
     {
-        public ModelRenderer conduitCage;
-        public ModelRenderer conduitWind;
         public ModelRenderer conduitEye;
+        public ModelRenderer conduitWind;
+        public ModelRenderer conduitCage;
 
         public ConduitLayer()
         {
             super(ButterflyLeviathanRenderer.this);
 
-            conduitCage = new ModelRenderer(16, 16, 0, 0);
+            conduitEye = new ModelRenderer(16, 16, 0, 0);
             conduitWind = new ModelRenderer(64, 32, 0, 0);
-            conduitEye = new ModelRenderer(32, 16, 0, 0);
-            conduitCage.addBox(-4.0F, -4.0F, 0.0F, 8.0F, 8.0F, 0.0F, 0.01F);
+            conduitCage = new ModelRenderer(32, 16, 0, 0);
+            conduitEye.addBox(-4.0F, -4.0F, 0.0F, 8.0F, 8.0F, 0.0F, 0.01F);
             conduitWind.addBox(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F);
-            conduitEye.addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F);
+            conduitCage.addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F);
         }
 
         @Override
@@ -122,13 +117,13 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             ms.rotate(Vector3f.XP.rotationDegrees(headPitch));
             ms.translate(0, -2.25, -3.65);
 
-            // Eye
+            // Cage
             ms.push();
             ms.translate(0, (0.3F + translation * 0.2F), 0);
             Vector3f vector3f = new Vector3f(0.5F, 1.0F, 0.5F);
             vector3f.normalize();
             ms.rotate(new Quaternion(vector3f, rotation, true));
-            conduitEye.render(ms, CONDUIT_CAGE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), light, overlay);
+            conduitCage.render(ms, CONDUIT_CAGE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), light, overlay);
             ms.pop();
 
             // Wind
@@ -149,18 +144,13 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             conduitWind.render(ms, builder, light, overlay);
             ms.pop();
 
-            // The cage thingy
-            ActiveRenderInfo activerenderinfo = Minecraft.getInstance().gameRenderer.getActiveRenderInfo();
+            // Eye
             ms.push();
             ms.translate(0, (0.3F + translation * 0.2F), 0);
             ms.scale(0.5F, 0.5F, 0.5F);
-            float f3 = activerenderinfo.getYaw();
-            ms.rotate(Vector3f.YP.rotationDegrees(f3));
-            ms.rotate(Vector3f.XP.rotationDegrees(activerenderinfo.getPitch()));
-            ms.rotate(Vector3f.ZP.rotationDegrees(180.0F));
-            float f4 = 1.3333334f;
-            ms.scale(f4, f4, f4);
-            conduitCage.render(ms, CONDUIT_OPEN_EYE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), light, overlay);
+            ms.rotate(Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getRotation());
+            ms.scale(1.4f, 1.4f, 1.4f);
+            conduitEye.render(ms, CONDUIT_OPEN_EYE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), light, overlay);
             ms.pop();
 
             ms.pop();

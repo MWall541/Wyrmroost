@@ -41,16 +41,16 @@ public class RenderHelper extends RenderType
     public static RenderType getAdditiveGlow(ResourceLocation locationIn)
     {
         return makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder()
-                .texture(new RenderState.TextureState(locationIn, false, false))
-                .transparency(RenderState.ADDITIVE_TRANSPARENCY)
-                .alpha(RenderState.DEFAULT_ALPHA)
+                .texture(new TextureState(locationIn, false, false))
+                .transparency(ADDITIVE_TRANSPARENCY)
+                .alpha(DEFAULT_ALPHA)
                 .build(false));
     }
 
     public static RenderType getTranslucentGlow(ResourceLocation texture)
     {
         return makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder()
-                .texture(new RenderState.TextureState(texture, false, false))
+                .texture(new TextureState(texture, false, false))
                 .cull(CULL_DISABLED)
                 .transparency(TRANSLUCENT_TRANSPARENCY)
                 .alpha(DEFAULT_ALPHA)

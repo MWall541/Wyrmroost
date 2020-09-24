@@ -3,13 +3,16 @@ package WolfShotz.Wyrmroost.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Predicate;
 
 /**
  * Maf utility class to make my life like way easier.
@@ -135,5 +138,19 @@ public final class Mafs
             return new EntityRayTraceResult(closestEntityHit, closestEntityHit.getPositionVec());
 
         return targetedBlock;
+    }
+
+    @Nullable
+    public static EntityRayTraceResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter)
+    {
+        Vec3d eyes = shooter.getEyePosition(1f);
+        Vec3d end = eyes.add(shooter.getLookVec().mul(range, range, range));
+        return ProjectileHelper.rayTraceEntities(shooter.world,
+                shooter,
+                eyes,
+                end,
+                shooter.getBoundingBox().grow(range),
+                filter,
+                range * range);
     }
 }

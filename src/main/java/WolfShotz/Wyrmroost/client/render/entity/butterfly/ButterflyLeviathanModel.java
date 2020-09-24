@@ -332,7 +332,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         resetToDefaultPose();
         animator.update(entity);
 
-        if (animator.setAnimation(ButterflyLeviathanEntity.ROAR_ANIMATION)) roarAnim(partialTick);
+        if (animator.setAnimation(ButterflyLeviathanEntity.LIGHTNING_ANIMATION)) roarAnim(partialTick);
         if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION)) conduitAnim(partialTick);
 
         beach(entity.beachedTimer.get(partialTick));
