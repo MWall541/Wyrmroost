@@ -503,7 +503,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void attackInAABB(AxisAlignedBB aabb)
     {
         List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
-        if (WRConfig.debugMode && world.isRemote) RenderHelper.queueDebugBoxRendering(aabb);
+        if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb);
         for (LivingEntity attacking : attackables) attackEntityAsMob(attacking);
     }
 

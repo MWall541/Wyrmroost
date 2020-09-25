@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.items;
 
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -18,7 +18,7 @@ public class DragonArmorItem extends Item
 
     public DragonArmorItem(int dmgReduction, int enchantability)
     {
-        super(ModUtils.itemBuilder().maxStackSize(1));
+        super(WRItems.builder().maxStackSize(1));
         this.dmgReduction = dmgReduction;
         this.enchantability = enchantability;
     }

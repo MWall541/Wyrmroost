@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.Mafs;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -30,7 +30,7 @@ public class SoulCrystalItem extends Item
 {
     public static final String DATA_DRAGON = "DragonData";
 
-    public SoulCrystalItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
+    public SoulCrystalItem() { super(WRItems.builder().maxStackSize(1)); }
 
     @Override
     public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)

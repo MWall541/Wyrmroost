@@ -1,10 +1,7 @@
 package WolfShotz.Wyrmroost.util;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
-import com.google.common.collect.Sets;
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
+import WolfShotz.Wyrmroost.client.ClientEvents;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,10 +11,11 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -29,34 +27,21 @@ import java.util.Set;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
- * Utility Class to help with Internationalization, ResourceLocations, etc.
  */
 public final class ModUtils
 {
     private ModUtils() {} // NU CONSTRUCTOR
 
     /**
-     * Item Properties builder
+     * @param registry the DeferredRegistry instance holding the objects
+     * @param <T>      the type of registry
+     * @return An Immutable Set that contains all entries of the provided DeferredRegister
      */
-    public static Item.Properties itemBuilder() { return new Item.Properties().group(Wyrmroost.ITEM_GROUP); }
-
-    /**
-     * Block Properties builder
-     */
-    public static Block.Properties blockBuilder(Material material)
-    {
-        Block.Properties properties = Block.Properties.create(material);
-        if (material == Material.WOOD) properties.harvestTool(ToolType.AXE).hardnessAndResistance(2).sound(SoundType.WOOD);
-        else if (material == Material.ROCK) properties.harvestTool(ToolType.PICKAXE);
-        else if (material == Material.SAND) properties.harvestTool(ToolType.SHOVEL).sound(SoundType.SAND);
-        return properties;
-    }
-
     public static <T extends IForgeRegistryEntry<T>> Set<T> getRegistryEntries(DeferredRegister<T> registry)
     {
-        Set<T> entries = new HashSet<>();
+        ImmutableSet.Builder<T> entries = ImmutableSet.builder();
         for (RegistryObject<T> entry : registry.getEntries()) entries.add(entry.get());
-        return entries;
+        return entries.build();
     }
 
     /**
@@ -100,6 +85,19 @@ public final class ModUtils
     }
 
     /**
+     * Play a sound on the local client.
+     *
+     * @param sound  why tf do u need an explanation mate
+     * @param volume so help me god
+     * @param pitch  the pitch of the sound. lower values = sulfur hexafloride, higher values = dying chipmunk
+     */
+    public static void playLocalSound(SoundEvent sound, float volume, float pitch)
+    {
+        Vec3d pos = ClientEvents.getPlayer().getPositionVec();
+        ClientEvents.getClient().world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
+    }
+
+    /**
      * Get all biomes of defined types.
      *
      * @param types The types of biomes
@@ -107,7 +105,7 @@ public final class ModUtils
      */
     public static Set<Biome> getBiomesByTypes(BiomeDictionary.Type... types)
     {
-        Set<Biome> biomes = Sets.newHashSet();
+        Set<Biome> biomes = new HashSet<>();
         for (BiomeDictionary.Type type : types) biomes.addAll(BiomeDictionary.getBiomes(type));
         return biomes;
     }
@@ -122,6 +120,12 @@ public final class ModUtils
      */
     public static Iterable<BlockPos> getBlockPosesInAABB(AxisAlignedBB aabb)
     {
-        return BlockPos.getAllInBoxMutable((int) aabb.minX, (int) aabb.minY, (int) aabb.minZ, (int) aabb.maxX, (int) aabb.maxY, (int) aabb.maxZ);
+        return BlockPos.getAllInBoxMutable(
+                MathHelper.ceil(aabb.minX),
+                MathHelper.ceil(aabb.minY),
+                MathHelper.ceil(aabb.minZ),
+                MathHelper.floor(aabb.maxX),
+                MathHelper.floor(aabb.maxY),
+                MathHelper.floor(aabb.maxZ));
     }
 }

@@ -33,7 +33,7 @@ public class ClientEvents
 {
     public static final List<Runnable> CALLBACKS = new ArrayList<>();
 
-    public static void register()
+    public static void load()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 

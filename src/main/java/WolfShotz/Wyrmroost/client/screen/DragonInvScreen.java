@@ -49,6 +49,6 @@ public class DragonInvScreen extends ContainerScreen<DragonInvContainer>
         String name = container.inventory.dragon.getName().getUnformattedComponentText();
         font.drawString(name, (float) (xSize / 2 - font.getStringWidth(name) / 2), 6f, 0x404040);
 
-//        font.drawString(playerInventory.getDisplayName().getFormattedText(), 8.0F, (float)(this.ySize - 96 + 2), 4210752);
+        font.drawString(playerInventory.getDisplayName().getFormattedText(), 8.0F, (float)(this.ySize - 96 + 2), 4210752);
     }
 }

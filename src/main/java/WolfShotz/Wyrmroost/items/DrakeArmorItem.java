@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.items.base.ArmorBase;
-import WolfShotz.Wyrmroost.items.base.ArmorMaterialList;
+import WolfShotz.Wyrmroost.items.base.ArmorMaterials;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -17,7 +17,7 @@ public class DrakeArmorItem extends ArmorBase
 
     public DrakeArmorItem(EquipmentSlotType equipType)
     {
-        super(ArmorMaterialList.DRAKE, equipType);
+        super(ArmorMaterials.DRAKE, equipType);
     }
 
     @Override

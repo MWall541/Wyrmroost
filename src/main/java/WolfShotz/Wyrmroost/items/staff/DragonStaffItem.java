@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.items.staff;
 
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -29,7 +30,7 @@ public class DragonStaffItem extends Item
     public static final String DATA_DRAGON_ID = "BoundDragon"; // int
     public static final String DATA_ACTION = "Action";
 
-    public DragonStaffItem() { super(ModUtils.itemBuilder().maxStackSize(1)); }
+    public DragonStaffItem() { super(WRItems.builder().maxStackSize(1)); }
 
     /**
      * Triggered when right clicked on air

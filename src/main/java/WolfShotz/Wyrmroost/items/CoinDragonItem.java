@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.items;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.CoinDragonEntity;
 import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ public class CoinDragonItem extends Item
 
     public CoinDragonItem()
     {
-        super(ModUtils.itemBuilder().maxStackSize(1));
+        super(WRItems.builder().maxStackSize(1));
         addPropertyOverride(VARIANT_OVERRIDE, (s, w, p) -> s.getOrCreateTag().getCompound(DATA_ENTITY).getInt(CoinDragonEntity.DATA_VARIANT));
     }
 

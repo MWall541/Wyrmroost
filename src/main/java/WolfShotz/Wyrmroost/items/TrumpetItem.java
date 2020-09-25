@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.items;
 
+import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class TrumpetItem extends Item
 {
-    public TrumpetItem() { super(ModUtils.itemBuilder()); }
+    public TrumpetItem() { super(WRItems.builder()); }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)

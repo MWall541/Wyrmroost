@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.entities.dragon.ButterflyLeviathanEntity;
 import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.RenderType;
@@ -110,6 +109,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             float translation = MathHelper.sin(tick * 0.1F) / 2.0F + 0.5F;
             translation = translation * translation + translation;
             if (!entity.canSwim()) headPitch /= 2;
+//            netHeadYaw /= 2;
 
             ms.push();
             ms.translate(entityModel.head.rotationPointX / 16, entityModel.head.rotationPointY / 16, entityModel.head.rotationPointZ / 16);
@@ -147,9 +147,10 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             // Eye
             ms.push();
             ms.translate(0, (0.3F + translation * 0.2F), 0);
-            ms.scale(0.5F, 0.5F, 0.5F);
-            ms.rotate(Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getRotation());
-            ms.scale(1.4f, 1.4f, 1.4f);
+            ms.rotate(Vector3f.YN.rotationDegrees(entity.rotationYaw)); // negate stack rotation from entity for full rotation control
+            ms.rotate(Vector3f.YP.rotationDegrees(getRenderManager().info.getYaw()));
+            ms.rotate(Vector3f.XP.rotationDegrees(getRenderManager().info.getPitch()));
+            ms.scale(0.8f, 0.8f, 0.8f);
             conduitEye.render(ms, CONDUIT_OPEN_EYE_TEXTURE.getBuffer(buffer, RenderType::getEntityCutoutNoCull), light, overlay);
             ms.pop();
 

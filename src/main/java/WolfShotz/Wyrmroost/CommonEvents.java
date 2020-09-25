@@ -34,7 +34,7 @@ public class CommonEvents
 {
     public static final List<Runnable> CALLBACKS = new ArrayList<>();
 
-    public static void register()
+    public static void load()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;

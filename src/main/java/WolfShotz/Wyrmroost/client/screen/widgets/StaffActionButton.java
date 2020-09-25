@@ -43,11 +43,7 @@ public class StaffActionButton extends AbstractButton
     @Override
     public void renderButton(int mouseX, int mouseY, float partialTick)
     {
-        if (wasHovered != isHovered)
-        {
-            onFocusedChanged(isHovered);
-            wasHovered = isHovered;
-        }
+        if (wasHovered != isHovered) onFocusedChanged(wasHovered = isHovered);
 
         float time = 0.5f * partialTick; // adjust speed for framerate
         focusTime.add(isHovered? time : -time);

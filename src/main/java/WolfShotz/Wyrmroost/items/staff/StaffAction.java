@@ -131,27 +131,16 @@ public enum StaffAction
                 @Override
                 public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    RayTraceResult rtr = Mafs.rayTrace(dragon.world, player, TARGET_RANGE, false);
-                    if (rtr instanceof EntityRayTraceResult)
+                    EntityRayTraceResult ertr = Mafs.rayTraceEntities(player,
+                            TARGET_RANGE,
+                            e -> e instanceof LivingEntity && dragon.shouldAttackEntity((LivingEntity) e, dragon.getOwner()));
+                    if (ertr != null)
                     {
-                        EntityRayTraceResult ertr = (EntityRayTraceResult) rtr;
-                        Entity entity = ertr.getEntity();
-                        if (entity instanceof LivingEntity && dragon.shouldAttackEntity((LivingEntity) entity, player))
-                        {
-                            dragon.setAttackTarget((LivingEntity) entity);
-                            ModUtils.playLocalSound(player.world, player.getPosition(), SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
-                        }
+                        dragon.setAttackTarget((LivingEntity) ertr.getEntity());
+                        ModUtils.playLocalSound(SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
+                        return true;
                     }
-                    else if (rtr instanceof BlockRayTraceResult)
-                    {
-                        BlockRayTraceResult brtr = (BlockRayTraceResult) rtr;
-                        BlockPos pos = brtr.getPos();
-                        ModUtils.playLocalSound(dragon.world, player.getPosition(), SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, 1, 1);
-                        for (int i = 0; i < 10; i++)
-                            dragon.world.addParticle(ParticleTypes.SMOKE, pos.getX() + 0.5d, pos.getY() + 1, pos.getZ() + 0.5d, 0, Math.min(dragon.getRNG().nextDouble(), 0.25d), 0);
-                        DragonStaffItem.setAction(DEFAULT, player, stack);
-                    }
-                    return true;
+                    return false;
                 }
 
                 @Override

@@ -82,7 +82,7 @@ public class WREntities
             .spawnEgg(0x17283C, 0x7A6F5A)
             .dragonEgg(new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater))
             .renderer(ButterflyLeviathanRenderer::new)
-//            .spawnPlacement(ButterflyLeviathanEntity.getSpawnConditions())
+            .spawnPlacement(ButterflyLeviathanEntity.getSpawnConditions())
             .build(b -> b.size(4f, 3f));
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = Builder.creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)
@@ -127,8 +127,6 @@ public class WREntities
             .renderer(DragonEggRenderer::new)
             .build(b -> b.disableSummoning().setCustomClientFactory(DragonEggEntity::new));
 
-//    public static final RegistryObject<EntityType<MultiPartEntity>> MULTIPART = register("multipart_entity", MultiPartEntity::new, EntityClassification.MISC, b -> b.disableSummoning().disableSerialization().setShouldReceiveVelocityUpdates(false));
-
     private static <T extends MobEntity> void basicSpawnConditions(EntityType<T> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
     {
         for (Biome b : biomes)
@@ -145,14 +143,13 @@ public class WREntities
         private final String name;
         private final EntityType.IFactory<T> factory;
         private final EntityClassification classification;
-        private final RegistryObject<EntityType<T>> registered;
+        private RegistryObject<EntityType<T>> registered;
 
         public Builder(String name, EntityType.IFactory<T> factory, EntityClassification classification)
         {
             this.name = name;
             this.factory = factory;
             this.classification = classification;
-            this.registered = RegistryObject.of(Wyrmroost.rl(name), ForgeRegistries.ENTITIES);
         }
 
         private Builder<T> spawnEgg(int primColor, int secColor)
@@ -188,7 +185,7 @@ public class WREntities
         {
             EntityType.Builder<T> builder = EntityType.Builder.create(factory, classification);
             consumer.accept(builder);
-            return REGISTRY.register(name, () -> builder.build(Wyrmroost.MOD_ID + ":" + name));
+            return registered = REGISTRY.register(name, () -> builder.build(Wyrmroost.MOD_ID + ":" + name));
         }
 
         private static <T extends Entity> Builder<T> creature(String name, EntityType.IFactory<T> factory)

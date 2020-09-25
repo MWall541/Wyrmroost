@@ -8,6 +8,8 @@ import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.LivingRenderer;
@@ -26,9 +28,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.OptionalDouble;
 
 public class RenderHelper extends RenderType
@@ -79,13 +78,18 @@ public class RenderHelper extends RenderType
         DebugBox.INSTANCE.render(ms);
     }
 
-    private static final Map<Entity, Color> ENTITY_OUTLINE_MAP = new HashMap<>();
+    private static final Object2IntMap<Entity> ENTITY_OUTLINE_MAP = new Object2IntOpenHashMap<>(1);
+
+    public static void renderEntityOutline(Entity entity, int red, int green, int blue, int alpha)
+    {
+        ENTITY_OUTLINE_MAP.put(entity, ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF)));
+    }
 
     public static void renderEntities(RenderLivingEvent.Pre<? super LivingEntity, ?> event)
     {
         LivingEntity entity = event.getEntity();
-        Color color = ENTITY_OUTLINE_MAP.remove(entity);
-        if (color != null)
+        int color = ENTITY_OUTLINE_MAP.removeInt(entity);
+        if (color != 0)
         {
             event.setCanceled(true);
 
@@ -96,8 +100,8 @@ public class RenderHelper extends RenderType
             float partialTicks = event.getPartialRenderTick();
             float yaw = MathHelper.lerp(partialTicks, entity.prevRotationYaw, entity.rotationYaw);
 
-            buffer.setColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-            renderer.render(entity, yaw, partialTicks, ms, buffer, event.getLight());
+            buffer.setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF);
+            renderer.render(entity, yaw, partialTicks, ms, buffer, 15728640);
             buffer.finish();
         }
     }
@@ -117,13 +121,6 @@ public class RenderHelper extends RenderType
         if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
         dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
     }
-
-    public static void renderEntityOutline(Entity entity, int red, int green, int blue, int alpha)
-    {
-        ENTITY_OUTLINE_MAP.put(entity, new Color(red, green, blue, alpha));
-    }
-
-    public static void queueDebugBoxRendering(AxisAlignedBB aabb) { DebugBox.INSTANCE.queue(aabb); }
 
     public static void drawShape(MatrixStack ms, IVertexBuilder buffer, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
     {

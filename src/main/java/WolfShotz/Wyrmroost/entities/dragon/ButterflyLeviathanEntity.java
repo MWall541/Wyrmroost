@@ -13,11 +13,13 @@ import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.WaterFluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.datasync.DataParameter;
@@ -34,9 +36,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.BiomeDictionary;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -144,7 +150,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                     if (hasConduit())
                     {
                         if (animTick % 10 == 0)
-                            ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.getPosX() + Mafs.nextDouble(getRNG()), target.getPosY(), target.getPosZ() + Mafs.nextDouble(getRNG()), false));
+                            ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.getPosX() + Mafs.nextDouble(getRNG()) * 2, target.getPosY(), target.getPosZ() + Mafs.nextDouble(getRNG()) * 2, false));
                     }
                     else if (animTick == 10)
                         ((ServerWorld) world).addLightningBolt(new LightningBoltEntity(world, target.getPosX(), target.getPosY(), target.getPosZ(), false));
@@ -264,8 +270,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     public void addScreenInfo(StaffScreen screen)
     {
-        super.addScreenInfo(screen);
         screen.addAction(StaffAction.INVENTORY);
+        super.addScreenInfo(screen);
     }
 
     @Override
@@ -314,6 +320,20 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     {
         super.setAnimation(animation);
         if (animation == CONDUIT_ANIMATION) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f, true);
+    }
+
+    public static Consumer<EntityType<ButterflyLeviathanEntity>> getSpawnConditions()
+    {
+        return type ->
+        {
+            for (Biome biome : ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN))
+                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(type, 2, 0, 1));
+
+            EntitySpawnPlacementRegistry.register(type,
+                    EntitySpawnPlacementRegistry.PlacementType.IN_WATER,
+                    Heightmap.Type.OCEAN_FLOOR_WG,
+                    (entity, world, reason, pos, rand) -> reason == SpawnReason.SPAWN_EGG || world.getFluidState(pos).getFluid() instanceof WaterFluid);
+        };
     }
 
     public class Navigator extends SwimmerPathNavigator

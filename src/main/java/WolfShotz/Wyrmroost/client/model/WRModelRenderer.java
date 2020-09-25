@@ -12,7 +12,6 @@ public class WRModelRenderer extends ModelRenderer
     public float defaultPositionX;
     public float defaultPositionY;
     public float defaultPositionZ;
-    private WRModelRenderer parent;
 
     public WRModelRenderer(WREntityModel<?> model)
     {
@@ -56,17 +55,6 @@ public class WRModelRenderer extends ModelRenderer
         rotationPointY = defaultPositionY;
         rotationPointZ = defaultPositionZ;
     }
-
-    @Override
-    public void addChild(ModelRenderer child)
-    {
-        super.addChild(child);
-        if (child instanceof WRModelRenderer) ((WRModelRenderer) child).setParent(this);
-    }
-
-    public WRModelRenderer getParent() { return parent; }
-
-    public void setParent(WRModelRenderer parent) { this.parent = parent; }
 
     public void walk(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
     {

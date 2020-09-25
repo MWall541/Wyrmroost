@@ -27,7 +27,7 @@ public class DebugScreen extends Screen
             for (int i = 0; i < animations.length; i++)
             {
                 Animation animation = animations[i];
-                addButton(new AbstractButton((i * 50) + (width / 2) - (animations.length * 25), 300, 50, 12, "Anim: " + i)
+                addButton(new AbstractButton((i * 50) + (width / 2) - (animations.length * 25), 265, 50, 12, "Anim: " + i)
                 {
                     @Override
                     public void onPress()

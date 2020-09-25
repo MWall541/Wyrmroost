@@ -37,8 +37,8 @@ public class Wyrmroost
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        CommonEvents.register();
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEvents::register);
+        CommonEvents.load();
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEvents::load);
 
         WREntities.REGISTRY.register(bus);
         WRBlocks.REGISTRY.register(bus);

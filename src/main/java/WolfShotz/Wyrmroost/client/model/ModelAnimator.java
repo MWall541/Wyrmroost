@@ -107,7 +107,7 @@ public class ModelAnimator
                 {
                     float tick = ((float) (animationTick - prevTempTick) + Minecraft.getInstance().getRenderPartialTicks()) / (tempTick - prevTempTick);
                     float inc = MathHelper.sin(tick * Mafs.PI / 2f);
-                    float dec = 1.0F - inc;
+                    float dec = 1f - inc;
 
                     for (Map.Entry<WRModelRenderer, BoxPosCache> entry : prevPosCache.entrySet())
                     {

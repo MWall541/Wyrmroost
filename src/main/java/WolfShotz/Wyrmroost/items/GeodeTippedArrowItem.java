@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.entities.projectile.GeodeTippedArrowEntity;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ArrowItem;
@@ -14,7 +14,7 @@ public class GeodeTippedArrowItem extends ArrowItem
 
     public GeodeTippedArrowItem(double damage)
     {
-        super(ModUtils.itemBuilder());
+        super(WRItems.builder());
         this.damage = damage;
     }
 

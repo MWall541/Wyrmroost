@@ -5,18 +5,21 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 
-public enum ToolMaterialList implements IItemTier
+public enum ToolMaterials implements IItemTier
 {
     BLUE_GEODE(9.3f, 5f, 2164, 4, 20, WRItems.BLUE_GEODE.get()),
     RED_GEODE(10f, 6f, 3264, 5, 24, WRItems.RED_GEODE.get()),
     PURPLE_GEODE(15f, 8f, 4214, 6, 28, WRItems.PURPLE_GEODE.get()),
     PLATINUM(5.5f, 3.5f, 645, 3, 19, WRItems.PLATINUM_INGOT.get());
 
-    private float efficiency, attackDamage;
-    private int durability, harvestLevel, enchantibility;
-    private Item repairMaterial;
+    private final float efficiency;
+    private final float attackDamage;
+    private final int durability;
+    private final int harvestLevel;
+    private final int enchantibility;
+    private final Item repairMaterial;
 
-    ToolMaterialList(float efficiency, float attackDamage, int durability, int harvestLevel, int enchantibility, Item repairMaterial)
+    ToolMaterials(float efficiency, float attackDamage, int durability, int harvestLevel, int enchantibility, Item repairMaterial)
     {
         this.efficiency = efficiency;
         this.attackDamage = attackDamage;

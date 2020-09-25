@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +24,7 @@ public class TarragonTomeItem extends Item
 {
     public TarragonTomeItem()
     {
-        super(ModUtils.itemBuilder().maxStackSize(1));
+        super(WRItems.builder().maxStackSize(1));
     }
     
     @Override

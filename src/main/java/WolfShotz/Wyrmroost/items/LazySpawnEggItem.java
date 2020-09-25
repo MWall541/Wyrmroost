@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.items;
 
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -37,7 +37,7 @@ public class LazySpawnEggItem extends Item
 
     public LazySpawnEggItem(Supplier<EntityType<? extends Entity>> type, int primaryColor, int secondaryColor)
     {
-        super(ModUtils.itemBuilder());
+        super(WRItems.builder());
 
         this.type = type;
         this.PRIMARY_COLOR = primaryColor;

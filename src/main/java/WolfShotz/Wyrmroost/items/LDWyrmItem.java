@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.items;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.entities.dragon.LDWyrmEntity;
 import WolfShotz.Wyrmroost.registry.WREntities;
-import WolfShotz.Wyrmroost.util.ModUtils;
+import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -18,7 +18,7 @@ public class LDWyrmItem extends Item
 
     public LDWyrmItem()
     {
-        super(ModUtils.itemBuilder());
+        super(WRItems.builder());
 
         addPropertyOverride(Wyrmroost.rl("is_alive"), (stack, world, player) ->
         {
