@@ -317,11 +317,12 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     public void setRotationAngles(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (entity.canSwim())
+        if (entity.canSwim() || entity.isJumpingOutOfWater())
         {
             body1.rotateAngleX = headPitch * (Mafs.PI / 180f);
             headPitch = 0;
         }
+
         faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
 
@@ -333,7 +334,8 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         animator.update(entity);
 
         if (animator.setAnimation(ButterflyLeviathanEntity.LIGHTNING_ANIMATION)) roarAnim(partialTick);
-        if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION)) conduitAnim(partialTick);
+        else if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION)) conduitAnim(partialTick);
+        else if (animator.setAnimation(ButterflyLeviathanEntity.BITE_ANIMATION)) biteAnim();
 
         beach(entity.beachedTimer.get(partialTick));
     }
@@ -369,6 +371,23 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         animator.resetKeyframe(8);
     }
 
+
+    private void biteAnim()
+    {
+        animator.startKeyframe(6);
+        animator.rotate(neck1, -0.6f, 0, 0);
+        animator.rotate(neck2, 0.3f, 0, 0);
+        animator.rotate(neck3, 0.4f, 0, 0);
+        animator.rotate(head, 0.4f, 0, 0);
+        animator.rotate(mouthTop, -0.5f, 0, 0);
+        animator.rotate(mouthBottom, 0.5f, 0, 0);
+        animator.endKeyframe();
+        animator.startKeyframe(3);
+        animator.rotate(neck1, 0.45f, 0, 0);
+        animator.endKeyframe();
+        animator.resetKeyframe(8);
+    }
+
     private void beach(float v)
     {
         setTime(v);
@@ -378,20 +397,10 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         rotate(neck3, 0.2f, 0, 0);
         rotate(head, 0.3f, 0, 0);
 
-        rotate(topWingFinPhalangeL1, 0, 4.25f, 0);
+        rotate(topWingFinPhalangeL1, 0, 1.05f, 0);
         rotate(topWingFinPhalangeL2, 0, 0.5f, 0);
-        rotate(bottomWingFinPhalangeL1, 0, -0.5f, 0);
-        rotate(bottomWingFinPhalangeL1, 0, 0, -0.6f);
-        rotate(bottomWingFinPhalangeL2, 0, 0.7f, 0);
-        rotate(bottomWingFinPhalangeL2, 0, 0, 0.6f);
-        rotate(bottomWingFinPhalangeL2, 0.2f, 0, 0);
 
         rotate(topWingFinPhalangeR1, 0, -1.05f, 0);
-        rotate(topWingFinPhalangeR2, 0, 0.5f, 0);
-        rotate(bottomWingFinPhalangeR1, 0, 0.5f, 0);
-        rotate(bottomWingFinPhalangeR1, 0, 0, 0.6f);
-        rotate(bottomWingFinPhalangeR2, 0, -0.7f, 0);
-        rotate(bottomWingFinPhalangeR2, 0, 0, -0.6f);
-        rotate(bottomWingFinPhalangeR2, 0.2f, 0, 0);
+        rotate(topWingFinPhalangeR2, 0, -0.5f, 0);
     }
 }

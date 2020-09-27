@@ -84,7 +84,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         getAttribute(FOLLOW_RANGE).setBaseValue(60d);
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d); // normal * 2.25
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d); // 5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.09d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.08d);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(4d); // 2 hearts
     }
 

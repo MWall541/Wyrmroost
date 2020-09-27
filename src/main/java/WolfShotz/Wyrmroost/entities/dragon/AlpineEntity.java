@@ -50,7 +50,7 @@ public class AlpineEntity extends AbstractDragonEntity
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.22d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1); // no knockback
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d); // 1.5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.15);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.1);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(1d); // 0.5 hearts
     }
 
@@ -90,7 +90,7 @@ public class AlpineEntity extends AbstractDragonEntity
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
 
-        if (!world.isRemote && noActiveAnimation() && !isSleeping() && !isChild() && getRNG().nextDouble() < 0.005)
+        if (!world.isRemote && noActiveAnimation() && !isSleeping() && !isChild() && getRNG().nextDouble() < 0.0005)
             AnimationPacket.send(this, ROAR_ANIMATION);
 
         if (getAnimation() == ROAR_ANIMATION)

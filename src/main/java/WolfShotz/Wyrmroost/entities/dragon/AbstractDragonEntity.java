@@ -1,8 +1,10 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
+import WolfShotz.Wyrmroost.client.sounds.FlyingSound;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.DragonBodyController;
@@ -419,7 +421,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             // Move relative to rotationYaw
             moveRelative(speed, vec3d);
             move(MoverType.SELF, getMotion());
-            setMotion(getMotion().scale(0.8f));
+            setMotion(getMotion().scale(0.88f));
 
             Vec3d motion = getMotion();
             if (motion.length() < 0.04f) // Not Moving, just hover
@@ -456,6 +458,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.notifyDataManagerChange(key);
         if (key == SLEEPING || key == FLYING || key == TAMED) recalculateSize();
+        if (world.isRemote && key == FLYING && isFlying())
+        {
+            ClientEvents.getClient().getSoundHandler().play(new FlyingSound(this));
+        }
     }
 
     @Override
