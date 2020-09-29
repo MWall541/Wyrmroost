@@ -39,7 +39,7 @@ public class RenderHelper extends RenderType
 
     public static RenderType getAdditiveGlow(ResourceLocation locationIn)
     {
-        return makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder()
+        return makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, State.getBuilder()
                 .texture(new TextureState(locationIn, false, false))
                 .transparency(ADDITIVE_TRANSPARENCY)
                 .alpha(DEFAULT_ALPHA)
@@ -48,7 +48,7 @@ public class RenderHelper extends RenderType
 
     public static RenderType getTranslucentGlow(ResourceLocation texture)
     {
-        return makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, RenderType.State.getBuilder()
+        return makeType("glow", DefaultVertexFormats.ENTITY, 7, 256, false, true, State.getBuilder()
                 .texture(new TextureState(texture, false, false))
                 .cull(CULL_DISABLED)
                 .transparency(TRANSLUCENT_TRANSPARENCY)
@@ -58,8 +58,7 @@ public class RenderHelper extends RenderType
 
     public static RenderType getThiccLines(double thickness)
     {
-        return makeType("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256,
-                State.getBuilder()
+        return makeType("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, State.getBuilder()
                         .line(new LineState(OptionalDouble.of(thickness)))
                         .layer(PROJECTION_LAYERING)
                         .transparency(TRANSLUCENT_TRANSPARENCY)

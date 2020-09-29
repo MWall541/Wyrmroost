@@ -82,7 +82,11 @@ public class CommonEvents
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
         if (player.isSneaking()) dragon.tame(true, player);
-        else if (dragon.world.isRemote) DebugScreen.open(dragon);
+        else
+        {
+            if (dragon.world.isRemote) DebugScreen.open(dragon);
+            else Wyrmroost.LOG.info(dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getTarget().toString());
+        }
     }
 
     @SubscribeEvent

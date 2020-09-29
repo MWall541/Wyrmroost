@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
@@ -47,6 +48,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
@@ -65,6 +67,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public static final int CONDUIT_SLOT = 0;
 
     public final TickFloat beachedTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat swimTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public int lightningCooldown;
     public boolean beached = true;
 
@@ -73,6 +77,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         super(dragon, world);
         ignoreFrustumCheck = WRConfig.disableFrustumCheck;
         moveController = new MoveController();
+        lookController = new LessShitLookController(this);
         stepHeight = 2;
 
         setPathPriority(PathNodeType.WATER, 0);
@@ -89,7 +94,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
         getAttribute(MAX_HEALTH).setBaseValue(100d);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.08d);
-        getAttribute(SWIM_SPEED).setBaseValue(0.1d);
+        getAttribute(SWIM_SPEED).setBaseValue(0.3d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8d);
         getAttribute(FOLLOW_RANGE).setBaseValue(32d);
@@ -103,9 +108,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         goalSelector.addGoal(2, new AttackGoal());
         goalSelector.addGoal(3, new FollowOwnerGoal());
         goalSelector.addGoal(4, new DragonBreedGoal(this, 1));
-        goalSelector.addGoal(5, new RandomSwimmingGoal(this, 1, 40));
-        goalSelector.addGoal(6, new LookAtGoal(this, LivingEntity.class, 14f));
-        goalSelector.addGoal(7, new LookRandomlyGoal(this));
+        goalSelector.addGoal(5, new JumpOutOfWaterGoal());
+        goalSelector.addGoal(6, new RandomSwimmingGoal(this, 1, 40));
+        goalSelector.addGoal(7, new LookAtGoal(this, LivingEntity.class, 14f));
+        goalSelector.addGoal(8, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
@@ -113,7 +119,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         targetSelector.addGoal(4, new DefendHomeGoal(this));
         targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, LivingEntity.class, false, true, e ->
                 e.getType() == EntityType.SQUID || e.getType() == EntityType.GUARDIAN || e.getType() == EntityType.PLAYER));
-
     }
 
     @Override
@@ -138,14 +143,14 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         if (!beached && onGround && !inWater) beached = true;
         else if (beached && inWater) beached = false;
         if (prevBeached != beached) recalculateSize();
-        beachedTimer.add(beached? 0.1f : -0.05f);
+        beachedTimer.add((beached)? 0.1f : -0.05f);
+        swimTimer.add(canSwim()? -0.1f : 0.1f);
+        sitTimer.add(isSitting()? 0.1f : -0.1f);
 
-        // handle water jumping rotations
-        if (isJumpingOutOfWater() && !firstUpdate)
+        if (isJumpingOutOfWater())
         {
             Vec3d motion = getMotion();
-            double planeMotionSq = Math.sqrt(Entity.horizontalMag(motion));
-            rotationPitch = (float) (Math.signum(-motion.y) * Math.acos(planeMotionSq / motion.length()) * 180 / Math.PI);
+            rotationPitch = (float) (Math.signum(-motion.y) * Math.acos(Math.sqrt(Entity.horizontalMag(motion)) / motion.length()) * (double) (180f / Mafs.PI)) * 0.725f;
         }
 
         // conduit effects
@@ -213,6 +218,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         }
         else if (animation == CONDUIT_ANIMATION) // oooo very scary
         {
+            ((LessShitLookController) getLookController()).skipLooking(true);
             if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 5f, 1, true);
             else if (animTick == 15)
             {
@@ -245,10 +251,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     {
         if (isInWater())
         {
-            float speed = getTravelSpeed();
             if (canPassengerSteer())
             {
-                speed *= 0.225f;
+                float speed = getTravelSpeed() * 0.225f;
                 LivingEntity entity = (LivingEntity) getControllingPassenger();
                 double moveY = vec3d.y;
                 double moveX = vec3d.x;
@@ -256,21 +261,30 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
                 rotationYawHead = entity.rotationYawHead;
                 if (!isJumpingOutOfWater()) rotationPitch = entity.rotationPitch * 0.5f;
-
-                if (entity.moveForward != 0)
-                    moveY = getLookVec().y * speed * 18;
+                double lookY = entity.getLookVec().y;
+                if (entity.moveForward != 0 && (canSwim() || lookY < 0)) moveY = lookY;
 
                 setAIMoveSpeed(speed);
                 vec3d = new Vec3d(moveX, moveY, moveZ);
             }
 
             // add motion if were coming out of water fast; jump out of water like a dolphin
-            if (getMotion().y > 0.5 && world.getBlockState(new BlockPos(getEyePosition(1)).up()).getFluidState().isEmpty())
-                addVelocity(0, 0.25, 0);
+            if (getMotion().y > 0.25 && world.getBlockState(new BlockPos(getEyePosition(1)).up()).getFluidState().isEmpty())
+                setMotion(getMotion().mul(1.2, 1.5f, 1.2d));
 
             moveRelative(getAIMoveSpeed(), vec3d);
             move(MoverType.SELF, getMotion());
             setMotion(getMotion().scale(0.9d));
+
+            prevLimbSwingAmount = limbSwingAmount;
+            double xDiff = getPosX() - prevPosX;
+            double yDiff = getPosY() - prevPosY;
+            double zDiff = getPosZ() - prevPosZ;
+            float amount = MathHelper.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff * zDiff) * 4f;
+            if (amount > 1f) amount = 1f;
+
+            limbSwingAmount += (amount - limbSwingAmount) * 0.4f;
+            limbSwing += limbSwingAmount;
 
             if (vec3d.z == 0 && getAttackTarget() == null && !isSitting())
                 setMotion(getMotion().add(0, -0.003d, 0));
@@ -282,8 +296,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     protected float getTravelSpeed()
     {
         //@formatter:off
-        return isInWater()? (float) getAttribute(SWIM_SPEED).getValue() * 2
-                          : (float) getAttribute(MOVEMENT_SPEED).getValue();
+        return isInWater()? (float) getAttribute(SWIM_SPEED).getValue()
+                          : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
         //@formatter:on
     }
 
@@ -314,7 +328,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (pressed /*&& noActiveAnimation()*/)
+        if (pressed && noActiveAnimation())
         {
             if (key == KeybindPacket.MOUNT_KEY1) setAnimation(BITE_ANIMATION);
             else if (key == KeybindPacket.MOUNT_KEY2 && !world.isRemote && canZap())
@@ -350,6 +364,13 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         container.addSlot(new SlotBuilder(getInvHandler(), CONDUIT_SLOT).only(Items.CONDUIT).limit(1));
     }
 
+    @Override
+    public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
+    {
+        if (backView) event.getInfo().movePosition(-10d, 1, 0);
+        else event.getInfo().movePosition(-5, -0.75, 0);
+    }
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_BFLY_IDLE.get(); }
@@ -381,6 +402,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public boolean canBreatheUnderwater() { return true; }
 
     public CreatureAttribute getCreatureAttribute() { return CreatureAttribute.WATER; }
+
+    @Override
+    public boolean isImmuneToArrows() { return true; }
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize size) { return size.height * (beached? 1f : 0.6f); }
@@ -458,41 +482,40 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
         public void tick()
         {
-            if (action == MovementController.Action.MOVE_TO && !getNavigator().noPath())
+            if (action == Action.MOVE_TO && !canPassengerSteer())
             {
-                double d0 = this.posX - getPosX();
-                double d1 = this.posY - getPosY();
-                double d2 = this.posZ - getPosZ();
-                double d3 = d0 * d0 + d1 * d1 + d2 * d2;
-                if (d3 < 0.0001d) setMoveForward(0.0F);
+                action = Action.WAIT;
+                double x = posX - getPosX();
+                double y = posY - getPosY();
+                double z = posZ - getPosZ();
+                double distSq = x * x + y * y + z * z;
+                if (distSq < 2.5000003E-7) setMoveForward(0f); // why move...
                 else
                 {
-                    float yaw = (float) (MathHelper.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
-                    rotationYaw = this.limitAngle(rotationYaw, yaw, 10.0F);
-                    renderYawOffset = rotationYaw;
-                    rotationYawHead = rotationYaw;
-                    float speed = (float) (this.speed * getAttribute(SWIM_SPEED).getValue());
+                    float yaw = (float) Math.toDegrees(MathHelper.atan2(z, x)) - 90f;
+                    float pitch = -((float)(MathHelper.atan2(y, MathHelper.sqrt(x * x + z * z)) * 180 / Math.PI));
+                    pitch = MathHelper.clamp(MathHelper.wrapDegrees(pitch), -85f, 85f);
+
+                    rotationYawHead = yaw;
+                    renderYawOffset = rotationYaw = limitAngle(rotationYaw, rotationYawHead, getHorizontalFaceSpeed());
+                    rotationPitch = limitAngle(rotationPitch, pitch, 90);
+                    ((LessShitLookController) getLookController()).setShouldResetPitch(false);
+                    float speed = getTravelSpeed();
+                    setAIMoveSpeed(speed);
                     if (isInWater())
                     {
-                        setAIMoveSpeed(speed * 0.02F);
-                        float f2 = -((float) (MathHelper.atan2(d1, MathHelper.sqrt(d0 * d0 + d2 * d2)) * (double) (180F / (float) Math.PI)));
-                        f2 = MathHelper.clamp(MathHelper.wrapDegrees(f2), -85.0F, 85.0F);
-                        rotationPitch = this.limitAngle(rotationPitch, f2, 5.0F);
-                        float f3 = MathHelper.cos(rotationPitch * ((float) Math.PI / 180F));
-                        float f4 = MathHelper.sin(rotationPitch * ((float) Math.PI / 180F));
-                        moveForward = f3 * speed;
-                        moveVertical = -f4 * speed;
+                        moveForward = MathHelper.cos(pitch * (Mafs.PI / 180f)) * speed;
+                        moveVertical = -MathHelper.sin(pitch * (Mafs.PI / 180f)) * speed;
                     }
-                    else setAIMoveSpeed(speed * 0.1F);
-
                 }
             }
             else
             {
-                setAIMoveSpeed(0.0F);
-                setMoveStrafing(0.0F);
-                setMoveVertical(0.0F);
-                setMoveForward(0.0F);
+                setAIMoveSpeed(0);
+                setMoveStrafing(0);
+                setMoveVertical(0);
+                setMoveForward(0);
+                ((LessShitLookController) getLookController()).setShouldResetPitch(true);
             }
         }
     }
@@ -516,16 +539,16 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
             LivingEntity target = getAttackTarget();
             double distFromTarget = getDistanceSq(target);
 
-            getLookController().setLookPositionWithEntity(target, 1, 1);
+            getLookController().setLookPositionWithEntity(target, getHorizontalFaceSpeed(), getVerticalFaceSpeed());
 
             if (getNavigator().noPath() || ticksExisted % 10 == 0)
                 getNavigator().tryMoveToEntityLiving(target, 1.2);
 
             if (noActiveAnimation())
             {
-                if (distFromTarget > 225 && canZap())
+                if (distFromTarget > 225 && target.getType() == EntityType.PLAYER && canZap())
                     AnimationPacket.send(ButterflyLeviathanEntity.this, LIGHTNING_ANIMATION);
-                else if (distFromTarget < 50)
+                else if (distFromTarget < 40 && MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90, rotationYaw) < 30)
                     AnimationPacket.send(ButterflyLeviathanEntity.this, BITE_ANIMATION);
             }
         }
@@ -556,7 +579,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         @Override
         public boolean shouldContinueExecuting()
         {
-            final int MINMUM_TRAVEL_DIST = 18;
+            final int MINMUM_TRAVEL_DIST = 36;
 
             if (isSitting() || getLeashed()) return false;
             LivingEntity owner = getOwner();
@@ -577,9 +600,57 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
             if (--recalcPathTime <= 0)
             {
                 recalcPathTime = 10;
-                if (getDistanceSq(owner) > 260) tryTeleportToOwner();
+                if (getDistanceSq(owner) > 900) tryTeleportToOwner();
                 else getNavigator().tryMoveToEntityLiving(owner, 1.1d);
             }
+        }
+    }
+
+    public class JumpOutOfWaterGoal extends Goal
+    {
+        private BlockPos pos;
+
+        public JumpOutOfWaterGoal()
+        {
+            setMutexFlags(EnumSet.of(Flag.LOOK, Flag.MOVE, Flag.JUMP, Flag.LOOK));
+        }
+
+        @Override
+        public boolean shouldExecute()
+        {
+            if (isSitting()) return false;
+            if (canPassengerSteer()) return false;
+            if (!canSwim()) return false;
+            if (world.getFluidState(this.pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, getPosition()).down()).isEmpty())
+                return false;
+            if (pos.getY() <= 0) return false;
+            return getRNG().nextDouble() < 0.001;
+        }
+
+        @Override
+        public boolean shouldContinueExecuting()
+        {
+            return !canPassengerSteer() && canSwim();
+        }
+
+        @Override
+        public void startExecuting()
+        {
+            getNavigator().clearPath();
+            this.pos = pos.offset(getHorizontalFacing(), (int) ((pos.getY() - getPosY()) * 0.5d));
+        }
+
+        @Override
+        public void tick()
+        {
+            getMoveHelper().setMoveTo(pos.getX(), pos.getY(), pos.getZ(), 1.2d);
+        }
+
+        @Override
+        public void resetTask()
+        {
+            pos = null;
+            clearAI();
         }
     }
 }

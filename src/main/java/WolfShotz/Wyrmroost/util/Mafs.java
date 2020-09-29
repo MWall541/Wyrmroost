@@ -46,9 +46,14 @@ public final class Mafs
     /**
      * Get the angle between 2 sources
      */
-    public static double getAngle(double x1, double x2, double z1, double z2)
+    public static double getAngle(double sourceX, double sourceZ, double targetX, double targetZ)
     {
-        return MathHelper.atan2(z2 - z1, x2 - x1) * 180 / Math.PI + 180;
+        return MathHelper.atan2(targetZ - sourceZ, targetX - sourceX) * 180 / Math.PI + 180;
+    }
+
+    public static double getAngle(Entity source, Entity target)
+    {
+        return MathHelper.atan2(target.getPosZ() - source.getPosZ(), target.getPosX() - source.getPosX()) * 180 / Math.PI + 180;
     }
 
     /**

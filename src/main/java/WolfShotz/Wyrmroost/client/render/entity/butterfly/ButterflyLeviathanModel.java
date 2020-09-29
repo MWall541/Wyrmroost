@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * butterfly leviathan - Kingdomall
@@ -317,9 +318,9 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     public void setRotationAngles(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (entity.canSwim() || entity.isJumpingOutOfWater())
+        if (!entity.beached)
         {
-            body1.rotateAngleX = headPitch * (Mafs.PI / 180f);
+            body1.rotateAngleX = headPitch * Mafs.PI / 180f;
             headPitch = 0;
         }
 
@@ -333,11 +334,93 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         resetToDefaultPose();
         animator.update(entity);
 
+        if (entity.beached)
+        {
+            bottomWingFinPhalangeL1.rotateAngleZ = -0.65f;
+            bottomWingFinPhalangeL2.rotateAngleZ = 0.65f;
+            bottomWingFinPhalangeR1.rotateAngleZ = 0.65f;
+            bottomWingFinPhalangeR2.rotateAngleZ = -0.65f;
+        }
+
+        if (entity.isInWater())
+        {
+            chainSwing(headArray, globalSpeed - 0.1f, 0.15f, 3f, limbSwing, limbSwingAmount);
+            chainSwing(ArrayUtils.addAll(tailArray, body2), globalSpeed - 0.1f, 0.2f, -3, limbSwing, limbSwingAmount);
+
+            if (entity.canSwim())
+            {
+                flap(topWingFinPhalangeR1, globalSpeed - 0.1f, 0.75f, false, 0, -0.25f, limbSwing, limbSwingAmount);
+                walk(topWingFinPhalangeR1, globalSpeed - 0.1f, 0.35f, false, 0.75f, 0, limbSwing, limbSwingAmount);
+                flap(topWingFinPhalangeR2, globalSpeed - 0.1f, 0.75f, false, -2, -0.3f, limbSwing, limbSwingAmount);
+                flap(topWingFinMembraneR3, globalSpeed - 0.1f, 0.5f, false, -2, 0.26f, limbSwing, limbSwingAmount);
+
+                flap(topWingFinPhalangeL1, globalSpeed - 0.1f, 0.75f, true, 0, -0.25f, limbSwing, limbSwingAmount);
+                walk(topWingFinPhalangeL1, globalSpeed - 0.1f, 0.35f, true, 0.75f, 0, limbSwing, limbSwingAmount);
+                flap(topWingFinPhalangeL2, globalSpeed - 0.1f, 0.75f, false, -2, -0.3f, limbSwing, limbSwingAmount);
+                flap(topWingFinMembrane3L, globalSpeed - 0.1f, 0.5f, false, -2, 0.26f, limbSwing, limbSwingAmount);
+
+                flap(bottomWingFinPhalangeR1, globalSpeed - 0.1f, 0.75f, false, -0.5f, -0.4f, limbSwing, limbSwingAmount);
+                walk(bottomWingFinPhalangeR1, globalSpeed - 0.1f, 0.35f, false, 1.25f, 0, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeR2, globalSpeed - 0.1f, 0.5f, false, -2f, 0.3f, limbSwing, limbSwingAmount);
+                flap(bottomWingFinMembraneR3, globalSpeed - 0.1f, 0.5f, false, -2, 0.17f, limbSwing, limbSwingAmount);
+
+                flap(bottomWingFinPhalangeL1, globalSpeed - 0.1f, 0.75f, true, -0.5f, -0.4f, limbSwing, limbSwingAmount);
+                walk(bottomWingFinPhalangeL1, globalSpeed - 0.1f, 0.35f, false, 1.25f, 0, limbSwing, limbSwingAmount);
+                flap(bottomWingFinPhalangeL2, globalSpeed - 0.1f, 0.5f, true, -2f, 0.3f, limbSwing, limbSwingAmount);
+                flap(bottomWingFinMembraneL3, globalSpeed - 0.1f, 0.5f, true, -2, 0.17f, limbSwing, limbSwingAmount);
+            }
+        }
+        else if (!entity.isJumpingOutOfWater())
+        {
+            swing(bottomWingFinPhalangeL1, globalSpeed, 2f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(bottomWingFinPhalangeL1, globalSpeed, 1f, false, -1f, 0.25f, limbSwing, limbSwingAmount);
+            walk(bottomWingFinPhalangeL1, globalSpeed, -1f, false, -1f, 0, limbSwing, limbSwingAmount);
+
+            swing(bottomWingFinPhalangeL2, globalSpeed, -3f, false, 0, 2, limbSwing, limbSwingAmount);
+            flap(bottomWingFinPhalangeL2, globalSpeed, -1f, false, -1f, 0, limbSwing, limbSwingAmount);
+            walk(bottomWingFinPhalangeL2, globalSpeed, -0.5f, false, -1f, 0, limbSwing, limbSwingAmount);
+
+            swing(bottomWingFinPhalangeR1, globalSpeed, 2f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(bottomWingFinPhalangeR1, globalSpeed, 1f, true, 1f, 0.25f, limbSwing, limbSwingAmount);
+            walk(bottomWingFinPhalangeR1, globalSpeed, -1f, true, -1f, 0, limbSwing, limbSwingAmount);
+
+            swing(bottomWingFinPhalangeR2, globalSpeed, -3f, false, 0, -2, limbSwing, limbSwingAmount);
+            flap(bottomWingFinPhalangeR2, globalSpeed, -1f, true, 1f, 0, limbSwing, limbSwingAmount);
+            walk(bottomWingFinPhalangeR2, globalSpeed, -0.5f, true, -1f, 0, limbSwing, limbSwingAmount);
+
+            idle(entity.ticksExisted + partialTick);
+        }
+
         if (animator.setAnimation(ButterflyLeviathanEntity.LIGHTNING_ANIMATION)) roarAnim(partialTick);
         else if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION)) conduitAnim(partialTick);
         else if (animator.setAnimation(ButterflyLeviathanEntity.BITE_ANIMATION)) biteAnim();
 
+        swim(entity.swimTimer.get(partialTick));
         beach(entity.beachedTimer.get(partialTick));
+        sit(entity.sitTimer.get(partialTick));
+    }
+
+    @Override
+    public void idle(float frame)
+    {
+        chainWave(headArray, globalSpeed - 0.45f, 0.07f, -2, frame, 0.5f);
+        chainSwing(tailArray, globalSpeed - 0.46f, 0.4f, -3, frame, 0.5f);
+        flap(topWingFinPhalangeL1, globalSpeed - 0.43f, 0.15f, false, 0, 0, frame, 0.5f);
+        swing(topWingFinPhalangeL1, globalSpeed - 0.45f, 0.1f, false, 0.5f, 0, frame, 0.5f);
+        swing(topWingFinPhalangeL2, globalSpeed - 0.45f, 0.1f, false, 0.5f, 0, frame, 0.5f);
+        flap(topWingFinPhalangeL2, globalSpeed - 0.44f, 0.1f, false, 0.5f, 0, frame, 0.5f);
+        flap(topWingFinPhalangeR1, globalSpeed - 0.43f, 0.15f, true, 0, 0, frame, 0.5f);
+        swing(topWingFinPhalangeR1, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, frame, 0.5f);
+        swing(topWingFinPhalangeR2, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, frame, 0.5f);
+        flap(topWingFinPhalangeR2, globalSpeed - 0.44f, 0.1f, true, 0.5f, 0, frame, 0.5f);
+
+        if (entity.isSitting())
+        {
+            flap(bottomWingFinPhalangeL1, globalSpeed - 0.43f, -0.1f, false, 0.25f, 0, frame, 0.5f);
+            swing(bottomWingFinPhalangeL1, globalSpeed - 0.45f, 0.075f, false, 0.75f, 0, frame, 0.5f);
+            flap(bottomWingFinPhalangeR1, globalSpeed - 0.43f, -0.1f, true, 0.25f, 0, frame, 0.5f);
+            swing(bottomWingFinPhalangeR1, globalSpeed - 0.45f, 0.075f, true, 0.75f, 0, frame, 0.5f);
+        }
     }
 
     private void roarAnim(float partialTick)
@@ -396,11 +479,25 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         rotate(neck2, 0.15f, 0, 0);
         rotate(neck3, 0.2f, 0, 0);
         rotate(head, 0.3f, 0, 0);
+    }
+
+    private void swim(float v)
+    {
+        setTime(v);
 
         rotate(topWingFinPhalangeL1, 0, 1.05f, 0);
         rotate(topWingFinPhalangeL2, 0, 0.5f, 0);
-
         rotate(topWingFinPhalangeR1, 0, -1.05f, 0);
         rotate(topWingFinPhalangeR2, 0, -0.5f, 0);
+    }
+
+    private void sit(float v)
+    {
+        setTime(v);
+
+        rotate(bottomWingFinPhalangeL1, -0.35f, 1.05f, -0.35f);
+        rotate(bottomWingFinPhalangeL2, 0, 0.5f, -0.1f);
+        rotate(bottomWingFinPhalangeR1, -0.35f, -1.05f, 0.35f);
+        rotate(bottomWingFinPhalangeR2, 0, -0.5f, 0.1f);
     }
 }

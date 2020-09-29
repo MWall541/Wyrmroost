@@ -8,7 +8,6 @@ import WolfShotz.Wyrmroost.client.sounds.FlyingSound;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.DragonBodyController;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
@@ -102,7 +101,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (hasDataEntry(FLYING))
         {
-            lookController = new FlyerLookController(this);
+//            lookController = new LessAnnoyingLookController(this);
             moveController = new FlyerMoveController(this);
         }
 
@@ -526,7 +525,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (!world.isRemote && isImmuneToArrows())
+        if (!world.isRemote && isImmuneToArrows() && source.getImmediateSource() != null)
         {
             EntityType<?> attackSource = source.getImmediateSource().getType();
             if (attackSource == EntityType.ARROW) return false;

@@ -204,6 +204,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         {
             for (Biome biome : ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN, BiomeDictionary.Type.BEACH))
                 biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
+
             EntitySpawnPlacementRegistry.register(WREntities.SILVER_GLIDER.get(),
                     EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
                     Heightmap.Type.MOTION_BLOCKING,

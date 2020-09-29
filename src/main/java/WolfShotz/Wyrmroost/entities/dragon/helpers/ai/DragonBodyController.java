@@ -25,7 +25,7 @@ public class DragonBodyController extends BodyController
         // No body rotations while sitting or sleeping
         if (dragon.isSleeping()) return;
 
-        // Clamp the head rotation to 70 degrees while
+        // Clamp the head rotation to 70 degrees while sitting
         if (dragon.isSitting())
         {
             clampHeadRotation(70f);
@@ -36,7 +36,7 @@ public class DragonBodyController extends BodyController
         if (dragon.canPassengerSteer() || dragon.isFlying())
         {
             clampHeadRotation(120f);
-            dragon.renderYawOffset = dragon.rotationYaw = MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, dragon.getHorizontalFaceSpeed());
+            dragon.renderYawOffset = dragon.rotationYaw = MathHelper.wrapDegrees(MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, dragon.getHorizontalFaceSpeed()));
             return;
         }
 

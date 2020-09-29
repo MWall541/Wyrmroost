@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
-import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.text.StringTextComponent;
 
 public class DebugScreen extends Screen
@@ -45,9 +44,6 @@ public class DebugScreen extends Screen
         renderBackground();
         super.render(mouseX, mouseY, partialTicks);
         String gender = dragon.isMale()? "male" : "female";
-        String moveTo = dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getCurrentPos().toString();
-        MovementController movement = dragon.getMoveHelper();
-        String forceMoving = movement.getX() + " " + movement.getY() + " " + movement.getZ();
 
         drawCenteredString(font, dragon.getDisplayName().getUnformattedComponentText(), (width / 2), 15, 0xffffff);
         drawCenteredString(font, "isSleeping: " + dragon.isSleeping(), (width / 2) + 50, 50, 0xffffff);
@@ -60,8 +56,6 @@ public class DebugScreen extends Screen
         drawCenteredString(font, "noAI: " + dragon.isAIDisabled(), (width / 2) + 50, 125, 0xffffff);
         drawCenteredString(font, "position: " + dragon.getPositionVec(), (width / 2), 150, 0xffffff);
         drawCenteredString(font, "motion: " + dragon.getMotion(), (width / 2), 175, 0xffffff);
-        drawCenteredString(font, "moveTo position: " + moveTo, (width / 2), 200, 0xffffff);
-        drawCenteredString(font, "Moving to: " + movement.getClass().getSimpleName() + ": " + forceMoving, (width / 2), 225, 0xffffff);
     }
 
     @Override
