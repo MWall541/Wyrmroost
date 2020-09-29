@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.items.CoinDragonItem;
 import WolfShotz.Wyrmroost.registry.WRItems;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -12,11 +13,15 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 /**
  * Simple Entity really, just bob and down in the same spot, and land to sleep at night. Easy.
@@ -110,6 +115,18 @@ public class CoinDragonEntity extends MobEntity
 
     @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {}
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_COINDRAGON_IDLE.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_COINDRAGON_HURT.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_COINDRAGON_HURT.get(); }
 
     public double getAltitude()
     {

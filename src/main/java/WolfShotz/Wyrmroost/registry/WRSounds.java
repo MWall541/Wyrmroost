@@ -46,6 +46,9 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_HURT = entity("alpine.hurt");
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_ROAR = entity("alpine.roar");
 
+    public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_IDLE = entity("coindragon.idle");
+    public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_HURT = entity("coindragon.hurt");
+
     public static RegistryObject<SoundEvent> register(String name)
     {
         return REGISTRY.register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
