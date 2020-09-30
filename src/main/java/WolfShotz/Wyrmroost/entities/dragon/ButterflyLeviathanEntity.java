@@ -36,10 +36,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.pathfinding.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
@@ -247,6 +244,19 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     }
 
     @Override
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    {
+        if (!world.isRemote && beached && lightningCooldown > 60 && isFoodItem(stack))
+        {
+            eat(stack);
+            tame(getRNG().nextDouble() < 0.2, player);
+        }
+
+
+        return super.playerInteraction(player, hand, stack);
+    }
+
+    @Override
     public void travel(Vec3d vec3d)
     {
         if (isInWater())
@@ -299,6 +309,13 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         return isInWater()? (float) getAttribute(SWIM_SPEED).getValue()
                           : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
         //@formatter:on
+    }
+
+    @Override
+    public ItemStack onFoodEaten(World world, ItemStack stack)
+    {
+        lightningCooldown = 0;
+        return super.onFoodEaten(world, stack);
     }
 
     @Override
@@ -370,6 +387,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         if (backView) event.getInfo().movePosition(-10d, 1, 0);
         else event.getInfo().movePosition(-5, -0.75, 0);
     }
+
+    @Override
+    public boolean isFoodItem(ItemStack stack) { return WRItems.Tags.MEATS.contains(stack.getItem()); }
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.KELP; }
 
     @Nullable
     @Override
@@ -600,7 +623,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
             if (--recalcPathTime <= 0)
             {
                 recalcPathTime = 10;
-                if (getDistanceSq(owner) > 900) tryTeleportToOwner();
+                if (getDistanceSq(owner) > 900 && (owner.onGround || owner.isInWater())) tryTeleportToOwner();
                 else getNavigator().tryMoveToEntityLiving(owner, 1.1d);
             }
         }

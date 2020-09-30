@@ -40,7 +40,11 @@ public class DragonBreedGoal extends Goal
      */
     public boolean shouldExecute()
     {
-        if (limit > 0 && dragon.breedCount >= limit) return false;
+        if (limit > 0 && dragon.breedCount >= limit)
+        {
+            dragon.resetInLove();
+            return false;
+        }
         if (!dragon.isInLove()) return false;
         if ((targetMate = getNearbyMate()) == null) return false;
         if (dragon.hasDataEntry(AbstractDragonEntity.GENDER)) return dragon.isMale() != targetMate.isMale();

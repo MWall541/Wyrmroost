@@ -13,6 +13,14 @@
       }
     ]
   },
+  "breathweapon.fire": {
+    "subtitle": "Dragon Fire Breath",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/other/breath/fire_breath"
+      }
+    ]
+  },
   "entity.ldwyrm.idle": {
     "subtitle": "Desertwyrm Click",
     "sounds": [
@@ -294,6 +302,20 @@
       },
       {
         "name": "wyrmroost:entity/alpine/roar2"
+      }
+    ]
+  },
+  "entity.coindragon.idle": {
+    "subtitle": "Coin Dragon Chirps",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/coin_dragon/idle"
+      },
+      {
+        "name": "wyrmroost:entity/coin_dragon/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/coin_dragon/idle2"
       }
     ]
   }

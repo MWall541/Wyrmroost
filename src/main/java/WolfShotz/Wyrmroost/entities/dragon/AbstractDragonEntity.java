@@ -457,10 +457,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.notifyDataManagerChange(key);
         if (key == SLEEPING || key == FLYING || key == TAMED) recalculateSize();
-        if (world.isRemote && key == FLYING && isFlying())
-        {
-            ClientEvents.getClient().getSoundHandler().play(new FlyingSound(this));
-        }
+        if (world.isRemote && key == FLYING && isFlying() && getControllingPlayer() == ClientEvents.getPlayer())
+            ClientEvents.playSound(new FlyingSound(this));
     }
 
     @Override

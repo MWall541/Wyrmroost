@@ -43,13 +43,14 @@ public class SoundData implements IDataProvider
         registerSounds(json);
         for (SoundEvent value : ModUtils.getRegistryEntries(WRSounds.REGISTRY))
             if (!registered.contains(value))
-                throw new IllegalArgumentException("Unregistered Sound event: " + value.toString());
+                throw new IllegalArgumentException("Unregistered Sound event: " + value.getName());
         IDataProvider.save(GSON, cache, json, generator.getOutputFolder().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
     }
 
     public void registerSounds(JsonObject json)
     {
         new Builder(WRSounds.WING_FLAP.get()).subtitle("Dragon Wing Flap").sounds(s -> Wyrmroost.rl("entity/other/wings" + s), "flap1", "flap2", "flap3").build(json);
+        new Builder(WRSounds.FIRE_BREATH.get()).subtitle("Dragon Fire Breath").sound(Wyrmroost.rl("entity/other/breath/fire_breath")).build(json);
 
         new Builder(WRSounds.ENTITY_LDWYRM_IDLE.get()).subtitle("Desertwyrm Click").sounds(s -> Wyrmroost.rl("entity/lesser_desertwyrm" + s), "idle1", "idle2").build(json);
 
@@ -84,6 +85,8 @@ public class SoundData implements IDataProvider
         new Builder(WRSounds.ENTITY_ALPINE_IDLE.get()).subtitle("Alpine Growls").sounds(s -> Wyrmroost.rl("entity/alpine" + s), "idle1", "idle2").build(json);
         new Builder(WRSounds.ENTITY_ALPINE_HURT.get()).subtitle("Alpine Whine").sounds(s -> Wyrmroost.rl("entity/alpine" + s), "hurt1", "hurt2", "hurt3").build(json);
         new Builder(WRSounds.ENTITY_ALPINE_ROAR.get()).subtitle("Alpine Roar").sounds(s -> Wyrmroost.rl("entity/alpine" + s), "roar", "roar1", "roar2").build(json);
+
+        new Builder(WRSounds.ENTITY_COINDRAGON_IDLE.get()).subtitle("Coin Dragon Chirps").sounds(s -> Wyrmroost.rl("entity/coin_dragon" + s), "idle", "idle1", "idle2").build(json);
     }
 
     @Override

@@ -230,9 +230,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         return false;
     }
 
-    /**
-     * todo
-     */
     @Override
     public void updatePassenger(Entity entity)
     {

@@ -1,7 +1,10 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
+import WolfShotz.Wyrmroost.client.sounds.BreathSound;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
@@ -122,12 +125,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void playSound(SoundEvent soundIn, float volume, float pitch)
-    {
-        super.playSound(soundIn, volume, pitch);
-    }
-
-    @Override
     public void livingTick()
     {
         super.livingTick();
@@ -142,11 +139,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             if (isBreathingFire() && getControllingPlayer() == null && getAttackTarget() == null)
                 setBreathingFire(false);
 
-            if (breathTimer.get() == 1)
-            {
-                world.addEntity(new FireBreathEntity(this));
-//                if (ticksExisted % 10 == 0) playSound(WRSounds.ENTITY_ROYALRED_BREATH.get(), 1, 0.5f);
-            }
+            if (breathTimer.get() == 1) world.addEntity(new FireBreathEntity(this));
 
             if (noActiveAnimation() && !isKnockedOut() && !isSleeping() && !isBreathingFire() && !isChild() && getRNG().nextDouble() < 0.0004)
                 AnimationPacket.send(this, ROAR_ANIMATION);
@@ -159,6 +152,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         if (anim == ROAR_ANIMATION)
         {
+            ((LessShitLookController) getLookController()).skipLooking(true);
             for (LivingEntity entity : getEntitiesNearby(10, this::isOnSameTeam))
                 entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
         }
@@ -232,6 +226,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    public void notifyDataManagerChange(DataParameter<?> key)
+    {
+        if (world.isRemote && key == BREATHING_FIRE && isBreathingFire()) ClientEvents.playSound(new BreathSound(this));
+        super.notifyDataManagerChange(key);
+    }
+
+    @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
         if (!noActiveAnimation()) return;
@@ -247,8 +248,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public void meleeAttack()
     {
-        if (world.isRemote) return;
-        AnimationPacket.send(this, isFlying() || getRNG().nextBoolean()? BITE_ATTACK_ANIMATION : SLAP_ATTACK_ANIMATION);
+        if (!world.isRemote)
+            AnimationPacket.send(this, isFlying() || getRNG().nextBoolean()? BITE_ATTACK_ANIMATION : SLAP_ATTACK_ANIMATION);
     }
 
     @Override

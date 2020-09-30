@@ -11,6 +11,7 @@ public class WRSounds
     public static final DeferredRegister<SoundEvent> REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<SoundEvent> WING_FLAP = register("wing.flap");
+    public static final RegistryObject<SoundEvent> FIRE_BREATH = register("breathweapon.fire");
 
     public static final RegistryObject<SoundEvent> ENTITY_LDWYRM_IDLE = entity("ldwyrm.idle");
 
@@ -47,7 +48,6 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_ROAR = entity("alpine.roar");
 
     public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_IDLE = entity("coindragon.idle");
-    public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_HURT = entity("coindragon.hurt");
 
     public static RegistryObject<SoundEvent> register(String name)
     {

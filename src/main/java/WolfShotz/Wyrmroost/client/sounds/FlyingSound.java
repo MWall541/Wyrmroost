@@ -16,7 +16,7 @@ public class FlyingSound extends TickableSound
         this.entity = entity;
         this.repeat = true;
         this.repeatDelay = 0;
-        this.volume = 0.1F;
+        this.volume = 0.1f;
     }
 
     public void tick()

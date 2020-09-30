@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.registry.WRKeybind;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -95,6 +96,8 @@ public class ClientEvents
 
     // for class loading issues
     public static PlayerEntity getPlayer() { return Minecraft.getInstance().player; }
+
+    public static void playSound(ISound sound) { getClient().getSoundHandler().play(sound); }
 
     public static Vec3d getProjectedView() { return getClient().gameRenderer.getActiveRenderInfo().getProjectedView(); }
 

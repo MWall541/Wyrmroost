@@ -122,11 +122,11 @@ public class CoinDragonEntity extends MobEntity
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_COINDRAGON_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_COINDRAGON_IDLE.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_COINDRAGON_HURT.get(); }
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_COINDRAGON_IDLE.get(); }
 
     public double getAltitude()
     {
