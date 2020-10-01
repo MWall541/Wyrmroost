@@ -710,7 +710,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         membraneR2.showModel = membraneL2.showModel = !flying;
 
         resetToDefaultPose();
-        animator.update(entity);
+        animator.update(entity, partialTicks);
 
         if (!entity.isSitting() && !entity.isSleeping())
         {

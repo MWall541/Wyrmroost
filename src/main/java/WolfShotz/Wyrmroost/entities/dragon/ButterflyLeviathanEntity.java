@@ -37,10 +37,7 @@ import net.minecraft.pathfinding.*;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
@@ -74,7 +71,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         super(dragon, world);
         ignoreFrustumCheck = WRConfig.disableFrustumCheck;
         moveController = new MoveController();
-        lookController = new LessShitLookController(this);
         stepHeight = 2;
 
         setPathPriority(PathNodeType.WATER, 0);
@@ -115,7 +111,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         targetSelector.addGoal(3, new HurtByTargetGoal(this));
         targetSelector.addGoal(4, new DefendHomeGoal(this));
         targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, LivingEntity.class, false, true, e ->
-                e.getType() == EntityType.SQUID || e.getType() == EntityType.GUARDIAN || e.getType() == EntityType.PLAYER));
+                (beached || e.isInWater()) && (e.getType() == EntityType.SQUID || e.getType() == EntityType.GUARDIAN || e.getType() == EntityType.PLAYER)));
     }
 
     @Override
@@ -239,19 +235,23 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         else if (animation == BITE_ANIMATION)
         {
             if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1, true);
-            else if (animTick == 6) attackInFront(0.85);
+            else if (animTick == 6)
+            {
+                AxisAlignedBB aabb = getBoundingBox().offset(Mafs.getYawVec(rotationYaw, 0, 5.5)).grow(0.85);
+                attackInAABB(aabb, true, 40);
+            }
         }
     }
 
     @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (!world.isRemote && beached && lightningCooldown > 60 && isFoodItem(stack))
+        if (beached && lightningCooldown > 60 && isFoodItem(stack))
         {
             eat(stack);
-            tame(getRNG().nextDouble() < 0.2, player);
+            if (!world.isRemote) tame(getRNG().nextDouble() < 0.2, player);
+            return true;
         }
-
 
         return super.playerInteraction(player, hand, stack);
     }

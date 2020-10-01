@@ -47,8 +47,11 @@ public class AnimationPacket
 
     public static <T extends Entity & IAnimatedEntity> void send(T entity, Animation animation)
     {
-        entity.setAnimation(animation);
-        Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),
-                new AnimationPacket(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+        if (!entity.world.isRemote)
+        {
+            entity.setAnimation(animation);
+            Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),
+                    new AnimationPacket(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+        }
     }
 }

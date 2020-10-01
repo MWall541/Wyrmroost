@@ -398,7 +398,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
         globalDegree = 0.5f;
         globalSpeed = 0.5f;
         resetToDefaultPose();
-        animator.update(fruitDrake);
+        animator.update(fruitDrake, partialTick);
 
         if (!fruitDrake.isSleeping())
         {

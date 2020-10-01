@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.client.model;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.util.Mafs;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
@@ -15,6 +14,7 @@ public class ModelAnimator
     private int tempTick = 0;
     private int prevTempTick;
     private boolean correctAnimation = false;
+    private float partialTicks;
     private IAnimatedEntity entity;
     private final HashMap<WRModelRenderer, BoxPosCache> boxPosCache = new HashMap<>();
     private final HashMap<WRModelRenderer, BoxPosCache> prevPosCache = new HashMap<>();
@@ -25,11 +25,12 @@ public class ModelAnimator
 
     public IAnimatedEntity getEntity() { return entity; }
 
-    public void update(IAnimatedEntity entity)
+    public void update(IAnimatedEntity entity, float partialTicks)
     {
         this.tempTick = prevTempTick = 0;
         this.correctAnimation = false;
         this.entity = entity;
+        this.partialTicks = partialTicks;
         boxPosCache.clear();
         prevPosCache.clear();
     }
@@ -105,7 +106,7 @@ public class ModelAnimator
                 }
                 else
                 {
-                    float tick = ((float) (animationTick - prevTempTick) + Minecraft.getInstance().getRenderPartialTicks()) / (tempTick - prevTempTick);
+                    float tick = ((float) (animationTick - prevTempTick) + partialTicks) / (tempTick - prevTempTick);
                     float inc = MathHelper.sin(tick * Mafs.PI / 2f);
                     float dec = 1f - inc;
 

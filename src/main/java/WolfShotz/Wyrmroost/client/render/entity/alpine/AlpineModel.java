@@ -669,7 +669,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
     {
         float tick = entity.ticksExisted + partialTick;
         this.entity = entity;
-        animator.update(entity);
+        animator.update(entity, partialTick);
         resetToDefaultPose();
 
         if (!entity.isSleeping() && !entity.isSitting())

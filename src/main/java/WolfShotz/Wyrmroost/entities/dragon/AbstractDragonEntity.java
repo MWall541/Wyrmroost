@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.DragonBodyController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerMoveController;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -32,6 +33,7 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -99,11 +101,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         invHandler = Optional.ofNullable(createInv());
         stepHeight = 1;
 
-        if (hasDataEntry(FLYING))
-        {
-//            lookController = new LessAnnoyingLookController(this);
-            moveController = new FlyerMoveController(this);
-        }
+        lookController = new LessShitLookController(this);
+
+        if (hasDataEntry(FLYING)) moveController = new FlyerMoveController(this);
 
         registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
         registerDataEntry("BreedCount", EntityDataEntry.INTEGER, () -> breedCount, i -> breedCount = i);
@@ -505,9 +505,30 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void attackInAABB(AxisAlignedBB aabb)
     {
+        attackInAABB(aabb, false, 0);
         List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
         if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb);
         for (LivingEntity attacking : attackables) attackEntityAsMob(attacking);
+    }
+
+    public void attackInAABB(AxisAlignedBB aabb, boolean disableShield, int shieldTime)
+    {
+        List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
+        if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb);
+        for (LivingEntity attacking : attackables)
+        {
+            attackEntityAsMob(attacking);
+            if (disableShield && attacking instanceof PlayerEntity)
+            {
+                PlayerEntity player = ((PlayerEntity) attacking);
+                if (player.isHandActive() && player.getActiveItemStack().isShield(player))
+                {
+                    player.getCooldownTracker().setCooldown(Items.SHIELD, shieldTime);
+                    player.resetActiveHand();
+                    world.setEntityState(player, (byte) 9);
+                }
+            }
+        }
     }
 
     @Override // Dont damage owners other pets!

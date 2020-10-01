@@ -394,7 +394,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
         float frame = drake.ticksExisted + partialTick;
 
         resetToDefaultPose();
-        animator.update(drake);
+        animator.update(drake, partialTick);
         
         if (!drake.isSitting() && !drake.isSleeping())
         {

@@ -132,7 +132,7 @@ public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
     {
         float frame = minutus.ticksExisted;
 
-        animator.update(minutus);
+        animator.update(minutus, partialTick);
         resetToDefaultPose();
 
         if (minutus.isBurrowed())

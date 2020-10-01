@@ -332,7 +332,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     {
         this.entity = entity;
         resetToDefaultPose();
-        animator.update(entity);
+        animator.update(entity, partialTick);
 
         if (entity.beached)
         {
@@ -372,6 +372,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         }
         else if (!entity.isJumpingOutOfWater())
         {
+            if (limbSwingAmount > 0.152f) limbSwingAmount = 0.152f;
             swing(bottomWingFinPhalangeL1, globalSpeed, 2f, false, 0, 0, limbSwing, limbSwingAmount);
             flap(bottomWingFinPhalangeL1, globalSpeed, 1f, false, -1f, 0.25f, limbSwing, limbSwingAmount);
             walk(bottomWingFinPhalangeL1, globalSpeed, -1f, false, -1f, 0, limbSwing, limbSwingAmount);

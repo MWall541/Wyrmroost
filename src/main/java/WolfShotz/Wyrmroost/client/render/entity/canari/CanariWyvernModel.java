@@ -411,7 +411,7 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         float frame = canari.ticksExisted + partialTick;
 
         resetToDefaultPose();
-        animator.update(canari);
+        animator.update(canari, partialTick);
         setInitialPositions();
 
         if (canari.isFlying())
