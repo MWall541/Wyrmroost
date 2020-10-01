@@ -44,18 +44,6 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     }
 
     @Override
-    public void startExecuting()
-    {
-        if (y > dragon.getHeight()) dragon.setFlying(true);
-    }
-
-    @Override
-    public void tick()
-    {
-        dragon.getLookController().setLookPosition(x, y, z, 90, 90);
-    }
-
-    @Override
     public Vec3d getPosition()
     {
         Vec3d position = null;

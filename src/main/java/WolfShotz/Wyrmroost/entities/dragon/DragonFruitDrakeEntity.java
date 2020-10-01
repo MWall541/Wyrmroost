@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.entities.dragon;
 import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -84,16 +85,16 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new DragonBreedGoal(this, 0));
         goalSelector.addGoal(6, new MeleeAttackGoal(this, 2, false));
+        goalSelector.addGoal(8, new WRFollowOwnerGoal(this));
+        goalSelector.addGoal(9, CommonGoalWrappers.followParent(this, 1));
+        goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
+        goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 7f));
+        goalSelector.addGoal(12, new LookRandomlyGoal(this));
         goalSelector.addGoal(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.fromItems(Items.APPLE))
         {
             @Override
             public boolean shouldExecute() { return !isTamed() && isChild() && super.shouldExecute(); }
         });
-        goalSelector.addGoal(8, CommonGoalWrappers.followOwner(this, 1.1d, 12f, 3f));
-        goalSelector.addGoal(9, CommonGoalWrappers.followParent(this, 1));
-        goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 7f));
-        goalSelector.addGoal(12, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));

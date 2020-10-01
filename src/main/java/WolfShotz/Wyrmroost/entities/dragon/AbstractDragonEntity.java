@@ -102,7 +102,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         stepHeight = 1;
 
         lookController = new LessShitLookController(this);
-
         if (hasDataEntry(FLYING)) moveController = new FlyerMoveController(this);
 
         registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
@@ -181,7 +180,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(FLYING, fly);
         if (fly)
         {
-            // make sure NOT to switch the navigator if liftoff fails
+//             make sure NOT to switch the navigator if liftoff fails
             if (liftOff()) navigator = new FlyingPathNavigator(this, world);
         }
         else navigator = new GroundPathNavigator(this, world);
@@ -417,15 +416,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (isFlying())
         {
-            // Move relative to rotationYaw
+            // Move relative to rotationYaw - handled in the move controller or by the passenger
             moveRelative(speed, vec3d);
             move(MoverType.SELF, getMotion());
             setMotion(getMotion().scale(0.88f));
 
+            // hover in place
             Vec3d motion = getMotion();
-            if (motion.length() < 0.04f) // Not Moving, just hover
+            if (motion.length() < 0.04f)
                 setMotion(motion.add(0, Math.cos(ticksExisted * 0.1f) * 0.02f, 0));
 
+            // limb swinging animations
             float limbSpeed = 0.4f;
             float amount = 1f;
             if (getPosY() - prevPosY < -0.2f)
@@ -444,7 +445,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super.travel(vec3d);
     }
 
-    protected float getTravelSpeed()
+    public float getTravelSpeed()
     {
         return isFlying()? (float) getAttribute(FLYING_SPEED).getValue()
                 : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;

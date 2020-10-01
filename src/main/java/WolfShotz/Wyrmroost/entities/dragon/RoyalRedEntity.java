@@ -5,10 +5,7 @@ import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.client.sounds.BreathSound;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
@@ -107,7 +104,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new AttackGoal());
-        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this, 2));
         goalSelector.addGoal(9, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));

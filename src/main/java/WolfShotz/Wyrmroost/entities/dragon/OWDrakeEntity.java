@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
@@ -15,7 +16,9 @@ import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -84,12 +87,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.registerGoals();
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
-        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2d, 12f, 3f));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this, 2));
-        goalSelector.addGoal(8, new GrazeGoal(this, 2, GRAZE_ANIMATION));
-        goalSelector.addGoal(9, new WaterAvoidingRandomWalkingGoal(this, 1));
-        goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
-        goalSelector.addGoal(11, new LookRandomlyGoal(this));
+        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
+        goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10f));
+        goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
@@ -165,6 +167,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void livingTick()
     {
+        super.livingTick();
+
         sitTimer.add((isSitting() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.04f : -0.1f);
 
@@ -175,7 +179,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
             thrownPassenger = null;
         }
 
-        if (getAnimation() == ROAR_ANIMATION && getAnimationTick() == 15)
+        if (!world.isRemote && getRNG().nextDouble() < (isChild()? 0.02 : 0.001)) AnimationPacket.send(this, GRAZE_ANIMATION);
+
+
+        Animation animation = getAnimation();
+        int tick = getAnimationTick();
+        if (animation == ROAR_ANIMATION && tick == 15)
         {
             for (LivingEntity e : getEntitiesNearby(15, e -> !isOnSameTeam(e))) // Dont get too close now ;)
             {
@@ -190,10 +199,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
             }
         }
 
-        if (getAnimation() == HORN_ATTACK_ANIMATION)
+        if (animation == HORN_ATTACK_ANIMATION)
         {
             prevRotationYaw = renderYawOffset = rotationYaw = rotationYawHead;
-            if (getAnimationTick() == 8)
+            if (tick == 8)
             {
                 playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f, true);
                 AxisAlignedBB size = getBoundingBox().shrink(0.15);
@@ -201,7 +210,22 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 attackInAABB(aabb);
             }
         }
-        super.livingTick();
+
+        if (animation == GRAZE_ANIMATION && tick == 13)
+        {
+            BlockPos pos = new BlockPos(Mafs.getYawVec(renderYawOffset, 0, getWidth() / 2 + 1).add(getPositionVec()));
+            if (world.getBlockState(pos).getBlock().getBlock() == Blocks.GRASS && WRConfig.canGrief(world))
+            {
+                world.destroyBlock(pos, false);
+                eatGrassBonus();
+            }
+            else if (world.getBlockState(pos.down()).getBlock().getBlock() == Blocks.GRASS_BLOCK)
+            {
+                world.playEvent(2001, pos, Block.getStateId(Blocks.GRASS_BLOCK.getDefaultState()));
+                world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
+                eatGrassBonus();
+            }
+        }
     }
 
     @Override
@@ -339,7 +363,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected float getTravelSpeed()
+    public float getTravelSpeed()
     {
         float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
         if (isSprinting()) speed += 0.1;

@@ -1,8 +1,10 @@
 package WolfShotz.Wyrmroost.entities.util;
 
-import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.entity.ai.goal.FollowParentGoal;
+import net.minecraft.entity.ai.goal.NonTamedTargetGoal;
+import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.EntityPredicates;
@@ -54,28 +56,6 @@ public class CommonGoalWrappers
 
             @Override
             public boolean shouldExecute() { return !animal.isTamed() && super.shouldExecute(); }
-        };
-    }
-
-    /**
-     * Follow owner but for dragons (RESPECT THE HOME)
-     *
-     * @param dragon  if I need to explain this I swear to god
-     * @param speed   speed at which it follows
-     * @param minDist the distance to follow to
-     * @param maxDist the distance at which to start following (if too far from this, start follow)
-     * @return a WAY cooler follow owner goal.
-     */
-    public static FollowOwnerGoal followOwner(AbstractDragonEntity dragon, double speed, float minDist, float maxDist)
-    {
-        return new FollowOwnerGoal(dragon, speed, minDist, maxDist, false)
-        {
-            @Override
-            public boolean shouldExecute()
-            {
-                if (dragon.isSleeping() || dragon.getHomePos().isPresent()) return false;
-                return super.shouldExecute();
-            }
         };
     }
 

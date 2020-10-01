@@ -1,11 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
@@ -70,7 +66,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         goalSelector.addGoal(3, new MoveToHomeGoal(this));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 2, false));
         goalSelector.addGoal(5, new ThreatenGoal());
-        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.1, 10, 2));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this, 0));
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 8f));

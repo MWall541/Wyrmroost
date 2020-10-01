@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -99,7 +100,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         goalSelector.addGoal(0, sitGoal = new SitGoal(this));
         goalSelector.addGoal(1, new MoveToHomeGoal(this));
         goalSelector.addGoal(2, new AttackGoal());
-        goalSelector.addGoal(3, new FollowOwnerGoal());
+        goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(4, new DragonBreedGoal(this, 1));
         goalSelector.addGoal(5, new JumpOutOfWaterGoal());
         goalSelector.addGoal(6, new RandomSwimmingGoal(this, 1, 40));
@@ -303,7 +304,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected float getTravelSpeed()
+    public float getTravelSpeed()
     {
         //@formatter:off
         return isInWater()? (float) getAttribute(SWIM_SPEED).getValue()
@@ -573,58 +574,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                     AnimationPacket.send(ButterflyLeviathanEntity.this, LIGHTNING_ANIMATION);
                 else if (distFromTarget < 40 && MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90, rotationYaw) < 30)
                     AnimationPacket.send(ButterflyLeviathanEntity.this, BITE_ANIMATION);
-            }
-        }
-    }
-
-    // because the vanilla one will throw a fucking fit if we have a water navigator
-    public class FollowOwnerGoal extends Goal
-    {
-        private int recalcPathTime;
-
-        public FollowOwnerGoal()
-        {
-            setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-        }
-
-        @Override
-        public boolean shouldExecute()
-        {
-            final int MINIMUM_FOLLOW_DIST = 225;
-
-            if (isSitting() || getLeashed()) return false;
-            LivingEntity owner = getOwner();
-            if (owner == null) return false;
-            if (owner.isSpectator()) return false;
-            return getDistanceSq(owner) > MINIMUM_FOLLOW_DIST;
-        }
-
-        @Override
-        public boolean shouldContinueExecuting()
-        {
-            final int MINMUM_TRAVEL_DIST = 36;
-
-            if (isSitting() || getLeashed()) return false;
-            LivingEntity owner = getOwner();
-            if (owner == null) return false;
-            if (owner.isSpectator()) return false;
-            return getDistanceSq(owner) > MINMUM_TRAVEL_DIST;
-        }
-
-        @Override
-        public void resetTask() { navigator.clearPath(); }
-
-        @Override
-        public void tick()
-        {
-            LivingEntity owner = getOwner();
-            getLookController().setLookPositionWithEntity(owner, 10, getVerticalFaceSpeed());
-
-            if (--recalcPathTime <= 0)
-            {
-                recalcPathTime = 10;
-                if (getDistanceSq(owner) > 900 && (owner.onGround || owner.isInWater())) tryTeleportToOwner();
-                else getNavigator().tryMoveToEntityLiving(owner, 1.1d);
             }
         }
     }

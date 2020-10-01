@@ -7,7 +7,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.registry.WRItems;
@@ -77,7 +77,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.1d, true));
         goalSelector.addGoal(5, new MoveToHomeGoal(this));
-        goalSelector.addGoal(6, CommonGoalWrappers.followOwner(this, 1.2f, 8, 2));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new BreedGoal());
         goalSelector.addGoal(9, new ScavengeGoal(1.1d));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));

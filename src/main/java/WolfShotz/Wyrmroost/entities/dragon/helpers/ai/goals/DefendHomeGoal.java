@@ -37,7 +37,7 @@ public class DefendHomeGoal extends TargetGoal
     public boolean shouldExecute()
     {
         if (!defender.getHomePos().isPresent()) return false;
-        return defender.getRNG().nextInt(5) == 0 && (target = findPotentialTarget()) != null;
+        return defender.getRNG().nextDouble() < 0.2 && (target = findPotentialTarget()) != null;
     }
 
     @Override
@@ -45,8 +45,9 @@ public class DefendHomeGoal extends TargetGoal
     {
         super.startExecuting();
 
-        defender.world.getEntitiesWithinAABB(MobEntity.class, defender.getBoundingBox().grow(WRConfig.homeRadius), defender::isOnSameTeam)
-                .forEach(e -> e.setAttackTarget(target));
+        // alert others!
+        for (MobEntity mob : defender.world.getEntitiesWithinAABB(MobEntity.class, defender.getBoundingBox().grow(WRConfig.homeRadius), defender::isOnSameTeam))
+            mob.setAttackTarget(target);
     }
 
     @Override
@@ -60,8 +61,7 @@ public class DefendHomeGoal extends TargetGoal
 
     public LivingEntity findPotentialTarget()
     {
-        return defender.world.func_225318_b(
-                LivingEntity.class,
+        return defender.world.func_225318_b(LivingEntity.class,
                 predicate,
                 defender,
                 defender.getPosX(),
