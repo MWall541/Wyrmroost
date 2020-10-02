@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.client.sounds;
 
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
@@ -27,7 +28,7 @@ public class FlyingSound extends TickableSound
             pitch = 1;
             return;
         }
-        if (entity.isAlive() && entity.isFlying())
+        if (entity.isAlive() && entity.isFlying() && entity.getControllingPlayer() == ClientEvents.getPlayer())
         {
             x = (float) entity.getPosX();
             y = (float) entity.getPosY();

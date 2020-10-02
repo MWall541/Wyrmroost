@@ -125,6 +125,7 @@ public enum StaffAction
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     dragon.clearAI();
+                    dragon.clearHome();
                     dragon.setSitting(false);
                 }
 
@@ -137,7 +138,7 @@ public enum StaffAction
                     if (ertr != null)
                     {
                         dragon.setAttackTarget((LivingEntity) ertr.getEntity());
-                        ModUtils.playLocalSound(SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
+                        if (player.world.isRemote) ModUtils.playLocalSound(SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
                         return true;
                     }
                     return false;

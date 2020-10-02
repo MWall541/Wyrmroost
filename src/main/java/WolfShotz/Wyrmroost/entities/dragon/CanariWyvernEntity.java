@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -11,6 +12,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.controller.BodyController;
+import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -20,6 +22,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -41,6 +44,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
+
+        moveController = new MoveController();
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
@@ -198,6 +203,52 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
     @Override
     public Collection<? extends IItemProvider> getFoodItems() { return Collections.singleton(Items.SWEET_BERRIES); }
+
+    private class MoveController extends MovementController
+    {
+        private MoveController()
+        {
+            super(CanariWyvernEntity.this);
+        }
+
+        public void tick()
+        {
+            if (action == Action.MOVE_TO)
+            {
+                action = Action.WAIT;
+
+                double x = posX - getPosX();
+                double y = posY - getPosY();
+                double z = posZ - getPosZ();
+                double distSq = x * x + y * y + z * z;
+                if (distSq < 2.5000003E-7)
+                {
+                    setMoveForward(0f);
+                    return;
+                }
+
+                if (distSq > 16) setFlying(true);
+
+                if (isFlying())
+                {
+                    rotationYawHead = limitAngle(rotationYawHead, (float) Math.toDegrees(MathHelper.atan2(z, x)) - 90f, getHorizontalFaceSpeed() * 3);
+                    rotationYaw = limitAngle(rotationYaw, rotationYawHead, getHorizontalFaceSpeed());
+                    ((LessShitLookController) getLookController()).freeze();
+                    float speed = (float) this.speed * getTravelSpeed();
+                    setAIMoveSpeed(speed);
+                    setMoveVertical(y > 0? speed : -speed);
+                }
+                else super.tick();
+            }
+            else
+            {
+                setAIMoveSpeed(0);
+                setMoveStrafing(0);
+                setMoveVertical(0);
+                setMoveForward(0);
+            }
+        }
+    }
 
     public class ThreatenGoal extends Goal
     {

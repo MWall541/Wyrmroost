@@ -58,8 +58,8 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
                 if (!dragon.isWithinHomeDistanceCurrentPosition())
                     vec3d = new Vec3d(dragon.getHomePosition()).subtract(dragon.getPositionVec()).normalize();
 
-                int yOffset = dragon.getAltitude() > 40? -10 : 3;
-                position = RandomPositionGenerator.findAirTarget(dragon, 20, 10, vec3d, Mafs.PI * 0.75f, 5, yOffset);
+                int yOffset = dragon.getAltitude() > 40? 10 : 0;
+                position = RandomPositionGenerator.findAirTarget(dragon, 20, 10, vec3d, Mafs.PI * 0.75f, 3, yOffset);
             }
         }
 

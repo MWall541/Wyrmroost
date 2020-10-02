@@ -6,8 +6,8 @@ import net.minecraft.util.math.MathHelper;
 
 public class LessShitLookController extends LookController
 {
-    private boolean shouldResetPitch = true;
-    private boolean skipLook = false;
+    private boolean frozen;
+    private boolean restore;
 
     public LessShitLookController(MobEntity entity)
     {
@@ -16,42 +16,43 @@ public class LessShitLookController extends LookController
 
     public void tick()
     {
-        if (skipLook)
+        if (restore)
         {
-            mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, mob.getFaceRotSpeed());
-            mob.rotationPitch = clampedRotate(mob.rotationPitch, 0, mob.getFaceRotSpeed());
-            skipLook = false;
-            isLooking = false;
+            this.restore = false;
+            mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, mob.getHorizontalFaceSpeed());
+            mob.rotationPitch = clampedRotate(mob.rotationPitch, 0, mob.getVerticalFaceSpeed());
+        }
+
+        if (frozen)
+        {
+            frozen = false;
             return;
         }
 
-        if (shouldResetPitch) mob.rotationPitch = 0;
-
+        mob.rotationPitch = 0;
         if (isLooking)
         {
             mob.rotationYawHead = clampedRotate(mob.rotationYawHead, getTargetYaw(), deltaLookYaw);
             mob.rotationPitch = clampedRotate(mob.rotationPitch, getTargetPitch(), deltaLookPitch);
         }
-        else mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, mob.getFaceRotSpeed());
+        else mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, mob.getHorizontalFaceSpeed());
 
         if (!mob.getNavigator().noPath())
             mob.rotationYawHead = MathHelper.func_219800_b(mob.rotationYawHead, mob.renderYawOffset, mob.getFaceRotSpeed());
     }
 
-    protected boolean func_220680_b()
+    protected boolean func_220680_b() { return !frozen; }
+
+    public void freeze()
     {
-        return shouldResetPitch();
+        this.frozen = true;
+        this.isLooking = false;
     }
 
-    public boolean shouldResetPitch()
+    public void restore()
     {
-        return shouldResetPitch;
+        this.restore = true;
+        this.frozen = true;
+        this.isLooking = false;
     }
-
-    public void setShouldResetPitch(boolean b)
-    {
-        shouldResetPitch = b;
-    }
-
-    public void skipLooking(boolean b) { skipLook = b; }
 }

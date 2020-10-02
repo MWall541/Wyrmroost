@@ -212,7 +212,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         }
         else if (animation == CONDUIT_ANIMATION) // oooo very scary
         {
-            ((LessShitLookController) getLookController()).skipLooking(true);
+            ((LessShitLookController) getLookController()).restore();
             if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 5f, 1, true);
             else if (animTick == 15)
             {
@@ -497,7 +497,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         protected boolean canNavigate() { return true; }
     }
 
-    public class MoveController extends MovementController
+    private class MoveController extends MovementController
     {
         public MoveController()
         {
@@ -523,8 +523,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                     rotationYawHead = yaw;
                     renderYawOffset = rotationYaw = limitAngle(rotationYaw, rotationYawHead, getHorizontalFaceSpeed());
                     rotationPitch = limitAngle(rotationPitch, pitch, 90);
-                    ((LessShitLookController) getLookController()).setShouldResetPitch(false);
-                    float speed = getTravelSpeed();
+                    ((LessShitLookController) getLookController()).freeze();
+                    float speed = (float) this.speed * getTravelSpeed();
                     setAIMoveSpeed(speed);
                     if (isInWater())
                     {
@@ -539,12 +539,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                 setMoveStrafing(0);
                 setMoveVertical(0);
                 setMoveForward(0);
-                ((LessShitLookController) getLookController()).setShouldResetPitch(true);
             }
         }
     }
 
-    public class AttackGoal extends Goal
+    private class AttackGoal extends Goal
     {
         public AttackGoal()
         {
@@ -578,7 +577,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         }
     }
 
-    public class JumpOutOfWaterGoal extends Goal
+    private class JumpOutOfWaterGoal extends Goal
     {
         private BlockPos pos;
 

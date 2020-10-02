@@ -44,8 +44,8 @@ public class DragonArmorItem extends Item
             throw new AssertionError("uhh this isn't a an armor: " + item.getRegistryName().toString());
 
         DragonArmorItem armor = (DragonArmorItem) item;
-        double reduction = armor.dmgReduction;
-        double multiplier = EnchantmentHelper.getEnchantments(stack).getOrDefault(Enchantments.PROTECTION, 0) * 1.25;
+        double reduction = armor.getDmgReduction();
+        double multiplier = 1 + (EnchantmentHelper.getEnchantments(stack).getOrDefault(Enchantments.PROTECTION, 0) * 0.25);
         return MathHelper.clamp(reduction * multiplier, reduction, 55d);
     }
 }

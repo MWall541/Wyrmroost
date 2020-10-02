@@ -9,11 +9,12 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.DragonBodyController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerMoveController;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerPathNavigator;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
-import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
@@ -22,7 +23,9 @@ import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -40,7 +43,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.GroundPathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.*;
@@ -82,6 +84,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> FLYING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SLEEPING = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<ItemStack> ARMOR = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.ITEMSTACK);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS);
 
     private final Set<String> immunes = new HashSet<>();
@@ -181,9 +184,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (fly)
         {
 //             make sure NOT to switch the navigator if liftoff fails
-            if (liftOff()) navigator = new FlyingPathNavigator(this, world);
+            if (liftOff()) navigator = new FlyerPathNavigator(this);
         }
         else navigator = new GroundPathNavigator(this, world);
+    }
+
+    public boolean hasArmor() { return hasDataEntry(ARMOR) && dataManager.get(ARMOR).getItem() instanceof DragonArmorItem; }
+
+    public ItemStack getArmor() { return hasDataEntry(ARMOR)? dataManager.get(ARMOR) : ItemStack.EMPTY; }
+
+    public void setArmor(@Nullable ItemStack stack)
+    {
+        if (stack == null || !(stack.getItem() instanceof DragonArmorItem)) stack = ItemStack.EMPTY;
+        dataManager.set(ARMOR, stack);
     }
 
     @Override
@@ -388,8 +401,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         float speed = getTravelSpeed();
 
-        if (canPassengerSteer()) // Were being controlled
+        if (canPassengerSteer()) // Were being controlled; override ai movement
         {
+            speed *= 0.225f;
             LivingEntity entity = (LivingEntity) getControllingPassenger();
             double moveY = vec3d.y;
             double moveX = entity.moveStrafing;
@@ -423,8 +437,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
             // hover in place
             Vec3d motion = getMotion();
-            if (motion.length() < 0.04f)
-                setMotion(motion.add(0, Math.cos(ticksExisted * 0.1f) * 0.02f, 0));
+            if (motion.length() < 0.04f) setMotion(motion.add(0, Math.cos(ticksExisted * 0.1f) * 0.02f, 0));
 
             // limb swinging animations
             float limbSpeed = 0.4f;
@@ -447,8 +460,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public float getTravelSpeed()
     {
+        //@formatter:off
         return isFlying()? (float) getAttribute(FLYING_SPEED).getValue()
-                : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
+                         : (float) getAttribute(MOVEMENT_SPEED).getValue();
+        //@formatter:on
     }
 
     public boolean shouldFly() { return canFly() && getAltitude() > getFlightThreshold(); }
@@ -456,10 +471,28 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void notifyDataManagerChange(DataParameter<?> key)
     {
-        super.notifyDataManagerChange(key);
-        if (key == SLEEPING || key == FLYING || key == TAMED) recalculateSize();
-        if (world.isRemote && key == FLYING && isFlying() && getControllingPlayer() == ClientEvents.getPlayer())
-            ClientEvents.playSound(new FlyingSound(this));
+        if (key == SLEEPING || key == FLYING || key == TAMED)
+        {
+            recalculateSize();
+            if (world.isRemote && key == FLYING && isFlying() && getControllingPlayer() == ClientEvents.getPlayer())
+                ClientEvents.playSound(new FlyingSound(this));
+        }
+        else if (key == ARMOR)
+        {
+            if (!world.isRemote)
+            {
+                IAttributeInstance attribute = getAttribute(SharedMonsterAttributes.ARMOR);
+                if (attribute.getModifier(DragonArmorItem.ARMOR_UUID) != null)
+                    attribute.removeModifier(DragonArmorItem.ARMOR_UUID);
+                if (hasArmor())
+                {
+                    attribute.applyModifier(new AttributeModifier(DragonArmorItem.ARMOR_UUID, "Armor Modifier", DragonArmorItem.getDmgReduction(getArmor()), AttributeModifier.Operation.ADDITION).setSaved(false));
+                    playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 1, 1, true);
+                }
+            }
+        }
+        else super.notifyDataManagerChange(key);
+
     }
 
     @Override
@@ -559,28 +592,28 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void doSpecialEffects() {}
 
-    public void tryTeleportToOwner()
+    public boolean tryTeleportToOwner()
     {
-        if (getOwner() == null) return;
+        if (getOwner() == null) return false;
         final int CONSTRAINT = (int) (getWidth() * 0.5) + 1;
         BlockPos pos = getOwner().getPosition();
         BlockPos.Mutable potentialPos = new BlockPos.Mutable();
 
         for (int x = -CONSTRAINT; x < CONSTRAINT; x++)
-            for (int y = -2; y < 2; y++)
+            for (int y = 0; y < 4; y++)
                 for (int z = -CONSTRAINT; z < CONSTRAINT; z++)
                 {
                     potentialPos.setPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
-//                    if (getPosX() - potentialPos.getX() < 2 && getPosZ() - potentialPos.getZ() < 2) continue;
-                    if (trySafeTeleport(potentialPos)) return;
+                    if (trySafeTeleport(potentialPos)) return true;
                 }
+        return false;
     }
 
     public boolean trySafeTeleport(BlockPos pos)
     {
         if (world.hasNoCollisions(this, getBoundingBox().offset(pos.subtract(getPosition()))))
         {
-            setLocationAndAngles(pos.getX(), pos.getY(), pos.getZ(), rotationYaw, rotationPitch);
+            setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, rotationYaw, rotationPitch);
             return true;
         }
         return false;
@@ -722,8 +755,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return null;
     }
 
-    public DragonEggProperties getEggProperties() { return DragonEggProperties.get(getType()); }
-
     public void handleSleep()
     {
         if (isSleeping())
@@ -810,6 +841,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public boolean isOnSameTeam(Entity entity)
     {
         if (entity == this) return true;

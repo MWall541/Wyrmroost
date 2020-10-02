@@ -22,37 +22,39 @@ public class FlyerMoveController extends MovementController
             return;
         }
 
-        double y = posY - dragon.getPosY();
-        if (y > dragon.getFlightThreshold() + 1)
-            dragon.setFlying(true);
-
-        if (dragon.isFlying())
+        if (action == Action.MOVE_TO)
         {
-            if (action == Action.MOVE_TO)
+            action = Action.WAIT;
+
+            double y = posY - dragon.getPosY();
+            if (y > dragon.getFlightThreshold() + 1)
+                dragon.setFlying(true);
+
+            if (dragon.isFlying())
             {
-                action = Action.WAIT;
                 double x = posX - dragon.getPosX();
                 double z = posZ - dragon.getPosZ();
                 double distSq = x * x + y * y + z * z;
                 if (distSq < 2.5000003E-7) dragon.setMoveForward(0f); // why move...
                 else
                 {
-                    dragon.rotationYawHead = (float) Math.toDegrees(MathHelper.atan2(z, x)) - 90f;
+                    dragon.rotationYawHead = limitAngle(dragon.rotationYawHead, (float) Math.toDegrees(MathHelper.atan2(z, x)) - 90f, dragon.getHorizontalFaceSpeed() * 3);
                     dragon.rotationYaw = limitAngle(dragon.rotationYaw, dragon.rotationYawHead, dragon.getHorizontalFaceSpeed());
-                    float speed = dragon.getTravelSpeed();
+                    ((LessShitLookController) dragon.getLookController()).freeze();
+                    float speed = (float) this.speed * dragon.getTravelSpeed();
                     dragon.setAIMoveSpeed(speed);
                     dragon.setMoveVertical(y > 0? speed : -speed);
                 }
+
             }
-            else
-            {
-                dragon.setAIMoveSpeed(0);
-                dragon.setMoveStrafing(0);
-                dragon.setMoveVertical(0);
-                dragon.setMoveForward(0);
-                ((LessShitLookController) dragon.getLookController()).setShouldResetPitch(true);
-            }
+            else super.tick();
         }
-        else super.tick();
+        else
+        {
+            dragon.setAIMoveSpeed(0);
+            dragon.setMoveStrafing(0);
+            dragon.setMoveVertical(0);
+            dragon.setMoveForward(0);
+        }
     }
 }
