@@ -21,8 +21,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -60,7 +58,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     // Dragon Entity Data
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<ItemStack> ARMOR = EntityDataManager.createKey(OWDrakeEntity.class, DataSerializers.ITEMSTACK);
 
     // Dragon Entity Animations
     public static final Animation GRAZE_ANIMATION = new Animation(35);
@@ -132,24 +129,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean hasChest() { return getStackInSlot(CHEST_SLOT) != ItemStack.EMPTY; }
 
     public boolean isSaddled() { return dataManager.get(SADDLED); }
-
-    public DragonArmorItem getArmor() { return (DragonArmorItem) dataManager.get(ARMOR).getItem(); }
-
-    public void setArmored(ItemStack armor)
-    {
-        if (!(armor.getItem() instanceof DragonArmorItem)) armor = ItemStack.EMPTY;
-        dataManager.set(ARMOR, armor);
-        if (!world.isRemote)
-        {
-            IAttributeInstance attribute = getAttribute(SharedMonsterAttributes.ARMOR);
-            if (attribute.getModifier(DragonArmorItem.ARMOR_UUID) != null)
-                attribute.removeModifier(DragonArmorItem.ARMOR_UUID);
-            if (!armor.isEmpty())
-                attribute.applyModifier(new AttributeModifier("Armor Modifier", DragonArmorItem.getDmgReduction(armor), AttributeModifier.Operation.ADDITION).setSaved(true));
-        }
-    }
-
-    public boolean isArmored() { return dataManager.get(ARMOR).getItem() instanceof DragonArmorItem; }
 
     @Override
     public int getVariantForSpawn()
@@ -288,7 +267,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (!stack.isEmpty() && !onLoad) playSound(SoundEvents.ENTITY_HORSE_SADDLE, 1, 1);
         }
 
-        if (slot == ARMOR_SLOT) setArmored(stack);
+        if (slot == ARMOR_SLOT) setArmor(stack);
     }
 
     @Override

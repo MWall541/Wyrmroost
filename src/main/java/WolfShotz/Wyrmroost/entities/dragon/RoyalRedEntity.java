@@ -4,12 +4,16 @@ import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.client.sounds.BreathSound;
+import WolfShotz.Wyrmroost.containers.DragonInvContainer;
+import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
+import WolfShotz.Wyrmroost.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
@@ -44,6 +48,8 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
+    public static final int ARMOR_SLOT = 0;
+
     public static final Animation ROAR_ANIMATION = new Animation(70);
     public static final Animation SLAP_ATTACK_ANIMATION = new Animation(30);
     public static final Animation BITE_ATTACK_ANIMATION = new Animation(15);
@@ -84,7 +90,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         getAttribute(FOLLOW_RANGE).setBaseValue(60d);
         getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.25d); // normal * 2.25
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(10d); // 5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.08d);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.27d);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(4d); // 2 hearts
     }
 
@@ -95,6 +101,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         dataManager.register(BREATHING_FIRE, false);
         dataManager.register(KNOCKED_OUT, false);
         dataManager.register(FLYING, false);
+        dataManager.register(ARMOR, ItemStack.EMPTY);
     }
 
     @Override
@@ -120,6 +127,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
             public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
         });
     }
+
+    @Override
+    public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
 
     @Override
     public void livingTick()
@@ -149,7 +159,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         if (anim == ROAR_ANIMATION)
         {
-            ((LessShitLookController) getLookController()).skipLooking(true);
+            ((LessShitLookController) getLookController()).restore();
             for (LivingEntity entity : getEntitiesNearby(10, this::isOnSameTeam))
                 entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
         }
@@ -226,7 +236,20 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public void notifyDataManagerChange(DataParameter<?> key)
     {
         if (world.isRemote && key == BREATHING_FIRE && isBreathingFire()) ClientEvents.playSound(new BreathSound(this));
-        super.notifyDataManagerChange(key);
+        else super.notifyDataManagerChange(key);
+    }
+
+    @Override
+    public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
+    {
+        if (slot == ARMOR_SLOT) setArmor(stack);
+    }
+
+    @Override
+    public void addContainerInfo(DragonInvContainer container)
+    {
+        super.addContainerInfo(container);
+        container.addSlot(new SlotBuilder(container.inventory, ARMOR_SLOT).only(DragonArmorItem.class));
     }
 
     @Override
@@ -268,8 +291,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public void addScreenInfo(StaffScreen screen)
     {
-        super.addScreenInfo(screen);
+        screen.addAction(StaffAction.INVENTORY);
         screen.addAction(StaffAction.TARGET);
+        super.addScreenInfo(screen);
     }
 
     @Override
@@ -346,9 +370,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Nullable
     @Override
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ROYALRED_DEATH.get(); }
-
-//    @Override
-//    protected float getSoundVolume() { return 3; }
 
     @Override
     public Animation[] getAnimations()
@@ -429,6 +450,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY(), target.getPosZ(), isBreathingFire? 0.8d : 1.2d);
         }
 
+        @SuppressWarnings("ConstantConditions")
         private void tickFlightAttacking()
         {
             LivingEntity target = getAttackTarget();
@@ -446,15 +468,17 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 else getLookController().setLookPosition(navPos.getX(), target.getPosY(), navPos.getZ(), 90, 90);
             }
 
+
             boolean breathFireFlag = canSeeTarget && distanceFlag;
             if (isBreathingFire != breathFireFlag) setBreathingFire(breathFireFlag);
 
-            Vec3d vec3d = new Vec3d(target.getPosX() - getPosX(), 0, target.getPosZ() - target.getPosZ());
-            vec3d.rotateYaw((float) (Mafs.nextDouble(getRNG()) * 5f)); // offset a little
-            double length = vec3d.length();
-            final double size = 30;
-            if (getNavigator().noPath())
-                getNavigator().tryMoveToXYZ(vec3d.x / length * size + target.getPosX(), getPosY() + Mafs.nextDouble(getRNG()) * 2, vec3d.z / length * size + target.getPosZ(), 3);
+            if (getNavigator().noPath() || getDistanceSq(target) > 1100)
+            {
+                Vec3d vec3d = new Vec3d(target.getPosX() - getPosX(), 0, target.getPosZ() - target.getPosZ());
+                vec3d.rotateYaw((float) (Mafs.nextDouble(getRNG()) * 5f)); // offset a little
+                double length = vec3d.length();
+                getNavigator().tryMoveToXYZ(vec3d.x / length * 30 + target.getPosX(), getPosY() + Mafs.nextDouble(getRNG()) * 2, vec3d.z / length * 30 + target.getPosZ(), 3);
+            }
         }
     }
 }

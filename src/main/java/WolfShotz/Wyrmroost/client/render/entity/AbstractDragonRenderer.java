@@ -1,10 +1,12 @@
 package WolfShotz.Wyrmroost.client.render.entity;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexBuilderUtils;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -94,6 +96,35 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
                 IVertexBuilder builder = buffer.getBuffer(RenderHelper.getAdditiveGlow(texture.apply(entity)));
                 getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
+        }
+    }
+
+    public class ArmorLayer extends LayerRenderer<T, M>
+    {
+        private final int slotIndex;
+
+        public ArmorLayer(int slotIndex)
+        {
+            super(AbstractDragonRenderer.this);
+            this.slotIndex = slotIndex;
+        }
+
+        @Override
+        public void render(MatrixStack ms, IRenderTypeBuffer type, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
+        {
+            if (entity.hasArmor())
+            {
+                IVertexBuilder builder = type.getBuffer(RenderType.getEntityCutoutNoCull(getArmorTexture(entity)));
+                if (entity.getStackInSlot(slotIndex).hasEffect())
+                    builder = VertexBuilderUtils.newDelegate(type.getBuffer(RenderType.getEntityGlint()), builder);
+                getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            }
+        }
+
+        public ResourceLocation getArmorTexture(T entity)
+        {
+            String path = entity.getArmor().getItem().getRegistryName().getPath().replace("_dragon_armor", "");
+            return Wyrmroost.rl(String.format("%s%s/accessories/armor_%s.png", BASE_PATH, entity.getType().getRegistryName().getPath(), path));
         }
     }
 }
