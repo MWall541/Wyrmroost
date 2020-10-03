@@ -1,11 +1,13 @@
 package WolfShotz.Wyrmroost.entities.dragon.helpers.ai;
 
-import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+/**
+ * todo: I guess make our own node processor. Derivative of WalkAndSwim, just ditch all the water related shit.
+ */
 public class FlyerPathNavigator extends FlyingPathNavigator
 {
     public FlyerPathNavigator(MobEntity entity)
@@ -13,19 +15,21 @@ public class FlyerPathNavigator extends FlyingPathNavigator
         super(entity, entity.world);
     }
 
-    protected void pathFollow()
+    @Override
+    public void tick()
     {
-        Vec3d entityPos = getEntityPosition();
-        Vec3d targetPos = currentPath.getVectorFromIndex(entity, currentPath.getCurrentPathIndex());
-        if (Math.abs(entity.getPosY() - targetPos.y) <= entity.getHeight() * 0.15)
+        if (!noPath() && canNavigate())
         {
+            BlockPos target = getTargetPos();
+            if (target != null) entity.getMoveHelper().setMoveTo(target.getX(), target.getY(), target.getZ(), speed);
+
             maxDistanceToWaypoint = entity.getWidth() * entity.getHorizontalFaceSpeed() * 3;
-            Wyrmroost.LOG.info("Distance to Target: {}, Diameter: {}", entityPos.squareDistanceTo(targetPos), maxDistanceToWaypoint);
-            if (entityPos.squareDistanceTo(targetPos) <= maxDistanceToWaypoint)
-                currentPath.setCurrentPathIndex(currentPath.getCurrentPathIndex() + 1);
+//            Wyrmroost.LOG.info("Distance to Target: {}, Diameter: {}", entityPos.squareDistanceTo(targetPos), maxDistanceToWaypoint);
+            Vec3d entityPos = getEntityPosition();
+            if (target.distanceSq(entityPos.x, entityPos.y, entityPos.z, true) <= maxDistanceToWaypoint)
+                currentPath = null;
         }
 
-        checkForStuck(targetPos);
     }
 
     @Override

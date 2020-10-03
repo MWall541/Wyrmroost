@@ -1,12 +1,14 @@
 package WolfShotz.Wyrmroost.entities.dragon.helpers.ai;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.MathHelper;
 
 public class FlyerMoveController extends MovementController
 {
     private final AbstractDragonEntity dragon;
+    private boolean flyIfFar = true;
 
     public FlyerMoveController(AbstractDragonEntity mob)
     {
@@ -24,30 +26,27 @@ public class FlyerMoveController extends MovementController
 
         if (action == Action.MOVE_TO)
         {
-            action = Action.WAIT;
-
+            double x = posX - dragon.getPosX();
             double y = posY - dragon.getPosY();
-            if (y > dragon.getFlightThreshold() + 1)
-                dragon.setFlying(true);
+            double z = posZ - dragon.getPosZ();
+            double distSq = x * x + y * y + z * z;
+            if (y > dragon.getFlightThreshold() + 1) dragon.setFlying(true);
 
             if (dragon.isFlying())
             {
-                double x = posX - dragon.getPosX();
-                double z = posZ - dragon.getPosZ();
-                double distSq = x * x + y * y + z * z;
                 if (distSq < 2.5000003E-7) dragon.setMoveForward(0f); // why move...
                 else
                 {
-                    dragon.rotationYawHead = limitAngle(dragon.rotationYawHead, (float) Math.toDegrees(MathHelper.atan2(z, x)) - 90f, dragon.getHorizontalFaceSpeed() * 3);
+                    dragon.rotationYawHead = limitAngle(dragon.rotationYawHead, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getHorizontalFaceSpeed() * 3);
                     dragon.rotationYaw = limitAngle(dragon.rotationYaw, dragon.rotationYawHead, dragon.getHorizontalFaceSpeed());
                     ((LessShitLookController) dragon.getLookController()).freeze();
                     float speed = (float) this.speed * dragon.getTravelSpeed();
                     dragon.setAIMoveSpeed(speed);
                     dragon.setMoveVertical(y > 0? speed : -speed);
                 }
-
             }
             else super.tick();
+            action = Action.WAIT;
         }
         else
         {
@@ -57,4 +56,6 @@ public class FlyerMoveController extends MovementController
             dragon.setMoveForward(0);
         }
     }
+
+    public void setFlyIfFar(boolean b) { this.flyIfFar = b; }
 }

@@ -32,6 +32,7 @@ public class LessShitLookController extends LookController
         mob.rotationPitch = 0;
         if (isLooking)
         {
+            this.isLooking = false;
             mob.rotationYawHead = clampedRotate(mob.rotationYawHead, getTargetYaw(), deltaLookYaw);
             mob.rotationPitch = clampedRotate(mob.rotationPitch, getTargetPitch(), deltaLookPitch);
         }

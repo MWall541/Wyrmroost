@@ -9,6 +9,7 @@ import java.util.EnumSet;
 public class WRFollowOwnerGoal extends Goal
 {
     private final AbstractDragonEntity dragon;
+    private int newPathTicks = 0;
 
     public WRFollowOwnerGoal(AbstractDragonEntity tameableEntity)
     {
@@ -48,14 +49,14 @@ public class WRFollowOwnerGoal extends Goal
         LivingEntity owner = dragon.getOwner();
         dragon.getLookController().setLookPositionWithEntity(owner, dragon.getHorizontalFaceSpeed(), dragon.getVerticalFaceSpeed());
 
-        if (dragon.getNavigator().noPath() || dragon.ticksExisted % 15 == 0)
+        if (++newPathTicks >= 10 || dragon.getNavigator().noPath())
         {
-            double minimumTeleportDist = dragon.getWidth() * dragon.getWidth() + 196;
-            if (dragon.isFlying()) minimumTeleportDist *= 5;
+            newPathTicks = 0;
+            final double MINIMUM_TELEPORT_DIST = (dragon.getWidth() * 5 * dragon.getWidth() * 5) + 196;
 
-/*            if (dragon.getDistanceSq(owner) > minimumTeleportDist && (owner.onGround || owner.isInWater() || dragon.isFlying()) && dragon.tryTeleportToOwner())
+            if (dragon.getDistanceSq(owner) > MINIMUM_TELEPORT_DIST && (owner.onGround || owner.isInWater() || dragon.isFlying()) && dragon.tryTeleportToOwner())
                 dragon.getNavigator().clearPath();
-            else */dragon.getNavigator().tryMoveToEntityLiving(owner, 1);
+            else dragon.getNavigator().tryMoveToEntityLiving(owner, 1);
         }
     }
 }

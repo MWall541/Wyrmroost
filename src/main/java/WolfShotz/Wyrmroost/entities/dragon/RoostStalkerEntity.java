@@ -137,7 +137,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         if (!world.isRemote)
         {
             ItemStack item = getStackInSlot(ITEM_SLOT);
-            if (isFoodItem(item) && getHealth() < getMaxHealth() && getRNG().nextDouble() <= 0.0025)
+            if (isFoodItem(item) && getHealth() < getMaxHealth() && getRNG().nextDouble() <= 0.0075)
                 eat(item);
 
             if (isBreedingItem(item) && canBreed() && getGrowingAge() == 0 && getRNG().nextDouble() < 0.01)

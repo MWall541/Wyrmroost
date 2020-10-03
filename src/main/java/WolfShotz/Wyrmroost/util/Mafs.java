@@ -53,7 +53,7 @@ public final class Mafs
 
     public static double getAngle(Entity source, Entity target)
     {
-        return MathHelper.atan2(target.getPosZ() - source.getPosZ(), target.getPosX() - source.getPosX()) * 180 / Math.PI + 180;
+        return MathHelper.atan2(target.getPosZ() - source.getPosZ(), target.getPosX() - source.getPosX()) * (180 / Math.PI) + 180;
     }
 
     /**

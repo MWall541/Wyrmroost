@@ -426,32 +426,32 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
             wing1L.rotateAngleZ -= limbSwingAmount * 0.35;
             wing1R.rotateAngleZ += limbSwingAmount * 0.35;
 
-            bob(body1, globalSpeed, 0.25f, true, limbSwing, limbSwingAmount);
+            bob(body1, globalSpeed + 0.5f, 0.25f, true, limbSwing, limbSwingAmount);
 
-            swing(wing1L, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
-            flap(wing1L, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+            swing(wing1L, globalSpeed + 0.5f, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(wing1L, globalSpeed + 0.5f, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
 
-            swing(wing1R, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
-            flap(wing1R, globalSpeed, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+            swing(wing1R, globalSpeed + 0.5f, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
+            flap(wing1R, globalSpeed + 0.5f, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
 
-            walk(leg1L, globalSpeed, 1, false, 0, 0, limbSwing, limbSwingAmount);
-            walk(leg2L, globalSpeed, 0.8f, false, -1.8f, 0.5f, limbSwing, limbSwingAmount);
-            walk(leg3L, globalSpeed, -1.2f, false, -1.8f, -0.5f, limbSwing, limbSwingAmount);
-            walk(footL, globalSpeed, 2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
+            walk(leg1L, globalSpeed + 0.5f, 1, false, 0, 0, limbSwing, limbSwingAmount);
+            walk(leg2L, globalSpeed + 0.5f, 0.8f, false, -1.8f, 0.5f, limbSwing, limbSwingAmount);
+            walk(leg3L, globalSpeed + 0.5f, -1.2f, false, -1.8f, -0.5f, limbSwing, limbSwingAmount);
+            walk(footL, globalSpeed + 0.5f, 2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
 
-            walk(leg1R, globalSpeed, 1, true, 0, 0, limbSwing, limbSwingAmount);
-            walk(leg2R, globalSpeed, -0.8f, false, -1.8f, 0.5f, limbSwing, limbSwingAmount);
-            walk(leg3R, globalSpeed, 1.2f, false, -1.8f, -0.5f, limbSwing, limbSwingAmount);
-            walk(footL_1, globalSpeed, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
+            walk(leg1R, globalSpeed + 0.5f, 1, true, 0, 0, limbSwing, limbSwingAmount);
+            walk(leg2R, globalSpeed + 0.5f, -0.8f, false, -1.8f, 0.5f, limbSwing, limbSwingAmount);
+            walk(leg3R, globalSpeed + 0.5f, 1.2f, false, -1.8f, -0.5f, limbSwing, limbSwingAmount);
+            walk(footL_1, globalSpeed + 0.5f, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
         }
 
         if (canari.isSitting() && !canari.isFlying()) sitPose();
         if (canari.isSleeping()) sleepPose();
 
         if (animator.setAnimation(CanariWyvernEntity.FLAP_WINGS_ANIMATION)) flapWingsAnim();
-        if (animator.setAnimation(CanariWyvernEntity.PREEN_ANIMATION)) preenAnim(frame);
-        if (animator.setAnimation(CanariWyvernEntity.THREAT_ANIMATION)) threatAnim(frame);
-        if (animator.setAnimation(CanariWyvernEntity.ATTACK_ANIMATION)) attackAnim();
+        else if (animator.setAnimation(CanariWyvernEntity.PREEN_ANIMATION)) preenAnim(frame);
+        else if (animator.setAnimation(CanariWyvernEntity.THREAT_ANIMATION)) threatAnim(frame);
+        else if (animator.setAnimation(CanariWyvernEntity.ATTACK_ANIMATION)) attackAnim();
 
         idle(frame);
     }

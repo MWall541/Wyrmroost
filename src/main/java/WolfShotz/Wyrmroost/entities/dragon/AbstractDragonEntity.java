@@ -466,7 +466,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         //@formatter:on
     }
 
-    public boolean shouldFly() { return canFly() && getAltitude() > getFlightThreshold(); }
+    public boolean shouldFly() { return canFly() && !isRiding() && getAltitude() > getFlightThreshold(); }
 
     @Override
     public void notifyDataManagerChange(DataParameter<?> key)
