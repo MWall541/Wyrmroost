@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.registry;
 import WolfShotz.Wyrmroost.CommonEvents;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
+import WolfShotz.Wyrmroost.client.render.entity.EmptyRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.alpine.AlpineRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
@@ -20,6 +21,7 @@ import WolfShotz.Wyrmroost.entities.dragon.*;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.entities.projectile.GeodeTippedArrowEntity;
+import WolfShotz.Wyrmroost.entities.projectile.WindGustEntity;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.util.ModUtils;
@@ -122,6 +124,10 @@ public class WREntities
     public static final RegistryObject<EntityType<FireBreathEntity>> FIRE_BREATH = Builder.<FireBreathEntity>withClassification("fire_breath", FireBreathEntity::new, EntityClassification.MISC)
             .renderer(BreathWeaponRenderer::new)
             .build(b -> b.size(0.75f, 0.75f).disableSerialization().disableSummoning());
+
+    public static final RegistryObject<EntityType<WindGustEntity>> WIND_GUST = Builder.<WindGustEntity>withClassification("wind_gust", WindGustEntity::new, EntityClassification.MISC)
+            .renderer(EmptyRenderer::new)
+            .build(b -> b.size(2, 2).disableSerialization().disableSummoning());
 
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = Builder.<DragonEggEntity>withClassification("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
             .renderer(DragonEggRenderer::new)
