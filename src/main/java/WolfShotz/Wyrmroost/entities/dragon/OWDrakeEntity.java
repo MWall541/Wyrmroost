@@ -160,7 +160,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (!world.isRemote && getRNG().nextDouble() < (isChild()? 0.02 : 0.001)) AnimationPacket.send(this, GRAZE_ANIMATION);
 
-
         Animation animation = getAnimation();
         int tick = getAnimationTick();
         if (animation == ROAR_ANIMATION && tick == 15)
@@ -168,12 +167,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
             for (LivingEntity e : getEntitiesNearby(15, e -> !isOnSameTeam(e))) // Dont get too close now ;)
             {
                 e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 200));
-                if (getDistanceSq(e) <= 5)
+                if (getDistanceSq(e) <= 10)
                 {
-                    double angle = (Mafs.getAngle(getPosX(), e.getPosX(), getPosZ(), e.getPosZ()) + 90) * Math.PI / 180;
-                    double x = 1.2 * (-Math.cos(angle));
-                    double z = 1.2 * (-Math.sin(angle));
-                    e.addVelocity(x, 0.4d, z);
+                    double angle = Mafs.getAngle(getPosX(), getPosZ(), e.getPosX(), e.getPosZ()) * Math.PI / 180;
+                    e.addVelocity(1.2 * -Math.cos(angle), 0.4d, 1.2 * -Math.sin(angle));
                 }
             }
         }

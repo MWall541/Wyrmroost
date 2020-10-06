@@ -8,7 +8,6 @@ import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -132,9 +131,7 @@ public enum StaffAction
                 @Override
                 public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    EntityRayTraceResult ertr = Mafs.rayTraceEntities(player,
-                            TARGET_RANGE,
-                            e -> e instanceof LivingEntity && dragon.shouldAttackEntity((LivingEntity) e, dragon.getOwner()));
+                    EntityRayTraceResult ertr = rayTrace(player, dragon);
                     if (ertr != null)
                     {
                         dragon.setAttackTarget((LivingEntity) ertr.getEntity());
@@ -147,13 +144,17 @@ public enum StaffAction
                 @Override
                 public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks)
                 {
-                    RayTraceResult rtr = Mafs.rayTrace(dragon.world, ClientEvents.getPlayer(), TARGET_RANGE, false);
-                    if (rtr instanceof EntityRayTraceResult)
-                    {
-                        Entity target = ((EntityRayTraceResult) rtr).getEntity();
-                        if (target != dragon.getAttackTarget())
-                            RenderHelper.renderEntityOutline(target, 255, 0, 0, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
-                    }
+                    EntityRayTraceResult rtr = rayTrace(ClientEvents.getPlayer(), dragon);
+                    if (rtr != null && rtr.getEntity() != dragon.getAttackTarget())
+                        RenderHelper.renderEntityOutline(rtr.getEntity(), 255, 0, 0, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
+                }
+
+                @Nullable
+                private EntityRayTraceResult rayTrace(PlayerEntity player, AbstractDragonEntity dragon)
+                {
+                    return Mafs.rayTraceEntities(player,
+                            TARGET_RANGE,
+                            e -> e instanceof LivingEntity && dragon.shouldAttackEntity((LivingEntity) e, dragon.getOwner()));
                 }
             };
 

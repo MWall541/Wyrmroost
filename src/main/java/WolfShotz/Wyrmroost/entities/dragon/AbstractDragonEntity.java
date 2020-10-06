@@ -183,7 +183,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(FLYING, fly);
         if (fly)
         {
-//             make sure NOT to switch the navigator if liftoff fails
+            // make sure NOT to switch the navigator if liftoff fails
             if (liftOff()) navigator = new FlyerPathNavigator(this);
         }
         else navigator = new GroundPathNavigator(this, world);

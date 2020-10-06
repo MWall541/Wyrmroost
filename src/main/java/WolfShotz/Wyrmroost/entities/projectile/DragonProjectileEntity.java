@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.entities.projectile;
 
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -27,16 +28,13 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public int life;
     public boolean hasCollided;
 
-    /**
-     * Don't use this, it is for registration
-     */
-    public DragonProjectileEntity(EntityType<?> type, World world) { super(type, world); }
+    protected DragonProjectileEntity(EntityType<?> type, World world) { super(type, world); }
 
-    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vec3d position)
+    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vec3d position, Vec3d acceleration)
     {
         super(type, shooter.world);
 
-        Vec3d acceleration = shooter.getLookVec().add(rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset());
+        acceleration = acceleration.add(rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset());
         double length = acceleration.length();
         this.accelerationX = acceleration.x / length * getMotionFactor();
         this.accelerationY = acceleration.y / length * getMotionFactor();
@@ -47,7 +45,16 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
         setMotion(getMotion().add(accelerationX, accelerationY, accelerationZ));
         position = position.add(getMotion());
-        setLocationAndAngles(position.x, position.y, position.z, rotationYaw, rotationPitch);
+
+        Vec3d motion = getMotion();
+        float x = (float) (motion.x - position.x);
+        float y = (float) (motion.y - position.y);
+        float z = (float) (motion.z - position.z);
+        float planeSqrt = MathHelper.sqrt(x * x + z * z);
+        float yaw = (float) MathHelper.atan2(z, x) * 180f / Mafs.PI - 90f;
+        float pitch = (float) -(MathHelper.atan2(y, planeSqrt) * 180f / Mafs.PI);
+
+        setLocationAndAngles(position.x, position.y, position.z, yaw, pitch);
     }
 
     @Override
@@ -76,7 +83,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
         if (isInWater())
         {
-            setMotion(motion.scale(0.2f));
+            setMotion(motion.scale(0.95f));
             for (int i = 0; i < 4; ++i)
                 world.addParticle(ParticleTypes.BUBBLE, getPosX() * 0.25d, getPosY() * 0.25d, getPosZ() * 0.25D, motion.x, motion.y, motion.z);
         }
@@ -98,7 +105,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public EntitySize getSize(Pose poseIn)
     {
         if (growthRate == 1) return getType().getSize();
-        float size = getWidth() * growthRate;
+        float size = Math.min(getWidth() * growthRate, 2.25f);
         return EntitySize.flexible(size, size);
     }
 
@@ -146,8 +153,16 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
 
     @Override
-    public void writeSpawnData(PacketBuffer buf) { buf.writeInt(shooter.getEntityId()); }
+    public void writeSpawnData(PacketBuffer buf)
+    {
+        buf.writeInt(shooter.getEntityId());
+        buf.writeFloat(growthRate);
+    }
 
     @Override
-    public void readSpawnData(PacketBuffer buf) { this.shooter = (AbstractDragonEntity) world.getEntityByID(buf.readInt()); }
+    public void readSpawnData(PacketBuffer buf)
+    {
+        this.shooter = (AbstractDragonEntity) world.getEntityByID(buf.readInt());
+        this.growthRate = buf.readFloat();
+    }
 }

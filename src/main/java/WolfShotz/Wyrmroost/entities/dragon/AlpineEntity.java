@@ -111,10 +111,10 @@ public class AlpineEntity extends AbstractDragonEntity
         }
         else if (animation == WIND_GUST_ANIMATION)
         {
-            if (tick == 0) setMotion(getMotion().add(0, -0.5, 0));
+            if (tick == 0) setMotion(getMotion().add(0, -0.35, 0));
             if (tick == 4)
             {
-                world.addEntity(new WindGustEntity(this));
+                if (!world.isRemote) world.addEntity(new WindGustEntity(this));
                 setMotion(getMotion().add(getLookVec().inverse().mul(1.5, 0, 1.5).add(0, 1, 0)));
                 playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
             }
@@ -157,6 +157,20 @@ public class AlpineEntity extends AbstractDragonEntity
     {
         if (backView) event.getInfo().movePosition(-5d, 0.75d, 0);
         else event.getInfo().movePosition(-3, 0.3, 0);
+    }
+
+    @Override
+    protected void jump()
+    {
+        super.jump();
+        if (!world.isRemote) world.addEntity(new WindGustEntity(this, getPositionVec().add(0, 7, 0), getVectorForRotation(90, rotationYaw)));
+    }
+
+    @Override
+    protected float getJumpUpwardsMotion()
+    {
+        if (canFly()) return (getHeight() * getJumpFactor());
+        else return super.getJumpUpwardsMotion();
     }
 
     @Override

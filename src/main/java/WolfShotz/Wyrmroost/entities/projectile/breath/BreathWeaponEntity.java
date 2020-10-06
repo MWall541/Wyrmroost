@@ -20,8 +20,9 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 
     public BreathWeaponEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter)
     {
-        super(type, shooter, shooter.getApproximateMouthPos());
-        this.growthRate = 1.04f;
+        super(type, shooter, shooter.getApproximateMouthPos(), shooter.getLookVec());
+        this.growthRate = 1.025f;
+        life = 40;
     }
 
     @Override
