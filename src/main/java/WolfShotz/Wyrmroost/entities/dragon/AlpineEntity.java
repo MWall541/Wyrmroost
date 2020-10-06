@@ -51,7 +51,7 @@ public class AlpineEntity extends AbstractDragonEntity
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.22d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1); // no knockback
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d); // 1.5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.1);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.365);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(1d); // 0.5 hearts
     }
 
@@ -156,6 +156,10 @@ public class AlpineEntity extends AbstractDragonEntity
     @Nullable
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_ALPINE_ROAR.get(); }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ALPINE_DEATH.get(); }
 
     @Override
     public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION}; }

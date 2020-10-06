@@ -305,6 +305,14 @@
       }
     ]
   },
+  "entity.alpine.death": {
+    "subtitle": "Alpine Screech",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/death"
+      }
+    ]
+  },
   "entity.coindragon.idle": {
     "subtitle": "Coin Dragon Chirps",
     "sounds": [

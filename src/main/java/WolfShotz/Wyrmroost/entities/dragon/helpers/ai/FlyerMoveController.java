@@ -37,12 +37,13 @@ public class FlyerMoveController extends MovementController
                 if (distSq < 2.5000003E-7) dragon.setMoveForward(0f); // why move...
                 else
                 {
-                    dragon.rotationYawHead = limitAngle(dragon.rotationYawHead, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getHorizontalFaceSpeed() * 3);
-                    dragon.rotationYaw = limitAngle(dragon.rotationYaw, dragon.rotationYawHead, dragon.getHorizontalFaceSpeed());
-                    ((LessShitLookController) dragon.getLookController()).freeze();
+                    if (!dragon.getLookController().getIsLooking())
+                        dragon.getLookController().setLookPosition(posX, posY, posZ, dragon.getHorizontalFaceSpeed() * 3, 75);
+
+                    dragon.rotationYaw = limitAngle(dragon.rotationYaw, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getHorizontalFaceSpeed());
                     float speed = (float) this.speed * dragon.getTravelSpeed();
                     dragon.setAIMoveSpeed(speed);
-                    dragon.setMoveVertical(y > 0? speed : -speed);
+                    if (y != 0) dragon.setMoveVertical(y > 0? speed : -speed);
                 }
             }
             else super.tick();

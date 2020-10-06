@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.data.DataGatherer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
@@ -81,12 +80,13 @@ public class CommonEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-        if (player.isSneaking()) dragon.tame(true, player);
-        else
-        {
-            if (dragon.world.isRemote) DebugScreen.open(dragon);
-            else Wyrmroost.LOG.info(dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getTarget().toString());
-        }
+        dragon.setFlying(true);
+//        if (player.isSneaking()) dragon.tame(true, player);
+//        else
+//        {
+//            if (dragon.world.isRemote) DebugScreen.open(dragon);
+//            else Wyrmroost.LOG.info(dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getTarget().toString());
+//        }
     }
 
     @SubscribeEvent

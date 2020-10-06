@@ -732,6 +732,14 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
                 walk(wingL2, globalSpeed - 0.3f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(palmL_1, globalSpeed - 0.3f, 0.4f, true, -1.5f, 0, limbSwing, limbSwingAmount);
 
+                if (entity.getMotion().y < 0 && entity.getMotion().length() > 0.1)
+                {
+                    flap(wingR1, globalSpeed - 0.3f, 0.15f, false, 0, 0, frame, 0.5f);
+                    walk(wingR1, globalSpeed + 0.65f, 0.15f, false, 0, 0, frame, 0.5f);
+                    flap(wingL1, globalSpeed - 0.3f, 0.15f, true, 0, 0, frame, 0.5f);
+                    walk(wingL1, globalSpeed + 0.65f, 0.15f, false, 0, 0, frame, 0.5f);
+                }
+
                 boolean wingsDown = wingR1.rotateAngleZ < 1.5;
                 if (!entity.wingsDown && wingsDown) entity.flapWings();
                 entity.wingsDown = wingsDown;

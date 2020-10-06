@@ -351,7 +351,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean shouldFly() { return super.shouldFly() && !isKnockedOut(); }
+    public boolean canFly() { return super.canFly() && !isKnockedOut(); }
 
     @Override
     public boolean isImmuneToArrows() { return true; }

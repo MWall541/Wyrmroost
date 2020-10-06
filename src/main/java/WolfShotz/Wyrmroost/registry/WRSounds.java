@@ -46,6 +46,7 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_IDLE = entity("alpine.idle");
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_HURT = entity("alpine.hurt");
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_ROAR = entity("alpine.roar");
+    public static final RegistryObject<SoundEvent> ENTITY_ALPINE_DEATH = entity("alpine.death");
 
     public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_IDLE = entity("coindragon.idle");
 

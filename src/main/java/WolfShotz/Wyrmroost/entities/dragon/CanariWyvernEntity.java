@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -18,13 +19,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -181,6 +180,27 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super.addScreenInfo(screen);
         screen.addAction(StaffAction.TARGET);
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_CANARI_IDLE.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_CANARI_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_CANARI_DEATH.get();
     }
 
     @Override

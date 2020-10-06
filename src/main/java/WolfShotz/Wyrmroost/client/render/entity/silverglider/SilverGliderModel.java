@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost.client.render.entity.silverglider;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -14,6 +15,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 {
     private final WRModelRenderer[] headArray;
     private final WRModelRenderer[] tailArray;
+    private final WRModelRenderer[] toeArray;
     public WRModelRenderer neck1;
     public WRModelRenderer backFin;
     public WRModelRenderer bottomFin;
@@ -92,6 +94,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         head = new WRModelRenderer(this, 80, 0);
         head.setRotationPoint(0.0F, -0.1F, -2.0F);
         head.addBox(-2.4F, -2.0F, -4.8F, 5, 4, 5, 0.0F);
+        setRotateAngle(head, 0.1f, 0, 0);
         secondaryBody = new WRModelRenderer(this, 76, 40);
         secondaryBody.setRotationPoint(0.0F, -0.3F, 4.9F);
         secondaryBody.addBox(-2.1F, -2.1F, -0.5F, 4, 4, 8, 0.0F);
@@ -106,16 +109,18 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         phalangeR1 = new WRModelRenderer(this, 0, 65);
         phalangeR1.setRotationPoint(-14.0F, 0.0F, -0.5F);
         phalangeR1.addBox(-15.0F, -0.3F, -0.5F, 15, 1, 1, 0.0F);
+        setRotateAngle(phalangeR1, 0, 1f, 0);
         wingMembraneElbowL = new WRModelRenderer(this, 125, 65);
         wingMembraneElbowL.setRotationPoint(-9.3F, -0.37F, -0.1F);
         wingMembraneElbowL.addBox(-4.9F, -0.1F, -13.0F, 10, 0, 14, 0.0F);
+        setRotateAngle(wingMembraneElbowL, 0, 0.5f, 0);
         wingMembraneR1 = new WRModelRenderer(this, -14, 83);
         wingMembraneR1.setRotationPoint(-5.2F, 0.0F, 0.0F);
         wingMembraneR1.addBox(-4.8F, -0.5F, -0.5F, 10, 0, 14, 0.0F);
         phalangeL2 = new WRModelRenderer(this, 33, 65);
         phalangeL2.setRotationPoint(-14.0F, 0.0F, 0.0F);
         phalangeL2.addBox(-25.0F, -0.5F, -0.5F, 25, 1, 1, 0.0F);
-        setRotateAngle(phalangeL2, 0.0F, -0.0326405187521112F, -0.01443337511952157F);
+        setRotateAngle(phalangeL2, 0.0F, -0.0326405187521112f + -0.76f, -0.01443337511952157f);
         mouthBottom = new WRModelRenderer(this, 84, 10);
         mouthBottom.setRotationPoint(0.0F, 1.0F, -4.5F);
         mouthBottom.addBox(-1.5F, -0.5F, -4.0F, 3, 1, 4, 0.0F);
@@ -125,6 +130,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         wingMembraneElbowR = new WRModelRenderer(this, -13, 100);
         wingMembraneElbowR.setRotationPoint(-8.9F, -0.37F, -0.1F);
         wingMembraneElbowR.addBox(-4.9F, -0.1F, -0.5F, 10, 0, 14, 0.0F);
+        setRotateAngle(wingMembraneElbowR, 0, -0.5f, 0);
         tail3 = new WRModelRenderer(this, 88, 53);
         tail3.setRotationPoint(0.02F, 0.02F, 2.8F);
         tail3.addBox(-1.6F, -1.7F, -0.4F, 3, 3, 3, 0.0F);
@@ -154,6 +160,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         wing2L = new WRModelRenderer(this, 31, 58);
         wing2L.setRotationPoint(-10.0F, -0.49F, 0.0F);
         wing2L.addBox(-15.0F, -0.4F, -1.0F, 15, 2, 2, 0.0F);
+        setRotateAngle(wing2L, 0, 0.8f, 0);
         tail8 = new WRModelRenderer(this, 90, 60);
         tail8.setRotationPoint(0.02F, 0.02F, 2.0F);
         tail8.addBox(-1.0F, -1.1F, 0.0F, 2, 2, 3, 0.0F);
@@ -164,6 +171,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         phalangeL1 = new WRModelRenderer(this, 0, 65);
         phalangeL1.setRotationPoint(-14.0F, 0.0F, 0.4F);
         phalangeL1.addBox(-15.0F, -0.3F, -0.5F, 15, 1, 1, 0.0F);
+        setRotateAngle(phalangeL1, 0, -1f, 0);
         legR2 = new WRModelRenderer(this, 56, 8);
         legR2.setRotationPoint(0.42F, 3.1F, -0.1F);
         legR2.addBox(-1.1F, -0.2F, -1.0F, 2, 3, 2, 0.0F);
@@ -183,6 +191,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         phalangeR2 = new WRModelRenderer(this, 33, 65);
         phalangeR2.setRotationPoint(-14.0F, 0.0F, 0.0F);
         phalangeR2.addBox(-25.0F, -0.5F, -0.5F, 25, 1, 1, 0.0F);
+        setRotateAngle(phalangeR2, 0, 0.76f, 0);
         tail4 = new WRModelRenderer(this, 88, 53);
         tail4.setRotationPoint(-0.02F, -0.02F, 2.8F);
         tail4.addBox(-1.6F, -1.7F, -0.4F, 3, 3, 3, 0.0F);
@@ -208,9 +217,11 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         neck4 = new WRModelRenderer(this, 88, 17);
         neck4.setRotationPoint(0.02F, 0.02F, -2.0F);
         neck4.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
+        setRotateAngle(neck4, 0.4f, 0, 0);
         phalangeR3 = new WRModelRenderer(this, 33, 65);
         phalangeR3.setRotationPoint(-25.0F, 0.0F, 0.0F);
         phalangeR3.addBox(-8.4F, -0.5F, -0.5F, 9, 1, 1, 0.0F);
+        setRotateAngle(phalangeR3, 0, 0.3f, 0);
         wingMembraneL2 = new WRModelRenderer(this, 94, 98);
         wingMembraneL2.setRotationPoint(-7.8F, 0.0F, 0.0F);
         wingMembraneL2.addBox(-6.2F, 0.0F, -15.3F, 14, 0, 16, 0.0F);
@@ -226,6 +237,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         wing1R = new WRModelRenderer(this, 0, 58);
         wing1R.setRotationPoint(-1.5F, -1.0F, -3.0F);
         wing1R.addBox(-10.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
+        setRotateAngle(wing1R, 0.7f, -0.2f, -0.1f);
         wingMembraneR3 = new WRModelRenderer(this, 32, 80);
         wingMembraneR3.setRotationPoint(-8.2F, 0.6F, 0.0F);
         wingMembraneR3.addBox(-5.8F, -0.6F, -0.1F, 14, 0, 18, 0.0F);
@@ -238,6 +250,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         neck2 = new WRModelRenderer(this, 88, 17);
         neck2.setRotationPoint(0.02F, 0.02F, -2.0F);
         neck2.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
+        setRotateAngle(neck2, -0.5f, 0, 0);
         phalangeSegmentR2 = new WRModelRenderer(this, 33, 69);
         phalangeSegmentR2.setRotationPoint(-9.7F, 0.0F, 0.0F);
         phalangeSegmentR2.addBox(-10.0F, -0.5F, -0.5F, 10, 1, 1, 0.0F);
@@ -258,6 +271,7 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         phalangeL3 = new WRModelRenderer(this, 33, 65);
         phalangeL3.setRotationPoint(-25.0F, 0.0F, 0.0F);
         phalangeL3.addBox(-8.4F, -0.5F, -0.5F, 9, 1, 1, 0.0F);
+        setRotateAngle(phalangeL3, 0, -0.3f, 0);
         neck3 = new WRModelRenderer(this, 88, 17);
         neck3.setRotationPoint(-0.02F, -0.02F, -2.0F);
         neck3.addBox(-2.0F, -2.0F, -3.0F, 4, 4, 3, 0.0F);
@@ -281,10 +295,11 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         wing2R = new WRModelRenderer(this, 31, 58);
         wing2R.setRotationPoint(-10.0F, -0.49F, 0.0F);
         wing2R.addBox(-15.0F, -0.5F, -1.0F, 15, 2, 2, 0.0F);
+        setRotateAngle(wing2R, 0, -0.8f, 0);
         wing1L = new WRModelRenderer(this, 0, 58);
         wing1L.setRotationPoint(1.5F, -1.0F, -3.0F);
         wing1L.addBox(-10.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
-        setRotateAngle(wing1L, 0.0F, -3.141592653589793F, 0.0F);
+        setRotateAngle(wing1L, -0.7f, -3.141592653589793f + 0.2f, 0.1f);
         tail2 = new WRModelRenderer(this, 88, 53);
         tail2.setRotationPoint(-0.02F, -0.02F, 2.8F);
         tail2.addBox(-1.6F, -1.7F, -0.4F, 3, 3, 3, 0.0F);
@@ -352,6 +367,12 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
         headArray = new WRModelRenderer[] {neck1, neck2, neck3, neck4, head};
         tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8, tail9, tail10};
+        toeArray = new WRModelRenderer[] {toeR1, toeR2, toeR3, toeL1, toeL2, toeL3};
+
+        wingMembraneR2.rotateAngleX = -0.0001f;
+        wingMembraneR3.rotateAngleX = 0.0001f;
+        wingMembraneL2.rotateAngleX = -0.0001f;
+        wingMembraneL3.rotateAngleX = 0.0001f;
 
         setDefaultPose();
     }
@@ -367,12 +388,12 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     {
         if (netHeadYaw < -180) netHeadYaw += 360;
         else if (netHeadYaw > 180) netHeadYaw -= 360;
-        if (!entityIn.isSleeping()) faceTarget(netHeadYaw, entityIn.isFlying()? 0 : headPitch, 1, headArray);
-        if (entityIn.isFlying())
+        if (entity.flightTimer.get() == 1 && !entityIn.isGliding())
         {
-            mainBody.rotateAngleX = headPitch * ((float) Math.PI / 180F);
-            mainBody.rotateAngleZ = -(netHeadYaw * ((float) Math.PI / 180F));
+            mainBody.rotateAngleZ = -(netHeadYaw * Mafs.PI / 180f) * 0.5f;
+            mainBody.rotateAngleX = headPitch * Mafs.PI / 180f;
         }
+        else faceTarget(netHeadYaw, entity.isFlying()? 0 : headPitch, 1, headArray);
     }
 
     @Override
@@ -380,21 +401,43 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     {
         this.entity = entity;
         float frame = entity.ticksExisted + partialTick;
-
         resetToDefaultPose();
-        wingMembraneL2.rotateAngleX = -0.0001f;
-        wingMembraneL4.rotateAngleX = 0.01f;
-        wingMembraneR2.rotateAngleX = 0.0001f;
-        wingMembraneR4.rotateAngleX = -0.01f;
-
-        if (!entity.isSitting() && !entity.isSleeping())
-        {
-            // todo walk cycle
-        }
 
         flight(entity.flightTimer.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
         sit(entity.sitTimer.get(partialTick));
+
+        if (entity.isFlying() || entity.isGliding())
+        {
+            flap(wing1L, globalSpeed - 0.2f, 0.05f, false, 0, 0, frame, 0.5f);
+            walk(wing1L, globalSpeed + 0.5f, 0.09f, false, 0, 0, frame, 0.5f);
+            flap(wing1R, globalSpeed - 0.2f, 0.05f, true, 0, 0, frame, 0.5f);
+            walk(wing1R, globalSpeed + 0.5f, 0.09f, true, 0, 0, frame, 0.5f);
+        }
+        else if (!entity.isSitting() && !entity.isSleeping())
+        {
+            walk(legR1, globalSpeed - 0.15f, 1.5f, false, 0, 0.75f, limbSwing, limbSwingAmount);
+            walk(legR2, globalSpeed - 0.15f, 1f, false, -0.7f, 0.3f, limbSwing, limbSwingAmount);
+            walk(legR3, globalSpeed - 0.15f, -1f, false, -0.7f, -0.5f, limbSwing, limbSwingAmount);
+
+            walk(legL1, globalSpeed - 0.15f, 1.5f, true, 0, -0.75f, limbSwing, limbSwingAmount);
+            walk(legL2, globalSpeed - 0.15f, 1f, true, -0.7f, -0.3f, limbSwing, limbSwingAmount);
+            walk(legL3, globalSpeed - 0.15f, -1f, true, -0.7f, 0.5f, limbSwing, limbSwingAmount);
+
+            for (int i = 0; i < toeArray.length; i++)
+            {
+                boolean invert = i > 2;
+                walk(toeArray[i], globalSpeed - 0.15f, 1f, false, -1f, invert? -0.8f : 0.8f, limbSwing, limbSwingAmount);
+            }
+
+            swing(wing1L, globalSpeed - 0.15f, 1, false, 0, 0, limbSwing, limbSwingAmount);
+            walk(wing1L, globalSpeed - 0.15f, 0.5f, false, 2f, 0.25f,limbSwing, limbSwingAmount);
+            swing(wing2L, globalSpeed - 0.15f, 0.25f, false, 1f, 0.25f, limbSwing, limbSwingAmount);
+
+            swing(wing1R, globalSpeed - 0.15f, 1, false, 0, 0, limbSwing, limbSwingAmount);
+            walk(wing1R, globalSpeed - 0.15f, 0.5f, false, 2f, -0.25f,limbSwing, limbSwingAmount);
+            swing(wing2R, globalSpeed - 0.15f, 0.25f, false, 1f, -0.25f, limbSwing, limbSwingAmount);
+        }
 
         idle(frame);
     }
@@ -448,22 +491,35 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     {
         setTime(amount);
 
-        rotate(neck2, -0.5f, 0, 0);
-        rotate(neck4, 0.4f, 0, 0);
-        rotate(head, 0.1f, 0, 0);
+        rotate(neck2, 0.5f, 0, 0);
+        rotate(neck4, -0.4f, 0, 0);
+        rotate(head, -0.1f, 0, 0);
 
-        rotate(wing1R, 0.7f, -0.2f, -0.1f);
-        rotate(wing2R, 0, -0.8f, 0);
-        rotate(phalangeR1, 0, 1f, 0);
-        rotate(phalangeR2, 0, 0.76f, 0);
-        rotate(phalangeR3, 0, 0.3f, 0);
+        rotate(wing1R, -0.7f, 0.5f, 0.2f);
+        rotate(wing2R, 0, 0.3f, -0.3f);
+        rotate(phalangeR1, 0, -0.8f, 0.1f);
+        rotate(phalangeR2, 0, -0.56f, 0.1f);
+        rotate(phalangeR3, 0, -0.3f, 0.2f);
+        rotate(wingMembraneElbowR, 0, 0.5f, 0);
+
+        rotate(wing1L, 0.7f, -0.5f, -0.2f);
+        rotate(wing2L, 0, -0.3f, -0.3f);
+        rotate(phalangeL1, 0, 0.8f, 0.1f);
+        rotate(phalangeL2, 0, 0.56f, 0.1f);
+        rotate(phalangeL3, 0, 0.3f, 0.2f);
         rotate(wingMembraneElbowR, 0, -0.5f, 0);
 
-        rotate(wing1L, -0.7f, 0.2f, 0.1f);
-        rotate(wing2L, 0, 0.8f, 0);
-        rotate(phalangeL1, 0, -1f, 0);
-        rotate(phalangeL2, 0, -0.76f, 0);
-        rotate(phalangeL3, 0, -0.3f, 0);
-        rotate(wingMembraneElbowL, 0, 0.5f, 0);
+        if (!entity.isGliding())
+        {
+            rotate(legR1, -0.6f, 0, 0);
+            rotate(legR2, 1f, 0, 0);
+            rotate(legR3, -0.75f, 0, 0);
+
+            rotate(legL1, -0.6f, 0, 0);
+            rotate(legL2, 1f, 0, 0);
+            rotate(legL3, -0.75f, 0, 0);
+
+            for (WRModelRenderer toe : toeArray) rotate(toe, 1f, 0, 0);
+        }
     }
 }

@@ -85,6 +85,7 @@ public class SoundData implements IDataProvider
         new Builder(WRSounds.ENTITY_ALPINE_IDLE.get()).subtitle("Alpine Growls").sounds(s -> Wyrmroost.rl("entity/alpine" + s), "idle1", "idle2").build(json);
         new Builder(WRSounds.ENTITY_ALPINE_HURT.get()).subtitle("Alpine Whine").sounds(s -> Wyrmroost.rl("entity/alpine" + s), "hurt1", "hurt2", "hurt3").build(json);
         new Builder(WRSounds.ENTITY_ALPINE_ROAR.get()).subtitle("Alpine Roar").sounds(s -> Wyrmroost.rl("entity/alpine" + s), "roar", "roar1", "roar2").build(json);
+        new Builder(WRSounds.ENTITY_ALPINE_DEATH.get()).subtitle("Alpine Screech").sound(Wyrmroost.rl("entity/alpine/death")).build(json);
 
         new Builder(WRSounds.ENTITY_COINDRAGON_IDLE.get()).subtitle("Coin Dragon Chirps").sounds(s -> Wyrmroost.rl("entity/coin_dragon" + s), "idle", "idle1", "idle2").build(json);
     }

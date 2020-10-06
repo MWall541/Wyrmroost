@@ -697,6 +697,13 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
                 walk(backleg1L, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
                 walk(backleg1R, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
 
+                if (entity.getMotion().y < 0)
+                {
+                    flap(wing1R, globalSpeed - 0.3f, 0.15f, false, 0, 0, tick, 0.5f);
+                    walk(wing1R, globalSpeed + 0.65f, 0.15f, false, 0, 0, tick, 0.5f);
+                    flap(wing1L, globalSpeed - 0.3f, 0.15f, true, 0, 0, tick, 0.5f);
+                    walk(wing1L, globalSpeed + 0.65f, 0.15f, false, 0, 0, tick, 0.5f);
+                }
 
                 boolean wingsDown = wing1R.rotateAngleZ < 0.8;
                 if (!entity.wingsDown && wingsDown) entity.flapWings();

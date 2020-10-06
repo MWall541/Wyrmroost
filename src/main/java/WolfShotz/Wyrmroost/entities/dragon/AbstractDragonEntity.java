@@ -421,7 +421,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             else if (entity.isJumping)
             {
                 if (canFly()) setFlying(true);
-                else jumpController.setJumping();
+                else setJumping(true);
             }
 
             setAIMoveSpeed(speed);
@@ -466,7 +466,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         //@formatter:on
     }
 
-    public boolean shouldFly() { return canFly() && !isRiding() && getAltitude() > getFlightThreshold(); }
+    public boolean shouldFly()
+    {
+        return canFly() && getAltitude() > getFlightThreshold();
+    }
 
     @Override
     public void notifyDataManagerChange(DataParameter<?> key)
@@ -931,7 +934,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || canPassengerSteer(); }
 
-    public boolean canFly() { return hasDataEntry(FLYING) && !isChild() && !getLeashed(); }
+    public boolean canFly()
+    {
+        return hasDataEntry(FLYING) && !isChild() && !getLeashed() && !canSwim() && !isRiding();
+    }
 
     /**
      * Get the motion this entity performs when jumping

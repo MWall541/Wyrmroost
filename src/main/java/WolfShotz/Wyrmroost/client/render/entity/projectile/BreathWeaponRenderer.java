@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.render.entity.projectile;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.entities.projectile.breath.BreathWeaponEntity;
+import WolfShotz.Wyrmroost.entities.projectile.DragonProjectileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Function;
 
-public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
+public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
 {
     public static final ResourceLocation RR_BREATH_0 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0");
     public static final ResourceLocation RR_BREATH_1 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_1");
@@ -24,7 +24,7 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
     public BreathWeaponRenderer(EntityRendererManager renderManager) { super(renderManager); }
 
     @Override
-    public void render(BreathWeaponEntity entity, float yaw, float partialTicks, MatrixStack ms, IRenderTypeBuffer typeBuffer, int packedLine)
+    public void render(DragonProjectileEntity entity, float yaw, float partialTicks, MatrixStack ms, IRenderTypeBuffer typeBuffer, int packedLine)
     {
         if (entity.isBurning())
         {
@@ -33,7 +33,7 @@ public class BreathWeaponRenderer extends EntityRenderer<BreathWeaponEntity>
     }
 
     @Override
-    public ResourceLocation getEntityTexture(BreathWeaponEntity entity) { return null; }
+    public ResourceLocation getEntityTexture(DragonProjectileEntity entity) { return null; }
 
     private void renderFire(MatrixStack ms, IRenderTypeBuffer typeBuffer, Entity entity)
     {
