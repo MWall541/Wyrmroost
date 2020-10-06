@@ -4,10 +4,12 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
+import WolfShotz.Wyrmroost.entities.projectile.WindGustEntity;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.TickFloat;
@@ -31,6 +33,7 @@ import static net.minecraft.entity.SharedMonsterAttributes.*;
 public class AlpineEntity extends AbstractDragonEntity
 {
     public static final Animation ROAR_ANIMATION = new Animation(84);
+    public static final Animation WIND_GUST_ANIMATION = new Animation(25);
 
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
@@ -94,22 +97,27 @@ public class AlpineEntity extends AbstractDragonEntity
         if (!world.isRemote && noActiveAnimation() && !isSleeping() && !isChild() && getRNG().nextDouble() < 0.0005)
             AnimationPacket.send(this, ROAR_ANIMATION);
 
-        if (getAnimation() == ROAR_ANIMATION)
-        {
-            int tick = getAnimationTick();
-            switch (tick)
-            {
-                case 0:
-                    playSound(WRSounds.ENTITY_ALPINE_ROAR.get(), 3f, 1f);
-                    break;
-                case 25:
-                    for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get() && ((AlpineEntity) e).noActiveAnimation()))
-                        ((AlpineEntity) entity).setAnimation(ROAR_ANIMATION);
-                    break;
-                default:
-                    break;
-            }
+        Animation animation = getAnimation();
+        int tick = getAnimationTick();
 
+        if (animation == ROAR_ANIMATION)
+        {
+            if (tick == 0) playSound(WRSounds.ENTITY_ALPINE_ROAR.get(), 3f, 1f);
+            else if (tick == 25)
+            {
+                for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get() && ((AlpineEntity) e).noActiveAnimation()))
+                    ((AlpineEntity) entity).setAnimation(ROAR_ANIMATION);
+            }
+        }
+        else if (animation == WIND_GUST_ANIMATION)
+        {
+            if (tick == 0) setMotion(getMotion().add(0, -0.5, 0));
+            if (tick == 4)
+            {
+                world.addEntity(new WindGustEntity(this));
+                setMotion(getMotion().add(getLookVec().inverse().mul(1.5, 0, 1.5).add(0, 1, 0)));
+                playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
+            }
         }
     }
 
@@ -131,6 +139,20 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
+    public EntitySize getSize(Pose poseIn)
+    {
+        EntitySize size = getType().getSize().scale(getRenderScale());
+        return size.scale(1, isSitting() || isSleeping()? 0.7f : 1);
+    }
+
+    @Override
+    public void recievePassengerKeybind(int key, int mods, boolean pressed)
+    {
+        if (key == KeybindPacket.MOUNT_KEY2 && pressed && noActiveAnimation() && isFlying())
+            setAnimation(WIND_GUST_ANIMATION);
+    }
+
+    @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
         if (backView) event.getInfo().movePosition(-5d, 0.75d, 0);
@@ -147,7 +169,10 @@ public class AlpineEntity extends AbstractDragonEntity
     public Collection<? extends IItemProvider> getFoodItems() { return ImmutableSet.of(Items.HONEYCOMB, Items.HONEY_BOTTLE); }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return sizeIn.height * 1.25f; }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    {
+        return sizeIn.height * (isFlying()? 0.8f : 1.25f);
+    }
 
     @Nullable
     @Override
@@ -162,5 +187,5 @@ public class AlpineEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ALPINE_DEATH.get(); }
 
     @Override
-    public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION}; }
 }

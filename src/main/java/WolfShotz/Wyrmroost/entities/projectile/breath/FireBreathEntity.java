@@ -26,7 +26,10 @@ public class FireBreathEntity extends BreathWeaponEntity
 {
     public FireBreathEntity(EntityType<?> type, World world) { super(type, world); }
 
-    public FireBreathEntity(AbstractDragonEntity shooter) { super(WREntities.FIRE_BREATH.get(), shooter); }
+    public FireBreathEntity(AbstractDragonEntity shooter)
+    {
+        super(WREntities.FIRE_BREATH.get(), shooter);
+    }
 
     @Override
     public void tick()
@@ -97,7 +100,4 @@ public class FireBreathEntity extends BreathWeaponEntity
 
     @Override
     public boolean isBurning() { return true; }
-
-    @Override
-    protected float getMotionFactor() { return 1f; }
 }

@@ -672,7 +672,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         animator.update(entity, partialTick);
         resetToDefaultPose();
 
-        if (!entity.isSleeping() && !entity.isSitting())
+        if (!entity.isSleeping() && !entity.isSitting() && entity.getAnimation() != AlpineEntity.WIND_GUST_ANIMATION)
         {
             if (entity.isFlying()) // flight
             {
@@ -697,12 +697,12 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
                 walk(backleg1L, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
                 walk(backleg1R, globalSpeed - 0.25f, 0.075f, true, 0, 0, limbSwing, limbSwingAmount);
 
-                if (entity.getMotion().y < 0)
+                if (entity.getMotion().y < 0 && entity.getMotion().length() > 0.1)
                 {
                     flap(wing1R, globalSpeed - 0.3f, 0.15f, false, 0, 0, tick, 0.5f);
-                    walk(wing1R, globalSpeed + 0.65f, 0.15f, false, 0, 0, tick, 0.5f);
+                    walk(wing1R, globalSpeed + 0.65f, 0.1f, false, 0, 0, tick, 0.5f);
                     flap(wing1L, globalSpeed - 0.3f, 0.15f, true, 0, 0, tick, 0.5f);
-                    walk(wing1L, globalSpeed + 0.65f, 0.15f, false, 0, 0, tick, 0.5f);
+                    walk(wing1L, globalSpeed + 0.65f, 0.1f, false, 0, 0, tick, 0.5f);
                 }
 
                 boolean wingsDown = wing1R.rotateAngleZ < 0.8;
@@ -740,6 +740,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         flight(entity.flightTimer.get(partialTick));
 
         if (animator.setAnimation(AlpineEntity.ROAR_ANIMATION)) roarAnim(tick);
+        else if (animator.setAnimation(AlpineEntity.WIND_GUST_ANIMATION)) windGustAnim();
 
         idle(tick);
     }
@@ -893,5 +894,31 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         animator.endKeyframe();
         animator.setStaticKeyframe(60);
         animator.resetKeyframe(12);
+    }
+
+
+    private void windGustAnim()
+    {
+        animator.startKeyframe(5);
+        animator.rotate(body1, -1, 0, 0);
+        animator.rotate(wing1L, 0, 0, -0.5f);
+        animator.rotate(wing2L, 0, 0, -0.6f);
+        animator.rotate(wing1R, 0, 0, 0.5f);
+        animator.rotate(wing2R, 0, 0, 0.6f);
+        for (WRModelRenderer head : headArray) animator.rotate(head, 0.2f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(5);
+        animator.rotate(body1, -1, 0, 0);
+        for (WRModelRenderer head : headArray) animator.rotate(head, 0.2f, 0, 0);
+        animator.rotate(wing1L, 0, 0, 1.25f);
+        animator.rotate(wing2L, 0, 0, 0.8f);
+        animator.rotate(wing3L, 0, 0, 0.8f);
+        animator.rotate(wing1R, 0, 0, -1.25f);
+        animator.rotate(wing2R, 0, 0, -0.8f);
+        animator.rotate(wing3R, 0, 0, -0.8f);
+        animator.endKeyframe();
+
+        animator.resetKeyframe(15);
     }
 }

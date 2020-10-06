@@ -127,7 +127,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<WindGustEntity>> WIND_GUST = Builder.<WindGustEntity>withClassification("wind_gust", WindGustEntity::new, EntityClassification.MISC)
             .renderer(EmptyRenderer::new)
-            .build(b -> b.size(2, 2).disableSerialization().disableSummoning());
+            .build(b -> b.size(4, 4).disableSerialization().disableSummoning());
 
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = Builder.<DragonEggEntity>withClassification("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
             .renderer(DragonEggRenderer::new)

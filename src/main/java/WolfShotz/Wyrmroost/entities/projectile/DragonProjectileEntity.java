@@ -23,7 +23,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 {
     public AbstractDragonEntity shooter;
     public double accelerationX, accelerationY, accelerationZ;
-    public float growthRate = 1.01f;
+    public float growthRate = 1f;
     public int life;
     public boolean hasCollided;
 
@@ -32,21 +32,22 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
      */
     public DragonProjectileEntity(EntityType<?> type, World world) { super(type, world); }
 
-    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter)
+    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vec3d position)
     {
         super(type, shooter.world);
 
-        Vec3d mouth = shooter.getApproximateMouthPos();
-        setLocationAndAngles(mouth.x, mouth.y, mouth.z, rotationYaw, rotationPitch);
-
-        Vec3d acceleration = Vec3d.fromPitchYaw(shooter.rotationPitch, shooter.rotationYawHead).add(rand.nextGaussian() * 0.1d, rand.nextGaussian() * 0.1d, rand.nextGaussian() * 0.1d);
+        Vec3d acceleration = shooter.getLookVec().add(rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset());
         double length = acceleration.length();
-        this.accelerationX = acceleration.x / length * 0.1d;
-        this.accelerationY = acceleration.y / length * 0.1d;
-        this.accelerationZ = acceleration.z / length * 0.1d;
+        this.accelerationX = acceleration.x / length * getMotionFactor();
+        this.accelerationY = acceleration.y / length * getMotionFactor();
+        this.accelerationZ = acceleration.z / length * getMotionFactor();
 
         this.shooter = shooter;
         this.life = 50;
+
+        setMotion(getMotion().add(accelerationX, accelerationY, accelerationZ));
+        position = position.add(getMotion());
+        setLocationAndAngles(position.x, position.y, position.z, rotationYaw, rotationPitch);
     }
 
     @Override
@@ -61,23 +62,24 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         super.tick();
         if (growthRate != 1) recalculateSize();
 
-        RayTraceResult rayTrace = ProjectileHelper.rayTrace(this, true, false, shooter, RayTraceContext.BlockMode.OUTLINE);
-        if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
-            onImpact(rayTrace);
+        if (directRaytrace())
+        {
+            RayTraceResult rayTrace = ProjectileHelper.rayTrace(this, true, false, shooter, RayTraceContext.BlockMode.OUTLINE);
+            if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
+                onImpact(rayTrace);
+        }
 
         Vec3d motion = getMotion();
-        float motionScale = getMotionFactor();
         double x = getPosX() + motion.x;
         double y = getPosY() + motion.y;
         double z = getPosZ() + motion.z;
 
         if (isInWater())
         {
-            motionScale *= 0.2f;
+            setMotion(motion.scale(0.2f));
             for (int i = 0; i < 4; ++i)
                 world.addParticle(ParticleTypes.BUBBLE, getPosX() * 0.25d, getPosY() * 0.25d, getPosZ() * 0.25D, motion.x, motion.y, motion.z);
         }
-        setMotion(motion.add(accelerationX, accelerationY, accelerationZ).scale(motionScale));
         setPosition(x, y, z);
     }
 
@@ -96,7 +98,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public EntitySize getSize(Pose poseIn)
     {
         if (growthRate == 1) return getType().getSize();
-        float size = Math.min(getWidth() * 1.04f, 2f);
+        float size = getWidth() * growthRate;
         return EntitySize.flexible(size, size);
     }
 
@@ -113,10 +115,14 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
     protected float getMotionFactor() { return 0.95f; }
 
+    protected double getAccelerationOffset() { return 0.1; }
+
     protected int getMaxLife() { return 150; }
 
     @Override
     protected boolean canTriggerWalking() { return false; }
+
+    protected boolean directRaytrace() { return true; }
 
     @Override
     public float getBrightness() { return 1f; }

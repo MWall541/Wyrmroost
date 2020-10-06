@@ -399,6 +399,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void travel(Vec3d vec3d)
     {
+        if (isAIDisabled()) return;
+
         float speed = getTravelSpeed();
 
         if (canPassengerSteer()) // Were being controlled; override ai movement

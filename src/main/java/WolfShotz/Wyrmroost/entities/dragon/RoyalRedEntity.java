@@ -326,7 +326,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
 
-    public void setBreathingFire(boolean b) { dataManager.set(BREATHING_FIRE, b); }
+    public void setBreathingFire(boolean b) { if (!world.isRemote) dataManager.set(BREATHING_FIRE, b); }
 
     public boolean isKnockedOut() { return dataManager.get(KNOCKED_OUT); }
 

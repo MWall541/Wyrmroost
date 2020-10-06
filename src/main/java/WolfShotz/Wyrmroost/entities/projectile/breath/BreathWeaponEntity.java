@@ -8,7 +8,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.World;
 
@@ -21,7 +20,8 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 
     public BreathWeaponEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter)
     {
-        super(type, shooter);
+        super(type, shooter, shooter.getApproximateMouthPos());
+        this.growthRate = 1.04f;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BreathWeaponEntity extends DragonProjectileEntity
                     break;
             }
 
-            setMotion(Vec3d.ZERO);
+            setMotion(accelerationX, accelerationY, accelerationZ);
 
             if (!hasCollided)
             {
@@ -61,4 +61,7 @@ public class BreathWeaponEntity extends DragonProjectileEntity
             }
         }
     }
+
+    @Override
+    protected float getMotionFactor() { return 0.6f; }
 }
