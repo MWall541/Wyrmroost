@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle'
 
 version = "${project.mod_version}"
 group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "${project.archiveBaseName}" + "-" + version
+archivesBaseName = "${project.archiveBaseName}"
 
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'

@@ -115,9 +115,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         if (stack.getItem() == Items.SHEARS && canBeSteered())
             return true; // Shears return false on entity interactions. bad, but workaround for it.
 
-        if (!isTamed() && isChild() && isFoodItem(stack))
+        if (!isTamed() && isChild() && isFoodItem(stack) && temptGoal.isRunning())
         {
-            tame(getRNG().nextInt(5) == 0, player);
+            tame(getRNG().nextDouble() <= 0.2d, player);
             eat(stack);
             return true;
         }
@@ -188,6 +188,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn) { return true; }
 
+    @Override
+    public boolean canDespawn(double distanceToClosestPlayer) { return true; }
+
     @Nullable
     @Override
     public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag)
@@ -198,7 +201,15 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return 1.8f; }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight(); }
+
+    @Override
+    public EntitySize getSize(Pose poseIn)
+    {
+        EntitySize size = getType().getSize().scale(getRenderScale());
+        if (isSitting() || isSleeping()) size = size.scale(1, 0.7f);
+        return size;
+    }
 
     @Override
     public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
@@ -229,7 +240,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         if (isSleeping() || (isChild() && world.isDaytime())) return;
         if (--sleepCooldown > 0) return;
         if (isTamed() && !isSitting()) return;
-//        if (!(getHomePos().isPresent() && isWithinHomeDistanceFromPosition())) return;
         if (!isIdling()) return;
         int sleepChance = world.isDaytime()? 450 : 300; // neps
         if (getRNG().nextInt(sleepChance) == 0)
@@ -262,7 +272,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     protected boolean canBeRidden(Entity passenger)
     {
-        return passenger instanceof LivingEntity && isOwner((LivingEntity) passenger);
+        return !isChild() && passenger instanceof LivingEntity && isOwner((LivingEntity) passenger);
     }
 
     @Nullable
@@ -277,24 +287,20 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_COW_DEATH; }
 
-    @Override
-    protected float getSoundPitch() { return super.getSoundPitch() * 0.5f; }
-
-    public static Consumer<EntityType<DragonFruitDrakeEntity>> getSpawnConditions()
+    public static Consumer<EntityType<DragonFruitDrakeEntity>> getSpawnPlacements()
     {
         return t ->
         {
             for (Biome biome : BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE))
-                biome.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 7, 2, 4));
+                biome.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 4, 3, 5));
 
-            EntitySpawnPlacementRegistry.register(
-                    WREntities.DRAGON_FRUIT_DRAKE.get(),
+            EntitySpawnPlacementRegistry.register(t,
                     EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
                     Heightmap.Type.MOTION_BLOCKING,
                     ((type, world, reason, pos, rand) ->
                     {
                         if (world.getLightSubtracted(pos, 0) <= 8) return false;
-                        Block block = world.getBlockState(pos).getBlock();
+                        Block block = world.getBlockState(pos.down()).getBlock();
                         return block instanceof GrassBlock || block instanceof LeavesBlock;
                     }));
         };
