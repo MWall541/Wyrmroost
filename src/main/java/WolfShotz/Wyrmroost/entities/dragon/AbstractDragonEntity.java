@@ -244,6 +244,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (flying != isFlying()) setFlying(flying);
 
             if (!isAIDisabled() && hasDataEntry(SLEEPING)) handleSleep();
+            if (isSleeping()) ((LessShitLookController) getLookController()).restore();
 
             if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(200) == 0)
                 heal(1);
@@ -284,6 +285,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if ((player.isSneaking() && !player.abilities.isFlying) || isInWater() || index > 2)
             {
                 stopRiding();
+                setSitting(false);
                 return;
             }
 
@@ -402,8 +404,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void travel(Vec3d vec3d)
     {
-        if (isAIDisabled()) return;
-
         float speed = getTravelSpeed();
 
         if (canPassengerSteer()) // Were being controlled; override ai movement
@@ -775,6 +775,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         else
         {
             if (--sleepCooldown > 0) return;
+            if (isFlying()) return;
             if (world.isDaytime()) return;
             if (isTamed() && (!isSitting() || !isWithinHomeDistanceCurrentPosition())) return;
             if (!isIdling()) return;

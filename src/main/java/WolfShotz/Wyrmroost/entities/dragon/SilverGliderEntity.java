@@ -134,7 +134,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         if (super.playerInteraction(player, hand, stack)) return true;
 
         // tame
-        if (!isTamed() && !world.isRemote && temptGoal.isRunning() && isBreedingItem(stack))
+        if (!isTamed() && !world.isRemote && (temptGoal.isRunning() || player.isCreative()) && isBreedingItem(stack))
         {
             tame(getRNG().nextInt(3) == 0, player);
             eat(stack);

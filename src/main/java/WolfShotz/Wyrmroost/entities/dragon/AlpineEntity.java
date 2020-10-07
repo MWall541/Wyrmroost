@@ -12,10 +12,12 @@ import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
@@ -23,10 +25,14 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -54,7 +60,7 @@ public class AlpineEntity extends AbstractDragonEntity
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.22d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1); // no knockback
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d); // 1.5 hearts
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.365);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.5f);
         getAttributes().registerAttribute(PROJECTILE_DAMAGE).setBaseValue(1d); // 0.5 hearts
     }
 
@@ -202,4 +208,18 @@ public class AlpineEntity extends AbstractDragonEntity
 
     @Override
     public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION}; }
+
+    public static Consumer<EntityType<AlpineEntity>> getSpawnPlacements()
+    {
+        return type ->
+        {
+            for (Biome biome : ModUtils.getBiomesByTypes(BiomeDictionary.Type.MOUNTAIN))
+                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(type, 1, 1, 4));
+
+            EntitySpawnPlacementRegistry.register(type,
+                    EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
+                    Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                    MonsterEntity::canSpawnOn);
+        };
+    }
 }

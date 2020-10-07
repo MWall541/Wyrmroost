@@ -85,14 +85,14 @@ public class WREntities
             .spawnEgg(0x17283C, 0x7A6F5A)
             .dragonEgg(new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater))
             .renderer(() -> ButterflyLeviathanRenderer::new)
-            .spawnPlacement(ButterflyLeviathanEntity.getSpawnConditions())
+            .spawnPlacement(ButterflyLeviathanEntity.getSpawnPlacements())
             .build(b -> b.size(4f, 3f));
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = Builder.creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)
             .spawnEgg(0xe05c9a, 0x788716)
             .dragonEgg(new DragonEggProperties(0.45f, 0.75f, 9600))
             .renderer(() -> DragonFruitDrakeRenderer::new)
-            .spawnPlacement(DragonFruitDrakeEntity.getSpawnConditions())
+            .spawnPlacement(DragonFruitDrakeEntity.getSpawnPlacements())
             .build(b -> b.size(1.5f, 1.9f));
 
     public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = Builder.creature("canari_wyvern", CanariWyvernEntity::new)
@@ -106,6 +106,7 @@ public class WREntities
             .spawnEgg(0x8a0900, 0x0)
             .dragonEgg(new DragonEggProperties(0.6f, 1f, 72000))
             .renderer(() -> RoyalRedRenderer::new)
+            .spawnPlacement(RoyalRedEntity.getSpawnPlacements())
             .build(b -> b.size(3f, 3.9f).immuneToFire());
 
     public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = Builder.creature("coin_dragon", CoinDragonEntity::new)
@@ -116,6 +117,7 @@ public class WREntities
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
             .dragonEgg(new DragonEggProperties(1, 1, 12000))
             .renderer(() -> AlpineRenderer::new)
+            .spawnPlacement(AlpineEntity.getSpawnPlacements())
             .build(b -> b.size(2f, 2f));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)

@@ -117,7 +117,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (!isTamed() && isFoodItem(stack) && isPissed())
+        if (!isTamed() && isFoodItem(stack) && (isPissed() || player.isCreative()))
         {
             eat(stack);
             if (!world.isRemote) tame(getRNG().nextDouble() < 0.2, player);
@@ -168,6 +168,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         {
             if (--sleepCooldown > 0) return;
             if (isPissed()) return;
+            if (isFlying()) return;
             if (world.isDaytime()) return;
             if (isTamed() && (!isSitting() || !isWithinHomeDistanceCurrentPosition())) return;
             if (!isIdling()) return;

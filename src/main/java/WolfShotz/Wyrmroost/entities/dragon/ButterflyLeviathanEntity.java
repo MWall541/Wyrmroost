@@ -247,7 +247,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (beached && lightningCooldown > 60 && isFoodItem(stack))
+        if (((beached && lightningCooldown > 60) || player.isCreative()) && isFoodItem(stack))
         {
             eat(stack);
             if (!world.isRemote) tame(getRNG().nextDouble() < 0.2, player);
@@ -460,12 +460,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     public Animation[] getAnimations() { return new Animation[] {LIGHTNING_ANIMATION, CONDUIT_ANIMATION, BITE_ANIMATION}; }
 
-    public static Consumer<EntityType<ButterflyLeviathanEntity>> getSpawnConditions()
+    public static Consumer<EntityType<ButterflyLeviathanEntity>> getSpawnPlacements()
     {
         return type ->
         {
             for (Biome biome : ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN))
-                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(type, 2, 0, 1));
+                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(type, 2, 1, 1));
 
             EntitySpawnPlacementRegistry.register(type,
                     EntitySpawnPlacementRegistry.PlacementType.IN_WATER,

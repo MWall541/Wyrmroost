@@ -29,7 +29,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     {
         super(manager, new RoostStalkerModel(), 0.5f);
         addLayer(new MouthItemLayer());
-        addLayer(new GlowLayer(stalker -> stalker.getVariant() == -1? BODY_SPE_GLOW : BODY_GLOW));
+        addLayer(new GlowLayer(stalker -> stalker.getVariant() == -1? BODY_SPE_GLOW : BODY_GLOW).addCondition(r -> !r.isSleeping()));
     }
 
     @Nullable

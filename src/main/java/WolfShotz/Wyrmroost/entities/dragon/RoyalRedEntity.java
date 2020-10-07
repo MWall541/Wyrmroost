@@ -19,10 +19,12 @@ import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
+import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -36,12 +38,16 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.common.BiomeDictionary;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.function.Consumer;
 
 import static net.minecraft.entity.SharedMonsterAttributes.*;
 
@@ -184,7 +190,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 if (knockOutTime <= (MAX_KNOCKOUT_TIME / 2))
                 {
                     // base taming chances on consciousness; the closer it is to waking up the better the chances
-                    if (tame(getRNG().nextInt(knockOutTime) < MAX_KNOCKOUT_TIME * 0.25d, player))
+                    if (tame(getRNG().nextInt(knockOutTime) < MAX_KNOCKOUT_TIME * 0.2d, player))
                     {
                         setKnockedOut(false);
                         AnimationPacket.send(this, ROAR_ANIMATION);
@@ -384,6 +390,20 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         super.setAnimation(animation);
         if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1, true);
+    }
+
+    public static Consumer<EntityType<RoyalRedEntity>> getSpawnPlacements()
+    {
+        return type ->
+        {
+            for (Biome biome : ModUtils.getBiomesByTypes(BiomeDictionary.Type.MOUNTAIN))
+                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(type, 1, 1, 1));
+
+            EntitySpawnPlacementRegistry.register(type,
+                    EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
+                    Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                    MonsterEntity::canSpawnOn);
+        };
     }
 
     class AttackGoal extends Goal
