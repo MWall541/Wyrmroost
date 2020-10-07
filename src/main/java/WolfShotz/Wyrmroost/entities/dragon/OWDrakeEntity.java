@@ -196,7 +196,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 world.destroyBlock(pos, false);
                 eatGrassBonus();
             }
-            else if (world.getBlockState(pos.down()).getBlock().getBlock() == Blocks.GRASS_BLOCK)
+            else if (world.getBlockState(pos = pos.down()).getBlock().getBlock() == Blocks.GRASS_BLOCK)
             {
                 world.playEvent(2001, pos, Block.getStateId(Blocks.GRASS_BLOCK.getDefaultState()));
                 world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
@@ -343,7 +343,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public float getTravelSpeed()
     {
         float speed = (float) getAttribute(MOVEMENT_SPEED).getValue();
-        if (isSprinting()) speed += 0.3;
+        if (isSprinting()) speed += 0.8f;
         return speed;
     }
 
