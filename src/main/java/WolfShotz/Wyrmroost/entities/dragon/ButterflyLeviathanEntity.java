@@ -77,6 +77,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         setPathPriority(PathNodeType.WATER, 0);
         setImmune(DamageSource.LIGHTNING_BOLT);
         setImmune(DamageSource.IN_FIRE);
+        setImmune(DamageSource.IN_WALL);
 
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
