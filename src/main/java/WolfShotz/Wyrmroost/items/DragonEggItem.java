@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.items;
 
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.DragonEggStackRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggEntity;
@@ -7,7 +8,6 @@ import WolfShotz.Wyrmroost.entities.dragonegg.DragonEggProperties;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -88,7 +88,7 @@ public class DragonEggItem extends Item
         if (type.isPresent())
         {
             String dragonTranslation = type.get().getName().getUnformattedComponentText();
-            return new TranslationTextComponent(dragonTranslation + " ").appendSibling(getName());
+            return new TranslationTextComponent(dragonTranslation + " ").appendSibling(new TranslationTextComponent(getTranslationKey()));
         }
         
         return super.getDisplayName(stack);
@@ -102,7 +102,7 @@ public class DragonEggItem extends Item
 
         if (tag != null && tag.contains(DragonEggEntity.DATA_HATCH_TIME))
             tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.tooltip", tag.getInt(DragonEggEntity.DATA_HATCH_TIME) / 1200).applyTextStyle(TextFormatting.AQUA));
-        PlayerEntity player = Minecraft.getInstance().player;
+        PlayerEntity player = ClientEvents.getPlayer();
         if (player != null && player.isCreative())
             tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.creativetooltip").applyTextStyle(TextFormatting.GRAY));
     }

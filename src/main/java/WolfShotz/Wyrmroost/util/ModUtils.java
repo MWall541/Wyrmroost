@@ -1,6 +1,5 @@
 package WolfShotz.Wyrmroost.util;
 
-import WolfShotz.Wyrmroost.client.ClientEvents;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -12,7 +11,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -82,19 +80,6 @@ public final class ModUtils
     public static void playLocalSound(World world, BlockPos pos, SoundEvent sound, float volume, float pitch)
     {
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
-    }
-
-    /**
-     * Play a sound on the local client.
-     *
-     * @param sound  why tf do u need an explanation mate
-     * @param volume so help me god
-     * @param pitch  the pitch of the sound. lower values = sulfur hexafloride, higher values = dying chipmunk
-     */
-    public static void playLocalSound(SoundEvent sound, float volume, float pitch)
-    {
-        Vec3d pos = ClientEvents.getPlayer().getPositionVec();
-        ClientEvents.getClient().world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
     }
 
     /**

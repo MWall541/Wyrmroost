@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.client.sounds;
 
 import WolfShotz.Wyrmroost.entities.dragon.RoyalRedEntity;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
@@ -33,5 +34,10 @@ public class BreathSound extends TickableSound
         x = (float) mouth.x;
         y = (float) mouth.y;
         z = (float) mouth.z;
+    }
+
+    public static void play(RoyalRedEntity dragon)
+    {
+        Minecraft.getInstance().getSoundHandler().play(new BreathSound(dragon));
     }
 }

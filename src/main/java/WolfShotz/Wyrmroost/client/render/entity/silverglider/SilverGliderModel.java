@@ -416,6 +416,8 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
         }
         else if (!entity.isSitting() && !entity.isSleeping())
         {
+            limbSwingAmount = Math.min(limbSwingAmount, 0.6f);
+
             walk(legR1, globalSpeed - 0.15f, 1.5f, false, 0, 0.75f, limbSwing, limbSwingAmount);
             walk(legR2, globalSpeed - 0.15f, 1f, false, -0.7f, 0.3f, limbSwing, limbSwingAmount);
             walk(legR3, globalSpeed - 0.15f, -1f, false, -0.7f, -0.5f, limbSwing, limbSwingAmount);

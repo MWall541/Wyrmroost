@@ -83,7 +83,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.registerGoals();
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
-        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
+        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1.75, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this, 2));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
@@ -158,7 +158,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
             thrownPassenger = null;
         }
 
-        if (!world.isRemote && getRNG().nextDouble() < (isChild()? 0.02 : 0.001)) AnimationPacket.send(this, GRAZE_ANIMATION);
+        if (!world.isRemote && getAttackTarget() == null && !isSitting() && !isSleeping() && world.getBlockState(getPosition().down()).getBlock() == Blocks.GRASS_BLOCK && getRNG().nextDouble() < (isChild()? 0.005 : 0.001))
+            AnimationPacket.send(this, GRAZE_ANIMATION);
 
         Animation animation = getAnimation();
         int tick = getAnimationTick();
@@ -341,8 +342,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public float getTravelSpeed()
     {
-        float speed = (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
-        if (isSprinting()) speed += 0.1;
+        float speed = (float) getAttribute(MOVEMENT_SPEED).getValue();
+        if (isSprinting()) speed += 0.3;
         return speed;
     }
 

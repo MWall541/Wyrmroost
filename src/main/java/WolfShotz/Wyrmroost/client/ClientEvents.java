@@ -3,17 +3,19 @@ package WolfShotz.Wyrmroost.client;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.registry.WRKeybind;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -81,7 +83,7 @@ public class ClientEvents
 
     public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
     {
-        Minecraft mc = Minecraft.getInstance();
+        Minecraft mc = getClient();
         Entity entity = mc.player.getRidingEntity();
         if (!(entity instanceof AbstractDragonEntity)) return;
         int i1 = mc.gameSettings.thirdPersonView;
@@ -94,11 +96,19 @@ public class ClientEvents
     // for class loading issues
     public static Minecraft getClient() { return Minecraft.getInstance(); }
 
-    // for class loading issues
-    public static PlayerEntity getPlayer() { return Minecraft.getInstance().player; }
+    public static ClientWorld getWorld() { return getClient().world; }
 
-    public static void playSound(ISound sound) { getClient().getSoundHandler().play(sound); }
+    public static PlayerEntity getPlayer() { return getClient().player; }
 
     public static Vec3d getProjectedView() { return getClient().gameRenderer.getActiveRenderInfo().getProjectedView(); }
 
+    public static boolean handleAnimationPacket(int entityID, int animationIndex)
+    {
+        World world = ClientEvents.getWorld();
+        IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(entityID);
+
+        if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
+        else entity.setAnimation(entity.getAnimations()[animationIndex]);
+        return true;
+    }
 }

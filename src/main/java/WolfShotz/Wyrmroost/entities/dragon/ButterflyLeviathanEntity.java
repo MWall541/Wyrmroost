@@ -352,7 +352,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
             else if (key == KeybindPacket.MOUNT_KEY2 && !world.isRemote && canZap())
             {
                 EntityRayTraceResult ertr = Mafs.rayTraceEntities(getControllingPlayer(), 40, e -> e instanceof LivingEntity && e != this);
-                if (ertr != null)
+                if (ertr != null && shouldAttackEntity((LivingEntity) ertr.getEntity(), getOwner()))
                 {
                     setAttackTarget((LivingEntity) ertr.getEntity());
                     AnimationPacket.send(this, LIGHTNING_ANIMATION);
@@ -365,7 +365,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     {
         return getEyePosition(1)
                 .add(0, 0.4, 0)
-                .add(getVectorForRotation(rotationPitch, rotationYaw).mul(4d, 4d, 4));
+                .add(getVectorForRotation(rotationPitch, rotationYaw).mul(-4d, -4d, -4));
     }
 
     @Override

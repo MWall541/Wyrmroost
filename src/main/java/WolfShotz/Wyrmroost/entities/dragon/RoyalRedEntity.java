@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
-import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.client.sounds.BreathSound;
 import WolfShotz.Wyrmroost.containers.DragonInvContainer;
@@ -192,11 +191,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
                     }
                     else knockOutTime += 600; // add 30 seconds to knockout time
                     eat(stack);
+                    player.swingArm(hand);
                     return true;
                 }
             }
             else
-                return true; //client is not aware of the knockout timer. todo in 1.16: take advantage of ActionResultType
+                return false; //client is not aware of the knockout timer. todo in 1.16: take advantage of ActionResultType
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -235,7 +235,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public void notifyDataManagerChange(DataParameter<?> key)
     {
-        if (world.isRemote && key == BREATHING_FIRE && isBreathingFire()) ClientEvents.playSound(new BreathSound(this));
+        if (world.isRemote && key.equals(BREATHING_FIRE) && isBreathingFire())
+            BreathSound.play(this);
         else super.notifyDataManagerChange(key);
     }
 
@@ -338,6 +339,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             knockOutTime = b? MAX_KNOCKOUT_TIME : 0;
             if (b)
             {
+                rotationYawHead = rotationYaw;
                 clearAI();
                 setFlying(false);
             }

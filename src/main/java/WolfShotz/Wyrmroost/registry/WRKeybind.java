@@ -1,8 +1,8 @@
 package WolfShotz.Wyrmroost.registry;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
@@ -30,13 +30,15 @@ public class WRKeybind extends KeyBinding
     {
         super.setPressed(pressed);
 
-        if (Minecraft.getInstance().player != null && prevIsPressed != pressed)
+        if (ClientEvents.getPlayer() != null && prevIsPressed != pressed)
         {
             byte mods = 0;
             if (Screen.hasAltDown()) mods |= GLFW.GLFW_MOD_ALT;
             if (Screen.hasControlDown()) mods |= GLFW.GLFW_MOD_CONTROL;
             if (Screen.hasShiftDown()) mods |= GLFW.GLFW_MOD_SHIFT;
-            Wyrmroost.NETWORK.sendToServer(new KeybindPacket(id, mods, pressed));
+            KeybindPacket packet = new KeybindPacket(id, mods, pressed);
+            packet.process(ClientEvents.getPlayer());
+            Wyrmroost.NETWORK.sendToServer(packet);
         }
         prevIsPressed = pressed;
     }

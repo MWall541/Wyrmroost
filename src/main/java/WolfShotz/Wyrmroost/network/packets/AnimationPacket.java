@@ -6,7 +6,8 @@ import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -37,12 +38,7 @@ public class AnimationPacket
 
     public boolean handle(Supplier<NetworkEvent.Context> context)
     {
-        World world = ClientEvents.getClient().world;
-        IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(entityID);
-
-        if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
-        else entity.setAnimation(entity.getAnimations()[animationIndex]);
-        return true;
+        return DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.handleAnimationPacket(entityID, animationIndex));
     }
 
     public static <T extends Entity & IAnimatedEntity> void send(T entity, Animation animation)

@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.client.sounds;
 
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -39,5 +40,10 @@ public class FlyingSound extends TickableSound
             else pitch = 1f;
         }
         else donePlaying = true;
+    }
+
+    public static void play(AbstractDragonEntity dragon)
+    {
+        Minecraft.getInstance().getSoundHandler().play(new FlyingSound(dragon));
     }
 }

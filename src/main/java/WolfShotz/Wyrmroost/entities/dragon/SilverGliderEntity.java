@@ -17,6 +17,7 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.particles.RedstoneParticleData;
@@ -113,6 +114,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             Vec3d vec3d = player.getLookVec().scale(0.3);
             player.setMotion(player.getMotion().scale(0.6).add(vec3d.x, 0, vec3d.z));
             player.fallDistance = 0;
+            if (!world.isRemote) ((ServerPlayerEntity) player).connection.floating = false;
         }
         isGliding = FLAG;
     }

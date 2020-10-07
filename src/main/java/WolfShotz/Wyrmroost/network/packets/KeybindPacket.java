@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.network.packets;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
-import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,7 +29,6 @@ public class KeybindPacket
         this.key = key;
         this.mods = mods;
         this.pressed = pressed;
-        handle(ClientEvents.getPlayer()); // handle on the client to
     }
 
     public KeybindPacket(PacketBuffer buf)
@@ -47,9 +45,9 @@ public class KeybindPacket
         buf.writeBoolean(pressed);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context) { return handle(context.get().getSender()); }
+    public boolean handle(Supplier<NetworkEvent.Context> context) { return process(context.get().getSender()); }
 
-    private boolean handle(PlayerEntity player)
+    public boolean process(PlayerEntity player)
     {
         switch (key)
         {

@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.WRConfig;
-import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.screen.StaffScreen;
 import WolfShotz.Wyrmroost.client.sounds.FlyingSound;
@@ -34,6 +33,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -247,6 +247,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
             if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(200) == 0)
                 heal(1);
+
+            LivingEntity target = getAttackTarget();
+            if (target != null && !target.isAlive()) setAttackTarget(null);
         }
         else
         {
@@ -419,6 +422,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             {
                 if (entity.moveForward != 0) moveY = entity.getLookVec().y * speed * 18;
                 moveX = vec3d.x;
+
+                if (entity instanceof ServerPlayerEntity)
+                    ((ServerPlayerEntity) entity).connection.vehicleFloating = false;
             }
             else if (entity.isJumping)
             {
@@ -476,11 +482,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void notifyDataManagerChange(DataParameter<?> key)
     {
-        if (key == SLEEPING || key == FLYING || key == TAMED)
+        if (key.equals(SLEEPING) || key.equals(FLYING) || key.equals(TAMED))
         {
             recalculateSize();
-            if (world.isRemote && key == FLYING && isFlying() && getControllingPlayer() == ClientEvents.getPlayer())
-                ClientEvents.playSound(new FlyingSound(this));
+            if (world.isRemote && key == FLYING && isFlying() && canPassengerSteer())
+                FlyingSound.play(this);
         }
         else if (key == ARMOR)
         {
@@ -583,7 +589,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (!world.isRemote && isImmuneToArrows() && source.getImmediateSource() != null)
+        if (isImmuneToArrows() && source.getImmediateSource() != null)
         {
             EntityType<?> attackSource = source.getImmediateSource().getType();
             if (attackSource == EntityType.ARROW) return false;
@@ -591,7 +597,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         setSleeping(false);
-        if (getOwner() != null) setSitting(false);
+        if (getOwner() != null && getOwner().isAlive() && amount != 0) setSitting(false);
         return super.attackEntityFrom(source, amount);
     }
 

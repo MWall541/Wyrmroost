@@ -6,6 +6,7 @@ import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.OWDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * WR Overworld Drake - Ukan
@@ -381,8 +382,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
     @Override
     public void setRotationAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        if (netHeadYaw < -180) netHeadYaw += 360;
-        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
             faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }

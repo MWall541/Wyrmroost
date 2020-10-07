@@ -22,7 +22,6 @@ public class BreathWeaponEntity extends DragonProjectileEntity
     {
         super(type, shooter, shooter.getApproximateMouthPos(), shooter.getLookVec());
         this.growthRate = 1.025f;
-        life = 40;
     }
 
     @Override
@@ -64,5 +63,5 @@ public class BreathWeaponEntity extends DragonProjectileEntity
     }
 
     @Override
-    protected float getMotionFactor() { return 0.6f; }
+    protected float getMotionFactor() { return 0.7f; }
 }
