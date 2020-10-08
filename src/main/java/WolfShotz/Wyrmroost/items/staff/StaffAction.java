@@ -49,7 +49,7 @@ public enum StaffAction
                 @Override
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    dragon.setSitting(!dragon.isSitting());
+                    dragon.setSit(!dragon.isSitting());
                     DragonStaffItem.setAction(DEFAULT, player, stack);
                 }
 
@@ -125,7 +125,7 @@ public enum StaffAction
                 {
                     dragon.clearAI();
                     dragon.clearHome();
-                    dragon.setSitting(false);
+                    dragon.setSit(false);
                 }
 
                 @Override

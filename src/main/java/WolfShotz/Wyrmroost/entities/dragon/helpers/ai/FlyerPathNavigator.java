@@ -24,7 +24,6 @@ public class FlyerPathNavigator extends FlyingPathNavigator
             if (target != null) entity.getMoveHelper().setMoveTo(target.getX(), target.getY(), target.getZ(), speed);
 
             maxDistanceToWaypoint = entity.getWidth() * entity.getHorizontalFaceSpeed() * 3;
-//            Wyrmroost.LOG.info("Distance to Target: {}, Diameter: {}", entityPos.squareDistanceTo(targetPos), maxDistanceToWaypoint);
             Vec3d entityPos = getEntityPosition();
             if (target.distanceSq(entityPos.x, entityPos.y, entityPos.z, true) <= maxDistanceToWaypoint)
                 currentPath = null;

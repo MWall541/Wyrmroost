@@ -10,6 +10,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.DragonBodyController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerMoveController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.FlyerPathNavigator;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
@@ -27,7 +28,6 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.ai.controller.BodyController;
-import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -116,7 +116,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerGoals()
     {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, sitGoal = new SitGoal(this));
+        goalSelector.addGoal(2, sitGoal = new WRSitGoal(this));
     }
 
     @Override
@@ -199,16 +199,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         dataManager.set(ARMOR, stack);
     }
 
-    @Override
-    public void setSitting(boolean sitting)
+    public void setSit(boolean sitting)
     {
         setSleeping(false);
         if (!world.isRemote)
         {
             sitGoal.setSitting(sitting);
             if (sitting) clearAI();
+            else super.setSitting(false);
         }
-        super.setSitting(sitting);
     }
 
     public DragonInvHandler getInvHandler()
@@ -285,7 +284,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if ((player.isSneaking() && !player.abilities.isFlying) || isInWater() || index > 2)
             {
                 stopRiding();
-                setSitting(false);
+                setSit(false);
                 return;
             }
 
@@ -345,7 +344,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (isOwner(player) && player.isSneaking() && !isFlying())
         {
-            setSitting(!isSitting());
+            setSit(!isSitting());
             return true;
         }
 
@@ -597,7 +596,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         setSleeping(false);
-        if (getOwner() != null && getOwner().isAlive() && amount != 0) setSitting(false);
+        if (getOwner() != null && getOwner().isAlive() && amount != 0) setSit(false);
         return super.attackEntityFrom(source, amount);
     }
 
@@ -790,7 +789,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (getControllingPassenger() == passenger && isOwner((LivingEntity) passenger))
         {
             clearAI();
-            setSitting(false);
+            setSit(false);
             clearHome();
         }
     }
@@ -935,6 +934,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void recievePassengerKeybind(int key, int mods, boolean pressed) {}
 
+    @Override
+    public boolean canBeRiddenInWater(Entity rider) { return false; }
+
     /**
      * Sort of misleading name. if this is true, then {@link MobEntity#updateEntityActionState()} is not ticked:
      * which tl;dr does not update any AI including Goal Selectors, Pathfinding, Moving, etc.
@@ -945,7 +947,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean canFly()
     {
-        return hasDataEntry(FLYING) && !isChild() && !getLeashed() && !canSwim() && !isRiding();
+        return !isChild() && !getLeashed() && !canSwim() && !isRiding();
     }
 
     /**
@@ -967,7 +969,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (heightDiff > 0 && heightDiff <= getFlightThreshold())
             return false; // position has too low of a ceiling, can't fly here.
 
-        setSitting(false);
+        setSit(false);
         setSleeping(false);
         jump();
         return true;

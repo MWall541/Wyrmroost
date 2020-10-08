@@ -6,10 +6,7 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -98,7 +95,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals()
     {
-        goalSelector.addGoal(0, sitGoal = new SitGoal(this));
+        goalSelector.addGoal(0, sitGoal = new WRSitGoal(this));
         goalSelector.addGoal(1, new MoveToHomeGoal(this));
         goalSelector.addGoal(2, new AttackGoal());
         goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
@@ -445,6 +442,9 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
     @Override
     public Vec3d getPassengerPosOffset(Entity entity, int index) { return new Vec3d(0, getMountedYOffset(), index == 1? -2 : 0); }
+
+    @Override
+    public boolean canBeRiddenInWater(Entity rider) { return true; }
 
     @Override
     public int getHorizontalFaceSpeed() { return 6; }

@@ -81,6 +81,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
         setPathPriority(PathNodeType.DANGER_FIRE, 0);
         setPathPriority(PathNodeType.DAMAGE_FIRE, 0);
 
+        setImmune(DamageSource.IN_WALL);
+
         ignoreFrustumCheck = WRConfig.disableFrustumCheck;
     }
 
@@ -172,6 +174,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         {
             attackInFront(0.2);
             if (animTime == 10) playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
+            rotationYaw = rotationYawHead;
         }
         else if (anim == BITE_ATTACK_ANIMATION && animTime == 4)
         {
@@ -451,7 +454,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
             getLookController().setLookPositionWithEntity(target, 90, 30);
 
-            boolean flag = distFromTarget > 225 && canSeeTarget;
+            boolean flag = distFromTarget > 225 && canSeeTarget && !isTamed();
             if (isBreathingFire != flag) setBreathingFire(isBreathingFire = flag);
 
             if (distFromTarget <= 16)
@@ -491,10 +494,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
             }
 
 
-            boolean breathFireFlag = canSeeTarget && distanceFlag;
+            boolean breathFireFlag = canSeeTarget && distanceFlag && !isTamed();
             if (isBreathingFire != breathFireFlag) setBreathingFire(breathFireFlag);
 
-            if (getNavigator().noPath() || getDistanceSq(target) > 1100)
+            if (getNavigator().noPath())
             {
                 Vec3d vec3d = new Vec3d(target.getPosX() - getPosX(), 0, target.getPosZ() - target.getPosZ());
                 vec3d.rotateYaw((float) (Mafs.nextDouble(getRNG()) * 5f)); // offset a little
