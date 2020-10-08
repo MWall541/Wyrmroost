@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.containers.DragonInvContainer;
 import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
-import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.DragonArmorItem;
@@ -93,12 +92,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, PlayerEntity.class, false));
-        targetSelector.addGoal(4, new HurtByTargetGoal(this)
-        {
-            @Override
-            public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
-        });
+        targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test));
     }
 
     @Override
@@ -163,15 +158,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         Animation animation = getAnimation();
         int tick = getAnimationTick();
-        if (animation == ROAR_ANIMATION && tick == 15)
+        if (animation == ROAR_ANIMATION)
         {
-            for (LivingEntity e : getEntitiesNearby(15, e -> !isOnSameTeam(e))) // Dont get too close now ;)
+            if (tick == 0) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f, true);
+            else if (tick == 15)
             {
-                e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 200));
-                if (getDistanceSq(e) <= 10)
+                for (LivingEntity e : getEntitiesNearby(15, e -> !isOnSameTeam(e))) // Dont get too close now ;)
                 {
-                    double angle = Mafs.getAngle(getPosX(), getPosZ(), e.getPosX(), e.getPosZ()) * Math.PI / 180;
-                    e.addVelocity(1.2 * -Math.cos(angle), 0.4d, 1.2 * -Math.sin(angle));
+                    e.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 200));
+                    if (getDistanceSq(e) <= 10)
+                    {
+                        double angle = Mafs.getAngle(getPosX(), getPosZ(), e.getPosX(), e.getPosZ()) * Math.PI / 180;
+                        e.addVelocity(1.2 * -Math.cos(angle), 0.4d, 1.2 * -Math.sin(angle));
+                    }
                 }
             }
         }
@@ -310,12 +309,14 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public void setAttackTarget(@Nullable LivingEntity target)
     {
+        LivingEntity prev = getAttackTarget();
+
         super.setAttackTarget(target);
 
         boolean flag = getAttackTarget() != null;
         setSprinting(flag);
 
-        if (flag && !isTamed() && noActiveAnimation())
+        if (flag && prev != target && !isTamed() && noActiveAnimation())
             AnimationPacket.send(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
     }
 
@@ -371,13 +372,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Override
     public Collection<? extends IItemProvider> getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements(); }
-
-    @Override
-    public void setAnimation(Animation animation)
-    {
-        super.setAnimation(animation);
-        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f, true);
-    }
 
     @Override
     public Animation[] getAnimations()

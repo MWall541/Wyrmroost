@@ -388,10 +388,27 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     {
         if (netHeadYaw < -180) netHeadYaw += 360;
         else if (netHeadYaw > 180) netHeadYaw -= 360;
-        if (entity.flightTimer.get() == 1 && !entityIn.isGliding())
+        if (entity.flightTimer.get() == 1)
         {
             mainBody.rotateAngleZ = -(netHeadYaw * Mafs.PI / 180f) * 0.5f;
             mainBody.rotateAngleX = headPitch * Mafs.PI / 180f;
+
+            float foldAmount = Math.max(headPitch * Mafs.PI / 180f, 0) * 0.75f;
+            wing1R.rotateAngleY += foldAmount;
+            wing2R.rotateAngleY += -foldAmount * 1.8;
+            phalangeR1.rotateAngleY += foldAmount * 2;
+            phalangeR2.rotateAngleY += foldAmount;
+            phalangeR3.rotateAngleY += foldAmount;
+            wingMembraneR2.rotationPointX += foldAmount * 4;
+            wingMembraneR2.rotateAngleY += foldAmount;
+
+            wing1L.rotateAngleY -= foldAmount;
+            wing2L.rotateAngleY -= -foldAmount * 1.8;
+            phalangeL1.rotateAngleY -= foldAmount * 2;
+            phalangeL2.rotateAngleY -= foldAmount;
+            phalangeL3.rotateAngleY -= foldAmount;
+            wingMembraneL2.rotationPointX += foldAmount * 4;
+            wingMembraneL2.rotateAngleY -= foldAmount;
         }
         else faceTarget(netHeadYaw, entity.isFlying()? 0 : headPitch, 1, headArray);
     }

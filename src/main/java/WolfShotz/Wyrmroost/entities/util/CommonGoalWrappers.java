@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.entities.util;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.FollowParentGoal;
-import net.minecraft.entity.ai.goal.NonTamedTargetGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.item.crafting.Ingredient;
@@ -57,39 +56,6 @@ public class CommonGoalWrappers
             @Override
             public boolean shouldExecute() { return !animal.isTamed() && super.shouldExecute(); }
         };
-    }
-
-    /**
-     * Targets when not tamed but also control if we should as a bb
-     *
-     * @param tameable    same scenario as above. please don't make me shout its been a long day
-     * @param targetClass the class to target
-     * @param asChild     should we attack as a child?
-     * @param checkSight  honestly, idk if this is even useful but self-explanatory
-     * @param targets     additional target filters
-     */
-    public static <T extends LivingEntity> NonTamedTargetGoal<T> nonTamedTarget(TameableEntity tameable, Class<T> targetClass, boolean asChild, boolean checkSight, Predicate<LivingEntity> targets)
-    {
-        return new NonTamedTargetGoal<T>(tameable, targetClass, checkSight, targets)
-        {
-            @Override
-            public boolean shouldExecute() { return (asChild || !tameable.isChild()) && super.shouldExecute(); }
-
-            @Override
-            public boolean shouldContinueExecuting() { return !tameable.isTamed() && super.shouldContinueExecuting(); }
-        };
-    }
-
-    /**
-     * Targets when not tamed but also control if we should as a bb
-     *
-     * @param tameable    same scenario as above. please don't make me shout its been a long day
-     * @param targetClass the class to target
-     * @param asChild     should we attack as a child?
-     */
-    public static <T extends LivingEntity> NonTamedTargetGoal<T> nonTamedTarget(TameableEntity tameable, Class<T> targetClass, boolean asChild)
-    {
-        return nonTamedTarget(tameable, targetClass, asChild, true, EntityPredicates.CAN_AI_TARGET::test);
     }
 
     /**

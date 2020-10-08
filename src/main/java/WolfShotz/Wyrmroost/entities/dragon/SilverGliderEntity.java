@@ -112,9 +112,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
         if (FLAG)
         {
             Vec3d vec3d = player.getLookVec().scale(0.3);
-            player.setMotion(player.getMotion().scale(0.6).add(vec3d.x, 0, vec3d.z));
-            player.fallDistance = 0;
+            player.setMotion(player.getMotion().scale(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
             if (!world.isRemote) ((ServerPlayerEntity) player).connection.floating = false;
+            player.fallDistance = 0;
         }
         isGliding = FLAG;
     }
@@ -123,7 +123,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public void travel(Vec3d vec3d)
     {
         Vec3d look = getLookVec();
-        if (isFlying() && look.y < 0) setMotion(getMotion().add(0, look.y * 0.5, 0));
+        if (isFlying() && look.y < 0) setMotion(getMotion().add(0, look.y * 0.25, 0));
 
         super.travel(vec3d);
     }
@@ -217,7 +217,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public Vec3d getRidingPosOffset(int passengerIndex) { return new Vec3d(0, 1.81, 0.5d); }
 
     @Override
-    public boolean shouldFly() { return isGliding() || super.shouldFly(); }
+    public boolean shouldFly() { return isRiding()? isGliding() : super.shouldFly(); }
 
     @Override
     public int getVerticalFaceSpeed() { return 30; }

@@ -7,7 +7,6 @@ import WolfShotz.Wyrmroost.containers.util.SlotBuilder;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
-import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
@@ -89,7 +88,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         getAttribute(SWIM_SPEED).setBaseValue(0.3d);
         getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1);
         getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8d);
-        getAttribute(FOLLOW_RANGE).setBaseValue(32d);
+        getAttribute(FOLLOW_RANGE).setBaseValue(50d);
     }
 
     @Override
@@ -109,7 +108,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new HurtByTargetGoal(this));
         targetSelector.addGoal(4, new DefendHomeGoal(this));
-        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, LivingEntity.class, false, true, e ->
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, e ->
                 (beached || e.isInWater()) && (e.getType() == EntityType.SQUID || e.getType() == EntityType.GUARDIAN || e.getType() == EntityType.PLAYER)));
     }
 
@@ -124,6 +123,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
+
 
         Vec3d conduitPos = getConduitPos();
 
@@ -245,7 +245,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (((beached && lightningCooldown > 60) || player.isCreative()) && isFoodItem(stack))
+        if (((beached && lightningCooldown > 60) || player.isCreative() || isChild()) && isFoodItem(stack))
         {
             eat(stack);
             if (!world.isRemote) tame(getRNG().nextDouble() < 0.2, player);
@@ -370,6 +370,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public void addScreenInfo(StaffScreen screen)
     {
         screen.addAction(StaffAction.INVENTORY);
+        screen.addAction(StaffAction.TARGET);
         super.addScreenInfo(screen);
     }
 
@@ -565,14 +566,18 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
             getLookController().setLookPositionWithEntity(target, getHorizontalFaceSpeed(), getVerticalFaceSpeed());
 
-            if (getNavigator().noPath() || ticksExisted % 10 == 0)
+            boolean isClose = distFromTarget < 40;
+
+            if (getNavigator().noPath() || isClose || ticksExisted % 10 == 0 )
                 getNavigator().tryMoveToEntityLiving(target, 1.2);
+
+            if (isClose) rotationYaw = (float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90f;
 
             if (noActiveAnimation())
             {
                 if (distFromTarget > 225 && target.getType() == EntityType.PLAYER && canZap())
                     AnimationPacket.send(ButterflyLeviathanEntity.this, LIGHTNING_ANIMATION);
-                else if (distFromTarget < 40 && MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90, rotationYaw) < 30)
+                else if (isClose && MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90, rotationYaw) < 30)
                     AnimationPacket.send(ButterflyLeviathanEntity.this, BITE_ANIMATION);
             }
         }

@@ -9,7 +9,6 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
-import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.items.DragonArmorItem;
@@ -18,11 +17,9 @@ import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -35,7 +32,6 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -127,12 +123,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, LivingEntity.class, false, true, e -> e instanceof PlayerEntity || e instanceof AnimalEntity));
-        targetSelector.addGoal(4, new HurtByTargetGoal(this)
-        {
-            @Override
-            public boolean shouldExecute() { return super.shouldExecute() && !isChild(); }
-        });
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, true, e -> e.getType() == EntityType.PLAYER || e instanceof AnimalEntity));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this));
     }
 
     @Override
@@ -186,11 +178,18 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (!isTamed() && isKnockedOut() && isFoodItem(stack))
+        if (!isTamed() && isFoodItem(stack))
         {
+            if (isChild() || player.isCreative())
+            {
+                eat(stack);
+                tame(getRNG().nextDouble() < 0.1, player);
+                return true;
+            }
+
             if (!world.isRemote)
             {
-                if (knockOutTime <= (MAX_KNOCKOUT_TIME / 2))
+                if (isKnockedOut() && knockOutTime <= MAX_KNOCKOUT_TIME / 2)
                 {
                     // base taming chances on consciousness; the closer it is to waking up the better the chances
                     if (tame(getRNG().nextInt(knockOutTime) < MAX_KNOCKOUT_TIME * 0.2d, player))
@@ -204,8 +203,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
                     return true;
                 }
             }
-            else
-                return false; //client is not aware of the knockout timer. todo in 1.16: take advantage of ActionResultType
+            else return false;
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -436,16 +434,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         }
 
         @Override
-        public void resetTask() { setAttackTarget(null); }
-
-        @Override
         public void tick()
-        {
-            if (isFlying()) tickFlightAttacking();
-            else tickGroundAttacking();
-        }
-
-        private void tickGroundAttacking()
         {
             LivingEntity target = getAttackTarget();
             double distFromTarget = getDistanceSq(target);
@@ -454,56 +443,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
             getLookController().setLookPositionWithEntity(target, 90, 30);
 
-            boolean flag = distFromTarget > 225 && canSeeTarget && !isTamed();
+            boolean flag = distFromTarget > 200 && canSeeTarget && !isTamed();
             if (isBreathingFire != flag) setBreathingFire(isBreathingFire = flag);
 
             if (distFromTarget <= 16)
             {
                 if (noActiveAnimation() && !isBreathingFire && canSeeTarget) meleeAttack();
             }
-            else if (distFromTarget > 900)
-            {
-                Vec3d vec3d = RandomPositionGenerator.findAirTarget(RoyalRedEntity.this, 20, (int) ((target.getPosY() - getPosY()) + 20), getLook(0), Mafs.PI / 2f, 5, 2);
-                if (vec3d != null)
-                {
-                    setFlying(true);
-                    setBreathingFire(false);
-                    getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 1);
-                    return;
-                }
-            }
-            getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY(), target.getPosZ(), isBreathingFire? 0.8d : 1.2d);
-        }
+            else if (distFromTarget > 900) setFlying(true);
 
-        @SuppressWarnings("ConstantConditions")
-        private void tickFlightAttacking()
-        {
-            LivingEntity target = getAttackTarget();
-            boolean isBreathingFire = isBreathingFire();
-            boolean canSeeTarget = getEntitySenses().canSee(target);
-            BlockPos navPos = getNavigator().getTargetPos();
-            boolean distanceFlag = false;
-
-            if (navPos != null)
-            {
-                double distToNav = getPosition().distanceSq(navPos);
-                double targetToNav = target.getPosition().distanceSq(navPos);
-                if (distanceFlag = distToNav - targetToNav > 4)
-                    getLookController().setLookPositionWithEntity(target, 90, 90);
-                else getLookController().setLookPosition(navPos.getX(), target.getPosY(), navPos.getZ(), 90, 90);
-            }
-
-
-            boolean breathFireFlag = canSeeTarget && distanceFlag && !isTamed();
-            if (isBreathingFire != breathFireFlag) setBreathingFire(breathFireFlag);
-
-            if (getNavigator().noPath())
-            {
-                Vec3d vec3d = new Vec3d(target.getPosX() - getPosX(), 0, target.getPosZ() - target.getPosZ());
-                vec3d.rotateYaw((float) (Mafs.nextDouble(getRNG()) * 5f)); // offset a little
-                double length = vec3d.length();
-                getNavigator().tryMoveToXYZ(vec3d.x / length * 30 + target.getPosX(), getPosY() + Mafs.nextDouble(getRNG()) * 2, vec3d.z / length * 30 + target.getPosZ(), 3);
-            }
+            getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying()? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.2d);
         }
     }
 }

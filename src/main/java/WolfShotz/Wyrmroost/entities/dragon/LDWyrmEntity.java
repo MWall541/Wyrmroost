@@ -251,7 +251,8 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
             BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY)
                     .stream()
                     .filter(b -> !BiomeDictionary.getTypes(b).containsAll(ImmutableList.of(BiomeDictionary.Type.MESA, BiomeDictionary.Type.BEACH)))
-                    .forEach(b -> b.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 14, 3, 6)));
+                    .forEach(b -> b.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 14, 1, 3)));
+
             EntitySpawnPlacementRegistry.register(WREntities.LESSER_DESERTWYRM.get(),
                     EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
                     Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,

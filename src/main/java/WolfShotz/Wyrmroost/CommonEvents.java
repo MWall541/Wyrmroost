@@ -3,10 +3,13 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.data.DataGatherer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
 import WolfShotz.Wyrmroost.items.base.ArmorBase;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,6 +17,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -45,6 +49,7 @@ public class CommonEvents
 
         forgeBus.addListener(CommonEvents::debugStick);
         forgeBus.addListener(CommonEvents::onChangeEquipment);
+        forgeBus.addListener(CommonEvents::onFall);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
     }
 
@@ -100,5 +105,16 @@ public class CommonEvents
 
         LivingEntity entity = evt.getEntityLiving();
         initial.applyFullSetBonus(entity, ArmorBase.hasFullSet(entity));
+    }
+
+    public static void onFall(LivingFallEvent evt)
+    {
+        Entity entity = evt.getEntity();
+        if (entity.getType() == EntityType.PLAYER && !entity.getPassengers().isEmpty())
+        {
+            Entity passenger = entity.getPassengers().get(0);
+            if (passenger.getType() == WREntities.SILVER_GLIDER.get())
+                evt.setCanceled(((SilverGliderEntity) passenger).isGliding());
+        }
     }
 }

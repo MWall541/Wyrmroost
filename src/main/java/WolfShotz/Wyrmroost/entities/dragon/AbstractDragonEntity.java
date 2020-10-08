@@ -586,6 +586,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean shouldAttackEntity(LivingEntity target, @Nullable LivingEntity owner) { return !isOnSameTeam(target); }
 
     @Override
+    public boolean canAttack(LivingEntity target) { return !isChild() && super.canAttack(target); }
+
+    @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         if (isImmuneToArrows() && source.getImmediateSource() != null)
@@ -943,7 +946,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Do not perform any AI actions while: Not Sleeping; not being controlled, etc.
      */
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || canPassengerSteer(); }
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || canPassengerSteer() || isRiding(); }
 
     public boolean canFly()
     {
@@ -984,9 +987,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public int getFlightThreshold() { return (int) getHeight(); }
 
-    /**
-     * todo make a forge patch to allow this to actually work
-     */
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event) {}
 
     public boolean isImmuneToArrows() { return false; }

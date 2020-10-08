@@ -77,7 +77,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(2, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
-        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 0, true, false, e -> getDistanceSq(e) <= 9));
     }
 
     @Override
@@ -117,7 +116,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     @Override
     public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (!isTamed() && isFoodItem(stack) && (isPissed() || player.isCreative()))
+        if (!isTamed() && isFoodItem(stack) && (isPissed() || player.isCreative() || isChild()))
         {
             eat(stack);
             if (!world.isRemote) tame(getRNG().nextDouble() < 0.2, player);
@@ -236,7 +235,9 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             if (isTamed()) return false;
             if (isFlying()) return false;
             if (getAttackTarget() != null) return false;
-            return (target = world.getClosestPlayer(getPosX(), getPosY(), getPosZ(), 12d, true)) != null;
+            if ((target = world.getClosestPlayer(getPosX(), getPosY(), getPosZ(), 12d, true)) == null)
+                return false;
+            return canAttack(target);
         }
 
         @Override

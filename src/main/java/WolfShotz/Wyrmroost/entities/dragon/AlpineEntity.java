@@ -5,7 +5,6 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import WolfShotz.Wyrmroost.entities.projectile.WindGustEntity;
-import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
@@ -21,9 +20,7 @@ import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
@@ -40,6 +37,7 @@ public class AlpineEntity extends AbstractDragonEntity
 {
     public static final Animation ROAR_ANIMATION = new Animation(84);
     public static final Animation WIND_GUST_ANIMATION = new Animation(25);
+    public static final Animation BITE_ANIMATION = new Animation(10);
 
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
@@ -81,7 +79,7 @@ public class AlpineEntity extends AbstractDragonEntity
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
-        targetSelector.addGoal(5, CommonGoalWrappers.nonTamedTarget(this, BeeEntity.class, true, false, bee -> ((BeeEntity) bee).hasNectar()));
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, BeeEntity.class, true, bee -> ((BeeEntity) bee).hasNectar()));
     }
 
     @Override
@@ -180,6 +178,14 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
+    public void swingArm(Hand hand)
+    {
+        setAnimation(BITE_ANIMATION);
+        playSound(SoundEvents.ENTITY_GENERIC_EAT, 1, 1, true);
+        super.swingArm(hand);
+    }
+
+    @Override
     public int getVariantForSpawn() { return getRNG().nextInt(6); }
 
     @Override
@@ -207,7 +213,7 @@ public class AlpineEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ALPINE_DEATH.get(); }
 
     @Override
-    public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION}; }
+    public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION}; }
 
     public static Consumer<EntityType<AlpineEntity>> getSpawnPlacements()
     {

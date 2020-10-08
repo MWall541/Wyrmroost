@@ -16,6 +16,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
 {
     public final WRModelRenderer[] headArray;
     public final WRModelRenderer[] tailArray;
+    private final WRModelRenderer[][] fingerArrays;
     private final ModelAnimator animator;
     public WRModelRenderer body1;
     public WRModelRenderer body2;
@@ -640,6 +641,11 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         this.headArray = new WRModelRenderer[] {neck1, neck2, neck3, neck4, neck5, neck6, head};
         this.tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8};
 
+        this.fingerArrays = new WRModelRenderer[][] {
+                {finger1R, finger2R, finger3R, finger4R, finger5R, finger6R, finger7R, finger8R, finger8R_1},
+                {finger1L, finger2L, finger3L, finger4L, finger5L, finger6L, finger7L, finger8L, finger8L_1}
+        };
+
         animator = ModelAnimator.create();
 
         setDefaultPose();
@@ -740,6 +746,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
 
         if (animator.setAnimation(AlpineEntity.ROAR_ANIMATION)) roarAnim(tick);
         else if (animator.setAnimation(AlpineEntity.WIND_GUST_ANIMATION)) windGustAnim();
+        else if (animator.setAnimation(AlpineEntity.BITE_ANIMATION)) biteAnim();
 
         idle(tick);
     }
@@ -889,6 +896,14 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
             animator.move(feathersR, 0, 0, 7.5f);
             animator.move(feathers1R, 0, 0, 7.5f);
             animator.move(feathers3R, 0, 0, 7.5f);
+
+            for (int i = 0; i < fingerArrays.length; i++)
+            {
+                for (WRModelRenderer finger : fingerArrays[i])
+                {
+                    animator.rotate(finger, 0, i == 1? 0.4f : -0.4f, 0);
+                }
+            }
         }
 
         animator.rotate(jaw, 0.8f, 0, 0);
@@ -927,5 +942,25 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         animator.endKeyframe();
 
         animator.resetKeyframe(15);
+    }
+
+    private void biteAnim()
+    {
+        animator.startKeyframe(3);
+        animator.rotate(neck1, -0.3f, 0, 0);
+        animator.rotate(neck2, 0.1f, 0, 0);
+        animator.rotate(neck3, 0.4f, 0, 0);
+        animator.rotate(head, 0.55f, 0, 0);
+        animator.rotate(jaw, 0.8f, 0, 0);
+        animator.endKeyframe();
+
+        animator.startKeyframe(3);
+        animator.rotate(neck1, 0.3f, 0, 0);
+        animator.rotate(neck2, 0.25f, 0, 0);
+        animator.rotate(neck3, 0.25f, 0, 0);
+        animator.rotate(head, 0.35f, 0, 0);
+        animator.endKeyframe();
+
+        animator.resetKeyframe(4);
     }
 }

@@ -33,7 +33,7 @@ public class WRWorld
 
             // overworld features
             oreFeature(biome, Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 10), Placement.COUNT_RANGE, new CountRangeConfig(4, 0, 0, 14));
-            oreFeature(biome, Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 9), Placement.COUNT_RANGE, new CountRangeConfig(15, 0, 0, 56));
+            oreFeature(biome, Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9), Placement.COUNT_RANGE, new CountRangeConfig(15, 0, 0, 56));
         }
     }
 

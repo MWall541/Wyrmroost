@@ -164,7 +164,7 @@ class LootTableData extends LootTableProvider
             registerLootTable(WREntities.BUTTERFLY_LEVIATHAN.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_APEX_MEAT.get(), 6, 9, 2, 4)))
                     .addLootPool(LootPool.builder().rolls(RandomValueRange.of(1, 4)).addEntry(item(Items.SEA_PICKLE, 0, 2).acceptFunction(looting(1, 2))).addEntry(item(Items.SEAGRASS, 4, 14)).addEntry(item(Items.KELP, 16, 24)))
-                    .addLootPool(singleRollPool().addEntry(item(Items.HEART_OF_THE_SEA, 1).acceptCondition(RandomChance.builder(0.1f))).addEntry(item(Items.NAUTILUS_SHELL, 1).acceptCondition(RandomChance.builder(0.4f)))));
+                    .addLootPool(singleRollPool().addEntry(item(Items.HEART_OF_THE_SEA, 1).acceptCondition(RandomChance.builder(0.1f))).addEntry(item(Items.NAUTILUS_SHELL, 1).acceptCondition(RandomChance.builder(0.2f)))));
 
             registerLootTable(WREntities.ROYAL_RED.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_APEX_MEAT.get(), 4, 8, 3, 5))));
@@ -173,8 +173,9 @@ class LootTableData extends LootTableProvider
                     .addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 1, 0, 1))
                     .addEntry(item(Items.GOLD_NUGGET, 4))));
 
-            registerLootTable(WREntities.ALPINE.get(), LootTable.builder().addLootPool(singleRollPool()
-                    .addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6))));
+            registerLootTable(WREntities.CANARI_WYVERN.get(), LootTable.builder()
+                    .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6)))
+                    .addLootPool(singleRollPool().addEntry(item(Items.FEATHER, 3, 10).acceptFunction(looting(3, 11)))));
         }
 
         private static LootingEnchantBonus.Builder looting(float min, float max)
