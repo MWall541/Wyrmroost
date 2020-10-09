@@ -14,6 +14,12 @@
   "entity.wyrmroost.butterfly_leviathan": "Leviatã Borboleta",
   "entity.wyrmroost.dragon_fruit_drake": "Drake Fruta do Dragão",
   "entity.wyrmroost.canari_wyvern": "Canari Wyvern",
+  "entity.wyrmroost.coin_dragon": "Dragão Moeda",
+  "entity.wyrmroost.royal_red": "Rubro Real",
+  "entity.wyrmroost.alpine": "Alpino",
+
+  "entity.wyrmroost.dragons.gender.male": "Macho",
+  "entity.wyrmroost.dragons.gender.female": "Fêmea",
 
   "_comment": "Items",
   "item.wyrmroost.armors.blue_geode": "Geodo Azul",
@@ -89,13 +95,7 @@
   "item.wyrmroost.red_geode_dragon_armor": "Armadura de Dragão de Geodo Vermelho",
   "item.wyrmroost.purple_geode_dragon_armor": "Armadura de Dragão de Geodo Roxo",
 
-  "item.wyrmroost.overworld_drake_egg": "Ovo Gerador de Drake do Overworld",
-  "item.wyrmroost.lesser_desertwyrm_egg": "Ovo Gerador de Desertwyrm Inferior",
-  "item.wyrmroost.silver_glider_egg": "Ovo Gerador de Planador Prateado",
-  "item.wyrmroost.roost_stalker_egg": "Ovo Gerador de Caçaninho",
-  "item.wyrmroost.butterfly_leviathan_egg": "Ovo Gerador de Leviatã Borboleta",
-  "item.wyrmroost.dragon_fruit_drake_egg": "Ovo Gerador de Drake Fruta do Dragão",
-  "item.wyrmroost.canari_wyvern_egg": "Ovo Gerador de Canari Wyvern",
+  "item.wyrmroost.spawn_egg": "Ovo Gerador",
 
   "item.wyrmroost.jewelled_apple": "Maçã Encrustrada",
   "item.wyrmroost.dragon_fruit": "Fruta do Dragão",
@@ -116,6 +116,7 @@
 
   "item.wyrmroost.soul_crystal": "Cristal da Alma de Dragão",
   "item.wyrmroost.soul_crystal.jeidesc": "Infundido com as propriedades misteriosas do geodo, ele pode conter a alma de dragões que confiem em você. A alma de um dragão pode te levar à %s...",
+  "item.wyrmroost.soul_crystal.fail": "Este local não é seguro...",
 
   "item.wyrmroost.dragon_staff": "Cajado do Dragão",
   "item.wyrmroost.dragon_staff.desc": "Dá um tapa",
@@ -129,5 +130,14 @@
   "item.wyrmroost.dragon_staff.action.sit.come": "Seguir",
   "item.wyrmroost.dragon_staff.action.sit.stay": "Ficar",
 
-  "item.wyrmroost.drake_backplate": "Carapaça de Drake"
+  "item.wyrmroost.blue_geode_tipped_arrow": "Flecha de Geodo Azul",
+  "item.wyrmroost.red_geode_tipped_arrow": "Flecha de Geodo Vermelho",
+  "item.wyrmroost.purple_geode_tipped_arrow": "Flecha de Geodo Roxo",
+
+  "item.wyrmroost.coin_dragon": "Dragão Moeda",
+
+  "item.wyrmroost.drake_backplate": "Carapaça de Drake",
+
+  "item.wyrmroost.trumpet": "Trompete",
+  "item.wyrmroost.trumpet.desc": "Os Sublimes Sons do Leviatã Borboleta podem ser replicados com tal divino instrumento"
 }
