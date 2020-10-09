@@ -185,6 +185,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             {
                 eat(stack);
                 tame(getRNG().nextDouble() < 0.1, player);
+                setKnockedOut(false);
                 return true;
             }
 
@@ -319,7 +320,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * (isFlying()? 0.95f : 1.13f); }
 
     @Override
-    protected boolean canBeRidden(Entity entity) { return entity instanceof LivingEntity && isOwner((LivingEntity) entity); }
+    protected boolean canBeRidden(Entity entity)
+    {
+        return !isKnockedOut() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
+    }
 
     @Override
     protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 3; }
