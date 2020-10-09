@@ -76,6 +76,10 @@ public class SoundData implements IDataProvider
         new Builder(WRSounds.ENTITY_CANARI_HURT.get()).subtitle("Canari Wyvern Screech").sounds(s -> Wyrmroost.rl("entity/canari_wyvern" + s), "hurt1", "hurt2", "hurt3").build(json);
         new Builder(WRSounds.ENTITY_CANARI_DEATH.get()).subtitle("Canari Wyvern Death").sound(Wyrmroost.rl("entity/canari_wyvern/death")).build(json);
 
+        new Builder(WRSounds.ENTITY_DFD_IDLE.get()).subtitle("Dragon Fruit Mumble").sounds(s -> Wyrmroost.rl("entity/dragonfruit_drake" + s), "idle1", "idle2", "idle3", "idle4").build(json);
+        new Builder(WRSounds.ENTITY_DFD_HURT.get()).subtitle("Dragon Fruit Screech").sounds(s -> Wyrmroost.rl("entity/dragonfruit_drake" + s), "hurt", "hurt1", "hurt2", "hurt3").build(json);
+        new Builder(WRSounds.ENTITY_DFD_DEATH.get()).subtitle("Dragon Fruit Moan").sound(Wyrmroost.rl("entity/dragonfruit_drake/death")).build(json);
+
         new Builder(WRSounds.ENTITY_ROYALRED_IDLE.get()).subtitle("Royal Red Grunts").sounds(s -> Wyrmroost.rl("entity/royal_red" + s), "idle1", "idle2").build(json);
         new Builder(WRSounds.ENTITY_ROYALRED_HURT.get()).subtitle("Royal Red Scream").sounds(s -> Wyrmroost.rl("entity/royal_red" + s), "hurt1", "hurt2").build(json);
         new Builder(WRSounds.ENTITY_ROYALRED_DEATH.get()).subtitle("Royal Red Outcry").sound(Wyrmroost.rl("entity/royal_red/death")).build(json);

@@ -9,6 +9,7 @@ import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
+import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
@@ -115,10 +116,11 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         if (stack.getItem() == Items.SHEARS && canBeSteered())
             return true; // Shears return false on entity interactions. bad, but workaround for it.
 
-        if (!isTamed() && isChild() && isFoodItem(stack) && temptGoal.isRunning())
+        if (!world.isRemote && !isTamed() && isChild() && isFoodItem(stack) && temptGoal.isRunning())
         {
             tame(getRNG().nextDouble() <= 0.2d, player);
             eat(stack);
+            player.swingArm(hand);
             return true;
         }
 
@@ -277,15 +279,15 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_COW_AMBIENT; }
+    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_DFD_IDLE.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return SoundEvents.ENTITY_COW_HURT; }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_DFD_HURT.get(); }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return SoundEvents.ENTITY_COW_DEATH; }
+    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_DFD_DEATH.get(); }
 
     public static Consumer<EntityType<DragonFruitDrakeEntity>> getSpawnPlacements()
     {

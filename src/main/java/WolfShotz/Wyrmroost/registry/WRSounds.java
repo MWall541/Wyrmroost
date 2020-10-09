@@ -37,6 +37,10 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> ENTITY_CANARI_HURT = entity("canari.hurt");
     public static final RegistryObject<SoundEvent> ENTITY_CANARI_DEATH = entity("canari.death");
 
+    public static final RegistryObject<SoundEvent> ENTITY_DFD_IDLE = entity("dfd.idle");
+    public static final RegistryObject<SoundEvent> ENTITY_DFD_HURT = entity("dfd.hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_DFD_DEATH = entity("dfd.death");
+
     public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_IDLE = entity("royalred.idle");
     public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_HURT = entity("royalred.hurt");
     public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_ROAR = entity("royalred.roar");

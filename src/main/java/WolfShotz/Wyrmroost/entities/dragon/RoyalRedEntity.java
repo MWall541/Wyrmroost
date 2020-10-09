@@ -361,6 +361,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    public boolean onLivingFall(float distance, float damageMultiplier)
+    {
+        if (isKnockedOut()) return false;
+        return super.onLivingFall(distance, damageMultiplier);
+    }
+
+    @Override
     public boolean canFly() { return super.canFly() && !isKnockedOut(); }
 
     @Override

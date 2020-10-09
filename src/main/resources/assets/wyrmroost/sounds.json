@@ -220,6 +220,48 @@
       }
     ]
   },
+  "entity.dfd.idle": {
+    "subtitle": "Dragon Fruit Mumble",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle3"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle4"
+      }
+    ]
+  },
+  "entity.dfd.hurt": {
+    "subtitle": "Dragon Fruit Screech",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt2"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt3"
+      }
+    ]
+  },
+  "entity.dfd.death": {
+    "subtitle": "Dragon Fruit Moan",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/death"
+      }
+    ]
+  },
   "entity.royalred.idle": {
     "subtitle": "Royal Red Grunts",
     "sounds": [
