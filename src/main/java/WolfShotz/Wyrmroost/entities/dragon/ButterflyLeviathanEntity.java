@@ -35,6 +35,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
@@ -389,6 +390,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     }
 
     @Override
+    public int getMaxSpawnedInChunk() { return 1; }
+
+    @Override
+    public boolean isNotColliding(IWorldReader world) { return world.checkNoEntityCollision(this); }
+
+    @Override
     public boolean isFoodItem(ItemStack stack) { return WRItems.Tags.MEATS.contains(stack.getItem()); }
 
     @Override
@@ -467,7 +474,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         return type ->
         {
             for (Biome biome : ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN))
-                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(type, 2, 1, 1));
+                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(type, 1, 1, 1));
 
             EntitySpawnPlacementRegistry.register(type,
                     EntitySpawnPlacementRegistry.PlacementType.IN_WATER,

@@ -17,6 +17,7 @@ import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
 import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
+import WolfShotz.Wyrmroost.util.Mafs;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
@@ -446,13 +447,18 @@ public class RoyalRedEntity extends AbstractDragonEntity
             boolean flag = distFromTarget > 200 && canSeeTarget && !isTamed();
             if (isBreathingFire != flag) setBreathingFire(isBreathingFire = flag);
 
-            if (distFromTarget <= 16)
+            if (distFromTarget <= 24)
             {
-                if (noActiveAnimation() && !isBreathingFire && canSeeTarget) meleeAttack();
+                if (noActiveAnimation() && !isBreathingFire && canSeeTarget)
+                {
+                    renderYawOffset = rotationYaw = (float) Mafs.getAngle(RoyalRedEntity.this, target) + 90;
+                    meleeAttack();
+                }
             }
             else if (distFromTarget > 900) setFlying(true);
 
-            getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying()? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.2d);
+            if (getNavigator().noPath() || ticksExisted % 10 == 0)
+                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying()? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.2d);
         }
     }
 }

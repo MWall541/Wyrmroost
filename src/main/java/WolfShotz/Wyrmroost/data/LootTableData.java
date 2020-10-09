@@ -173,7 +173,7 @@ class LootTableData extends LootTableProvider
                     .addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 1, 0, 1))
                     .addEntry(item(Items.GOLD_NUGGET, 4))));
 
-            registerLootTable(WREntities.CANARI_WYVERN.get(), LootTable.builder()
+            registerLootTable(WREntities.ALPINE.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6)))
                     .addLootPool(singleRollPool().addEntry(item(Items.FEATHER, 3, 10).acceptFunction(looting(3, 11)))));
         }

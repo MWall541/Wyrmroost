@@ -107,6 +107,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         lookController = new LessShitLookController(this);
         if (hasDataEntry(FLYING)) moveController = new FlyerMoveController(this);
 
+        if (isImmuneToArrows()) setImmune(DamageSource.CACTUS);
+
         registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
         registerDataEntry("BreedCount", EntityDataEntry.INTEGER, () -> breedCount, i -> breedCount = i);
         invHandler.ifPresent(i -> registerDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
