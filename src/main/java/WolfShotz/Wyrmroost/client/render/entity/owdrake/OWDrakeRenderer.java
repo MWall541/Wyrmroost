@@ -2,59 +2,31 @@ package WolfShotz.Wyrmroost.client.render.entity.owdrake;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
-import WolfShotz.Wyrmroost.content.entities.dragon.OWDrakeEntity;
+import WolfShotz.Wyrmroost.entities.dragon.OWDrakeEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
+public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDrakeModel>
 {
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[64]; // some indexes will be left unused
+
     // Easter Egg
-    public static final ResourceLocation DAISY = resource("dasy.png");
+    public static final ResourceLocation DAISY = resource("daisy.png");
     public static final ResourceLocation JEB_ = resource("jeb.png");
     // Saddle
     public static final ResourceLocation SADDLE_LAYER = resource("accessories/saddle.png");
-    // Armor
-    public static final ResourceLocation ARMOR_IRON = resource("accessories/armor_iron.png");
-    public static final ResourceLocation ARMOR_GOLD = resource("accessories/armor_gold.png");
-    public static final ResourceLocation ARMOR_DIAMOND = resource("accessories/armor_diamond.png");
-    public static final ResourceLocation ARMOR_PLATINUM = resource("accessories/armor_platinum.png");
-    public static final ResourceLocation ARMOR_GEODE_BLUE = resource("accessories/armor_geode_blue.png");
-    public static final ResourceLocation ARMOR_GEODE_RED = resource("accessories/armor_geode_red.png");
-    public static final ResourceLocation ARMOR_GEODE_PURPLE = resource("accessories/armor_geode_purple.png");
 
     public OWDrakeRenderer(EntityRendererManager manager)
     {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ConditionalLayer(OWDrakeEntity::isArmored, d -> RenderType.getEntityCutoutNoCull(getArmorTexture(d))));
-        addLayer(new ConditionalLayer(OWDrakeEntity::hasChest, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
+        addLayer(new ArmorLayer(OWDrakeEntity.ARMOR_SLOT));
+        addLayer(new ConditionalLayer(OWDrakeEntity::isSaddled, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
     }
-    
-    public static ResourceLocation resource(String png) { return Wyrmroost.rl(DEF_LOC + "owdrake/" + png); }
 
-    private ResourceLocation getArmorTexture(OWDrakeEntity drake)
-    {
-        switch (drake.getArmor().getType())
-        {
-            default:
-            case IRON:
-                return ARMOR_IRON;
-            case GOLD:
-                return ARMOR_GOLD;
-            case DIAMOND:
-                return ARMOR_DIAMOND;
-            case PLATINUM:
-                return ARMOR_PLATINUM;
-            case BLUE_GEODE:
-                return ARMOR_GEODE_BLUE;
-            case RED_GEODE:
-                return ARMOR_GEODE_RED;
-            case PURPLE_GEODE:
-                return ARMOR_GEODE_PURPLE;
-        }
-    }
+    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "overworld_drake/" + png); }
 
     @Nullable
     @Override
@@ -67,9 +39,19 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity>
             if (name.equalsIgnoreCase("Jeb_")) return JEB_;
         }
 
-        String path = drake.isChild()? "child" : drake.getGender()? "male" : "female";
-        if (drake.isSpecial()) return resource(path + "_spe.png");
-        if (drake.getDrakeVariant()) return resource(path + "_sav.png");
-        return resource(path + "_com.png");
+        int index = 0;
+        if (drake.isChild()) index |= 1;
+        else if (!drake.isMale()) index |= 2;
+        if (drake.getVariant() == -1) index |= 4;
+        else if (drake.getVariant() == 1) index |= 8;
+
+        if (TEXTURES[index] == null)
+        {
+            String path = (index & 1) != 0? "child" : (index & 2) != 0? "female" : "male";
+            if ((index & 4) != 0) path += "_spe";
+            else if ((index & 8) != 0) path += "_sav";
+            return TEXTURES[index] = resource(path + ".png");
+        }
+        return TEXTURES[index];
     }
 }

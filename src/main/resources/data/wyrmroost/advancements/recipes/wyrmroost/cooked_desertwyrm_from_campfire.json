@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "wyrmroost:cooked_desertwyrm_from_campfire"
+    ]
+  },
+  "criteria": {
+    "has_desert_wyrm": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "wyrmroost:desert_wyrm"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "wyrmroost:cooked_desertwyrm_from_campfire"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_desert_wyrm",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -71,13 +71,15 @@ public class BoxPosCache
     
     public void setRotation(float x, float y, float z)
     {
-        resetRotation();
-        addRotation(x, y, z);
+        this.rotationX = x;
+        this.rotationY = y;
+        this.rotationZ = z;
     }
     
     public void setOffset(float x, float y, float z)
     {
-        resetOffset();
-        addOffset(x, y, z);
+        this.offsetX = x;
+        this.offsetY = y;
+        this.offsetZ = z;
     }
 }

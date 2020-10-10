@@ -1,98 +1,77 @@
 package WolfShotz.Wyrmroost;
 
-import WolfShotz.Wyrmroost.content.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.content.entities.multipart.IMultiPartEntity;
-import WolfShotz.Wyrmroost.content.items.DrakeArmorItem;
+import WolfShotz.Wyrmroost.client.screen.DebugScreen;
+import WolfShotz.Wyrmroost.data.DataGatherer;
+import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragon.SilverGliderEntity;
+import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
+import WolfShotz.Wyrmroost.items.base.ArmorBase;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRWorld;
-import WolfShotz.Wyrmroost.util.ConfigData;
-import WolfShotz.Wyrmroost.util.network.NetworkUtils;
-import com.google.common.collect.Streams;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResultType;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@SuppressWarnings("unused")
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Reflection is shit and we shouldn't use it
+ * - Some communist coding wyrmroost 2020
+ * <p>
+ * Manually add listeners
+ */
 public class CommonEvents
 {
-    /**
-     * This is for MOD Event bus stuff.
-     */
-    public static void onModConstruction(IEventBus bus)
+    public static final List<Runnable> CALLBACKS = new ArrayList<>();
+
+    public static void load()
     {
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+
         bus.addListener(CommonEvents::commonSetup);
-        bus.addListener(CommonEvents::configLoad);
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> ClientEvents.onModConstruction(bus));
+        bus.addListener(WRConfig::configLoad);
+        bus.addListener(DataGatherer::gather);
+
+        forgeBus.addListener(CommonEvents::debugStick);
+        forgeBus.addListener(CommonEvents::onChangeEquipment);
+        forgeBus.addListener(CommonEvents::onFall);
+        forgeBus.addListener(VillagerHelper::addWandererTrades);
     }
 
+    // ====================
+    //       Mod Bus
+    // ====================
+
+    // @formatter:off
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(CommonEvents.class);
-
-        DeferredWorkQueue.runLater(WRWorld::setupWorldGen);
-        DeferredWorkQueue.runLater(WREntities::registerEntityWorldSpawns);
-        NetworkUtils.registerMessages();
+        DeferredWorkQueue.runLater(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
+        DeferredWorkQueue.runLater(WRWorld::setupWorld);
     }
+    // @formatter: on
 
-    /**
-     * Fire on config change
-     */
-    public static void configLoad(ModConfig.ModConfigEvent evt)
-    {
-        if (evt.getConfig().getSpec() == ConfigData.CommonConfig.COMMON_SPEC)
-            ConfigData.CommonConfig.reload();
-        if (evt.getConfig().getSpec() == ConfigData.ClientConfig.CLIENT_SPEC)
-            ConfigData.ClientConfig.reload();
-    }
+    // =====================
+    //      Forge Bus
+    // =====================
 
-    // ==========================================================
-    //  Forge Eventbus listeners
-    //
-    //  Anything below here isnt related to the mod bus,
-    //  so like runtime stuff (Non-registry stuff)
-    // ==========================================================
-
-    /**
-     * Register the Mod Dimension
-     */
-//    @SubscribeEvent
-//    @SuppressWarnings("ConstantConditions")
-//    public static void registerDimension(RegisterDimensionsEvent evt)
-//    {
-//        if (ModUtils.getDimensionInstance() == null)
-//            DimensionManager.registerDimension(Wyrmroost.rl("wyrmroost"), WyrmroostDimension.WYRMROOST_DIM, null, true);
-//    }
-
-    /**
-     * Attatch our capabilities
-     */
-//    @SubscribeEvent
-//    public static void attachWorldCaps(AttachCapabilitiesEvent<World> evt)
-//    {
-//        if (evt.getObject().isRemote) return;
-//        evt.addCapability(Wyrmroost.rl("overworld_cap"), new WorldCapability.PropertiesDispatcher());
-//    }
-
-    /**
-     * Nuff' said
-     */
-    @SubscribeEvent
     public static void debugStick(PlayerInteractEvent.EntityInteract evt)
     {
-        if (!ConfigData.debugMode) return;
+        if (!WRConfig.debugMode) return;
         PlayerEntity player = evt.getPlayer();
         ItemStack stack = player.getHeldItem(evt.getHand());
         if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick"))
@@ -102,34 +81,40 @@ public class CommonEvents
         evt.setCancellationResult(ActionResultType.SUCCESS);
 
         Entity entity = evt.getTarget();
+        entity.recalculateSize();
+
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-        if (player.isSneaking()) dragon.tame(true, player);
-        else if (evt.getWorld().isRemote) ClientEvents.debugScreen(dragon);
 //        dragon.setFlying(true);
-    }
-
-    @SubscribeEvent
-    public static void onEntityTrack(PlayerEvent.StartTracking evt)
-    {
-        Entity target = evt.getTarget();
-        if (target instanceof IMultiPartEntity)
+        if (player.isSneaking()) dragon.tame(true, player);
+        else
         {
-            IMultiPartEntity entity = (IMultiPartEntity) target;
-            entity.iterateParts().forEach(target.world::addEntity);
+            if (dragon.world.isRemote) DebugScreen.open(dragon);
+            else Wyrmroost.LOG.info(dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getTarget().toString());
         }
     }
 
     @SubscribeEvent
     public static void onChangeEquipment(LivingEquipmentChangeEvent evt)
     {
-        if (!(evt.getEntity() instanceof PlayerEntity)) return;
-        Iterable<ItemStack> armor = evt.getEntity().getArmorInventoryList();
-        boolean full = Streams.stream(armor).allMatch(k -> k.getItem() instanceof DrakeArmorItem);
-        Streams.stream(armor)
-                .filter(i -> i.getItem() instanceof DrakeArmorItem)
-                .map(i -> (DrakeArmorItem) i.getItem())
-                .forEach(i -> i.setFullSet(full));
+        ArmorBase initial;
+        if (evt.getTo().getItem() instanceof ArmorBase) initial = (ArmorBase) evt.getTo().getItem();
+        else if (evt.getFrom().getItem() instanceof ArmorBase) initial = (ArmorBase) evt.getFrom().getItem();
+        else return;
+
+        LivingEntity entity = evt.getEntityLiving();
+        initial.applyFullSetBonus(entity, ArmorBase.hasFullSet(entity));
+    }
+
+    public static void onFall(LivingFallEvent evt)
+    {
+        Entity entity = evt.getEntity();
+        if (entity.getType() == EntityType.PLAYER && !entity.getPassengers().isEmpty())
+        {
+            Entity passenger = entity.getPassengers().get(0);
+            if (passenger.getType() == WREntities.SILVER_GLIDER.get())
+                evt.setCanceled(((SilverGliderEntity) passenger).isGliding());
+        }
     }
 }

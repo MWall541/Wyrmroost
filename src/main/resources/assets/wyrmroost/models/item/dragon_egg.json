@@ -1,5 +1,6 @@
 {
   "parent": "builtin/entity",
+  "gui_light": "front",
   "display": {
     "gui": {
       "rotation": [
@@ -28,11 +29,6 @@
         13,
         10,
         -10
-      ],
-      "scale": [
-        1,
-        1,
-        1
       ]
     },
     "firstperson_lefthand": {
@@ -45,11 +41,6 @@
         -2,
         11,
         -12
-      ],
-      "scale": [
-        1,
-        1,
-        1
       ]
     },
     "thirdperson_righthand": {

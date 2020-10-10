@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "wyrmroost:raw_apex_meat"
+  },
+  "result": "wyrmroost:cooked_apex_meat",
+  "experience": 0.35,
+  "cookingtime": 200
+}

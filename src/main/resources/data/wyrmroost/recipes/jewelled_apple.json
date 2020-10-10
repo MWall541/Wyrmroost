@@ -6,11 +6,11 @@
     " G "
   ],
   "key": {
-    "G": {
-      "item": "wyrmroost:geode"
-    },
     "A": {
       "item": "minecraft:apple"
+    },
+    "G": {
+      "tag": "wyrmroost:geodes"
     }
   },
   "result": {

@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "MMM",
-    "M M",
-    "M M"
+    "XXX",
+    "X X",
+    "X X"
   ],
   "key": {
-    "M": {
-      "item": "wyrmroost:platinum_ingot"
+    "X": {
+      "tag": "forge:ingots/platinum"
     }
   },
   "result": {

@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "wyrmroost:minutus"
-  },
-  "result": "wyrmroost:cooked_minutus",
-  "experience": 0.35,
-  "cookingtime": 200
-}

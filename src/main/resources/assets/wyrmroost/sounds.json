@@ -1,163 +1,371 @@
 {
-  "entity.minutus.idle": {
-    "category": "entity",
-    "subtitle": "Minutus Idle",
+  "wing.flap": {
+    "subtitle": "Dragon Wing Flap",
     "sounds": [
-      {"name": "wyrmroost:entity/minutus/idle1"},
-      {"name": "wyrmroost:entity/minutus/idle2"}
+      {
+        "name": "wyrmroost:entity/other/wings/flap1"
+      },
+      {
+        "name": "wyrmroost:entity/other/wings/flap2"
+      },
+      {
+        "name": "wyrmroost:entity/other/wings/flap3"
+      }
     ]
   },
-
+  "breathweapon.fire": {
+    "subtitle": "Dragon Fire Breath",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/other/breath/fire_breath"
+      }
+    ]
+  },
+  "entity.ldwyrm.idle": {
+    "subtitle": "Desertwyrm Click",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/lesser_desertwyrm/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/lesser_desertwyrm/idle2"
+      }
+    ]
+  },
   "entity.silverglider.idle": {
-    "category": "entity",
-    "subtitle": "SilverGlider Idle",
+    "subtitle": "Silver Glider Whistles",
     "sounds": [
-      {"name": "wyrmroost:entity/silverglider/idle1"},
-      {"name": "wyrmroost:entity/silverglider/idle2"},
-      {"name": "wyrmroost:entity/silverglider/idle3"},
-      {"name": "wyrmroost:entity/silverglider/idle4"}
+      {
+        "name": "wyrmroost:entity/silver_glider/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/silver_glider/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/silver_glider/idle3"
+      },
+      {
+        "name": "wyrmroost:entity/silver_glider/idle4"
+      }
     ]
   },
-  
   "entity.silverglider.hurt": {
-    "category": "entity",
-    "subtitle": "SilverGlider Hurt",
-    "sounds": [{"name": "wyrmroost:entity/silverglider/hurt"}]
+    "subtitle": "Silver Glider Screech",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/silver_glider/hurt"
+      }
+    ]
   },
-  
   "entity.silverglider.death": {
-    "category": "entity",
-    "subtitle": "SilverGlider Hurt",
-    "sounds": [{"name": "wyrmroost:entity/silverglider/death"}]
+    "subtitle": "Silver Glider Moan",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/silver_glider/death"
+      }
+    ]
   },
-  
   "entity.owdrake.idle": {
-    "category": "entity",
-    "subtitle": "Drake Idle",
+    "subtitle": "Overworld Drake Snorts",
     "sounds": [
-      {"name": "wyrmroost:entity/owdrake/idle1"},
-      {"name": "wyrmroost:entity/owdrake/idle2"},
-      {"name": "wyrmroost:entity/owdrake/idle3"}
+      {
+        "name": "wyrmroost:entity/overworld_drake/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/overworld_drake/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/overworld_drake/idle3"
+      }
     ]
   },
-  
-  "entity.owdrake.roar": {
-    "category": "entity",
-    "subtitle": "Drake Idle",
-    "sounds": [{"name": "wyrmroost:entity/owdrake/roar"}]
-  },
-  
   "entity.owdrake.hurt": {
-    "category": "entity",
-    "subtitle": "Drake Hurt",
+    "subtitle": "Overworld Drake Outcry",
     "sounds": [
-      {"name": "wyrmroost:entity/owdrake/hurt1"},
-      {"name": "wyrmroost:entity/owdrake/hurt2"}
+      {
+        "name": "wyrmroost:entity/overworld_drake/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/overworld_drake/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/overworld_drake/idle3"
+      }
     ]
   },
-  
   "entity.owdrake.death": {
-    "category": "entity",
-    "subtitle": "Drake Death",
-    "sounds": [{"name": "wyrmroost:entity/owdrake/death"}]
-  },
-
-  "entity.rooststalker.idle": {
-    "category": "entity",
-    "subtitle": "Stalker Idle",
-    "sounds": [
-      {"name": "wyrmroost:entity/rooststalker/idle1"},
-      {"name": "wyrmroost:entity/rooststalker/idle2"},
-      {"name": "wyrmroost:entity/rooststalker/idle3"}
-    ]
-  },
-  "entity.rooststalker.hurt": {
-    "category": "entity",
-    "subtitle": "Stalker Hurt",
+    "subtitle": "Overworld Drake Moan",
     "sounds": [
       {
-        "name": "wyrmroost:entity/rooststalker/hurt"
+        "name": "wyrmroost:entity/overworld_drake/death"
       }
     ]
   },
-  "entity.rooststalker.death": {
-    "category": "entity",
-    "subtitle": "Stalker Death",
+  "entity.owdrake.roar": {
+    "subtitle": "Overworld Drake Roar",
+    "category": "hostile",
     "sounds": [
       {
-        "name": "wyrmroost:entity/rooststalker/death"
+        "name": "wyrmroost:entity/overworld_drake/roar"
       }
     ]
   },
-  "entity.bflylevi.idle": {
-    "category": "entity",
-    "subtitle": "Butterfly Idle",
+  "entity.stalker.idle": {
+    "subtitle": "Rooststalker Clicks",
     "sounds": [
       {
-        "name": "wyrmroost:entity/butterflyleviathan/idle1"
+        "name": "wyrmroost:entity/roost_stalker/idle1"
       },
       {
-        "name": "wyrmroost:entity/butterflyleviathan/idle2"
-      }
-    ]
-  },
-  "entity.bflylevi.roar": {
-    "category": "entity",
-    "subtitle": "Butterfly Roar",
-    "sounds": [
-      {
-        "name": "wyrmroost:entity/butterflyleviathan/roar"
-      }
-    ]
-  },
-  "entity.bflylevi.hurt": {
-    "category": "entity",
-    "subtitle": "Butterfly Hurt",
-    "sounds": [
-      {
-        "name": "wyrmroost:entity/butterflyleviathan/hurt1"
+        "name": "wyrmroost:entity/roost_stalker/idle2"
       },
       {
-        "name": "wyrmroost:entity/butterflyleviathan/hurt2"
+        "name": "wyrmroost:entity/roost_stalker/idle3"
       }
     ]
   },
-  "entity.bflylevi.death": {
-    "category": "entity",
-    "subtitle": "Butterfly Death",
+  "entity.stalker.hurt": {
+    "subtitle": "Rooststalker Screech",
     "sounds": [
       {
-        "name": "wyrmroost:entity/butterflyleviathan/death"
+        "name": "wyrmroost:entity/roost_stalker/hurt"
+      }
+    ]
+  },
+  "entity.stalker.death": {
+    "subtitle": "Rooststalker Moan",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/roost_stalker/death"
+      }
+    ]
+  },
+  "entity.bfly.idle": {
+    "subtitle": "Butterfly Leviathan Trumpets",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/idle3"
+      }
+    ]
+  },
+  "entity.bfly.hurt": {
+    "subtitle": "Butterfly Leviathan Outcry",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/hurt2"
+      }
+    ]
+  },
+  "entity.bfly.roar": {
+    "subtitle": "Butterfly Leviathan Ascension",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/roar"
+      }
+    ]
+  },
+  "entity.bfly.death": {
+    "subtitle": "Butterfly Leviathan Death",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/butterfly_leviathan/death"
       }
     ]
   },
   "entity.canari.idle": {
-    "category": "entity",
-    "subtitle": "Canari Idle",
+    "subtitle": "Canari Wyvern Chirps",
     "sounds": [
       {
-        "name": "wyrmroost:entity/canari/idle1"
+        "name": "wyrmroost:entity/canari_wyvern/idle1"
       },
       {
-        "name": "wyrmroost:entity/canari/idle2"
+        "name": "wyrmroost:entity/canari_wyvern/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/canari_wyvern/idle3"
+      },
+      {
+        "name": "wyrmroost:entity/canari_wyvern/idle4"
       }
     ]
   },
   "entity.canari.hurt": {
-    "category": "entity",
-    "subtitle": "Canari Hurt",
+    "subtitle": "Canari Wyvern Screech",
     "sounds": [
       {
-        "name": "wyrmroost:entity/canari/hurt1"
+        "name": "wyrmroost:entity/canari_wyvern/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/canari_wyvern/hurt2"
+      },
+      {
+        "name": "wyrmroost:entity/canari_wyvern/hurt3"
       }
     ]
   },
   "entity.canari.death": {
-    "category": "entity",
-    "subtitle": "Canari Death",
+    "subtitle": "Canari Wyvern Death",
     "sounds": [
       {
-        "name": "wyrmroost:entity/canari/death"
+        "name": "wyrmroost:entity/canari_wyvern/death"
+      }
+    ]
+  },
+  "entity.dfd.idle": {
+    "subtitle": "Dragon Fruit Mumble",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle2"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle3"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/idle4"
+      }
+    ]
+  },
+  "entity.dfd.hurt": {
+    "subtitle": "Dragon Fruit Screech",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt2"
+      },
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/hurt3"
+      }
+    ]
+  },
+  "entity.dfd.death": {
+    "subtitle": "Dragon Fruit Moan",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/dragonfruit_drake/death"
+      }
+    ]
+  },
+  "entity.royalred.idle": {
+    "subtitle": "Royal Red Grunts",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/royal_red/idle2"
+      }
+    ]
+  },
+  "entity.royalred.hurt": {
+    "subtitle": "Royal Red Scream",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/royal_red/hurt2"
+      }
+    ]
+  },
+  "entity.royalred.death": {
+    "subtitle": "Royal Red Outcry",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/death"
+      }
+    ]
+  },
+  "entity.royalred.roar": {
+    "subtitle": "Royal Red Roar",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/roar"
+      }
+    ]
+  },
+  "entity.royalred.breath": {
+    "subtitle": "Royal Red Breathes Fire",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/royal_red/scree"
+      }
+    ]
+  },
+  "entity.alpine.idle": {
+    "subtitle": "Alpine Growls",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/idle2"
+      }
+    ]
+  },
+  "entity.alpine.hurt": {
+    "subtitle": "Alpine Whine",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/hurt1"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/hurt2"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/hurt3"
+      }
+    ]
+  },
+  "entity.alpine.roar": {
+    "subtitle": "Alpine Roar",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/roar"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/roar1"
+      },
+      {
+        "name": "wyrmroost:entity/alpine/roar2"
+      }
+    ]
+  },
+  "entity.alpine.death": {
+    "subtitle": "Alpine Screech",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/alpine/death"
+      }
+    ]
+  },
+  "entity.coindragon.idle": {
+    "subtitle": "Coin Dragon Chirps",
+    "sounds": [
+      {
+        "name": "wyrmroost:entity/coin_dragon/idle"
+      },
+      {
+        "name": "wyrmroost:entity/coin_dragon/idle1"
+      },
+      {
+        "name": "wyrmroost:entity/coin_dragon/idle2"
       }
     ]
   }

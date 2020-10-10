@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_apple": {
+    "has_geode": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "minecraft:apple"
+            "item": "wyrmroost:blue_geode"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_apple",
+      "has_geode",
       "has_the_recipe"
     ]
   ]

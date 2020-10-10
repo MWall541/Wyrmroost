@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[28,)" #mandatory (26 is current forge version)
+loaderVersion="[31,)" #mandatory (26 is current forge version)
 
 # A URL to refer people to when problems occur with this mod
 # issueTrackerURL="http://my.issue.tracker/" #optional
@@ -20,10 +20,10 @@ displayName="Wyrmroost" #mandatory
 # logoFile="examplemod.png" #optional
 
 # A text field displayed in the mod UI
-credits="Novacraft: Rooststalker Model and Textures" #optional
+#credits="Novacraft: Rooststalker Model and Textures" #optional
 
 # A text field displayed in the mod UI
-authors="WolfShotz, Kingdomall, Shannieann, Toucan, Moon" #optional
+authors="WolfShotz, Kingdomall, Shannieann, Ukan" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 #description='''
@@ -36,7 +36,7 @@ authors="WolfShotz, Kingdomall, Shannieann, Toucan, Moon" #optional
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[28,)" #mandatory
+    versionRange="[31,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -44,6 +44,6 @@ authors="WolfShotz, Kingdomall, Shannieann, Toucan, Moon" #optional
 [[dependencies.wyrmroost]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4]"
+    versionRange="[1.15.2]"
     ordering="NONE"
     side="BOTH"

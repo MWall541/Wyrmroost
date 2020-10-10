@@ -1,52 +1,72 @@
 package WolfShotz.Wyrmroost;
 
+import WolfShotz.Wyrmroost.client.ClientEvents;
+import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
+import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
+import WolfShotz.Wyrmroost.network.packets.RenameEntityPacket;
+import WolfShotz.Wyrmroost.network.packets.StaffActionPacket;
 import WolfShotz.Wyrmroost.registry.*;
-import WolfShotz.Wyrmroost.util.ConfigData;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(Wyrmroost.MOD_ID)
 public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
+    public static final Logger LOG = LogManager.getLogger(MOD_ID);
     public static final ItemGroup ITEM_GROUP = new WRItemGroup();
-    private static final String PROTOCOL_VERSION = "1.0";
-    public static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
-            .named(rl("network"))
-            .clientAcceptedVersions(PROTOCOL_VERSION::equals)
-            .serverAcceptedVersions(PROTOCOL_VERSION::equals)
-            .networkProtocolVersion(() -> PROTOCOL_VERSION)
-            .simpleChannel();
+    public static final SimpleChannel NETWORK = buildChannel();
 
     public Wyrmroost()
     {
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        CommonEvents.onModConstruction(eventBus);
+        CommonEvents.load();
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEvents::load);
 
-        WREntities.ENTITIES.register(eventBus);
-        WRBlocks.BLOCKS.register(eventBus);
-        WRItems.ITEMS.register(eventBus);
-//        WRFluids.FLUIDS.register(eventBus);
-        WRIO.CONTAINERS.register(eventBus);
-        WRSounds.SOUNDS.register(eventBus);
-//        WRBiomes.BIOMES.register(eventBus);
-//        WRWorld.FEATURES.register(eventBus);
-//        eventBus.addGenericListener(ModDimension.class, (RegistryEvent.Register<ModDimension> e) -> e.getRegistry().register(ModDimension.withFactory(WyrmroostDimension::new).setRegistryName("wyrmroost")));
+        WREntities.REGISTRY.register(bus);
+        WRBlocks.REGISTRY.register(bus);
+        WRItems.REGISTRY.register(bus);
+        WRIO.REGISTRY.register(bus);
+        WRSounds.REGISTRY.register(bus);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigData.CommonConfig.COMMON_SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ConfigData.ClientConfig.CLIENT_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.Common.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.Client.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, WRConfig.Server.SPEC);
+    }
+
+    private static SimpleChannel buildChannel()
+    {
+        final String PROTOCOL_VERSION = "1.0";
+        final SimpleChannel network = NetworkRegistry.ChannelBuilder
+                .named(rl("network")).clientAcceptedVersions(PROTOCOL_VERSION::equals)
+                .serverAcceptedVersions(PROTOCOL_VERSION::equals)
+                .networkProtocolVersion(() -> PROTOCOL_VERSION)
+                .simpleChannel();
+
+        int index = 1;
+        network.messageBuilder(AnimationPacket.class, index, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimationPacket::encode).decoder(AnimationPacket::new).consumer(AnimationPacket::handle).add();
+        network.messageBuilder(KeybindPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(KeybindPacket::encode).decoder(KeybindPacket::new).consumer(KeybindPacket::handle).add();
+        network.messageBuilder(RenameEntityPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(RenameEntityPacket::encode).decoder(RenameEntityPacket::new).consumer(RenameEntityPacket::handle).add();
+        network.messageBuilder(StaffActionPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(StaffActionPacket::encode).decoder(StaffActionPacket::new).consumer(StaffActionPacket::handle).add();
+
+        return network;
     }
 
     /**
@@ -60,7 +80,7 @@ public class Wyrmroost
     public static ResourceLocation rl(String path) { return new ResourceLocation(MOD_ID, path); }
 
     /**
-     * Its still <b>Creative Tab</b>. Idc what anyone says.
+     * C R E A T I V E  T A B. F U C K  Y O U.
      */
     static class WRItemGroup extends ItemGroup
     {
@@ -73,7 +93,7 @@ public class Wyrmroost
         public void fill(NonNullList<ItemStack> items)
         {
             super.fill(items);
-            if (ConfigData.debugMode)
+            if (WRConfig.debugMode)
                 items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
         }
     }

@@ -1,15 +1,15 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " G ",
-    "GEG",
-    " G "
+    " X ",
+    "X#X",
+    " X "
   ],
   "key": {
-    "G": {
-      "item": "wyrmroost:geode"
+    "X": {
+      "item": "wyrmroost:blue_geode"
     },
-    "E": {
+    "#": {
       "item": "minecraft:ender_eye"
     }
   },
