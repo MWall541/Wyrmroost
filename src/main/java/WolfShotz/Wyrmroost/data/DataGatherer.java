@@ -19,7 +19,7 @@ public class DataGatherer
 
         if (event.includeServer())
         {
-            TagData.provide(gen);
+            TagData.provide(gen, event.getExistingFileHelper());
             gen.addProvider(new RecipeData(gen));
             gen.addProvider(new LootTableData(gen));
         }

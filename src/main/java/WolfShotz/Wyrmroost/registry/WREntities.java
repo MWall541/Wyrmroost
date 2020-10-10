@@ -24,13 +24,16 @@ import WolfShotz.Wyrmroost.entities.projectile.GeodeTippedArrowEntity;
 import WolfShotz.Wyrmroost.entities.projectile.WindGustEntity;
 import WolfShotz.Wyrmroost.entities.projectile.breath.FireBreathEntity;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -38,11 +41,11 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static net.minecraftforge.common.BiomeDictionary.Type;
+import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS;
+import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.ON_GROUND;
 
 /**
  * Created by WolfShotz - 7/3/19 19:03 <p>
@@ -55,69 +58,88 @@ public class WREntities
     public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = Builder.creature("lesser_desertwyrm", LDWyrmEntity::new)
+            .attributes(LDWyrmEntity::getAttributes)
+            .spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LDWyrmEntity::getSpawnPlacement)
+            .spawnBiomes(LDWyrmEntity::setSpawnBiomes)
             .spawnEgg(0xD6BCBC, 0xDEB6C7)
             .renderer(() -> LDWyrmRenderer::new)
-            .spawnPlacement(LDWyrmEntity.getSpawnPlacements())
             .build(b -> b.size(0.6f, 0.2f));
 
     public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = Builder.creature("overworld_drake", OWDrakeEntity::new)
+            .attributes(OWDrakeEntity::getAttributes)
+            .spawnPlacement()
+            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
             .spawnEgg(0x788716, 0x3E623E)
             .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
             .renderer(() -> OWDrakeRenderer::new)
-            .spawnPlacement(t -> basicSpawnConditions(t, 8, 1, 3, ModUtils.getBiomesByTypes(Type.SAVANNA, Type.PLAINS)))
             .build(b -> b.size(2.376f, 2.58f));
 
     public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER = Builder.creature("silver_glider", SilverGliderEntity::new)
+            .attributes(SilverGliderEntity::getAttributes)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::getSpawnPlacement)
+            .spawnBiomes(SilverGliderEntity::setSpawnBiomes)
             .spawnEgg(0xC8C8C8, 0xC4C4C4)
             .dragonEgg(new DragonEggProperties(0.4f, 0.65f, 12000))
             .renderer(() -> SilverGliderRenderer::new)
-            .spawnPlacement(SilverGliderEntity.getSpawnPlacements())
             .build(b -> b.size(1.5f, 0.75f));
 
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = Builder.creature("roost_stalker", RoostStalkerEntity::new)
+            .attributes(RoostStalkerEntity::getAttributes)
+            .spawnPlacement()
+            .spawnBiomes(RoostStalkerEntity::setSpawnBiomes)
             .spawnEgg(0x52100D, 0x959595)
             .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000))
             .renderer(() -> RoostStalkerRenderer::new)
-            .spawnPlacement(t -> basicSpawnConditions(t, 7, 2, 9, ModUtils.getBiomesByTypes(Type.FOREST, Type.PLAINS, Type.MOUNTAIN)))
             .build(b -> b.size(0.65f, 0.5f));
 
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN = Builder.withClassification("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE)
+            .attributes(ButterflyLeviathanEntity::getAttributes)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.OCEAN_FLOOR_WG, ButterflyLeviathanEntity::getSpawnPlacement)
+            .spawnBiomes(ButterflyLeviathanEntity::setSpawnBiomes)
             .spawnEgg(0x17283C, 0x7A6F5A)
             .dragonEgg(new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater))
             .renderer(() -> ButterflyLeviathanRenderer::new)
-            .spawnPlacement(ButterflyLeviathanEntity.getSpawnPlacements())
             .build(b -> b.size(4f, 3f));
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = Builder.creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)
+            .attributes(DragonFruitDrakeEntity::getAttributes)
+            .spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING, AnimalEntity::canAnimalSpawn)
+            .spawnBiomes(DragonFruitDrakeEntity::setSpawnBiomes)
             .spawnEgg(0xe05c9a, 0x788716)
             .dragonEgg(new DragonEggProperties(0.45f, 0.75f, 9600))
             .renderer(() -> DragonFruitDrakeRenderer::new)
-            .spawnPlacement(DragonFruitDrakeEntity.getSpawnPlacements())
             .build(b -> b.size(1.5f, 1.9f));
 
     public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = Builder.creature("canari_wyvern", CanariWyvernEntity::new)
+            .attributes(CanariWyvernEntity::getAttributes)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
+            .spawnBiomes(CanariWyvernEntity::setSpawnBiomes)
             .spawnEgg(0x1D1F28, 0x492E0E)
             .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.world.getBlockState(c.getPosition().down()).getBlock() == Blocks.JUNGLE_LEAVES))
             .renderer(() -> CanariWyvernRenderer::new)
-            .spawnPlacement(t -> basicSpawnConditions(t, 9, 2, 5, BiomeDictionary.getBiomes(Type.SWAMP)))
             .build(b -> b.size(0.65f, 0.85f));
 
     public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = Builder.creature("royal_red", RoyalRedEntity::new)
+            .attributes(RoyalRedEntity::getAttributes)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
+            .spawnBiomes(RoyalRedEntity::setSpawnBiomes)
             .spawnEgg(0x8a0900, 0x0)
             .dragonEgg(new DragonEggProperties(0.6f, 1f, 72000))
             .renderer(() -> RoyalRedRenderer::new)
-            .spawnPlacement(RoyalRedEntity.getSpawnPlacements())
             .build(b -> b.size(3f, 3.9f).immuneToFire());
 
     public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = Builder.creature("coin_dragon", CoinDragonEntity::new)
             .renderer(() -> CoinDragonRenderer::new)
+            .attributes(CoinDragonEntity::getAttributes)
             .build(b -> b.size(0.35f, 0.435f));
 
     public static final RegistryObject<EntityType<AlpineEntity>> ALPINE = Builder.creature("alpine", AlpineEntity::new)
+            .attributes(AlpineEntity::getAttributes)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
+            .spawnBiomes(AlpineEntity::setSpawnBiomes)
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
             .dragonEgg(new DragonEggProperties(1, 1, 12000))
             .renderer(() -> AlpineRenderer::new)
-            .spawnPlacement(AlpineEntity.getSpawnPlacements())
             .build(b -> b.size(2f, 2f));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
@@ -136,17 +158,7 @@ public class WREntities
             .renderer(() -> DragonEggRenderer::new)
             .build(b -> b.disableSummoning().setCustomClientFactory(DragonEggEntity::new));
 
-    private static <T extends MobEntity> void basicSpawnConditions(EntityType<T> entity, int frequency, int minAmount, int maxAmount, Set<Biome> biomes)
-    {
-        for (Biome b : biomes)
-            b.getSpawns(entity.getClassification()).add(new Biome.SpawnListEntry(entity, frequency, minAmount, maxAmount));
-        EntitySpawnPlacementRegistry.register(entity,
-                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                MobEntity::canSpawnOn);
-    }
-
-    // todo in 1.16: Attributes
+    @SuppressWarnings("unchecked")
     private static class Builder<T extends Entity>
     {
         private final String name;
@@ -174,13 +186,40 @@ public class WREntities
             return this;
         }
 
-        /**
-         * Just a consumer, tho it is ran at FMLCommonSetupEvent,
-         * so it is advisable to take advantage by using this for spawning logic
-         */
-        private Builder<T> spawnPlacement(Consumer<EntityType<T>> consumer)
+        private Builder<T> attributes(Supplier<AttributeModifierMap.MutableAttribute> map)
         {
-            CommonEvents.CALLBACKS.add(() -> consumer.accept(registered.get()));
+            try
+            {
+                CommonEvents.CALLBACKS.add(() -> GlobalEntityTypeAttributes.put((EntityType<? extends LivingEntity>) registered.get(), map.get().create()));
+            }
+            catch (ClassCastException e)
+            {
+                throw new ClassCastException("Entity Attributes cannot be Applied to non-living! Erroring Entity: " + name);
+            }
+            return this;
+        }
+
+        private <F extends MobEntity> Builder<T> spawnPlacement(EntitySpawnPlacementRegistry.PlacementType type, Heightmap.Type height, EntitySpawnPlacementRegistry.IPlacementPredicate<F> predicate)
+        {
+            try
+            {
+                CommonEvents.CALLBACKS.add(() -> EntitySpawnPlacementRegistry.register((EntityType<F>) registered.get(), type, height, predicate));
+            }
+            catch (ClassCastException e)
+            {
+                throw new ClassCastException("Entity Spawn Placement cannot be applied to non-mob! Erroring Entity: " + name);
+            }
+            return this;
+        }
+
+        private Builder<T> spawnPlacement()
+        {
+            return spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, AnimalEntity::canAnimalSpawn);
+        }
+
+        private Builder<T> spawnBiomes(Consumer<BiomeLoadingEvent> consumer)
+        {
+            WRWorld.BIOME_LISTENERS.add(consumer);
             return this;
         }
 
@@ -205,6 +244,23 @@ public class WREntities
         private static <T extends Entity> Builder<T> withClassification(String name, EntityType.IFactory<T> factory, EntityClassification classification)
         {
             return new Builder<>(name, factory, classification);
+        }
+    }
+
+    public static class Attributes
+    {
+        public static final DeferredRegister<Attribute> REGISTRY = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, Wyrmroost.MOD_ID);
+
+        public static final RegistryObject<Attribute> PROJECTILE_DAMAGE = ranged("generic.projectileDamage", 2d, 0, 2048d);
+
+        private static RegistryObject<Attribute> ranged(String name, double defaultValue, double min, double max)
+        {
+            return register(name.toLowerCase().replace('.', '_'), () -> new RangedAttribute("attribute.name." + name, defaultValue, min, max));
+        }
+
+        private static RegistryObject<Attribute> register(String name, Supplier<Attribute> attribute)
+        {
+            return REGISTRY.register(name, attribute);
         }
     }
 }

@@ -39,7 +39,7 @@ public class ArmorBase extends ArmorItem
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> lines, ITooltipFlag flags)
     {
         super.addInformation(stack, world, lines, flags);
-        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + material.getName()).applyTextStyle(((ArmorMaterials) material).getRarity().color)));
+        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + material.getName()).mergeStyle(((ArmorMaterials) material).getRarity().color)));
         lines.add(new StringTextComponent(""));
         lines.add(new TranslationTextComponent(String.format("item.wyrmroost.armors.%s.desc", material.getName().toLowerCase())));
     }

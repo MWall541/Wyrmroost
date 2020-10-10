@@ -34,6 +34,6 @@ public class TrumpetItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        tooltip.add(new TranslationTextComponent("item.wyrmroost.trumpet.desc").applyTextStyle(TextFormatting.GRAY));
+        tooltip.add(new TranslationTextComponent("item.wyrmroost.trumpet.desc").mergeStyle(TextFormatting.GRAY));
     }
 }

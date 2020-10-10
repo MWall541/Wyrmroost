@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.network.packets.StaffActionPacket;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.widget.button.AbstractButton;
@@ -14,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 
 public class StaffActionButton extends AbstractButton
 {
@@ -21,7 +23,7 @@ public class StaffActionButton extends AbstractButton
     public final TickFloat focusTime = new TickFloat().setLimit(0, 1);
     public boolean wasHovered = false;
 
-    public StaffActionButton(int xIn, int yIn, String msg, StaffAction action)
+    public StaffActionButton(int xIn, int yIn, ITextComponent msg, StaffAction action)
     {
         super(xIn, yIn, 100, 20, msg);
         this.action = action;
@@ -41,14 +43,15 @@ public class StaffActionButton extends AbstractButton
     }
 
     @Override
-    public void renderButton(int mouseX, int mouseY, float partialTick)
+    public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
     {
         if (wasHovered != isHovered) onFocusedChanged(wasHovered = isHovered);
 
-        float time = 0.5f * partialTick; // adjust speed for framerate
+        float time = 0.5f * partialTicks; // adjust speed for framerate
         focusTime.add(isHovered? time : -time);
-        float amount = focusTime.get(partialTick) * 6;
-        drawCenteredString(Minecraft.getInstance().fontRenderer,
+        float amount = focusTime.get(partialTicks) * 6;
+        drawCenteredString(ms,
+                Minecraft.getInstance().fontRenderer,
                 getMessage(),
                 x + width / 2,
                 (y + (height - 8) / 2) - (int) amount,

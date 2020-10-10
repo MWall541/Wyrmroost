@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.client.screen;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
@@ -26,36 +27,36 @@ public class DebugScreen extends Screen
             for (int i = 0; i < animations.length; i++)
             {
                 Animation animation = animations[i];
-                addButton(new AbstractButton((i * 50) + (width / 2) - (animations.length * 25), 200, 50, 12, "Anim: " + i)
+                addButton(new AbstractButton((i * 50) + (width / 2) - (animations.length * 25), 200, 50, 12, new StringTextComponent("Anim: " + i))
                 {
                     @Override
                     public void onPress()
                     {
                         dragon.setAnimation(animation);
-                        onClose();
+                        closeScreen();
                     }
                 });
             }
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
     {
-        renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
+        renderBackground(ms);
+        super.render(ms, mouseX, mouseY, partialTicks);
         String gender = dragon.isMale()? "male" : "female";
 
-        drawCenteredString(font, dragon.getDisplayName().getUnformattedComponentText(), (width / 2), 15, 0xffffff);
-        drawCenteredString(font, "isSleeping: " + dragon.isSleeping(), (width / 2) + 50, 50, 0xffffff);
-        drawCenteredString(font, "isTamed: " + dragon.isTamed(), (width / 2) - 50, 50, 0xffffff);
-        drawCenteredString(font, "isSitting: " + dragon.isSitting(), (width / 2) - 50, 75, 0xffffff);
-        drawCenteredString(font, "isFlying: " + dragon.isFlying(), (width / 2) + 50, 75, 0xffffff);
-        drawCenteredString(font, "variant: " + dragon.getVariant(), (width / 2) - 50, 100, 0xffffff);
-        drawCenteredString(font, "gender: " + gender, (width / 2) + 50, 100, 0xffffff);
-        drawCenteredString(font, "health: " + dragon.getHealth() + " / " + dragon.getMaxHealth(), (width / 2) - 50, 125, 0xffffff);
-        drawCenteredString(font, "noAI: " + dragon.isAIDisabled(), (width / 2) + 50, 125, 0xffffff);
-        drawCenteredString(font, "position: " + dragon.getPositionVec(), (width / 2), 150, 0xffffff);
-        drawCenteredString(font, "motion: " + dragon.getMotion(), (width / 2), 175, 0xffffff);
+        drawCenteredString(ms, font, dragon.getDisplayName().getUnformattedComponentText(), (width / 2), 15, 0xffffff);
+        drawCenteredString(ms, font, "isSleeping: " + dragon.isSleeping(), (width / 2) + 50, 50, 0xffffff);
+        drawCenteredString(ms, font, "isTamed: " + dragon.isTamed(), (width / 2) - 50, 50, 0xffffff);
+        drawCenteredString(ms, font, "isSitting: " + dragon.func_233684_eK_(), (width / 2) - 50, 75, 0xffffff);
+        drawCenteredString(ms, font, "isFlying: " + dragon.isFlying(), (width / 2) + 50, 75, 0xffffff);
+        drawCenteredString(ms, font, "variant: " + dragon.getVariant(), (width / 2) - 50, 100, 0xffffff);
+        drawCenteredString(ms, font, "gender: " + gender, (width / 2) + 50, 100, 0xffffff);
+        drawCenteredString(ms, font, "health: " + dragon.getHealth() + " / " + dragon.getMaxHealth(), (width / 2) - 50, 125, 0xffffff);
+        drawCenteredString(ms, font, "noAI: " + dragon.isAIDisabled(), (width / 2) + 50, 125, 0xffffff);
+        drawCenteredString(ms, font, "position: " + dragon.getPositionVec(), (width / 2), 150, 0xffffff);
+        drawCenteredString(ms, font, "motion: " + dragon.getMotion(), (width / 2), 175, 0xffffff);
     }
 
     @Override

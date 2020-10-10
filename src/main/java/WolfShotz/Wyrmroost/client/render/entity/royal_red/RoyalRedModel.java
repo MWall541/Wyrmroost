@@ -712,7 +712,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         resetToDefaultPose();
         animator.update(entity, partialTicks);
 
-        if (!entity.isSitting() && !entity.isSleeping())
+        if (!entity.func_233684_eK_() && !entity.isSleeping())
         {
             if (flying) // Flight Cycle
             {

@@ -7,11 +7,11 @@ import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import WolfShotz.Wyrmroost.util.ModUtils;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
@@ -22,23 +22,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.function.Consumer;
+import java.util.Random;
 
-import static net.minecraft.entity.SharedMonsterAttributes.*;
+import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class SilverGliderEntity extends AbstractDragonEntity
 {
@@ -55,15 +54,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-    }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        getAttribute(MAX_HEALTH).setBaseValue(20d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.23);
-        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.24);
     }
 
     @Override
@@ -95,7 +85,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         if (isGliding && !isRiding()) isGliding = false;
 
-        sitTimer.add((isSitting() || isSleeping())? 0.2f : -0.2f);
+        sitTimer.add((func_233684_eK_() || isSleeping())? 0.2f : -0.2f);
         sleepTimer.add(isSleeping()? 0.05f : -0.1f);
         flightTimer.add(isFlying() || isGliding()? 0.1f : -0.1f);
     }
@@ -111,7 +101,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         final boolean FLAG = shouldGlide(player);
         if (FLAG)
         {
-            Vec3d vec3d = player.getLookVec().scale(0.3);
+            Vector3d vec3d = player.getLookVec().scale(0.3);
             player.setMotion(player.getMotion().scale(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
             if (!world.isRemote) ((ServerPlayerEntity) player).connection.floating = false;
             player.fallDistance = 0;
@@ -120,47 +110,40 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void travel(Vec3d vec3d)
+    public void travel(Vector3d vec3d)
     {
-        Vec3d look = getLookVec();
+        Vector3d look = getLookVec();
         if (isFlying() && look.y < 0) setMotion(getMotion().add(0, look.y * 0.25, 0));
 
         super.travel(vec3d);
     }
 
     @Override
-    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (super.playerInteraction(player, hand, stack)) return true;
-
-        // tame
-        if (!isTamed() && !world.isRemote && (temptGoal.isRunning() || player.isCreative()) && isBreedingItem(stack))
+        if (!isTamed() && isBreedingItem(stack))
         {
-            tame(getRNG().nextInt(3) == 0, player);
-            eat(stack);
-            return true;
+            if (!world.isRemote && (temptGoal.isRunning() || player.isCreative()))
+            {
+                tame(getRNG().nextDouble() < 0.333, player);
+                eat(stack);
+                return ActionResultType.SUCCESS;
+            }
+            return ActionResultType.CONSUME;
         }
 
-        if (isOwner(player)) // owner only actions
+        if (isOwner(player))
         {
-            // sit
-            if (player.isSneaking())
-            {
-                setSit(!isSitting());
-                return true;
-            }
-
-            // ride player
             if (player.getPassengers().size() == 0)
             {
                 startRiding(player, true);
                 setSit(false);
                 clearAI();
-                return true;
+                return ActionResultType.func_233537_a_(world.isRemote);
             }
         }
 
-        return false;
+        return super.playerInteraction(player, hand, stack);
     }
 
     public boolean shouldGlide(PlayerEntity player)
@@ -190,7 +173,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        if (isSitting() || isSleeping()) size = size.scale(1, 0.87f);
+        if (func_233684_eK_() || isSleeping()) size = size.scale(1, 0.87f);
         return size;
     }
 
@@ -214,7 +197,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_SILVERGLIDER_DEATH.get(); }
 
     @Override
-    public Vec3d getRidingPosOffset(int passengerIndex) { return new Vec3d(0, 1.81, 0.5d); }
+    public Vector3d getRidingPosOffset(int passengerIndex) { return new Vector3d(0, 1.81, 0.5d); }
 
     @Override
     public boolean shouldFly() { return isRiding()? isGliding() : super.shouldFly(); }
@@ -230,23 +213,26 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public Collection<? extends IItemProvider> getFoodItems() { return ItemTags.FISHES.getAllElements(); }
 
-    public static Consumer<EntityType<SilverGliderEntity>> getSpawnPlacements()
+    public static boolean getSpawnPlacement(EntityType<SilverGliderEntity> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos blockPos, Random random)
     {
-        return t ->
-        {
-            for (Biome biome : ModUtils.getBiomesByTypes(BiomeDictionary.Type.OCEAN, BiomeDictionary.Type.BEACH))
-                biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
+        if (spawnReason == SpawnReason.SPAWNER) return true;
+        Block block = world.getBlockState(blockPos.down()).getBlock();
+        return block == Blocks.AIR || block == Blocks.SAND && world.getLightSubtracted(blockPos, 0) > 8;
+    }
 
-            EntitySpawnPlacementRegistry.register(WREntities.SILVER_GLIDER.get(),
-                    EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS,
-                    Heightmap.Type.MOTION_BLOCKING,
-                    (glider, world, reason, pos, rand) ->
-                    {
-                        if (reason == SpawnReason.SPAWNER) return true;
-                        Block block = world.getBlockState(pos.down(1)).getBlock();
-                        return block == Blocks.AIR || block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
-                    });
-        };
+    @Nullable
+    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    {
+        if (event.getCategory() == Biome.Category.OCEAN || event.getCategory() == Biome.Category.BEACH)
+            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
+    }
+
+    public static AttributeModifierMap.MutableAttribute getAttributes()
+    {
+        return MobEntity.func_233666_p_()
+                .createMutableAttribute(MAX_HEALTH, 20)
+                .createMutableAttribute(MOVEMENT_SPEED, 0.23)
+                .createMutableAttribute(FLYING_SPEED, 0.24);
     }
 
     public class SwoopGoal extends Goal

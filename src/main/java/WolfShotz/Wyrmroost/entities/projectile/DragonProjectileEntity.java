@@ -14,7 +14,11 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -30,7 +34,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
     protected DragonProjectileEntity(EntityType<?> type, World world) { super(type, world); }
 
-    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vec3d position, Vec3d acceleration)
+    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vector3d position, Vector3d acceleration)
     {
         super(type, shooter.world);
 
@@ -46,7 +50,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         setMotion(getMotion().add(accelerationX, accelerationY, accelerationZ));
         position = position.add(getMotion());
 
-        Vec3d motion = getMotion();
+        Vector3d motion = getMotion();
         float x = (float) (motion.x - position.x);
         float y = (float) (motion.y - position.y);
         float z = (float) (motion.z - position.z);
@@ -71,12 +75,12 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
         if (directRaytrace())
         {
-            RayTraceResult rayTrace = ProjectileHelper.rayTrace(this, true, false, shooter, RayTraceContext.BlockMode.OUTLINE);
+            RayTraceResult rayTrace = ProjectileHelper.func_234618_a_(this, this::canImpactEntity);
             if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
                 onImpact(rayTrace);
         }
 
-        Vec3d motion = getMotion();
+        Vector3d motion = getMotion();
         double x = getPosX() + motion.x;
         double y = getPosY() + motion.y;
         double z = getPosZ() + motion.z;
@@ -88,6 +92,12 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
                 world.addParticle(ParticleTypes.BUBBLE, getPosX() * 0.25d, getPosY() * 0.25d, getPosZ() * 0.25D, motion.x, motion.y, motion.z);
         }
         setPosition(x, y, z);
+    }
+
+    private boolean canImpactEntity(Entity entity)
+    {
+        if (entity.isSpectator() || !entity.isAlive() || !entity.canBeCollidedWith() || entity.noClip) return false;
+        return !shooter.getPassengers().contains(entity);
     }
 
     public void onImpact(RayTraceResult result)

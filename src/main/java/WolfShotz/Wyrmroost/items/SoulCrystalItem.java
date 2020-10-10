@@ -33,13 +33,13 @@ public class SoulCrystalItem extends Item
     public SoulCrystalItem() { super(WRItems.builder().maxStackSize(1)); }
 
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
+    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
     {
         World world = player.world;
-        if (containsDragon(stack)) return false;
-        if (!isSuitableEntity(target)) return false;
+        if (containsDragon(stack)) return ActionResultType.PASS;
+        if (!isSuitableEntity(target)) return ActionResultType.PASS;
         TameableEntity dragon = (TameableEntity) target;
-        if (dragon.getOwner() != player) return false;
+        if (dragon.getOwner() != player) return ActionResultType.PASS;
 
         if (!dragon.getPassengers().isEmpty()) dragon.removePassengers();
         if (!world.isRemote)
@@ -67,7 +67,7 @@ public class SoulCrystalItem extends Item
             }
         }
         world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
-        return true;
+        return ActionResultType.func_233537_a_(world.isRemote);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class SoulCrystalItem extends Item
         dragon.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5); // update the position now for collision checking
         if (!world.hasNoCollisions(dragon, dragon.getBoundingBox()))
         {
-            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").applyTextStyle(TextFormatting.RED), true);
+            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").mergeStyle(TextFormatting.RED), true);
             return ActionResultType.FAIL;
         }
 
@@ -124,8 +124,8 @@ public class SoulCrystalItem extends Item
         if (dragon != null)
         {
             tooltip.add(new StringTextComponent(dragon.getName().getUnformattedComponentText()));
-            tooltip.add(new StringTextComponent(Character.toString('\u2764')).applyTextStyle(TextFormatting.RED)
-                    .appendSibling(new StringTextComponent(String.format(" %s / %s", (int) (dragon.getHealth() / 2), (int) dragon.getMaxHealth() / 2))));
+            tooltip.add(new StringTextComponent(Character.toString('\u2764')).mergeStyle(TextFormatting.RED)
+                    .append(new StringTextComponent(String.format(" %s / %s", (int) (dragon.getHealth() / 2), (int) dragon.getMaxHealth() / 2))));
             tooltip.add(new StringTextComponent("Tamed by " + dragon.getOwner().getName().getUnformattedComponentText()));
         }
     }
@@ -133,8 +133,8 @@ public class SoulCrystalItem extends Item
     @Override
     public ITextComponent getDisplayName(ItemStack stack)
     {
-        ITextComponent name = super.getDisplayName(stack);
-        if (containsDragon(stack)) name.applyTextStyle(TextFormatting.AQUA).applyTextStyle(TextFormatting.ITALIC);
+        TranslationTextComponent name = (TranslationTextComponent) super.getDisplayName(stack);
+        if (containsDragon(stack)) name.mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC);
         return name;
     }
 

@@ -29,7 +29,7 @@ public class BreathWeaponEntity extends DragonProjectileEntity
     {
         BlockPos pos = result.getPos();
         BlockState state = world.getBlockState(result.getPos());
-        state.onProjectileCollision(world, state, result, this);
+//        state.onProjectileCollision(world, state, result, this); todo
 
         if (!world.isRemote && !noClip && !world.getBlockState(result.getPos()).getCollisionShape(world, pos).equals(VoxelShapes.empty()))
         {

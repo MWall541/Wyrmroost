@@ -10,8 +10,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -54,23 +54,19 @@ public class WRBlocks
         return properties;
     }
 
-    public static class Tags
+    public static class WRTags
     {
-        public static final Map<Tag<Block>, Tag<Item>> ITEM_BLOCK_TAGS = Maps.newHashMap();
+        public static final Map<Tags.IOptionalNamedTag<Block>, Tags.IOptionalNamedTag<Item>> ITEM_BLOCK_TAGS = Maps.newHashMap();
 
-        public static final Tag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
-        public static final Tag<Block> STORAGE_BLOCKS_PLATINUM = tag(new ResourceLocation("forge", "storage_blocks/platinum"));
-//        public static final Tag<Block> CANARI_LOGS = tag(new ResourceLocation("logs/canari_logs"));
-//        public static final Tag<Block> BLUE_CORIN_LOGS = tag(new ResourceLocation("logs/blue_corin_logs"));
-//        public static final Tag<Block> TEAL_CORIN_LOGS = tag(new ResourceLocation("logs/teal_corin_logs"));
-//        public static final Tag<Block> RED_CORIN_LOGS = tag(new ResourceLocation("logs/red_corin_logs"));
+        public static final Tags.IOptionalNamedTag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
+        public static final Tags.IOptionalNamedTag<Block> STORAGE_BLOCKS_PLATINUM = tag(new ResourceLocation("forge", "storage_blocks/platinum"));
 
-        public static Tag<Block> tag(String name) { return tag(Wyrmroost.rl(name));}
+        public static Tags.IOptionalNamedTag<Block> tag(String name) { return tag(Wyrmroost.rl(name));}
 
-        public static Tag<Block> tag(ResourceLocation name)
+        public static Tags.IOptionalNamedTag<Block> tag(ResourceLocation name)
         {
-            Tag<Block> tag = new BlockTags.Wrapper(name);
-            ITEM_BLOCK_TAGS.put(tag, new ItemTags.Wrapper(name));
+            Tags.IOptionalNamedTag<Block> tag = BlockTags.createOptional(name);
+            ITEM_BLOCK_TAGS.put(tag, ItemTags.createOptional(name));
             return tag;
         }
     }

@@ -1,12 +1,12 @@
 package WolfShotz.Wyrmroost.util;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -34,9 +34,9 @@ public final class Mafs
     /**
      * A good way to get a position offset by the direction of a yaw angle.
      */
-    public static Vec3d getYawVec(float yaw, double xOffset, double zOffset)
+    public static Vector3d getYawVec(float yaw, double xOffset, double zOffset)
     {
-        return new Vec3d(xOffset, 0, zOffset).rotateYaw(-yaw * (PI / 180f));
+        return new Vector3d(xOffset, 0, zOffset).rotateYaw(-yaw * (PI / 180f));
     }
 
     /**
@@ -65,14 +65,25 @@ public final class Mafs
     @Nullable
     public static EntityRayTraceResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter)
     {
-        Vec3d eyes = shooter.getEyePosition(1f);
-        Vec3d end = eyes.add(shooter.getLookVec().mul(range, range, range));
-        return ProjectileHelper.rayTraceEntities(shooter.world,
-                shooter,
-                eyes,
-                end,
-                shooter.getBoundingBox().grow(range),
-                filter,
-                range * range);
+        Vector3d eyes = shooter.getEyePosition(1f);
+        Vector3d end = eyes.add(shooter.getLookVec().mul(range, range, range));
+
+        Entity result = null;
+        double distance = range * range;
+        for (Entity entity : shooter.world.getEntitiesInAABBexcluding(shooter, shooter.getBoundingBox().grow(range), filter))
+        {
+            Optional<Vector3d> opt = entity.getBoundingBox().grow(0.3d).rayTrace(eyes, end);
+            if (opt.isPresent())
+            {
+                double dist = eyes.squareDistanceTo(opt.get());
+                if (dist < distance)
+                {
+                    result = entity;
+                    distance = dist;
+                }
+            }
+        }
+
+        return result == null? null : new EntityRayTraceResult(result);
     }
 }

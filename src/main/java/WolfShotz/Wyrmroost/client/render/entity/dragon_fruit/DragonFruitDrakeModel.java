@@ -394,7 +394,7 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
         float frame = partialTick + fruitDrake.ticksExisted;
         this.entity = fruitDrake;
 
-        this.isSitting = fruitDrake.isSitting();
+        this.isSitting = fruitDrake.func_233684_eK_();
         globalDegree = 0.5f;
         globalSpeed = 0.5f;
         resetToDefaultPose();

@@ -7,11 +7,11 @@ import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -25,30 +25,25 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityPredicates;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraftforge.common.BiomeDictionary;
+import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.*;
 import java.util.function.Predicate;
 
-import static net.minecraft.entity.SharedMonsterAttributes.*;
+import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 /**
  * Desertwyrm Dragon Entity
@@ -93,28 +88,12 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
     }
 
     @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        getAttribute(MAX_HEALTH).setBaseValue(4d);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.4d);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4d);
-
-    }
-
-    /**
-     * Save Game
-     */
-    @Override
     public void writeAdditional(CompoundNBT compound)
     {
         super.writeAdditional(compound);
         compound.putBoolean(DATA_BURROWED, isBurrowed());
     }
 
-    /**
-     * Load Game
-     */
     @Override
     public void readAdditional(CompoundNBT compound)
     {
@@ -185,23 +164,25 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand)
+    public ActionResultType func_230254_b_(PlayerEntity player, Hand hand)
     {
-        if (player.getHeldItem(hand).isEmpty() && !world.isRemote)
+        if (player.getHeldItem(hand).isEmpty())
         {
-            ItemStack stack = new ItemStack(WRItems.LDWYRM.get());
-            CompoundNBT tag = new CompoundNBT();
-            CompoundNBT subTag = serializeNBT();
-            tag.put(LDWyrmItem.DATA_CONTENTS, subTag);
-            if (hasCustomName()) stack.setDisplayName(getCustomName());
-            stack.setTag(tag);
-            InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), stack);
-            remove();
-
-            return true;
+            if (!world.isRemote)
+            {
+                ItemStack stack = new ItemStack(WRItems.LDWYRM.get());
+                CompoundNBT tag = new CompoundNBT();
+                CompoundNBT subTag = serializeNBT();
+                tag.put(LDWyrmItem.DATA_CONTENTS, subTag);
+                if (hasCustomName()) stack.setDisplayName(getCustomName());
+                stack.setTag(tag);
+                InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), stack);
+                remove();
+            }
+            return ActionResultType.func_233537_a_(world.isRemote);
         }
 
-        return super.processInteract(player, hand);
+        return super.func_230254_b_(player, hand);
     }
 
     @Override
@@ -244,26 +225,9 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
         }
     }
 
-    public static Consumer<EntityType<LDWyrmEntity>> getSpawnPlacements()
-    {
-        return t ->
-        {
-            BiomeDictionary.getBiomes(BiomeDictionary.Type.SANDY)
-                    .stream()
-                    .filter(b -> !BiomeDictionary.getTypes(b).containsAll(ImmutableList.of(BiomeDictionary.Type.MESA, BiomeDictionary.Type.BEACH)))
-                    .forEach(b -> b.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 14, 1, 3)));
-
-            EntitySpawnPlacementRegistry.register(WREntities.LESSER_DESERTWYRM.get(),
-                    EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                    Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                    (wyrm, world, reason, pos, rng) ->
-                    {
-                        if (reason == SpawnReason.SPAWNER) return true;
-                        Block block = world.getBlockState(pos.down()).getBlock();
-                        return block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
-                    });
-        };
-    }
+    @Nullable
+    @Override
+    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) { return null; }
 
     @Override
     public boolean isInvulnerableTo(DamageSource source)
@@ -297,13 +261,6 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
     @Override
     protected boolean isMovementBlocked() { return super.isMovementBlocked() || isBurrowed(); }
 
-    @Nullable
-    @Override
-    public AgeableEntity createChild(AgeableEntity ageableEntity) { return null; }
-
-    // ================================
-    //        Entity Animation
-    // ================================
     @Override
     public int getAnimationTick()
     {
@@ -335,7 +292,26 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
         setAnimationTick(0);
     }
 
-    // ================================
+    public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason reason, BlockPos pos, Random random)
+    {
+        if (reason == SpawnReason.SPAWNER) return true;
+        Block block = world.getBlockState(pos.down()).getBlock();
+        return block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
+    }
+
+    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    {
+        if (event.getCategory() == Biome.Category.DESERT)
+            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 10, 2, 4));
+    }
+
+    public static AttributeModifierMap.MutableAttribute getAttributes()
+    {
+        return MobEntity.func_233666_p_()
+                .createMutableAttribute(MAX_HEALTH, 4)
+                .createMutableAttribute(MOVEMENT_SPEED, 0.4)
+                .createMutableAttribute(ATTACK_DAMAGE, 4);
+    }
 
     class BurrowGoal extends Goal
     {

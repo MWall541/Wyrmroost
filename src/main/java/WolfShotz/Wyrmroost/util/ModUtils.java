@@ -12,15 +12,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -80,19 +77,6 @@ public final class ModUtils
     public static void playLocalSound(World world, BlockPos pos, SoundEvent sound, float volume, float pitch)
     {
         world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
-    }
-
-    /**
-     * Get all biomes of defined types.
-     *
-     * @param types The types of biomes
-     * @return a set of all biomes that consist of the defined types.
-     */
-    public static Set<Biome> getBiomesByTypes(BiomeDictionary.Type... types)
-    {
-        Set<Biome> biomes = new HashSet<>();
-        for (BiomeDictionary.Type type : types) biomes.addAll(BiomeDictionary.getBiomes(type));
-        return biomes;
     }
 
     /**

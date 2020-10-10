@@ -52,7 +52,7 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
     @Override
     public void writeSpawnData(PacketBuffer buf)
     {
-        Entity shooter = getShooter();
+        Entity shooter = func_234616_v_();
         buf.writeInt(shooter == null? 0 : shooter.getEntityId());
         buf.writeVarInt(Item.getIdFromItem(item));
     }

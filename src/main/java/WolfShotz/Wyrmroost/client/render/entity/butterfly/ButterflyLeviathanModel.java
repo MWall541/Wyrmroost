@@ -430,7 +430,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
             swing(topWingFinPhalangeR2, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, frame, 0.5f);
             flap(topWingFinPhalangeR2, globalSpeed - 0.44f, 0.1f, true, 0.5f, 0, frame, 0.5f);
 
-            if (entity.isSitting())
+            if (entity.func_233684_eK_())
             {
                 flap(bottomWingFinPhalangeL1, globalSpeed - 0.43f, -0.1f, false, 0.25f, 0, frame, 0.5f);
                 swing(bottomWingFinPhalangeL1, globalSpeed - 0.45f, 0.075f, false, 0.75f, 0, frame, 0.5f);

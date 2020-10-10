@@ -39,7 +39,7 @@ public class FlyingSound extends TickableSound
             if (volume > 0.4f) pitch = 1f + (volume - 0.6f);
             else pitch = 1f;
         }
-        else donePlaying = true;
+        else finishPlaying();
     }
 
     public static void play(AbstractDragonEntity dragon)

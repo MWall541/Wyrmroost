@@ -10,16 +10,15 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.items.staff.StaffAction;
+import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.ChickenEntity;
@@ -41,14 +40,17 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static net.minecraft.entity.SharedMonsterAttributes.*;
+import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
@@ -117,15 +119,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public boolean isScavenging() { return dataManager.get(SCAVENGING); }
 
     public void setScavenging(boolean b) { dataManager.set(SCAVENGING, b); }
-
-    @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        getAttribute(MAX_HEALTH).setBaseValue(10d); // 5 hearts
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.285d);
-        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3d); // 1.5 hearts
-    }
     
     @Override
     public void livingTick()
@@ -146,8 +139,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
+        final ActionResultType COMMON_SUCCESS = ActionResultType.func_233537_a_(world.isRemote);
+
         ItemStack heldItem = getItem();
         Item item = stack.getItem();
 
@@ -156,16 +151,15 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             eat(stack);
             if (tame(rand.nextInt(4) == 0, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
 
-            return true;
+            return COMMON_SUCCESS;
         }
 
         if (isOwner(player))
         {
             if (player.isSneaking())
             {
-                setSit(!isSitting());
-
-                return true;
+                setSit(!func_233684_eK_());
+                return COMMON_SUCCESS;
             }
 
             if (stack.isEmpty() && heldItem.isEmpty() && player.getPassengers().size() < 3)
@@ -173,16 +167,16 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 setSit(false);
                 startRiding(player, true);
 
-                return true;
+                return COMMON_SUCCESS;
             }
 
             setStackInSlot(ITEM_SLOT, stack);
             player.setHeldItem(hand, heldItem);
 
-            return true;
+            return COMMON_SUCCESS;
         }
 
-        return false;
+        return ActionResultType.PASS;
     }
 
     @Override
@@ -260,7 +254,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
      * Array Containing all of the dragons food items
      */
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.Tags.MEATS.getAllElements(); }
+    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.WRTags.MEATS.getAllElements(); }
 
     @Override
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
@@ -273,6 +267,21 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         entity.setInLove(600);
         entity.setStackInSlot(ITEM_SLOT, item.copy());
         entity.world.setEntityState(entity, (byte) 18);
+    }
+
+    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    {
+        Biome.Category category = event.getCategory();
+        if (category == Biome.Category.PLAINS || category == Biome.Category.FOREST || category == Biome.Category.EXTREME_HILLS)
+            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ROOSTSTALKER.get(), 7, 2, 9));
+    }
+
+    public static AttributeModifierMap.MutableAttribute getAttributes()
+    {
+        return MobEntity.func_233666_p_()
+                .createMutableAttribute(MAX_HEALTH, 10)
+                .createMutableAttribute(MOVEMENT_SPEED, 0.285)
+                .createMutableAttribute(ATTACK_DAMAGE, 3);
     }
 
     class ScavengeGoal extends MoveToBlockGoal
@@ -352,7 +361,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 {
                     inv = (IInventory) tileentity;
                     if (inv instanceof ChestTileEntity && block instanceof ChestBlock)
-                        inv = ChestBlock.func_226916_a_((ChestBlock) block, blockstate, world, destinationBlock, true);
+                        inv = ChestBlock.getChestInventory((ChestBlock) block, blockstate, world, destinationBlock, true);
                 }
             }
 

@@ -1,53 +1,52 @@
 package WolfShotz.Wyrmroost.registry;
 
+import WolfShotz.Wyrmroost.Wyrmroost;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
-import net.minecraft.world.gen.feature.ReplaceBlockConfig;
-import net.minecraft.world.gen.placement.CountRangeConfig;
-import net.minecraft.world.gen.placement.IPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.gen.feature.template.BlockMatchRuleTest;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class WRWorld
 {
-    public static void setupWorld()
+    public static List<Consumer<BiomeLoadingEvent>> BIOME_LISTENERS = new ArrayList<>();
+
+    public static void onBiomeLoad(BiomeLoadingEvent evt)
     {
-        for (Biome biome : ForgeRegistries.BIOMES)
+        BIOME_LISTENERS.forEach(e -> e.accept(evt));
+
+        Biome.Category category = evt.getCategory();
+
+        if (category == Biome.Category.NETHER)
+            evt.getGeneration().func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Features.RED_GEODE);
+        else if (category == Biome.Category.THEEND)
+            evt.getGeneration().func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PURPLE_GEODE);
+        else
         {
-            if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.NETHER)) // nether features
-            {
-                oreFeature(biome, Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4), Placement.COUNT_RANGE, new CountRangeConfig(3, 0, 0, 256));
-                continue;
-            }
-
-            if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.END)) // end features
-            {
-                oreFeature(biome, Feature.EMERALD_ORE, new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState()), Placement.RANDOM_COUNT_RANGE, new CountRangeConfig(1, 0, 0, 256));
-                continue;
-            }
-
-            // overworld features
-            oreFeature(biome, Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 10), Placement.COUNT_RANGE, new CountRangeConfig(4, 0, 0, 14));
-            oreFeature(biome, Feature.ORE, new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9), Placement.COUNT_RANGE, new CountRangeConfig(15, 0, 0, 56));
+            evt.getGeneration().func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PLATINUM_ORE);
+            evt.getGeneration().func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Features.BLUE_GEODE);
         }
     }
 
-    /**
-     * Helper method for ore features
-     * A common placement for ores is using the {@link CountRangeConfig} which has parameters:
-     * count: the amount of veins in a chunk
-     * bottomOffset: do not generate below this y-level
-     * topOffset: really no point to this.. its just subtracted from maximum
-     * maximum: do not generate above this y-level
-     */
-    private static <T extends IFeatureConfig, P extends IPlacementConfig> void oreFeature(Biome biome, Feature<T> feature, T featureConfig, Placement<P> placement, P placeConfig)
+    public static class Features
     {
-        biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES,
-                feature.withConfiguration(featureConfig).withPlacement(placement.configure(placeConfig)));
+        public static final ConfiguredFeature<?, ?> PLATINUM_ORE = configured("ore_platinum", Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241882_a, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9)).func_242733_d(64).func_242728_a().func_242731_b(20));
+        public static final ConfiguredFeature<?, ?> BLUE_GEODE = configured("ore_blue_geode", Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241882_a, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 9)).func_242733_d(16).func_242728_a());
+        public static final ConfiguredFeature<?, ?> RED_GEODE = configured("ore_red_geode", Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241883_b, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4)).func_242733_d(128).func_242728_a().func_242731_b(12));
+        public static final ConfiguredFeature<?, ?> PURPLE_GEODE = configured("ore_pruple_geode", Feature.field_236289_V_.withConfiguration(new OreFeatureConfig(new BlockMatchRuleTest(Blocks.END_STONE), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState(), 1)).func_242733_d(80).func_242728_a().func_242731_b(7));
+
+        private static ConfiguredFeature<?, ?> configured(String name, ConfiguredFeature<?, ?> feature)
+        {
+            return Registry.register(WorldGenRegistries.field_243653_e, Wyrmroost.rl(name), feature);
+        }
     }
 }

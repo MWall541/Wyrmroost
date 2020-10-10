@@ -188,7 +188,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
         resetToDefaultPose();
 
-        if (!stalker.isSitting())
+        if (!stalker.func_233684_eK_())
         {
             swing(legl1, globalSpeed, 0.7f, false, 0, 0, limbSwing, limbSwingAmount);
             swing(legl2, globalSpeed, 0.7f, true, 0, 0, limbSwing, limbSwingAmount);
@@ -203,7 +203,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
             walk(neck, globalSpeed + 0.5f, 0.4f, false, 0, 1.5f, frame, 0.5f);
 
 
-        if (stalker.isSitting() && !stalker.isSleeping()) sit();
+        if (stalker.func_233684_eK_() && !stalker.isSleeping()) sit();
         sleep(stalker.sleepTimer.get(partialTick));
 
         boolean flag = stalker.getItem().isEmpty() || stalker.isSleeping();

@@ -21,8 +21,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -157,7 +158,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         move(MoverType.SELF, getMotion());
         if (!hasNoGravity() && !isSprinting())
         {
-            Vec3d vec3d2 = getMotion();
+            Vector3d vec3d2 = getMotion();
             double d2;
             if (flag && Math.abs(vec3d2.y - 0.005D) >= 0.003D && Math.abs(vec3d2.y - d0 / 16.0D) < 0.003D) d2 = -0.003D;
             else d2 = vec3d2.y - d0 / 16.0D;
@@ -165,7 +166,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
             setMotion(vec3d2.x, d2, vec3d2.z);
         }
 
-        Vec3d vec3d6 = getMotion();
+        Vector3d vec3d6 = getMotion();
         if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - getPosY() + d1, vec3d6.z))
         {
             setMotion(vec3d6.x, 0.3F, vec3d6.z);
@@ -208,7 +209,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
             }
             newDragon.setPosition(getPosX(), getPosY(), getPosZ());
             newDragon.setGrowingAge(getProperties().getGrowthTime());
-            newDragon.onInitialSpawn(world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
+            newDragon.onInitialSpawn((ServerWorld) world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
             world.addEntity(newDragon);
         }
         else

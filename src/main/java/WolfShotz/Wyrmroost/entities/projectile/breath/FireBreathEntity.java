@@ -4,13 +4,12 @@ import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.Mafs;
+import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FireBlock;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.DamageSource;
@@ -18,7 +17,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -45,7 +44,7 @@ public class FireBreathEntity extends BreathWeaponEntity
             return;
         }
 
-        Vec3d motion = getMotion();
+        Vector3d motion = getMotion();
         double x = getPosX() + motion.x + (rand.nextGaussian() * 0.2);
         double y = getPosY() + motion.y + (rand.nextGaussian() * 0.2) + 0.5d;
         double z = getPosZ() + motion.z + (rand.nextGaussian() * 0.2);
@@ -60,7 +59,7 @@ public class FireBreathEntity extends BreathWeaponEntity
 
         BlockPos pos = result.getPos();
         BlockState state = world.getBlockState(pos);
-        if (FlintAndSteelItem.isUnlitCampfire(state))
+        if (CampfireBlock.canBeLit(state))
         {
             world.setBlockState(pos, state.with(BlockStateProperties.LIT, true), 11);
             return;
@@ -73,7 +72,7 @@ public class FireBreathEntity extends BreathWeaponEntity
             BlockPos offset = pos.offset(face);
 
             if (world.getBlockState(offset).isAir(world, offset) && (flammability == 1 || rand.nextDouble() <= flammability))
-                world.setBlockState(offset, ((FireBlock) Blocks.FIRE).getStateForPlacement(world, offset), 11);
+                world.setBlockState(offset, AbstractFireBlock.getFireForPlacement(world, offset), 11);
         }
     }
 
@@ -85,7 +84,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (entity.isImmuneToFire()) return;
         if (entity instanceof LivingEntity && shooter.isOnSameTeam(entity)) return;
 
-        float damage = (float) shooter.getAttribute(AbstractDragonEntity.PROJECTILE_DAMAGE).getValue();
+        float damage = (float) shooter.getAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get()).getValue();
         if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;
 
         entity.setFire(8);

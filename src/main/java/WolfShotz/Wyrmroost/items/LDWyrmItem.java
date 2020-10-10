@@ -1,16 +1,20 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.dragon.LDWyrmEntity;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 public class LDWyrmItem extends Item
 {
@@ -20,11 +24,11 @@ public class LDWyrmItem extends Item
     {
         super(WRItems.builder());
 
-        addPropertyOverride(Wyrmroost.rl("is_alive"), (stack, world, player) ->
+        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CALLBACKS.add(() -> ItemModelsProperties.func_239418_a_(this, Wyrmroost.rl("is_alive"), (stack, world, player) ->
         {
             if (stack.hasTag() && stack.getTag().contains(DATA_CONTENTS)) return 1f;
             return 0f;
-        });
+        })));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
@@ -16,10 +17,10 @@ import net.minecraft.util.ResourceLocation;
 public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
 {
     @Override
-    public void render(ItemStack itemStackIn, MatrixStack ms, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn)
+    public void func_239207_a_(ItemStack stack, ItemCameraTransforms.TransformType transform, MatrixStack ms, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay)
     {
-        IVertexBuilder builder = ItemRenderer.getBuffer(bufferIn, DragonEggRenderer.MODEL.getRenderType(getEggTexture(itemStackIn)), false, itemStackIn.hasEffect());
-        DragonEggRenderer.MODEL.render(ms, builder, combinedLightIn, combinedOverlayIn, 1, 1, 1, 1);
+        IVertexBuilder builder = ItemRenderer.getBuffer(buffer, DragonEggRenderer.MODEL.getRenderType(getEggTexture(stack)), false, stack.hasEffect());
+        DragonEggRenderer.MODEL.render(ms, builder, combinedLight, combinedOverlay, 1, 1, 1, 1);
     }
 
     private ResourceLocation getEggTexture(ItemStack stack)

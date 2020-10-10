@@ -41,6 +41,7 @@ public class Wyrmroost
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEvents::load);
 
         WREntities.REGISTRY.register(bus);
+        WREntities.Attributes.REGISTRY.register(bus);
         WRBlocks.REGISTRY.register(bus);
         WRItems.REGISTRY.register(bus);
         WRIO.REGISTRY.register(bus);

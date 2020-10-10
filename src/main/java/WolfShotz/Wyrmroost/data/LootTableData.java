@@ -19,18 +19,18 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.loot.*;
+import net.minecraft.loot.conditions.EntityHasProperty;
+import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.loot.conditions.KilledByPlayer;
+import net.minecraft.loot.conditions.RandomChance;
+import net.minecraft.loot.functions.LootingEnchantBonus;
+import net.minecraft.loot.functions.SetCount;
+import net.minecraft.loot.functions.Smelt;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
-import net.minecraft.world.storage.loot.*;
-import net.minecraft.world.storage.loot.conditions.EntityHasProperty;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
-import net.minecraft.world.storage.loot.conditions.KilledByPlayer;
-import net.minecraft.world.storage.loot.conditions.RandomChance;
-import net.minecraft.world.storage.loot.functions.LootingEnchantBonus;
-import net.minecraft.world.storage.loot.functions.SetCount;
-import net.minecraft.world.storage.loot.functions.Smelt;
 
 import java.util.List;
 import java.util.Map;
@@ -70,7 +70,7 @@ class LootTableData extends LootTableProvider
 
             for (Block block : getKnownBlocks()) // All blocks that have not been given special treatment above, drop themselves!
             {
-                if (!lootTables.containsKey(block) && block.getLootTable() != net.minecraft.world.storage.loot.LootTables.EMPTY) // Loottable is already set to not have one, ignore.
+                if (!lootTables.containsKey(block) && block.getLootTable() != LootTables.EMPTY) // Loottable is already set to not have one, ignore.
                     registerDropSelfLootTable(block);
             }
         }

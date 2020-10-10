@@ -39,10 +39,10 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
     {
         double reach = getAttackReachSqr(enemy);
-        if (distToEnemySqr <= reach && attackTick <= 0 && !dragon.isRidingOrBeingRiddenBy(enemy) && dragon.noActiveAnimation())
+        if (distToEnemySqr <= reach && func_234040_h_() && !dragon.isRidingOrBeingRiddenBy(enemy) && dragon.noActiveAnimation())
         {
             attack.accept(dragon);
-            attackTick = 10;
+            func_234039_g_();
         }
     }
 

@@ -21,6 +21,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -50,8 +51,8 @@ public class LazySpawnEggItem extends Item
     {
         ResourceLocation regName = type.get().getRegistryName();
         return new TranslationTextComponent("entity." + regName.getNamespace() + "." + regName.getPath())
-                .appendText(" ")
-                .appendSibling(new TranslationTextComponent("item.wyrmroost.spawn_egg"));
+                .appendString(" ")
+                .append(new TranslationTextComponent("item.wyrmroost.spawn_egg"));
     }
 
     public ActionResultType onItemUse(ItemUseContext context)
@@ -81,7 +82,7 @@ public class LazySpawnEggItem extends Item
         if (blockstate.getCollisionShape(world, blockpos).isEmpty()) blockpos1 = blockpos;
         else blockpos1 = blockpos.offset(direction);
         
-        if (type.get().spawn(world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null)
+        if (type.get().spawn((ServerWorld) world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null)
             itemstack.shrink(1);
         
         return ActionResultType.SUCCESS;
@@ -106,7 +107,7 @@ public class LazySpawnEggItem extends Item
         
         if (worldIn.isBlockModifiable(playerIn, blockpos) && playerIn.canPlayerEdit(blockpos, blockraytraceresult.getFace(), itemstack))
         {
-            if (type.get().spawn(worldIn, itemstack, playerIn, blockpos, SpawnReason.SPAWN_EGG, false, false) == null)
+            if (type.get().spawn((ServerWorld) worldIn, itemstack, playerIn, blockpos, SpawnReason.SPAWN_EGG, false, false) == null)
                 return new ActionResult<>(ActionResultType.PASS, itemstack);
             if (!playerIn.abilities.isCreativeMode) itemstack.shrink(1);
             
@@ -118,15 +119,15 @@ public class LazySpawnEggItem extends Item
     }
     
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
+    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
     {
-        if (!(target instanceof AgeableEntity)) return false;
-        if (!target.isAlive()) return false;
-        if (target.getType() != type.get()) return false;
+        if (!(target instanceof AgeableEntity)) return ActionResultType.PASS;
+        if (!target.isAlive()) return ActionResultType.PASS;
+        if (target.getType() != type.get()) return ActionResultType.PASS;
 
-        ((AgeableEntity) target).createChild((AgeableEntity) target);
+        if (!target.world.isRemote) ((AgeableEntity) target).func_241840_a((ServerWorld) target.world, (AgeableEntity) target);
 
-        return true;
+        return ActionResultType.func_233537_a_(playerIn.world.isRemote);
     }
 
     public int getColors(int index) { return index == 0? PRIMARY_COLOR : SECONDARY_COLOR; }

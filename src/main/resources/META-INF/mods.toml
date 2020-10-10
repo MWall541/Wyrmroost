@@ -1,49 +1,29 @@
-modLoader="javafml" #mandatory
-loaderVersion="[31,)" #mandatory (26 is current forge version)
+modLoader="javafml"
+loaderVersion="[34,)"
+license="All Rights Reserved"
 
-# A URL to refer people to when problems occur with this mod
-# issueTrackerURL="http://my.issue.tracker/" #optional
+# issueTrackerURL="http://my.issue.tracker/"
 
-# A list of mods - how many allowed here is determined by the individual mod loader
-[[mods]] #mandatory
+[[mods]]
 
-# The modid of the mod
-modId="wyrmroost" #mandatory
+modId="wyrmroost"
+version="${file.jarVersion}"
+displayName="Wyrmroost"
+# logoFile="examplemod.png"
+#credits="Novacraft: Rooststalker Model and Textures"
+authors="WolfShotz, Kingdomall, Shannieann, Ukan"
+#description=''' '''
 
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
-
- # A display name for the mod
-displayName="Wyrmroost" #mandatory
-
-# A file name (in the root of the mod JAR) containing a logo for display
-# logoFile="examplemod.png" #optional
-
-# A text field displayed in the mod UI
-#credits="Novacraft: Rooststalker Model and Textures" #optional
-
-# A text field displayed in the mod UI
-authors="WolfShotz, Kingdomall, Shannieann, Ukan" #optional
-
-# The description text for the mod (multi line!) (#mandatory)
-#description='''
-#'''
-
-# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.wyrmroost]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[31,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+[[dependencies.wyrmroost]]
+    modId="forge"
+    mandatory=true
+    versionRange="[34,)"
     ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
+
 [[dependencies.wyrmroost]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.3]"
     ordering="NONE"
     side="BOTH"

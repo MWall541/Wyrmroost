@@ -677,7 +677,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         animator.update(entity, partialTick);
         resetToDefaultPose();
 
-        if (!entity.isSleeping() && !entity.isSitting() && entity.getAnimation() != AlpineEntity.WIND_GUST_ANIMATION)
+        if (!entity.isSleeping() && !entity.func_233684_eK_() && entity.getAnimation() != AlpineEntity.WIND_GUST_ANIMATION)
         {
             if (entity.isFlying()) // flight
             {
@@ -755,7 +755,7 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
     public void idle(float frame)
     {
         chainWave(headArray, globalSpeed - 0.45f, 0.04f, -1, frame, 0.5f);
-        if (!entity.isSitting() && !entity.isSleeping())
+        if (!entity.func_233684_eK_() && !entity.isSleeping())
             chainWave(tailArray, globalSpeed - 0.45f, 0.08f, -3, frame, 0.5f);
         chainSwing(tailArray, globalSpeed - 0.42f, 0.08f, -3, frame, 0.5f);
         flap(wing1L, globalSpeed - 0.4f, 0.05f, false, 0, 0, frame, 0.5f);

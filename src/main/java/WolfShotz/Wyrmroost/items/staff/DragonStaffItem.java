@@ -75,7 +75,7 @@ public class DragonStaffItem extends Item
      * Triggered when Right clicking an entity
      */
     @Override
-    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
+    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
     {
         if (target instanceof AbstractDragonEntity)
         {
@@ -84,10 +84,10 @@ public class DragonStaffItem extends Item
             {
                 bindDragon(dragon, stack);
                 if (playerIn.world.isRemote) StaffScreen.open(dragon, stack);
-                return true;
+                return ActionResultType.func_233537_a_(playerIn.world.isRemote);
             }
         }
-        return false;
+        return ActionResultType.PASS;
     }
 
     /**
@@ -106,14 +106,14 @@ public class DragonStaffItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.desc").applyTextStyle(TextFormatting.GRAY));
+        tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.desc").mergeStyle(TextFormatting.GRAY));
         if (stack.hasTag())
         {
             AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
             if (dragon != null)
             {
-                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", new StringTextComponent(dragon.getName().getUnformattedComponentText()).applyTextStyle(TextFormatting.AQUA)));
-                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", new TranslationTextComponent(getAction(stack).getTranslateKey(dragon)).applyTextStyle(TextFormatting.AQUA).getFormattedText()));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", new StringTextComponent(dragon.getName().getUnformattedComponentText()).mergeStyle(TextFormatting.AQUA)));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", new TranslationTextComponent(getAction(stack).getTranslateKey(dragon)).mergeStyle(TextFormatting.AQUA).getString()));
             }
         }
     }

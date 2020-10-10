@@ -16,6 +16,7 @@ import WolfShotz.Wyrmroost.util.TickFloat;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.*;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -27,19 +28,15 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.IShearable;
+import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,10 +44,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.function.Consumer;
+
+import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 @SuppressWarnings("deprecation")
-public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShearable
+public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IForgeShearable
 {
     private static final int CROP_GROWTH_RADIUS = 5;
     private static final int CROP_GROWTH_TIME = 1200; // 1 minute
@@ -102,33 +100,28 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     }
 
     @Override
-    protected void registerAttributes()
-    {
-        super.registerAttributes();
-        getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.232524f);
-        getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20d);
-        getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3d);
-    }
-
-    @Override
-    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (stack.getItem() == Items.SHEARS && canBeSteered())
-            return true; // Shears return false on entity interactions. bad, but workaround for it.
+            return ActionResultType.func_233537_a_(world.isRemote);
 
-        if (!world.isRemote && !isTamed() && isChild() && isFoodItem(stack) && temptGoal.isRunning())
+        if (!isTamed() && isChild() && isFoodItem(stack))
         {
-            tame(getRNG().nextDouble() <= 0.2d, player);
-            eat(stack);
-            player.swingArm(hand);
-            return true;
+            if (!world.isRemote && temptGoal.isRunning())
+            {
+                tame(getRNG().nextDouble() <= 0.2d, player);
+                eat(stack);
+                player.swingArm(hand);
+                return ActionResultType.SUCCESS;
+            }
+            return ActionResultType.CONSUME;
         }
 
         if (isTamed() && stack.getItem() == Items.GLISTERING_MELON_SLICE && growCropsTime <= 0)
         {
             eat(stack);
             growCropsTime = CROP_GROWTH_TIME;
-            return true;
+            return ActionResultType.func_233537_a_(world.isRemote);
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -140,7 +133,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         super.tick();
 
         if (shearCooldownTime > 0) --shearCooldownTime;
-        sitTimer.add((isSitting() || isSleeping())? 0.1f : -0.1f);
+        sitTimer.add((func_233684_eK_() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.05f : -0.1f);
 
         setSprinting(getAttackTarget() != null);
@@ -193,12 +186,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public boolean canDespawn(double distanceToClosestPlayer) { return true; }
 
-    @Nullable
     @Override
-    public ILivingEntityData onInitialSpawn(IWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag)
+    public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag)
     {
-        if (spawnData == null) spawnData = new AgeableData();
-        ((AgeableData) spawnData).setBabySpawnProbability((float) WRConfig.dfdBabyChance);
+        if (spawnData == null) spawnData = new AgeableData((float) WRConfig.dfdBabyChance);
         return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnData, dataTag);
     }
 
@@ -209,7 +200,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        if (isSitting() || isSleeping()) size = size.scale(1, 0.7f);
+        if (func_233684_eK_() || isSleeping()) size = size.scale(1, 0.7f);
         return size;
     }
 
@@ -217,14 +208,14 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
 
     @Override
-    public boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos)
+    public boolean isShearable(@Nonnull ItemStack item, World world, BlockPos pos)
     {
         return shearCooldownTime <= 0;
     }
 
     @Nonnull
     @Override
-    public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune)
+    public List<ItemStack> onSheared(@Nullable PlayerEntity player, @Nonnull ItemStack item, World world, BlockPos pos, int fortune)
     {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
@@ -241,7 +232,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         }
         if (isSleeping() || (isChild() && world.isDaytime())) return;
         if (--sleepCooldown > 0) return;
-        if (isTamed() && !isSitting()) return;
+        if (isTamed() && !func_233684_eK_()) return;
         if (!isIdling()) return;
         int sleepChance = world.isDaytime()? 450 : 300; // neps
         if (getRNG().nextInt(sleepChance) == 0)
@@ -289,23 +280,18 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_DFD_DEATH.get(); }
 
-    public static Consumer<EntityType<DragonFruitDrakeEntity>> getSpawnPlacements()
+    public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
-        return t ->
-        {
-            for (Biome biome : BiomeDictionary.getBiomes(BiomeDictionary.Type.JUNGLE))
-                biome.getSpawns(EntityClassification.MONSTER).add(new Biome.SpawnListEntry(WREntities.DRAGON_FRUIT_DRAKE.get(), 4, 3, 5));
+        if (event.getCategory() == Biome.Category.JUNGLE)
+            event.getSpawns().func_242575_a(EntityClassification.MONSTER, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 4, 4, 7));
+    }
 
-            EntitySpawnPlacementRegistry.register(t,
-                    EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
-                    Heightmap.Type.MOTION_BLOCKING,
-                    ((type, world, reason, pos, rand) ->
-                    {
-                        if (world.getLightSubtracted(pos, 0) <= 8) return false;
-                        Block block = world.getBlockState(pos.down()).getBlock();
-                        return block instanceof GrassBlock || block instanceof LeavesBlock;
-                    }));
-        };
+    public static AttributeModifierMap.MutableAttribute getAttributes()
+    {
+        return MobEntity.func_233666_p_()
+                .createMutableAttribute(MAX_HEALTH, 20)
+                .createMutableAttribute(MOVEMENT_SPEED, 0.23)
+                .createMutableAttribute(ATTACK_DAMAGE, 3);
     }
 
     @Override
@@ -341,7 +327,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
         public void tick()
         {
             super.tick();
-            getLookController().setLookPosition(new Vec3d(destinationBlock));
+            getLookController().setLookPosition(destinationBlock.getX(), destinationBlock.getY(), destinationBlock.getY());
             if (timeoutCounter >= 200 && getRNG().nextInt(timeoutCounter) >= 100)
             {
                 timeoutCounter = 0;

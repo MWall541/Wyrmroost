@@ -19,9 +19,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -51,6 +51,7 @@ public class CommonEvents
         forgeBus.addListener(CommonEvents::onChangeEquipment);
         forgeBus.addListener(CommonEvents::onFall);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
+        forgeBus.addListener(EventPriority.HIGH, WRWorld::onBiomeLoad);
     }
 
     // ====================
@@ -60,8 +61,7 @@ public class CommonEvents
     // @formatter:off
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        DeferredWorkQueue.runLater(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
-        DeferredWorkQueue.runLater(WRWorld::setupWorld);
+        event.enqueueWork(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
     }
     // @formatter: on
 

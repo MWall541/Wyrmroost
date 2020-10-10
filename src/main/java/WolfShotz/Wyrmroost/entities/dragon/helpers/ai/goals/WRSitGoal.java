@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -25,7 +25,7 @@ public class WRSitGoal extends SitGoal
     {
         if (!dragon.isTamed()) return false;
         if (dragon.isInWaterOrBubbleColumn() && dragon.getCreatureAttribute() != CreatureAttribute.WATER) return false;
-        if (!dragon.canFly() && !dragon.onGround) return false;
+        if (!dragon.canFly() && !dragon.isOnGround()) return false;
         LivingEntity owner = dragon.getOwner();
         if (owner == null) return true;
         return (dragon.getDistanceSq(owner) > 144d || owner.getRevengeTarget() == null) && super.shouldContinueExecuting();
@@ -48,7 +48,7 @@ public class WRSitGoal extends SitGoal
                 dragon.getNavigator().tryMoveToXYZ(pos.getX(), pos.getY(), pos.getZ(), 1.05);
             }
         }
-        else if (dragon.isSitting() != super.shouldContinueExecuting()) dragon.setSitting(true);
+        else if (dragon.func_233684_eK_() != dragon.func_233685_eM_()) dragon.func_233686_v_(true);
     }
 
     private BlockPos findLandingPos()
@@ -56,14 +56,14 @@ public class WRSitGoal extends SitGoal
         Random rand = dragon.getRNG();
 
         // get current entity position
-        BlockPos.Mutable ground = new BlockPos.Mutable(dragon.world.getHeight(Heightmap.Type.WORLD_SURFACE, dragon.getPosition()));
+        BlockPos.Mutable ground = dragon.world.getHeight(Heightmap.Type.WORLD_SURFACE, dragon.getPosition()).toMutable();
 
         // make sure the y value is suitable
         if (ground.getY() <= 0 || ground.getY() > dragon.getPosY() || !dragon.world.getBlockState(ground.down()).getMaterial().isSolid())
             ground.setY((int) dragon.getPosY() - 5);
 
         // add some variance
-        int followRange = MathHelper.floor(dragon.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getValue());
+        int followRange = MathHelper.floor(dragon.getAttribute(Attributes.FOLLOW_RANGE).getValue());
         int ox = followRange - rand.nextInt(followRange) * 2;
         int oz = followRange - rand.nextInt(followRange) * 2;
         ground.setX(ox);

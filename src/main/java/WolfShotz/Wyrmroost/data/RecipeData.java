@@ -11,7 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.CookingRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.IItemProvider;
 
 import java.io.IOException;
@@ -71,7 +71,7 @@ class RecipeData extends RecipeProvider
         shaped(boots).key('X', material).patternLine("X X").patternLine("X X").addCriterion("has_material", hasItem(material)).build(consumer);
     }
 
-    private void armorSet(Tag<Item> materials, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots)
+    private void armorSet(ITag<Item> materials, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots)
     {
         shaped(helmet).key('X', materials).patternLine("XXX").patternLine("X X").addCriterion("has_material", hasItem(materials)).build(consumer);
         shaped(chest).key('X', materials).patternLine("X X").patternLine("XXX").addCriterion("has_material", hasItem(materials)).patternLine("XXX").build(consumer);
@@ -88,7 +88,7 @@ class RecipeData extends RecipeProvider
         shaped(hoe).key('X', material).key('|', Items.STICK).patternLine("XX").patternLine(" |").patternLine(" |").addCriterion("has_material", hasItem(material)).build(consumer);
     }
 
-    private void toolSet(Tag<Item> materials, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
+    private void toolSet(ITag<Item> materials, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
     {
         shaped(sword).key('X', materials).key('|', Items.STICK).patternLine("X").patternLine("X").patternLine("|").addCriterion("has_material", hasItem(materials)).build(consumer);
         shaped(pick).key('X', materials).key('|', Items.STICK).patternLine("XXX").patternLine(" | ").patternLine(" | ").addCriterion("has_material", hasItem(materials)).build(consumer);
@@ -148,7 +148,7 @@ class RecipeData extends RecipeProvider
         storageBlock(WRItems.PURPLE_GEODE.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
         smelt(WRBlocks.PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get(), 2f, 200);
 
-        shaped(WRBlocks.PLATINUM_BLOCK.get()).key('X', WRItems.Tags.PLATINUM).patternLine("XXX").patternLine("XXX").patternLine("XXX").addCriterion("has_platinum", hasItem(WRItems.PLATINUM_INGOT.get())).build(consumer);
+        shaped(WRBlocks.PLATINUM_BLOCK.get()).key('X', WRItems.WRTags.PLATINUM).patternLine("XXX").patternLine("XXX").patternLine("XXX").addCriterion("has_platinum", hasItem(WRItems.PLATINUM_INGOT.get())).build(consumer);
         shapeless(WRItems.PLATINUM_INGOT.get(), 9).addIngredient(WRBlocks.PLATINUM_BLOCK.get()).addCriterion("has_platinum", hasItem(WRBlocks.PLATINUM_BLOCK.get())).build(consumer);
         smelt(WRBlocks.PLATINUM_ORE.get(), WRItems.PLATINUM_INGOT.get(), 0.7f, 200);
 
@@ -156,12 +156,12 @@ class RecipeData extends RecipeProvider
         toolSet(WRItems.BLUE_GEODE.get(), WRItems.BLUE_GEODE_SWORD.get(), WRItems.BLUE_GEODE_PICKAXE.get(), WRItems.BLUE_GEODE_AXE.get(), WRItems.BLUE_GEODE_SHOVEL.get(), WRItems.BLUE_GEODE_HOE.get());
         toolSet(WRItems.RED_GEODE.get(), WRItems.RED_GEODE_SWORD.get(), WRItems.RED_GEODE_PICKAXE.get(), WRItems.RED_GEODE_AXE.get(), WRItems.RED_GEODE_SHOVEL.get(), WRItems.RED_GEODE_HOE.get());
         toolSet(WRItems.PURPLE_GEODE.get(), WRItems.PURPLE_GEODE_SWORD.get(), WRItems.PURPLE_GEODE_PICKAXE.get(), WRItems.PURPLE_GEODE_AXE.get(), WRItems.PURPLE_GEODE_SHOVEL.get(), WRItems.PURPLE_GEODE_HOE.get());
-        toolSet(WRItems.Tags.PLATINUM, WRItems.PLATINUM_SWORD.get(), WRItems.PLATINUM_PICKAXE.get(), WRItems.PLATINUM_AXE.get(), WRItems.PLATINUM_SHOVEL.get(), WRItems.PLATINUM_HOE.get());
+        toolSet(WRItems.WRTags.PLATINUM, WRItems.PLATINUM_SWORD.get(), WRItems.PLATINUM_PICKAXE.get(), WRItems.PLATINUM_AXE.get(), WRItems.PLATINUM_SHOVEL.get(), WRItems.PLATINUM_HOE.get());
 
         armorSet(WRItems.BLUE_GEODE.get(), WRItems.BLUE_GEODE_HELMET.get(), WRItems.BLUE_GEODE_CHESTPLATE.get(), WRItems.BLUE_GEODE_LEGGINGS.get(), WRItems.BLUE_GEODE_BOOTS.get());
         armorSet(WRItems.RED_GEODE.get(), WRItems.RED_GEODE_HELMET.get(), WRItems.RED_GEODE_CHESTPLATE.get(), WRItems.RED_GEODE_LEGGINGS.get(), WRItems.RED_GEODE_BOOTS.get());
         armorSet(WRItems.PURPLE_GEODE.get(), WRItems.PURPLE_GEODE_HELMET.get(), WRItems.PURPLE_GEODE_CHESTPLATE.get(), WRItems.PURPLE_GEODE_LEGGINGS.get(), WRItems.PURPLE_GEODE_BOOTS.get());
-        armorSet(WRItems.Tags.PLATINUM, WRItems.PLATINUM_HELMET.get(), WRItems.PLATINUM_CHESTPLATE.get(), WRItems.PLATINUM_LEGGINGS.get(), WRItems.PLATINUM_BOOTS.get());
+        armorSet(WRItems.WRTags.PLATINUM, WRItems.PLATINUM_HELMET.get(), WRItems.PLATINUM_CHESTPLATE.get(), WRItems.PLATINUM_LEGGINGS.get(), WRItems.PLATINUM_BOOTS.get());
 
         shapeless(WRItems.DRAKE_HELMET.get(), WRItems.DRAKE_BACKPLATE.get(), 3);
         shapeless(WRItems.DRAKE_CHESTPLATE.get(), WRItems.DRAKE_BACKPLATE.get(), 6);
@@ -174,7 +174,7 @@ class RecipeData extends RecipeProvider
         smelt(WRItems.RAW_COMMON_MEAT.get(), WRItems.COOKED_COMMON_MEAT.get(), 0.35f, 200, true);
         smelt(WRItems.RAW_APEX_MEAT.get(), WRItems.COOKED_APEX_MEAT.get(), 0.35f, 200, true);
         smelt(WRItems.RAW_BEHEMOTH_MEAT.get(), WRItems.COOKED_BEHEMOTH_MEAT.get(), 0.5f, 250, true);
-        shaped(WRItems.JEWELLED_APPLE.get()).key('A', Items.APPLE).key('G', WRItems.Tags.GEODES).patternLine(" G ").patternLine("GAG").patternLine(" G ").addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get())).build(consumer);
+        shaped(WRItems.JEWELLED_APPLE.get()).key('A', Items.APPLE).key('G', WRItems.WRTags.GEODES).patternLine(" G ").patternLine("GAG").patternLine(" G ").addCriterion("has_geode", hasItem(WRItems.BLUE_GEODE.get())).build(consumer);
 
         // Dragon armor
         shaped(WRItems.DRAGON_ARMOR_IRON.get()).key('X', Items.IRON_INGOT).key('#', Items.IRON_BLOCK).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_iron", hasItem(Items.IRON_INGOT)).build(consumer);

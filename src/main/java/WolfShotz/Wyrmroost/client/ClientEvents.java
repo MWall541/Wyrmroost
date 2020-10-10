@@ -11,10 +11,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -86,9 +87,10 @@ public class ClientEvents
         Minecraft mc = getClient();
         Entity entity = mc.player.getRidingEntity();
         if (!(entity instanceof AbstractDragonEntity)) return;
-        int i1 = mc.gameSettings.thirdPersonView;
+        PointOfView view = mc.gameSettings.func_243230_g();
 
-        if (i1 != 0) ((AbstractDragonEntity) entity).setMountCameraAngles(i1 == 1, event);
+        if (view != PointOfView.FIRST_PERSON)
+            ((AbstractDragonEntity) entity).setMountCameraAngles(view == PointOfView.THIRD_PERSON_BACK, event);
     }
 
     // =====================
@@ -100,7 +102,7 @@ public class ClientEvents
 
     public static PlayerEntity getPlayer() { return getClient().player; }
 
-    public static Vec3d getProjectedView() { return getClient().gameRenderer.getActiveRenderInfo().getProjectedView(); }
+    public static Vector3d getProjectedView() { return getClient().gameRenderer.getActiveRenderInfo().getProjectedView(); }
 
     public static boolean handleAnimationPacket(int entityID, int animationIndex)
     {
