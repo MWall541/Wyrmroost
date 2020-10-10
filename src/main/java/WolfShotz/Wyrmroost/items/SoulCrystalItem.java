@@ -76,7 +76,7 @@ public class SoulCrystalItem extends Item
         ItemStack stack = context.getItem();
         if (!containsDragon(stack)) return ActionResultType.PASS;
         World world = context.getWorld();
-        AbstractDragonEntity dragon = getContained(stack, world);
+        TameableEntity dragon = getContained(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
         PlayerEntity player = context.getPlayer();
 
@@ -120,7 +120,7 @@ public class SoulCrystalItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        AbstractDragonEntity dragon = getContained(stack, world);
+        TameableEntity dragon = getContained(stack, world);
         if (dragon != null)
         {
             tooltip.add(new StringTextComponent(dragon.getName().getUnformattedComponentText()));
@@ -147,13 +147,13 @@ public class SoulCrystalItem extends Item
     }
 
     @Nullable
-    private static AbstractDragonEntity getContained(ItemStack stack, World world)
+    private static TameableEntity getContained(ItemStack stack, World world)
     {
         if (!containsDragon(stack)) return null;
         CompoundNBT tag = stack.getTag().getCompound(DATA_DRAGON);
         EntityType<?> type = EntityType.byKey(tag.getString("id")).orElse(null);
         if (type == null) return null;
-        AbstractDragonEntity dragon = (AbstractDragonEntity) type.create(world);
+        TameableEntity dragon = (TameableEntity) type.create(world);
         dragon.deserializeNBT(tag);
         return dragon;
     }

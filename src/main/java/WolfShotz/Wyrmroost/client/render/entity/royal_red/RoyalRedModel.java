@@ -740,7 +740,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
                     walk(wingL1, globalSpeed + 0.65f, 0.15f, false, 0, 0, frame, 0.5f);
                 }
 
-                boolean wingsDown = wingR1.rotateAngleZ < 1.5;
+                boolean wingsDown = wingR1.rotateAngleZ < 1.35;
                 if (!entity.wingsDown && wingsDown) entity.flapWings();
                 entity.wingsDown = wingsDown;
             }

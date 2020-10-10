@@ -27,4 +27,10 @@ public class DrakeArmorItem extends ArmorBase
         if (attribute.hasModifier(KB_RESISTANCE)) attribute.removeModifier(KB_RESISTANCE);
         if (hasFullSet) attribute.applyNonPersistentModifier(KB_RESISTANCE);
     }
+
+    @Override
+    protected boolean hasDescription()
+    {
+        return true;
+    }
 }
