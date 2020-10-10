@@ -94,8 +94,11 @@ public class AlpineEntity extends AbstractDragonEntity
             if (tick == 0) playSound(WRSounds.ENTITY_ALPINE_ROAR.get(), 3f, 1f);
             else if (tick == 25)
             {
-                for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get() && ((AlpineEntity) e).noActiveAnimation()))
-                    ((AlpineEntity) entity).setAnimation(ROAR_ANIMATION);
+                for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get()))
+                {
+                    AlpineEntity alpine = ((AlpineEntity) entity);
+                    if (alpine.noActiveAnimation() && alpine.isIdling()) alpine.setAnimation(ROAR_ANIMATION);
+                }
             }
         }
         else if (animation == WIND_GUST_ANIMATION)
