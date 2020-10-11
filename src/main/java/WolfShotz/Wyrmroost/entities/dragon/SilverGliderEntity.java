@@ -132,15 +132,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
             return ActionResultType.CONSUME;
         }
 
-        if (isOwner(player))
+        if (isOwner(player) && player.getPassengers().size() == 0 && !player.isSneaking())
         {
-            if (player.getPassengers().size() == 0)
-            {
-                startRiding(player, true);
-                setSit(false);
-                clearAI();
-                return ActionResultType.func_233537_a_(world.isRemote);
-            }
+            startRiding(player, true);
+            setSit(false);
+            clearAI();
+            return ActionResultType.func_233537_a_(world.isRemote);
         }
 
         return super.playerInteraction(player, hand, stack);

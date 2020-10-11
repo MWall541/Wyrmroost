@@ -586,6 +586,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         public void tick()
         {
             LivingEntity target = getAttackTarget();
+            if (target == null) return;
             double distFromTarget = getDistanceSq(target);
 
             getLookController().setLookPositionWithEntity(target, getHorizontalFaceSpeed(), getVerticalFaceSpeed());
