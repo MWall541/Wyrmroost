@@ -11,6 +11,7 @@ import WolfShotz.Wyrmroost.client.render.entity.coin_dragon.CoinDragonRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
+import WolfShotz.Wyrmroost.client.render.entity.orbwyrm.OrbwyrmRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.projectile.GeodeTippedArrowRenderer;
@@ -140,6 +141,15 @@ public class WREntities
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
             .dragonEgg(new DragonEggProperties(1, 1, 12000))
             .renderer(() -> AlpineRenderer::new)
+            .build(b -> b.size(2f, 2f));
+
+    public static final RegistryObject<EntityType<OrbwyrmEntity>> ORBWYRM = Builder.creature("orbwyrm", OrbwyrmEntity::new)
+            .attributes(OrbwyrmEntity::getAttributes)
+//            .spawnPlacement()
+//            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
+            .spawnEgg(0x788716, 0x3E623E)
+//            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
+            .renderer(() -> OrbwyrmRenderer::new)
             .build(b -> b.size(2f, 2f));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
