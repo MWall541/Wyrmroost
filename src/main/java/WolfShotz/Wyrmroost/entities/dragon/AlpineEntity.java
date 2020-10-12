@@ -178,7 +178,10 @@ public class AlpineEntity extends AbstractDragonEntity
     public int getVariantForSpawn() { return getRNG().nextInt(6); }
 
     @Override
-    protected boolean canBeRidden(Entity entity) { return entity instanceof LivingEntity && isOwner((LivingEntity) entity); }
+    protected boolean canBeRidden(Entity entity)
+    {
+        return !isChild() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
+    }
 
     @Override
     public Collection<? extends IItemProvider> getFoodItems() { return ImmutableSet.of(Items.HONEYCOMB, Items.HONEY_BOTTLE); }

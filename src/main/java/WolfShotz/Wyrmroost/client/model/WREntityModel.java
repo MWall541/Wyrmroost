@@ -1,7 +1,6 @@
 package WolfShotz.Wyrmroost.client.model;
 
 import WolfShotz.Wyrmroost.util.Mafs;
-import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
@@ -9,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -16,7 +16,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 {
     public T entity;
     public float globalSpeed = 0.5f;
-    public final List<ModelRenderer> boxList = Lists.newArrayList();
+    public final List<ModelRenderer> boxList = new ArrayList<>();
     public float time;
 
     public WREntityModel() {}

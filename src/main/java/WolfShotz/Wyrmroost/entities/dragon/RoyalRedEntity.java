@@ -307,7 +307,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     protected boolean canBeRidden(Entity entity)
     {
-        return !isKnockedOut() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
+        return !isChild() && !isKnockedOut() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
     }
 
     @Override
