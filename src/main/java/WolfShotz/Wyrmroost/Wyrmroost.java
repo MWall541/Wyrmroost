@@ -1,10 +1,7 @@
 package WolfShotz.Wyrmroost;
 
 import WolfShotz.Wyrmroost.client.ClientEvents;
-import WolfShotz.Wyrmroost.network.packets.AnimationPacket;
-import WolfShotz.Wyrmroost.network.packets.KeybindPacket;
-import WolfShotz.Wyrmroost.network.packets.RenameEntityPacket;
-import WolfShotz.Wyrmroost.network.packets.StaffActionPacket;
+import WolfShotz.Wyrmroost.network.packets.*;
 import WolfShotz.Wyrmroost.registry.*;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -66,6 +63,7 @@ public class Wyrmroost
         network.messageBuilder(KeybindPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(KeybindPacket::encode).decoder(KeybindPacket::new).consumer(KeybindPacket::handle).add();
         network.messageBuilder(RenameEntityPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(RenameEntityPacket::encode).decoder(RenameEntityPacket::new).consumer(RenameEntityPacket::handle).add();
         network.messageBuilder(StaffActionPacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(StaffActionPacket::encode).decoder(StaffActionPacket::new).consumer(StaffActionPacket::handle).add();
+        network.messageBuilder(SGGlidePacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(SGGlidePacket::encode).decoder(SGGlidePacket::new).consumer(SGGlidePacket::handle).add();
 
         return network;
     }
