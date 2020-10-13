@@ -1,9 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
-import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.*;
 import WolfShotz.Wyrmroost.entities.projectile.WindGustEntity;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
@@ -56,7 +53,7 @@ public class AlpineEntity extends AbstractDragonEntity
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this, 4));
-        goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
+        goalSelector.addGoal(8, new FlyerWanderGoal(this, 1, 0.01f));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
