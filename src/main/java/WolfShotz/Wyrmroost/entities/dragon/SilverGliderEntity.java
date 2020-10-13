@@ -5,6 +5,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import WolfShotz.Wyrmroost.entities.util.CommonGoalWrappers;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
+import WolfShotz.Wyrmroost.network.packets.SGGlidePacket;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.registry.WRSounds;
 import WolfShotz.Wyrmroost.util.TickFloat;
@@ -45,7 +46,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
 
     public TemptGoal temptGoal;
-    private boolean isGliding; // controlled by player-gliding.
+    public boolean isGliding; // controlled by player-gliding.
 
     public SilverGliderEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -97,16 +98,21 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         if (!(getRidingEntity() instanceof PlayerEntity)) return;
         PlayerEntity player = (PlayerEntity) getRidingEntity();
-
         final boolean FLAG = shouldGlide(player);
-        if (FLAG)
+
+        if (world.isRemote && isGliding != FLAG)
+        {
+            SGGlidePacket.send(FLAG);
+            isGliding = FLAG;
+        }
+
+        if (isGliding)
         {
             Vector3d vec3d = player.getLookVec().scale(0.3);
             player.setMotion(player.getMotion().scale(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
             if (!world.isRemote) ((ServerPlayerEntity) player).connection.floating = false;
             player.fallDistance = 0;
         }
-        isGliding = FLAG;
     }
 
     @Override
@@ -151,6 +157,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         if (player.isElytraFlying()) return false;
         if (player.isInWater()) return false;
         if (player.getMotion().y > 0) return false;
+        if (isGliding() && !player.isOnGround()) return true;
         return getAltitude() - 1.8 > 4;
     }
 
@@ -162,7 +169,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             double x = getPosX() + getRNG().nextGaussian();
             double y = getPosY() + getRNG().nextDouble();
             double z = getPosZ() + getRNG().nextGaussian();
-            world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.1925f, 0);
+            world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.2f, 0);
         }
     }
 
