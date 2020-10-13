@@ -96,8 +96,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
     private boolean canImpactEntity(Entity entity)
     {
-        if (entity.isSpectator() || !entity.isAlive() || !entity.canBeCollidedWith() || entity.noClip) return false;
-        return !shooter.getPassengers().contains(entity);
+        return !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && !entity.noClip;
     }
 
     public void onImpact(RayTraceResult result)
