@@ -8,6 +8,7 @@ import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
  * WRRoyalRedReparent - Ukan
@@ -732,7 +733,8 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
                 walk(wingL2, globalSpeed - 0.3f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(palmL_1, globalSpeed - 0.3f, 0.4f, true, -1.5f, 0, limbSwing, limbSwingAmount);
 
-                if (entity.getMotion().y < 0 && entity.getMotion().length() > 0.4)
+                Vector3d motion = entity.getMotion();
+                if (motion.y < 0 && motion.x != 0 && motion.z != 0)
                 {
                     flap(wingR1, globalSpeed - 0.3f, 0.15f, false, 0, 0, frame, 0.5f);
                     walk(wingR1, globalSpeed + 0.65f, 0.15f, false, 0, 0, frame, 0.5f);
@@ -778,7 +780,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         sleep(entity.sleepTimer.get(partialTicks));
         knockout(entity.knockOutTimer.get(partialTicks));
 
-        if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation(frame);
+        if (animator.setAnimation(RoyalRedEntity.ROAR_ANIMATION)) roarAnimation(frame, partialTicks);
         if (animator.setAnimation(RoyalRedEntity.SLAP_ATTACK_ANIMATION)) slapAttackAnim();
         if (animator.setAnimation(RoyalRedEntity.BITE_ATTACK_ANIMATION)) biteAttackAnim();
         idle(frame);
@@ -1035,7 +1037,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         }
     }
 
-    private void roarAnimation(float frame)
+    private void roarAnimation(float frame, float partialTick)
     {
         animator.startKeyframe(10);
 
@@ -1071,8 +1073,9 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         int tick = entity.getAnimationTick();
         if (tick > 5 && tick < 60)
         {
-            chainFlap(headParts, globalSpeed, 0.2f, 2.5, frame, 0.5f);
-            chainSwing(headParts, globalSpeed, 0.065f, 1, frame, 0.5f);
+            float delta = (Math.min(MathHelper.sin(((tick - 6) / 59f) * Mafs.PI) * 2, 1) * 0.5f);
+            chainFlap(headParts, globalSpeed, 0.2f, 2.5, frame, delta);
+            chainSwing(headParts, globalSpeed, 0.065f, 1, frame, delta);
         }
         for (WRModelRenderer tailPart : tailParts) animator.rotate(tailPart, 0.08f, 0, 0);
 

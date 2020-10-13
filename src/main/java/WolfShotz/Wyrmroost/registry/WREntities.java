@@ -151,7 +151,7 @@ public class WREntities
             .spawnEgg(0x788716, 0x3E623E)
 //            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
             .renderer(() -> OrbwyrmRenderer::new)
-            .build(b -> b.size(2f, 2f));
+            .build(b -> b.size(2.8f, 3.2f));
 
     public static final RegistryObject<EntityType<FogWraithEntity>> FOG_WRAITH = Builder.creature("fog_wraith", FogWraithEntity::new)
             .attributes(FogWraithEntity::getAttributes)

@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AlpineEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
@@ -665,8 +666,8 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
     public void setRotationAngles(AlpineEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-//        if (entity.getAnimation() != AlpineEntity.ROAR_ANIMATION && !entity.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
-//        if (this.entity.flightTimer.get() == 1) body1.rotateAngleZ = -(netHeadYaw * (Mafs.PI / 180F)) * 0.4f;
+        if (!entity.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
+        if (entity.flightTimer.get() == 1) body1.rotateAngleZ = -(netHeadYaw * Mafs.PI / 180f) * 0.4f;
     }
 
     @Override

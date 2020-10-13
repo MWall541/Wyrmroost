@@ -21,6 +21,7 @@ public class LessShitLookController extends LookController
             this.restore = false;
             mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, mob.getHorizontalFaceSpeed());
             mob.rotationPitch = clampedRotate(mob.rotationPitch, 0, mob.getVerticalFaceSpeed());
+            return;
         }
 
         if (frozen)

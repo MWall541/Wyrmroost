@@ -16,6 +16,8 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class OrbwyrmEntity extends AbstractDragonEntity
 {
+
+
     public OrbwyrmEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
@@ -32,8 +34,7 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     @Override
     public EntitySize getSize(Pose poseIn)
     {
-        EntitySize size = getType().getSize().scale(getRenderScale());
-        return EntitySize.flexible(2.8f, 3.2f);
+        return getType().getSize().scale(getRenderScale());
     }
 
     @Override
@@ -43,7 +44,7 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     }
 
     @Override
-    public float getRenderScale() { return isChild()? 0.3f : isMale()? 0.75f : 1f; }
+    public float getRenderScale() { return isChild()? 0.5f : isMale()? 0.75f : 1f; }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()
     {

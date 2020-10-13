@@ -459,7 +459,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             // limb swinging animations
             float limbSpeed = 0.4f;
             float amount = 1f;
-            if (getPosY() - prevPosY < -0.2f)
+            if (getPosY() - prevPosY < -0.1f)
             {
                 amount = 0f;
                 limbSpeed = 0.2f;

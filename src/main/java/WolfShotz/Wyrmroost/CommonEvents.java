@@ -86,7 +86,7 @@ public class CommonEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-//        dragon.setFlying(true);
+        dragon.setFlying(true);
         if (player.isSneaking()) dragon.tame(true, player);
         else
         {

@@ -1,12 +1,17 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
+import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
+import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.TickFloat;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.goal.LookAtGoal;
+import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.world.World;
 
@@ -16,11 +21,40 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class FogWraithEntity extends AbstractDragonEntity
 {
-    public final TickFloat flightTimer = new TickFloat(1).setLimit(0, 1);
+    private static final DataParameter<Boolean> STEALTH = EntityDataManager.createKey(FogWraithEntity.class, DataSerializers.BOOLEAN);
+
+    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
+    public final TickFloat stealthTimer = new TickFloat().setLimit(0, 1);
 
     public FogWraithEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
+
+        registerDataEntry("IsStealth", EntityDataEntry.BOOLEAN, STEALTH, false);
+    }
+
+    @Override
+    protected void registerGoals()
+    {
+        goalSelector.addGoal(1, new SwimGoal(this));
+        goalSelector.addGoal(9, new FlyerWanderGoal(this, 1));
+        goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
+        goalSelector.addGoal(11, new LookRandomlyGoal(this));
+    }
+
+    @Override
+    protected void registerData()
+    {
+        super.registerData();
+        dataManager.register(FLYING, false);
+    }
+
+    @Override
+    public void livingTick()
+    {
+        super.livingTick();
+        flightTimer.add(isFlying()? 0.1f : -0.1f);
+        stealthTimer.add(isInvisible()? 0.1f : -0.1f);
     }
 
     @Override

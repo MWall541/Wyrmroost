@@ -80,4 +80,11 @@ public class WRModelRenderer extends ModelRenderer
                 -Math.abs(MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree) :
                 MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree - limbSwingAmount * degree;
     }
+
+    public void copyRotationsTo(ModelRenderer box)
+    {
+        box.rotateAngleX = rotateAngleX;
+        box.rotateAngleY = -rotateAngleY;
+        box.rotateAngleZ = -rotateAngleZ;
+    }
 }

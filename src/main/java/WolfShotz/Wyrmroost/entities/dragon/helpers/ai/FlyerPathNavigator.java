@@ -16,6 +16,7 @@ public class FlyerPathNavigator extends FlyingPathNavigator
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions") // IT CAN BE NULL DAMNIT
     public void tick()
     {
         if (!noPath() && canNavigate())
@@ -23,7 +24,7 @@ public class FlyerPathNavigator extends FlyingPathNavigator
             BlockPos target = getTargetPos();
             if (target != null) entity.getMoveHelper().setMoveTo(target.getX(), target.getY(), target.getZ(), speed);
 
-            maxDistanceToWaypoint = entity.getWidth() * entity.getHorizontalFaceSpeed() * 3;
+            maxDistanceToWaypoint = entity.getWidth() * entity.getWidth() * entity.getHorizontalFaceSpeed() * entity.getHorizontalFaceSpeed();
             Vector3d entityPos = getEntityPosition();
             if (target.distanceSq(entityPos.x, entityPos.y, entityPos.z, true) <= maxDistanceToWaypoint)
                 currentPath = null;
