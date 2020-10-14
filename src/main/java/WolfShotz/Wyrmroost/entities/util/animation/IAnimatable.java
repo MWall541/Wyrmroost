@@ -1,6 +1,6 @@
 package WolfShotz.Wyrmroost.entities.util.animation;
 
-public interface IAnimatedEntity
+public interface IAnimatable
 {
     Animation NO_ANIMATION = new Animation(0)
     {
@@ -19,4 +19,19 @@ public interface IAnimatedEntity
     Animation[] getAnimations();
 
     default boolean noActiveAnimation() { return getAnimation() == NO_ANIMATION; }
+
+    default void updateAnimations()
+    {
+        Animation current = getAnimation();
+        if (current != NO_ANIMATION)
+        {
+            int tick = getAnimationTick() + 1;
+            if (tick >= current.getDuration())
+            {
+                setAnimation(NO_ANIMATION);
+                tick = 0;
+            }
+            setAnimationTick(tick);
+        }
+    }
 }

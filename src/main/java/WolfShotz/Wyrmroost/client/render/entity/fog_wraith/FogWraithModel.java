@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.client.render.entity.fog_wraith;
 
+import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.FogWraithEntity;
@@ -13,8 +14,8 @@ import net.minecraft.client.renderer.model.ModelRenderer;
  */
 public class FogWraithModel extends WREntityModel<FogWraithEntity>
 {
-    private final ModelRenderer[][] tails;
-    private final ModelRenderer[] headArray;
+    public final WRModelRenderer[][] tails;
+    public final ModelRenderer[] headArray;
     public WRModelRenderer body2;
     public WRModelRenderer body1;
     public WRModelRenderer body3;
@@ -145,6 +146,7 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
     public WRModelRenderer fingerC1_2R;
     public WRModelRenderer membraneC2R;
     public WRModelRenderer membraneC1R;
+    public ModelAnimator animator;
 
     public FogWraithModel()
     {
@@ -756,7 +758,7 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
         tailL5_2.addChild(tailL6_2);
         tailL4_3.addChild(tailL5_3);
 
-        tails = new ModelRenderer[][] {
+        tails = new WRModelRenderer[][] {
                 {tailL1_1, tailL2_1, tailL3_1, tailL4_1, tailL5_1, tailL6_1, tailL7_1, tailL8_1, tailL9_1, tailL10_1, tailL11_1, tailL12_1}, // top left
                 {tailL1_2, tailL2_2, tailL3_2, tailL4_2, tailL5_2, tailL6_2, tailL7_2, tailL8_2, tailL9_2, tailL10_2, tailL11_2, tailL12_2}, // top right
                 {tailL1_3, tailL2_3, tailL3_3, tailL4_3, tailL5_3, tailL6_3, tailL7_3, tailL8_3, tailL9_3, tailL10_3, tailL11_3, tailL12_3}, // bottom left
@@ -769,6 +771,8 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
         setRotateAngle(tailL1_2, 0.9f, -0.3f, 0);
         setRotateAngle(tailL1_3, 0, 0.3f, 0);
         setRotateAngle(tailL1_4, 0, -0.3f, 0);
+
+        animator = ModelAnimator.create();
 
         setDefaultPose();
     }
@@ -873,18 +877,18 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
         swing(fingerA1_2L, globalSpeed - 0.45f, -0.1f, true, 0.5f, 0, frame, 0.5f);
 
         // tail
-        float flightDelta = -entity.flightTimer.get(partialTick) + 1;
         for (int i = 0; i < tails.length; i++)
-        {
-            float waveDegree = 0.4f;
-            float swingDegree = (i == 1 || i == 2? -0.4f : 0.4f);
-            if (i > 1) waveDegree = 0.1f;
-            if (i == 1 || i == 2) waveDegree = -waveDegree;
-            swingDegree *= flightDelta;
-            waveDegree *= flightDelta;
-            chainWave(tails[i], globalSpeed - 0.4f, waveDegree, -2, frame, 0.5f);
-            chainSwing(tails[i], globalSpeed - (i > 1? 0.38f : 0.35f), swingDegree, -2, frame, 0.5f);
-        }
+            animateTail(i, partialTick, -entity.flightTimer.get(partialTick) + 1);
+    }
+
+    public void animateTail(int generation, float tick, float swingAmount)
+    {
+        float waveDegree = 0.4f;
+        if (generation > 1) waveDegree = 0.1f;
+        if (generation == 1 || generation == 2) waveDegree = -waveDegree;
+        chainWave(tails[generation], globalSpeed - 0.4f, waveDegree, -2, tick, swingAmount * 0.5f);
+        chainSwing(tails[generation], globalSpeed - (generation > 1? 0.38f : 0.35f), (generation == 1 || generation == 2? -0.4f : 0.4f), -2, tick, swingAmount * 0.5f);
+
     }
 
     private void flight(float v, float frame)

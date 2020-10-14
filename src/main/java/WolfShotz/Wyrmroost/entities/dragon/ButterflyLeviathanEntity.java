@@ -486,7 +486,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason reason, BlockPos pos, Random random)
     {
         if (reason == SpawnReason.SPAWNER) return true;
-        return world.getFluidState(pos).getFluid().isIn(FluidTags.WATER) && world.getFluidState(pos.up(2)).getFluid().isIn(FluidTags.WATER) && random.nextDouble() < 0.1;
+        return world.getFluidState(pos).getFluid().isIn(FluidTags.WATER) && world.getFluidState(pos.up(2)).getFluid().isIn(FluidTags.WATER) && random.nextDouble() < 0.001;
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()

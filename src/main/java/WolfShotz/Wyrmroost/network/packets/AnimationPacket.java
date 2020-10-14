@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.network.packets;
 import WolfShotz.Wyrmroost.Wyrmroost;
 import WolfShotz.Wyrmroost.client.ClientEvents;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -41,7 +41,7 @@ public class AnimationPacket
         return DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.handleAnimationPacket(entityID, animationIndex));
     }
 
-    public static <T extends Entity & IAnimatedEntity> void send(T entity, Animation animation)
+    public static <T extends Entity & IAnimatable> void send(T entity, Animation animation)
     {
         if (!entity.world.isRemote)
         {

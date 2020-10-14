@@ -118,6 +118,9 @@ class ModelData
                     .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
                     .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
 
+            itemBare(WRItems.FOG_WRAITH_TAILS.get())
+                    .parent(new ModelFile.UncheckedModelFile("builtin/entity"));
+
             getBuilder("desert_wyrm_alive")
                     .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
                     .texture("layer0", resource("desert_wyrm_alive"));

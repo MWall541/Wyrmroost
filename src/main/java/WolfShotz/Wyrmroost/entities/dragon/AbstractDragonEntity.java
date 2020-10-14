@@ -13,7 +13,7 @@ import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import WolfShotz.Wyrmroost.items.DragonArmorItem;
 import WolfShotz.Wyrmroost.items.DragonEggItem;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
@@ -74,7 +74,7 @@ import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
  * Created by WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatedEntity
+public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatable
 {
     public static final byte HEAL_PARTICLES_DATA_ID = 8;
 

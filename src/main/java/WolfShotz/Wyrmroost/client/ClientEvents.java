@@ -3,7 +3,7 @@ package WolfShotz.Wyrmroost.client;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
-import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WRIO;
 import WolfShotz.Wyrmroost.registry.WRKeybind;
@@ -104,12 +104,14 @@ public class ClientEvents
 
     public static Vector3d getProjectedView() { return getClient().gameRenderer.getActiveRenderInfo().getProjectedView(); }
 
+    public static float getPartialTicks() { return getClient().getRenderPartialTicks(); }
+
     public static boolean handleAnimationPacket(int entityID, int animationIndex)
     {
         World world = ClientEvents.getWorld();
-        IAnimatedEntity entity = (IAnimatedEntity) world.getEntityByID(entityID);
+        IAnimatable entity = (IAnimatable) world.getEntityByID(entityID);
 
-        if (animationIndex < 0) entity.setAnimation(IAnimatedEntity.NO_ANIMATION);
+        if (animationIndex < 0) entity.setAnimation(IAnimatable.NO_ANIMATION);
         else entity.setAnimation(entity.getAnimations()[animationIndex]);
         return true;
     }

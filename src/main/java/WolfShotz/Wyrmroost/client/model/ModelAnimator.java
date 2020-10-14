@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.client.model;
 
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import WolfShotz.Wyrmroost.util.Mafs;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
@@ -15,7 +15,7 @@ public class ModelAnimator
     private int prevTempTick;
     private boolean correctAnimation = false;
     private float partialTicks;
-    private IAnimatedEntity entity;
+    private IAnimatable entity;
     private final HashMap<WRModelRenderer, BoxPosCache> boxPosCache = new HashMap<>();
     private final HashMap<WRModelRenderer, BoxPosCache> prevPosCache = new HashMap<>();
 
@@ -23,9 +23,9 @@ public class ModelAnimator
 
     public static ModelAnimator create() { return new ModelAnimator(); }
 
-    public IAnimatedEntity getEntity() { return entity; }
+    public IAnimatable getEntity() { return entity; }
 
-    public void update(IAnimatedEntity entity, float partialTicks)
+    public void update(IAnimatable entity, float partialTicks)
     {
         this.tempTick = prevTempTick = 0;
         this.correctAnimation = false;

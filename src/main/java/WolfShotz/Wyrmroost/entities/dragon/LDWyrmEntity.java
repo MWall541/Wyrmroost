@@ -1,7 +1,7 @@
 package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.entities.util.animation.IAnimatedEntity;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import WolfShotz.Wyrmroost.items.LDWyrmItem;
 import WolfShotz.Wyrmroost.items.LazySpawnEggItem;
 import WolfShotz.Wyrmroost.registry.WREntities;
@@ -50,7 +50,7 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
  * Seperated from AbstractDragonEntity:
  * This does not need/require much from that class and would instead create redundancies. do this instead.
  */
-public class LDWyrmEntity extends AnimalEntity implements IAnimatedEntity
+public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 {
     public static final String DATA_BURROWED = "Burrowed";
     public static final Animation BITE_ANIMATION = new Animation(10);

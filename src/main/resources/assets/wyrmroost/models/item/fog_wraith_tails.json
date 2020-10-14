@@ -1,0 +1,29 @@
+{
+  "parent": "builtin/entity",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -100,
+        0,
+        0
+      ],
+      "translation": [
+        8,
+        0,
+        -5
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        -180,
+        0,
+        0
+      ],
+      "translation": [
+        8,
+        -12,
+        1
+      ]
+    }
+  }
+}
