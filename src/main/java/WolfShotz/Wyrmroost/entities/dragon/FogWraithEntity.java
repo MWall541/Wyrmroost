@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.entities.dragon;
 
 import WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import WolfShotz.Wyrmroost.entities.util.EntityDataEntry;
+import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.registry.WREntities;
 import WolfShotz.Wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
@@ -23,8 +24,10 @@ public class FogWraithEntity extends AbstractDragonEntity
 {
     private static final DataParameter<Boolean> STEALTH = EntityDataManager.createKey(FogWraithEntity.class, DataSerializers.BOOLEAN);
 
-    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat stealthTimer = new TickFloat().setLimit(0, 1);
+    public static final Animation GRAB_AND_ATTACK_ANIMATION = new Animation(400);
+
+    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1f);
+    public final TickFloat stealthTimer = new TickFloat().setLimit(0, 0.85f);
 
     public FogWraithEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -54,7 +57,7 @@ public class FogWraithEntity extends AbstractDragonEntity
     {
         super.livingTick();
         flightTimer.add(isFlying()? 0.1f : -0.1f);
-        stealthTimer.add(isInvisible()? 0.1f : -0.1f);
+        stealthTimer.add(isStealth()? 0.05f : -0.05f);
     }
 
     @Override
@@ -67,6 +70,22 @@ public class FogWraithEntity extends AbstractDragonEntity
     public Collection<? extends IItemProvider> getFoodItems()
     {
         return null;
+    }
+
+    public boolean isStealth()
+    {
+        return dataManager.get(STEALTH);
+    }
+
+    public void setStealth(boolean b)
+    {
+        dataManager.set(STEALTH, b);
+    }
+
+    @Override
+    public Animation[] getAnimations()
+    {
+        return new Animation[] {GRAB_AND_ATTACK_ANIMATION};
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()

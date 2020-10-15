@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.entities.dragon.FogWraithEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * WRFogWraith - Ukan
@@ -780,6 +781,7 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
     @Override
     public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
+        alpha = -entity.stealthTimer.get() + 1;
         body2.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
@@ -794,6 +796,8 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
         this.entity = entity;
         float frame = entity.ticksExisted + partialTick;
         boolean flying = entity.flightTimer.get() > 0;
+
+        animator.update(entity, partialTick);
 
         resetToDefaultPose();
 
@@ -845,6 +849,8 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
             membraneB5L.showModel = true;
         }
 
+        if (animator.setAnimation(FogWraithEntity.GRAB_AND_ATTACK_ANIMATION)) grabAttackAnim(frame, partialTick);
+
         flight(entity.flightTimer.get(partialTick), frame);
 
         idle(frame, partialTick);
@@ -878,7 +884,16 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
 
         // tail
         for (int i = 0; i < tails.length; i++)
-            animateTail(i, partialTick, -entity.flightTimer.get(partialTick) + 1);
+        {
+            float amount = -entity.flightTimer.get(partialTick) + 1;
+            if (i == 0 && entity.getAnimation() == FogWraithEntity.GRAB_AND_ATTACK_ANIMATION)
+            {
+                float tick = MathHelper.clamp(-(entity.getAnimationTick() / 8f) + 1,0, 1);
+                float prev = MathHelper.clamp(-((entity.getAnimationTick() - 1f) / 8f) + 1,0, 1);
+                amount = MathHelper.lerp(partialTick, prev, tick);
+            }
+            animateTail(i, frame, amount);
+        }
     }
 
     public void animateTail(int generation, float tick, float swingAmount)
@@ -888,7 +903,6 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
         if (generation == 1 || generation == 2) waveDegree = -waveDegree;
         chainWave(tails[generation], globalSpeed - 0.4f, waveDegree, -2, tick, swingAmount * 0.5f);
         chainSwing(tails[generation], globalSpeed - (generation > 1? 0.38f : 0.35f), (generation == 1 || generation == 2? -0.4f : 0.4f), -2, tick, swingAmount * 0.5f);
-
     }
 
     private void flight(float v, float frame)
@@ -945,10 +959,20 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
             rotate(tails[i][0], i < 2? -0.5f : 0.3f, i % 2 == 0? -0.3f : 0.3f, 0);
             if (i > 0)
             {
-                for (int j = 0; j < tails[i].length; j++) tails[i][j].rotateAngleX = tails[0][j].rotateAngleX;
+                for (int j = 0; j < tails[i].length; j++)
+                    tails[i][j].rotateAngleX = i % 2 == 0? tails[0][j].rotateAngleX : -tails[0][j].rotateAngleX;
             }
         }
 
         chainWave(headArray, globalSpeed - 0.2f, 0.1f, 3, frame, v * 0.5f);
+    }
+
+    public void grabAttackAnim(float frame, float partialTicks)
+    {
+        WRModelRenderer[] parts = tails[0];
+        animator.startKeyframe(1);
+        animator.rotate(parts[0], 0.3f, 0, 0);
+        animator.endKeyframe();
+        animator.setStaticKeyframe(100);
     }
 }

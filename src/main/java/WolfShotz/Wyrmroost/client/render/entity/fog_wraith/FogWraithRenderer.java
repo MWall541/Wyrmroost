@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.client.render.entity.fog_wraith;
 
 import WolfShotz.Wyrmroost.Wyrmroost;
+import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.client.render.entity.AbstractDragonRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.FogWraithEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -30,7 +31,15 @@ public class FogWraithRenderer extends AbstractDragonRenderer<FogWraithEntity, F
     @Override
     protected RenderType func_230496_a_(FogWraithEntity entity, boolean isInvisible, boolean visibleOnClient, boolean glowing)
     {
+        if (entity.stealthTimer.get() > 0) return RenderHelper.getEntityTranslucent(TEXTURE);
+
         return super.func_230496_a_(entity, isInvisible, visibleOnClient, glowing);
+    }
+
+    @Override
+    protected void applyRotations(FogWraithEntity entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks)
+    {
+
     }
 
     @Override
