@@ -3,6 +3,7 @@ package WolfShotz.Wyrmroost;
 import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.data.DataGatherer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
+import WolfShotz.Wyrmroost.entities.dragon.FogWraithEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
 import WolfShotz.Wyrmroost.entities.util.animation.CapabilityAnimationHandler;
 import WolfShotz.Wyrmroost.items.base.ArmorBase;
@@ -18,7 +19,6 @@ import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -83,7 +83,7 @@ public class CommonEvents
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-        dragon.setFlying(true);
+        ((FogWraithEntity) dragon).setSteath(!((FogWraithEntity)dragon).isStealth());
         if (player.isSneaking()) dragon.tame(true, player);
         else
         {
@@ -92,7 +92,6 @@ public class CommonEvents
         }
     }
 
-    @SubscribeEvent
     public static void onChangeEquipment(LivingEquipmentChangeEvent evt)
     {
         ArmorBase initial;
