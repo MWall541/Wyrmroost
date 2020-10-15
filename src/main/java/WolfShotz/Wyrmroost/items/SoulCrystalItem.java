@@ -14,7 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -162,8 +165,19 @@ public class SoulCrystalItem extends Item
 
     private static boolean isSuitableEntity(LivingEntity entity)
     {
-        if (entity instanceof AbstractDragonEntity) return true;
-        ResourceLocation name = entity.getType().getRegistryName();
-        return name.getNamespace().equals("dragonmounts") && name.getPath().contains("dragon");
+        if (entity instanceof TameableEntity)
+        {
+            if (entity instanceof AbstractDragonEntity) return true;
+            String modID = entity.getType().getRegistryName().getNamespace();
+            switch (modID)
+            {
+                case "dragonmounts":
+                case "wings":
+                    return true;
+                default:
+                    break;
+            }
+        }
+        return false;
     }
 }
