@@ -159,10 +159,16 @@ public class RenderHelper extends RenderType
         private AxisAlignedBB aabb = null;
         private int color = 0xff0000ff;
 
-        public void queue(AxisAlignedBB aabb)
+        public DebugBox queue(AxisAlignedBB aabb)
+        {
+            return queue(aabb, Integer.MAX_VALUE);
+        }
+
+        public DebugBox queue(AxisAlignedBB aabb, int time)
         {
             this.aabb = aabb;
-            this.time = Integer.MAX_VALUE;
+            this.time = time;
+            return this;
         }
 
         public void setColor(int color)

@@ -227,7 +227,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (getAnimation() != NO_ANIMATION)
         {
             ++animationTick;
-            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
+//            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
     }
 
@@ -561,7 +561,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         attackInAABB(aabb, false, 0);
         List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
-        if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb);
+        if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb, 1000);
         for (LivingEntity attacking : attackables) attackEntityAsMob(attacking);
     }
 
@@ -723,7 +723,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 if (!world.isRemote && pair.getFirst() != null && rand.nextFloat() < pair.getSecond())
                     addPotionEffect(new EffectInstance(pair.getFirst()));
         }
-        if (item.hasContainerItem(stack)) entityDropItem(item.getContainerItem(stack), (float) mouth.y);
+        if (item.hasContainerItem(stack)) entityDropItem(item.getContainerItem(stack), (float) (mouth.y - getPosY()));
         stack.shrink(1);
 
         return stack;

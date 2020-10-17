@@ -1,6 +1,7 @@
 package WolfShotz.Wyrmroost.items;
 
 import WolfShotz.Wyrmroost.client.render.FogWraithTailsStackRenderer;
+import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
 import WolfShotz.Wyrmroost.entities.util.animation.CapabilityAnimationHandler;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
@@ -102,7 +103,8 @@ public class FogWraithTailsItem extends Item
         }
         else if (entity instanceof PlayerEntity && animation == TAIL_SWIPE_ANIMATION && (tick == 2 || tick == 6))
         {
-            AxisAlignedBB aabb = entity.getBoundingBox().grow(1).offset(entity.getLookVec().mul(2, 0, 2));
+            AxisAlignedBB aabb = entity.getBoundingBox().grow(1).offset(entity.getLookVec().mul(1.7, 0.7f, 1.7));
+            RenderHelper.DebugBox.INSTANCE.queue(aabb, 100);
             boolean playHitSound = false;
             for (Entity attacking : world.getEntitiesInAABBexcluding(entity, aabb, e -> e instanceof LivingEntity && !e.isOnSameTeam(entity)))
                 playHitSound |= attackEntity((PlayerEntity) entity, (LivingEntity) attacking, 8);

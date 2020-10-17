@@ -4,6 +4,7 @@ import WolfShotz.Wyrmroost.client.model.ModelAnimator;
 import WolfShotz.Wyrmroost.client.model.WREntityModel;
 import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.entities.dragon.FogWraithEntity;
+import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
@@ -16,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
 public class FogWraithModel extends WREntityModel<FogWraithEntity>
 {
     public final WRModelRenderer[][] tails;
-    public final ModelRenderer[] headArray;
+    public final WRModelRenderer[] headArray;
     public WRModelRenderer body2;
     public WRModelRenderer body1;
     public WRModelRenderer body3;
@@ -766,7 +767,7 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
                 {tailL1_4, tailL2_4, tailL3_4, tailL4_4, tailL5_4, tailL6_4, tailL7_4, tailL8_4, tailL9_4, tailL10_4, tailL11_4, tailL12_4}, // bottom right
         };
 
-        headArray = new ModelRenderer[] {neck1, neck2, neck3, neck4, neck5, neck6, neck7, head};
+        headArray = new WRModelRenderer[] {neck1, neck2, neck3, neck4, neck5, neck6, neck7, head};
 
         setRotateAngle(tailL1_1, 0.9f, 0.3f, 0);
         setRotateAngle(tailL1_2, 0.9f, -0.3f, 0);
@@ -849,50 +850,57 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
             membraneB5L.showModel = true;
         }
 
+        float swingAmount = 0.5f;
+
         if (animator.setAnimation(FogWraithEntity.GRAB_AND_ATTACK_ANIMATION)) grabAttackAnim(frame, partialTick);
+        if (animator.setAnimation(FogWraithEntity.BITE_ANIMATION)) biteAnim();
+        if (animator.setAnimation(FogWraithEntity.SCREECH_ANIMATION))
+        {
+            screechAnim(frame, swingAmount);
+        }
 
         flight(entity.flightTimer.get(partialTick), frame);
 
-        idle(frame, partialTick);
+        if (entity.getAnimation() == FogWraithEntity.SCREECH_ANIMATION)
+            swingAmount *= getAnimationSwingDelta(10f, entity.getAnimationTick(), partialTick);
+
+        idle(frame, swingAmount, partialTick);
     }
 
-    public void idle(float frame, float partialTick)
+    public void idle(float frame, float swingAmount, float partialTick)
     {
-        walk(body1, globalSpeed - 0.43f, 0.1f, false, 0, 0, frame, 0.5f);
+        walk(body1, globalSpeed - 0.43f, 0.1f, false, 0, 0, frame, swingAmount);
 
-        chainWave(headArray, globalSpeed - 0.43f, 0.05f, -2, frame, 0.5f);
+        chainWave(headArray, globalSpeed - 0.43f, 0.05f, -2, frame, swingAmount);
 
-        swing(wingB1R, globalSpeed - 0.43f, -0.1f, false, 0, 0, frame, 0.5f);
-        swing(wingB2R, globalSpeed - 0.43f, -0.1f, false, 0, 0, frame, 0.5f);
-        swing(wingB3R, globalSpeed - 0.43f, 0.2f, false, 0, 0, frame, 0.5f);
+        swing(wingB1R, globalSpeed - 0.43f, -0.1f, false, 0, 0, frame, swingAmount);
+        swing(wingB2R, globalSpeed - 0.43f, -0.1f, false, 0, 0, frame, swingAmount);
+        swing(wingB3R, globalSpeed - 0.43f, 0.2f, false, 0, 0, frame, swingAmount);
 
-        swing(wingB1L, globalSpeed - 0.43f, -0.1f, true, 0, 0, frame, 0.5f);
-        swing(wingB2L, globalSpeed - 0.43f, -0.1f, true, 0, 0, frame, 0.5f);
-        swing(wingB3L, globalSpeed - 0.43f, 0.2f, true, 0, 0, frame, 0.5f);
+        swing(wingB1L, globalSpeed - 0.43f, -0.1f, true, 0, 0, frame, swingAmount);
+        swing(wingB2L, globalSpeed - 0.43f, -0.1f, true, 0, 0, frame, swingAmount);
+        swing(wingB3L, globalSpeed - 0.43f, 0.2f, true, 0, 0, frame, swingAmount);
 
-        flap(wingA1R, globalSpeed - 0.45f, 0.2f, false, 0, 0, frame, 0.5f);
-        swing(wingA2R, globalSpeed - 0.45f, 0.2f, false, 0, 0, frame, 0.5f);
-        swing(wingA3R, globalSpeed - 0.45f, -0.09f, false, 0, 0, frame, 0.5f);
-        swing(fingerA1_1R, globalSpeed - 0.45f, -0.2f, false, 0.5f, 0, frame, 0.5f);
-        swing(fingerA1_2R, globalSpeed - 0.45f, -0.1f, false, 0.5f, 0, frame, 0.5f);
+        flap(wingA1R, globalSpeed - 0.45f, 0.2f, false, 0, 0, frame, swingAmount);
+        swing(wingA2R, globalSpeed - 0.45f, 0.2f, false, 0, 0, frame, swingAmount);
+        swing(wingA3R, globalSpeed - 0.45f, -0.09f, false, 0, 0, frame, swingAmount);
+        swing(fingerA1_1R, globalSpeed - 0.45f, -0.2f, false, 0.5f, 0, frame, swingAmount);
+        swing(fingerA1_2R, globalSpeed - 0.45f, -0.1f, false, 0.5f, 0, frame, swingAmount);
 
-        flap(wingA1L, globalSpeed - 0.45f, 0.1f, false, 0, 0, frame, 0.5f);
-        swing(wingA2L, globalSpeed - 0.45f, 0.2f, true, 0, 0, frame, 0.5f);
-        swing(wingA3L, globalSpeed - 0.45f, -0.09f, true, 0, 0, frame, 0.5f);
-        swing(fingerA1_1L, globalSpeed - 0.45f, -0.2f, true, 0.5f, 0, frame, 0.5f);
-        swing(fingerA1_2L, globalSpeed - 0.45f, -0.1f, true, 0.5f, 0, frame, 0.5f);
+        flap(wingA1L, globalSpeed - 0.45f, 0.1f, false, 0, 0, frame, swingAmount);
+        swing(wingA2L, globalSpeed - 0.45f, 0.2f, true, 0, 0, frame, swingAmount);
+        swing(wingA3L, globalSpeed - 0.45f, -0.09f, true, 0, 0, frame, swingAmount);
+        swing(fingerA1_1L, globalSpeed - 0.45f, -0.2f, true, 0.5f, 0, frame, swingAmount);
+        swing(fingerA1_2L, globalSpeed - 0.45f, -0.1f, true, 0.5f, 0, frame, swingAmount);
 
         // tail
         for (int i = 0; i < tails.length; i++)
         {
-            float amount = -entity.flightTimer.get(partialTick) + 1;
+            swingAmount *= -entity.flightTimer.get(partialTick) + 1;
             if (i == 0 && entity.getAnimation() == FogWraithEntity.GRAB_AND_ATTACK_ANIMATION)
-            {
-                float tick = MathHelper.clamp(-(entity.getAnimationTick() / 8f) + 1,0, 1);
-                float prev = MathHelper.clamp(-((entity.getAnimationTick() - 1f) / 8f) + 1,0, 1);
-                amount = MathHelper.lerp(partialTick, prev, tick);
-            }
-            animateTail(i, frame, amount);
+                swingAmount *= getAnimationSwingDelta(8f, entity.getAnimationTick(), partialTick);
+
+            animateTail(i, frame, swingAmount);
         }
     }
 
@@ -901,8 +909,8 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
         float waveDegree = 0.4f;
         if (generation > 1) waveDegree = 0.1f;
         if (generation == 1 || generation == 2) waveDegree = -waveDegree;
-        chainWave(tails[generation], globalSpeed - 0.4f, waveDegree, -2, tick, swingAmount * 0.5f);
-        chainSwing(tails[generation], globalSpeed - (generation > 1? 0.38f : 0.35f), (generation == 1 || generation == 2? -0.4f : 0.4f), -2, tick, swingAmount * 0.5f);
+        chainWave(tails[generation], globalSpeed - 0.4f, waveDegree, -2, tick, swingAmount);
+        chainSwing(tails[generation], globalSpeed - (generation > 1? 0.38f : 0.35f), (generation == 1 || generation == 2? -0.4f : 0.4f), -2, tick, swingAmount);
     }
 
     private void flight(float v, float frame)
@@ -974,5 +982,84 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
         animator.rotate(parts[0], 0.3f, 0, 0);
         animator.endKeyframe();
         animator.setStaticKeyframe(100);
+    }
+
+    public void biteAnim()
+    {
+        animator.startKeyframe(4);
+        animator.rotate(neck1, -0.3f, 0, 0);
+        animator.rotate(neck2, -0.3f, 0, 0);
+        animator.rotate(neck3, -0.2f, 0, 0);
+        animator.rotate(neck4, 0.5f, 0, 0);
+        animator.rotate(neck5, 0.5f, 0, 0);
+        animator.rotate(neck6, 0.4f, 0, 0);
+        animator.rotate(jaw, 1f, 0, 0);
+        animator.endKeyframe();
+        animator.startKeyframe(3);
+        for (WRModelRenderer head : headArray) animator.rotate(head, -head.rotateAngleX, 0, 0);
+        animator.rotate(neck1, 0.85f, 0, 0);
+        animator.rotate(head, 0.2f, 0, 0);
+        animator.endKeyframe();
+        animator.resetKeyframe(6);
+    }
+
+    public void screechAnim(float frame, float swingAmount)
+    {
+        animator.startKeyframe(10);
+        animator.rotate(body1, 0.4f, 0, 0);
+
+        animator.rotate(neck1, 1.2f, 0, 0);
+        animator.rotate(neck2, 0.2f, 0, 0);
+        animator.rotate(neck3, -0.2f, 0, 0);
+        animator.rotate(neck4, -0.15f, 0, 0);
+        animator.rotate(neck5, -1.2f, 0, 0);
+        animator.rotate(neck6, -0.1f, 0, 0);
+        animator.rotate(neck7, -0.1f, 0, 0);
+        animator.rotate(jaw, 1.2f, 0, 0);
+        animator.rotate(head, -0.5f, 0, 0);
+
+        animator.rotate(wingA1R, -2, -0.4f, 0.7f);
+        animator.rotate(wingA2R, 0, 1.8f, 0);
+        animator.rotate(membraneA4R, 0, -2.4f, 0);
+        animator.rotate(membraneA6R, 0, 1.2f, 0);
+        animator.rotate(wingA3R, 0, -3.1f, 0);
+
+        animator.rotate(wingA1L, -2, 0.4f, -0.7f);
+        animator.rotate(wingA2L, 0, -1.8f, 0);
+        animator.rotate(membraneA4L, 0, 2.4f, 0);
+        animator.rotate(membraneA6L, 0, -1.2f, 0);
+        animator.rotate(wingA3L, 0, 3.1f, 0);
+
+        animator.rotate(wingB1R, 0, -0.6f, 0);
+        animator.rotate(wingB2R, -0.5f, -0.3f, 0.2f);
+        animator.rotate(wingB3R, 0, 0.3f, 0);
+        animator.rotate(fingerB1_2R, 0, -0.3f, 0);
+        animator.rotate(membraneB5R, -0.5f, 0, 0);
+        animator.rotate(membraneB6R, -0.5f, 0, 0);
+
+        animator.rotate(wingB1L, 0, 0.6f, 0);
+        animator.rotate(wingB2L, -0.5f, 0.3f, -0.2f);
+        animator.rotate(wingB3L, 0, -0.3f, 0);
+        animator.rotate(fingerB1_2L, 0, 0.3f, 0);
+        animator.rotate(membraneB5L, -0.5f, 0, 0);
+        animator.rotate(membraneB6L, -0.5f, 0, 0);
+        for (int i = 0; i < tails.length; i++)
+        {
+            for (WRModelRenderer part : tails[i])
+            {
+                animator.rotate(part, i < 2? 0.1f : -0.1f, i % 2 != 0? -0.3f : 0.3f, 0);
+            }
+        }
+        animator.endKeyframe();
+        animator.setStaticKeyframe(50);
+        animator.resetKeyframe(10);
+
+        int tick = entity.getAnimationTick();
+        if (tick > 5 && tick < 60)
+        {
+            float delta = (Math.min(MathHelper.sin(((tick - 6) / 54f) * Mafs.PI) * 2, 1) * 0.5f);
+            chainFlap(headArray, globalSpeed + 0.5f, 0.05f, -2.5, frame, delta);
+            chainSwing(headArray, globalSpeed + 0.5f, 0.03f, -2.5, frame, delta);
+        }
     }
 }

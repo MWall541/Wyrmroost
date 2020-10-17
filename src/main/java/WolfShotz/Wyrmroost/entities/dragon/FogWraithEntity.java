@@ -13,10 +13,13 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.world.World;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
@@ -25,6 +28,8 @@ public class FogWraithEntity extends AbstractDragonEntity
     private static final DataParameter<Boolean> STEALTH = EntityDataManager.createKey(FogWraithEntity.class, DataSerializers.BOOLEAN);
 
     public static final Animation GRAB_AND_ATTACK_ANIMATION = new Animation(400);
+    public static final Animation BITE_ANIMATION = new Animation(13);
+    public static final Animation SCREECH_ANIMATION = new Animation(100);
 
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1f);
     public final TickFloat stealthTimer = new TickFloat().setLimit(0, 0.85f);
@@ -58,6 +63,36 @@ public class FogWraithEntity extends AbstractDragonEntity
         super.livingTick();
         flightTimer.add(isFlying()? 0.1f : -0.1f);
         stealthTimer.add(isStealth()? 0.05f : -0.05f);
+
+        Animation animation = getAnimation();
+        int tick = getAnimationTick();
+
+        if (animation == BITE_ANIMATION && tick == 5)
+        {
+            attackInAABB(getBoundingBox().offset(getLookVec().mul(2.5, 2.5, 2.5)).grow(-0.3));
+        }
+    }
+
+    @Override
+    public boolean attackEntityAsMob(Entity entity)
+    {
+        if (super.attackEntityAsMob(entity) && entity instanceof LivingEntity)
+        {
+            int i = 5;
+            switch (world.getDifficulty())
+            {
+                case HARD:
+                    i = 12; break;
+                case NORMAL:
+                    i = 8; break;
+                default:
+                    break;
+            }
+            ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.WITHER, i * 20, 1));
+            ((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, 500));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -69,7 +104,7 @@ public class FogWraithEntity extends AbstractDragonEntity
     @Override
     public Collection<? extends IItemProvider> getFoodItems()
     {
-        return null;
+        return Collections.emptySet();
     }
 
     public boolean isStealth()
@@ -85,7 +120,7 @@ public class FogWraithEntity extends AbstractDragonEntity
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {GRAB_AND_ATTACK_ANIMATION};
+        return new Animation[] {GRAB_AND_ATTACK_ANIMATION, BITE_ANIMATION, SCREECH_ANIMATION};
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()

@@ -96,7 +96,7 @@ public class FogWraithTailsStackRenderer extends ItemStackTileEntityRenderer
             default:
                 for (int i = 0; i < model.tails.length; i++)
                 {
-                    model.animateTail(i, tick, i == tailUseNum? -timer + 1: 1);
+                    model.animateTail(i, tick, (i == tailUseNum? (-timer + 1) : 1f) * 0.5f);
                     model.tails[i][0].render(ms, buffer, light, overlay);
                 }
         }

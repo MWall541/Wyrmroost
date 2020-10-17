@@ -87,7 +87,7 @@ public class DragonEggItem extends Item
         
         if (type.isPresent())
         {
-            String dragonTranslation = type.get().getName().getUnformattedComponentText();
+            String dragonTranslation = type.get().getName().getString();
             return new TranslationTextComponent(dragonTranslation + " ").append(new TranslationTextComponent(getTranslationKey()));
         }
         

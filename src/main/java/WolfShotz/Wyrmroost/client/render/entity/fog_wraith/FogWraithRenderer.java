@@ -39,7 +39,7 @@ public class FogWraithRenderer extends AbstractDragonRenderer<FogWraithEntity, F
     @Override
     protected void applyRotations(FogWraithEntity entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks)
     {
-
+        super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
     }
 
     @Override

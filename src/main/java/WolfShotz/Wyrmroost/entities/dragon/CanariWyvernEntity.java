@@ -314,11 +314,11 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             {
                 repathTimer = 0;
                 if (!isFlying()) setFlying(true);
-                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosYEye(), target.getPosZ(), 1);
+                getNavigator().tryMoveToXYZ(target.getPosX(), target.getBoundingBox().maxY - 2, target.getPosZ(), 1);
                 getLookController().setLookPositionWithEntity(target, 90, 90);
             }
 
-            if (--attackDelay <= 0 && getDistanceSq(target) <= 2.25 + target.getWidth())
+            if (--attackDelay <= 0 && getDistanceSq(target.getPositionVec().add(0, target.getBoundingBox().getYSize(), 0)) <= 2.25 + target.getWidth())
             {
                 attackDelay = 20 + getRNG().nextInt(10);
                 AnimationPacket.send(CanariWyvernEntity.this, ATTACK_ANIMATION);

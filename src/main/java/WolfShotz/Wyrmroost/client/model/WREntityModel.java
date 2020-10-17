@@ -163,4 +163,11 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     }
 
     public void idle(float frame) {}
+
+    public float getAnimationSwingDelta(float speed, float tick, float partialTick)
+    {
+        float end = MathHelper.clamp(-(tick / speed) + 1, 0, 1);
+        float start = MathHelper.clamp(-((tick - 1f) / speed) + 1, 0, 1);
+        return MathHelper.lerp(partialTick, start, end);
+    }
 }

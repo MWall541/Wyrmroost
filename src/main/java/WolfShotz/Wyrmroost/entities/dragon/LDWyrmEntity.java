@@ -193,7 +193,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     }
 
     @Override
-    public boolean canDespawn(double distanceToClosestPlayer) { return !world.isDaytime(); }
+    public boolean canDespawn(double distanceToClosestPlayer) { return true; }
 
     @Override
     public void checkDespawn()
@@ -302,7 +302,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.DESERT)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 10, 2, 4));
+            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 2, 1, 3));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()

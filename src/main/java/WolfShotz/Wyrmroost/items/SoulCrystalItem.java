@@ -55,12 +55,13 @@ public class SoulCrystalItem extends Item
         }
         else // Client side Aesthetics
         {
-            for (int i = 0; i <= dragon.getWidth() * 25; ++i)
+            double width = dragon.getWidth();
+            for (int i = 0; i <= Math.floor(width) * 25; ++i)
             {
-                double calcX = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
-                double calcZ = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double calcX = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (width * 1.5);
+                double calcZ = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (width * 1.5);
                 double x = dragon.getPosX() + calcX;
-                double y = dragon.getPosY() + (dragon.getHeight() * 1.8f);
+                double y = dragon.getPosY() + (dragon.getHeight() * 1.8);
                 double z = dragon.getPosZ() + calcZ;
                 double xMot = -calcX / 5f;
                 double yMot = -(dragon.getHeight() / 8);
