@@ -59,13 +59,6 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         this.containedDragon = ModUtils.getEntityTypeByKey(packet.getAdditionalData().readString());
     }
 
-    @Override
-    public void onAddedToWorld()
-    {
-        super.onAddedToWorld();
-        correctConditions = getProperties().getConditions().test(this);
-    }
-
     // ================================
     //           Entity NBT
     // ================================
@@ -89,7 +82,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public String getDragonKey() { return EntityType.getKey(containedDragon).toString(); }
     
     // ================================
-    
+
     @Override
     public void tick()
     {
@@ -133,9 +126,6 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
                     world.setEntityState(this, (byte) WIGGLE_ID);
             }
         }
-        
-        EntitySize size = getSize();
-        if (getWidth() != size.width || getHeight() != size.height) recalculateSize();
     }
 
     @Override
