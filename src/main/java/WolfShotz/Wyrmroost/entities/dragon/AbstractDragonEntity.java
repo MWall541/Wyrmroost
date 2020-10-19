@@ -980,7 +980,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean canFly()
     {
-        return !isChild() && !getLeashed() && !canSwim() && !isRiding();
+        return !isChild() && !canSwim() && !isRiding();
     }
 
     /**
