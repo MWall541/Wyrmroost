@@ -10,7 +10,6 @@ import WolfShotz.Wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.coin_dragon.CoinDragonRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRenderer;
-import WolfShotz.Wyrmroost.client.render.entity.fog_wraith.FogWraithRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.orbwyrm.OrbwyrmRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
@@ -152,15 +151,6 @@ public class WREntities
 //            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
             .renderer(() -> OrbwyrmRenderer::new)
             .build(b -> b.size(2.8f, 3.2f));
-
-    public static final RegistryObject<EntityType<FogWraithEntity>> FOG_WRAITH = Builder.creature("fog_wraith", FogWraithEntity::new)
-            .attributes(FogWraithEntity::getAttributes)
-//            .spawnPlacement()
-//            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
-            .spawnEgg(0x788716, 0x3E623E)
-//            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
-            .renderer(() -> FogWraithRenderer::new)
-            .build(b -> b.size(2.6f, 3.3f));
 
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)

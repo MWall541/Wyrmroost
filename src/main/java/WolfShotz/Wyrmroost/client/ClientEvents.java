@@ -40,14 +40,15 @@ public class ClientEvents
     public static void load()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         bus.addListener(ClientEvents::clientSetup);
         bus.addListener(ClientEvents::stitchTextures);
         bus.addListener(ClientEvents::itemColors);
 
-        MinecraftForge.EVENT_BUS.addListener(RenderHelper::renderWorld);
-        MinecraftForge.EVENT_BUS.addListener(RenderHelper::renderEntities);
-        MinecraftForge.EVENT_BUS.addListener(ClientEvents::cameraPerspective);
+        forgeBus.addListener(RenderHelper::renderWorld);
+        forgeBus.addListener(RenderHelper::renderEntities);
+        forgeBus.addListener(ClientEvents::cameraPerspective);
     }
 
     // ====================

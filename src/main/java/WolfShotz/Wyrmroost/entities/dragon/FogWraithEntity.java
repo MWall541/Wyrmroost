@@ -39,6 +39,7 @@ public class FogWraithEntity extends AbstractDragonEntity
         super(dragon, world);
 
         registerDataEntry("IsStealth", EntityDataEntry.BOOLEAN, STEALTH, false);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.31);
     }
 
     @Override
@@ -94,6 +95,9 @@ public class FogWraithEntity extends AbstractDragonEntity
         }
         return false;
     }
+
+    @Override
+    public void handleSleep() {}
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)

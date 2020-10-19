@@ -7,6 +7,7 @@ import WolfShotz.Wyrmroost.entities.dragon.FogWraithEntity;
 import WolfShotz.Wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
@@ -152,6 +153,8 @@ public class FogWraithModel extends WREntityModel<FogWraithEntity>
 
     public FogWraithModel()
     {
+        super(RenderType::getEntityCutout);
+
         textureWidth = 300;
         textureHeight = 150;
         membraneA3L = new WRModelRenderer(this, 120, 30);
