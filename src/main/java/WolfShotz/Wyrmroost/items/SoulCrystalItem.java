@@ -14,10 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -29,6 +26,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+@SuppressWarnings("ConstantConditions")
 public class SoulCrystalItem extends Item
 {
     public static final String DATA_DRAGON = "DragonData";
@@ -169,13 +167,15 @@ public class SoulCrystalItem extends Item
         if (entity instanceof TameableEntity)
         {
             if (entity instanceof AbstractDragonEntity) return true;
-            String modID = entity.getType().getRegistryName().getNamespace();
-            switch (modID)
+            ResourceLocation rl = entity.getType().getRegistryName();
+            switch (rl.getNamespace())
             {
                 case "dragonmounts":
                 case "wings":
-                case "iceandfire":
                     return true;
+                case "iceandfire":
+                    String path = rl.getPath();
+                    return path.contains("dragon") || path.contains("amphithere");
                 default:
                     break;
             }
