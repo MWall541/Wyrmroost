@@ -174,6 +174,7 @@ public class SoulCrystalItem extends Item
             {
                 case "dragonmounts":
                 case "wings":
+                case "iceandfire":
                     return true;
                 default:
                     break;
