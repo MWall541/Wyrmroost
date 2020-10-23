@@ -73,6 +73,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
         registerDataEntry("KnockOutTime", EntityDataEntry.INTEGER, () -> knockOutTime, this::setKnockoutTime);
 
         setPathPriority(PathNodeType.DANGER_FIRE, 0);
@@ -144,6 +145,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         if (anim == ROAR_ANIMATION)
         {
+            if (animTime == 0) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1, true);
             ((LessShitLookController) getLookController()).restore();
             for (LivingEntity entity : getEntitiesNearby(10, this::isOnSameTeam))
                 entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
@@ -299,6 +301,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    public int getVariantForSpawn()
+    {
+        return getRNG().nextDouble() < 0.03? -1 : 0;
+    }
+
+    @Override
     protected boolean isMovementBlocked() { return super.isMovementBlocked() || isKnockedOut(); }
 
     @Override
@@ -307,7 +315,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     protected boolean canBeRidden(Entity entity)
     {
-        return !isChild() && !isKnockedOut() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
+        return !isChild() && !isKnockedOut() && isTamed();
     }
 
     @Override
@@ -381,13 +389,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public Animation[] getAnimations()
     {
         return new Animation[] {NO_ANIMATION, ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION};
-    }
-
-    @Override
-    public void setAnimation(Animation animation)
-    {
-        super.setAnimation(animation);
-        if (animation == ROAR_ANIMATION) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1, true);
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)

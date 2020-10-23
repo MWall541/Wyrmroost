@@ -48,7 +48,7 @@ public class WRSitGoal extends SitGoal
                 dragon.getNavigator().tryMoveToXYZ(pos.getX(), pos.getY(), pos.getZ(), 1.05);
             }
         }
-        else if (dragon.func_233684_eK_() != dragon.func_233685_eM_()) dragon.func_233686_v_(true);
+        else dragon.func_233686_v_(true);
     }
 
     private BlockPos findLandingPos()

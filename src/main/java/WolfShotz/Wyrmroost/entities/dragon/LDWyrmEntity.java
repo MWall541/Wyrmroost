@@ -37,7 +37,6 @@ import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -204,25 +203,21 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
             return;
         }
 
-        Entity player = world.getClosestPlayer(this, -1d);
-        Event.Result result = ForgeEventFactory.canEntityDespawn(this);
-        if (result == Event.Result.DENY)
+        switch (ForgeEventFactory.canEntityDespawn(this))
         {
-            idleTime = 0;
-            return;
-        }
-        else if (result == Event.Result.ALLOW)
-        {
-            remove();
-            return;
+            case DENY:
+                idleTime = 0;
+                return;
+            case ALLOW:
+                remove();
+                return;
+            default:
+                break;
         }
 
-        if (player != null)
-        {
-            double distanceSq = player.getDistanceSq(this);
-            if (distanceSq > 1024 && getRNG().nextInt(500) == 0 && canDespawn(distanceSq)) remove();
-            else if (distanceSq < 1024.0D) idleTime = 0;
-        }
+        Entity player = world.getClosestPlayer(this, 32);
+        if (player == null && getRNG().nextDouble() < 0.05) remove();
+        else idleTime = 0;
     }
 
     @Nullable

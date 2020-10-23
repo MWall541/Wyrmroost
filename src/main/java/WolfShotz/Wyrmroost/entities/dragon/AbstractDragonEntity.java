@@ -158,6 +158,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void setVariant(int variant) { dataManager.set(VARIANT, variant); }
 
+    /**
+     * @return true for male, false for female. anything else is a political abomination and needs to be cancelled.
+     */
     public boolean isMale() { return hasDataEntry(GENDER)? dataManager.get(GENDER) : true; }
 
     public void setGender(boolean sex) { dataManager.set(GENDER, sex); }
@@ -227,7 +230,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (getAnimation() != NO_ANIMATION)
         {
             ++animationTick;
-//            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
+            if (animationTick >= animation.getDuration()) setAnimation(NO_ANIMATION);
         }
     }
 
@@ -390,7 +393,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             }
         }
 
-        if (canBeRidden(player))
+        if (canBeRidden(player) && !player.isSneaking())
         {
             if (!world.isRemote) player.startRiding(this);
             return COMMON_SUCCESS;
@@ -941,7 +944,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean canPassengerSteer() // Only OWNERS can control their pets
     {
         Entity entity = getControllingPassenger();
-        return entity instanceof LivingEntity && isOwner((LivingEntity) entity);
+        if (entity instanceof PlayerEntity)
+        {
+            PlayerEntity player = (PlayerEntity) entity;
+            if (isOwner(player)) return !world.isRemote || player.isUser(); // fix vehicle-desync
+        }
+        return false;
     }
 
     @Nullable
@@ -976,7 +984,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Do not perform any AI actions while: Not Sleeping; not being controlled, etc.
      */
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || canPassengerSteer() || isRiding(); }
+    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isSleeping() || isRiding(); }
 
     public boolean canFly()
     {

@@ -130,7 +130,7 @@ public class SoulCrystalItem extends Item
                     .append(new StringTextComponent(String.format(" %s / %s", (int) (dragon.getHealth() / 2), (int) dragon.getMaxHealth() / 2))));
             LivingEntity owner = dragon.getOwner();
             if (owner != null)
-                tooltip.add(new StringTextComponent("Tamed by " + owner.getName().getUnformattedComponentText()));
+                tooltip.add(new StringTextComponent("Tamed by " + owner.getName().getString()));
         }
     }
 

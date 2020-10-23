@@ -15,7 +15,6 @@ import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +50,7 @@ public class StaffScreen extends Screen
         for (int i = 0; i < size; i++)
         {
             StaffAction action = actions.get(i);
-            ITextComponent name = new TranslationTextComponent(action.getTranslateKey(dragon));
+            ITextComponent name = action.getTranslation(dragon);
             double deg = 2 * Math.PI * i / size - Math.toRadians(90);
             int x = (int) (radius * Math.cos(deg));
             int y = (int) (radius * Math.sin(deg));

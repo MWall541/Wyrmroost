@@ -124,6 +124,7 @@ class LootTableData extends LootTableProvider
          * @param types the types to register an empty loot tables
          * @deprecated SHOULD ONLY USE THIS WHEN AN ENTITY ABSOLUTELY DOES NOT HAVE ONE, OR IN TESTING!
          */
+        @Deprecated
         public void registerEmptyTables(EntityType<?>... types)
         {
             for (EntityType<?> type : types)
@@ -176,6 +177,8 @@ class LootTableData extends LootTableProvider
             registerLootTable(WREntities.ALPINE.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6)))
                     .addLootPool(singleRollPool().addEntry(item(Items.FEATHER, 3, 10).acceptFunction(looting(3, 11)))));
+
+            registerEmptyTables(WREntities.ORBWYRM.get());
         }
 
         private static LootingEnchantBonus.Builder looting(float min, float max)

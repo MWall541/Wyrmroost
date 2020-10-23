@@ -16,6 +16,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.*;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -170,8 +171,13 @@ public enum StaffAction
 
     public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks) {}
 
-    public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
+    protected String getTranslateKey(@Nullable AbstractDragonEntity dragon)
     {
         return TRANSLATE_PATH + name().toLowerCase();
+    }
+
+    public TranslationTextComponent getTranslation(@Nullable AbstractDragonEntity dragon)
+    {
+        return new TranslationTextComponent(getTranslateKey(dragon));
     }
 }

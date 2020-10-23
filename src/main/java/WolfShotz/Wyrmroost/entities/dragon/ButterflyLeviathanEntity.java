@@ -451,7 +451,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public int getHorizontalFaceSpeed() { return 6; }
 
     @Override
-    public int getVariantForSpawn() { return getRNG().nextInt(2); }
+    public int getVariantForSpawn() { return getRNG().nextDouble() < 0.02 ? -1 : getRNG().nextInt(2); }
 
     @Override
     public boolean canFly() { return false; }

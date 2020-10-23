@@ -119,7 +119,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public int getVariantForSpawn()
     {
-        if (getRNG().nextInt(100) == 0) return -1;
+        if (getRNG().nextDouble() < 0.008) return -1;
         if (world.getBiome(getPosition()).getCategory() == Biome.Category.SAVANNA) return 1;
         return 0;
     }

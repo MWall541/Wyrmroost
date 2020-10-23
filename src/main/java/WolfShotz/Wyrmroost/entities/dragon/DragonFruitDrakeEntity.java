@@ -184,7 +184,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn) { return true; }
 
     @Override
-    public boolean canDespawn(double distanceToClosestPlayer) { return true; }
+    public boolean canDespawn(double distanceToClosestPlayer) { return !isTamed(); }
 
     @Override
     public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag)
@@ -260,7 +260,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public boolean canFly() { return false; }
 
     @Override
-    public int getVariantForSpawn() { return getRNG().nextInt(500) == 0? -1 : 0; }
+    public int getVariantForSpawn() { return getRNG().nextDouble() < 0.008? -1 : 0; }
 
     @Override
     protected boolean canBeRidden(Entity passenger)

@@ -35,8 +35,7 @@ public class NoExposureReplacementFeature extends Feature<ReplaceBlockConfig>
         for (Direction direction : DIRECTIONS)
         {
             BlockState state = world.getBlockState(pos.setAndMove(initialPos, direction));
-            if (state.isAir(world, pos))
-                return false;
+            if (state.isAir(world, pos)) return false;
         }
         return true;
     }

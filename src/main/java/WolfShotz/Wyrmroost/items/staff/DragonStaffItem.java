@@ -16,8 +16,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -112,8 +112,8 @@ public class DragonStaffItem extends Item
             AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
             if (dragon != null)
             {
-                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", new StringTextComponent(dragon.getName().getUnformattedComponentText()).mergeStyle(TextFormatting.AQUA)));
-                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", new TranslationTextComponent(getAction(stack).getTranslateKey(dragon)).mergeStyle(TextFormatting.AQUA).getString()));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", ((IFormattableTextComponent) dragon.getName()).mergeStyle(TextFormatting.AQUA)));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", getAction(stack).getTranslation(dragon)).mergeStyle(TextFormatting.AQUA));
             }
         }
     }
