@@ -9,11 +9,12 @@ import net.minecraft.util.ResourceLocation;
 
 public class OrbwyrmRenderer extends AbstractDragonRenderer<OrbwyrmEntity, OrbwyrmModel>
 {
-    public static final ResourceLocation TEXTURE = Wyrmroost.rl(BASE_PATH + "orbwyrm/body.png");
+    private static final ResourceLocation PALE = Wyrmroost.rl(BASE_PATH + "orbwyrm/body.png");
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
 
     public OrbwyrmRenderer(EntityRendererManager manager)
     {
-        super(manager, new OrbwyrmModel(), 2);
+        super(manager, new OrbwyrmModel(), 3.5f);
     }
 
     @Override
@@ -26,6 +27,15 @@ public class OrbwyrmRenderer extends AbstractDragonRenderer<OrbwyrmEntity, Orbwy
     @Override
     public ResourceLocation getEntityTexture(OrbwyrmEntity entity)
     {
-        return TEXTURE;
+        if (entity.getVariant() == -1) return PALE;
+
+        int index = entity.isMale()? 3: 0;
+        index += entity.getVariant();
+        if (TEXTURES[index] == null)
+        {
+            String path = BASE_PATH + "orbwyrm/body_" + entity.getVariant() + (entity.isMale()? "m" : "f") + ".png";
+            return TEXTURES[index] = Wyrmroost.rl(path);
+        }
+        return TEXTURES[index];
     }
 }

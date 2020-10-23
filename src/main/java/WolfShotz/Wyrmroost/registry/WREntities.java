@@ -150,7 +150,7 @@ public class WREntities
             .spawnEgg(0x788716, 0x3E623E)
 //            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
             .renderer(() -> OrbwyrmRenderer::new)
-            .build(b -> b.size(2.8f, 3.2f));
+            .build(b -> b.size(2.8f, 3.76f));
 
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)

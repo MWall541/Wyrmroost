@@ -45,7 +45,6 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_HURT = entity("royalred.hurt");
     public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_ROAR = entity("royalred.roar");
     public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_DEATH = entity("royalred.death");
-    public static final RegistryObject<SoundEvent> ENTITY_ROYALRED_BREATH = entity("royalred.breath");
 
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_IDLE = entity("alpine.idle");
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_HURT = entity("alpine.hurt");
@@ -53,6 +52,11 @@ public class WRSounds
     public static final RegistryObject<SoundEvent> ENTITY_ALPINE_DEATH = entity("alpine.death");
 
     public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_IDLE = entity("coindragon.idle");
+
+    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_IDLE = entity("orbwyrm.idle");
+    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_HURT = entity("orbwyrm.hurt");
+    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_HISS = entity("orbwyrm.hiss");
+    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_DEATH = entity("orbwyrm.death");
 
     public static RegistryObject<SoundEvent> register(String name)
     {
