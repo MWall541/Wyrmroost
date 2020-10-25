@@ -438,11 +438,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 if (entity instanceof ServerPlayerEntity)
                     ((ServerPlayerEntity) entity).connection.vehicleFloating = false;
             }
-            else if (entity.isJumping)
-            {
-                if (canFly()) setFlying(true);
-                else setJumping(true);
-            }
+            else if (entity.isJumping && canFly()) setFlying(true);
 
             setAIMoveSpeed(speed);
             vec3d = new Vector3d(moveX, moveY, moveZ);
@@ -553,34 +549,32 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public void setStackInSlot(int slot, ItemStack stack) { invHandler.ifPresent(i -> i.setStackInSlot(slot, stack)); }
 
-    public void attackInFront(double radius)
+    public void attackInFront(float hitBoxOffset, double radius)
     {
-        AxisAlignedBB size = getBoundingBox();
-        AxisAlignedBB aabb = size.offset(Mafs.getYawVec(renderYawOffset, 0, size.getXSize())).grow(radius);
-        attackInAABB(aabb);
+        attackInFront(hitBoxOffset, radius, 0);
     }
 
-    public void attackInAABB(AxisAlignedBB aabb)
+    public void attackInFront(float hitBoxOffset, double radius, int disabledShieldTime)
     {
-        attackInAABB(aabb, false, 0);
-        List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
-        if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb, 1000);
-        for (LivingEntity attacking : attackables) attackEntityAsMob(attacking);
+        attackInBox(getBoundingBox()
+                        .offset(Vector3d.fromPitchYaw(0, renderYawOffset).scale(hitBoxOffset))
+                        .grow(radius),
+                disabledShieldTime);
     }
 
-    public void attackInAABB(AxisAlignedBB aabb, boolean disableShield, int shieldTime)
+    public void attackInBox(AxisAlignedBB aabb, int disabledShieldTime)
     {
         List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
         if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb);
         for (LivingEntity attacking : attackables)
         {
             attackEntityAsMob(attacking);
-            if (disableShield && attacking instanceof PlayerEntity)
+            if (disabledShieldTime > 0 && attacking instanceof PlayerEntity)
             {
                 PlayerEntity player = ((PlayerEntity) attacking);
                 if (player.isHandActive() && player.getActiveItemStack().isShield(player))
                 {
-                    player.getCooldownTracker().setCooldown(Items.SHIELD, shieldTime);
+                    player.getCooldownTracker().setCooldown(Items.SHIELD, disabledShieldTime);
                     player.resetActiveHand();
                     world.setEntityState(player, (byte) 9);
                 }
@@ -847,6 +841,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         isJumping = false;
         navigator.clearPath();
         setAttackTarget(null);
+        setRevengeTarget(null);
         setMoveForward(0);
         setMoveVertical(0);
     }
@@ -871,7 +866,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         Vector3d position = getEyePosition(1).subtract(0, 0.75d, 0);
         double dist = (getWidth() / 2) + 0.75d;
-        return position.add(getVectorForRotation(rotationPitch, rotationYawHead).mul(dist, dist, dist));
+        return position.add(getVectorForRotation(rotationPitch, rotationYawHead).scale(dist));
     }
 
     @Override
@@ -893,7 +888,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         if (entity == this) return true;
         if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
-        if (entity instanceof TameableEntity && ((TameableEntity) entity).getOwner() == getOwner()) return true;
+        if (entity instanceof TameableEntity && getOwner() != null && ((TameableEntity) entity).getOwner() == getOwner()) return true;
+        if (entity.getType() == getType()) return true;
         return entity.isOnScoreboardTeam(getTeam());
     }
 

@@ -29,11 +29,10 @@ public class OrbwyrmRenderer extends AbstractDragonRenderer<OrbwyrmEntity, Orbwy
     {
         if (entity.getVariant() == -1) return PALE;
 
-        int index = entity.isMale()? 3: 0;
-        index += entity.getVariant();
+        int index = (entity.isMale()? 0 : 3) + entity.getVariant();
         if (TEXTURES[index] == null)
         {
-            String path = BASE_PATH + "orbwyrm/body_" + entity.getVariant() + (entity.isMale()? "m" : "f") + ".png";
+            String path = BASE_PATH + "orbwyrm/body_" + entity.getVariant() + (index < 3? "m" : "f") + ".png";
             return TEXTURES[index] = Wyrmroost.rl(path);
         }
         return TEXTURES[index];

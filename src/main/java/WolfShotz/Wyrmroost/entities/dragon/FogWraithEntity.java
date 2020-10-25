@@ -70,7 +70,7 @@ public class FogWraithEntity extends AbstractDragonEntity
 
         if (animation == BITE_ANIMATION && tick == 5)
         {
-            attackInAABB(getBoundingBox().offset(getLookVec().mul(2.5, 2.5, 2.5)).grow(-0.3));
+            attackInFront(2.5f, 0.3);
         }
     }
 

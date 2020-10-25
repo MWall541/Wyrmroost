@@ -147,7 +147,7 @@ public class WREntities
             .attributes(OrbwyrmEntity::getAttributes)
 //            .spawnPlacement()
 //            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
-            .spawnEgg(0x788716, 0x3E623E)
+            .spawnEgg(0x41444F, 0x16171C)
 //            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
             .renderer(() -> OrbwyrmRenderer::new)
             .build(b -> b.size(2.8f, 3.76f));

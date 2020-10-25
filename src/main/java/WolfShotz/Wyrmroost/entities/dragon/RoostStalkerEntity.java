@@ -149,7 +149,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         if (!isTamed() && Tags.Items.EGGS.contains(item))
         {
             eat(stack);
-            if (tame(rand.nextInt(4) == 0, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
+            if (tame(getRNG().nextDouble() < 0.25, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
 
             return COMMON_SUCCESS;
         }

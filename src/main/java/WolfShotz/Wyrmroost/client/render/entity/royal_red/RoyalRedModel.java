@@ -715,7 +715,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
 
         if (!entity.func_233684_eK_() && !entity.isSleeping())
         {
-            if (flying) // Flight Cycle
+            if (entity.isFlying()) // Flight Cycle
             {
                 globalSpeed = 0.5f;
 
@@ -1117,17 +1117,6 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         animator.rotate(leg1R, -0.6f, 0, 0);
         animator.rotate(leg2R, 0.9f, 0, 0);
         animator.rotate(footR, 0.9f, 0, 0);
-        animator.endKeyframe();
-
-        animator.startKeyframe(3);
-        keepSlapStance();
-        animator.rotate(arm1R, -0.8f, 0.3f, 1f);
-        animator.rotate(arm2R, 0.5f, 0, 0.5f);
-        animator.rotate(body1, 0, 0, 0.3f);
-        animator.rotate(head, 0, 0, -0.3f);
-        animator.rotate(leg1R, -0.1f, 0, 0);
-        animator.rotate(leg2R, 0.3f, 0, 0);
-        animator.rotate(leg3R, 0.3f, 0, 0);
         animator.endKeyframe();
 
         animator.startKeyframe(3);

@@ -150,15 +150,15 @@ public class RoyalRedEntity extends AbstractDragonEntity
             for (LivingEntity entity : getEntitiesNearby(10, this::isOnSameTeam))
                 entity.addPotionEffect(new EffectInstance(Effects.STRENGTH, 60));
         }
-        else if (anim == SLAP_ATTACK_ANIMATION && (animTime == 10 || animTime == 15))
+        else if (anim == SLAP_ATTACK_ANIMATION && (animTime == 7 || animTime == 12))
         {
-            attackInFront(0.2);
-            if (animTime == 10) playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
+            attackInFront(getWidth(), 0.2);
+            if (animTime == 7) playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
             rotationYaw = rotationYawHead;
         }
         else if (anim == BITE_ATTACK_ANIMATION && animTime == 4)
         {
-            attackInFront(-0.3);
+            attackInFront(getWidth(), -0.3);
             playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
         }
     }
@@ -274,7 +274,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         Vector3d position = getEyePosition(1).subtract(0, 1.3d, 0);
         double dist = (getWidth() / 2) + 3.5d;
-        return position.add(getVectorForRotation(rotationPitch, rotationYawHead).mul(dist, dist, dist));
+        return position.add(getVectorForRotation(rotationPitch, rotationYawHead).scale(dist));
     }
 
     @Override

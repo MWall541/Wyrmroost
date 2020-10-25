@@ -2,6 +2,7 @@ package WolfShotz.Wyrmroost.entities.dragon.helpers.ai;
 
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.util.Mafs;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.util.math.MathHelper;
 
@@ -41,7 +42,7 @@ public class FlyerMoveController extends MovementController
                         dragon.getLookController().setLookPosition(posX, posY, posZ, dragon.getHorizontalFaceSpeed() * 3, 75);
 
                     dragon.rotationYaw = limitAngle(dragon.rotationYaw, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getHorizontalFaceSpeed());
-                    float speed = (float) this.speed * dragon.getTravelSpeed();
+                    float speed = (float) (dragon.getAttribute(Attributes.FLYING_SPEED).getValue() * this.speed);
                     dragon.setAIMoveSpeed(speed);
                     if (y != 0) dragon.setMoveVertical(y > 0? speed : -speed);
                 }

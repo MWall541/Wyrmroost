@@ -33,7 +33,6 @@ import net.minecraft.network.play.server.SEntityVelocityPacket;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -172,9 +171,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             if (tick == 8)
             {
                 playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f, true);
-                AxisAlignedBB size = getBoundingBox().shrink(0.15);
-                AxisAlignedBB aabb = size.offset(Mafs.getYawVec(renderYawOffset, 0, size.getXSize() * 1.2));
-                attackInAABB(aabb);
+                attackInFront(getWidth() * 1.2f, -0.15);
             }
         }
 

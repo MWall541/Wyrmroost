@@ -35,7 +35,6 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
@@ -228,11 +227,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         else if (animation == BITE_ANIMATION)
         {
             if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1, true);
-            else if (animTick == 6)
-            {
-                AxisAlignedBB aabb = getBoundingBox().offset(Mafs.getYawVec(rotationYaw, 0, 5.5)).grow(0.85);
-                attackInAABB(aabb, true, 40);
-            }
+            else if (animTick == 6) attackInFront(5.5f, 0.85, 40);
         }
     }
 
@@ -300,7 +295,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     {
         //@formatter:off
         return isInWater()? (float) getAttribute(ForgeMod.SWIM_SPEED.get()).getValue()
-                          : (float) getAttribute(MOVEMENT_SPEED).getValue() * 0.225f;
+                          : (float) getAttribute(MOVEMENT_SPEED).getValue();
         //@formatter:on
     }
 
@@ -550,7 +545,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                     renderYawOffset = rotationYaw = limitAngle(rotationYaw, rotationYawHead, getHorizontalFaceSpeed());
                     rotationPitch = limitAngle(rotationPitch, pitch, 90);
                     ((LessShitLookController) getLookController()).freeze();
-                    float speed = (float) this.speed * getTravelSpeed();
+                    float speed = isInWater()? (float) getAttribute(ForgeMod.SWIM_SPEED.get()).getValue() : (float) getAttribute(MOVEMENT_SPEED).getValue();
                     setAIMoveSpeed(speed);
                     if (isInWater())
                     {

@@ -582,7 +582,7 @@ public class OrbwyrmModel extends WREntityModel<OrbwyrmEntity>
     public void setRotationAngles(OrbwyrmEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        faceTarget(netHeadYaw, hashCode(), 1, necks);
+        faceTarget(netHeadYaw, headPitch, 1, necks);
     }
 
     @Override
@@ -609,26 +609,32 @@ public class OrbwyrmModel extends WREntityModel<OrbwyrmEntity>
         float amount = 0.5f * (-entity.sleepTimer.get(partialTicks) + 1f);
         float sitAmount = entity.sitTimer.get(partialTicks);
 
-        chainWave(necks, 0.05f, 0.025f, -1, frame, amount);
+        if (amount > 0)
+        {
+            chainWave(necks, 0.05f, 0.025f, -1, frame, amount);
 
-        walk(body1, 0.05f, 0.075f, false, 0, 0, frame, amount);
-        walk(body2, 0.05f, 0.075f, true, 0, 0, frame, amount);
-        swing(wing1R, 0.05f, 0.0375f, false, 0, 0, frame, amount);
-        flap(wing1R, 0.05f, 0.0375f, true, 0, 0, frame, amount * sitAmount);
+            walk(body1, 0.05f, 0.075f, false, 0, 0, frame, amount);
+            walk(body2, 0.05f, 0.075f, true, 0, 0, frame, amount);
+            swing(wing1R, 0.05f, 0.0375f, false, 0, 0, frame, amount);
+            flap(wing1R, 0.05f, 0.0375f, true, 0, 0, frame, amount * sitAmount);
 
-        walk(arm1R, 0.06f, 0.15f, false, 0, 0, frame, amount);
-        flap(arm1R, 0.075f, 0.15f, false, 0, 0, frame, amount);
-        walk(arm2R, 0.06f, 0.25f, false, 0, 0.5f, frame, amount);
-        walk(spikeR, 0.06f, 0.1f, false, 0, -0.5f, frame, amount);
+            walk(arm1R, 0.06f, 0.15f, false, 0, 0, frame, amount);
+            flap(arm1R, 0.075f, 0.15f, false, 0, 0, frame, amount);
+            walk(arm2R, 0.06f, 0.25f, false, 0, 0.5f, frame, amount);
+            walk(spikeR, 0.06f, 0.1f, false, 0, -0.5f, frame, amount);
+        }
 
         arm1R.copyRotationsTo(arm1L);
         arm2R.copyRotationsTo(arm2L);
         spikeR.copyRotationsTo(spikeL);
         wing1R.copyRotationsTo(wing1L);
 
-        amount *= -sitAmount + 1;
-        chainSwing(tails, 0.05f, 0.2f, -2, frame, amount);
-        flap(tail5, 0.05f, 0.2f, false, -1.122f, 0, frame, amount);
+        amount *= -sitAmount + 1; // tails movement is different when sitting
+        if (amount > 0)
+        {
+            chainSwing(tails, 0.05f, 0.2f, -2, frame, amount);
+            flap(tail5, 0.05f, 0.2f, false, -1.122f, 0, frame, amount);
+        }
     }
 
     private void sit(float v, float frame)
@@ -638,33 +644,42 @@ public class OrbwyrmModel extends WREntityModel<OrbwyrmEntity>
         rotate(body2, 0.1f, 0, 0);
         move(body1, 0, -5f, 0);
 
-        rotate(wing1R, -1f, -1f, 0.3f);
-        rotate(wing2R, 0, 0, 0.25f);
-        rotate(palmR, -0.2f, 0, 0);
+        rotate(wing1R, -0.4f, -0.8f, -0.1f);
+        rotate(wing2R, -0.1f, 0, 0);
+        rotate(palmR, 0.2f, 0, 0.3f);
 
         wing1R.copyRotationsTo(wing1L);
         wing2R.copyRotationsTo(wing2L);
         palmR.copyRotationsTo(palmL);
 
         rotate(neck1, 0.6f, 0, 0);
-        rotate(neck3, 0.6f, 0, 0);
+        rotate(neck3, 0.7f, 0, 0);
 
         rotate(tail1, 0.4f, 0, 0);
         rotate(tail2, 0.6f, 0, 0);
-        rotate(tail3, 0.4f, -0.4f, -0.3f);
-        rotate(tail4, 0.2f, -0.6f, 0.1f);
+        rotate(tail3, 0.4f, -0.6f, -0.4f);
+        rotate(tail4, 0.3f, -0.8f, 0);
         rotate(tail5, -0.1f, -0.7f, -0.1f);
-        rotate(tail6, -0.2f, -0.7f, 0);
+        rotate(tail6, -0.2f, -0.8f, 0);
         rotate(tail7, -0.1f, -0.6f, 0);
-        rotate(tail8, 0, -0.4f, 0);
-        rotate(tail9, 0, -0.4f, 0);
-        rotate(tail10, 0, -0.5f, 0);
-        rotate(tail11, 0, -0.6f, 0);
-        rotate(tail12, 0, 0.4f, 0);
+        rotate(tail8, 0, -0.6f, 0);
+        rotate(tail9, 0, -0.6f, 0);
+        rotate(tail10, -0.025f, 0.3f, 0);
+        rotate(tail11, 0, 0.6f, 0);
+        rotate(tail12, 0, 0.9f, 0.075f);
         rotate(tail13, 0, 0.9f, 0);
         rotate(tail14, 0, 1f, 0);
 
+        rotate(arm1R, 0.5f, 0, 0);
+        rotate(arm2R, -0.4f, 0, 0);
+        rotate(spikeR, 0.4f, 0, 0);
+
         chainSwing(tails, 0.05f, 0.01f, -2, frame, v * 0.5f);
+
+        walk(arm1R, 0.02f, 0.15f, false, 0, 0, frame, v * 0.5f);
+        flap(arm1R, 0.035f, 0.15f, false, 0, 0, frame, v * 0.5f);
+        walk(arm2R, 0.02f, 0.25f, false, 0, 0.5f, frame, v * 0.5f);
+        walk(spikeR, 0.01f, 0.1f, false, 0, -0.5f, frame, v * 0.5f);
     }
 
 
@@ -672,18 +687,9 @@ public class OrbwyrmModel extends WREntityModel<OrbwyrmEntity>
     {
         setTime(v);
 
-        for (WRModelRenderer part : necks) rotate(part, 0.275f, 0, 0);
         rotate(neck1, -0.875f, 0, 0);
-
-        rotate(arm1R, 0.5f, 0, 0);
-        rotate(arm2R, -0.4f, 0, 0);
-        rotate(spikeR, 0.4f, 0, 0);
-
-        if (v == 1)
-        {
-            for (int i = 0; i < eyes.length; i++) eyes[i].rotateAngleY += i < 3? Mafs.PI : -Mafs.PI;
-        }
-
+        for (WRModelRenderer part : necks) rotate(part, 0.275f, 0, 0);
+        if (v == 1) for (int i = 0; i < eyes.length; i++) eyes[i].rotateAngleY += i < 3? Mafs.PI : -Mafs.PI;
         chainWave(necks, 0.05f, 0.04f, -2, frame, v * 0.5f);
     }
 

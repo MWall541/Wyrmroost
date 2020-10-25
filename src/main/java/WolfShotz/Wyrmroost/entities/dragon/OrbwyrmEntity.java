@@ -55,6 +55,7 @@ public class OrbwyrmEntity extends AbstractDragonEntity
         else if (animation == BITE_ANIMATION)
         {
             if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_DEATH.get(), 1, 1, true);
+            else if (tick == 7) attackInFront(3.65f, -0.3f);
         }
     }
 

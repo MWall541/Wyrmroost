@@ -164,7 +164,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
 
         if (getAnimation() == BITE_ANIMATION && getAnimationTick() == 7 && canPassengerSteer())
         {
-            attackInFront(0);
+            attackInFront(getWidth(), 0);
             AxisAlignedBB aabb = getBoundingBox().grow(2).offset(Mafs.getYawVec(rotationYawHead, 0, 2));
             for (BlockPos pos : ModUtils.getBlockPosesInAABB(aabb))
             {
