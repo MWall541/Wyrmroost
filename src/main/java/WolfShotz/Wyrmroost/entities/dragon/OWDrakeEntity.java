@@ -87,7 +87,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new ControlledAttackGoal(this, 1.75, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, 2));
+        goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
@@ -116,7 +116,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean isSaddled() { return dataManager.get(SADDLED); }
 
     @Override
-    public int getVariantForSpawn()
+    public int determineVariant()
     {
         if (getRNG().nextDouble() < 0.008) return -1;
         if (world.getBiome(getPosition()).getCategory() == Biome.Category.SAVANNA) return 1;
@@ -328,8 +328,9 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public float getTravelSpeed()
     {
+
         float speed = (float) getAttribute(MOVEMENT_SPEED).getValue();
-        if (isSprinting()) speed += 0.8f;
+        if (canPassengerSteer()) speed += 0.85;
         return speed;
     }
 

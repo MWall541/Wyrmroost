@@ -717,6 +717,8 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
             }
             else // walk cycle
             {
+                bob(body1, 0.8f, 0.2f, false, limbSwing, limbSwingAmount);
+
                 walk(leg1L, globalSpeed, 1.1f, false, 0, 0.2f, limbSwing, limbSwingAmount);
                 walk(leg2L, globalSpeed, -1f, false, -1.6f, -1f, limbSwing, limbSwingAmount);
                 walk(foot1L, globalSpeed, 0.3f, false, -1.6f, 0.5f, limbSwing, limbSwingAmount);
