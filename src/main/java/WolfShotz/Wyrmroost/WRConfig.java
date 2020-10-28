@@ -6,6 +6,11 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * Configuration stuff for Wyrmroost
  * Try to keep "chance" values like so: Higher values, higher chances.
@@ -24,6 +29,7 @@ public class WRConfig
     public static double dfdBabyChance = 0.4d;
     private static boolean respectMobGriefing;
     private static boolean dragonGriefing;
+    public static Map<String, Integer> breedLimits;
 
     public static boolean canGrief(World world)
     {
@@ -118,26 +124,51 @@ public class WRConfig
         public final ForgeConfigSpec.DoubleValue breathFlammability;
         public final ForgeConfigSpec.BooleanValue respectMobGriefing;
         public final ForgeConfigSpec.BooleanValue dragonGriefing;
+        private static final List<String> BREED_LIMIT_DEFAULTS = new ArrayList<String>()
+        {{
+            add("butterfly_leviathan:1");
+            add("royal_red:2");
+        }};
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> breedLimits;
 
         public Server(ForgeConfigSpec.Builder builder)
         {
             builder.comment("Wyrmroost Dragon Options").push("dragons");
-            homeRadius = builder.comment("How far dragons can travel from their home points")
+            homeRadius = builder
+                    .comment("How far dragons can travel from their home points")
                     .translation("config.wyrmroost.homeradius")
-                    .defineInRange("homeRadius", 16, 6, 1024);
-            dfdBabyChance = builder.comment("Chances for a Dragon Fruit Drake to spawn as a baby. 0 = No Chance, 1 = (practically) Guaranteed. Higher values are better chances")
+                    .defineInRange("home_radius", 16, 6, 1024);
+
+            dfdBabyChance = builder
+                    .comment("Chances for a Dragon Fruit Drake to spawn as a baby",
+                            "0 = No Chance, 1 = (practically) Guaranteed. Higher values are better chances")
                     .translation("config.wyrmroost.dfdbabychance")
-                    .defineInRange("dfdBabyChance", 0.3d, 0, 1d);
-            breathFlammability = builder.comment("Base Flammability for Dragon Fire Breath. A value of 0 will disable fire block damage completely.")
+                    .defineInRange("dfd_baby_chance", 0.3, 0, 1);
+
+            breathFlammability = builder
+                    .comment("Base Flammability for Dragon Fire Breath.",
+                            "A value of 0 will disable fire block damage completely.")
                     .translation("config.wyrmroost.breathFlammability")
-                    .defineInRange("breathFlammability", 0.8, 0.0, 1.0);
+                    .defineInRange("breath_lammability", 0.8, 0, 1);
+
+            breedLimits = builder
+                    .comment("Breed Limit for each dragon. This determines how many times a certain dragon can breed.",
+                            "Leaving this blank will disable the functionality.")
+                    .translation("config.wyrmroost.breedlimits")
+                    .defineList("breed_limits", () -> BREED_LIMIT_DEFAULTS, o -> o instanceof String);
+
             builder.push("griefing");
-            respectMobGriefing = builder.comment("If True, Dragons will respect the Minecraft MobGriefing Gamerule. Else, follow \"dragonGriefing\" option")
+
+            respectMobGriefing = builder
+                    .comment("If True, Dragons will respect the Minecraft MobGriefing Gamerule. Else, follow \"dragonGriefing\" option")
                     .translation("config.wyrmroost.respectMobGriefing")
-                    .define("respectMobGriefing", true);
-            dragonGriefing = builder.comment("If true and not respecting MobGriefing rules, allow dragons to grief")
+                    .define("respect_mob_griefing", true);
+
+            dragonGriefing = builder
+                    .comment("If true and not respecting MobGriefing rules, allow dragons to grief")
                     .translation("config.wyrmroost.dragonGriefing")
-                    .define("dragonGriefing", true);
+                    .define("dragon_griefing", true);
+
             builder.pop();
             builder.pop();
         }
@@ -149,6 +180,7 @@ public class WRConfig
             WRConfig.fireBreathFlammability = INSTANCE.breathFlammability.get();
             WRConfig.respectMobGriefing = INSTANCE.respectMobGriefing.get();
             WRConfig.dragonGriefing = INSTANCE.dragonGriefing.get();
+            WRConfig.breedLimits = INSTANCE.breedLimits.get().stream().collect(Collectors.toMap(s -> s.split(":")[0], s -> Integer.valueOf(s.split(":")[1])));
         }
     }
 }

@@ -1,5 +1,6 @@
 package WolfShotz.Wyrmroost.entities.dragon.helpers.ai.goals;
 
+import WolfShotz.Wyrmroost.WRConfig;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.ai.goal.Goal;
@@ -12,16 +13,14 @@ import java.util.EnumSet;
 public class DragonBreedGoal extends Goal
 {
     protected final AbstractDragonEntity dragon;
-    protected final int limit;
     protected final EntityPredicate predicate;
     protected AbstractDragonEntity targetMate;
     protected int spawnBabyDelay;
 
-    public DragonBreedGoal(AbstractDragonEntity dragon, int limit)
+    public DragonBreedGoal(AbstractDragonEntity dragon)
     {
         setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         this.dragon = dragon;
-        this.limit = limit;
         this.predicate = new EntityPredicate()
                 .setDistance(dragon.getWidth() * 8)
                 .allowInvulnerable()
@@ -36,12 +35,13 @@ public class DragonBreedGoal extends Goal
      */
     public boolean shouldExecute()
     {
-        if (limit > 0 && dragon.breedCount >= limit)
+        if (!dragon.isInLove()) return false;
+        final int breedLimit = WRConfig.breedLimits.getOrDefault(dragon.getType().getRegistryName().getPath(), 0);
+        if (breedLimit > 0 && dragon.breedCount >= breedLimit)
         {
             dragon.resetInLove();
             return false;
         }
-        if (!dragon.isInLove()) return false;
         return (targetMate = getNearbyMate()) != null;
     }
 
