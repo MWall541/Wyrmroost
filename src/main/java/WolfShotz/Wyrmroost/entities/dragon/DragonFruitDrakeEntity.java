@@ -187,10 +187,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public boolean canDespawn(double distanceToClosestPlayer) { return !isTamed(); }
 
     @Override
-    public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag)
+    public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData data, @Nullable CompoundNBT dataTag)
     {
-        if (spawnData == null) spawnData = new AgeableData((float) WRConfig.dfdBabyChance);
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnData, dataTag);
+        if (data == null) data = new AgeableData((float) WRConfig.dfdBabyChance);
+        return super.onInitialSpawn(world, difficulty, reason, data, dataTag);
     }
 
     @Override
@@ -289,7 +289,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public static AttributeModifierMap.MutableAttribute getAttributes()
     {
         return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 20)
+                .createMutableAttribute(MAX_HEALTH, 15)
                 .createMutableAttribute(MOVEMENT_SPEED, 0.23)
                 .createMutableAttribute(ATTACK_DAMAGE, 3);
     }

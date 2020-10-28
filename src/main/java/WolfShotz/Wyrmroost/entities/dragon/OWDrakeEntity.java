@@ -375,11 +375,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public static AttributeModifierMap.MutableAttribute getAttributes()
     {
         return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 50)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.21)
-                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
+                .createMutableAttribute(MAX_HEALTH, 70)
+                .createMutableAttribute(MOVEMENT_SPEED, 0.2125)
+                .createMutableAttribute(KNOCKBACK_RESISTANCE, 0.75)
                 .createMutableAttribute(FOLLOW_RANGE, 20)
                 .createMutableAttribute(ATTACK_KNOCKBACK, 3.2)
-                .createMutableAttribute(ATTACK_DAMAGE, 5);
+                .createMutableAttribute(ATTACK_DAMAGE, 6);
     }
 }

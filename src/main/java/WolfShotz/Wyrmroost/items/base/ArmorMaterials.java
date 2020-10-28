@@ -16,9 +16,9 @@ import java.util.function.Supplier;
  */
 public enum ArmorMaterials implements IArmorMaterial
 {
-    BLUE_GEODE(new int[] {3, 6, 8, 3}, 2.5f, 48, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.BLUE_GEODE),
-    RED_GEODE(new int[] {3, 6, 9, 4}, 3f, 52, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE),
-    PURPLE_GEODE(new int[] {4, 8, 12, 6}, 4f, 60, 28, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE, Rarity.RARE),
+    BLUE_GEODE(new int[] {3, 6, 8, 3}, 1f, 35, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.BLUE_GEODE),
+    RED_GEODE(new int[] {3, 6, 9, 4}, 2.5f, 37, 25, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE),
+    PURPLE_GEODE(new int[] {4, 8, 12, 6}, 4f, 45, 28, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, WRItems.RED_GEODE, Rarity.RARE),
     PLATINUM(new int[] {2, 5, 7, 2}, 0.1f, 20, 10, SoundEvents.ITEM_ARMOR_EQUIP_IRON, WRItems.PLATINUM_INGOT),
     DRAKE(new int[] {3, 6, 8, 3}, 1.2f, 32, 9, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, WRItems.DRAKE_BACKPLATE, Rarity.UNCOMMON);
 

@@ -37,9 +37,9 @@ public class WRItems
     public static final RegistryObject<Item> PLATINUM_INGOT = register("platinum_ingot");
     public static final RegistryObject<Item> DRAKE_BACKPLATE = register("drake_backplate");
 
-    public static final RegistryObject<Item> BLUE_GEODE_SWORD = register("blue_geode_sword", () -> new SwordItem(ToolMaterials.BLUE_GEODE, 2, -2.2f, builder()));
+    public static final RegistryObject<Item> BLUE_GEODE_SWORD = register("blue_geode_sword", () -> new SwordItem(ToolMaterials.BLUE_GEODE, 2, -2.4f, builder()));
     public static final RegistryObject<Item> BLUE_GEODE_PICKAXE = register("blue_geode_pickaxe", () -> new PickaxeItem(ToolMaterials.BLUE_GEODE, 0, -2.8f, builder()));
-    public static final RegistryObject<Item> BLUE_GEODE_AXE = register("blue_geode_axe", () -> new AxeItem(ToolMaterials.BLUE_GEODE, 3.5f, -2.8f, builder()));
+    public static final RegistryObject<Item> BLUE_GEODE_AXE = register("blue_geode_axe", () -> new AxeItem(ToolMaterials.BLUE_GEODE, 3.5f, -3f, builder()));
     public static final RegistryObject<Item> BLUE_GEODE_SHOVEL = register("blue_geode_shovel", () -> new ShovelItem(ToolMaterials.BLUE_GEODE, 1f, -3f, builder()));
     public static final RegistryObject<Item> BLUE_GEODE_HOE = register("blue_geode_hoe", () -> new HoeItem(ToolMaterials.BLUE_GEODE, 1, 0, builder()));
     public static final RegistryObject<Item> BLUE_GEODE_HELMET = register("blue_geode_helmet", () -> new ArmorBase(ArmorMaterials.BLUE_GEODE, EquipmentSlotType.HEAD));
@@ -48,7 +48,7 @@ public class WRItems
     public static final RegistryObject<Item> BLUE_GEODE_BOOTS = register("blue_geode_boots", () -> new ArmorBase(ArmorMaterials.BLUE_GEODE, EquipmentSlotType.FEET));
     public static final RegistryObject<Item> BLUE_GEODE_ARROW = register("blue_geode_tipped_arrow", () -> new GeodeTippedArrowItem(3));
 
-    public static final RegistryObject<Item> RED_GEODE_SWORD = register("red_geode_sword", () -> new SwordItem(ToolMaterials.RED_GEODE, 2, -2f, builder()));
+    public static final RegistryObject<Item> RED_GEODE_SWORD = register("red_geode_sword", () -> new SwordItem(ToolMaterials.RED_GEODE, 2, -2.4f, builder()));
     public static final RegistryObject<Item> RED_GEODE_PICKAXE = register("red_geode_pickaxe", () -> new PickaxeItem(ToolMaterials.RED_GEODE, 0, -2.8f, builder()));
     public static final RegistryObject<Item> RED_GEODE_AXE = register("red_geode_axe", () -> new AxeItem(ToolMaterials.RED_GEODE, 3.5f, -2.8f, builder()));
     public static final RegistryObject<Item> RED_GEODE_SHOVEL = register("red_geode_shovel", () -> new ShovelItem(ToolMaterials.RED_GEODE, 1f, -3f, builder()));
@@ -59,8 +59,8 @@ public class WRItems
     public static final RegistryObject<Item> RED_GEODE_BOOTS = register("red_geode_boots", () -> new ArmorBase(ArmorMaterials.RED_GEODE, EquipmentSlotType.FEET));
     public static final RegistryObject<Item> RED_GEODE_ARROW = register("red_geode_tipped_arrow", () -> new GeodeTippedArrowItem(3.5));
 
-    public static final RegistryObject<Item> PURPLE_GEODE_SWORD = register("purple_geode_sword", () -> new SwordItem(ToolMaterials.PURPLE_GEODE, 2, -1.5f, builder()));
-    public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE = register("purple_geode_pickaxe", () -> new PickaxeItem(ToolMaterials.PURPLE_GEODE, 0, -2.5f, builder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_SWORD = register("purple_geode_sword", () -> new SwordItem(ToolMaterials.PURPLE_GEODE, 2, -2.4f, builder()));
+    public static final RegistryObject<Item> PURPLE_GEODE_PICKAXE = register("purple_geode_pickaxe", () -> new PickaxeItem(ToolMaterials.PURPLE_GEODE, 0, -2.8f, builder()));
     public static final RegistryObject<Item> PURPLE_GEODE_AXE = register("purple_geode_axe", () -> new AxeItem(ToolMaterials.PURPLE_GEODE, 3.5f, -2.6f, builder()));
     public static final RegistryObject<Item> PURPLE_GEODE_SHOVEL = register("purple_geode_shovel", () -> new ShovelItem(ToolMaterials.PURPLE_GEODE, 1f, -2.7f, builder()));
     public static final RegistryObject<Item> PURPLE_GEODE_HOE = register("purple_geode_hoe", () -> new HoeItem(ToolMaterials.PURPLE_GEODE, 3, 0, builder()));
@@ -96,13 +96,13 @@ public class WRItems
     public static final RegistryObject<Item> COOKED_MINUTUS = register("cooked_desertwyrm", () -> new Item(builder().food(WRFoods.COOKED_DESERTWYRM)));
     public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", () -> new Item(builder().food(WRFoods.JEWELLED_APPLE)));
 
-    public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragon_armor", () -> new DragonArmorItem(5, ArmorMaterial.IRON.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragon_armor", () -> new DragonArmorItem(7, ArmorMaterial.GOLD.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND = register("diamond_dragon_armor", () -> new DragonArmorItem(11, ArmorMaterial.DIAMOND.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterials.PLATINUM.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("blue_geode_dragon_armor", () -> new DragonArmorItem(16, ArmorMaterials.BLUE_GEODE.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterials.RED_GEODE.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(20, ArmorMaterials.PURPLE_GEODE.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragon_armor", () -> new DragonArmorItem(4, ArmorMaterial.IRON.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterial.GOLD.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND = register("diamond_dragon_armor", () -> new DragonArmorItem(8, ArmorMaterial.DIAMOND.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragon_armor", () -> new DragonArmorItem(7, ArmorMaterials.PLATINUM.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("blue_geode_dragon_armor", () -> new DragonArmorItem(10, ArmorMaterials.BLUE_GEODE.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(13, ArmorMaterials.RED_GEODE.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterials.PURPLE_GEODE.getEnchantability()));
 
     static RegistryObject<Item> register(String name, Supplier<Item> item) { return REGISTRY.register(name, item); }
 
@@ -112,15 +112,15 @@ public class WRItems
 
     public static class WRFoods
     {
-        public static final Food RAW_LOWTIER_MEAT = new Food.Builder().hunger(2).saturation(0.25f).meat().build();
-        public static final Food RAW_COMMON_MEAT = new Food.Builder().hunger(3).saturation(0.35f).meat().build();
+        public static final Food RAW_LOWTIER_MEAT = new Food.Builder().hunger(1).saturation(0.1f).meat().build();
+        public static final Food RAW_COMMON_MEAT = new Food.Builder().hunger(3).saturation(0.3f).meat().build();
         public static final Food RAW_APEX_MEAT = new Food.Builder().hunger(5).saturation(0.45f).meat().build();
         public static final Food RAW_BEHEMOTH_MEAT = new Food.Builder().hunger(7).saturation(0.7f).meat().build();
-        public static final Food COOKED_LOWTIER_MEAT = new Food.Builder().hunger(5).saturation(0.7f).meat().build();
+        public static final Food COOKED_LOWTIER_MEAT = new Food.Builder().hunger(3).saturation(0.7f).meat().build();
         public static final Food COOKED_COMMON_MEAT = new Food.Builder().hunger(8).saturation(0.8f).meat().build();
-        public static final Food COOKED_APEX_MEAT = new Food.Builder().hunger(12).saturation(1f).meat().build();
-        public static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().hunger(16).saturation(1.4f).meat().build();
-        public static final Food COOKED_DESERTWYRM = new Food.Builder().hunger(6).saturation(0.7f).meat().build();
+        public static final Food COOKED_APEX_MEAT = new Food.Builder().hunger(16).saturation(1f).meat().build();
+        public static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().hunger(20).saturation(2f).meat().build();
+        public static final Food COOKED_DESERTWYRM = new Food.Builder().hunger(10).saturation(1f).meat().build();
         public static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturation(0.9f).setAlwaysEdible()
                 .effect(() -> new EffectInstance(Effects.GLOWING, 800), 1.0f)
                 .effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1.0f)

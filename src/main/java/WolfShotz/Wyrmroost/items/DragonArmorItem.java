@@ -6,7 +6,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.UUID;
 
@@ -43,9 +42,6 @@ public class DragonArmorItem extends Item
         if (!(item instanceof DragonArmorItem))
             throw new AssertionError("uhh this isn't a an armor: " + item.getRegistryName().toString());
 
-        DragonArmorItem armor = (DragonArmorItem) item;
-        double reduction = armor.getDmgReduction();
-        double multiplier = 1 + (EnchantmentHelper.getEnchantments(stack).getOrDefault(Enchantments.PROTECTION, 0) * 0.25);
-        return MathHelper.clamp(reduction * multiplier, reduction, 55d);
+        return ((DragonArmorItem) item).getDmgReduction() + EnchantmentHelper.getEnchantments(stack).getOrDefault(Enchantments.PROTECTION, 0);
     }
 }

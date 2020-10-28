@@ -279,9 +279,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public static AttributeModifierMap.MutableAttribute getAttributes()
     {
         return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 10)
+                .createMutableAttribute(MAX_HEALTH, 8)
                 .createMutableAttribute(MOVEMENT_SPEED, 0.285)
-                .createMutableAttribute(ATTACK_DAMAGE, 3);
+                .createMutableAttribute(ATTACK_DAMAGE, 2);
     }
 
     class ScavengeGoal extends MoveToBlockGoal

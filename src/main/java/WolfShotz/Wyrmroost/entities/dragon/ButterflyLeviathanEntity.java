@@ -487,11 +487,11 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public static AttributeModifierMap.MutableAttribute getAttributes()
     {
         return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 100)
+                .createMutableAttribute(MAX_HEALTH, 180)
                 .createMutableAttribute(MOVEMENT_SPEED, 0.08)
                 .createMutableAttribute(ForgeMod.SWIM_SPEED.get(), 0.3)
                 .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
-                .createMutableAttribute(ATTACK_DAMAGE, 8)
+                .createMutableAttribute(ATTACK_DAMAGE, 14)
                 .createMutableAttribute(FOLLOW_RANGE, 50);
     }
 

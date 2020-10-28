@@ -7,9 +7,9 @@ import net.minecraft.item.crafting.Ingredient;
 
 public enum ToolMaterials implements IItemTier
 {
-    BLUE_GEODE(8.1f, 3f, 1732, 4, 20, WRItems.BLUE_GEODE.get()),
-    RED_GEODE(8.3f, 5f, 2031, 5, 20, WRItems.RED_GEODE.get()),
-    PURPLE_GEODE(10f, 7f, 4214, 6, 25, WRItems.PURPLE_GEODE.get()),
+    BLUE_GEODE(7.5f, 4f, 1732, 4, 20, WRItems.BLUE_GEODE.get()),
+    RED_GEODE(8.5f, 4.5f, 2031, 5, 20, WRItems.RED_GEODE.get()),
+    PURPLE_GEODE(10f, 8f, 4214, 6, 25, WRItems.PURPLE_GEODE.get()),
     PLATINUM(6.5f, 3.25f, 425, 2, 18, WRItems.PLATINUM_INGOT.get());
 
     private final float efficiency;

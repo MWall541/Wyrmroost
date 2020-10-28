@@ -136,6 +136,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.readAdditional(nbt);
         for (EntityDataEntry<?> entry : dataEntries) entry.read(nbt);
+        applyAttributes();
     }
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
@@ -304,6 +305,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public Vector3d getRidingPosOffset(int passengerIndex)
     {
         double x = getWidth() * 0.5d + getRidingEntity().getWidth() * 0.5d;
@@ -406,6 +408,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void travel(Vector3d vec3d)
     {
         float speed = getTravelSpeed();
@@ -466,6 +469,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super.travel(vec3d);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public float getTravelSpeed()
     {
         //@formatter:off
@@ -480,6 +484,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void notifyDataManagerChange(DataParameter<?> key)
     {
         if (key.equals(SLEEPING) || key.equals(FLYING) || key.equals(TAMED))
@@ -509,21 +514,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public void handleStatusUpdate(byte id)
     {
-        switch (id)
+        if (id == HEAL_PARTICLES_DATA_ID)
         {
-            default:
-                super.handleStatusUpdate(id);
-                break;
-            case HEAL_PARTICLES_DATA_ID:
-                for (int i = 0; i < getWidth() * getHeight(); ++i)
-                {
-                    double x = getPosX() + Mafs.nextDouble(getRNG()) * getWidth() + 0.4d;
-                    double y = getPosY() + getRNG().nextDouble() * getHeight();
-                    double z = getPosZ() + Mafs.nextDouble(getRNG()) * getWidth() + 0.4d;
-                    world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
-                }
-                break;
+            for (int i = 0; i < getWidth() * getHeight(); ++i)
+            {
+                double x = getPosX() + Mafs.nextDouble(getRNG()) * getWidth() + 0.4d;
+                double y = getPosY() + getRNG().nextDouble() * getHeight();
+                double z = getPosZ() + Mafs.nextDouble(getRNG()) * getWidth() + 0.4d;
+                world.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
+            }
         }
+        else super.handleStatusUpdate(id);
     }
 
     public ItemStack getStackInSlot(int slot)
@@ -535,9 +536,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * It is VERY important to be careful when using this.
      * It is VERY sidedness sensitive. If not done correctly, it can result in the loss of items! <P>
      * {@code if (!world.isReomote) setStackInSlot(...)}
-     *
-     * @param slot
-     * @param stack
      */
     public void setStackInSlot(int slot, ItemStack stack) { invHandler.ifPresent(i -> i.setStackInSlot(slot, stack)); }
 
@@ -631,8 +629,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return false;
     }
 
-    public boolean isOwner(Entity entity) { return entity instanceof LivingEntity && entity == getOwner(); }
-
     @Override
     public BlockPos getHomePosition() { return getHomePos().orElse(BlockPos.ZERO); }
 
@@ -685,6 +681,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void eat(ItemStack stack) { onFoodEaten(world, stack); }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public ItemStack onFoodEaten(World world, ItemStack stack)
     {
         float max = getMaxHealth();
@@ -916,14 +913,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag)
+    public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData data, @Nullable CompoundNBT dataTag)
     {
         if (hasDataParameter(GENDER)) setGender(getRNG().nextBoolean());
         if (hasDataParameter(VARIANT)) setVariant(determineVariant());
 
+        applyAttributes();
 
-        return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+        return super.onInitialSpawn(world, difficulty, reason, data, dataTag);
     }
+
+    /**
+     * This method is called after the entity is read, and after the entity initally spawns.
+     * It is intended to modify the base attributes based on the entity after it has been fully constructed (and guaranteed to spawn)
+     */
+    public void applyAttributes() {}
 
     public int determineVariant() { return 0; }
 
@@ -1094,6 +1098,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public Animation[] getAnimations() { return new Animation[0]; }
 
+    @SuppressWarnings("unused")
     public static boolean canFlyerSpawn(EntityType<? extends AbstractDragonEntity> type, IWorld world, SpawnReason reason, BlockPos pos, Random random)
     {
         return world.getBlockState(pos.down()).getFluidState().isEmpty();
