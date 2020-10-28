@@ -41,6 +41,8 @@ public final class Mafs
 
     /**
      * Get the angle between 2 sources
+     *
+     * TODO: Adjust so that the angle is closest to 0 in the SOUTH direction!, currently it is only doing it for east!
      */
     public static double getAngle(double sourceX, double sourceZ, double targetX, double targetZ)
     {
@@ -72,7 +74,7 @@ public final class Mafs
         double distance = range * range;
         for (Entity entity : shooter.world.getEntitiesInAABBexcluding(shooter, shooter.getBoundingBox().grow(range), filter))
         {
-            Optional<Vector3d> opt = entity.getBoundingBox().grow(0.3d).rayTrace(eyes, end);
+            Optional<Vector3d> opt = entity.getBoundingBox().grow(0.3).rayTrace(eyes, end);
             if (opt.isPresent())
             {
                 double dist = eyes.squareDistanceTo(opt.get());

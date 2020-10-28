@@ -9,6 +9,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 public class BreathWeaponEntity extends DragonProjectileEntity
@@ -20,7 +21,7 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 
     public BreathWeaponEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter)
     {
-        super(type, shooter, shooter.getApproximateMouthPos(), shooter.getLookVec());
+        super(type, shooter, shooter.getApproximateMouthPos(), Vector3d.fromPitchYaw(shooter.rotationPitch, shooter.rotationYawHead));
         this.growthRate = 1.025f;
     }
 

@@ -33,6 +33,7 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -102,7 +103,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new AttackGoal());
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, 2));
+        goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(9, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
@@ -152,13 +153,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
         }
         else if (anim == SLAP_ATTACK_ANIMATION && (animTime == 7 || animTime == 12))
         {
-            attackInFront(getWidth(), 0.2);
+            attackInFront(getWidth(), 0.2, 50);
             if (animTime == 7) playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
             rotationYaw = rotationYawHead;
         }
         else if (anim == BITE_ATTACK_ANIMATION && animTime == 4)
         {
-            attackInFront(getWidth(), -0.3);
+            attackInFront(getWidth(), -0.3, 150);
             playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
         }
     }
@@ -301,7 +302,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getVariantForSpawn()
+    public int determineVariant()
     {
         return getRNG().nextDouble() < 0.03? -1 : 0;
     }
@@ -328,7 +329,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public float getRenderScale() { return isChild()? 0.3f : isMale()? 0.8f : 1f; }
 
     @Override
-    public int getHorizontalFaceSpeed() { return isFlying()? 5 : 8; }
+    public int getHorizontalFaceSpeed() { return isFlying()? 5 : 90; }
 
     public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
 
@@ -441,26 +442,25 @@ public class RoyalRedEntity extends AbstractDragonEntity
         {
             LivingEntity target = getAttackTarget();
             double distFromTarget = getDistanceSq(target);
+            double degrees = Math.atan2(target.getPosZ() - getPosZ(), target.getPosX() - getPosX()) * (180 / Math.PI) - 90;
             boolean isBreathingFire = isBreathingFire();
             boolean canSeeTarget = getEntitySenses().canSee(target);
 
-            getLookController().setLookPositionWithEntity(target, 90, 30);
+            getLookController().setLookPositionWithEntity(target, 90, 90);
 
-            boolean flag = distFromTarget > 200 && canSeeTarget && !isTamed();
-            if (isBreathingFire != flag) setBreathingFire(isBreathingFire = flag);
+            double headAngle = Math.abs(MathHelper.wrapDegrees(degrees - rotationYawHead));
+            boolean shouldBreatheFire = (!detachHome() || !isWithinHomeDistanceCurrentPosition()) && (distFromTarget > 100 || isFlying()) && headAngle < 30 && canSeeTarget;
+            if (isBreathingFire != shouldBreatheFire) setBreathingFire(isBreathingFire = shouldBreatheFire);
 
-            if (distFromTarget <= 24)
+            if (getRNG().nextDouble() < 0.001 || distFromTarget > 900) setFlying(true);
+            else if (distFromTarget <= 24 && noActiveAnimation() && !isBreathingFire && canSeeTarget)
             {
-                if (noActiveAnimation() && !isBreathingFire && canSeeTarget)
-                {
-                    renderYawOffset = rotationYaw = (float) Mafs.getAngle(RoyalRedEntity.this, target) + 90;
-                    meleeAttack();
-                }
+                renderYawOffset = rotationYaw = (float) Mafs.getAngle(RoyalRedEntity.this, target) + 90;
+                meleeAttack();
             }
-            else if (distFromTarget > 900) setFlying(true);
 
             if (getNavigator().noPath() || ticksExisted % 10 == 0)
-                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying()? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.2d);
+                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying() && getRNG().nextDouble() > 0.2? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.2d);
         }
     }
 }
