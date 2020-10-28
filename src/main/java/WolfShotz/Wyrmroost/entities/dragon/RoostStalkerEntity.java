@@ -226,7 +226,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn) { return getType().getSize().scale(getRenderScale()); }
 
     @Override
-    public int getVariantForSpawn() { return getRNG().nextDouble() < 0.005? -1 : 0; }
+    public int determineVariant() { return getRNG().nextDouble() < 0.005? -1 : 0; }
 
     @Override
     // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P
@@ -394,7 +394,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     {
         public BreedGoal()
         {
-            super(RoostStalkerEntity.this, 0); // UNLIMITED OFFSPRING, ARMIES ARISE
+            super(RoostStalkerEntity.this); // UNLIMITED OFFSPRING, ARMIES ARISE
         }
 
         @Override

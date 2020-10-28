@@ -37,10 +37,10 @@ public class LessShitLookController extends LookController
             mob.rotationYawHead = clampedRotate(mob.rotationYawHead, getTargetYaw(), deltaLookYaw);
             mob.rotationPitch = clampedRotate(mob.rotationPitch, getTargetPitch(), deltaLookPitch);
         }
-        else mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, mob.getHorizontalFaceSpeed());
+        else mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, deltaLookYaw);
 
         if (!mob.getNavigator().noPath())
-            mob.rotationYawHead = MathHelper.func_219800_b(mob.rotationYawHead, mob.renderYawOffset, mob.getFaceRotSpeed());
+            mob.rotationYawHead = MathHelper.func_219800_b(mob.rotationYawHead, mob.renderYawOffset, deltaLookYaw);
     }
 
     protected boolean func_220680_b() { return !frozen; }

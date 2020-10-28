@@ -60,7 +60,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new AttackGoal());
         goalSelector.addGoal(5, new ThreatenGoal());
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, 0));
+        goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 8f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
@@ -202,7 +202,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getVariantForSpawn() { return getRNG().nextInt(5); }
+    public int determineVariant() { return getRNG().nextInt(5); }
 
     @Override
     public int getHorizontalFaceSpeed() { return isFlying()? 12 : 75; }

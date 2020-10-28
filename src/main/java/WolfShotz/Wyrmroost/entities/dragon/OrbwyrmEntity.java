@@ -70,7 +70,7 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getVariantForSpawn()
+    public int determineVariant()
     {
         if (getRNG().nextDouble() < 0.01) return -1;
         return getRNG().nextInt(3);

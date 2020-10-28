@@ -3,7 +3,6 @@ package WolfShotz.Wyrmroost.items;
 import WolfShotz.Wyrmroost.client.render.FogWraithTailsStackRenderer;
 import WolfShotz.Wyrmroost.client.render.RenderHelper;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.entities.util.animation.CapabilityAnimationHandler;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import WolfShotz.Wyrmroost.registry.WRItems;
 import WolfShotz.Wyrmroost.util.Mafs;
@@ -152,7 +151,7 @@ public class FogWraithTailsItem extends Item
 
     public static Capability getCapability(ItemStack stack)
     {
-        return (Capability) stack.getCapability(CapabilityAnimationHandler.ANIMATABLE_CAPABILITY).orElseThrow(NullPointerException::new);
+        return (Capability) stack.getCapability(IAnimatable.CapImpl.CAPABILITY).orElseThrow(NullPointerException::new);
     }
 
     private static boolean attackEntity(LivingEntity attacker, LivingEntity attacking, float damage)
@@ -175,7 +174,7 @@ public class FogWraithTailsItem extends Item
         return flag;
     }
 
-    public static class Capability extends CapabilityAnimationHandler.Holder implements ICapabilityProvider
+    public static class Capability extends IAnimatable.CapImpl implements ICapabilityProvider
     {
         public final TickFloat transition = new TickFloat().setLimit(0, 1);
         private final LazyOptional<IAnimatable> holder = LazyOptional.of(() -> this);
@@ -184,7 +183,7 @@ public class FogWraithTailsItem extends Item
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull net.minecraftforge.common.capabilities.Capability<T> cap, @Nullable Direction side)
         {
-            return CapabilityAnimationHandler.ANIMATABLE_CAPABILITY.orEmpty(cap, holder);
+            return CapImpl.CAPABILITY.orEmpty(cap, holder);
         }
     }
 }

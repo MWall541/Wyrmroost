@@ -93,7 +93,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         goalSelector.addGoal(1, new MoveToHomeGoal(this));
         goalSelector.addGoal(2, new AttackGoal());
         goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(4, new DragonBreedGoal(this, 1));
+        goalSelector.addGoal(4, new DragonBreedGoal(this));
         goalSelector.addGoal(5, new JumpOutOfWaterGoal());
         goalSelector.addGoal(6, new RandomSwimmingGoal(this, 1, 40));
         goalSelector.addGoal(7, new LookAtGoal(this, LivingEntity.class, 14f));
@@ -446,7 +446,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public int getHorizontalFaceSpeed() { return 6; }
 
     @Override
-    public int getVariantForSpawn() { return getRNG().nextDouble() < 0.02 ? -1 : getRNG().nextInt(2); }
+    public int determineVariant() { return getRNG().nextDouble() < 0.02 ? -1 : getRNG().nextInt(2); }
 
     @Override
     public boolean canFly() { return false; }

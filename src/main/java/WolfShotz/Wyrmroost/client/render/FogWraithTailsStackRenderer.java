@@ -6,7 +6,6 @@ import WolfShotz.Wyrmroost.client.model.WRModelRenderer;
 import WolfShotz.Wyrmroost.client.render.entity.fog_wraith.FogWraithModel;
 import WolfShotz.Wyrmroost.client.render.entity.fog_wraith.FogWraithRenderer;
 import WolfShotz.Wyrmroost.entities.util.animation.Animation;
-import WolfShotz.Wyrmroost.entities.util.animation.CapabilityAnimationHandler;
 import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import WolfShotz.Wyrmroost.items.FogWraithTailsItem;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -44,7 +43,7 @@ public class FogWraithTailsStackRenderer extends ItemStackTileEntityRenderer
             case FIRST_PERSON_RIGHT_HAND:
             {
                 timer = FogWraithTailsItem.getCapability(stack).transition.get(partialTicks);
-                final IAnimatable animCap = stack.getCapability(CapabilityAnimationHandler.ANIMATABLE_CAPABILITY).orElseThrow(NullPointerException::new);
+                final IAnimatable animCap = stack.getCapability(IAnimatable.CapImpl.CAPABILITY).orElseThrow(NullPointerException::new);
                 final ModelAnimator animator = MODEL.animator;
                 final WRModelRenderer[] parts = MODEL.tails[tailUseNum];
 

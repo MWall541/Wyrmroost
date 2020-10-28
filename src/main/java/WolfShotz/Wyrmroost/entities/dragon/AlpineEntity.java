@@ -52,7 +52,7 @@ public class AlpineEntity extends AbstractDragonEntity
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(7, new DragonBreedGoal(this, 4));
+        goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1, 0.01f));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
@@ -94,7 +94,7 @@ public class AlpineEntity extends AbstractDragonEntity
                 for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get()))
                 {
                     AlpineEntity alpine = ((AlpineEntity) entity);
-                    if (alpine.noActiveAnimation() && alpine.isIdling()) alpine.setAnimation(ROAR_ANIMATION);
+                    if (alpine.noActiveAnimation() && alpine.isIdling() && !alpine.isSleeping()) alpine.setAnimation(ROAR_ANIMATION);
                 }
             }
         }
@@ -172,7 +172,7 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getVariantForSpawn() { return getRNG().nextInt(6); }
+    public int determineVariant() { return getRNG().nextInt(6); }
 
     @Override
     protected boolean canBeRidden(Entity entity)

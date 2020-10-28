@@ -82,7 +82,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         super.registerGoals();
         goalSelector.addGoal(3, new MoveToCropsGoal());
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
-        goalSelector.addGoal(5, new DragonBreedGoal(this, 0));
+        goalSelector.addGoal(5, new DragonBreedGoal(this));
         goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.3, false));
         goalSelector.addGoal(8, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(9, CommonGoalWrappers.followParent(this, 1));
@@ -260,7 +260,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public boolean canFly() { return false; }
 
     @Override
-    public int getVariantForSpawn() { return getRNG().nextDouble() < 0.008? -1 : 0; }
+    public int determineVariant() { return getRNG().nextDouble() < 0.008? -1 : 0; }
 
     @Override
     protected boolean canBeRidden(Entity passenger)

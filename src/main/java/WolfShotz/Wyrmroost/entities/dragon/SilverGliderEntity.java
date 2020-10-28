@@ -64,7 +64,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         goalSelector.addGoal(3, temptGoal = CommonGoalWrappers.nonTamedTemptGoal(this, 0.8d, true, Ingredient.fromItems(getFoodItems().toArray(new IItemProvider[0]))));
         goalSelector.addGoal(4, CommonGoalWrappers.nonTamedAvoidGoal(this, PlayerEntity.class, 8f, 1f));
-        goalSelector.addGoal(5, new DragonBreedGoal(this, 0));
+        goalSelector.addGoal(5, new DragonBreedGoal(this));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new SwoopGoal());
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
@@ -182,7 +182,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getVariantForSpawn()
+    public int determineVariant()
     {
         if (getRNG().nextDouble() < 0.002) return -1;
         return getRNG().nextInt(3);

@@ -4,7 +4,7 @@ import WolfShotz.Wyrmroost.client.screen.DebugScreen;
 import WolfShotz.Wyrmroost.data.DataGatherer;
 import WolfShotz.Wyrmroost.entities.dragon.AbstractDragonEntity;
 import WolfShotz.Wyrmroost.entities.util.VillagerHelper;
-import WolfShotz.Wyrmroost.entities.util.animation.CapabilityAnimationHandler;
+import WolfShotz.Wyrmroost.entities.util.animation.IAnimatable;
 import WolfShotz.Wyrmroost.items.base.ArmorBase;
 import WolfShotz.Wyrmroost.registry.WRWorld;
 import net.minecraft.entity.Entity;
@@ -57,7 +57,7 @@ public class CommonEvents
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
-        CapabilityAnimationHandler.register();
+        IAnimatable.registerCapability();
     }
     // @formatter: on
 
