@@ -159,7 +159,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         }
         else if (anim == BITE_ATTACK_ANIMATION && animTime == 4)
         {
-            attackInFront(getWidth(), -0.3, 150);
+            attackInFront(getWidth(), -0.3, 100);
             playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
         }
     }
@@ -398,16 +398,29 @@ public class RoyalRedEntity extends AbstractDragonEntity
             event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ROYAL_RED.get(), 1, 1, 1));
     }
 
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    public void applyAttributes()
+    {
+        if (!isMale())
+        {
+            getAttribute(MAX_HEALTH).setBaseValue(140);
+            getAttribute(MOVEMENT_SPEED).setBaseValue(0.22);
+            getAttribute(ATTACK_KNOCKBACK).setBaseValue(4);
+            getAttribute(ATTACK_KNOCKBACK).setBaseValue(0.27);
+        }
+    }
+
     public static AttributeModifierMap.MutableAttribute getAttributes()
     {
         return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 100)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.22)
+                .createMutableAttribute(MAX_HEALTH, 120)
+                .createMutableAttribute(MOVEMENT_SPEED, 0.2275)
                 .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
                 .createMutableAttribute(FOLLOW_RANGE, 60)
-                .createMutableAttribute(ATTACK_KNOCKBACK, 2.25)
-                .createMutableAttribute(ATTACK_DAMAGE, 10)
-                .createMutableAttribute(FLYING_SPEED, 0.27)
+                .createMutableAttribute(ATTACK_KNOCKBACK, 3)
+                .createMutableAttribute(ATTACK_DAMAGE, 12)
+                .createMutableAttribute(FLYING_SPEED, 0.275)
                 .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 4);
     }
 
@@ -460,7 +473,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             }
 
             if (getNavigator().noPath() || ticksExisted % 10 == 0)
-                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying() && getRNG().nextDouble() > 0.2? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.2d);
+                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying() && getRNG().nextDouble() > 0.2? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
         }
     }
 }
