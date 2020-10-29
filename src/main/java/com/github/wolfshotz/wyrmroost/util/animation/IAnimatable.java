@@ -1,4 +1,4 @@
-package com.github.wolfshotz.wyrmroost.entities.util.animation;
+package com.github.wolfshotz.wyrmroost.util.animation;
 
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;

@@ -6,13 +6,13 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHom
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.CommonGoalWrappers;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.*;
 import net.minecraft.entity.*;

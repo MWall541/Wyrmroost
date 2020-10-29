@@ -1,8 +1,8 @@
 package com.github.wolfshotz.wyrmroost.client.model;
 
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.IAnimatable;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 

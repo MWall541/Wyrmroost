@@ -1,12 +1,12 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.IAnimatable;
 import com.github.wolfshotz.wyrmroost.items.LDWyrmItem;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;

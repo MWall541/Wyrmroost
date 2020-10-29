@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.client.screen;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;

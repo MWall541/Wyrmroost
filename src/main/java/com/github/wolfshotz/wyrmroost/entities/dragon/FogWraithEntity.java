@@ -2,9 +2,9 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.LookAtGoal;

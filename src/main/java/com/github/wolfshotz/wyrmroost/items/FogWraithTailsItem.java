@@ -2,11 +2,11 @@ package com.github.wolfshotz.wyrmroost.items;
 
 import com.github.wolfshotz.wyrmroost.client.render.FogWraithTailsStackRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.IAnimatable;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;

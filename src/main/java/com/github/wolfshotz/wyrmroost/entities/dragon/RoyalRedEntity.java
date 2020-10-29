@@ -10,7 +10,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookCon
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
@@ -20,6 +19,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
@@ -274,8 +274,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public Vector3d getApproximateMouthPos()
     {
         Vector3d position = getEyePosition(1).subtract(0, 1.3d, 0);
-        double dist = (getWidth() / 2) + 3.5d;
-        return position.add(getVectorForRotation(rotationPitch, rotationYawHead).scale(dist));
+        position = position.add(getVectorForRotation(rotationPitch, renderYawOffset).scale(getWidth() / 2)); // base of neck
+        return position.add(getVectorForRotation(rotationPitch, rotationYawHead).scale(2.75));
     }
 
     @Override
@@ -329,7 +329,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public float getRenderScale() { return isChild()? 0.3f : isMale()? 0.8f : 1f; }
 
     @Override
-    public int getHorizontalFaceSpeed() { return isFlying()? 5 : 90; }
+    public int getHorizontalFaceSpeed() { return isFlying()? 5 : 7; }
 
     public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
 
