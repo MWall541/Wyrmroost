@@ -13,9 +13,9 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle'
 
-version = "${project.mod_version}"
-group = 'WolfShotz.Wyrmroost' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "${project.archiveBaseName}-${project.mc_version}"
+version = "${project.mc_version}-${project.mod_version}"
+group = 'com.github.wolfShotz.wyrmroost'
+archivesBaseName = "${project.archiveBaseName}"
 
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'

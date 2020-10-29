@@ -1,8 +1,8 @@
 modLoader="javafml"
 loaderVersion="[34,)"
-license="All Rights Reserved"
+license="All Rights Reserved (See Github)"
 
-# issueTrackerURL="http://my.issue.tracker/"
+issueTrackerURL="https://github.com/WolfShotz/Wyrmroost/issues"
 
 [[mods]]
 
