@@ -10,6 +10,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.loot.ItemLootEntry;
+import net.minecraft.loot.LootEntry;
+import net.minecraft.loot.functions.SetNBT;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
@@ -20,6 +23,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
+
+import java.util.Random;
 
 public class CoinDragonItem extends Item
 {
@@ -42,7 +47,7 @@ public class CoinDragonItem extends Item
         ItemStack stack = context.getItem();
         PlayerEntity player = context.getPlayer();
 
-        if (!world.isRemote && stack.hasTag())
+        if (!world.isRemote && stack.hasTag()) // read data first!: setting position before reading will reset that position!
         {
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_ENTITY)) entity.deserializeNBT(tag.getCompound(DATA_ENTITY));
@@ -62,5 +67,14 @@ public class CoinDragonItem extends Item
         entity.rotationYaw = entity.rotationYawHead = player.rotationYawHead + 180;
         world.addEntity(entity);
         return ActionResultType.SUCCESS;
+    }
+
+    public static LootEntry.Builder<?> getLootEntry()
+    {
+        CompoundNBT parent = new CompoundNBT();
+        CompoundNBT child = new CompoundNBT(); // because the parent nbt gets merged with the stack, we need to nest a child within the one getting merged
+        child.putInt(CoinDragonEntity.DATA_VARIANT, new Random().nextInt(5));
+        parent.put(DATA_ENTITY, child);
+        return ItemLootEntry.builder(WRItems.COIN_DRAGON.get()).acceptFunction(SetNBT.builder(parent));
     }
 }

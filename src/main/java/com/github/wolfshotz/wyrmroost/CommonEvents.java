@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.data.DataGatherer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.entities.util.animation.IAnimatable;
+import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import net.minecraft.entity.Entity;
@@ -12,8 +13,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -45,6 +49,7 @@ public class CommonEvents
 
         forgeBus.addListener(CommonEvents::debugStick);
         forgeBus.addListener(CommonEvents::onChangeEquipment);
+        forgeBus.addListener(CommonEvents::loadLoot);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
         forgeBus.addListener(EventPriority.HIGH, WRWorld::onBiomeLoad);
     }
@@ -99,5 +104,11 @@ public class CommonEvents
 
         LivingEntity entity = evt.getEntityLiving();
         initial.applyFullSetBonus(entity, ArmorBase.hasFullSet(entity));
+    }
+
+    public static void loadLoot(LootTableLoadEvent evt)
+    {
+        if (evt.getName().equals(LootTables.CHESTS_ABANDONED_MINESHAFT))
+            evt.getTable().addPool(LootPool.builder().addEntry(CoinDragonItem.getLootEntry()).build());
     }
 }
