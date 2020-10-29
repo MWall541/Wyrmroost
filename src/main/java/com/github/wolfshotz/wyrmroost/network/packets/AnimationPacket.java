@@ -2,8 +2,8 @@ package com.github.wolfshotz.wyrmroost.network.packets;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.Animation;
-import com.github.wolfshotz.wyrmroost.entities.util.animation.IAnimatable;
+import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;

@@ -3,21 +3,16 @@ package com.github.wolfshotz.wyrmroost.entities.projectile;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.*;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -27,27 +22,26 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class DragonProjectileEntity extends Entity implements IEntityAdditionalSpawnData
 {
     public AbstractDragonEntity shooter;
-    public double accelerationX, accelerationY, accelerationZ;
+    public Vector3d acceleration;
     public float growthRate = 1f;
     public int life;
     public boolean hasCollided;
 
     protected DragonProjectileEntity(EntityType<?> type, World world) { super(type, world); }
 
-    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vector3d position, Vector3d acceleration)
+    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vector3d position, Vector3d velocity)
     {
         super(type, shooter.world);
 
-        acceleration = acceleration.add(rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset());
-        double length = acceleration.length();
-        this.accelerationX = acceleration.x / length * getMotionFactor();
-        this.accelerationY = acceleration.y / length * getMotionFactor();
-        this.accelerationZ = acceleration.z / length * getMotionFactor();
+        velocity = velocity.add(rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset());
+        double length = velocity.length();
+        this.acceleration = new Vector3d(velocity.x / length * getMotionFactor(), velocity.y / length * getMotionFactor(), velocity.z / length * getMotionFactor());
 
         this.shooter = shooter;
         this.life = 50;
 
-        setMotion(getMotion().add(accelerationX, accelerationY, accelerationZ));
+        Vector3d shooterMotion = shooter.getMotion();
+        setMotion(getMotion().add(acceleration).add(shooterMotion.x, 0, shooterMotion.z));
         position = position.add(getMotion());
 
         Vector3d motion = getMotion();
@@ -73,11 +67,28 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         super.tick();
         if (growthRate != 1) recalculateSize();
 
-        if (directRaytrace())
+        switch (getEffectType())
         {
-            RayTraceResult rayTrace = ProjectileHelper.func_234618_a_(this, this::canImpactEntity);
-            if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
-                onImpact(rayTrace);
+            case RAYTRACE:
+            {
+                RayTraceResult rayTrace = ProjectileHelper.func_234618_a_(this, this::canImpactEntity);
+                if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
+                    rayTrace(rayTrace);
+                break;
+            }
+            case COLLIDING:
+            {
+                AxisAlignedBB box = getBoundingBox().grow(0.05);
+                for (Entity entity : world.getEntitiesInAABBexcluding(this, box, this::canImpactEntity))
+                    onEntityImpact(entity);
+
+                Vector3d position = getPositionVec();
+                Vector3d end = position.add(getMotion());
+                BlockRayTraceResult rtr = world.rayTraceBlocks(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
+                if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getPos(), rtr.getFace());
+            }
+            default:
+                break;
         }
 
         Vector3d motion = getMotion();
@@ -92,23 +103,28 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
                 world.addParticle(ParticleTypes.BUBBLE, getPosX() * 0.25d, getPosY() * 0.25d, getPosZ() * 0.25D, motion.x, motion.y, motion.z);
         }
         setPosition(x, y, z);
+        ProjectileHelper.rotateTowardsMovement(this, 1);
     }
 
     private boolean canImpactEntity(Entity entity)
     {
-        return !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && !entity.noClip;
+        return !entity.isSpectator() && entity.isAlive() && entity instanceof LivingEntity && entity.canBeCollidedWith() && !entity.noClip;
     }
 
-    public void onImpact(RayTraceResult result)
+    public void rayTrace(RayTraceResult result)
     {
         RayTraceResult.Type type = result.getType();
-        if (type == RayTraceResult.Type.BLOCK) onBlockImpact((BlockRayTraceResult) result);
+        if (type == RayTraceResult.Type.BLOCK)
+        {
+            final BlockRayTraceResult brtr = (BlockRayTraceResult) result;
+            onBlockImpact(brtr.getPos(), brtr.getFace());
+        }
         else if (type == RayTraceResult.Type.ENTITY) onEntityImpact(((EntityRayTraceResult) result).getEntity());
     }
 
     public void onEntityImpact(Entity result) {}
 
-    public void onBlockImpact(BlockRayTraceResult result) {}
+    public void onBlockImpact(BlockPos pos, Direction direction) {}
 
     @Override
     public EntitySize getSize(Pose poseIn)
@@ -129,25 +145,49 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
     public DamageSource getDamageSource(String name) { return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setDifficultyScaled(); }
 
-    protected float getMotionFactor() { return 0.95f; }
+    protected EffectType getEffectType()
+    {
+        return EffectType.NONE;
+    }
 
-    protected double getAccelerationOffset() { return 0.1; }
+    protected float getMotionFactor()
+    {
+        return 0.95f;
+    }
 
-    protected int getMaxLife() { return 150; }
+    protected double getAccelerationOffset()
+    {
+        return 0.1;
+    }
+
+    protected int getMaxLife()
+    {
+        return 150;
+    }
 
     @Override
-    protected boolean canTriggerWalking() { return false; }
-
-    protected boolean directRaytrace() { return true; }
-
-    @Override
-    public float getBrightness() { return 1f; }
+    protected boolean canTriggerWalking()
+    {
+        return false;
+    }
 
     @Override
-    public boolean attackEntityFrom(DamageSource source, float amount) { return false; }
+    public float getBrightness()
+    {
+        return 1f;
+    }
 
     @Override
-    public float getCollisionBorderSize() { return getWidth(); }
+    public boolean attackEntityFrom(DamageSource source, float amount)
+    {
+        return false;
+    }
+
+    @Override
+    public float getCollisionBorderSize()
+    {
+        return getWidth();
+    }
 
     @Override
     protected void registerData() {}
@@ -159,7 +199,10 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     protected void writeAdditional(CompoundNBT compound) {}
 
     @Override
-    public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+    public IPacket<?> createSpawnPacket()
+    {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
 
     @Override
     public void writeSpawnData(PacketBuffer buf)
@@ -173,5 +216,12 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     {
         this.shooter = (AbstractDragonEntity) world.getEntityByID(buf.readInt());
         this.growthRate = buf.readFloat();
+    }
+
+    protected enum EffectType
+    {
+        NONE,
+        RAYTRACE,
+        COLLIDING
     }
 }

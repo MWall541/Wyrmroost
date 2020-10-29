@@ -13,7 +13,6 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -46,7 +45,7 @@ public class WindGustEntity extends DragonProjectileEntity
             if (entity instanceof LivingEntity)
             {
                 if (shooter.isOnSameTeam(entity)) continue;
-                entity.addVelocity(accelerationX * 5, 1 + accelerationY * 3, accelerationZ * 5);
+                entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
                 entity.attackEntityFrom(new IndirectEntityDamageSource("windGust", this, shooter), 3);
                 if (entity instanceof ServerPlayerEntity) ((ServerWorld) world).getChunkProvider().sendToTrackingAndSelf(entity, new SEntityVelocityPacket(entity));
             }
@@ -68,20 +67,18 @@ public class WindGustEntity extends DragonProjectileEntity
     }
 
     @Override
-    public void onBlockImpact(BlockRayTraceResult result)
+    public void onBlockImpact(BlockPos pos, Direction direction)
     {
         final int PARTICLE_COUNT = 75;
-        BlockPos pos = result.getPos();
-        Direction face = result.getFace();
         BlockParticleData blockParticle = new BlockParticleData(ParticleTypes.BLOCK, world.getBlockState(pos));
-        pos = pos.offset(face);
+        pos = pos.offset(direction);
         if (world.isRemote)
         {
             for (int i = 0; i < PARTICLE_COUNT; i++)
             {
                 Vector3d motion = new Vector3d(1, 1, 0);
-                if (face.getAxis().getPlane() == Direction.Plane.VERTICAL) motion = motion.rotatePitch(0.5f * Mafs.PI);
-                else motion = motion.rotateYaw(face.getHorizontalAngle() / 180f * Mafs.PI);
+                if (direction.getAxis().getPlane() == Direction.Plane.VERTICAL) motion = motion.rotatePitch(0.5f * Mafs.PI);
+                else motion = motion.rotateYaw(direction.getHorizontalAngle() / 180f * Mafs.PI);
                 motion = motion.mul(Mafs.nextDouble(rand) * 0.8, Mafs.nextDouble(rand) * 0.8, Mafs.nextDouble(rand) * 0.8);
                 world.addParticle(ParticleTypes.CLOUD, pos.getX(), pos.getY(), pos.getZ(), motion.x, motion.y, motion.z);
                 world.addParticle(blockParticle, pos.getX(), pos.getY(), pos.getZ(), motion.x * 10, motion.y, motion.z * 10);
@@ -104,4 +101,7 @@ public class WindGustEntity extends DragonProjectileEntity
 
     @Override
     protected float getMotionFactor() { return 1.5f; }
+
+    @Override
+    protected EffectType getEffectType() { return EffectType.RAYTRACE; }
 }

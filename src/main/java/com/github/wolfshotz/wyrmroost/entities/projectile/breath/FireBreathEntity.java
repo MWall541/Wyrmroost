@@ -16,7 +16,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -52,12 +51,11 @@ public class FireBreathEntity extends BreathWeaponEntity
     }
 
     @Override
-    public void onBlockImpact(BlockRayTraceResult result)
+    public void onBlockImpact(BlockPos pos, Direction direction)
     {
-        super.onBlockImpact(result);
+        super.onBlockImpact(pos, direction);
         if (world.isRemote) return;
 
-        BlockPos pos = result.getPos();
         BlockState state = world.getBlockState(pos);
         if (CampfireBlock.canBeLit(state))
         {
@@ -68,8 +66,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         double flammability = WRConfig.fireBreathFlammability;
         if (world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) && WRConfig.canGrief(world) && flammability != 0) // respect game rules
         {
-            Direction face = result.getFace();
-            BlockPos offset = pos.offset(face);
+            BlockPos offset = pos.offset(direction);
 
             if (world.getBlockState(offset).isAir(world, offset) && (flammability == 1 || rand.nextDouble() <= flammability))
                 world.setBlockState(offset, AbstractFireBlock.getFireForPlacement(world, offset), 11);
