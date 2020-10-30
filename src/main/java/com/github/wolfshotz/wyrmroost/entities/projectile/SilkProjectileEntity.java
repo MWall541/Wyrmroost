@@ -20,9 +20,9 @@ public class SilkProjectileEntity extends DragonProjectileEntity
     }
 
     @Override
-    public void rayTrace(RayTraceResult result)
+    public void hit(RayTraceResult result)
     {
-        super.rayTrace(result);
+        super.hit(result);
         if (world.isRemote)
         {
             Vector3d pos = result.getHitVec();
@@ -35,10 +35,10 @@ public class SilkProjectileEntity extends DragonProjectileEntity
     @Override
     public void onEntityImpact(Entity entity)
     {
-        if (entity instanceof LivingEntity && entity.getWidth() < 5 && entity.getHeight() < 5)
+        if (entity.getWidth() < 5 && entity.getHeight() < 5)
         {
             LivingEntity living = (LivingEntity) entity;
-            living.attackEntityFrom(createDamage("silk"), 3f);
+            living.attackEntityFrom(getDamageSource("silk"), 3f);
             living.addPotionEffect(new EffectInstance(WREffects.SILK.get(), 1200));
             living.applyKnockback((float) getMotion().length(), entity.getPosX() - getPosX(), entity.getPosZ() - getPosZ());
         }

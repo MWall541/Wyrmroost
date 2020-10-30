@@ -72,7 +72,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
             {
                 RayTraceResult rayTrace = ProjectileHelper.func_234618_a_(this, this::canImpactEntity);
                 if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
-                    rayTrace(rayTrace);
+                    hit(rayTrace);
                 break;
             }
             case COLLIDING:
@@ -107,10 +107,14 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
     private boolean canImpactEntity(Entity entity)
     {
-        return !entity.isSpectator() && entity.isAlive() && entity instanceof LivingEntity && entity.canBeCollidedWith() && !entity.noClip;
+        if (entity == shooter) return false;
+        if (entity.isAlive()) return false;
+        if (!(entity instanceof LivingEntity)) return false;
+        if (entity.isSpectator() || !entity.canBeCollidedWith() || entity.noClip) return false;
+        return !entity.isOnSameTeam(shooter);
     }
 
-    public void rayTrace(RayTraceResult result)
+    public void hit(RayTraceResult result)
     {
         RayTraceResult.Type type = result.getType();
         if (type == RayTraceResult.Type.BLOCK)
@@ -121,7 +125,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         else if (type == RayTraceResult.Type.ENTITY) onEntityImpact(((EntityRayTraceResult) result).getEntity());
     }
 
-    public void onEntityImpact(Entity result) {}
+    public void onEntityImpact(Entity entity) {}
 
     public void onBlockImpact(BlockPos pos, Direction direction) {}
 
@@ -149,7 +153,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         return distance < d0 * d0;
     }
 
-    public DamageSource createDamage(String name) { return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setDifficultyScaled(); }
+    public DamageSource getDamageSource(String name) { return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setDifficultyScaled(); }
 
     protected EffectType getEffectType()
     {

@@ -11,7 +11,6 @@ import net.minecraft.network.play.server.SEntityVelocityPacket;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -40,17 +39,6 @@ public class WindGustEntity extends DragonProjectileEntity
     {
         super.tick();
 
-        for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(shooter, getBoundingBox()))
-        {
-            if (entity instanceof LivingEntity)
-            {
-                if (shooter.isOnSameTeam(entity)) continue;
-                entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
-                entity.attackEntityFrom(new IndirectEntityDamageSource("windGust", this, shooter), 3);
-                if (entity instanceof ServerPlayerEntity) ((ServerWorld) world).getChunkProvider().sendToTrackingAndSelf(entity, new SEntityVelocityPacket(entity));
-            }
-        }
-
         if (world.isRemote)
         {
             double multiplier = Math.min(ticksExisted / 5d, 4d);
@@ -64,6 +52,15 @@ public class WindGustEntity extends DragonProjectileEntity
                 world.addParticle(ParticleTypes.CLOUD, vec3d.x, vec3d.y, vec3d.z, xMot, yMot, zMot);
             }
         }
+    }
+
+    @Override
+    public void onEntityImpact(Entity entity)
+    {
+        entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
+        entity.attackEntityFrom(getDamageSource("windGust"), 3);
+        if (entity instanceof ServerPlayerEntity)
+            ((ServerWorld) world).getChunkProvider().sendToTrackingAndSelf(entity, new SEntityVelocityPacket(entity));
     }
 
     @Override
@@ -103,5 +100,5 @@ public class WindGustEntity extends DragonProjectileEntity
     protected float getMotionFactor() { return 1.5f; }
 
     @Override
-    protected EffectType getEffectType() { return EffectType.RAYTRACE; }
+    protected EffectType getEffectType() { return EffectType.COLLIDING; }
 }
