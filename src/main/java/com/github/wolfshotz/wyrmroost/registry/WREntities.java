@@ -22,6 +22,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.*;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.projectile.GeodeTippedArrowEntity;
+import com.github.wolfshotz.wyrmroost.entities.projectile.SilkProjectileEntity;
 import com.github.wolfshotz.wyrmroost.entities.projectile.WindGustEntity;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
@@ -152,6 +153,9 @@ public class WREntities
             .renderer(() -> OrbwyrmRenderer::new)
             .build(b -> b.size(2.8f, 3.76f));
 
+    public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = Builder.<DragonEggEntity>withClassification("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
+            .renderer(() -> DragonEggRenderer::new)
+            .build(b -> b.disableSummoning().setCustomClientFactory(DragonEggEntity::new));
 
     public static final RegistryObject<EntityType<GeodeTippedArrowEntity>> GEODE_TIPPED_ARROW = Builder.<GeodeTippedArrowEntity>withClassification("geode_tipped_arrow", GeodeTippedArrowEntity::new, EntityClassification.MISC)
             .renderer(() -> GeodeTippedArrowRenderer::new)
@@ -165,9 +169,9 @@ public class WREntities
             .renderer(() -> EmptyRenderer::new)
             .build(b -> b.size(4, 4).disableSerialization().disableSummoning());
 
-    public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = Builder.<DragonEggEntity>withClassification("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
-            .renderer(() -> DragonEggRenderer::new)
-            .build(b -> b.disableSummoning().setCustomClientFactory(DragonEggEntity::new));
+    public static final RegistryObject<EntityType<SilkProjectileEntity>> SILK = Builder.withClassification("silk", SilkProjectileEntity::new, EntityClassification.MISC)
+            .renderer(() -> EmptyRenderer::new) // todo
+            .build(b -> b.size(0.5f, 0.5f).disableSerialization().disableSummoning());
 
     @SuppressWarnings("unchecked")
     private static class Builder<T extends Entity>

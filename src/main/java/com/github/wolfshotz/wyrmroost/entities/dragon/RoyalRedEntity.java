@@ -404,15 +404,17 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         if (!isMale())
         {
-            getAttribute(MAX_HEALTH).setBaseValue(140);
+            // base female attributes
+            getAttribute(MAX_HEALTH).setBaseValue(130);
             getAttribute(MOVEMENT_SPEED).setBaseValue(0.22);
             getAttribute(ATTACK_KNOCKBACK).setBaseValue(4);
-            getAttribute(ATTACK_KNOCKBACK).setBaseValue(0.27);
+            getAttribute(FLYING_SPEED).setBaseValue(0.27);
         }
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()
     {
+        // base male attributes
         return MobEntity.func_233666_p_()
                 .createMutableAttribute(MAX_HEALTH, 120)
                 .createMutableAttribute(MOVEMENT_SPEED, 0.2275)
@@ -420,7 +422,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 .createMutableAttribute(FOLLOW_RANGE, 60)
                 .createMutableAttribute(ATTACK_KNOCKBACK, 3)
                 .createMutableAttribute(ATTACK_DAMAGE, 12)
-                .createMutableAttribute(FLYING_SPEED, 0.275)
+                .createMutableAttribute(FLYING_SPEED, 0.274)
                 .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 4);
     }
 
@@ -473,7 +475,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             }
 
             if (getNavigator().noPath() || ticksExisted % 10 == 0)
-                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying() && getRNG().nextDouble() > 0.2? 8 : 0), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
+                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying() && getRNG().nextDouble() < 0.1? 0 : 8), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
         }
     }
 }

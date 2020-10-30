@@ -1,12 +1,12 @@
 {
   "itemGroup.wyrmroost": "Wyrmroost",
 
-  "_comment": "Controls",
+
   "keyCategory.wyrmroost": "Wyrmroost Controls",
   "key.genericAttack": "Mount Attack",
   "key.specialAttack": "Alt Mount Attack",
 
-  "_comment": "Entities",
+
   "entity.wyrmroost.overworld_drake": "Overworld Drake",
   "entity.wyrmroost.silver_glider": "Silver Glider",
   "entity.wyrmroost.roost_stalker": "Rooststalker",
@@ -21,7 +21,7 @@
   "entity.wyrmroost.dragons.gender.male": "Male",
   "entity.wyrmroost.dragons.gender.female": "Female",
 
-  "_comment": "Items",
+
   "item.wyrmroost.armors.blue_geode": "Blue Geode",
   "item.wyrmroost.blue_geode": "Blue Geode",
   "block.wyrmroost.blue_geode_ore": "Blue Geode Ore",
@@ -139,5 +139,9 @@
   "item.wyrmroost.drake_backplate": "Drake Backplate",
 
   "item.wyrmroost.trumpet": "Trumpet",
-  "item.wyrmroost.trumpet.desc": "The Blissful Sounds of the Butterfly Leviathan can be replicated with such a divine device"
+  "item.wyrmroost.trumpet.desc": "The Blissful Sounds of the Butterfly Leviathan can be replicated with such a divine device",
+
+
+  "death.attack.fireBreath0": "%s was torched by %s",
+  "death.attack.fireBreath1": "Charizard used Flamethrower on %s, It's super effective!"
 }

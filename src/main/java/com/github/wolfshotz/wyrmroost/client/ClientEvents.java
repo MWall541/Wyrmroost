@@ -48,6 +48,8 @@ public class ClientEvents
 
         forgeBus.addListener(RenderHelper::renderWorld);
         forgeBus.addListener(RenderHelper::renderEntities);
+        forgeBus.addListener(RenderHelper::renderFog);
+        forgeBus.addListener(RenderHelper::fogColors);
         forgeBus.addListener(ClientEvents::cameraPerspective);
     }
 

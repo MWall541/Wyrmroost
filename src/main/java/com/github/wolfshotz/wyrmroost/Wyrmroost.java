@@ -43,6 +43,7 @@ public class Wyrmroost
         WRItems.REGISTRY.register(bus);
         WRIO.REGISTRY.register(bus);
         WRSounds.REGISTRY.register(bus);
+        WREffects.REGISTRY.register(bus);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.Common.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.Client.SPEC);

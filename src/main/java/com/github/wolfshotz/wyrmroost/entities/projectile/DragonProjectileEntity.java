@@ -40,8 +40,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         this.shooter = shooter;
         this.life = 50;
 
-        Vector3d shooterMotion = shooter.getMotion();
-        setMotion(getMotion().add(acceleration).add(shooterMotion.x, 0, shooterMotion.z));
+        setMotion(getMotion().add(acceleration));
         position = position.add(getMotion());
 
         Vector3d motion = getMotion();
@@ -92,6 +91,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         }
 
         Vector3d motion = getMotion();
+        if (!hasNoGravity()) setMotion(motion = motion.add(0, -0.05, 0));
         double x = getPosX() + motion.x;
         double y = getPosY() + motion.y;
         double z = getPosZ() + motion.z;
@@ -103,7 +103,6 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
                 world.addParticle(ParticleTypes.BUBBLE, getPosX() * 0.25d, getPosY() * 0.25d, getPosZ() * 0.25D, motion.x, motion.y, motion.z);
         }
         setPosition(x, y, z);
-        ProjectileHelper.rotateTowardsMovement(this, 1);
     }
 
     private boolean canImpactEntity(Entity entity)
@@ -127,6 +126,13 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public void onBlockImpact(BlockPos pos, Direction direction) {}
 
     @Override
+    public void setMotion(Vector3d motionIn)
+    {
+        super.setMotion(motionIn);
+        ProjectileHelper.rotateTowardsMovement(this, 1);
+    }
+
+    @Override
     public EntitySize getSize(Pose poseIn)
     {
         if (growthRate == 1) return getType().getSize();
@@ -143,7 +149,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         return distance < d0 * d0;
     }
 
-    public DamageSource getDamageSource(String name) { return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setDifficultyScaled(); }
+    public DamageSource createDamage(String name) { return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setDifficultyScaled(); }
 
     protected EffectType getEffectType()
     {
@@ -163,6 +169,12 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     protected int getMaxLife()
     {
         return 150;
+    }
+
+    @Override
+    public boolean hasNoGravity()
+    {
+        return true;
     }
 
     @Override
