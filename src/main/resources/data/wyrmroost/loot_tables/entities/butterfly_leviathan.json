@@ -11,7 +11,7 @@
               "function": "minecraft:set_count",
               "count": {
                 "min": 6.0,
-                "max": 9.0,
+                "max": 10.0,
                 "type": "minecraft:uniform"
               }
             },
@@ -123,7 +123,7 @@
           "conditions": [
             {
               "condition": "minecraft:random_chance",
-              "chance": 0.2
+              "chance": 0.15
             }
           ],
           "functions": [

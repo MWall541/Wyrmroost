@@ -14,6 +14,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.IItemProvider;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -58,9 +59,15 @@ class RecipeData extends RecipeProvider
 
     private ShapelessRecipeBuilder shapeless(IItemProvider result) { return shapeless(result, 1); }
 
-    private void shapeless(IItemProvider result, IItemProvider ingredient, int ingredientCount)
+    /**
+     * @param ingredients first element is used for criterion, design accordingly.
+     */
+    private void shapeless(IItemProvider result, @Nonnull ShapelessPair... ingredients)
     {
-        shapeless(result).addIngredient(ingredient, ingredientCount).addCriterion("has_" + ingredient.asItem().getRegistryName().getPath(), hasItem(ingredient)).build(consumer);
+        final ShapelessRecipeBuilder builder = shapeless(result);
+        for (ShapelessPair ingredient : ingredients) builder.addIngredient(ingredient.item, ingredient.count);
+        IItemProvider firstIngredient = ingredients[0].item;
+        builder.addCriterion("has_" + firstIngredient.asItem().getRegistryName().getPath(), hasItem(firstIngredient)).build(consumer);
     }
 
     private void armorSet(IItemProvider material, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots)
@@ -163,10 +170,10 @@ class RecipeData extends RecipeProvider
         armorSet(WRItems.PURPLE_GEODE.get(), WRItems.PURPLE_GEODE_HELMET.get(), WRItems.PURPLE_GEODE_CHESTPLATE.get(), WRItems.PURPLE_GEODE_LEGGINGS.get(), WRItems.PURPLE_GEODE_BOOTS.get());
         armorSet(WRItems.WRTags.PLATINUM, WRItems.PLATINUM_HELMET.get(), WRItems.PLATINUM_CHESTPLATE.get(), WRItems.PLATINUM_LEGGINGS.get(), WRItems.PLATINUM_BOOTS.get());
 
-        shapeless(WRItems.DRAKE_HELMET.get(), WRItems.DRAKE_BACKPLATE.get(), 3);
-        shapeless(WRItems.DRAKE_CHESTPLATE.get(), WRItems.DRAKE_BACKPLATE.get(), 6);
-        shapeless(WRItems.DRAKE_LEGGINGS.get(), WRItems.DRAKE_BACKPLATE.get(), 5);
-        shapeless(WRItems.DRAKE_BOOTS.get(), WRItems.DRAKE_BACKPLATE.get(), 2);
+        shapeless(WRItems.DRAKE_HELMET.get(), new ShapelessPair(WRItems.DRAKE_BACKPLATE.get(), 3), new ShapelessPair(WRItems.PLATINUM_HELMET.get()));
+        shapeless(WRItems.DRAKE_CHESTPLATE.get(), new ShapelessPair(WRItems.DRAKE_BACKPLATE.get(), 6), new ShapelessPair(WRItems.PLATINUM_CHESTPLATE.get()));
+        shapeless(WRItems.DRAKE_LEGGINGS.get(), new ShapelessPair(WRItems.DRAKE_BACKPLATE.get(), 5), new ShapelessPair(WRItems.PLATINUM_LEGGINGS.get()));
+        shapeless(WRItems.DRAKE_BOOTS.get(), new ShapelessPair(WRItems.DRAKE_BACKPLATE.get(), 2), new ShapelessPair(WRItems.PLATINUM_BOOTS.get()));
 
         // Food
         smelt(WRItems.LDWYRM.get(), WRItems.COOKED_MINUTUS.get(), 0.35f, 200, true);
@@ -193,5 +200,23 @@ class RecipeData extends RecipeProvider
         Set<IItemProvider> set = new HashSet<>();
         for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY)) if (exemptClass.isInstance(item)) set.add(item);
         REGISTERED.addAll(set);
+    }
+
+    private static class ShapelessPair
+    {
+        IItemProvider item;
+        int count;
+
+        public ShapelessPair(IItemProvider item, int count)
+        {
+            this.item = item;
+            this.count = count;
+        }
+
+        public ShapelessPair(IItemProvider item)
+        {
+            this.item = item;
+            this.count = 1;
+        }
     }
 }
