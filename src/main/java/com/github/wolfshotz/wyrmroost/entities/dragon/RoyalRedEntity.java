@@ -15,7 +15,6 @@ import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
-import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
@@ -43,7 +42,6 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.EnumSet;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
@@ -72,17 +70,19 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         super(dragon, world);
 
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
-        registerDataEntry("KnockOutTime", EntityDataEntry.INTEGER, () -> knockOutTime, this::setKnockoutTime);
+        ignoreFrustumCheck = WRConfig.disableFrustumCheck;
+
+        getSleepController().setHomeDefender().addSleepCondition(() -> !isKnockedOut());
+
+        setImmune(DamageSource.IN_WALL);
 
         setPathPriority(PathNodeType.DANGER_FIRE, 0);
         setPathPriority(PathNodeType.DAMAGE_FIRE, 0);
 
-        setImmune(DamageSource.IN_WALL);
-
-        ignoreFrustumCheck = WRConfig.disableFrustumCheck;
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
+        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
+        registerDataEntry("KnockOutTime", EntityDataEntry.INTEGER, () -> knockOutTime, this::setKnockoutTime);
     }
 
     @Override
@@ -111,8 +111,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, true, e -> e.getType() == EntityType.PLAYER || e instanceof AnimalEntity));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, e -> e.getType() == EntityType.PLAYER || e instanceof AnimalEntity));
     }
 
     @Override
@@ -153,13 +153,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
         }
         else if (anim == SLAP_ATTACK_ANIMATION && (animTime == 7 || animTime == 12))
         {
-            attackInFront(getWidth(), 0.2, 50);
+            attackInBox(getOffsetBox(getWidth()).grow(0.2), 50);
             if (animTime == 7) playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
             rotationYaw = rotationYawHead;
         }
         else if (anim == BITE_ATTACK_ANIMATION && animTime == 4)
         {
-            attackInFront(getWidth(), -0.3, 100);
+            attackInBox(getOffsetBox(getWidth()).grow(-0.3), 100);
             playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
         }
     }
@@ -208,24 +208,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
         {
             setHealth(getMaxHealth() * 0.25f); // reset to 25% health
             setKnockedOut(true);
-        }
-    }
-
-    @Override
-    public void handleSleep()
-    {
-        if (isSleeping())
-        {
-            if (world.isDaytime() && getRNG().nextInt(300) == 0) setSleeping(false);
-        }
-        else
-        {
-            if (--sleepCooldown > 0) return;
-            if (world.isDaytime()) return;
-            if (isKnockedOut()) return;
-            if (!isIdling()) return;
-            if (isTamed() && (!func_233684_eK_() || !isWithinHomeDistanceCurrentPosition())) return;
-            setSleeping(getRNG().nextInt(300) == 0);
         }
     }
 
@@ -372,7 +354,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public boolean isImmuneToArrows() { return true; }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.WRTags.MEATS.getAllElements(); }
+    @SuppressWarnings("ConstantConditions")
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return stack.getItem().isFood() && stack.getItem().getFood().isMeat();
+    }
 
     @Nullable
     @Override
@@ -464,7 +450,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             getLookController().setLookPositionWithEntity(target, 90, 90);
 
             double headAngle = Math.abs(MathHelper.wrapDegrees(degrees - rotationYawHead));
-            boolean shouldBreatheFire = (!detachHome() || !isWithinHomeDistanceCurrentPosition()) && (distFromTarget > 100 || isFlying()) && headAngle < 30 && canSeeTarget;
+            boolean shouldBreatheFire = (!detachHome() || !isWithinHomeDistanceCurrentPosition()) && (distFromTarget > 100 || isFlying()) && headAngle < 30;
             if (isBreathingFire != shouldBreatheFire) setBreathingFire(isBreathingFire = shouldBreatheFire);
 
             if (getRNG().nextDouble() < 0.001 || distFromTarget > 900) setFlying(true);

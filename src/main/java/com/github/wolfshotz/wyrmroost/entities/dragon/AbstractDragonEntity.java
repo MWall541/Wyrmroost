@@ -86,19 +86,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
     public final Optional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
+    protected SleepController sleepController;
     public boolean wingsDown;
-    public int sleepCooldown;
     public int breedCount;
     private Animation animation = NO_ANIMATION;
     private int animationTick;
+
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
 
-        invHandler = Optional.ofNullable(createInv());
         stepHeight = 1;
 
+        invHandler = Optional.ofNullable(createInv());
+        sleepController = new SleepController(this);
         lookController = new LessShitLookController(this);
         navigator = new BetterPathNavigator(this);
         if (hasDataParameter(FLYING)) moveController = new FlyerMoveController(this);
@@ -170,10 +172,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSleeping() == sleep) return;
 
         dataManager.set(SLEEPING, sleep);
-        if (!world.isRemote)
+        if (!world.isRemote && sleep)
         {
             if (sleep) clearAI();
-            else this.sleepCooldown = 350;
+            else sleepController.coolDown = 350;
         }
     }
 
@@ -238,11 +240,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             boolean flying = shouldFly();
             if (flying != isFlying()) setFlying(flying);
 
-            if (!isAIDisabled() && hasDataParameter(SLEEPING)) handleSleep();
-            if (isSleeping()) ((LessShitLookController) getLookController()).restore();
-
-            if (isSleeping() && getHomePos().isPresent() && isWithinHomeDistanceCurrentPosition() && getRNG().nextInt(200) == 0)
-                heal(1);
+            if (!isAIDisabled() && sleepController != null) sleepController.tick();
+            if (isSleeping())
+            {
+                ((LessShitLookController) getLookController()).restore();
+                if (getHealth() < getMaxHealth() && getRNG().nextDouble() < 0.005) heal(1);
+            }
 
             LivingEntity target = getAttackTarget();
             if (target != null && !target.isAlive()) setAttackTarget(null);
@@ -251,6 +254,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         {
             doSpecialEffects();
         }
+    }
+
+    @Override
+    protected void updateAITasks()
+    {
+        super.updateAITasks();
+        if (getAttackTarget() != null && canPassengerSteer()) setAttackTarget(null);
     }
 
     /**
@@ -469,12 +479,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         super.travel(vec3d);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public float getTravelSpeed()
     {
         //@formatter:off
-        return isFlying()? (float) getAttribute(FLYING_SPEED).getValue()
-                         : (float) getAttribute(MOVEMENT_SPEED).getValue();
+        return isFlying()? (float) getAttributeValue(FLYING_SPEED)
+                         : (float) getAttributeValue(MOVEMENT_SPEED);
         //@formatter:on
     }
 
@@ -537,25 +546,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * It is VERY sidedness sensitive. If not done correctly, it can result in the loss of items! <P>
      * {@code if (!world.isReomote) setStackInSlot(...)}
      */
-    public void setStackInSlot(int slot, ItemStack stack) { invHandler.ifPresent(i -> i.setStackInSlot(slot, stack)); }
-
-    public void attackInFront(float hitBoxOffset, double radius)
+    public void setStackInSlot(int slot, ItemStack stack)
     {
-        attackInFront(hitBoxOffset, radius, 0);
+        invHandler.ifPresent(i -> i.setStackInSlot(slot, stack));
     }
 
-    public void attackInFront(float hitBoxOffset, double radius, int disabledShieldTime)
+    public void attackInBox(AxisAlignedBB box)
     {
-        attackInBox(getBoundingBox()
-                        .offset(Vector3d.fromPitchYaw(0, renderYawOffset).scale(hitBoxOffset))
-                        .grow(radius),
-                disabledShieldTime);
+        attackInBox(box, 0);
     }
 
-    public void attackInBox(AxisAlignedBB aabb, int disabledShieldTime)
+    public void attackInBox(AxisAlignedBB box, int disabledShieldTime)
     {
-        List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, aabb, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
-        if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(aabb);
+        List<LivingEntity> attackables = world.getEntitiesWithinAABB(LivingEntity.class, box, entity -> entity != this && !isPassenger(entity) && shouldAttackEntity(entity, getOwner()));
+        if (WRConfig.debugMode && world.isRemote) RenderHelper.DebugBox.INSTANCE.queue(box);
         for (LivingEntity attacking : attackables)
         {
             attackEntityAsMob(attacking);
@@ -572,6 +576,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
     }
 
+    public AxisAlignedBB getOffsetBox(float offset)
+    {
+        return getBoundingBox().offset(Vector3d.fromPitchYaw(0, renderYawOffset).scale(offset));
+    }
+
     @Override // Dont damage owners other pets!
     public boolean attackEntityAsMob(Entity entity)
     {
@@ -583,7 +592,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean shouldAttackEntity(LivingEntity target, @Nullable LivingEntity owner) { return !isOnSameTeam(target); }
 
     @Override
-    public boolean canAttack(LivingEntity target) { return !isChild() && super.canAttack(target); }
+    public boolean canAttack(LivingEntity target) { return !isChild() && !canPassengerSteer() && super.canAttack(target); }
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
@@ -657,6 +666,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         Optional<BlockPos> home = getHomePos();
         return home.map(h -> h.distanceSq(pos) <= getMaximumHomeDistance()).orElse(true);
+    }
+
+    public boolean isAtHome()
+    {
+        return detachHome() && isWithinHomeDistanceCurrentPosition();
     }
 
     @Override
@@ -784,23 +798,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             world.addEntity(new ExperienceOrbEntity(world, getPosX(), getPosY(), getPosZ(), getRNG().nextInt(7) + 1));
     }
 
-    public void handleSleep()
-    {
-        if (isSleeping())
-        {
-            if (world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
-        }
-        else
-        {
-            if (--sleepCooldown > 0) return;
-            if (isFlying()) return;
-            if (world.isDaytime()) return;
-            if (isTamed() && (!func_233684_eK_() || !isWithinHomeDistanceCurrentPosition())) return;
-            if (!isIdling()) return;
-            if (getRNG().nextInt(300) == 0) setSleeping(true);
-        }
-    }
-
     @Override
     protected void addPassenger(Entity passenger)
     {
@@ -844,6 +841,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 && !isFlying();
     }
 
+    public SleepController getSleepController()
+    {
+        return sleepController;
+    }
+
     /**
      * A universal getter for the position of the mouth on the dragon.
      * This is prone to be inaccurate, but can serve good enough for most things
@@ -866,20 +868,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(radius), filter.and(e -> e != this));
     }
 
-    public List<LivingEntity> getEntitiesNearby(double radius)
-    {
-        return getEntitiesNearby(radius, EntityPredicates.notRiding(this)::test);
-    }
-
     @Override
     @SuppressWarnings("ConstantConditions")
     public boolean isOnSameTeam(Entity entity)
     {
         if (entity == this) return true;
         if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
-        if (entity instanceof TameableEntity && getOwner() != null && ((TameableEntity) entity).getOwner() == getOwner())
+        if (entity instanceof TameableEntity && getOwner() != null && getOwner().equals(((TameableEntity) entity).getOwner()))
             return true;
-        if (entity.getType() == getType()) return true;
         return entity.isOnScoreboardTeam(getTeam());
     }
 
@@ -1064,14 +1060,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isBreedingItem(ItemStack stack) { return isFoodItem(stack); }
 
-    public boolean isFoodItem(ItemStack stack)
-    {
-        Item food = stack.getItem();
-        for (IItemProvider wrapper : getFoodItems()) if (wrapper.asItem() == food) return true;
-        return false;
-    }
-
-    public abstract Collection<? extends IItemProvider> getFoodItems();
+    public abstract boolean isFoodItem(ItemStack stack);
 
     // ================================
     //        Entity Animation

@@ -52,9 +52,10 @@ public class WRFollowOwnerGoal extends Goal
         if (++newPathTicks >= 10 || dragon.getNavigator().noPath())
         {
             newPathTicks = 0;
-            final double MIN_TELEPORT_DIST = (dragon.getWidth() * 5 * dragon.getWidth() * 5 * (dragon.isFlying()? dragon.getWidth() * 5 : 1)) + 196;
 
-            if (dragon.getDistanceSq(owner) > MIN_TELEPORT_DIST && (owner.isOnGround() || owner.isInWater() || dragon.isFlying()) && dragon.tryTeleportToOwner())
+            final double minTeleportDist = (dragon.getWidth() * 5 * dragon.getWidth() * 5 * (dragon.isFlying()? dragon.getWidth() * 5 : 1)) + 196;
+
+            if (dragon.getDistanceSq(owner) > minTeleportDist && (owner.getLowestRidingEntity().isOnGround() || dragon.canFly()) && dragon.tryTeleportToOwner())
                 dragon.getNavigator().clearPath();
             else dragon.getNavigator().tryMoveToEntityLiving(owner, 1);
         }

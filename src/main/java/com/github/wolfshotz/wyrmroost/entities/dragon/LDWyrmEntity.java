@@ -297,7 +297,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.DESERT)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 1, 1, 3));
+            event.getSpawns().func_242575_a(EntityClassification.AMBIENT, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 1, 1, 3));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()

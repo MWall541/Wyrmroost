@@ -63,7 +63,7 @@ public class WRSitGoal extends SitGoal
             ground.setY((int) dragon.getPosY() - 5);
 
         // add some variance
-        int followRange = MathHelper.floor(dragon.getAttribute(Attributes.FOLLOW_RANGE).getValue());
+        int followRange = MathHelper.floor(dragon.getAttributeValue(Attributes.FOLLOW_RANGE));
         int ox = followRange - rand.nextInt(followRange) * 2;
         int oz = followRange - rand.nextInt(followRange) * 2;
         ground.setX(ox);

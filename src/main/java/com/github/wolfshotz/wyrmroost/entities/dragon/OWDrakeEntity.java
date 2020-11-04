@@ -14,6 +14,7 @@ import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.block.Block;
@@ -32,7 +33,9 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SEntityVelocityPacket;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -44,7 +47,6 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
@@ -73,6 +75,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super(drake, world);
 
+        getSleepController().setHomeDefender();
+
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
@@ -85,7 +89,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.registerGoals();
         goalSelector.addGoal(4, new MoveToHomeGoal(this));
-        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1.75, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
+        goalSelector.addGoal(5, new ControlledAttackGoal(this, 1.425, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
@@ -134,7 +138,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         super.livingTick();
 
         sitTimer.add((func_233684_eK_() || isSleeping())? 0.1f : -0.1f);
-        sleepTimer.add(isSleeping()? 0.04f : -0.1f);
+        sleepTimer.add(isSleeping()? 0.04f : -0.06f);
 
         if (thrownPassenger != null)
         {
@@ -143,13 +147,17 @@ public class OWDrakeEntity extends AbstractDragonEntity
             thrownPassenger = null;
         }
 
-        if (!world.isRemote && getAttackTarget() == null && !func_233684_eK_() && !isSleeping() && world.getBlockState(getPosition().down()).getBlock() == Blocks.GRASS_BLOCK && getRNG().nextDouble() < (isChild()? 0.005 : 0.001))
+        if (!world.isRemote && getAttackTarget() == null && !func_233684_eK_() && !isSleeping() && world.getBlockState(getPosition().down()).getBlock() == Blocks.GRASS_BLOCK && getRNG().nextDouble() < (isChild() || getHealth() < getMaxHealth()? 0.005 : 0.001))
             AnimationPacket.send(this, GRAZE_ANIMATION);
 
         Animation animation = getAnimation();
         int tick = getAnimationTick();
+        LivingEntity target = getAttackTarget();
+
         if (animation == ROAR_ANIMATION)
         {
+
+
             if (tick == 0) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f, true);
             else if (tick == 15)
             {
@@ -167,23 +175,29 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (animation == HORN_ATTACK_ANIMATION)
         {
-            prevRotationYaw = renderYawOffset = rotationYaw = rotationYawHead;
             if (tick == 8)
             {
+                if (target != null) rotationYaw = renderYawOffset = (float) Mafs.getAngle(this, target) + 90f;
                 playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f, true);
-                attackInFront(getWidth() * 1.2f, -0.15);
+                AxisAlignedBB box = getOffsetBox(getWidth()).grow(-0.075);
+                attackInBox(box);
+                for (BlockPos pos : ModUtils.getBlockPosesInAABB(box))
+                {
+                    if (world.getBlockState(pos).isIn(BlockTags.LEAVES))
+                        world.destroyBlock(pos, false, this);
+                }
             }
         }
 
-        if (animation == GRAZE_ANIMATION && tick == 13)
+        if (!world.isRemote && animation == GRAZE_ANIMATION && tick == 13)
         {
             BlockPos pos = new BlockPos(Mafs.getYawVec(renderYawOffset, 0, getWidth() / 2 + 1).add(getPositionVec()));
-            if (world.getBlockState(pos).getBlock().getBlock() == Blocks.GRASS && WRConfig.canGrief(world))
+            if (world.getBlockState(pos).isIn(Blocks.GRASS) && WRConfig.canGrief(world))
             {
                 world.destroyBlock(pos, false);
                 eatGrassBonus();
             }
-            else if (world.getBlockState(pos = pos.down()).getBlock().getBlock() == Blocks.GRASS_BLOCK)
+            else if (world.getBlockState(pos = pos.down()).getBlock() == Blocks.GRASS_BLOCK)
             {
                 world.playEvent(2001, pos, Block.getStateId(Blocks.GRASS_BLOCK.getDefaultState()));
                 world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
@@ -306,6 +320,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
+    protected boolean isMovementBlocked()
+    {
+        return getAnimation() == ROAR_ANIMATION || super.isMovementBlocked();
+    }
+
+    @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
         if (backView) event.getInfo().movePosition(-0.5d, 0.75d, 0);
@@ -328,9 +348,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public float getTravelSpeed()
     {
-
-        float speed = (float) getAttribute(MOVEMENT_SPEED).getValue();
-        if (canPassengerSteer()) speed += 0.85;
+        float speed = (float) getAttributeValue(MOVEMENT_SPEED);
+        if (canPassengerSteer()) speed += 0.45f;
         return speed;
     }
 
@@ -357,7 +376,10 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean canFly() { return false; }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return Tags.Items.CROPS_WHEAT.getAllElements(); }
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return stack.getItem().isIn(Tags.Items.CROPS_WHEAT);
+    }
 
     @Override
     public Animation[] getAnimations()
@@ -379,7 +401,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 .createMutableAttribute(MOVEMENT_SPEED, 0.2125)
                 .createMutableAttribute(KNOCKBACK_RESISTANCE, 0.75)
                 .createMutableAttribute(FOLLOW_RANGE, 20)
-                .createMutableAttribute(ATTACK_KNOCKBACK, 3.2)
-                .createMutableAttribute(ATTACK_DAMAGE, 6);
+                .createMutableAttribute(ATTACK_KNOCKBACK, 2.85)
+                .createMutableAttribute(ATTACK_DAMAGE, 8);
     }
 }

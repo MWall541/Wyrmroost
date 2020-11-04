@@ -23,7 +23,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IServerWorld;
@@ -34,7 +37,6 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Random;
 
@@ -62,7 +64,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        goalSelector.addGoal(3, temptGoal = CommonGoalWrappers.nonTamedTemptGoal(this, 0.8d, true, Ingredient.fromItems(getFoodItems().toArray(new IItemProvider[0]))));
+        goalSelector.addGoal(3, temptGoal = CommonGoalWrappers.nonTamedTemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
         goalSelector.addGoal(4, CommonGoalWrappers.nonTamedAvoidGoal(this, PlayerEntity.class, 8f, 1f));
         goalSelector.addGoal(5, new DragonBreedGoal(this));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
@@ -215,7 +217,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public boolean isGliding() { return isGliding; }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return ItemTags.FISHES.getAllElements(); }
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return stack.getItem().isIn(ItemTags.FISHES);
+    }
 
     public static boolean getSpawnPlacement(EntityType<SilverGliderEntity> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos blockPos, Random random)
     {

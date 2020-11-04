@@ -12,7 +12,6 @@ import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
-import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
@@ -51,7 +50,6 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Random;
 
@@ -77,6 +75,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         ignoreFrustumCheck = WRConfig.disableFrustumCheck;
         moveController = new MoveController();
         stepHeight = 2;
+
+        getSleepController().setHomeDefender();
 
         setPathPriority(PathNodeType.WATER, 0);
         setImmune(DamageSource.LIGHTNING_BOLT);
@@ -227,7 +227,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         else if (animation == BITE_ANIMATION)
         {
             if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1, true);
-            else if (animTick == 6) attackInFront(5.5f, 0.85, 40);
+            else if (animTick == 6) attackInBox(getOffsetBox(5.5f).grow(0.85),  40);
         }
     }
 
@@ -294,8 +294,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public float getTravelSpeed()
     {
         //@formatter:off
-        return isInWater()? (float) getAttribute(ForgeMod.SWIM_SPEED.get()).getValue()
-                          : (float) getAttribute(MOVEMENT_SPEED).getValue();
+        return isInWater()? (float) getAttributeValue(ForgeMod.SWIM_SPEED.get())
+                          : (float) getAttributeValue(MOVEMENT_SPEED);
         //@formatter:on
     }
 
@@ -384,7 +384,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public boolean isNotColliding(IWorldReader world) { return world.checkNoEntityCollision(this); }
 
     @Override
-    public boolean isFoodItem(ItemStack stack) { return WRItems.WRTags.MEATS.contains(stack.getItem()); }
+    @SuppressWarnings("ConstantConditions")
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return stack.getItem().isFood() && stack.getItem().getFood().isMeat();
+    }
+
 
     @Override
     public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.KELP; }
@@ -408,9 +413,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
     @Override
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
-
-    @Override
-    public boolean canAttack(LivingEntity target) { return !isChild() && super.canAttack(target); }
 
     public boolean isJumpingOutOfWater() { return !isInWater() && !beached; }
 
@@ -450,9 +452,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
     @Override
     public boolean canFly() { return false; }
-
-    @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.WRTags.MEATS.getAllElements(); }
 
     @Override
     public Animation[] getAnimations() { return new Animation[] {LIGHTNING_ANIMATION, CONDUIT_ANIMATION, BITE_ANIMATION}; }
@@ -545,7 +544,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                     renderYawOffset = rotationYaw = limitAngle(rotationYaw, rotationYawHead, getHorizontalFaceSpeed());
                     rotationPitch = limitAngle(rotationPitch, pitch, 90);
                     ((LessShitLookController) getLookController()).freeze();
-                    float speed = isInWater()? (float) getAttribute(ForgeMod.SWIM_SPEED.get()).getValue() : (float) getAttribute(MOVEMENT_SPEED).getValue();
+                    float speed = isInWater()? (float) getAttributeValue(ForgeMod.SWIM_SPEED.get()) : (float) getAttributeValue(MOVEMENT_SPEED);
                     setAIMoveSpeed(speed);
                     if (isInWater())
                     {

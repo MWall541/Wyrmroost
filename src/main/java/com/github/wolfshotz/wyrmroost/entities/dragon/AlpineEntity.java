@@ -7,16 +7,20 @@ import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
@@ -24,7 +28,6 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
@@ -181,7 +184,10 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return ImmutableSet.of(Items.HONEYCOMB, Items.HONEY_BOTTLE); }
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return ModUtils.isItemIn(stack, Items.HONEYCOMB, Items.HONEY_BOTTLE);
+    }
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)

@@ -3,7 +3,6 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
-import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
@@ -11,12 +10,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.util.IItemProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.Collection;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
@@ -31,6 +28,8 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     public OrbwyrmEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
+
+        getSleepController().setNocturnal().setHomeDefender();
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, false);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
@@ -55,7 +54,7 @@ public class OrbwyrmEntity extends AbstractDragonEntity
         else if (animation == BITE_ANIMATION)
         {
             if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_DEATH.get(), 1, 1, true);
-            else if (tick == 7) attackInFront(3.65f, -0.3f);
+            else if (tick == 7) attackInBox(getOffsetBox(3.65f).grow(-0.3f));
         }
     }
 
@@ -102,9 +101,10 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems()
+    @SuppressWarnings("ConstantConditions")
+    public boolean isFoodItem(ItemStack stack)
     {
-        return WRItems.WRTags.MEATS.getAllElements();
+        return stack.getItem().isFood() && stack.getItem().getFood().isMeat();
     }
 
     @Override

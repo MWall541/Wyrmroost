@@ -27,8 +27,6 @@ import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
@@ -45,6 +43,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
+
+        getSleepController().setHomeDefender().addSleepCondition(() -> !isPissed());
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
@@ -149,25 +149,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void handleSleep()
-    {
-        if (isSleeping())
-        {
-            if (world.isDaytime() && getRNG().nextInt(150) == 0) setSleeping(false);
-        }
-        else
-        {
-            if (--sleepCooldown > 0) return;
-            if (isPissed()) return;
-            if (isFlying()) return;
-            if (world.isDaytime()) return;
-            if (isTamed() && (!func_233684_eK_() || !isWithinHomeDistanceCurrentPosition())) return;
-            if (!isIdling()) return;
-            if (getRNG().nextInt(300) == 0) setSleeping(true);
-        }
-    }
-
-    @Override
     public void addScreenInfo(StaffScreen screen)
     {
         super.addScreenInfo(screen);
@@ -208,7 +189,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public int getHorizontalFaceSpeed() { return isFlying()? 12 : 75; }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return Collections.singleton(Items.SWEET_BERRIES); }
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return stack.getItem() == Items.SWEET_BERRIES;
+    }
 
     public boolean isPissed() { return pissedOffTarget != null; }
 

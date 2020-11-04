@@ -42,7 +42,7 @@ public class FlyerMoveController extends MovementController
                         dragon.getLookController().setLookPosition(posX, posY, posZ, dragon.getHorizontalFaceSpeed() * 3, 75);
 
                     dragon.rotationYaw = limitAngle(dragon.rotationYaw, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getHorizontalFaceSpeed());
-                    float speed = (float) (dragon.getAttribute(Attributes.FLYING_SPEED).getValue() * this.speed);
+                    float speed = (float) (dragon.getAttributeValue(Attributes.FLYING_SPEED) * this.speed);
                     dragon.setAIMoveSpeed(speed);
                     if (y != 0) dragon.setMoveVertical(y > 0? speed : -speed);
                 }

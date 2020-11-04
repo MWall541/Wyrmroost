@@ -11,7 +11,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowO
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
-import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.block.Block;
@@ -42,11 +41,9 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -64,6 +61,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         super(stalker, world);
 
         stepHeight = 0;
+
+        getSleepController().setHomeDefender();
 
         setImmune(DamageSource.DROWN); // tf
 
@@ -146,7 +145,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         ItemStack heldItem = getItem();
         Item item = stack.getItem();
 
-        if (!isTamed() && Tags.Items.EGGS.contains(item))
+        if (!isTamed() && net.minecraftforge.common.Tags.Items.EGGS.contains(item))
         {
             eat(stack);
             if (tame(getRNG().nextDouble() < 0.25, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
@@ -250,11 +249,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     protected float getSoundVolume() { return 0.8f; }
 
-    /**
-     * Array Containing all of the dragons food items
-     */
     @Override
-    public Collection<? extends IItemProvider> getFoodItems() { return WRItems.WRTags.MEATS.getAllElements(); }
+    @SuppressWarnings("ConstantConditions")
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return stack.getItem().isFood() && stack.getItem().getFood().isMeat();
+    }
 
     @Override
     public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }

@@ -13,13 +13,11 @@ import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.*;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
@@ -40,14 +38,12 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
-@SuppressWarnings("deprecation")
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IForgeShearable
 {
     private static final int CROP_GROWTH_RADIUS = 5;
@@ -62,18 +58,17 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     {
         super(dragon, world);
 
+        getSleepController().addWakeConditions(() -> --napTime <= 0);
+
         registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
     }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems()
+    public boolean isFoodItem(ItemStack stack)
     {
-        return ImmutableSet.<Item>builder()
-                .addAll(Tags.Items.CROPS.getAllElements())
-                .add(Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE)
-                .build();
+        return stack.getItem().isIn(Tags.Items.CROPS) || ModUtils.isItemIn(stack, Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE);
     }
 
     @Override
@@ -128,9 +123,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
-    public void tick()
+    public void livingTick()
     {
-        super.tick();
+        super.livingTick();
 
         if (shearCooldownTime > 0) --shearCooldownTime;
         sitTimer.add((func_233684_eK_() || isSleeping())? 0.1f : -0.1f);
@@ -138,33 +133,42 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
 
         setSprinting(getAttackTarget() != null);
 
-        if (!world.isRemote && growCropsTime >= 0)
+        if (!world.isRemote)
         {
-            --growCropsTime;
-            if (getRNG().nextBoolean())
+            if (growCropsTime >= 0)
             {
-                AxisAlignedBB aabb = getBoundingBox().grow(CROP_GROWTH_RADIUS);
-                int x = MathHelper.nextInt(getRNG(), (int) aabb.minX, (int) aabb.maxX);
-                int y = MathHelper.nextInt(getRNG(), (int) aabb.minY, (int) aabb.maxY);
-                int z = MathHelper.nextInt(getRNG(), (int) aabb.minZ, (int) aabb.maxZ);
-                BlockPos pos = new BlockPos(x, y, z);
-                BlockState state = world.getBlockState(pos);
-                Block block = state.getBlock();
-                if (block instanceof IGrowable && !(block instanceof GrassBlock))
+                --growCropsTime;
+                if (getRNG().nextBoolean())
                 {
-                    IGrowable plant = (IGrowable) block;
-                    if (plant.canGrow(world, pos, state, false))
+                    AxisAlignedBB aabb = getBoundingBox().grow(CROP_GROWTH_RADIUS);
+                    int x = MathHelper.nextInt(getRNG(), (int) aabb.minX, (int) aabb.maxX);
+                    int y = MathHelper.nextInt(getRNG(), (int) aabb.minY, (int) aabb.maxY);
+                    int z = MathHelper.nextInt(getRNG(), (int) aabb.minZ, (int) aabb.maxZ);
+                    BlockPos pos = new BlockPos(x, y, z);
+                    BlockState state = world.getBlockState(pos);
+                    Block block = state.getBlock();
+                    if (block instanceof IGrowable && !(block instanceof GrassBlock))
                     {
-                        plant.grow((ServerWorld) world, getRNG(), pos, state);
-                        world.playEvent(Constants.WorldEvents.BONEMEAL_PARTICLES, pos, 0);
+                        IGrowable plant = (IGrowable) block;
+                        if (plant.canGrow(world, pos, state, false))
+                        {
+                            plant.grow((ServerWorld) world, getRNG(), pos, state);
+                            world.playEvent(Constants.WorldEvents.BONEMEAL_PARTICLES, pos, 0);
+                        }
                     }
                 }
+            }
+
+            if (world.isDaytime() && !isSleeping() && getRNG().nextDouble() < 0.002)
+            {
+                napTime = 1200;
+                setSleeping(true);
             }
         }
 
         if (getAnimation() == BITE_ANIMATION && getAnimationTick() == 7 && canPassengerSteer())
         {
-            attackInFront(getWidth(), 0);
+            attackInBox(getOffsetBox(getWidth()));
             AxisAlignedBB aabb = getBoundingBox().grow(2).offset(Mafs.getYawVec(rotationYawHead, 0, 2));
             for (BlockPos pos : ModUtils.getBlockPosesInAABB(aabb))
             {
@@ -220,26 +224,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
         return Collections.singletonList(new ItemStack(Items.APPLE, 1 + fortune + getRNG().nextInt(2)));
-    }
-
-    @Override // These bois are lazy, can sleep during the day
-    public void handleSleep()
-    {
-        if (isSleeping() && --napTime <= 0 && world.isDaytime() && getRNG().nextInt(375) == 0)
-        {
-            setSleeping(false);
-            return;
-        }
-        if (isSleeping() || (isChild() && world.isDaytime())) return;
-        if (--sleepCooldown > 0) return;
-        if (isTamed() && !func_233684_eK_()) return;
-        if (!isIdling()) return;
-        int sleepChance = world.isDaytime()? 450 : 300; // neps
-        if (getRNG().nextInt(sleepChance) == 0)
-        {
-            setSleeping(true);
-            this.napTime = 150 * getRNG().nextInt(9);
-        }
     }
 
     @Override

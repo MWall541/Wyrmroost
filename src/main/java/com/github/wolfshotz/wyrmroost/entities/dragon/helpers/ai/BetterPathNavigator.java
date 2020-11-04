@@ -24,7 +24,7 @@ public class BetterPathNavigator extends GroundPathNavigator
         double yDiff = Math.abs(pathPos.getY() - entity.getPosY());
         double zDiff = Math.abs(pathPos.getZ() - entity.getPosZ());
 
-        maxDistanceToWaypoint = ((int) (entity.getWidth() + 1)) * 0.5f;
+        maxDistanceToWaypoint = ((int) (entity.getWidth() + 1f)) * 0.5f;
         boolean isWithinPathPoint = xDiff < maxDistanceToWaypoint && zDiff < maxDistanceToWaypoint && yDiff < 1;
 
         if (isWithinPathPoint || (entity.func_233660_b_(currentPath.func_237225_h_().nodeType) && isPathLongEnough(pos)))

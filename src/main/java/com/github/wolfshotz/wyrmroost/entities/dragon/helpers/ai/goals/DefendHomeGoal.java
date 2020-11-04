@@ -36,6 +36,7 @@ public class DefendHomeGoal extends TargetGoal
     @Override
     public boolean shouldExecute()
     {
+        if (defender.getHealth() <= defender.getMaxHealth() * 0.25) return false;
         if (!defender.getHomePos().isPresent()) return false;
         return defender.getRNG().nextDouble() < 0.2 && (target = findPotentialTarget()) != null;
     }

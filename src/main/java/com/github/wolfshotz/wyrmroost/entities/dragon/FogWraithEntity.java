@@ -10,16 +10,13 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.IItemProvider;
 import net.minecraft.world.World;
-
-import java.util.Collection;
-import java.util.Collections;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
@@ -37,6 +34,8 @@ public class FogWraithEntity extends AbstractDragonEntity
     public FogWraithEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
+
+        sleepController = null;
 
         registerDataEntry("IsStealth", EntityDataEntry.BOOLEAN, STEALTH, false);
         getAttribute(MOVEMENT_SPEED).setBaseValue(0.31);
@@ -70,7 +69,7 @@ public class FogWraithEntity extends AbstractDragonEntity
 
         if (animation == BITE_ANIMATION && tick == 5)
         {
-            attackInFront(2.5f, 0.3);
+            attackInBox(getOffsetBox(2.5f).grow(0.3));
         }
     }
 
@@ -97,18 +96,15 @@ public class FogWraithEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void handleSleep() {}
-
-    @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
         return sizeIn.height * 1.3f;
     }
 
     @Override
-    public Collection<? extends IItemProvider> getFoodItems()
+    public boolean isFoodItem(ItemStack stack)
     {
-        return Collections.emptySet();
+        return false;
     }
 
     public boolean isStealth()

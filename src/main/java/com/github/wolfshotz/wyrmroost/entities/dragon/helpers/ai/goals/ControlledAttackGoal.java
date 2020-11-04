@@ -33,7 +33,7 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     public void startExecuting() { attacker.setAggroed(true); }
 
     @Override
-    public void tick() { if (dragon.noActiveAnimation()) super.tick(); }
+    public void tick() { super.tick(); }
 
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
