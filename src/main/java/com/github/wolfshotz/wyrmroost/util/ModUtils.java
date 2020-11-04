@@ -90,11 +90,18 @@ public final class ModUtils
     public static Iterable<BlockPos> getBlockPosesInAABB(AxisAlignedBB aabb)
     {
         return BlockPos.getAllInBoxMutable(
-                MathHelper.ceil(aabb.minX),
-                MathHelper.ceil(aabb.minY),
-                MathHelper.ceil(aabb.minZ),
-                MathHelper.floor(aabb.maxX),
-                MathHelper.floor(aabb.maxY),
-                MathHelper.floor(aabb.maxZ));
+                MathHelper.floor(aabb.minX),
+                MathHelper.floor(aabb.minY),
+                MathHelper.floor(aabb.minZ),
+                MathHelper.ceil(aabb.maxX),
+                MathHelper.ceil(aabb.maxY),
+                MathHelper.ceil(aabb.maxZ));
+    }
+
+    public static boolean isItemIn(ItemStack stack, Item... items)
+    {
+        Item item = stack.getItem();
+        for (Item item1 : items) if (item1 == item) return true;
+        return false;
     }
 }

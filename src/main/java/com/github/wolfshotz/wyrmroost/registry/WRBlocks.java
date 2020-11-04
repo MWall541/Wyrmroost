@@ -2,7 +2,6 @@ package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.base.EXPBlock;
-import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -11,12 +10,13 @@ import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -29,10 +29,10 @@ public class WRBlocks
 
     public static final RegistryObject<Block> BLUE_GEODE_ORE = register("blue_geode_ore", new EXPBlock(3, 7, builder(Material.ROCK).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE)));
     public static final RegistryObject<Block> BLUE_GEODE_BLOCK = register("blue_geode_block", new Block(builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(2).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> RED_GEODE_ORE = register("red_geode_ore", new EXPBlock(4, 8, builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> RED_GEODE_BLOCK = register("red_geode_block", new Block(builder(Material.ROCK).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", new EXPBlock(8, 11, builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(5).hardnessAndResistance(5).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", new Block(builder(Material.ROCK).harvestLevel(5).hardnessAndResistance(5).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> RED_GEODE_ORE = register("red_geode_ore", new EXPBlock(4, 8, builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(3).hardnessAndResistance(5).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> RED_GEODE_BLOCK = register("red_geode_block", new Block(builder(Material.ROCK).harvestLevel(3).hardnessAndResistance(5).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", new EXPBlock(8, 11, builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.STONE)));
+    public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", new Block(builder(Material.ROCK).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.METAL)));
 
     public static RegistryObject<Block> register(String name, Block block)
     {
@@ -54,18 +54,18 @@ public class WRBlocks
         return properties;
     }
 
-    public static class WRTags
+    public static class Tags
     {
-        public static final Map<Tags.IOptionalNamedTag<Block>, Tags.IOptionalNamedTag<Item>> ITEM_BLOCK_TAGS = Maps.newHashMap();
+        public static final Map<IOptionalNamedTag<Block>, IOptionalNamedTag<Item>> ITEM_BLOCK_TAGS = new HashMap<>();
 
-        public static final Tags.IOptionalNamedTag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
-        public static final Tags.IOptionalNamedTag<Block> STORAGE_BLOCKS_PLATINUM = tag(new ResourceLocation("forge", "storage_blocks/platinum"));
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_PLATINUM = tag(new ResourceLocation("forge", "storage_blocks/platinum"));
 
-        public static Tags.IOptionalNamedTag<Block> tag(String name) { return tag(Wyrmroost.rl(name));}
+        public static IOptionalNamedTag<Block> tag(String name) { return tag(Wyrmroost.rl(name)); }
 
-        public static Tags.IOptionalNamedTag<Block> tag(ResourceLocation name)
+        public static IOptionalNamedTag<Block> tag(ResourceLocation name)
         {
-            Tags.IOptionalNamedTag<Block> tag = BlockTags.createOptional(name);
+            IOptionalNamedTag<Block> tag = BlockTags.createOptional(name);
             ITEM_BLOCK_TAGS.put(tag, ItemTags.createOptional(name));
             return tag;
         }

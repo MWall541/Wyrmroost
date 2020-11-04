@@ -46,7 +46,9 @@ public class SoulCrystalItem extends Item
         if (!world.isRemote)
         {
             CompoundNBT tag = stack.getOrCreateTag();
-            tag.put(DATA_DRAGON, dragon.serializeNBT()); // Serializing the dragons data, including its id.
+            CompoundNBT dragonTag = dragon.serializeNBT();
+            dragonTag.putString("OwnerName", player.getName().getUnformattedComponentText());
+            tag.put(DATA_DRAGON, dragonTag); // Serializing the dragons data, including its id.
             stack.setTag(tag);
             dragon.remove();
             player.setHeldItem(hand, stack);
@@ -122,15 +124,17 @@ public class SoulCrystalItem extends Item
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        TameableEntity dragon = getContained(stack, world);
-        if (dragon != null)
+        if (containsDragon(stack))
         {
-            tooltip.add(new StringTextComponent(dragon.getName().getUnformattedComponentText()));
-            tooltip.add(new StringTextComponent(Character.toString('\u2764')).mergeStyle(TextFormatting.RED)
-                    .append(new StringTextComponent(String.format(" %s / %s", (int) (dragon.getHealth() / 2), (int) dragon.getMaxHealth() / 2))));
-            LivingEntity owner = dragon.getOwner();
-            if (owner != null)
-                tooltip.add(new StringTextComponent("Tamed by " + owner.getName().getString()));
+            CompoundNBT tag = stack.getTag().getCompound(DATA_DRAGON);
+            ITextComponent name;
+
+            if (tag.contains("CustomName"))
+                name = ITextComponent.Serializer.func_240643_a_(tag.getString("CustomName"));
+            else name = EntityType.byKey(tag.getString("id")).orElse(null).getName();
+
+            tooltip.add(name.copyRaw().mergeStyle(TextFormatting.BOLD));
+            tooltip.add(new StringTextComponent("Tamed by ").append(new StringTextComponent(tag.getString("OwnerName")).mergeStyle(TextFormatting.ITALIC)));
         }
     }
 

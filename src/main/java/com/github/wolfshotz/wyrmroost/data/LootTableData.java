@@ -5,7 +5,6 @@ import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.criterion.EntityFlagsPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
@@ -32,6 +31,7 @@ import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -47,10 +47,7 @@ class LootTableData extends LootTableProvider
     @Override
     protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables()
     {
-        return ImmutableList.of(
-                Pair.of(Blocks::new, LootParameterSets.BLOCK),
-                Pair.of(Entities::new, LootParameterSets.ENTITY)
-        );
+        return ImmutableList.of(Pair.of(Blocks::new, LootParameterSets.BLOCK), Pair.of(Entities::new, LootParameterSets.ENTITY));
     }
 
     @Override
@@ -58,7 +55,7 @@ class LootTableData extends LootTableProvider
 
     private static class Blocks extends BlockLootTables
     {
-        public final Map<Block, LootTable.Builder> lootTables = Maps.newHashMap();
+        public final Map<Block, LootTable.Builder> lootTables = new HashMap<>();
 
         @Override
         @SuppressWarnings("ConstantConditions")
@@ -93,7 +90,7 @@ class LootTableData extends LootTableProvider
         private static final ILootCondition.IBuilder UNTAMED_AND_ADULT = EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(new EntityFlagsPredicate(null, null, null, null, false)).nbt(new NBTPredicate(Util.make(new CompoundNBT(), c -> c.putString("OwnerUUID", "")))));
         private static final LootFunction.Builder<?> ON_FIRE_SMELT = Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build())));
 
-        private final Map<EntityType<?>, LootTable.Builder> lootTables = Maps.newHashMap();
+        private final Map<EntityType<?>, LootTable.Builder> lootTables = new HashMap<>();
 
         /**
          * Our way is much neater and cooler anyway. fuck mojang

@@ -77,7 +77,7 @@ public class ClientEvents
     public static void itemColors(ColorHandlerEvent.Item evt)
     {
         ItemColors handler = evt.getItemColors();
-        IItemColor eggColor = (stack, tintIndex) -> ((LazySpawnEggItem) stack.getItem()).getColors(tintIndex);
+        IItemColor eggColor = (stack, tintIndex) -> ((LazySpawnEggItem) stack.getItem()).getColor(tintIndex);
         for (LazySpawnEggItem e : LazySpawnEggItem.EGG_TYPES) handler.register(eggColor, e);
     }
 

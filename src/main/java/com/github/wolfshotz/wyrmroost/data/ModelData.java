@@ -6,7 +6,6 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.client.renderer.model.BlockModel;
@@ -18,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -36,7 +36,7 @@ class ModelData
 
     private static class Blocks extends BlockStateProvider
     {
-        private final List<String> MISSING_TEXTURES = Lists.newArrayList();
+        private final List<String> MISSING_TEXTURES = new ArrayList<>();
 
         public Blocks(DataGenerator generator)
         {
@@ -66,8 +66,7 @@ class ModelData
 
     private static class Items extends ItemModelProvider
     {
-        private final List<Item> REGISTERED = Lists.newArrayList();
-        private final List<String> MISSING_TEXTURES = Lists.newArrayList();
+        private final List<Item> REGISTERED = new ArrayList<>();
 
         public Items(DataGenerator generator)
         {
