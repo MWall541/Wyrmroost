@@ -1,15 +1,15 @@
 package com.github.wolfshotz.wyrmroost.entities.dragonegg;
 
-import com.google.common.collect.Maps;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
-    public static final Map<EntityType<?>, DragonEggProperties> MAP = Maps.newHashMap();
+    public static final Map<EntityType<?>, DragonEggProperties> MAP = new HashMap<>();
 
     private final EntitySize size;
     private final int hatchTime;

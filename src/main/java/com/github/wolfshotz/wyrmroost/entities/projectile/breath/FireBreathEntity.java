@@ -81,7 +81,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (entity.isImmuneToFire()) return;
         if (entity instanceof LivingEntity && shooter.isOnSameTeam(entity)) return;
 
-        float damage = (float) shooter.getAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get()).getValue();
+        float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
         if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;
 
         entity.setFire(8);
