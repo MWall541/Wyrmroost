@@ -1,12 +1,12 @@
 package com.github.wolfshotz.wyrmroost;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,7 +26,6 @@ public class WRConfig
     // Server
     public static double fireBreathFlammability = 0.8d;
     public static int homeRadius = 16;
-    public static double dfdBabyChance = 0.4d;
     private static boolean respectMobGriefing;
     private static boolean dragonGriefing;
     public static Map<String, Integer> breedLimits;
@@ -120,15 +119,10 @@ public class WRConfig
         }
 
         public final ForgeConfigSpec.IntValue homeRadius;
-        public final ForgeConfigSpec.DoubleValue dfdBabyChance;
         public final ForgeConfigSpec.DoubleValue breathFlammability;
         public final ForgeConfigSpec.BooleanValue respectMobGriefing;
         public final ForgeConfigSpec.BooleanValue dragonGriefing;
-        private static final List<String> BREED_LIMIT_DEFAULTS = new ArrayList<String>()
-        {{
-            add("butterfly_leviathan:1");
-            add("royal_red:2");
-        }};
+        private static final List<String> BREED_LIMIT_DEFAULTS = ImmutableList.of("butterfly_leviathan:1", "royal_red:2");
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> breedLimits;
 
         public Server(ForgeConfigSpec.Builder builder)
@@ -138,12 +132,6 @@ public class WRConfig
                     .comment("How far dragons can travel from their home points")
                     .translation("config.wyrmroost.homeradius")
                     .defineInRange("home_radius", 16, 6, 1024);
-
-            dfdBabyChance = builder
-                    .comment("Chances for a Dragon Fruit Drake to spawn as a baby",
-                            "0 = No Chance, 1 = (practically) Guaranteed. Higher values are better chances")
-                    .translation("config.wyrmroost.dfdbabychance")
-                    .defineInRange("dfd_baby_chance", 0.3, 0, 1);
 
             breathFlammability = builder
                     .comment("Base Flammability for Dragon Fire Breath.",
@@ -176,7 +164,6 @@ public class WRConfig
         public static void reload()
         {
             WRConfig.homeRadius = INSTANCE.homeRadius.get();
-            WRConfig.dfdBabyChance = INSTANCE.dfdBabyChance.get();
             WRConfig.fireBreathFlammability = INSTANCE.breathFlammability.get();
             WRConfig.respectMobGriefing = INSTANCE.respectMobGriefing.get();
             WRConfig.dragonGriefing = INSTANCE.dragonGriefing.get();

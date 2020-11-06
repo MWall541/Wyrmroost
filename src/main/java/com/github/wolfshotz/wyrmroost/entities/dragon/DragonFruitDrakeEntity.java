@@ -1,9 +1,9 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.CommonGoalWrappers;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
@@ -22,11 +22,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.*;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.server.ServerWorld;
@@ -41,6 +45,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
@@ -127,14 +132,14 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     {
         super.livingTick();
 
-        if (shearCooldownTime > 0) --shearCooldownTime;
         sitTimer.add((func_233684_eK_() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.05f : -0.1f);
 
-        setSprinting(getAttackTarget() != null);
-
         if (!world.isRemote)
         {
+            setSprinting(getAttackTarget() != null);
+            if (shearCooldownTime > 0) --shearCooldownTime;
+
             if (growCropsTime >= 0)
             {
                 --growCropsTime;
@@ -159,7 +164,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
                 }
             }
 
-            if (world.isDaytime() && !isSleeping() && getRNG().nextDouble() < 0.002)
+            if (!isChild() && world.isDaytime() && !isSleeping() && getRNG().nextDouble() < 0.002)
             {
                 napTime = 1200;
                 setSleeping(true);
@@ -185,16 +190,15 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
-    public boolean canSpawn(IWorld worldIn, SpawnReason spawnReasonIn) { return true; }
-
-    @Override
-    public boolean canDespawn(double distanceToClosestPlayer) { return !isTamed(); }
-
-    @Override
-    public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData data, @Nullable CompoundNBT dataTag)
+    public boolean preventDespawn()
     {
-        if (data == null) data = new AgeableData((float) WRConfig.dfdBabyChance);
-        return super.onInitialSpawn(world, difficulty, reason, data, dataTag);
+        return isTamed();
+    }
+
+    @Override
+    public boolean canDespawn(double distanceToClosestPlayer)
+    {
+        return ticksExisted > 2400;
     }
 
     @Override
@@ -264,10 +268,34 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     @Override
     protected SoundEvent getDeathSound() { return WRSounds.ENTITY_DFD_DEATH.get(); }
 
+    @Override
+    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.APPLE; }
+
+    @Override
+    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, BITE_ANIMATION}; }
+
+    @Override
+    public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData data, @Nullable CompoundNBT dataTag)
+    {
+        if (data == null)
+        {
+            data = new AgeableData(true);
+            if (reason == SpawnReason.NATURAL) setGrowingAge(DragonEggProperties.get(getType()).getGrowthTime()); // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
+        }
+
+        return super.onInitialSpawn(world, difficulty, reason, data, dataTag);
+    }
+
+    public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos pos, Random random)
+    {
+        BlockState state = world.getBlockState(pos.down());
+        return (state.isIn(Blocks.GRASS_BLOCK) || state.isIn(BlockTags.LEAVES)) && world.getLightSubtracted(pos, 0) > 8;
+    }
+
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.JUNGLE)
-            event.getSpawns().func_242575_a(EntityClassification.MONSTER, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 4, 4, 7));
+            event.getSpawns().func_242575_a(EntityClassification.AMBIENT, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 14, 4, 5));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()
@@ -277,12 +305,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
                 .createMutableAttribute(MOVEMENT_SPEED, 0.23)
                 .createMutableAttribute(ATTACK_DAMAGE, 3);
     }
-
-    @Override
-    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.APPLE; }
-
-    @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, BITE_ANIMATION}; }
 
     public static boolean isCrop(Block block)
     {

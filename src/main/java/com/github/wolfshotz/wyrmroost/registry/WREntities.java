@@ -105,7 +105,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = Builder.creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)
             .attributes(DragonFruitDrakeEntity::getAttributes)
-            .spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING, AnimalEntity::canAnimalSpawn)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, DragonFruitDrakeEntity::getSpawnPlacement)
             .spawnBiomes(DragonFruitDrakeEntity::setSpawnBiomes)
             .spawnEgg(0xe05c9a, 0x788716)
             .dragonEgg(new DragonEggProperties(0.45f, 0.75f, 9600))

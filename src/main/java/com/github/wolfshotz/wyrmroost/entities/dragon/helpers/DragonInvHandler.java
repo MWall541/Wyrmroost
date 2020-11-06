@@ -20,7 +20,10 @@ public class DragonInvHandler extends ItemStackHandler
     }
 
     @Override
-    protected void onContentsChanged(int slot) { dragon.onInvContentsChanged(slot, dragon.getStackInSlot(slot), false); }
+    protected void onContentsChanged(int slot)
+    {
+        dragon.onInvContentsChanged(slot, dragon.getStackInSlot(slot), false);
+    }
 
     @Override
     protected void onLoad()
