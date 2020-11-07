@@ -47,7 +47,7 @@ public class WRFollowOwnerGoal extends Goal
     public void tick()
     {
         LivingEntity owner = dragon.getOwner();
-        dragon.getLookController().setLookPositionWithEntity(owner, dragon.getHorizontalFaceSpeed(), dragon.getVerticalFaceSpeed());
+        dragon.getLookController().setLookPositionWithEntity(owner, 90, 90);
 
         if (++newPathTicks >= 10 || dragon.getNavigator().noPath())
         {

@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -34,11 +35,13 @@ public class FogWraithEntity extends AbstractDragonEntity
     public FogWraithEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
-
-        sleepController = null;
-
         registerDataEntry("IsStealth", EntityDataEntry.BOOLEAN, STEALTH, false);
-        getAttribute(MOVEMENT_SPEED).setBaseValue(0.31);
+    }
+
+    @Override
+    protected SleepController createSleepController()
+    {
+        return null;
     }
 
     @Override
@@ -127,7 +130,7 @@ public class FogWraithEntity extends AbstractDragonEntity
     {
         return MobEntity.func_233666_p_()
                 .createMutableAttribute(MAX_HEALTH, 100)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.22)
+                .createMutableAttribute(MOVEMENT_SPEED, 0.31)
                 .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
                 .createMutableAttribute(FOLLOW_RANGE, 60)
                 .createMutableAttribute(ATTACK_KNOCKBACK, 2.25)

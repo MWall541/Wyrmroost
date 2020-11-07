@@ -6,6 +6,7 @@ import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
@@ -76,14 +77,18 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         moveController = new MoveController();
         stepHeight = 2;
 
-        getSleepController().setHomeDefender();
-
         setPathPriority(PathNodeType.WATER, 0);
         setImmune(DamageSource.LIGHTNING_BOLT);
         setImmune(DamageSource.IN_FIRE);
         setImmune(DamageSource.IN_WALL);
 
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
+    }
+
+    @Override
+    protected SleepController createSleepController()
+    {
+        return null;
     }
 
     @Override
@@ -118,7 +123,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public void livingTick()
     {
         super.livingTick();
-
 
         Vector3d conduitPos = getConduitPos();
 
@@ -278,6 +282,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
             double xDiff = getPosX() - prevPosX;
             double yDiff = getPosY() - prevPosY;
             double zDiff = getPosZ() - prevPosZ;
+            if (yDiff < 0.2) yDiff = 0;
             float amount = MathHelper.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff * zDiff) * 4f;
             if (amount > 1f) amount = 1f;
 
@@ -445,7 +450,10 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public boolean canBeRiddenInWater(Entity rider) { return true; }
 
     @Override
-    public int getHorizontalFaceSpeed() { return 6; }
+    public int getYawRotationSpeed()
+    {
+        return 6;
+    }
 
     @Override
     public int determineVariant() { return getRNG().nextDouble() < 0.02 ? -1 : getRNG().nextInt(2); }
@@ -480,7 +488,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason reason, BlockPos pos, Random random)
     {
         if (reason == SpawnReason.SPAWNER) return true;
-        return world.getFluidState(pos).getFluid().isIn(FluidTags.WATER) && world.getFluidState(pos.up(2)).getFluid().isIn(FluidTags.WATER) && random.nextDouble() < 0.001;
+        return world.getFluidState(pos).getFluid().isIn(FluidTags.WATER);
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()
@@ -541,8 +549,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
                     pitch = MathHelper.clamp(MathHelper.wrapDegrees(pitch), -85f, 85f);
 
                     rotationYawHead = yaw;
-                    renderYawOffset = rotationYaw = limitAngle(rotationYaw, rotationYawHead, getHorizontalFaceSpeed());
-                    rotationPitch = limitAngle(rotationPitch, pitch, 90);
+                    renderYawOffset = rotationYaw = limitAngle(rotationYaw, rotationYawHead, getYawRotationSpeed());
+                    rotationPitch = limitAngle(rotationPitch, pitch, 75);
                     ((LessShitLookController) getLookController()).freeze();
                     float speed = isInWater()? (float) getAttributeValue(ForgeMod.SWIM_SPEED.get()) : (float) getAttributeValue(MOVEMENT_SPEED);
                     setAIMoveSpeed(speed);

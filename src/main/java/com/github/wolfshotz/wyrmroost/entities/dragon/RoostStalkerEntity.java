@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
@@ -62,14 +63,18 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
         stepHeight = 0;
 
-        getSleepController().setHomeDefender();
-
         setImmune(DamageSource.DROWN); // tf
 
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
-    
+
+    @Override
+    protected SleepController createSleepController()
+    {
+        return new SleepController(this).setHomeDefender();
+    }
+
     @Override
     protected void registerGoals()
     {

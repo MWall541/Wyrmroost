@@ -4,11 +4,9 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
-import com.github.wolfshotz.wyrmroost.registry.WREffects;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -23,7 +21,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +29,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -112,28 +108,28 @@ public class RenderHelper extends RenderType
         }
     }
 
-    public static void fogColors(EntityViewRenderEvent.FogColors evt)
-    {
-        EffectInstance effect = ClientEvents.getPlayer().getActivePotionEffect(WREffects.SILK.get());
-        if (effect != null)
-        {
-            evt.setBlue(evt.getRed() + 0.875f);
-            evt.setGreen(evt.getGreen() + 0.875f);
-            evt.setRed(evt.getBlue() + 0.875f);
-        }
-    }
-
-    public static void renderFog(EntityViewRenderEvent.RenderFogEvent evt)
-    {
-        EffectInstance effect = ClientEvents.getPlayer().getActivePotionEffect(WREffects.SILK.get());
-        if (effect != null)
-        {
-            float duration = (float) effect.getDuration();
-            float lerp = MathHelper.lerp(Math.min(1f, duration / 10f), evt.getFarPlaneDistance(), 5f);
-            RenderSystem.fogStart(lerp * 0.25f);
-            RenderSystem.fogEnd(lerp);
-        }
-    }
+//    public static void fogColors(EntityViewRenderEvent.FogColors evt)
+//    {
+//        EffectInstance effect = ClientEvents.getPlayer().getActivePotionEffect(WREffects.SILK.get());
+//        if (effect != null)
+//        {
+//            evt.setBlue(evt.getRed() + 0.875f);
+//            evt.setGreen(evt.getGreen() + 0.875f);
+//            evt.setRed(evt.getBlue() + 0.875f);
+//        }
+//    }
+//
+//    public static void renderFog(EntityViewRenderEvent.RenderFogEvent evt)
+//    {
+//        EffectInstance effect = ClientEvents.getPlayer().getActivePotionEffect(WREffects.SILK.get());
+//        if (effect != null)
+//        {
+//            float duration = (float) effect.getDuration();
+//            float lerp = MathHelper.lerp(Math.min(1f, duration / 10f), evt.getFarPlaneDistance(), 5f);
+//            RenderSystem.fogStart(lerp * 0.25f);
+//            RenderSystem.fogEnd(lerp);
+//        }
+//    }
 
     private static void renderDragonStaff(MatrixStack ms, float partialTicks)
     {

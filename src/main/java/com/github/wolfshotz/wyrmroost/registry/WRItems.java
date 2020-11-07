@@ -28,7 +28,7 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", DragonStaffItem::new);
     public static final RegistryObject<Item> COIN_DRAGON = register("coin_dragon", CoinDragonItem::new);
     public static final RegistryObject<Item> TRUMPET = register("trumpet", TrumpetItem::new);
-    public static final RegistryObject<Item> SILK_GLAND = register("orbwyrm_silk_gland", SilkGlandItem::new);
+//    public static final RegistryObject<Item> SILK_GLAND = register("orbwyrm_silk_gland", SilkGlandItem::new);
 //    public static final RegistryObject<Item> FOG_WRAITH_TAILS = register("fog_wraith_tails", FogWraithTailsItem::new);
 
     public static final RegistryObject<Item> BLUE_GEODE = register("blue_geode");

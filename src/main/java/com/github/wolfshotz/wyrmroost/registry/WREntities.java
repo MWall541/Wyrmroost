@@ -11,7 +11,6 @@ import com.github.wolfshotz.wyrmroost.client.render.entity.coin_dragon.CoinDrago
 import com.github.wolfshotz.wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.orbwyrm.OrbwyrmRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.GeodeTippedArrowRenderer;
@@ -22,7 +21,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.*;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.projectile.GeodeTippedArrowEntity;
-import com.github.wolfshotz.wyrmroost.entities.projectile.SilkProjectileEntity;
 import com.github.wolfshotz.wyrmroost.entities.projectile.WindGustEntity;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
@@ -144,14 +142,14 @@ public class WREntities
             .renderer(() -> AlpineRenderer::new)
             .build(b -> b.size(2f, 2f));
 
-    public static final RegistryObject<EntityType<OrbwyrmEntity>> ORBWYRM = Builder.creature("orbwyrm", OrbwyrmEntity::new)
-            .attributes(OrbwyrmEntity::getAttributes)
-//            .spawnPlacement()
-//            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
-            .spawnEgg(0x41444F, 0x16171C)
-//            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
-            .renderer(() -> OrbwyrmRenderer::new)
-            .build(b -> b.size(2.8f, 3.76f));
+//    public static final RegistryObject<EntityType<OrbwyrmEntity>> ORBWYRM = Builder.creature("orbwyrm", OrbwyrmEntity::new)
+//            .attributes(OrbwyrmEntity::getAttributes)
+////            .spawnPlacement()
+////            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
+//            .spawnEgg(0x41444F, 0x16171C)
+////            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
+//            .renderer(() -> OrbwyrmRenderer::new)
+//            .build(b -> b.size(2.8f, 3.76f));
 
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = Builder.<DragonEggEntity>withClassification("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
             .renderer(() -> DragonEggRenderer::new)
@@ -169,9 +167,9 @@ public class WREntities
             .renderer(() -> EmptyRenderer::new)
             .build(b -> b.size(4, 4).disableSerialization().disableSummoning());
 
-    public static final RegistryObject<EntityType<SilkProjectileEntity>> SILK = Builder.withClassification("silk", SilkProjectileEntity::new, EntityClassification.MISC)
-            .renderer(() -> EmptyRenderer::new) // todo
-            .build(b -> b.size(0.5f, 0.5f).disableSerialization().disableSummoning());
+//    public static final RegistryObject<EntityType<SilkProjectileEntity>> SILK = Builder.withClassification("silk", SilkProjectileEntity::new, EntityClassification.MISC)
+//            .renderer(() -> EmptyRenderer::new) // todo
+//            .build(b -> b.size(0.5f, 0.5f).disableSerialization().disableSummoning());
 
     @SuppressWarnings("unchecked")
     private static class Builder<T extends Entity>

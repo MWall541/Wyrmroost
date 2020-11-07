@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.core.util.Integers;
 
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,17 @@ public class WRConfig
 
     public static void configLoad(ModConfig.ModConfigEvent evt)
     {
-        ForgeConfigSpec spec = evt.getConfig().getSpec();
-        if (spec == Common.SPEC) Common.reload();
-        else if (spec == Client.SPEC) Client.reload();
-        else if (spec == Server.SPEC) Server.reload();
+        try
+        {
+            ForgeConfigSpec spec = evt.getConfig().getSpec();
+            if (spec == Common.SPEC) Common.reload();
+            else if (spec == Client.SPEC) Client.reload();
+            else if (spec == Server.SPEC) Server.reload();
+        }
+        catch (Throwable e)
+        {
+            Wyrmroost.LOG.error("Something went wrong updating Wyrmroost configs, using previous or default values! {}", e.toString());
+        }
     }
 
     /**
@@ -90,7 +98,7 @@ public class WRConfig
 
         public final ForgeConfigSpec.BooleanValue disableFrustumCheck;
 
-        public Client(ForgeConfigSpec.Builder builder)
+        Client(ForgeConfigSpec.Builder builder)
         {
             builder.comment("Wyrmroost Client Options").push("General");
             disableFrustumCheck = builder.comment("Disables Frustum check when rendering (Dragons parts dont go poof when looking too far) - Only applies to bigger bois")
@@ -125,7 +133,7 @@ public class WRConfig
         private static final List<String> BREED_LIMIT_DEFAULTS = ImmutableList.of("butterfly_leviathan:1", "royal_red:2");
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> breedLimits;
 
-        public Server(ForgeConfigSpec.Builder builder)
+        Server(ForgeConfigSpec.Builder builder)
         {
             builder.comment("Wyrmroost Dragon Options").push("dragons");
             homeRadius = builder
@@ -167,7 +175,7 @@ public class WRConfig
             WRConfig.fireBreathFlammability = INSTANCE.breathFlammability.get();
             WRConfig.respectMobGriefing = INSTANCE.respectMobGriefing.get();
             WRConfig.dragonGriefing = INSTANCE.dragonGriefing.get();
-            WRConfig.breedLimits = INSTANCE.breedLimits.get().stream().collect(Collectors.toMap(s -> s.split(":")[0], s -> Integer.valueOf(s.split(":")[1])));
+            WRConfig.breedLimits = INSTANCE.breedLimits.get().stream().collect(Collectors.toMap(s -> s.split(":")[0], s -> Integers.parseInt(s.split(":")[1])));
         }
     }
 }

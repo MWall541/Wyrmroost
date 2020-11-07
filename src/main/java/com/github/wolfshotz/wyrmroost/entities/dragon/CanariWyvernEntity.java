@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
@@ -44,8 +45,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super(dragon, world);
 
-        getSleepController().setHomeDefender().addSleepCondition(() -> !isPissed());
-
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
@@ -72,7 +71,16 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected BodyController createBodyController() { return new BodyController(this); }
+    protected BodyController createBodyController()
+    {
+        return new BodyController(this);
+    }
+
+    @Override
+    protected SleepController createSleepController()
+    {
+        return new SleepController(this).setHomeDefender().addSleepCondition(() -> !isPissed());
+    }
 
     @Override
     protected void registerData()
@@ -108,6 +116,9 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
+        ActionResultType result = super.playerInteraction(player, hand, stack);
+        if (result.isSuccessOrConsume()) return result;
+
         if (!isTamed() && isFoodItem(stack) && (isPissed() || player.isCreative() || isChild()))
         {
             eat(stack);
@@ -115,7 +126,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             return ActionResultType.func_233537_a_(world.isRemote);
         }
 
-        if (isOwner(player) && player.getPassengers().size() < 3 && !player.isSneaking() && !isFoodItem(stack))
+        if (isOwner(player) && player.getPassengers().size() < 3 && !player.isSneaking())
         {
             setSit(true);
             setFlying(false);
@@ -124,7 +135,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             return ActionResultType.func_233537_a_(world.isRemote);
         }
 
-        return super.playerInteraction(player, hand, stack);
+        return ActionResultType.PASS;
     }
 
     @Override
@@ -186,7 +197,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public int determineVariant() { return getRNG().nextInt(5); }
 
     @Override
-    public int getHorizontalFaceSpeed() { return isFlying()? 12 : 75; }
+    public int getYawRotationSpeed()
+    {
+        return isFlying()? 12 : 75;
+    }
 
     @Override
     public boolean isFoodItem(ItemStack stack)
@@ -207,7 +221,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         return MobEntity.func_233666_p_()
                 .createMutableAttribute(MAX_HEALTH, 12)
                 .createMutableAttribute(MOVEMENT_SPEED, 0.2)
-                .createMutableAttribute(FLYING_SPEED, 0.2)
+                .createMutableAttribute(FLYING_SPEED, 0.1)
                 .createMutableAttribute(ATTACK_DAMAGE, 3);
     }
 

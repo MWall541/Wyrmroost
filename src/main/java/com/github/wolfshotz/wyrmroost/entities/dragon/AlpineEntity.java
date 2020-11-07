@@ -43,6 +43,7 @@ public class AlpineEntity extends AbstractDragonEntity
     public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
+
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
@@ -223,7 +224,7 @@ public class AlpineEntity extends AbstractDragonEntity
                 .createMutableAttribute(MOVEMENT_SPEED, 0.22)
                 .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
                 .createMutableAttribute(ATTACK_DAMAGE, 3)
-                .createMutableAttribute(FLYING_SPEED, 0.5)
+                .createMutableAttribute(FLYING_SPEED, 0.185f)
                 .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 1);
     }
 }

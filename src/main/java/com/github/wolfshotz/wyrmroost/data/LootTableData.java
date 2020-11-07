@@ -175,8 +175,6 @@ class LootTableData extends LootTableProvider
             registerLootTable(WREntities.ALPINE.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6)))
                     .addLootPool(singleRollPool().addEntry(item(Items.FEATHER, 3, 10).acceptFunction(looting(3, 11)))));
-
-            registerEmptyTables(WREntities.ORBWYRM.get());
         }
 
         private static LootingEnchantBonus.Builder looting(float min, float max)
@@ -194,7 +192,10 @@ class LootTableData extends LootTableProvider
             return ItemLootEntry.builder(itemIn).acceptFunction(SetCount.builder(ConstantRange.of(amount)));
         }
 
-        private static LootPool.Builder singleRollPool() { return LootPool.builder().rolls(ConstantRange.of(1)); }
+        private static LootPool.Builder singleRollPool()
+        {
+            return LootPool.builder().rolls(ConstantRange.of(1));
+        }
 
         private static ItemLootEntry.Builder<?> meat(IItemProvider itemIn, int minAmount, int maxAmount, int lootingMin, int lootingMax)
         {
