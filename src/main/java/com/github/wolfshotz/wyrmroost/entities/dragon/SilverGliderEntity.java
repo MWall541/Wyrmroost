@@ -2,8 +2,9 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRAvoidEntityGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
-import com.github.wolfshotz.wyrmroost.entities.util.CommonGoalWrappers;
+import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.SGGlidePacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -64,8 +65,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        goalSelector.addGoal(3, temptGoal = CommonGoalWrappers.nonTamedTemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
-        goalSelector.addGoal(4, CommonGoalWrappers.nonTamedAvoidGoal(this, PlayerEntity.class, 8f, 1f));
+        goalSelector.addGoal(3, temptGoal = AnonymousGoals.nonTamedTemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
+        goalSelector.addGoal(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
         goalSelector.addGoal(5, new DragonBreedGoal(this));
         goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new SwoopGoal());
@@ -129,6 +130,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
+        ActionResultType result = super.playerInteraction(player, hand, stack);
+        if (result.isSuccessOrConsume()) return result;
+
         if (!isTamed() && isBreedingItem(stack))
         {
             if (!world.isRemote && (temptGoal.isRunning() || player.isCreative()))
@@ -140,7 +144,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             return ActionResultType.CONSUME;
         }
 
-        if (isOwner(player) && player.getPassengers().size() == 0 && !player.isSneaking())
+        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking())
         {
             startRiding(player, true);
             setSit(false);
@@ -148,7 +152,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             return ActionResultType.func_233537_a_(world.isRemote);
         }
 
-        return super.playerInteraction(player, hand, stack);
+        return ActionResultType.PASS;
     }
 
     public boolean shouldGlide(PlayerEntity player)
@@ -212,7 +216,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public int getVerticalFaceSpeed() { return 30; }
 
     @Override
-    public int getHorizontalFaceSpeed() { return isFlying()? 5 : 75; }
+    public int getYawRotationSpeed()
+    {
+        return isFlying()? 5 : 75;
+    }
 
     public boolean isGliding() { return isGliding; }
 
@@ -241,7 +248,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         return MobEntity.func_233666_p_()
                 .createMutableAttribute(MAX_HEALTH, 20)
                 .createMutableAttribute(MOVEMENT_SPEED, 0.23)
-                .createMutableAttribute(FLYING_SPEED, 0.24);
+                .createMutableAttribute(FLYING_SPEED, 0.12);
     }
 
     public class SwoopGoal extends Goal
