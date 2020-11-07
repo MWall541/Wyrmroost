@@ -382,17 +382,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (isTamed())
         {
-            if (isBreedingItem(stack) && getGrowingAge() == 0)
-            {
-                if (!world.isRemote && canBreed())
-                {
-                    eat(stack);
-                    setInLove(player);
-                    return ActionResultType.SUCCESS;
-                }
-                return ActionResultType.CONSUME;
-            }
-
             if (isFoodItem(stack))
             {
                 boolean flag = getHealth() < getMaxHealth();
@@ -407,6 +396,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     eat(stack);
                     return COMMON_SUCCESS;
                 }
+            }
+
+            if (isBreedingItem(stack) && getGrowingAge() == 0)
+            {
+                if (!world.isRemote && canBreed())
+                {
+                    eat(stack);
+                    setInLove(player);
+                    return ActionResultType.SUCCESS;
+                }
+                return ActionResultType.CONSUME;
             }
         }
 
