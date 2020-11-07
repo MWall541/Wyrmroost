@@ -41,6 +41,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
@@ -86,12 +87,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
     public final Optional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
-    protected SleepController sleepController;
+    private final SleepController sleepController;
     public boolean wingsDown;
     public int breedCount;
     private Animation animation = NO_ANIMATION;
     private int animationTick;
-
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -100,9 +100,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         stepHeight = 1;
 
         invHandler = Optional.ofNullable(createInv());
-        sleepController = new SleepController(this);
+        sleepController = createSleepController();
         lookController = new LessShitLookController(this);
-        navigator = new BetterPathNavigator(this);
         if (hasDataParameter(FLYING)) moveController = new FlyerMoveController(this);
 
         if (isImmuneToArrows()) setImmune(DamageSource.CACTUS); // because for some reason it makes sense.
@@ -113,14 +112,28 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
+    protected PathNavigator createNavigator(World worldIn)
+    {
+        return new BetterPathNavigator(this);
+    }
+
+    @Override
+    protected BodyController createBodyController()
+    {
+        return new DragonBodyController(this);
+    }
+
+    protected SleepController createSleepController()
+    {
+        return new SleepController(this);
+    }
+
+    @Override
     protected void registerGoals()
     {
         goalSelector.addGoal(1, new SwimGoal(this));
         goalSelector.addGoal(2, new WRSitGoal(this));
     }
-
-    @Override
-    protected BodyController createBodyController() { return new DragonBodyController(this); }
 
     // ================================
     //           Entity Data
@@ -425,7 +438,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (canPassengerSteer()) // Were being controlled; override ai movement
         {
-            speed *= 0.35f;
             LivingEntity entity = (LivingEntity) getControllingPassenger();
             double moveY = vec3d.y;
             double moveX = entity.moveStrafing * 0.5;
@@ -443,7 +455,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 if (entity instanceof ServerPlayerEntity)
                     ((ServerPlayerEntity) entity).connection.vehicleFloating = false;
             }
-            else if (entity.isJumping && canFly()) setFlying(true);
+            else
+            {
+                speed *= 0.35f;
+                if (entity.isJumping && canFly()) setFlying(true);
+            }
 
             setAIMoveSpeed(speed);
             vec3d = new Vector3d(moveX, moveY, moveZ);
@@ -589,10 +605,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override // We shouldnt be targetting pets...
-    public boolean shouldAttackEntity(LivingEntity target, @Nullable LivingEntity owner) { return !isOnSameTeam(target); }
+    public boolean shouldAttackEntity(LivingEntity target, @Nullable LivingEntity owner)
+    {
+        return !isOnSameTeam(target);
+    }
 
     @Override
-    public boolean canAttack(LivingEntity target) { return !isChild() && !canPassengerSteer() && super.canAttack(target); }
+    public boolean canAttack(LivingEntity target)
+    {
+        return !isChild() && !canPassengerSteer() && super.canAttack(target);
+    }
 
     @Override
     public boolean attackEntityFrom(DamageSource source, float amount)
@@ -753,6 +775,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         world.setEntityState(this, HEAL_PARTICLES_DATA_ID);
     }
 
+    public int getYawRotationSpeed()
+    {
+        return isFlying()? 6 : 75;
+    }
+
+    public boolean isRiding()
+    {
+        return getRidingEntity() != null;
+    }
+
     @Override
     public boolean canMateWith(AnimalEntity mate)
     {
@@ -762,14 +794,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return super.canMateWith(mate);
     }
 
-    @Override
-    public int getHorizontalFaceSpeed() { return isFlying()? 6 : super.getHorizontalFaceSpeed(); }
-
-    public boolean isRiding() { return getRidingEntity() != null; }
-
     @Nullable
     @Override
-    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) { return null; }
+    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+    {
+        return null;
+    }
 
     @Override
     public void func_234177_a_(ServerWorld world, AnimalEntity mate)
@@ -841,6 +871,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 && !isFlying();
     }
 
+    @Nullable
     public SleepController getSleepController()
     {
         return sleepController;

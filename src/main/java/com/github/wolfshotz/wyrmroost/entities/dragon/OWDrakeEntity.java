@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
@@ -75,13 +76,15 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super(drake, world);
 
-        getSleepController().setHomeDefender();
-
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
+    }
 
-        sitTimer.set(func_233684_eK_()? 1 : 0);
+    @Override
+    protected SleepController createSleepController()
+    {
+        return new SleepController(this).setHomeDefender();
     }
 
     @Override
