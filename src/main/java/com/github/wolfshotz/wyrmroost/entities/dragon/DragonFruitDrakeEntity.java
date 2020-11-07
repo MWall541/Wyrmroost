@@ -1,10 +1,11 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
-import com.github.wolfshotz.wyrmroost.entities.util.CommonGoalWrappers;
+import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -63,17 +64,15 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     {
         super(dragon, world);
 
-        getSleepController().addWakeConditions(() -> --napTime <= 0);
-
         registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
     }
 
     @Override
-    public boolean isFoodItem(ItemStack stack)
+    protected SleepController createSleepController()
     {
-        return stack.getItem().isIn(Tags.Items.CROPS) || ModUtils.isItemIn(stack, Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE);
+        return new SleepController(this).addWakeConditions(() -> --napTime <= 0);
     }
 
     @Override
@@ -85,14 +84,17 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         goalSelector.addGoal(5, new DragonBreedGoal(this));
         goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.3, false));
         goalSelector.addGoal(8, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(9, CommonGoalWrappers.followParent(this, 1));
+        goalSelector.addGoal(9, AnonymousGoals.followParent(this, 1));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 7f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
         goalSelector.addGoal(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.fromItems(Items.APPLE))
         {
             @Override
-            public boolean shouldExecute() { return !isTamed() && isChild() && super.shouldExecute(); }
+            public boolean shouldExecute()
+            {
+                return !isTamed() && isChild() && super.shouldExecute();
+            }
         });
 
         targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
@@ -111,7 +113,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
             {
                 tame(getRNG().nextDouble() <= 0.2d, player);
                 eat(stack);
-                player.swingArm(hand);
                 return ActionResultType.SUCCESS;
             }
             return ActionResultType.CONSUME;
@@ -184,6 +185,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
+    public boolean isFoodItem(ItemStack stack)
+    {
+        return stack.getItem().isIn(Tags.Items.CROPS) || ModUtils.isItemIn(stack, Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE);
+    }
+
+    @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
         if (key == KeybindPacket.MOUNT_KEY1 && pressed) setAnimation(BITE_ANIMATION);
@@ -202,7 +209,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight(); }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    {
+        return getHeight();
+    }
 
     @Override
     public EntitySize getSize(Pose poseIn)
@@ -213,7 +223,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
-    public double getMountedYOffset() { return super.getMountedYOffset() + 0.1d; }
+    public double getMountedYOffset()
+    {
+        return super.getMountedYOffset() + 0.1d;
+    }
 
     @Override
     public boolean isShearable(@Nonnull ItemStack item, World world, BlockPos pos)
@@ -245,10 +258,16 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
-    public boolean canFly() { return false; }
+    public boolean canFly()
+    {
+        return false;
+    }
 
     @Override
-    public int determineVariant() { return getRNG().nextDouble() < 0.008? -1 : 0; }
+    public int determineVariant()
+    {
+        return getRNG().nextDouble() < 0.008? -1 : 0;
+    }
 
     @Override
     protected boolean canBeRidden(Entity passenger)
@@ -258,21 +277,36 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_DFD_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_DFD_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_DFD_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_DFD_HURT.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_DFD_DEATH.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_DFD_DEATH.get();
+    }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.APPLE; }
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return stack.getItem() == Items.APPLE;
+    }
 
     @Override
-    public Animation[] getAnimations() { return new Animation[] {NO_ANIMATION, BITE_ANIMATION}; }
+    public Animation[] getAnimations()
+    {
+        return new Animation[] {NO_ANIMATION, BITE_ANIMATION};
+    }
 
     @Override
     public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData data, @Nullable CompoundNBT dataTag)
@@ -280,7 +314,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         if (data == null)
         {
             data = new AgeableData(true);
-            if (reason == SpawnReason.NATURAL) setGrowingAge(DragonEggProperties.get(getType()).getGrowthTime()); // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
+            if (reason == SpawnReason.NATURAL)
+                setGrowingAge(DragonEggProperties.get(getType()).getGrowthTime()); // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
         }
 
         return super.onInitialSpawn(world, difficulty, reason, data, dataTag);
@@ -321,13 +356,22 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         }
 
         @Override
-        public boolean shouldExecute() { return growCropsTime >= 0 && searchForDestination(); }
+        public boolean shouldExecute()
+        {
+            return growCropsTime >= 0 && searchForDestination();
+        }
 
         @Override
-        protected int getRunDelay(CreatureEntity creature) { return 100; }
+        protected int getRunDelay(CreatureEntity creature)
+        {
+            return 100;
+        }
 
         @Override
-        public boolean shouldContinueExecuting() { return growCropsTime >= 0; }
+        public boolean shouldContinueExecuting()
+        {
+            return growCropsTime >= 0;
+        }
 
         @Override
         public void tick()

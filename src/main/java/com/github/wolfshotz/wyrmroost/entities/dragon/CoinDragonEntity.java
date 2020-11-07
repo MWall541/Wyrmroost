@@ -36,10 +36,16 @@ public class CoinDragonEntity extends MobEntity
     public static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(CoinDragonEntity.class, DataSerializers.VARINT);
     public static String DATA_VARIANT = "Variant";
 
-    public CoinDragonEntity(EntityType<? extends CoinDragonEntity> type, World worldIn) { super(type, worldIn); }
+    public CoinDragonEntity(EntityType<? extends CoinDragonEntity> type, World worldIn)
+    {
+        super(type, worldIn);
+    }
 
     @Override
-    protected void registerGoals() { goalSelector.addGoal(0, new LookAtGoal(this, PlayerEntity.class, 4)); }
+    protected void registerGoals()
+    {
+        goalSelector.addGoal(0, new LookAtGoal(this, PlayerEntity.class, 4));
+    }
 
     @Override
     protected void registerData()
@@ -62,9 +68,15 @@ public class CoinDragonEntity extends MobEntity
         setVariant(compound.getInt(DATA_VARIANT));
     }
 
-    public int getVariant() { return dataManager.get(VARIANT); }
+    public int getVariant()
+    {
+        return dataManager.get(VARIANT);
+    }
 
-    public void setVariant(int variant) { dataManager.set(VARIANT, variant); }
+    public void setVariant(int variant)
+    {
+        dataManager.set(VARIANT, variant);
+    }
 
     // move up if too low, move down if too high, else, just bob up and down
     @Override
@@ -100,31 +112,60 @@ public class CoinDragonEntity extends MobEntity
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose pose, EntitySize size) { return size.height * 0.8645f; }
+    protected float getStandingEyeHeight(Pose pose, EntitySize size)
+    {
+        return size.height * 0.8645f;
+    }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) { return new ItemStack(WRItems.COIN_DRAGON.get()); }
+    public ItemStack getPickedResult(RayTraceResult target)
+    {
+        return new ItemStack(WRItems.COIN_DRAGON.get());
+    }
 
     @Override
-    public boolean isOnLadder() { return false; }
+    public boolean preventDespawn()
+    {
+        return true;
+    }
 
     @Override
-    public boolean onLivingFall(float distance, float damageMultiplier) { return false; }
+    public boolean isOnLadder()
+    {
+        return false;
+    }
 
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {}
+    public boolean onLivingFall(float distance, float damageMultiplier)
+    {
+        return false;
+    }
+
+    @Override
+    protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
+    {
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_COINDRAGON_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_COINDRAGON_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_COINDRAGON_IDLE.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_COINDRAGON_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_COINDRAGON_IDLE.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_COINDRAGON_IDLE.get();
+    }
 
     public double getAltitude()
     {
