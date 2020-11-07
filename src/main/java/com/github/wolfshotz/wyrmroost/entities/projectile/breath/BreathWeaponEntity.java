@@ -2,7 +2,6 @@ package com.github.wolfshotz.wyrmroost.entities.projectile.breath;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.projectile.DragonProjectileEntity;
-import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -31,13 +30,7 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 
         if (!world.isRemote && !noClip && !world.getBlockState(pos).getCollisionShape(world, pos).equals(VoxelShapes.empty()))
         {
-            acceleration.add(Mafs.nextDouble(rand) * 0.05, Mafs.nextDouble(rand) * 0.05, Mafs.nextDouble(rand) * 0.05);
-
-            Vector3d motion = new Vector3d(1, 1, 0);
-            if (direction.getAxis().getPlane() == Direction.Plane.VERTICAL) motion = motion.rotatePitch(-0.5f * Mafs.PI);
-            else motion = motion.rotateYaw(direction.getHorizontalAngle() / 180f * Mafs.PI);
-
-            setMotion(acceleration.mul(motion));
+            setMotion(acceleration.mul(-Math.abs(direction.getXOffset()) + 1, -Math.abs(direction.getYOffset()) + 1, -Math.abs(direction.getZOffset()) + 1));
 
             if (!hasCollided)
             {

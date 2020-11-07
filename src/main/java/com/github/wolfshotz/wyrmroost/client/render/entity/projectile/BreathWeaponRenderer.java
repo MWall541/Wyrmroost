@@ -49,27 +49,19 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
         ms.rotate(renderManager.getCameraOrientation());
         ms.translate(0, 0, (-0.3f + (float) ((int) height) * 0.02f));
         float z = 0;
-        int i = 0;
         IVertexBuilder vertex = typeBuffer.getBuffer(Atlases.getCutoutBlockType());
 
-        for (MatrixStack.Entry msEntry = ms.getLast(); height > 0.0F; ++i)
+        for (MatrixStack.Entry msEntry = ms.getLast(); height > 0f;)
         {
-            TextureAtlasSprite fireSprite = i % 2 == 0? fireSprite1 : fireSprite2;
-            float minU = fireSprite.getMinU();
-            float minV = fireSprite.getMinV();
-            float maxU = fireSprite.getMaxU();
-            float maxV = fireSprite.getMaxV();
-            if (i / 2 % 2 == 0)
-            {
-                float prevMaxU = maxU;
-                maxU = minU;
-                minU = prevMaxU;
-            }
+            float minU = fireSprite1.getMinU();
+            float minV = fireSprite1.getMinV();
+            float maxU = fireSprite1.getMaxU();
+            float maxV = fireSprite1.getMaxV();
 
-            vertex(msEntry, vertex, x - 0, 0 - y, z, maxU, maxV);
-            vertex(msEntry, vertex, -x - 0, 0 - y, z, minU, maxV);
-            vertex(msEntry, vertex, -x - 0, 1.4f - y, z, minU, minV);
-            vertex(msEntry, vertex, x - 0, 1.4f - y, z, maxU, minV);
+            vertex(msEntry, vertex, x, -y, z, maxU, maxV);
+            vertex(msEntry, vertex, -x, -y, z, minU, maxV);
+            vertex(msEntry, vertex, -x, 1.4f - y, z, minU, minV);
+            vertex(msEntry, vertex, x, 1.4f - y, z, maxU, minV);
             height -= 0.45f;
             y -= 0.45f;
             x *= 0.9f;

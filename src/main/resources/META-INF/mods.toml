@@ -17,7 +17,7 @@ authors="WolfShotz, Kingdomall, Shannieann, Ukan"
 [[dependencies.wyrmroost]]
     modId="forge"
     mandatory=true
-    versionRange="[34,)"
+    versionRange="[34.1.35,)"
     ordering="NONE"
     side="BOTH"
 
