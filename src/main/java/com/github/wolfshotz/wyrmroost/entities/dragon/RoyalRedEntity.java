@@ -7,6 +7,7 @@ import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
@@ -69,11 +70,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
         super(dragon, world);
-
         ignoreFrustumCheck = WRConfig.disableFrustumCheck;
-
-        getSleepController().setHomeDefender().addSleepCondition(() -> !isKnockedOut());
-
         setImmune(DamageSource.IN_WALL);
 
         setPathPriority(PathNodeType.DANGER_FIRE, 0);
@@ -86,9 +83,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
+    protected SleepController createSleepController()
+    {
+        return new SleepController(this).setHomeDefender().addSleepCondition(() -> !isKnockedOut());
+    }
+
+    @Override
     protected void registerData()
     {
         super.registerData();
+
         dataManager.register(BREATHING_FIRE, false);
         dataManager.register(KNOCKED_OUT, false);
         dataManager.register(FLYING, false);
@@ -311,7 +315,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public float getRenderScale() { return isChild()? 0.3f : isMale()? 0.8f : 1f; }
 
     @Override
-    public int getHorizontalFaceSpeed() { return isFlying()? 5 : 7; }
+    public int getYawRotationSpeed()
+    {
+        return isFlying()? 5 : 7;
+    }
 
     public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
 
@@ -360,6 +367,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
         return stack.getItem().isFood() && stack.getItem().getFood().isMeat();
     }
 
+    @Override
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        return true;
+    }
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_ROYALRED_IDLE.get(); }
@@ -394,7 +407,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             getAttribute(MAX_HEALTH).setBaseValue(130);
             getAttribute(MOVEMENT_SPEED).setBaseValue(0.22);
             getAttribute(ATTACK_KNOCKBACK).setBaseValue(4);
-            getAttribute(FLYING_SPEED).setBaseValue(0.27);
+            getAttribute(FLYING_SPEED).setBaseValue(0.121);
         }
     }
 
@@ -408,7 +421,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 .createMutableAttribute(FOLLOW_RANGE, 60)
                 .createMutableAttribute(ATTACK_KNOCKBACK, 3)
                 .createMutableAttribute(ATTACK_DAMAGE, 12)
-                .createMutableAttribute(FLYING_SPEED, 0.274)
+                .createMutableAttribute(FLYING_SPEED, 0.125)
                 .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 4);
     }
 
