@@ -19,7 +19,6 @@ import java.util.function.Function;
 public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
 {
     public static final ResourceLocation RR_BREATH_0 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0");
-    public static final ResourceLocation RR_BREATH_1 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_1");
 
     public BreathWeaponRenderer(EntityRendererManager renderManager) { super(renderManager); }
 
@@ -39,7 +38,6 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
     {
         Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
         TextureAtlasSprite fireSprite1 = func.apply(RR_BREATH_0);
-        TextureAtlasSprite fireSprite2 = func.apply(RR_BREATH_1);
         ms.push();
         float width = entity.getWidth() * 1.4F;
         ms.scale(width, width, width);
@@ -50,13 +48,20 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
         ms.translate(0, 0, (-0.3f + (float) ((int) height) * 0.02f));
         float z = 0;
         IVertexBuilder vertex = typeBuffer.getBuffer(Atlases.getCutoutBlockType());
+        MatrixStack.Entry msEntry = ms.getLast();
 
-        for (MatrixStack.Entry msEntry = ms.getLast(); height > 0f;)
+        for (int i = 0; height > 0; i++)
         {
             float minU = fireSprite1.getMinU();
             float minV = fireSprite1.getMinV();
             float maxU = fireSprite1.getMaxU();
             float maxV = fireSprite1.getMaxV();
+            if (i / 2 % 2 == 0)
+            {
+                float prevMaxU = maxU;
+                maxU = minU;
+                minU = prevMaxU;
+            }
 
             vertex(msEntry, vertex, x, -y, z, maxU, maxV);
             vertex(msEntry, vertex, -x, -y, z, minU, maxV);
