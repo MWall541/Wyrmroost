@@ -69,7 +69,7 @@ public class ClientEvents
     {
         if (evt.getMap().getTextureLocation() == AtlasTexture.LOCATION_BLOCKS_TEXTURE)
         {
-            evt.addSprite(BreathWeaponRenderer.RR_BREATH_0);
+            evt.addSprite(BreathWeaponRenderer.BLUE_FIRE);
         }
     }
 

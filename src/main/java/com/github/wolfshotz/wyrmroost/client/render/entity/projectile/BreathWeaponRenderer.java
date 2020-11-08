@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
 {
-    public static final ResourceLocation RR_BREATH_0 = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire_0");
+    public static final ResourceLocation BLUE_FIRE = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire");
 
     public BreathWeaponRenderer(EntityRendererManager renderManager) { super(renderManager); }
 
@@ -37,7 +37,7 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
     private void renderFire(MatrixStack ms, IRenderTypeBuffer typeBuffer, Entity entity)
     {
         Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        TextureAtlasSprite fireSprite1 = func.apply(RR_BREATH_0);
+        TextureAtlasSprite fireSprite1 = func.apply(BLUE_FIRE);
         ms.push();
         float width = entity.getWidth() * 1.4F;
         ms.scale(width, width, width);
