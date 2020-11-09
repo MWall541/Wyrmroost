@@ -4,7 +4,9 @@ import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,7 +22,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -52,8 +53,8 @@ public class LazySpawnEggItem extends Item
     {
         ResourceLocation regName = type.get().getRegistryName();
         return new TranslationTextComponent("entity." + regName.getNamespace() + "." + regName.getPath())
-                .appendString(" ")
-                .append(new TranslationTextComponent("item.wyrmroost.spawn_egg"));
+                .appendText(" ")
+                .appendSibling(new TranslationTextComponent("item.wyrmroost.spawn_egg"));
     }
 
     public ActionResultType onItemUse(ItemUseContext context)
@@ -83,7 +84,7 @@ public class LazySpawnEggItem extends Item
         if (blockstate.getCollisionShape(world, blockpos).isEmpty()) blockpos1 = blockpos;
         else blockpos1 = blockpos.offset(direction);
         
-        if (type.get().spawn((ServerWorld) world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null)
+        if (type.get().spawn(world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null)
             itemstack.shrink(1);
         
         return ActionResultType.SUCCESS;
@@ -95,19 +96,21 @@ public class LazySpawnEggItem extends Item
         
         if (worldIn.isRemote) return new ActionResult<>(ActionResultType.PASS, itemstack);
         
-        BlockRayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.SOURCE_ONLY);
+        RayTraceResult rtr = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.SOURCE_ONLY);
         
-        if (raytraceresult.getType() != RayTraceResult.Type.BLOCK)
+        if (rtr.getType() != RayTraceResult.Type.BLOCK)
             return new ActionResult<>(ActionResultType.PASS, itemstack);
 
-        BlockPos blockpos = raytraceresult.getPos();
+        BlockRayTraceResult rayTraceResult = ((BlockRayTraceResult) rtr);
+
+        BlockPos blockpos = rayTraceResult.getPos();
         
         if (!(worldIn.getBlockState(blockpos).getBlock() instanceof FlowingFluidBlock))
             return new ActionResult<>(ActionResultType.PASS, itemstack);
         
-        if (worldIn.isBlockModifiable(playerIn, blockpos) && playerIn.canPlayerEdit(blockpos, raytraceresult.getFace(), itemstack))
+        if (worldIn.isBlockModifiable(playerIn, blockpos) && playerIn.canPlayerEdit(blockpos, rayTraceResult.getFace(), itemstack))
         {
-            if (type.get().spawn((ServerWorld) worldIn, itemstack, playerIn, blockpos, SpawnReason.SPAWN_EGG, false, false) == null)
+            if (type.get().spawn(worldIn, itemstack, playerIn, blockpos, SpawnReason.SPAWN_EGG, false, false) == null)
                 return new ActionResult<>(ActionResultType.PASS, itemstack);
             if (!playerIn.abilities.isCreativeMode) itemstack.shrink(1);
             
@@ -116,18 +119,6 @@ public class LazySpawnEggItem extends Item
         }
         
         return new ActionResult<>(ActionResultType.FAIL, itemstack);
-    }
-    
-    @Override
-    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
-    {
-        if (!(target instanceof AgeableEntity)) return ActionResultType.PASS;
-        if (!target.isAlive()) return ActionResultType.PASS;
-        if (target.getType() != type.get()) return ActionResultType.PASS;
-
-        if (!target.world.isRemote) ((AgeableEntity) target).func_241840_a((ServerWorld) target.world, (AgeableEntity) target);
-
-        return ActionResultType.func_233537_a_(playerIn.world.isRemote);
     }
 
     public int getColor(int index) { return index == 0? PRIMARY_COLOR : SECONDARY_COLOR; }

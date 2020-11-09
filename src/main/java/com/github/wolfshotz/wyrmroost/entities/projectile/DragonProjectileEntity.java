@@ -13,7 +13,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -22,20 +21,20 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class DragonProjectileEntity extends Entity implements IEntityAdditionalSpawnData
 {
     public AbstractDragonEntity shooter;
-    public Vector3d acceleration;
+    public Vec3d acceleration;
     public float growthRate = 1f;
     public int life;
     public boolean hasCollided;
 
     protected DragonProjectileEntity(EntityType<?> type, World world) { super(type, world); }
 
-    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vector3d position, Vector3d velocity)
+    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vec3d position, Vec3d velocity)
     {
         super(type, shooter.world);
 
         velocity = velocity.add(rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset());
         double length = velocity.length();
-        this.acceleration = new Vector3d(velocity.x / length * getMotionFactor(), velocity.y / length * getMotionFactor(), velocity.z / length * getMotionFactor());
+        this.acceleration = new Vec3d(velocity.x / length * getMotionFactor(), velocity.y / length * getMotionFactor(), velocity.z / length * getMotionFactor());
 
         this.shooter = shooter;
         this.life = 50;
@@ -43,7 +42,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         setMotion(getMotion().add(acceleration));
         position = position.add(getMotion());
 
-        Vector3d motion = getMotion();
+        Vec3d motion = getMotion();
         float x = (float) (motion.x - position.x);
         float y = (float) (motion.y - position.y);
         float z = (float) (motion.z - position.z);
@@ -70,7 +69,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         {
             case RAYTRACE:
             {
-                RayTraceResult rayTrace = ProjectileHelper.func_234618_a_(this, this::canImpactEntity);
+                RayTraceResult rayTrace = ProjectileHelper.rayTrace(this, true, false, shooter, RayTraceContext.BlockMode.COLLIDER);
                 if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
                     hit(rayTrace);
                 break;
@@ -81,8 +80,8 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
                 for (Entity entity : world.getEntitiesInAABBexcluding(this, box, this::canImpactEntity))
                     onEntityImpact(entity);
 
-                Vector3d position = getPositionVec();
-                Vector3d end = position.add(getMotion());
+                Vec3d position = getPositionVec();
+                Vec3d end = position.add(getMotion());
                 BlockRayTraceResult rtr = world.rayTraceBlocks(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
                 if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getPos(), rtr.getFace());
             }
@@ -90,7 +89,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
                 break;
         }
 
-        Vector3d motion = getMotion();
+        Vec3d motion = getMotion();
         if (!hasNoGravity()) setMotion(motion = motion.add(0, -0.05, 0));
         double x = getPosX() + motion.x;
         double y = getPosY() + motion.y;
@@ -130,7 +129,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public void onBlockImpact(BlockPos pos, Direction direction) {}
 
     @Override
-    public void setMotion(Vector3d motionIn)
+    public void setMotion(Vec3d motionIn)
     {
         super.setMotion(motionIn);
         ProjectileHelper.rotateTowardsMovement(this, 1);

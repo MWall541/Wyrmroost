@@ -7,8 +7,9 @@ import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.feature.ReplaceBlockConfig;
-import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraft.world.gen.placement.CountRangeConfig;
+import net.minecraft.world.gen.placement.Placement;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,32 +17,32 @@ import java.util.function.Consumer;
 
 public class WRWorld
 {
-    public static List<Consumer<BiomeLoadingEvent>> BIOME_LISTENERS = new ArrayList<>();
+    public static List<Consumer<Biome>> BIOME_LISTENERS = new ArrayList<>();
 
-    public static void onBiomeLoad(BiomeLoadingEvent evt)
+    public static void onBiomeLoad()
     {
-        BIOME_LISTENERS.forEach(e -> e.accept(evt));
-
-        Biome.Category category = evt.getCategory();
-        BiomeGenerationSettingsBuilder generator = evt.getGeneration();
-
-        switch (category)
+        for (Biome biome : ForgeRegistries.BIOMES)
         {
-            case NETHER:
-                generator.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241883_b, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4)).func_242733_d(128).func_242728_a().func_242731_b(8));
-                break;
-            case THEEND:
-                generator.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Features.NO_EXPOSURE_REPLACE.withConfiguration(new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState())).func_242733_d(80).func_242728_a().func_242731_b(45));
-                break;
-            default:
-                generator.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241882_a, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9)).func_242733_d(64).func_242728_a().func_242731_b(20));
-                generator.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.field_241882_a, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 10)).func_242733_d(16).func_242728_a());
+            BIOME_LISTENERS.forEach(e -> e.accept(biome));
 
+            switch (biome.getCategory())
+            {
+                case NETHER:
+                    biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4)).withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(8, 0, 0, 128))));
+                    break;
+                case THEEND:
+                    biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.NO_EXPOSURE_REPLACE.withConfiguration(new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState())).withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(40, 0, 0, 80))));
+                    break;
+                default:
+                    biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9)).withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(20, 0, 0, 64))));
+                    biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE.withConfiguration(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 10)).withPlacement(Placement.COUNT_RANGE.configure(new CountRangeConfig(1, 0, 0, 16))));
+
+            }
         }
     }
 
     public static class Features
     {
-        public static final Feature<ReplaceBlockConfig> NO_EXPOSURE_REPLACE = new NoExposureReplacementFeature(ReplaceBlockConfig.field_236604_a_);
+        public static final Feature<ReplaceBlockConfig> NO_EXPOSURE_REPLACE = new NoExposureReplacementFeature();
     }
 }

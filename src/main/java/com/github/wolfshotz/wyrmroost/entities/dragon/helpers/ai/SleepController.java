@@ -78,7 +78,7 @@ public class SleepController
         if (dragon.isIdling() && dragon.world.isDaytime() == nocturnal && (sleepConditions == null || sleepConditions.getAsBoolean()))
         {
             if (dragon.isTamed())
-                return dragon.func_233684_eK_() || (dragon.isAtHome() && (!defendsHome || dragon.getHealth() <= dragon.getMaxHealth() * 0.25));
+                return dragon.isSitting() || (dragon.isAtHome() && (!defendsHome || dragon.getHealth() <= dragon.getMaxHealth() * 0.25));
             else return true;
         }
         return false;

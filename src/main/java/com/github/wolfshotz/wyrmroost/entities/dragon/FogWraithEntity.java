@@ -3,11 +3,9 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
-import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -18,8 +16,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.world.World;
-
-import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class FogWraithEntity extends AbstractDragonEntity
 {
@@ -126,16 +122,16 @@ public class FogWraithEntity extends AbstractDragonEntity
         return new Animation[] {GRAB_AND_ATTACK_ANIMATION, BITE_ANIMATION, SCREECH_ANIMATION};
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
-    {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 100)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.31)
-                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
-                .createMutableAttribute(FOLLOW_RANGE, 60)
-                .createMutableAttribute(ATTACK_KNOCKBACK, 2.25)
-                .createMutableAttribute(ATTACK_DAMAGE, 10)
-                .createMutableAttribute(FLYING_SPEED, 0.27)
-                .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 4);
-    }
+//    public static AttributeModifierMap.MutableAttribute getAttributes()
+//    {
+//        return MobEntity.func_233666_p_()
+//                .createMutableAttribute(MAX_HEALTH, 100)
+//                .createMutableAttribute(MOVEMENT_SPEED, 0.31)
+//                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
+//                .createMutableAttribute(FOLLOW_RANGE, 60)
+//                .createMutableAttribute(ATTACK_KNOCKBACK, 2.25)
+//                .createMutableAttribute(ATTACK_DAMAGE, 10)
+//                .createMutableAttribute(FLYING_SPEED, 0.27)
+//                .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 4);
+//    }
 }

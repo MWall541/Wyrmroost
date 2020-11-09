@@ -3,20 +3,17 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
-import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.lwjgl.glfw.GLFW;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class OrbwyrmEntity extends AbstractDragonEntity
 {
@@ -46,7 +43,7 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     {
         super.livingTick();
 
-        sitTimer.add(func_233684_eK_() || isSleeping()? 0.065f : -0.065f);
+        sitTimer.add(isSitting() || isSleeping()? 0.065f : -0.065f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
 
         Animation animation = getAnimation();
@@ -81,15 +78,15 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void setMotionMultiplier(BlockState state, Vector3d multiplier)
+    public void setMotionMultiplier(BlockState state, Vec3d multiplier)
     {
-        if (!state.isIn(Blocks.COBWEB)) super.setMotionMultiplier(state, multiplier);
+        if (state.getBlock() != Blocks.COBWEB) super.setMotionMultiplier(state, multiplier);
     }
 
     @Override
-    public Vector3d getPassengerPosOffset(Entity entity, int index)
+    public Vec3d getPassengerPosOffset(Entity entity, int index)
     {
-        if (getAnimation() == HISS_ANIMATION && index == 0) return new Vector3d(0, getMountedYOffset() + 0.5, -0.85);
+        if (getAnimation() == HISS_ANIMATION && index == 0) return new Vec3d(0, getMountedYOffset() + 0.5, -0.85);
         return super.getPassengerPosOffset(entity, index);
     }
 
@@ -138,13 +135,13 @@ public class OrbwyrmEntity extends AbstractDragonEntity
         return new Animation[] {HISS_ANIMATION, BITE_ANIMATION, SHOOT_SILK_ANIMATION};
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
-    {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 40)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.4)
-                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
-                .createMutableAttribute(ATTACK_DAMAGE, 3)
-                .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 1);
-    }
+//    public static AttributeModifierMap.MutableAttribute getAttributes()
+//    {
+//        return MobEntity.func_233666_p_()
+//                .createMutableAttribute(MAX_HEALTH, 40)
+//                .createMutableAttribute(MOVEMENT_SPEED, 0.4)
+//                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
+//                .createMutableAttribute(ATTACK_DAMAGE, 3)
+//                .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 1);
+//    }
 }

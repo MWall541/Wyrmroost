@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
 
 import java.io.IOException;
 import java.util.HashSet;

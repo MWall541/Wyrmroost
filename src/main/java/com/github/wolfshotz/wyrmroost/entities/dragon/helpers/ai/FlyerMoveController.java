@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.controller.MovementController;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
@@ -50,12 +50,12 @@ public class FlyerMoveController extends MovementController
                 if (!dragon.getLookController().getIsLooking())
                     dragon.getLookController().setLookPosition(posX, posY, posZ, dragon.getHorizontalFaceSpeed(), 75);
 
-                speed = (float) (dragon.getAttributeValue(Attributes.FLYING_SPEED) * this.speed) / 0.225f;
+                speed = (float) (dragon.getAttribute(SharedMonsterAttributes.FLYING_SPEED).getValue() * this.speed) / 0.225f;
                 if (y != 0) dragon.setMoveVertical(y > 0? speed : -speed);
             }
             else
             {
-                speed = (float) (this.speed * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED));
+                speed = (float) (this.speed * dragon.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getValue());
                 BlockPos blockpos = mob.getPosition();
                 BlockState blockstate = mob.world.getBlockState(blockpos);
                 Block block = blockstate.getBlock();

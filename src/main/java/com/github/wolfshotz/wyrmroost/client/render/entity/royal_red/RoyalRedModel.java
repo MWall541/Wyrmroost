@@ -8,7 +8,7 @@ import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * WRRoyalRedReparent - Ukan
@@ -713,7 +713,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
         resetToDefaultPose();
         animator.update(entity, partialTicks);
 
-        if (!entity.func_233684_eK_() && !entity.isSleeping())
+        if (!entity.isSitting() && !entity.isSleeping())
         {
             if (entity.isFlying()) // Flight Cycle
             {
@@ -733,7 +733,7 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
                 walk(wingL2, globalSpeed - 0.3f, 0.05f, false, 0.6f, 0, limbSwing, limbSwingAmount);
                 flap(palmL_1, globalSpeed - 0.3f, 0.4f, true, -1.5f, 0, limbSwing, limbSwingAmount);
 
-                Vector3d motion = entity.getMotion();
+                Vec3d motion = entity.getMotion();
                 if (motion.y < 0 && motion.x != 0 && motion.z != 0)
                 {
                     flap(wingR1, globalSpeed - 0.3f, 0.15f, false, 0, 0, frame, 0.5f);

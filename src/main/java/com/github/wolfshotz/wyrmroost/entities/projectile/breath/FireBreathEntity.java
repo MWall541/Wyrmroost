@@ -4,9 +4,10 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
-import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
+import net.minecraft.block.FireBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -16,7 +17,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -43,7 +44,7 @@ public class FireBreathEntity extends BreathWeaponEntity
             return;
         }
 
-        Vector3d motion = getMotion();
+        Vec3d motion = getMotion();
         double x = getPosX() + motion.x + (rand.nextGaussian() * 0.2);
         double y = getPosY() + motion.y + (rand.nextGaussian() * 0.2) + 0.5d;
         double z = getPosZ() + motion.z + (rand.nextGaussian() * 0.2);
@@ -57,7 +58,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (world.isRemote) return;
 
         BlockState state = world.getBlockState(pos);
-        if (CampfireBlock.canBeLit(state))
+        if (state.getBlock() == Blocks.CAMPFIRE && !state.get(CampfireBlock.LIT))
         {
             world.setBlockState(pos, state.with(BlockStateProperties.LIT, true), 11);
             return;
@@ -69,7 +70,7 @@ public class FireBreathEntity extends BreathWeaponEntity
             BlockPos offset = pos.offset(direction);
 
             if (world.getBlockState(offset).isAir(world, offset) && (flammability == 1 || rand.nextDouble() <= flammability))
-                world.setBlockState(offset, AbstractFireBlock.getFireForPlacement(world, offset), 11);
+                world.setBlockState(offset, ((FireBlock) Blocks.FIRE).getStateForPlacement(world, offset), 11);
         }
     }
 
@@ -81,7 +82,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (entity.isImmuneToFire()) return;
         if (entity instanceof LivingEntity && shooter.isOnSameTeam(entity)) return;
 
-        float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
+        float damage = (float) shooter.getAttribute(WREntities.Attributes.PROJECTILE_DAMAGE).getValue();
         if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;
 
         entity.setFire(8);

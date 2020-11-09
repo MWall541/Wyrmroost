@@ -11,9 +11,9 @@ public class NameFieldWidget extends TextFieldWidget
 {
     public NameFieldWidget(FontRenderer font, int posX, int posY, int sizeX, int sizeY, AbstractDragonEntity dragon)
     {
-        super(font, posX, posY, sizeX, sizeY, dragon.getName());
+        super(font, posX, posY, sizeX, sizeY, dragon.getName().getString());
 
-        setText(getMessage().getString());
+        setText(getMessage());
         setCanLoseFocus(true);
         changeFocus(true);
         setEnableBackgroundDrawing(false);

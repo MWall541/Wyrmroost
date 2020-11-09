@@ -23,7 +23,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -40,16 +39,14 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 /**
  * Created by com.github.WolfShotz 7/10/19 - 22:18
@@ -140,7 +137,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.livingTick();
 
-        sitTimer.add((func_233684_eK_() || isSleeping())? 0.1f : -0.1f);
+        sitTimer.add((isSitting() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.04f : -0.06f);
 
         if (thrownPassenger != null)
@@ -150,7 +147,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             thrownPassenger = null;
         }
 
-        if (!world.isRemote && getAttackTarget() == null && !func_233684_eK_() && !isSleeping() && world.getBlockState(getPosition().down()).getBlock() == Blocks.GRASS_BLOCK && getRNG().nextDouble() < (isChild() || getHealth() < getMaxHealth()? 0.005 : 0.001))
+        if (!world.isRemote && getAttackTarget() == null && !isSitting() && !isSleeping() && world.getBlockState(getPosition().down()).getBlock() == Blocks.GRASS_BLOCK && getRNG().nextDouble() < (isChild() || getHealth() < getMaxHealth()? 0.005 : 0.001))
             AnimationPacket.send(this, GRAZE_ANIMATION);
 
         Animation animation = getAnimation();
@@ -195,7 +192,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (!world.isRemote && animation == GRAZE_ANIMATION && tick == 13)
         {
             BlockPos pos = new BlockPos(Mafs.getYawVec(renderYawOffset, 0, getWidth() / 2 + 1).add(getPositionVec()));
-            if (world.getBlockState(pos).isIn(Blocks.GRASS) && WRConfig.canGrief(world))
+            if (world.getBlockState(pos).getBlock() == Blocks.GRASS && WRConfig.canGrief(world))
             {
                 world.destroyBlock(pos, false);
                 eatGrassBonus();
@@ -210,7 +207,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (stack.getItem() == Items.SADDLE && !isSaddled() && !isChild())
         {
@@ -219,16 +216,16 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 getInvHandler().insertItem(SADDLE_SLOT, stack.copy(), false);
                 consumeItemFromStack(player, stack);
             }
-            return ActionResultType.func_233537_a_(world.isRemote);
+            return true;
         }
 
         if (!isTamed() && isChild() && isFoodItem(stack))
         {
             tame(getRNG().nextInt(10) == 0, player);
             consumeItemFromStack(player, stack);
-            return ActionResultType.func_233537_a_(world.isRemote);
+            return true;
         }
-        
+
         return super.playerInteraction(player, hand, stack);
     }
 
@@ -283,7 +280,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        if (func_233684_eK_() || isSleeping()) size = size.scale(1, 0.75f);
+        if (isSitting() || isSleeping()) size = size.scale(1, 0.75f);
         return size;
     }
 
@@ -351,7 +348,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     public float getTravelSpeed()
     {
-        float speed = (float) getAttributeValue(MOVEMENT_SPEED);
+        float speed = (float) getAttribute(MOVEMENT_SPEED).getValue();
         if (canPassengerSteer()) speed += 0.45f;
         return speed;
     }
@@ -390,21 +387,22 @@ public class OWDrakeEntity extends AbstractDragonEntity
         return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
     }
 
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    @Override
+    protected void registerAttributes()
     {
-        Biome.Category category = event.getCategory();
-        if (category == Biome.Category.SAVANNA || category == Biome.Category.PLAINS)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.OVERWORLD_DRAKE.get(), 8, 1, 3));
+        super.registerAttributes();
+        getAttribute(MAX_HEALTH).setBaseValue(70);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.2125);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(0.75);
+        getAttribute(FOLLOW_RANGE).setBaseValue(20);
+        getAttribute(ATTACK_KNOCKBACK).setBaseValue(2.85);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(8);
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static void setSpawnBiomes(Biome biome)
     {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 70)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.2125)
-                .createMutableAttribute(KNOCKBACK_RESISTANCE, 0.75)
-                .createMutableAttribute(FOLLOW_RANGE, 20)
-                .createMutableAttribute(ATTACK_KNOCKBACK, 2.85)
-                .createMutableAttribute(ATTACK_DAMAGE, 8);
+        Biome.Category category = biome.getCategory();
+        if (category == Biome.Category.SAVANNA || category == Biome.Category.PLAINS)
+            biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.OVERWORLD_DRAKE.get(), 8, 1, 3));
     }
 }

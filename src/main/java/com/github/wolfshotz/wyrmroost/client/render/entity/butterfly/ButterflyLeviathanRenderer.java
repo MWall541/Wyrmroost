@@ -8,17 +8,17 @@ import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -31,10 +31,10 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     // Glow
     public static final ResourceLocation GLOW = resource("activated.png");
 
-    private static final RenderMaterial CONDUIT_CAGE_TEXTURE = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/cage"));
-    private static final RenderMaterial CONDUIT_WIND_TEXTURE = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/wind"));
-    private static final RenderMaterial CONDUIT_VERTICAL_WIND_TEXTURE = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/wind_vertical"));
-    private static final RenderMaterial CONDUIT_OPEN_EYE_TEXTURE = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/open_eye"));
+    private static final Material CONDUIT_CAGE_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/cage"));
+    private static final Material CONDUIT_WIND_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/wind"));
+    private static final Material CONDUIT_VERTICAL_WIND_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/wind_vertical"));
+    private static final Material CONDUIT_OPEN_EYE_TEXTURE = new Material(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/open_eye"));
 
     public ButterflyLeviathanRenderer(EntityRendererManager manager)
     {

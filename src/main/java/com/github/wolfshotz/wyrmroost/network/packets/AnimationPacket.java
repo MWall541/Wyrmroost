@@ -38,7 +38,7 @@ public class AnimationPacket
 
     public boolean handle(Supplier<NetworkEvent.Context> context)
     {
-        return DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.handleAnimationPacket(entityID, animationIndex));
+        return DistExecutor.callWhenOn(Dist.CLIENT, () -> () -> ClientEvents.handleAnimationPacket(entityID, animationIndex));
     }
 
     public static <T extends Entity & IAnimatable> void send(T entity, Animation animation)

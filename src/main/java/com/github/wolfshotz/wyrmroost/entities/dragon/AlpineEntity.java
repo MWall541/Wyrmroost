@@ -11,7 +11,6 @@ import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,13 +22,12 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.common.BiomeDictionary;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class AlpineEntity extends AbstractDragonEntity
 {
@@ -80,7 +78,7 @@ public class AlpineEntity extends AbstractDragonEntity
     {
         super.livingTick();
 
-        sitTimer.add(func_233684_eK_() || isSleeping()? 0.1f : -0.1f);
+        sitTimer.add(isSitting() || isSleeping()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
 
@@ -135,7 +133,7 @@ public class AlpineEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        return size.scale(1, func_233684_eK_() || isSleeping()? 0.7f : 1);
+        return size.scale(1, isSitting() || isSleeping()? 0.7f : 1);
     }
 
     @Override
@@ -211,20 +209,21 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION}; }
 
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    @Override
+    protected void registerAttributes()
     {
-        if (event.getCategory() == Biome.Category.EXTREME_HILLS)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ALPINE.get(), 2, 1, 4));
+        super.registerAttributes();
+        getAttribute(MAX_HEALTH).setBaseValue(40);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.22);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(3);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.185f);
+        getAttributes().registerAttribute(WREntities.Attributes.PROJECTILE_DAMAGE).setBaseValue(0.185f);
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static void setSpawnBiomes(Biome biome)
     {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 40)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.22)
-                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
-                .createMutableAttribute(ATTACK_DAMAGE, 3)
-                .createMutableAttribute(FLYING_SPEED, 0.185f)
-                .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 1);
+        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.HILLS))
+            biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.ALPINE.get(), 2, 1, 4));
     }
 }

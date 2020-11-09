@@ -12,7 +12,7 @@ import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -23,7 +23,7 @@ public class WindGustEntity extends DragonProjectileEntity
         super(type, world);
     }
 
-    public WindGustEntity(AbstractDragonEntity shooter, Vector3d position, Vector3d acceleration)
+    public WindGustEntity(AbstractDragonEntity shooter, Vec3d position, Vec3d acceleration)
     {
         super(WREntities.WIND_GUST.get(), shooter, position, acceleration);
         life = 20;
@@ -42,10 +42,10 @@ public class WindGustEntity extends DragonProjectileEntity
         if (world.isRemote)
         {
             double multiplier = Math.min(ticksExisted / 5d, 4d);
-            Vector3d motion = getMotion().inverse().mul(0.1, 0.1, 0.1);
+            Vec3d motion = getMotion().inverse().mul(0.1, 0.1, 0.1);
             for (int i = 0; i < 30; i++)
             {
-                Vector3d vec3d = getPositionVec().add(getMotion()).add(Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier);
+                Vec3d vec3d = getPositionVec().add(getMotion()).add(Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier);
                 double xMot = motion.x + Mafs.nextDouble(rand) * 0.1;
                 double yMot = motion.y + Mafs.nextDouble(rand) * 0.1;
                 double zMot = motion.z + Mafs.nextDouble(rand) * 0.1;
@@ -76,7 +76,7 @@ public class WindGustEntity extends DragonProjectileEntity
         {
             for (int i = 0; i < PARTICLE_COUNT; i++)
             {
-                Vector3d motion = new Vector3d(1, 1, 0);
+                Vec3d motion = new Vec3d(1, 1, 0);
                 if (direction.getAxis().getPlane() == Direction.Plane.VERTICAL) motion = motion.rotatePitch(0.5f * Mafs.PI);
                 else motion = motion.rotateYaw(direction.getHorizontalAngle() / 180f * Mafs.PI);
                 motion = motion.mul(Mafs.nextDouble(rand) * 0.8, Mafs.nextDouble(rand) * 0.8, Mafs.nextDouble(rand) * 0.8);

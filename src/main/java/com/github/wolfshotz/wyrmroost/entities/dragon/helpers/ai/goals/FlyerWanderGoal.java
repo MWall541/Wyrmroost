@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
 
@@ -28,9 +28,9 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     @Override
     public boolean shouldExecute()
     {
-        if (dragon.func_233684_eK_()) return false;
+        if (dragon.isSitting()) return false;
         if (dragon.canPassengerSteer()) return false;
-        Vector3d vec3d;
+        Vec3d vec3d;
         if (dragon.isFlying() && (vec3d = getPosition()) != null)
         {
             this.x = vec3d.x;
@@ -44,9 +44,9 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     }
 
     @Override
-    public Vector3d getPosition()
+    public Vec3d getPosition()
     {
-        Vector3d position = null;
+        Vec3d position = null;
 
         if (dragon.isFlying() || (!dragon.getLeashed() && dragon.getRNG().nextFloat() <= probability + 0.02))
         {
@@ -54,9 +54,9 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
                 position = RandomPositionGenerator.getLandPos(dragon, 20, 25);
             else
             {
-                Vector3d vec3d = dragon.getLookVec();
+                Vec3d vec3d = dragon.getLookVec();
                 if (!dragon.isWithinHomeDistanceCurrentPosition())
-                    vec3d = Vector3d.copy(dragon.getHomePosition()).subtract(dragon.getPositionVec()).normalize();
+                    vec3d = new Vec3d(dragon.getHomePosition()).subtract(dragon.getPositionVec()).normalize();
 
                 int yOffset = dragon.getAltitude() > 40? 10 : 0;
                 position = RandomPositionGenerator.findAirTarget(dragon, 50, 30, vec3d, Mafs.PI / 2, 10, yOffset);

@@ -26,14 +26,12 @@ import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntit
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -55,10 +53,9 @@ import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.ON
  */
 public class WREntities
 {
-    public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> REGISTRY = new DeferredRegister<>(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = Builder.creature("lesser_desertwyrm", LDWyrmEntity::new)
-            .attributes(LDWyrmEntity::getAttributes)
             .spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LDWyrmEntity::getSpawnPlacement)
             .spawnBiomes(LDWyrmEntity::setSpawnBiomes)
             .spawnEgg(0xD6BCBC, 0xDEB6C7)
@@ -66,7 +63,6 @@ public class WREntities
             .build(b -> b.size(0.6f, 0.2f));
 
     public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = Builder.creature("overworld_drake", OWDrakeEntity::new)
-            .attributes(OWDrakeEntity::getAttributes)
             .spawnPlacement()
             .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
             .spawnEgg(0x788716, 0x3E623E)
@@ -75,7 +71,6 @@ public class WREntities
             .build(b -> b.size(2.376f, 2.58f));
 
     public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER = Builder.creature("silver_glider", SilverGliderEntity::new)
-            .attributes(SilverGliderEntity::getAttributes)
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::getSpawnPlacement)
             .spawnBiomes(SilverGliderEntity::setSpawnBiomes)
             .spawnEgg(0xC8C8C8, 0xC4C4C4)
@@ -84,7 +79,6 @@ public class WREntities
             .build(b -> b.size(1.5f, 0.75f));
 
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = Builder.creature("roost_stalker", RoostStalkerEntity::new)
-            .attributes(RoostStalkerEntity::getAttributes)
             .spawnPlacement()
             .spawnBiomes(RoostStalkerEntity::setSpawnBiomes)
             .spawnEgg(0x52100D, 0x959595)
@@ -93,7 +87,6 @@ public class WREntities
             .build(b -> b.size(0.65f, 0.5f));
 
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN = Builder.withClassification("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE)
-            .attributes(ButterflyLeviathanEntity::getAttributes)
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.OCEAN_FLOOR_WG, ButterflyLeviathanEntity::getSpawnPlacement)
             .spawnBiomes(ButterflyLeviathanEntity::setSpawnBiomes)
             .spawnEgg(0x17283C, 0x7A6F5A)
@@ -102,7 +95,6 @@ public class WREntities
             .build(b -> b.size(4f, 3f));
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = Builder.creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)
-            .attributes(DragonFruitDrakeEntity::getAttributes)
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, DragonFruitDrakeEntity::getSpawnPlacement)
             .spawnBiomes(DragonFruitDrakeEntity::setSpawnBiomes)
             .spawnEgg(0xe05c9a, 0x788716)
@@ -111,7 +103,6 @@ public class WREntities
             .build(b -> b.size(1.5f, 1.9f));
 
     public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = Builder.creature("canari_wyvern", CanariWyvernEntity::new)
-            .attributes(CanariWyvernEntity::getAttributes)
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
             .spawnBiomes(CanariWyvernEntity::setSpawnBiomes)
             .spawnEgg(0x1D1F28, 0x492E0E)
@@ -120,7 +111,6 @@ public class WREntities
             .build(b -> b.size(0.65f, 0.85f));
 
     public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = Builder.creature("royal_red", RoyalRedEntity::new)
-            .attributes(RoyalRedEntity::getAttributes)
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
             .spawnBiomes(RoyalRedEntity::setSpawnBiomes)
             .spawnEgg(0x8a0900, 0x0)
@@ -130,11 +120,9 @@ public class WREntities
 
     public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = Builder.creature("coin_dragon", CoinDragonEntity::new)
             .renderer(() -> CoinDragonRenderer::new)
-            .attributes(CoinDragonEntity::getAttributes)
             .build(b -> b.size(0.35f, 0.435f));
 
     public static final RegistryObject<EntityType<AlpineEntity>> ALPINE = Builder.creature("alpine", AlpineEntity::new)
-            .attributes(AlpineEntity::getAttributes)
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
             .spawnBiomes(AlpineEntity::setSpawnBiomes)
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
@@ -194,21 +182,8 @@ public class WREntities
 
         private Builder<T> renderer(Supplier<IRenderFactory<T>> renderFactory)
         {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+            DistExecutor.runWhenOn(Dist.CLIENT,
                     () -> () -> ClientEvents.CALLBACKS.add(() -> RenderingRegistry.registerEntityRenderingHandler(registered.get(), renderFactory.get())));
-            return this;
-        }
-
-        private Builder<T> attributes(Supplier<AttributeModifierMap.MutableAttribute> map)
-        {
-            try
-            {
-                CommonEvents.CALLBACKS.add(() -> GlobalEntityTypeAttributes.put((EntityType<? extends LivingEntity>) registered.get(), map.get().create()));
-            }
-            catch (ClassCastException e)
-            {
-                throw new ClassCastException("Entity Attributes cannot be Applied to non-living! Erroring Entity: " + name);
-            }
             return this;
         }
 
@@ -230,7 +205,7 @@ public class WREntities
             return spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, AnimalEntity::canAnimalSpawn);
         }
 
-        private Builder<T> spawnBiomes(Consumer<BiomeLoadingEvent> consumer)
+        private Builder<T> spawnBiomes(Consumer<Biome> consumer)
         {
             WRWorld.BIOME_LISTENERS.add(consumer);
             return this;
@@ -262,18 +237,11 @@ public class WREntities
 
     public static class Attributes
     {
-        public static final DeferredRegister<Attribute> REGISTRY = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, Wyrmroost.MOD_ID);
+        public static final IAttribute PROJECTILE_DAMAGE = ranged("generic.projectileDamage", 2d, 0, 2048d);
 
-        public static final RegistryObject<Attribute> PROJECTILE_DAMAGE = ranged("generic.projectileDamage", 2d, 0, 2048d);
-
-        private static RegistryObject<Attribute> ranged(String name, double defaultValue, double min, double max)
+        private static IAttribute ranged(String name, double defaultValue, double min, double max)
         {
-            return register(name.toLowerCase().replace('.', '_'), () -> new RangedAttribute("attribute.name." + name, defaultValue, min, max));
-        }
-
-        private static RegistryObject<Attribute> register(String name, Supplier<Attribute> attribute)
-        {
-            return REGISTRY.register(name, attribute);
+            return new RangedAttribute(null, "attribute.name." + name, defaultValue, min, max);
         }
     }
 }

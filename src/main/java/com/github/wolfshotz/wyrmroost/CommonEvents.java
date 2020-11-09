@@ -13,15 +13,15 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.LootTables;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -51,7 +51,6 @@ public class CommonEvents
         forgeBus.addListener(CommonEvents::onChangeEquipment);
         forgeBus.addListener(CommonEvents::loadLoot);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
-        forgeBus.addListener(EventPriority.HIGH, WRWorld::onBiomeLoad);
     }
 
     // ====================
@@ -61,7 +60,12 @@ public class CommonEvents
     // @formatter:off
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
+        DeferredWorkQueue.runLater(() ->
+        {
+            CALLBACKS.forEach(Runnable::run);
+            CALLBACKS.clear();
+            WRWorld.onBiomeLoad();
+        });
         IAnimatable.registerCapability();
     }
     // @formatter: on

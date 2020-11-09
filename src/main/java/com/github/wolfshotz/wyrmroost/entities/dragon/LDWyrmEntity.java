@@ -11,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -25,24 +24,24 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IServerWorld;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 /**
  * Desertwyrm Dragon Entity
@@ -172,7 +171,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     }
 
     @Override
-    public ActionResultType func_230254_b_(PlayerEntity player, Hand hand)
+    public boolean processInteract(PlayerEntity player, Hand hand)
     {
         if (player.getHeldItem(hand).isEmpty())
         {
@@ -187,10 +186,10 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
                 InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), stack);
                 remove();
             }
-            return ActionResultType.func_233537_a_(world.isRemote);
+            return true;
         }
 
-        return super.func_230254_b_(player, hand);
+        return super.processInteract(player, hand);
     }
 
     @Override
@@ -234,7 +233,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 
     @Nullable
     @Override
-    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+    public AgeableEntity createChild(AgeableEntity ageable)
     {
         return null;
     }
@@ -320,25 +319,26 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
         setAnimationTick(0);
     }
 
-    public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason reason, BlockPos pos, Random random)
+    @Override
+    protected void registerAttributes()
+    {
+        super.registerAttributes();
+        getAttribute(MAX_HEALTH).setBaseValue(4);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.4);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(4);
+    }
+
+    public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IWorld world, SpawnReason reason, BlockPos pos, Random random)
     {
         if (reason == SpawnReason.SPAWNER) return true;
         Block block = world.getBlockState(pos.down()).getBlock();
         return block == Blocks.SAND && world.getLightSubtracted(pos, 0) > 8;
     }
 
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    public static void setSpawnBiomes(Biome biome)
     {
-        if (event.getCategory() == Biome.Category.DESERT)
-            event.getSpawns().func_242575_a(EntityClassification.AMBIENT, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 11, 1, 3));
-    }
-
-    public static AttributeModifierMap.MutableAttribute getAttributes()
-    {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 4)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.4)
-                .createMutableAttribute(ATTACK_DAMAGE, 4);
+        if (biome.getCategory() == Biome.Category.DESERT)
+            biome.getSpawns(EntityClassification.AMBIENT).add(new Biome.SpawnListEntry(WREntities.LESSER_DESERTWYRM.get(), 11, 1, 3));
     }
 
     class BurrowGoal extends Goal

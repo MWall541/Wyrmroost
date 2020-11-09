@@ -5,7 +5,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 public class BreathSound extends TickableSound
 {
@@ -26,11 +26,11 @@ public class BreathSound extends TickableSound
         float tick = dragon.breathTimer.get();
         if (!dragon.isAlive() || tick == 0)
         {
-            finishPlaying();
+            donePlaying = true;
             return;
         }
         volume = tick;
-        Vector3d mouth = dragon.getApproximateMouthPos();
+        Vec3d mouth = dragon.getApproximateMouthPos();
         x = (float) mouth.x;
         y = (float) mouth.y;
         z = (float) mouth.z;

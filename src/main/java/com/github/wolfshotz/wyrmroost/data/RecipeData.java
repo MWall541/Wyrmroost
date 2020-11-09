@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.CookingRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 
 import javax.annotation.Nonnull;
@@ -77,7 +77,7 @@ class RecipeData extends RecipeProvider
         shaped(boots).key('X', material).patternLine("X X").patternLine("X X").addCriterion("has_material", hasItem(material)).build(consumer);
     }
 
-    private void armorSet(ITag<Item> materials, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots)
+    private void armorSet(Tag<Item> materials, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots)
     {
         shaped(helmet).key('X', materials).patternLine("XXX").patternLine("X X").addCriterion("has_material", hasItem(materials)).build(consumer);
         shaped(chest).key('X', materials).patternLine("X X").patternLine("XXX").addCriterion("has_material", hasItem(materials)).patternLine("XXX").build(consumer);
@@ -94,7 +94,7 @@ class RecipeData extends RecipeProvider
         shaped(hoe).key('X', material).key('|', Items.STICK).patternLine("XX").patternLine(" |").patternLine(" |").addCriterion("has_material", hasItem(material)).build(consumer);
     }
 
-    private void toolSet(ITag<Item> materials, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
+    private void toolSet(Tag<Item> materials, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
     {
         shaped(sword).key('X', materials).key('|', Items.STICK).patternLine("X").patternLine("X").patternLine("|").addCriterion("has_material", hasItem(materials)).build(consumer);
         shaped(pick).key('X', materials).key('|', Items.STICK).patternLine("XXX").patternLine(" | ").patternLine(" | ").addCriterion("has_material", hasItem(materials)).build(consumer);

@@ -15,7 +15,6 @@ import net.minecraft.item.TieredItem;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
 import java.util.List;

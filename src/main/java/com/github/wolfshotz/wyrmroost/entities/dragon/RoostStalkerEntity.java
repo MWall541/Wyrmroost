@@ -18,7 +18,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.ChickenEntity;
@@ -36,19 +35,20 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
@@ -143,10 +143,8 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        final ActionResultType COMMON_SUCCESS = ActionResultType.func_233537_a_(world.isRemote);
-
         ItemStack heldItem = getItem();
         Item item = stack.getItem();
 
@@ -155,15 +153,15 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             eat(stack);
             if (tame(getRNG().nextDouble() < 0.25, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
 
-            return COMMON_SUCCESS;
+            return true;
         }
 
         if (isOwner(player))
         {
             if (player.isSneaking())
             {
-                setSit(!func_233684_eK_());
-                return COMMON_SUCCESS;
+                setSit(!isSitting());
+                return true;
             }
 
             if (stack.isEmpty() && heldItem.isEmpty() && player.getPassengers().size() < 3)
@@ -171,16 +169,16 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 setSit(false);
                 startRiding(player, true);
 
-                return COMMON_SUCCESS;
+                return true;
             }
 
             setStackInSlot(ITEM_SLOT, stack);
             player.setHeldItem(hand, heldItem);
 
-            return COMMON_SUCCESS;
+            return true;
         }
 
-        return ActionResultType.PASS;
+        return false;
     }
 
     @Override
@@ -274,19 +272,20 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         entity.world.setEntityState(entity, (byte) 18);
     }
 
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    @Override
+    protected void registerAttributes()
     {
-        Biome.Category category = event.getCategory();
-        if (category == Biome.Category.PLAINS || category == Biome.Category.FOREST || category == Biome.Category.EXTREME_HILLS)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ROOSTSTALKER.get(), 7, 2, 9));
+        super.registerAttributes();
+        getAttribute(MAX_HEALTH).setBaseValue(8);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.285);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(2);
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static void setSpawnBiomes(Biome biome)
     {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 8)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.285)
-                .createMutableAttribute(ATTACK_DAMAGE, 2);
+        Biome.Category category = biome.getCategory();
+        if (category == Biome.Category.PLAINS || category == Biome.Category.FOREST || category == Biome.Category.EXTREME_HILLS)
+            biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.ROOSTSTALKER.get(), 7, 2, 9));
     }
 
     class ScavengeGoal extends MoveToBlockGoal
@@ -366,7 +365,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 {
                     inv = (IInventory) tileentity;
                     if (inv instanceof ChestTileEntity && block instanceof ChestBlock)
-                        inv = ChestBlock.getChestInventory((ChestBlock) block, blockstate, world, destinationBlock, true);
+                        inv = ChestBlock.func_226916_a_((ChestBlock) block, blockstate, world, destinationBlock, true);
                 }
             }
 

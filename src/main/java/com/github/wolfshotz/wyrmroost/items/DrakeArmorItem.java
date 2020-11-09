@@ -3,9 +3,9 @@ package com.github.wolfshotz.wyrmroost.items;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorMaterials;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.inventory.EquipmentSlotType;
 
 import java.util.UUID;
@@ -23,9 +23,9 @@ public class DrakeArmorItem extends ArmorBase
     @Override
     public void applyFullSetBonus(LivingEntity entity, boolean hasFullSet)
     {
-        ModifiableAttributeInstance attribute = entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
+        IAttributeInstance attribute = entity.getAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
         if (attribute.hasModifier(KB_RESISTANCE)) attribute.removeModifier(KB_RESISTANCE);
-        if (hasFullSet) attribute.applyNonPersistentModifier(KB_RESISTANCE);
+        if (hasFullSet) attribute.applyModifier(KB_RESISTANCE);
     }
 
     @Override

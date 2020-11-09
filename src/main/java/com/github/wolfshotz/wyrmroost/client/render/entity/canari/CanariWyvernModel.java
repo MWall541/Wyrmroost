@@ -445,7 +445,7 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
             walk(footL_1, globalSpeed + 0.5f, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
         }
 
-        if (canari.func_233684_eK_() && !canari.isFlying()) sitPose();
+        if (canari.isSitting() && !canari.isFlying()) sitPose();
         if (canari.isSleeping()) sleepPose();
 
         if (animator.setAnimation(CanariWyvernEntity.FLAP_WINGS_ANIMATION)) flapWingsAnim();

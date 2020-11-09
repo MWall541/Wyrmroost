@@ -7,7 +7,6 @@ import com.github.wolfshotz.wyrmroost.network.packets.StaffActionPacket;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.widget.button.AbstractButton;
@@ -25,7 +24,7 @@ public class StaffActionButton extends AbstractButton
 
     public StaffActionButton(int xIn, int yIn, ITextComponent msg, StaffAction action)
     {
-        super(xIn, yIn, 100, 20, msg);
+        super(xIn, yIn, 100, 20, msg.getString());
         this.action = action;
     }
 
@@ -43,15 +42,14 @@ public class StaffActionButton extends AbstractButton
     }
 
     @Override
-    public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
+    public void renderButton(int mouseX, int mouseY, float partialTicks)
     {
         if (wasHovered != isHovered) onFocusedChanged(wasHovered = isHovered);
 
         float time = 0.5f * partialTicks; // adjust speed for framerate
         focusTime.add(isHovered? time : -time);
         float amount = focusTime.get(partialTicks) * 6;
-        drawCenteredString(ms,
-                Minecraft.getInstance().fontRenderer,
+        drawCenteredString(Minecraft.getInstance().fontRenderer,
                 getMessage(),
                 x + width / 2,
                 (y + (height - 8) / 2) - (int) amount,

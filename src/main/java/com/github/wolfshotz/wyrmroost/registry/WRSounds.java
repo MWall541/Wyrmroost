@@ -8,7 +8,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class WRSounds
 {
-    public static final DeferredRegister<SoundEvent> REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<SoundEvent> REGISTRY = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<SoundEvent> WING_FLAP = register("wing.flap");
     public static final RegistryObject<SoundEvent> FIRE_BREATH = register("breathweapon.fire");

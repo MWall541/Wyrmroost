@@ -47,8 +47,8 @@ public class TarragonTomeItem extends Item
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip")
-                            .append(new StringTextComponent("sgdshdf")
-                                                   .mergeStyle(TextFormatting.OBFUSCATED))
-                            .mergeStyle(TextFormatting.GRAY));
+                            .appendSibling(new StringTextComponent("sgdshdf")
+                                                   .applyTextStyle(TextFormatting.OBFUSCATED))
+                            .applyTextStyle(TextFormatting.GRAY));
     }
 }

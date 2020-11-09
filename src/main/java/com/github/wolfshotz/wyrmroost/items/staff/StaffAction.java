@@ -50,14 +50,14 @@ public enum StaffAction
                 @Override
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    dragon.setSit(!dragon.func_233684_eK_());
+                    dragon.setSit(!dragon.isSitting());
                     DragonStaffItem.setAction(DEFAULT, player, stack);
                 }
 
                 @Override
                 public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
                 {
-                    if (dragon != null && dragon.func_233684_eK_()) return "item.wyrmroost.dragon_staff.action.sit.come";
+                    if (dragon != null && dragon.isSitting()) return "item.wyrmroost.dragon_staff.action.sit.come";
                     return "item.wyrmroost.dragon_staff.action.sit.stay";
                 }
             },

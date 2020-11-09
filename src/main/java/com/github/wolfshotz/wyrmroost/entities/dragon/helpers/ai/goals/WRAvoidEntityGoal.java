@@ -5,7 +5,7 @@ import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
 import java.util.function.Predicate;
@@ -42,7 +42,7 @@ public class WRAvoidEntityGoal<T extends LivingEntity> extends Goal
         if (entity.isTamed()) return false;
         this.avoidTarget = entity.world.func_225318_b(classToAvoid, builtTargetSelector, entity, entity.getPosX(), entity.getPosY(), entity.getPosZ(), entity.getBoundingBox().grow(avoidDistance, 3.0D, avoidDistance));
         if (avoidTarget == null) return false;
-        Vector3d pos = RandomPositionGenerator.findRandomTargetBlockAwayFrom(entity, 16, 7, avoidTarget.getPositionVec());
+        Vec3d pos = RandomPositionGenerator.findRandomTargetBlockAwayFrom(entity, 16, 7, avoidTarget.getPositionVec());
         if (pos == null) return false;
         if (avoidTarget.getPositionVec().squareDistanceTo(pos) < avoidTarget.getDistanceSq(entity)) return false;
         return entity.getNavigator().tryMoveToXYZ(pos.getX(), pos.getY(), pos.getZ(), farSpeed);

@@ -88,7 +88,7 @@ public class DragonEggItem extends Item
         if (type.isPresent())
         {
             String dragonTranslation = type.get().getName().getString();
-            return new TranslationTextComponent(dragonTranslation + " ").append(new TranslationTextComponent(getTranslationKey()));
+            return new TranslationTextComponent(dragonTranslation + " ").appendSibling(new TranslationTextComponent(getTranslationKey()));
         }
         
         return super.getDisplayName(stack);
@@ -101,10 +101,10 @@ public class DragonEggItem extends Item
         CompoundNBT tag = stack.getTag();
 
         if (tag != null && tag.contains(DragonEggEntity.DATA_HATCH_TIME))
-            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.tooltip", tag.getInt(DragonEggEntity.DATA_HATCH_TIME) / 1200).mergeStyle(TextFormatting.AQUA));
+            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.tooltip", tag.getInt(DragonEggEntity.DATA_HATCH_TIME) / 1200).applyTextStyle(TextFormatting.AQUA));
         PlayerEntity player = ClientEvents.getPlayer();
         if (player != null && player.isCreative())
-            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.creativetooltip").mergeStyle(TextFormatting.GRAY));
+            tooltip.add(new TranslationTextComponent("item.wyrmroost.egg.creativetooltip").applyTextStyle(TextFormatting.GRAY));
     }
 
     public static ItemStack getStack(EntityType<?> type)

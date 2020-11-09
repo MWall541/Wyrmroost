@@ -10,9 +10,11 @@ import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,16 +23,15 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.*;
+
 
 public class CanariWyvernEntity extends AbstractDragonEntity
 {
@@ -114,16 +115,15 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        ActionResultType result = super.playerInteraction(player, hand, stack);
-        if (result.isSuccessOrConsume()) return result;
+        if (super.playerInteraction(player, hand, stack)) return true;
 
         if (!isTamed() && isFoodItem(stack) && (isPissed() || player.isCreative() || isChild()))
         {
             eat(stack);
             if (!world.isRemote) tame(getRNG().nextDouble() < 0.2, player);
-            return ActionResultType.func_233537_a_(world.isRemote);
+            return true;
         }
 
         if (isOwner(player) && player.getPassengers().size() < 3 && !player.isSneaking())
@@ -132,10 +132,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             setFlying(false);
             clearAI();
             startRiding(player, true);
-            return ActionResultType.func_233537_a_(world.isRemote);
+            return true;
         }
 
-        return ActionResultType.PASS;
+        return false;
     }
 
     @Override
@@ -210,19 +210,20 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
     public boolean isPissed() { return pissedOffTarget != null; }
 
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    @Override
+    protected void registerAttributes()
     {
-        if (event.getCategory() == Biome.Category.SWAMP)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.CANARI_WYVERN.get(), 9, 2, 5));
+        super.registerAttributes();
+        getAttribute(MAX_HEALTH).setBaseValue(12);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.2);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.1);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(0.1);
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static void setSpawnBiomes(Biome biome)
     {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 12)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.2)
-                .createMutableAttribute(FLYING_SPEED, 0.1)
-                .createMutableAttribute(ATTACK_DAMAGE, 3);
+        if (biome.getCategory() == Biome.Category.SWAMP)
+            biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.CANARI_WYVERN.get(), 9, 2, 5));
     }
 
     public class ThreatenGoal extends Goal
@@ -253,7 +254,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             {
                 if (getNavigator().noPath())
                 {
-                    Vector3d vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(CanariWyvernEntity.this, 16, 7, target.getPositionVec());
+                    Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(CanariWyvernEntity.this, 16, 7, target.getPositionVec());
                     if (vec3d != null) getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 1.5);
                 }
             }

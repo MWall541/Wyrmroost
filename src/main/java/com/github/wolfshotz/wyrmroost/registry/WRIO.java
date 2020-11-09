@@ -15,7 +15,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class WRIO
 {
-    public static final DeferredRegister<ContainerType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
+    public static final DeferredRegister<ContainerType<?>> REGISTRY = new DeferredRegister<>(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<ContainerType<DragonInvContainer>> DRAGON_INVENTORY = register("dragon_inventory", getDragonInvContainer());
 

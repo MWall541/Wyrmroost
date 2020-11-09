@@ -21,7 +21,6 @@ import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,20 +31,21 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
+import static net.minecraft.entity.SharedMonsterAttributes.*;
 
 
 public class RoyalRedEntity extends AbstractDragonEntity
@@ -120,14 +120,17 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
+    public DragonInvHandler createInv()
+    {
+        return new DragonInvHandler(this, 1);
+    }
 
     @Override
     public void livingTick()
     {
         super.livingTick();
         flightTimer.add(isFlying()? 0.1f : -0.05f);
-        sitTimer.add(func_233684_eK_()? 0.1f : -0.1f);
+        sitTimer.add(isSitting()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
         breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
         knockOutTimer.add(isKnockedOut()? 0.05f : -0.1f);
@@ -169,7 +172,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
+    public boolean playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (!isTamed() && isFoodItem(stack))
         {
@@ -178,7 +181,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 eat(stack);
                 tame(getRNG().nextDouble() < 0.1, player);
                 setKnockedOut(false);
-                return ActionResultType.func_233537_a_(world.isRemote);
+                return true;
             }
 
             if (isKnockedOut() && knockOutTime <= MAX_KNOCKOUT_TIME / 2)
@@ -194,9 +197,8 @@ public class RoyalRedEntity extends AbstractDragonEntity
                     else knockOutTime += 600; // add 30 seconds to knockout time
                     eat(stack);
                     player.swingArm(hand);
-                    return ActionResultType.SUCCESS;
                 }
-                else return ActionResultType.CONSUME;
+                return true;
             }
         }
 
@@ -257,9 +259,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public Vector3d getApproximateMouthPos()
+    public Vec3d getApproximateMouthPos()
     {
-        Vector3d position = getEyePosition(1).subtract(0, 1.3d, 0);
+        Vec3d position = getEyePosition(1).subtract(0, 1.3d, 0);
         position = position.add(getVectorForRotation(rotationPitch, renderYawOffset).scale(getWidth() / 2)); // base of neck
         return position.add(getVectorForRotation(rotationPitch, rotationYawHead).scale(2.75));
     }
@@ -268,7 +270,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        float heightFactor = isSleeping()? 0.5f : func_233684_eK_()? 0.9f : 1;
+        float heightFactor = isSleeping()? 0.5f : isSitting()? 0.9f : 1;
         return size.scale(1, heightFactor);
     }
 
@@ -294,10 +296,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isKnockedOut(); }
+    protected boolean isMovementBlocked()
+    {
+        return super.isMovementBlocked() || isKnockedOut();
+    }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * (isFlying()? 0.95f : 1.13f); }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    {
+        return getHeight() * (isFlying()? 0.95f : 1.13f);
+    }
 
     @Override
     protected boolean canBeRidden(Entity entity)
@@ -306,13 +314,22 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 3; }
+    protected boolean canFitPassenger(Entity passenger)
+    {
+        return getPassengers().size() < 3;
+    }
 
     @Override
-    public Vector3d getPassengerPosOffset(Entity entity, int index) { return new Vector3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1); }
+    public Vec3d getPassengerPosOffset(Entity entity, int index)
+    {
+        return new Vec3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1);
+    }
 
     @Override
-    public float getRenderScale() { return isChild()? 0.3f : isMale()? 0.8f : 1f; }
+    public float getRenderScale()
+    {
+        return isChild()? 0.3f : isMale()? 0.8f : 1f;
+    }
 
     @Override
     public int getYawRotationSpeed()
@@ -320,11 +337,20 @@ public class RoyalRedEntity extends AbstractDragonEntity
         return isFlying()? 5 : 7;
     }
 
-    public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
+    public boolean isBreathingFire()
+    {
+        return dataManager.get(BREATHING_FIRE);
+    }
 
-    public void setBreathingFire(boolean b) { if (!world.isRemote) dataManager.set(BREATHING_FIRE, b); }
+    public void setBreathingFire(boolean b)
+    {
+        if (!world.isRemote) dataManager.set(BREATHING_FIRE, b);
+    }
 
-    public boolean isKnockedOut() { return dataManager.get(KNOCKED_OUT); }
+    public boolean isKnockedOut()
+    {
+        return dataManager.get(KNOCKED_OUT);
+    }
 
     public void setKnockedOut(boolean b)
     {
@@ -355,10 +381,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean canFly() { return super.canFly() && !isKnockedOut(); }
+    public boolean canFly()
+    {
+        return super.canFly() && !isKnockedOut();
+    }
 
     @Override
-    public boolean isImmuneToArrows() { return true; }
+    public boolean isImmuneToArrows()
+    {
+        return true;
+    }
 
     @Override
     @SuppressWarnings("ConstantConditions")
@@ -375,15 +407,24 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_ROYALRED_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_ROYALRED_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_ROYALRED_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_ROYALRED_HURT.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ROYALRED_DEATH.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_ROYALRED_DEATH.get();
+    }
 
     @Override
     public Animation[] getAnimations()
@@ -391,10 +432,19 @@ public class RoyalRedEntity extends AbstractDragonEntity
         return new Animation[] {NO_ANIMATION, ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION};
     }
 
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
+    @Override
+    public void registerAttributes()
     {
-        if (event.getCategory() == Biome.Category.EXTREME_HILLS)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ROYAL_RED.get(), 1, 1, 1));
+        // base male attributes
+        super.registerAttributes();
+        getAttribute(MAX_HEALTH).setBaseValue(120);
+        getAttribute(MOVEMENT_SPEED).setBaseValue(0.2275);
+        getAttribute(KNOCKBACK_RESISTANCE).setBaseValue(1);
+        getAttribute(FOLLOW_RANGE).setBaseValue(60);
+        getAttribute(ATTACK_KNOCKBACK).setBaseValue(3);
+        getAttributes().registerAttribute(ATTACK_DAMAGE).setBaseValue(12);
+        getAttributes().registerAttribute(FLYING_SPEED).setBaseValue(0.125);
+        getAttributes().registerAttribute(WREntities.Attributes.PROJECTILE_DAMAGE).setBaseValue(4);
     }
 
     @Override
@@ -411,18 +461,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
         }
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static void setSpawnBiomes(Biome biome)
     {
-        // base male attributes
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 120)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.2275)
-                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
-                .createMutableAttribute(FOLLOW_RANGE, 60)
-                .createMutableAttribute(ATTACK_KNOCKBACK, 3)
-                .createMutableAttribute(ATTACK_DAMAGE, 12)
-                .createMutableAttribute(FLYING_SPEED, 0.125)
-                .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 4);
+        if (biome.getCategory() == Biome.Category.EXTREME_HILLS)
+            biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.ROYAL_RED.get(), 1, 1, 1));
     }
 
     class AttackGoal extends Goal

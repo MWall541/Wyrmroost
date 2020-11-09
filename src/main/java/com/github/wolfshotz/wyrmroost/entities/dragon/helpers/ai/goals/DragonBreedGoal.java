@@ -70,7 +70,7 @@ public class DragonBreedGoal extends Goal
         dragon.getLookController().setLookPositionWithEntity(targetMate, 10f, dragon.getVerticalFaceSpeed());
         dragon.getNavigator().tryMoveToEntityLiving(targetMate, 1);
         if (++spawnBabyDelay >= 60 && dragon.getDistance(targetMate) < dragon.getWidth() * 2)
-            dragon.func_234177_a_((ServerWorld) dragon.world, targetMate);
+            dragon.mate((ServerWorld) dragon.world, targetMate);
     }
 
     /**

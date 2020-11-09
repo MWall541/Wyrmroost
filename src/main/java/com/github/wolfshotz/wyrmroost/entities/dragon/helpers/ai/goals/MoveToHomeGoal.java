@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
 
@@ -32,7 +32,7 @@ public class MoveToHomeGoal extends Goal
     public void tick()
     {
         int sq = WRConfig.homeRadius * WRConfig.homeRadius;
-        Vector3d home = Vector3d.copy(dragon.getHomePosition());
+        Vec3d home = new Vec3d(dragon.getHomePosition());
         final int TIME_UNTIL_TELEPORT = 600; // 30 seconds
 
         time++;
@@ -40,7 +40,7 @@ public class MoveToHomeGoal extends Goal
             dragon.trySafeTeleport(dragon.getHomePosition().up());
         else
         {
-            Vector3d movePos;
+            Vec3d movePos;
             if (dragon.getNavigator().noPath() && (movePos = RandomPositionGenerator.findRandomTargetBlockTowards(dragon, WRConfig.homeRadius, 10, home)) != null)
                 dragon.getNavigator().tryMoveToXYZ(movePos.x, movePos.y, movePos.y, 1.1);
         }

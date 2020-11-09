@@ -396,7 +396,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
         resetToDefaultPose();
         animator.update(drake, partialTick);
         
-        if (!drake.func_233684_eK_() && !drake.isSleeping())
+        if (!drake.isSitting() && !drake.isSleeping())
         {
             // Body bob
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, limbSwingAmount);

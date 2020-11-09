@@ -11,10 +11,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.OutlineLayerBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -25,9 +22,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -159,7 +155,7 @@ public class RenderHelper extends RenderType
 
     public static void drawBlockPos(MatrixStack ms, BlockPos pos, World world, double lineThickness, int argb)
     {
-        Vector3d view = ClientEvents.getProjectedView();
+        Vec3d view = ClientEvents.getProjectedView();
         double x = pos.getX() - view.x;
         double y = pos.getY() - view.y;
         double z = pos.getZ() - view.z;
@@ -211,7 +207,7 @@ public class RenderHelper extends RenderType
             if (!WRConfig.debugMode) return;
             if (aabb == null) return;
 
-            Vector3d view = ClientEvents.getProjectedView();
+            Vec3d view = ClientEvents.getProjectedView();
             double x = view.x;
             double y = view.y;
             double z = view.z;

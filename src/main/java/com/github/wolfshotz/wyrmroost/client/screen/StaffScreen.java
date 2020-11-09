@@ -5,16 +5,13 @@ import com.github.wolfshotz.wyrmroost.client.screen.widgets.StaffActionButton;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.List;
 public class StaffScreen extends Screen
 {
     private final AbstractDragonEntity dragon;
-    public final List<IReorderingProcessor> toolTip = new ArrayList<>();
+    public final List<String> toolTip = new ArrayList<>();
     public final List<StaffAction> actions = new ArrayList<>();
 
     public StaffScreen(AbstractDragonEntity dragon)
@@ -61,20 +58,20 @@ public class StaffScreen extends Screen
     }
 
     @Override
-    public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
-        renderBackground(ms);
-        for (Widget b : buttons) b.render(ms, mouseX, mouseY, partialTicks);
+        renderBackground();
+        for (Widget b : buttons) b.render(mouseX, mouseY, partialTicks);
         int x = width / 2;
         int y = (height / 2) + (int) (dragon.getHeight() / 2);
 
         if (dragon.getVariant() < 0)
-            drawString(ms, font, Character.toString('\u2726'), x - 40, y - 40, 0xffff00);
+            drawString(font, Character.toString('\u2726'), x - 40, y - 40, 0xffff00);
 
         int scale = (int) -(dragon.getWidth() * dragon.getHeight()) + 23; // linear decay: smaller scale bigger the dragon. if things get problematic, exponential?
         InventoryScreen.drawEntityOnScreen(x, y, scale, x - mouseX, y - mouseY, dragon);
         if (mouseX >= x - 40 && mouseY >= y - 40 && mouseX < x + 45 && mouseY < y + 15)
-            renderTooltip(ms, toolTip, mouseX, mouseY);
+            renderTooltip(toolTip, mouseX, mouseY);
     }
 
     @Override
@@ -82,7 +79,7 @@ public class StaffScreen extends Screen
 
     public void addAction(StaffAction action) { actions.add(action); }
 
-    public void addTooltip(String string) { toolTip.add(IReorderingProcessor.func_242239_a(string, Style.EMPTY)); }
+    public void addTooltip(String string) { toolTip.add(string); }
 
     public static void open(AbstractDragonEntity dragon, ItemStack stack)
     {
