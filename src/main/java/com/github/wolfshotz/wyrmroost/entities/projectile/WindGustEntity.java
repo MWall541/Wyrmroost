@@ -57,10 +57,13 @@ public class WindGustEntity extends DragonProjectileEntity
     @Override
     public void onEntityImpact(Entity entity)
     {
-        entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
-        entity.attackEntityFrom(getDamageSource("windGust"), 3);
-        if (entity instanceof ServerPlayerEntity)
-            ((ServerWorld) world).getChunkProvider().sendToTrackingAndSelf(entity, new SEntityVelocityPacket(entity));
+        if (!world.isRemote)
+        {
+            entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
+            entity.attackEntityFrom(getDamageSource("windGust"), 3);
+            if (entity instanceof ServerPlayerEntity)
+                ((ServerWorld) world).getChunkProvider().sendToTrackingAndSelf(entity, new SEntityVelocityPacket(entity));
+        }
     }
 
     @Override

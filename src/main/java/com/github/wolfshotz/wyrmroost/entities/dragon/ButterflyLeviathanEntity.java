@@ -238,7 +238,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (((beached && lightningCooldown > 60) || player.isCreative() || isChild()) && isFoodItem(stack))
+        if (((beached && lightningCooldown > 60 && world.isRainingAt(getPosition())) || player.isCreative() || isChild()) && isFoodItem(stack))
         {
             eat(stack);
             if (!world.isRemote) tame(getRNG().nextDouble() < 0.2, player);

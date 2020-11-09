@@ -74,7 +74,10 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) { return new ItemStack(LazySpawnEggItem.getEggFor(getType())); }
+    public ItemStack getPickedResult(RayTraceResult target)
+    {
+        return new ItemStack(LazySpawnEggItem.getEggFor(getType()));
+    }
 
     // ================================
     //           Entity NBT
@@ -103,9 +106,15 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     /**
      * Whether or not the Minutus is burrowed
      */
-    public boolean isBurrowed() { return dataManager.get(BURROWED); }
+    public boolean isBurrowed()
+    {
+        return dataManager.get(BURROWED);
+    }
 
-    public void setBurrowed(boolean burrow) { dataManager.set(BURROWED, burrow); }
+    public void setBurrowed(boolean burrow)
+    {
+        dataManager.set(BURROWED, burrow);
+    }
 
     // ================================
 
@@ -192,7 +201,10 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     }
 
     @Override
-    public boolean canDespawn(double distanceToClosestPlayer) { return true; }
+    public boolean canDespawn(double distanceToClosestPlayer)
+    {
+        return true;
+    }
 
     @Override
     public void checkDespawn()
@@ -222,7 +234,10 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 
     @Nullable
     @Override
-    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) { return null; }
+    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+    {
+        return null;
+    }
 
     @Override
     public boolean isInvulnerableTo(DamageSource source)
@@ -232,7 +247,10 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_LDWYRM_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_LDWYRM_IDLE.get();
+    }
 
 //    @Nullable
 //    @Override
@@ -242,19 +260,34 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 //    }
 
     @Override
-    protected float getSoundVolume() { return 0.3f; }
+    protected float getSoundVolume()
+    {
+        return 0.15f;
+    }
 
     @Override
-    public boolean canBePushed() { return !isBurrowed(); }
+    public boolean canBePushed()
+    {
+        return !isBurrowed();
+    }
 
     @Override
-    public boolean canBeCollidedWith() { return !isBurrowed(); }
+    public boolean canBeCollidedWith()
+    {
+        return !isBurrowed();
+    }
 
     @Override
-    protected void collideWithEntity(Entity entityIn) { if (!isBurrowed()) super.collideWithEntity(entityIn); }
+    protected void collideWithEntity(Entity entityIn)
+    {
+        if (!isBurrowed()) super.collideWithEntity(entityIn);
+    }
 
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isBurrowed(); }
+    protected boolean isMovementBlocked()
+    {
+        return super.isMovementBlocked() || isBurrowed();
+    }
 
     @Override
     public int getAnimationTick()
@@ -327,7 +360,10 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
         }
 
         @Override
-        public void resetTask() { burrowTicks = 30; }
+        public void resetTask()
+        {
+            burrowTicks = 30;
+        }
 
         @Override
         public void tick()
@@ -339,6 +375,9 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
             }
         }
 
-        private boolean belowIsSand() { return world.getBlockState(getPosition().down(1)).getMaterial() == Material.SAND; }
+        private boolean belowIsSand()
+        {
+            return world.getBlockState(getPosition().down(1)).getMaterial() == Material.SAND;
+        }
     }
 }
