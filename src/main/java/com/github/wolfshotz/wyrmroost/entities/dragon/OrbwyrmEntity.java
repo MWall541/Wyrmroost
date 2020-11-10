@@ -4,7 +4,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
-import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.block.BlockState;
@@ -54,12 +53,12 @@ public class OrbwyrmEntity extends AbstractDragonEntity
 
         if (animation == HISS_ANIMATION)
         {
-            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_HISS.get(), 2, 1, true);
+//            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_HISS.get(), 2, 1, true);
         }
         else if (animation == BITE_ANIMATION)
         {
-            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_DEATH.get(), 1, 1, true);
-            else if (tick == 7) attackInBox(getOffsetBox(3.65f).grow(-0.3f));
+//            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_DEATH.get(), 1, 1, true);
+//            else if (tick == 7) attackInBox(getOffsetBox(3.65f).grow(-0.3f));
         }
     }
 

@@ -59,7 +59,7 @@ public class SoundData implements IDataProvider
         getBuilder(WRSounds.ENTITY_SILVERGLIDER_HURT.get()).subtitle("Silver Glider Screech").sound(Wyrmroost.rl("entity/silver_glider/hurt")).build(json);
         getBuilder(WRSounds.ENTITY_SILVERGLIDER_DEATH.get()).subtitle("Silver Glider Moan").sound(Wyrmroost.rl("entity/silver_glider/death")).build(json);
 
-        getBuilder(WRSounds.ENTITY_OWDRAKE_IDLE.get()).subtitle("Overworld Drake Snorts").sounds(Wyrmroost::rl,"entity/overworld_drake/%s", "idle1", "idle2", "idle3").build(json);
+        getBuilder(WRSounds.ENTITY_OWDRAKE_IDLE.get()).subtitle("Overworld Drake Snorts").sounds(Wyrmroost::rl, "entity/overworld_drake/%s", "idle1", "idle2", "idle3").build(json);
         getBuilder(WRSounds.ENTITY_OWDRAKE_HURT.get()).subtitle("Overworld Drake Outcry").sounds(Wyrmroost::rl, "entity/overworld_drake/%s", "idle1", "idle2", "idle3").build(json);
         getBuilder(WRSounds.ENTITY_OWDRAKE_DEATH.get()).subtitle("Overworld Drake Moan").sound(Wyrmroost.rl("entity/overworld_drake/death")).build(json);
         getBuilder(WRSounds.ENTITY_OWDRAKE_ROAR.get()).subtitle("Overworld Drake Roar").sound(Wyrmroost.rl("entity/overworld_drake/roar")).build(json);
@@ -78,7 +78,7 @@ public class SoundData implements IDataProvider
         getBuilder(WRSounds.ENTITY_CANARI_DEATH.get()).subtitle("Canari Wyvern Death").sound(Wyrmroost.rl("entity/canari_wyvern/death")).build(json);
 
         getBuilder(WRSounds.ENTITY_DFD_IDLE.get()).subtitle("Dragon Fruit Mumble").sounds(Wyrmroost::rl, "entity/dragonfruit_drake/%s", "idle1", "idle2", "idle3", "idle4").build(json);
-        getBuilder(WRSounds.ENTITY_DFD_HURT.get()).subtitle("Dragon Fruit Screech").sounds(Wyrmroost::rl,"entity/dragonfruit_drake/%s", "hurt", "hurt1", "hurt2", "hurt3").build(json);
+        getBuilder(WRSounds.ENTITY_DFD_HURT.get()).subtitle("Dragon Fruit Screech").sounds(Wyrmroost::rl, "entity/dragonfruit_drake/%s", "hurt", "hurt1", "hurt2", "hurt3").build(json);
         getBuilder(WRSounds.ENTITY_DFD_DEATH.get()).subtitle("Dragon Fruit Moan").sound(Wyrmroost.rl("entity/dragonfruit_drake/death")).build(json);
 
         getBuilder(WRSounds.ENTITY_ROYALRED_IDLE.get()).subtitle("Royal Red Grunts").sounds(Wyrmroost::rl, "entity/royal_red/%s", "idle1", "idle2").build(json);
@@ -93,10 +93,10 @@ public class SoundData implements IDataProvider
 
         getBuilder(WRSounds.ENTITY_COINDRAGON_IDLE.get()).subtitle("Coin Dragon Chirps").sounds(Wyrmroost::rl, "entity/coin_dragon/%s", "idle", "idle1", "idle2").build(json);
 
-        getBuilder(WRSounds.ENTITY_ORBWYRM_IDLE.get()).subtitle("Orbwyrm Hissing").sounds(Wyrmroost::rl, "entity/orbwyrm/%s", "idle1", "idle2", "idle3").build(json);
-        getBuilder(WRSounds.ENTITY_ORBWYRM_HURT.get()).subtitle("Orbwyrm Screech").sounds(Wyrmroost::rl, "entity/orbwyrm/%s", "hurt1", "hurt2", "hurt3").build(json);
-        getBuilder(WRSounds.ENTITY_ORBWYRM_HISS.get()).subtitle("Orbwyrm Hiss").sound(Wyrmroost.rl("entity/orbwyrm/hiss")).build(json);
-        getBuilder(WRSounds.ENTITY_ORBWYRM_DEATH.get()).subtitle("Orbwyrm Cry").sound(Wyrmroost.rl("entity/orbwyrm/death")).build(json);
+//        getBuilder(WRSounds.ENTITY_ORBWYRM_IDLE.get()).subtitle("Orbwyrm Hissing").sounds(Wyrmroost::rl, "entity/orbwyrm/%s", "idle1", "idle2", "idle3").build(json);
+//        getBuilder(WRSounds.ENTITY_ORBWYRM_HURT.get()).subtitle("Orbwyrm Screech").sounds(Wyrmroost::rl, "entity/orbwyrm/%s", "hurt1", "hurt2", "hurt3").build(json);
+//        getBuilder(WRSounds.ENTITY_ORBWYRM_HISS.get()).subtitle("Orbwyrm Hiss").sound(Wyrmroost.rl("entity/orbwyrm/hiss")).build(json);
+//        getBuilder(WRSounds.ENTITY_ORBWYRM_DEATH.get()).subtitle("Orbwyrm Cry").sound(Wyrmroost.rl("entity/orbwyrm/death")).build(json);
     }
 
     private Builder getBuilder(SoundEvent sound)
@@ -107,7 +107,10 @@ public class SoundData implements IDataProvider
     }
 
     @Override
-    public String getName() { return "WR Sounds"; }
+    public String getName()
+    {
+        return "WR Sounds";
+    }
 
     private class Builder
     {
@@ -151,7 +154,10 @@ public class SoundData implements IDataProvider
             return this;
         }
 
-        public Builder sound(ResourceLocation path) { return sound(path, 1, 1); }
+        public Builder sound(ResourceLocation path)
+        {
+            return sound(path, 1, 1);
+        }
 
         public Builder sounds(Function<String, ResourceLocation> rlFunction, String path, String... sounds)
         {
