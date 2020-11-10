@@ -110,6 +110,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         if (entity == shooter) return false;
         if (!entity.isAlive()) return false;
         if (!(entity instanceof LivingEntity)) return false;
+        if (shooter.getPassengers().contains(entity)) return false;
         if (entity.isSpectator() || !entity.canBeCollidedWith() || entity.noClip) return false;
         return !entity.isOnSameTeam(shooter);
     }
