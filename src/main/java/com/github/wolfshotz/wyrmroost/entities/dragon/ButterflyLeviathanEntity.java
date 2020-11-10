@@ -92,7 +92,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals()
     {
-        goalSelector.addGoal(0, new WRSitGoal(this));
+        goalSelector.addGoal(0, sitGoal = new WRSitGoal(this));
         goalSelector.addGoal(1, new MoveToHomeGoal(this));
         goalSelector.addGoal(2, new AttackGoal());
         goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
