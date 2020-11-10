@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "#wyrmroost:dragon_meats",
     "minecraft:beef",
     "minecraft:cooked_beef",
     "minecraft:porkchop",
@@ -10,14 +11,6 @@
     "minecraft:mutton",
     "minecraft:cooked_mutton",
     "minecraft:rabbit",
-    "minecraft:cooked_rabbit",
-    "wyrmroost:raw_lowtier_meat",
-    "wyrmroost:cooked_lowtier_meat",
-    "wyrmroost:raw_common_meat",
-    "wyrmroost:cooked_common_meat",
-    "wyrmroost:raw_apex_meat",
-    "wyrmroost:cooked_apex_meat",
-    "wyrmroost:raw_behemoth_meat",
-    "wyrmroost:cooked_behemoth_meat"
+    "minecraft:cooked_rabbit"
   ]
 }

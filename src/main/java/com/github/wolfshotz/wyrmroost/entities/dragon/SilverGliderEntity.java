@@ -138,7 +138,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             return true;
         }
 
-        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking())
+        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking() && !isBreedingItem(stack))
         {
             startRiding(player, true);
             setSit(false);

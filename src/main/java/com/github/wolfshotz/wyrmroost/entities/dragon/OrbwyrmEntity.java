@@ -51,12 +51,12 @@ public class OrbwyrmEntity extends AbstractDragonEntity
 
         if (animation == HISS_ANIMATION)
         {
-            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_HISS.get(), 2, 1, true);
+//            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_HISS.get(), 2, 1, true);
         }
         else if (animation == BITE_ANIMATION)
         {
-            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_DEATH.get(), 1, 1, true);
-            else if (tick == 7) attackInBox(getOffsetBox(3.65f).grow(-0.3f));
+//            if (tick == 0) playSound(WRSounds.ENTITY_ORBWYRM_DEATH.get(), 1, 1, true);
+//            else if (tick == 7) attackInBox(getOffsetBox(3.65f).grow(-0.3f));
         }
     }
 

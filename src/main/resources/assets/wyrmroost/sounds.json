@@ -359,49 +359,5 @@
         "name": "wyrmroost:entity/coin_dragon/idle2"
       }
     ]
-  },
-  "entity.orbwyrm.idle": {
-    "subtitle": "Orbwyrm Hissing",
-    "sounds": [
-      {
-        "name": "wyrmroost:entity/orbwyrm/idle1"
-      },
-      {
-        "name": "wyrmroost:entity/orbwyrm/idle2"
-      },
-      {
-        "name": "wyrmroost:entity/orbwyrm/idle3"
-      }
-    ]
-  },
-  "entity.orbwyrm.hurt": {
-    "subtitle": "Orbwyrm Screech",
-    "sounds": [
-      {
-        "name": "wyrmroost:entity/orbwyrm/hurt1"
-      },
-      {
-        "name": "wyrmroost:entity/orbwyrm/hurt2"
-      },
-      {
-        "name": "wyrmroost:entity/orbwyrm/hurt3"
-      }
-    ]
-  },
-  "entity.orbwyrm.hiss": {
-    "subtitle": "Orbwyrm Hiss",
-    "sounds": [
-      {
-        "name": "wyrmroost:entity/orbwyrm/hiss"
-      }
-    ]
-  },
-  "entity.orbwyrm.death": {
-    "subtitle": "Orbwyrm Cry",
-    "sounds": [
-      {
-        "name": "wyrmroost:entity/orbwyrm/death"
-      }
-    ]
   }
 }

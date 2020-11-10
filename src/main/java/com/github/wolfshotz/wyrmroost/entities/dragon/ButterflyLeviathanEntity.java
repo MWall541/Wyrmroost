@@ -65,7 +65,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public final TickFloat beachedTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat swimTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    public int lightningCooldown;
+    public int lightningCooldown = 0;
     public boolean beached = true;
 
     public ButterflyLeviathanEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
@@ -229,7 +229,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         else if (animation == BITE_ANIMATION)
         {
             if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1, true);
-            else if (animTick == 6) attackInBox(getOffsetBox(5.5f).grow(0.85),  40);
+            else if (animTick == 6)
+                attackInBox(getBoundingBox().offset(Vector3d.fromPitchYaw(isInWater()? rotationPitch : 0, rotationYawHead).scale(5.5f)).grow(0.85), 40);
         }
     }
 

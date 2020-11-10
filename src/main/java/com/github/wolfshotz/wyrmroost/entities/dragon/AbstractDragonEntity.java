@@ -262,21 +262,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 ((LessShitLookController) getLookController()).restore();
                 if (getHealth() < getMaxHealth() && getRNG().nextDouble() < 0.005) heal(1);
             }
-
-            LivingEntity target = getAttackTarget();
-            if (target != null && !target.isAlive()) setAttackTarget(null);
         }
         else
         {
             doSpecialEffects();
         }
-    }
-
-    @Override
-    protected void updateAITasks()
-    {
-        super.updateAITasks();
-        if (getAttackTarget() != null && canPassengerSteer()) setAttackTarget(null);
     }
 
     /**
@@ -391,7 +381,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
             if (isBreedingItem(stack) && getGrowingAge() == 0)
             {
-                if (!world.isRemote && canBreed())
+                if (!world.isRemote && !isInLove())
                 {
                     eat(stack);
                     setInLove(player);
@@ -402,7 +392,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (canBeRidden(player) && !player.isSneaking())
         {
-            if (!world.isRemote) player.startRiding(this);
+            if (!world.isRemote)
+            {
+                player.startRiding(this);
+                clearAI();
+            }
             return true;
         }
 
