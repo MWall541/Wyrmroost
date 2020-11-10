@@ -390,7 +390,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
             if (isBreedingItem(stack) && getGrowingAge() == 0)
             {
-                if (!world.isRemote && canBreed())
+                if (!world.isRemote && !isInLove())
                 {
                     eat(stack);
                     setInLove(player);
