@@ -230,7 +230,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         {
             if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1, true);
             else if (animTick == 6)
-                attackInBox(getBoundingBox().offset(Vector3d.fromPitchYaw(isInWater()? rotationPitch : 0, rotationYawHead).scale(5.5f)).grow(0.85), 40);
+                attackInBox(getBoundingBox().offset(Vec3d.fromPitchYaw(isInWater()? rotationPitch : 0, rotationYawHead).scale(5.5f)).grow(0.85), 40);
         }
     }
 

@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:builtin/entity",
+  "parent": "builtin/entity",
   "gui_light": "front",
   "display": {
     "gui": {
