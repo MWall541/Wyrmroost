@@ -9,7 +9,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.DamageSource;
@@ -77,9 +76,6 @@ public class FireBreathEntity extends BreathWeaponEntity
     public void onEntityImpact(Entity entity)
     {
         if (world.isRemote) return;
-        if (entity == shooter) return;
-        if (entity.isImmuneToFire()) return;
-        if (entity instanceof LivingEntity && shooter.isOnSameTeam(entity)) return;
 
         float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
         if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;

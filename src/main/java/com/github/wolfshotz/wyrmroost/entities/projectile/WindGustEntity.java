@@ -86,7 +86,7 @@ public class WindGustEntity extends DragonProjectileEntity
         }
         else
         {
-            for (LivingEntity e : world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(1), e -> !shooter.isOnSameTeam(e)))
+            for (LivingEntity e : world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(1), this::canImpactEntity))
             {
                 double angle = Mafs.getAngle(getPosX(), getPosZ(), e.getPosX(), e.getPosZ()) * Math.PI / 180;
                 e.addVelocity(2 * -Math.cos(angle), 0.5d, 2 * -Math.sin(angle));

@@ -108,7 +108,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         setPosition(x, y, z);
     }
 
-    private boolean canImpactEntity(Entity entity)
+    public boolean canImpactEntity(Entity entity)
     {
         if (entity == shooter) return false;
         if (!entity.isAlive()) return false;
