@@ -791,8 +791,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (item.isFood())
             {
                 for (Pair<EffectInstance, Float> pair : item.getFood().getEffects())
-                    if (!world.isRemote && pair.getFirst() != null && rand.nextFloat() < pair.getSecond())
-                        addPotionEffect(new EffectInstance(pair.getFirst()));
+                    if (!world.isRemote && pair.getLeft() != null && rand.nextFloat() < pair.getRight())
+                        addPotionEffect(new EffectInstance(pair.getLeft()));
             }
             if (item.hasContainerItem(stack)) entityDropItem(item.getContainerItem(stack), (float) (mouth.y - getPosY()));
             stack.shrink(1);
