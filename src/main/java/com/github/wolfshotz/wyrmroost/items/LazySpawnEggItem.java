@@ -1,5 +1,7 @@
 package com.github.wolfshotz.wyrmroost.items;
 
+import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -125,7 +127,11 @@ public class LazySpawnEggItem extends Item
         if (!target.isAlive()) return ActionResultType.PASS;
         if (target.getType() != type.get()) return ActionResultType.PASS;
 
-        if (!target.world.isRemote) ((AgeableEntity) target).func_241840_a((ServerWorld) target.world, (AgeableEntity) target);
+        if (!target.world.isRemote)
+        {
+            AgeableEntity entity = ((AgeableEntity) type.get().spawn(((ServerWorld) target.world), stack, playerIn, target.getPosition(), SpawnReason.SPAWN_EGG, false, false));
+            entity.setGrowingAge(entity instanceof AbstractDragonEntity? DragonEggProperties.get(type.get()).getGrowthTime() : -24000);
+        }
 
         return ActionResultType.func_233537_a_(playerIn.world.isRemote);
     }
