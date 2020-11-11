@@ -10,6 +10,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookCon
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
+import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
@@ -115,12 +116,15 @@ public class RoyalRedEntity extends AbstractDragonEntity
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(4, AnonymousGoals.nonTamedHurtByTarget(this));
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, e -> e.getType() == EntityType.PLAYER || e instanceof AnimalEntity));
     }
 
     @Override
-    public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
+    public DragonInvHandler createInv()
+    {
+        return new DragonInvHandler(this, 1);
+    }
 
     @Override
     public void livingTick()
@@ -294,10 +298,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean isMovementBlocked() { return super.isMovementBlocked() || isKnockedOut(); }
+    protected boolean isMovementBlocked()
+    {
+        return super.isMovementBlocked() || isKnockedOut();
+    }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) { return getHeight() * (isFlying()? 0.95f : 1.13f); }
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    {
+        return getHeight() * (isFlying()? 0.95f : 1.13f);
+    }
 
     @Override
     protected boolean canBeRidden(Entity entity)
@@ -306,13 +316,22 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean canFitPassenger(Entity passenger) { return getPassengers().size() < 3; }
+    protected boolean canFitPassenger(Entity passenger)
+    {
+        return getPassengers().size() < 3;
+    }
 
     @Override
-    public Vector3d getPassengerPosOffset(Entity entity, int index) { return new Vector3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1); }
+    public Vector3d getPassengerPosOffset(Entity entity, int index)
+    {
+        return new Vector3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1);
+    }
 
     @Override
-    public float getRenderScale() { return isChild()? 0.3f : isMale()? 0.8f : 1f; }
+    public float getRenderScale()
+    {
+        return isChild()? 0.3f : isMale()? 0.8f : 1f;
+    }
 
     @Override
     public int getYawRotationSpeed()
@@ -320,11 +339,20 @@ public class RoyalRedEntity extends AbstractDragonEntity
         return isFlying()? 5 : 7;
     }
 
-    public boolean isBreathingFire() { return dataManager.get(BREATHING_FIRE); }
+    public boolean isBreathingFire()
+    {
+        return dataManager.get(BREATHING_FIRE);
+    }
 
-    public void setBreathingFire(boolean b) { if (!world.isRemote) dataManager.set(BREATHING_FIRE, b); }
+    public void setBreathingFire(boolean b)
+    {
+        if (!world.isRemote) dataManager.set(BREATHING_FIRE, b);
+    }
 
-    public boolean isKnockedOut() { return dataManager.get(KNOCKED_OUT); }
+    public boolean isKnockedOut()
+    {
+        return dataManager.get(KNOCKED_OUT);
+    }
 
     public void setKnockedOut(boolean b)
     {
@@ -355,10 +383,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean canFly() { return super.canFly() && !isKnockedOut(); }
+    public boolean canFly()
+    {
+        return super.canFly() && !isKnockedOut();
+    }
 
     @Override
-    public boolean isImmuneToArrows() { return true; }
+    public boolean isImmuneToArrows()
+    {
+        return true;
+    }
 
     @Override
     @SuppressWarnings("ConstantConditions")
@@ -375,15 +409,24 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_ROYALRED_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_ROYALRED_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_ROYALRED_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_ROYALRED_HURT.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ROYALRED_DEATH.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_ROYALRED_DEATH.get();
+    }
 
     @Override
     public Animation[] getAnimations()

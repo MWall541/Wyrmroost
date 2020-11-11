@@ -8,6 +8,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
+import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
@@ -106,7 +107,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
         targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        targetSelector.addGoal(3, AnonymousGoals.nonTamedHurtByTarget(this));
         targetSelector.addGoal(4, new DefendHomeGoal(this));
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, e ->
                 (beached || e.isInWater()) && (e.getType() == EntityType.SQUID || e.getType() == EntityType.GUARDIAN || e.getType() == EntityType.PLAYER)));

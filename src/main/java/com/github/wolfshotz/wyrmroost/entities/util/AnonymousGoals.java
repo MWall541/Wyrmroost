@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.util;
 
 import net.minecraft.entity.ai.goal.FollowParentGoal;
+import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.item.crafting.Ingredient;
@@ -51,6 +52,24 @@ public class AnonymousGoals
 
             @Override
             public boolean shouldExecute() { return !animal.isTamed() && super.shouldExecute(); }
+        };
+    }
+
+    public static HurtByTargetGoal nonTamedHurtByTarget(TameableEntity mob)
+    {
+        return new HurtByTargetGoal(mob)
+        {
+            @Override
+            public boolean shouldExecute()
+            {
+                return !mob.isTamed() && super.shouldExecute();
+            }
+
+            @Override
+            public boolean shouldContinueExecuting()
+            {
+                return mob.isTamed() && super.shouldContinueExecuting();
+            }
         };
     }
 }

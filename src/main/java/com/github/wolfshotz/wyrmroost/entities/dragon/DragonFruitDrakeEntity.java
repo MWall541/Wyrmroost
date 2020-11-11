@@ -97,7 +97,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
             }
         });
 
-        targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
+        targetSelector.addGoal(1, AnonymousGoals.nonTamedHurtByTarget(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test));
     }
 

@@ -10,3 +10,7 @@ Some of these probably won't work, some may. who knows, exactly why theyre plans
           - ~~It's annoying having to pass around these things, especially when runtime-animating where restarts are constantly required~~
 - Fix Animations to interpolate TO positions, not FROM.
 - Add Model Physics. (tails etc)
+- Adding a concept for Goals, essentially disabling certain ones when tamed:
+    - Either remove and re-apply goals when tamed
+    - OR remove only the ones we want when tamed (would need to be stored)
+    - This is beneficial as it will disallow certain actions from a dragon from happening when tamed, and even removes more goals so it's more efficient.

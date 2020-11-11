@@ -9,6 +9,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHom
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
+import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -98,7 +99,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(4, new HurtByTargetGoal(this).setCallsForHelp());
+        targetSelector.addGoal(4, AnonymousGoals.nonTamedHurtByTarget(this).setCallsForHelp());
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, TARGETS));
     }
 
