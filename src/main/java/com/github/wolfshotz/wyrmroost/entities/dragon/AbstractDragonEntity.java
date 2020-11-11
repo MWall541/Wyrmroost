@@ -928,11 +928,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean isIdling()
     {
-        return getNavigator().noPath()
-                && getAttackTarget() == null
-                && !isBeingRidden()
-                && !isInWaterOrBubbleColumn()
-                && !isFlying();
+        return getNavigator().noPath() && getAttackTarget() == null && !isBeingRidden() && !isInWaterOrBubbleColumn() && !isFlying();
     }
 
     @Nullable

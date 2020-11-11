@@ -165,7 +165,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
                 }
             }
 
-            if (!isChild() && world.isDaytime() && !isSleeping() && getRNG().nextDouble() < 0.002)
+            if (!isChild() && world.isDaytime() && !isSleeping() && isIdling() && getRNG().nextDouble() < 0.002)
             {
                 napTime = 1200;
                 setSleeping(true);
@@ -266,7 +266,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     @Override
     public int determineVariant()
     {
-        return getRNG().nextDouble() < 0.008? -1 : 0;
+        return getRNG().nextDouble() < 0.01? -1 : 0;
     }
 
     @Override
