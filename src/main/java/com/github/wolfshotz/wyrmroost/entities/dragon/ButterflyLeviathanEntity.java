@@ -559,7 +559,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public static void setSpawnBiomes(Biome biome)
     {
         if (biome.getCategory() == Biome.Category.OCEAN)
-            biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1));
+            biome.getSpawns(EntityClassification.WATER_CREATURE).add(new Biome.SpawnListEntry(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1));
     }
 
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IWorld world, SpawnReason reason, BlockPos pos, Random random)
@@ -568,8 +568,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         if (world.getFluidState(pos).getFluid().isIn(FluidTags.WATER))
         {
             final double chance = random.nextDouble();
-            if (reason == SpawnReason.CHUNK_GENERATION) return chance < 0.325;
-            else if (reason == SpawnReason.NATURAL) return chance < 0.001;
+            if (reason == SpawnReason.NATURAL) return chance < 0.005;
         }
         return false;
     }
