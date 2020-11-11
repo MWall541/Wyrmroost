@@ -8,11 +8,11 @@ public class SleepController
 {
     private final AbstractDragonEntity dragon;
     public int coolDown;
-    private double sleepChance = 0.01;
-    private boolean nocturnal = false;
-    private boolean defendsHome = false;
-    private BooleanSupplier sleepConditions;
-    private BooleanSupplier wakeConditions;
+    public double sleepChance = 0.01;
+    public boolean nocturnal = false;
+    public boolean defendsHome = false;
+    public BooleanSupplier sleepConditions;
+    public BooleanSupplier wakeConditions;
 
     public SleepController(AbstractDragonEntity dragon)
     {
@@ -65,7 +65,7 @@ public class SleepController
 
         if (dragon.isSleeping())
         {
-            if (shouldWakeUp() && dragon.getRNG().nextDouble() < sleepChance * 0.5) dragon.setSleeping(false);
+            if (shouldWakeUp() && dragon.getRNG().nextDouble() < sleepChance * 1.75) dragon.setSleeping(false);
         }
         else
         {

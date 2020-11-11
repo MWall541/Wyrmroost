@@ -94,7 +94,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
             }
         });
 
-        targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp(DragonFruitDrakeEntity.class));
+        targetSelector.addGoal(1, AnonymousGoals.nonTamedHurtByTarget(this).setCallsForHelp(DragonFruitDrakeEntity.class));
         targetSelector.addGoal(2, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test));
     }
 
@@ -188,7 +188,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
                 }
             }
 
-            if (!isChild() && world.isDaytime() && !isSleeping() && getRNG().nextDouble() < 0.002)
+            if (!isChild() && world.isDaytime() && !isSleeping() && isIdling() && getRNG().nextDouble() < 0.002)
             {
                 napTime = 1200;
                 setSleeping(true);
@@ -289,7 +289,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IShe
     @Override
     public int determineVariant()
     {
-        return getRNG().nextDouble() < 0.008? -1 : 0;
+        return getRNG().nextDouble() < 0.01? -1 : 0;
     }
 
     @Override

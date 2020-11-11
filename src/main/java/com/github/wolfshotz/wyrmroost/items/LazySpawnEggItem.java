@@ -1,12 +1,14 @@
 package com.github.wolfshotz.wyrmroost.items;
 
+import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
+import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,6 +24,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -119,6 +122,22 @@ public class LazySpawnEggItem extends Item
         }
         
         return new ActionResult<>(ActionResultType.FAIL, itemstack);
+    }
+
+    @Override
+    public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
+    {
+        if (!(target instanceof AgeableEntity)) return false;
+        if (!target.isAlive()) return false;
+        if (target.getType() != type.get()) return false;
+
+        if (!target.world.isRemote)
+        {
+            AgeableEntity entity = ((AgeableEntity) type.get().spawn(((ServerWorld) target.world), stack, playerIn, target.getPosition(), SpawnReason.SPAWN_EGG, false, false));
+            entity.setGrowingAge(entity instanceof AbstractDragonEntity? DragonEggProperties.get(type.get()).getGrowthTime() : -24000);
+        }
+
+        return true;
     }
 
     public int getColor(int index) { return index == 0? PRIMARY_COLOR : SECONDARY_COLOR; }

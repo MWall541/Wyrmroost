@@ -19,7 +19,10 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     }
 
     @Override
-    public boolean shouldExecute() { return super.shouldExecute() && !dragon.isBeingRidden(); }
+    public boolean shouldExecute()
+    {
+        return super.shouldExecute() && !dragon.isBeingRidden();
+    }
 
     @Override
     public boolean shouldContinueExecuting()
@@ -30,16 +33,16 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     }
 
     @Override
-    public void startExecuting() { attacker.setAggroed(true); }
-
-    @Override
-    public void tick() { super.tick(); }
+    public void startExecuting()
+    {
+        attacker.setAggroed(true);
+    }
 
     @Override
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
     {
         double reach = getAttackReachSqr(enemy);
-        if (distToEnemySqr <= reach && attackTick <= 0 && !dragon.isRidingOrBeingRiddenBy(enemy) && dragon.noActiveAnimation())
+        if (distToEnemySqr <= reach && attackTick <= 0 && enemy.getRidingEntity() != dragon && dragon.noActiveAnimation())
         {
             attack.accept(dragon);
             attackTick = 20;
