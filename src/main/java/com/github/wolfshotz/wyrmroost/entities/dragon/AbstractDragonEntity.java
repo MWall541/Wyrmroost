@@ -203,7 +203,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSleeping() == sleep) return;
 
         dataManager.set(SLEEPING, sleep);
-        if (!world.isRemote && sleep)
+        if (!world.isRemote)
         {
             if (sleep) clearAI();
             else sleepController.coolDown = 350;
@@ -1025,6 +1025,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (hasDataParameter(VARIANT)) setVariant(determineVariant());
 
         applyAttributes();
+        setHealth(getMaxHealth());
 
         return super.onInitialSpawn(world, difficulty, reason, data, dataTag);
     }
