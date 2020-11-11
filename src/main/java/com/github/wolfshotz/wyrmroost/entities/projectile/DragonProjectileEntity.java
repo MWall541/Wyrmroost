@@ -19,8 +19,11 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nullable;
+
 public class DragonProjectileEntity extends Entity implements IEntityAdditionalSpawnData
 {
+    @Nullable // Potentially if the dragon is unloaded, or is not synced yet.
     public AbstractDragonEntity shooter;
     public Vector3d acceleration;
     public float growthRate = 1f;
@@ -110,9 +113,9 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         if (entity == shooter) return false;
         if (!entity.isAlive()) return false;
         if (!(entity instanceof LivingEntity)) return false;
-        if (shooter.getPassengers().contains(entity)) return false;
+        if (entity.getLowestRidingEntity() == shooter) return false;
         if (entity.isSpectator() || !entity.canBeCollidedWith() || entity.noClip) return false;
-        return !entity.isOnSameTeam(shooter);
+        return shooter != null && !entity.isOnSameTeam(shooter);
     }
 
     public void hit(RayTraceResult result)
