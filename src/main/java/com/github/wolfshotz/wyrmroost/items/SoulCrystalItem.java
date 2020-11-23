@@ -31,7 +31,10 @@ public class SoulCrystalItem extends Item
 {
     public static final String DATA_DRAGON = "DragonData";
 
-    public SoulCrystalItem() { super(WRItems.builder().maxStackSize(1)); }
+    public SoulCrystalItem()
+    {
+        super(WRItems.builder().maxStackSize(1));
+    }
 
     @Override
     public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
@@ -40,7 +43,11 @@ public class SoulCrystalItem extends Item
         if (containsDragon(stack)) return ActionResultType.PASS;
         if (!isSuitableEntity(target)) return ActionResultType.PASS;
         TameableEntity dragon = (TameableEntity) target;
-        if (dragon.getOwner() != player) return ActionResultType.PASS;
+        if (dragon.getOwner() != player)
+        {
+            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").mergeStyle(TextFormatting.RED), true);
+            return ActionResultType.FAIL;
+        }
 
         if (!dragon.getPassengers().isEmpty()) dragon.removePassengers();
         if (!world.isRemote)
@@ -52,6 +59,7 @@ public class SoulCrystalItem extends Item
             stack.setTag(tag);
             dragon.remove();
             player.setHeldItem(hand, stack);
+            world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
         }
         else // Client side Aesthetics
         {
@@ -70,7 +78,6 @@ public class SoulCrystalItem extends Item
                 world.addParticle(ParticleTypes.END_ROD, x, y, z, xMot, yMot, zMot);
             }
         }
-        world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
         return ActionResultType.func_233537_a_(world.isRemote);
     }
 
@@ -80,9 +87,15 @@ public class SoulCrystalItem extends Item
         ItemStack stack = context.getItem();
         if (!containsDragon(stack)) return ActionResultType.PASS;
         World world = context.getWorld();
+        PlayerEntity player = context.getPlayer();
+        if (!stack.getChildTag(DATA_DRAGON).getUniqueId("Owner").equals(player.getUniqueID()))
+        {
+            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").mergeStyle(TextFormatting.RED), true);
+            return ActionResultType.FAIL;
+        }
         TameableEntity dragon = getContained(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
-        PlayerEntity player = context.getPlayer();
+
 
         dragon.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5); // update the position now for collision checking
         if (!world.hasNoCollisions(dragon, dragon.getBoundingBox()))
@@ -95,6 +108,7 @@ public class SoulCrystalItem extends Item
         {
             stack.removeChildTag(DATA_DRAGON);
             world.addEntity(dragon);
+            world.playSound(null, dragon.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
         }
         else // Client Side Aesthetics
         {
@@ -113,10 +127,8 @@ public class SoulCrystalItem extends Item
 
                 world.addParticle(ParticleTypes.END_ROD, posX, posY, posZ, xMot, yMot, zMot);
                 world.addParticle(ParticleTypes.CLOUD, posX, posY + (i * 0.25), posZ, 0, 0, 0);
-
             }
         }
-        world.playSound(null, dragon.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
 
         return ActionResultType.SUCCESS;
     }
@@ -147,7 +159,10 @@ public class SoulCrystalItem extends Item
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack) { return containsDragon(stack); }
+    public boolean hasEffect(ItemStack stack)
+    {
+        return containsDragon(stack);
+    }
 
     private static boolean containsDragon(ItemStack stack)
     {

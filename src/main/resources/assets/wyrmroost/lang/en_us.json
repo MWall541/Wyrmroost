@@ -115,8 +115,8 @@
   "item.wyrmroost.egg.creativetooltip": "You are in Creative: You can convert this egg's type by Left Clicking a dragon",
 
   "item.wyrmroost.soul_crystal": "Dragon Soul Crystal",
-  "item.wyrmroost.soul_crystal.jeidesc": "Infused with the mysterious properties of geodes, it has the potential to contain the souls of dragons that you have entrusted. The soul of a dragon can lead you to %s...",
   "item.wyrmroost.soul_crystal.fail": "It isn't safe here...",
+  "item.wyrmroost.soul_crystal.not_owner": "You are not entrusted with this dragon...",
 
   "item.wyrmroost.dragon_staff": "Dragon Staff",
   "item.wyrmroost.dragon_staff.desc": "Slap a Dragon!",
