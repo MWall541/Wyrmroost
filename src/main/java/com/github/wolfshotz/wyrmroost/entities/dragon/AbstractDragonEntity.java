@@ -57,7 +57,10 @@ import net.minecraft.world.*;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -84,9 +87,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<ItemStack> ARMOR = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.ITEMSTACK);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.createKey(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS);
 
-    private final Set<String> immunes = new HashSet<>();
     private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
-    public final Optional<DragonInvHandler> invHandler;
+    public final LazyOptional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
     private final SleepController sleepController;
     public boolean wingsDown;
@@ -100,12 +102,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         stepHeight = 1;
 
-        invHandler = Optional.ofNullable(createInv());
+        invHandler = LazyOptional.of(this::createInv);
         sleepController = createSleepController();
         lookController = new LessShitLookController(this);
         if (hasDataParameter(FLYING)) moveController = new FlyerMoveController(this);
-
-        if (isImmuneToArrows()) setImmune(DamageSource.CACTUS); // because for some reason it makes sense.
 
         registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
         registerDataEntry("BreedCount", EntityDataEntry.INTEGER, () -> breedCount, i -> breedCount = i);
@@ -134,15 +134,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         goalSelector.addGoal(1, new SwimGoal(this));
         if (isTamed()) goalSelector.addGoal(2, new WRSitGoal(this));
-    }
-
-    public void onTamed(boolean tamed)
-    {
-        goalSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
-        targetSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
-        goalSelector.goals.clear();
-        targetSelector.goals.clear();
-        registerGoals();
     }
 
     // ================================
@@ -269,7 +260,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void setTamed(boolean tamed)
     {
         super.setTamed(tamed);
-        onTamed(tamed);
+        resetGoals();
     }
 
     public DragonInvHandler getInvHandler()
@@ -1021,16 +1012,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         playSound(WRSounds.WING_FLAP.get(), 3, 1, true);
     }
 
-    public void setImmune(DamageSource source)
-    {
-        immunes.add(source.getDamageType());
-    }
-
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
         if (isRiding() && source == DamageSource.IN_WALL) return true;
-        if (!immunes.isEmpty() && immunes.contains(source.getDamageType())) return true;
+        if (isImmuneToArrows() && source == DamageSource.CACTUS) return true;
         return super.isInvulnerableTo(source);
     }
 
@@ -1075,6 +1061,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return isOwner(player) && (!world.isRemote || player.isUser()); // fix vehicle-desync
         }
         return false;
+    }
+
+    public void resetGoals()
+    {
+        goalSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
+        targetSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
+        goalSelector.goals.clear();
+        targetSelector.goals.clear();
+        registerGoals();
     }
 
     @Nullable
@@ -1214,6 +1209,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected int getExperiencePoints(PlayerEntity player)
     {
         return Math.max((int) ((getWidth() * getHeight()) * 0.25) + getRNG().nextInt(3), super.getExperiencePoints(player));
+    }
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
+    {
+        if (isAlive() && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && invHandler.isPresent())
+            return invHandler.cast();
+        return super.getCapability(capability, facing);
     }
 
     @Override

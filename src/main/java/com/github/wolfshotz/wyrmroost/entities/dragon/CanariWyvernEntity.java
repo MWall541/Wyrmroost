@@ -168,6 +168,12 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
+    public boolean isInvulnerableTo(DamageSource source)
+    {
+        return source == DamageSource.MAGIC || super.isInvulnerableTo(source);
+    }
+
+    @Override
     public void addScreenInfo(StaffScreen screen)
     {
         super.addScreenInfo(screen);

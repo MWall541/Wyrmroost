@@ -71,7 +71,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         super(dragon, world);
         ignoreFrustumCheck = WRConfig.disableFrustumCheck;
-        setImmune(DamageSource.IN_WALL);
 
         setPathPriority(PathNodeType.DANGER_FIRE, 0);
         setPathPriority(PathNodeType.DAMAGE_FIRE, 0);
@@ -296,6 +295,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         if (backView) event.getInfo().movePosition(-8.5d, 3d, 0);
         else event.getInfo().movePosition(-5, -0.75, 0);
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source)
+    {
+        return source == DamageSource.IN_WALL || super.isInvulnerableTo(source);
     }
 
     @Override

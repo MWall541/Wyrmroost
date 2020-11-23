@@ -85,7 +85,6 @@ public final class ModUtils
      * Iterable Version - for statements ftw
      *
      * @param aabb please tell me your not asking what this is for
-     * @return an iterable of block pos's and not a damned stream
      */
     public static Iterable<BlockPos> getBlockPosesInAABB(AxisAlignedBB aabb)
     {
@@ -98,10 +97,10 @@ public final class ModUtils
                 MathHelper.ceil(aabb.maxZ));
     }
 
-    public static boolean isItemIn(ItemStack stack, Item... items)
+    @SafeVarargs
+    public static <T> boolean equalsAny(T comparator, T... comparing)
     {
-        Item item = stack.getItem();
-        for (Item item1 : items) if (item1 == item) return true;
+        for (T t : comparing) if (comparator.equals(t)) return true;
         return false;
     }
 }

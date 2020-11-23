@@ -203,7 +203,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     @Override
     public boolean isFoodItem(ItemStack stack)
     {
-        return stack.getItem().isIn(Tags.Items.CROPS) || ModUtils.isItemIn(stack, Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE);
+        return stack.getItem().isIn(Tags.Items.CROPS) || ModUtils.equalsAny(stack.getItem(), Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE);
     }
 
     @Override

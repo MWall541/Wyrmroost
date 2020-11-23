@@ -1,6 +1,9 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.projectile.WindGustEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
@@ -59,20 +62,16 @@ public class AlpineEntity extends AbstractDragonEntity
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
-        targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(0, new HurtByTargetGoal(this));
 
         if (isTamed())
         {
             goalSelector.addGoal(4, new MoveToHomeGoal(this));
             goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-
-            targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-            targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-            targetSelector.addGoal(3, new DefendHomeGoal(this));
         }
         else
         {
-            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, BeeEntity.class, 10, false, false, e -> ((BeeEntity) e).hasNectar()));
+            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, BeeEntity.class, 10, false, false, e -> ((BeeEntity) e).hasNectar()));
         }
     }
 
@@ -140,6 +139,15 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
+    public boolean isInvulnerableTo(DamageSource source)
+    {
+        Entity immediate = source.getImmediateSource();
+        if (source != null && immediate.getType() == EntityType.BEE) return true;
+        return super.isInvulnerableTo(source);
+    }
+
+    @Override
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
@@ -195,7 +203,7 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public boolean isFoodItem(ItemStack stack)
     {
-        return ModUtils.isItemIn(stack, Items.HONEYCOMB, Items.HONEY_BOTTLE);
+        return ModUtils.equalsAny(stack.getItem(), Items.HONEYCOMB, Items.HONEY_BOTTLE);
     }
 
     @Override

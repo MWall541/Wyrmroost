@@ -15,6 +15,7 @@ import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
@@ -78,9 +79,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         stepHeight = 2;
 
         setPathPriority(PathNodeType.WATER, 0);
-        setImmune(DamageSource.LIGHTNING_BOLT);
-        setImmune(DamageSource.IN_FIRE);
-        setImmune(DamageSource.IN_WALL);
 
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
@@ -484,6 +482,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     public boolean isImmuneToArrows()
     {
         return true;
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source)
+    {
+        return ModUtils.equalsAny(source, DamageSource.LIGHTNING_BOLT, DamageSource.IN_FIRE, DamageSource.IN_WALL) || super.isInvulnerableTo(source);
     }
 
     @Override

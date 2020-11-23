@@ -61,8 +61,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
         stepHeight = 0;
 
-        setImmune(DamageSource.DROWN); // tf
-
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
@@ -231,6 +229,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     {
         super.addContainerInfo(container);
         container.addSlot(new SlotBuilder(getInvHandler(), ITEM_SLOT));
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source)
+    {
+        return source == DamageSource.DROWN || super.isInvulnerableTo(source);
     }
 
     @Override
