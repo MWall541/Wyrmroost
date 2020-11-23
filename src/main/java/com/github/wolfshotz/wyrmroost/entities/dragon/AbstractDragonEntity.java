@@ -25,6 +25,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.controller.BodyController;
+import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -132,7 +133,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerGoals()
     {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, new WRSitGoal(this));
+        if (isTamed()) goalSelector.addGoal(2, new WRSitGoal(this));
+    }
+
+    public void onTamed(boolean tamed)
+    {
+        goalSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
+        targetSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
+        goalSelector.goals.clear();
+        targetSelector.goals.clear();
+        registerGoals();
     }
 
     // ================================
@@ -245,12 +255,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void setSit(boolean sitting)
     {
-        setSleeping(false);
-        if (!world.isRemote)
-        {
-            func_233687_w_(sitting);
-            if (sitting) clearAI();
-        }
+        func_233687_w_(sitting);
+    }
+
+    @Override
+    public void func_233686_v_(boolean sitting)
+    {
+        super.func_233686_v_(sitting);
+        if (sitting) clearAI();
+    }
+
+    @Override
+    public void setTamed(boolean tamed)
+    {
+        super.setTamed(tamed);
+        onTamed(tamed);
     }
 
     public DragonInvHandler getInvHandler()
@@ -808,7 +827,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     if (!world.isRemote && pair.getFirst() != null && rand.nextFloat() < pair.getSecond())
                         addPotionEffect(new EffectInstance(pair.getFirst()));
             }
-            if (item.hasContainerItem(stack)) entityDropItem(item.getContainerItem(stack), (float) (mouth.y - getPosY()));
+            if (item.hasContainerItem(stack))
+                entityDropItem(item.getContainerItem(stack), (float) (mouth.y - getPosY()));
             stack.shrink(1);
         }
 

@@ -8,7 +8,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
-import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
@@ -95,22 +94,34 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals()
     {
-        goalSelector.addGoal(0, new WRSitGoal(this));
-        goalSelector.addGoal(1, new MoveToHomeGoal(this));
+        if (isTamed())
+        {
+            goalSelector.addGoal(0, new WRSitGoal(this));
+            goalSelector.addGoal(1, new MoveToHomeGoal(this));
+            goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
+
+            targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
+            targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
+            targetSelector.addGoal(4, new DefendHomeGoal(this));
+        }
+        else
+        {
+            // add wild targets when not tamed.
+            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e ->
+            {
+                EntityType<?> type = e.getType();
+                return e.isInWater() == isInWater() && (type == EntityType.PLAYER || type == EntityType.GUARDIAN || type == EntityType.SQUID);
+            }));
+        }
+
         goalSelector.addGoal(2, new AttackGoal());
-        goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(4, new DragonBreedGoal(this));
         goalSelector.addGoal(5, new JumpOutOfWaterGoal());
         goalSelector.addGoal(6, new RandomSwimmingGoal(this, 1, 40));
         goalSelector.addGoal(7, new LookAtGoal(this, LivingEntity.class, 14f));
         goalSelector.addGoal(8, new LookRandomlyGoal(this));
 
-        targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, AnonymousGoals.nonTamedHurtByTarget(this));
-        targetSelector.addGoal(4, new DefendHomeGoal(this));
-        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, e ->
-                (beached || e.isInWater()) && (e.getType() == EntityType.SQUID || e.getType() == EntityType.GUARDIAN || e.getType() == EntityType.PLAYER)));
+        targetSelector.addGoal(3, new HurtByTargetGoal(this));
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
-import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
@@ -92,21 +91,30 @@ public class OWDrakeEntity extends AbstractDragonEntity
     protected void registerGoals()
     {
         super.registerGoals();
-        goalSelector.addGoal(4, new MoveToHomeGoal(this));
+
+        if (isTamed())
+        {
+            goalSelector.addGoal(4, new MoveToHomeGoal(this));
+            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
+
+            targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+            targetSelector.addGoal(3, new DefendHomeGoal(this));
+        }
+        else
+        {
+            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, EntityPredicates.CAN_AI_TARGET::test));
+        }
+
         goalSelector.addGoal(5, new ControlledAttackGoal(this, 1.425, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
-        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
-        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(4, AnonymousGoals.nonTamedHurtByTarget(this));
-        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this));
     }
-    
+
     // ================================
     //           Entity Data
     // ================================
@@ -119,9 +127,15 @@ public class OWDrakeEntity extends AbstractDragonEntity
         dataManager.register(ARMOR, ItemStack.EMPTY);
     }
 
-    public boolean hasChest() { return getStackInSlot(CHEST_SLOT) != ItemStack.EMPTY; }
+    public boolean hasChest()
+    {
+        return getStackInSlot(CHEST_SLOT) != ItemStack.EMPTY;
+    }
 
-    public boolean isSaddled() { return dataManager.get(SADDLED); }
+    public boolean isSaddled()
+    {
+        return dataManager.get(SADDLED);
+    }
 
     @Override
     public int determineVariant()
@@ -132,8 +146,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    public DragonInvHandler createInv() { return new DragonInvHandler(this, 24); }
-    
+    public DragonInvHandler createInv()
+    {
+        return new DragonInvHandler(this, 24);
+    }
+
     // ================================
 
     @Override
@@ -229,7 +246,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             consumeItemFromStack(player, stack);
             return ActionResultType.func_233537_a_(world.isRemote);
         }
-        
+
         return super.playerInteraction(player, hand, stack);
     }
 
@@ -366,18 +383,30 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_OWDRAKE_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_OWDRAKE_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_OWDRAKE_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_OWDRAKE_HURT.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_OWDRAKE_DEATH.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_OWDRAKE_DEATH.get();
+    }
 
     @Override
-    public boolean canFly() { return false; }
+    public boolean canFly()
+    {
+        return false;
+    }
 
     @Override
     public boolean isFoodItem(ItemStack stack)

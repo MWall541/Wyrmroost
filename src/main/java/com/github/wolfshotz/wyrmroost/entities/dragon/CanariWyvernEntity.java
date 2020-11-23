@@ -3,7 +3,6 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
-import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
@@ -56,19 +55,27 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        goalSelector.addGoal(3, new MoveToHomeGoal(this));
+        if (isTamed())
+        {
+            goalSelector.addGoal(3, new MoveToHomeGoal(this));
+            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
+
+            targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
+            targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
+            targetSelector.addGoal(2, new DefendHomeGoal(this));
+        }
+        else
+        {
+            goalSelector.addGoal(5, new ThreatenGoal());
+        }
+
         goalSelector.addGoal(4, new AttackGoal());
-        goalSelector.addGoal(5, new ThreatenGoal());
-        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 8f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
-        targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(2, new DefendHomeGoal(this));
-        targetSelector.addGoal(4, AnonymousGoals.nonTamedHurtByTarget(this));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this));
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.projectile.WindGustEntity;
-import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
@@ -54,19 +53,27 @@ public class AlpineEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
-        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1, 0.01f));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
-        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(4, AnonymousGoals.nonTamedHurtByTarget(this));
-        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, BeeEntity.class, true, bee -> ((BeeEntity) bee).hasNectar()));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this));
+
+        if (isTamed())
+        {
+            goalSelector.addGoal(4, new MoveToHomeGoal(this));
+            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
+
+            targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+            targetSelector.addGoal(3, new DefendHomeGoal(this));
+        }
+        else
+        {
+            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, BeeEntity.class, 10, false, false, e -> ((BeeEntity) e).hasNectar()));
+        }
     }
 
     @Override

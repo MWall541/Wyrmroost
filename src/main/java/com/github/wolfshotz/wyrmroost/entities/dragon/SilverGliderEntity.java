@@ -4,7 +4,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBre
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRAvoidEntityGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
-import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.SGGlidePacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -65,10 +64,17 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        goalSelector.addGoal(3, temptGoal = AnonymousGoals.nonTamedTemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
-        goalSelector.addGoal(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
+        if (isTamed())
+        {
+            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
+        }
+        else
+        {
+            goalSelector.addGoal(3, temptGoal = new TemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
+            goalSelector.addGoal(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
+        }
+
         goalSelector.addGoal(5, new DragonBreedGoal(this));
-        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new SwoopGoal());
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 7f));

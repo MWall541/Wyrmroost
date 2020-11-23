@@ -9,7 +9,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHom
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
-import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -47,14 +46,12 @@ import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.Random;
-import java.util.function.Predicate;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
     public static final int ITEM_SLOT = 0;
-    private static final Predicate<LivingEntity> TARGETS = target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity;
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(RoostStalkerEntity.class, DataSerializers.ITEMSTACK);
     private static final DataParameter<Boolean> SCAVENGING = EntityDataManager.createKey(RoostStalkerEntity.class, DataSerializers.BOOLEAN);
 
@@ -81,26 +78,38 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
+        if (isTamed())
+        {
+            goalSelector.addGoal(5, new MoveToHomeGoal(this));
+            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
+
+            targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+            targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+            targetSelector.addGoal(3, new DefendHomeGoal(this));
+        }
+        else
+        {
+            goalSelector.addGoal(8, new AvoidEntityGoal<PlayerEntity>(this, PlayerEntity.class, 7f, 1.15f, 1f)
+            {
+                @Override
+                public boolean shouldExecute()
+                {
+                    return !getItem().isEmpty() && super.shouldExecute();
+                }
+            });
+            goalSelector.addGoal(9, new ScavengeGoal(1.1d));
+
+            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity));
+        }
+
         goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.1d, true));
-        goalSelector.addGoal(5, new MoveToHomeGoal(this));
-        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new BreedGoal());
-        goalSelector.addGoal(9, new ScavengeGoal(1.1d));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 5f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
-        goalSelector.addGoal(8, new AvoidEntityGoal<PlayerEntity>(this, PlayerEntity.class, 7f, 1.15f, 1f)
-        {
-            @Override
-            public boolean shouldExecute() { return !isTamed() && !getItem().isEmpty() && super.shouldExecute(); }
-        });
 
-        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new DefendHomeGoal(this));
-        targetSelector.addGoal(4, AnonymousGoals.nonTamedHurtByTarget(this).setCallsForHelp());
-        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, TARGETS));
+        targetSelector.addGoal(4, new HurtByTargetGoal(this).setCallsForHelp());
     }
 
     @Override
