@@ -139,13 +139,12 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     public boolean isInvulnerableTo(DamageSource source)
     {
-        Entity immediate = source.getImmediateSource();
-        if (source != null && immediate.getType() == EntityType.BEE)
+        Entity attacker = source.getImmediateSource();
+        if (attacker != null && attacker.getType() == EntityType.BEE)
         {
-            setAttackTarget((BeeEntity) immediate);
+            setAttackTarget((BeeEntity) attacker);
             return true;
         }
         return super.isInvulnerableTo(source);

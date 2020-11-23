@@ -118,9 +118,15 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         dataManager.register(SCAVENGING, false);
     }
 
-    public ItemStack getItem() { return dataManager.get(ITEM); }
+    public ItemStack getItem()
+    {
+        return dataManager.get(ITEM);
+    }
 
-    private boolean hasItem() { return getItem() != ItemStack.EMPTY; }
+    private boolean hasItem()
+    {
+        return getItem() != ItemStack.EMPTY;
+    }
 
     public void setItem(ItemStack item)
     {
@@ -128,10 +134,16 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         if (!item.isEmpty()) playSound(SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0.5f, 1);
     }
 
-    public boolean isScavenging() { return dataManager.get(SCAVENGING); }
+    public boolean isScavenging()
+    {
+        return dataManager.get(SCAVENGING);
+    }
 
-    public void setScavenging(boolean b) { dataManager.set(SCAVENGING, b); }
-    
+    public void setScavenging(boolean b)
+    {
+        dataManager.set(SCAVENGING, b);
+    }
+
     @Override
     public void livingTick()
     {
@@ -238,35 +250,62 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack) { return stack.getItem() == Items.GOLD_NUGGET; }
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return stack.getItem() == Items.GOLD_NUGGET;
+    }
 
     @Override
-    public EntitySize getSize(Pose poseIn) { return getType().getSize().scale(getRenderScale()); }
+    public EntitySize getSize(Pose poseIn)
+    {
+        return getType().getSize().scale(getRenderScale());
+    }
 
     @Override
-    public int determineVariant() { return getRNG().nextDouble() < 0.005? -1 : 0; }
+    public int determineVariant()
+    {
+        return getRNG().nextDouble() < 0.005? -1 : 0;
+    }
 
     @Override
     // Override normal dragon body controller to allow rotations while sitting: its small enough for it, why not. :P
-    protected BodyController createBodyController() { return new BodyController(this); }
+    protected BodyController createBodyController()
+    {
+        return new BodyController(this);
+    }
 
     @Override
-    public boolean canFly() { return false; }
-
-    @Nullable
-    @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_STALKER_IDLE.get(); }
-
-    @Nullable
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_STALKER_HURT.get(); }
+    public boolean canFly()
+    {
+        return false;
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_STALKER_DEATH.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_STALKER_IDLE.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_STALKER_HURT.get();
+    }
+
+    @Nullable
+    @Override
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_STALKER_DEATH.get();
+    }
 
     @Override
-    protected float getSoundVolume() { return 0.8f; }
+    protected float getSoundVolume()
+    {
+        return 0.8f;
+    }
 
     @Override
     @SuppressWarnings("ConstantConditions")
@@ -276,7 +315,10 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public DragonInvHandler createInv() { return new DragonInvHandler(this, 1); }
+    public DragonInvHandler createInv()
+    {
+        return new DragonInvHandler(this, 1);
+    }
 
     private static void setInLove(RoostStalkerEntity entity)
     {
@@ -417,6 +459,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
 
         @Override
-        public void startExecuting() { setInLove((RoostStalkerEntity) targetMate); }
+        public void startExecuting()
+        {
+            setInLove((RoostStalkerEntity) targetMate);
+        }
     }
 }

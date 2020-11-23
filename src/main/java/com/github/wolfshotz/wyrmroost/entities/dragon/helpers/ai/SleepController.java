@@ -4,6 +4,9 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 
 import java.util.function.BooleanSupplier;
 
+/**
+ * @deprecated re-make in favor of a goal.
+ */
 public class SleepController
 {
     private final AbstractDragonEntity dragon;

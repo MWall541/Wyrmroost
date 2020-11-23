@@ -412,13 +412,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         return stack.getItem().isFood() && stack.getItem().getFood().isMeat();
     }
 
-
-    @Override
-    public boolean isBreedingItem(ItemStack stack)
-    {
-        return stack.getItem() == Items.KELP;
-    }
-
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()
@@ -690,14 +683,14 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
             boolean isClose = distFromTarget < 40;
 
-            if (getNavigator().noPath() || isClose || ticksExisted % 10 == 0)
+            if (getNavigator().noPath())
                 getNavigator().tryMoveToEntityLiving(target, 1.2);
 
             if (isClose) rotationYaw = (float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90f;
 
             if (noActiveAnimation())
             {
-                if (distFromTarget > 225 && target.getType() == EntityType.PLAYER && canZap())
+                if (distFromTarget > 225 && (isTamed() || target.getType() == EntityType.PLAYER) && canZap())
                     AnimationPacket.send(ButterflyLeviathanEntity.this, LIGHTNING_ANIMATION);
                 else if (isClose && MathHelper.degreesDifferenceAbs((float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90, rotationYaw) < 30)
                     AnimationPacket.send(ButterflyLeviathanEntity.this, BITE_ANIMATION);

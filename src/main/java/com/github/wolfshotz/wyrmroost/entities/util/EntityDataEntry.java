@@ -29,9 +29,15 @@ public class EntityDataEntry<T>
         this.reader = read;
     }
 
-    public void write(CompoundNBT nbt) { serializer.write.accept(key, nbt, writer.get()); }
+    public void write(CompoundNBT nbt)
+    {
+        serializer.write.accept(key, nbt, writer.get());
+    }
 
-    public void read(CompoundNBT nbt) { reader.accept(serializer.read.apply(key, nbt)); }
+    public void read(CompoundNBT nbt)
+    {
+        reader.accept(serializer.read.apply(key, nbt));
+    }
 
     public static class SerializerType<T>
     {

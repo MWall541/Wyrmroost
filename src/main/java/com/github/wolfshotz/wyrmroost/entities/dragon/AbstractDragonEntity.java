@@ -102,7 +102,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         stepHeight = 1;
 
-        invHandler = LazyOptional.of(this::createInv);
+        DragonInvHandler inv = createInv();
+        invHandler = LazyOptional.of(inv == null? null : () -> inv);
         sleepController = createSleepController();
         lookController = new LessShitLookController(this);
         if (hasDataParameter(FLYING)) moveController = new FlyerMoveController(this);
