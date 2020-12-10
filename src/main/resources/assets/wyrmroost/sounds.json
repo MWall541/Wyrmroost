@@ -1,6 +1,6 @@
 {
   "wing.flap": {
-    "subtitle": "Dragon Wing Flap",
+    "subtitle": "Dragon Wing flap",
     "sounds": [
       {
         "name": "wyrmroost:entity/other/wings/flap1"
@@ -14,7 +14,7 @@
     ]
   },
   "breathweapon.fire": {
-    "subtitle": "Dragon Fire Breath",
+    "subtitle": "Dragon Fire breath",
     "sounds": [
       {
         "name": "wyrmroost:entity/other/breath/fire_breath"
@@ -22,7 +22,7 @@
     ]
   },
   "entity.ldwyrm.idle": {
-    "subtitle": "Desertwyrm Click",
+    "subtitle": "Desertwyrm click",
     "sounds": [
       {
         "name": "wyrmroost:entity/lesser_desertwyrm/idle1"
@@ -33,7 +33,7 @@
     ]
   },
   "entity.silverglider.idle": {
-    "subtitle": "Silver Glider Whistles",
+    "subtitle": "Silver Glider whistles",
     "sounds": [
       {
         "name": "wyrmroost:entity/silver_glider/idle1"
@@ -50,7 +50,7 @@
     ]
   },
   "entity.silverglider.hurt": {
-    "subtitle": "Silver Glider Screech",
+    "subtitle": "Silver Glider screeches",
     "sounds": [
       {
         "name": "wyrmroost:entity/silver_glider/hurt"
@@ -58,7 +58,7 @@
     ]
   },
   "entity.silverglider.death": {
-    "subtitle": "Silver Glider Moan",
+    "subtitle": "Silver Glider moans",
     "sounds": [
       {
         "name": "wyrmroost:entity/silver_glider/death"
@@ -66,7 +66,7 @@
     ]
   },
   "entity.owdrake.idle": {
-    "subtitle": "Overworld Drake Snorts",
+    "subtitle": "Overworld Drake snorts",
     "sounds": [
       {
         "name": "wyrmroost:entity/overworld_drake/idle1"
@@ -80,7 +80,7 @@
     ]
   },
   "entity.owdrake.hurt": {
-    "subtitle": "Overworld Drake Outcry",
+    "subtitle": "Overworld Drake outcries",
     "sounds": [
       {
         "name": "wyrmroost:entity/overworld_drake/idle1"
@@ -94,7 +94,7 @@
     ]
   },
   "entity.owdrake.death": {
-    "subtitle": "Overworld Drake Moan",
+    "subtitle": "Overworld Drake moans",
     "sounds": [
       {
         "name": "wyrmroost:entity/overworld_drake/death"
@@ -102,7 +102,7 @@
     ]
   },
   "entity.owdrake.roar": {
-    "subtitle": "Overworld Drake Roar",
+    "subtitle": "Overworld Drake roars",
     "sounds": [
       {
         "name": "wyrmroost:entity/overworld_drake/roar"
@@ -110,7 +110,7 @@
     ]
   },
   "entity.stalker.idle": {
-    "subtitle": "Rooststalker Clicks",
+    "subtitle": "Rooststalker clicks",
     "sounds": [
       {
         "name": "wyrmroost:entity/roost_stalker/idle1"
@@ -124,7 +124,7 @@
     ]
   },
   "entity.stalker.hurt": {
-    "subtitle": "Rooststalker Screech",
+    "subtitle": "Rooststalker ccreeches",
     "sounds": [
       {
         "name": "wyrmroost:entity/roost_stalker/hurt"
@@ -132,7 +132,7 @@
     ]
   },
   "entity.stalker.death": {
-    "subtitle": "Rooststalker Moan",
+    "subtitle": "Rooststalker moans",
     "sounds": [
       {
         "name": "wyrmroost:entity/roost_stalker/death"
@@ -140,7 +140,7 @@
     ]
   },
   "entity.bfly.idle": {
-    "subtitle": "Butterfly Leviathan Trumpets",
+    "subtitle": "Butterfly Leviathan trumpets",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterfly_leviathan/idle1"
@@ -154,7 +154,7 @@
     ]
   },
   "entity.bfly.hurt": {
-    "subtitle": "Butterfly Leviathan Outcry",
+    "subtitle": "Butterfly Leviathan outcries",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterfly_leviathan/hurt1"
@@ -165,7 +165,7 @@
     ]
   },
   "entity.bfly.roar": {
-    "subtitle": "Butterfly Leviathan Ascension",
+    "subtitle": "Butterfly Leviathan ascension",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterfly_leviathan/roar"
@@ -173,7 +173,7 @@
     ]
   },
   "entity.bfly.death": {
-    "subtitle": "Butterfly Leviathan Death",
+    "subtitle": "Butterfly Leviathan dies",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterfly_leviathan/death"
@@ -181,7 +181,7 @@
     ]
   },
   "entity.canari.idle": {
-    "subtitle": "Canari Wyvern Chirps",
+    "subtitle": "Canari Wyvern chirps",
     "sounds": [
       {
         "name": "wyrmroost:entity/canari_wyvern/idle1"
@@ -198,7 +198,7 @@
     ]
   },
   "entity.canari.hurt": {
-    "subtitle": "Canari Wyvern Screech",
+    "subtitle": "Canari Wyvern screeches",
     "sounds": [
       {
         "name": "wyrmroost:entity/canari_wyvern/hurt1"
@@ -212,7 +212,7 @@
     ]
   },
   "entity.canari.death": {
-    "subtitle": "Canari Wyvern Death",
+    "subtitle": "Canari Wyvern dies",
     "sounds": [
       {
         "name": "wyrmroost:entity/canari_wyvern/death"
@@ -220,7 +220,7 @@
     ]
   },
   "entity.dfd.idle": {
-    "subtitle": "Dragon Fruit Mumble",
+    "subtitle": "Dragon Fruit mumbles",
     "sounds": [
       {
         "name": "wyrmroost:entity/dragonfruit_drake/idle1"
@@ -237,7 +237,7 @@
     ]
   },
   "entity.dfd.hurt": {
-    "subtitle": "Dragon Fruit Screech",
+    "subtitle": "Dragon Fruit screeches",
     "sounds": [
       {
         "name": "wyrmroost:entity/dragonfruit_drake/hurt"
@@ -254,7 +254,7 @@
     ]
   },
   "entity.dfd.death": {
-    "subtitle": "Dragon Fruit Moan",
+    "subtitle": "Dragon Fruit moans",
     "sounds": [
       {
         "name": "wyrmroost:entity/dragonfruit_drake/death"
@@ -262,7 +262,7 @@
     ]
   },
   "entity.royalred.idle": {
-    "subtitle": "Royal Red Grunts",
+    "subtitle": "Royal Red grunts",
     "sounds": [
       {
         "name": "wyrmroost:entity/royal_red/idle1"
@@ -273,7 +273,7 @@
     ]
   },
   "entity.royalred.hurt": {
-    "subtitle": "Royal Red Scream",
+    "subtitle": "Royal Red screams",
     "sounds": [
       {
         "name": "wyrmroost:entity/royal_red/hurt1"
@@ -284,7 +284,7 @@
     ]
   },
   "entity.royalred.death": {
-    "subtitle": "Royal Red Outcry",
+    "subtitle": "Royal Red outcries",
     "sounds": [
       {
         "name": "wyrmroost:entity/royal_red/death"
@@ -292,7 +292,7 @@
     ]
   },
   "entity.royalred.roar": {
-    "subtitle": "Royal Red Roar",
+    "subtitle": "Royal Red roars",
     "sounds": [
       {
         "name": "wyrmroost:entity/royal_red/roar"
@@ -300,7 +300,7 @@
     ]
   },
   "entity.alpine.idle": {
-    "subtitle": "Alpine Growls",
+    "subtitle": "Alpine growls",
     "sounds": [
       {
         "name": "wyrmroost:entity/alpine/idle1"
@@ -311,7 +311,7 @@
     ]
   },
   "entity.alpine.hurt": {
-    "subtitle": "Alpine Whine",
+    "subtitle": "Alpine whines",
     "sounds": [
       {
         "name": "wyrmroost:entity/alpine/hurt1"
@@ -325,7 +325,7 @@
     ]
   },
   "entity.alpine.roar": {
-    "subtitle": "Alpine Roar",
+    "subtitle": "Alpine roars",
     "sounds": [
       {
         "name": "wyrmroost:entity/alpine/roar"
@@ -339,7 +339,7 @@
     ]
   },
   "entity.alpine.death": {
-    "subtitle": "Alpine Screech",
+    "subtitle": "Alpine screeches",
     "sounds": [
       {
         "name": "wyrmroost:entity/alpine/death"
@@ -347,7 +347,7 @@
     ]
   },
   "entity.coindragon.idle": {
-    "subtitle": "Coin Dragon Chirps",
+    "subtitle": "Coin Dragon chirps",
     "sounds": [
       {
         "name": "wyrmroost:entity/coin_dragon/idle"
