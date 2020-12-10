@@ -1,6 +1,6 @@
 {
   "wing.flap": {
-    "subtitle": "Dragon Wing flap",
+    "subtitle": "Dragon wing flap",
     "sounds": [
       {
         "name": "wyrmroost:entity/other/wings/flap1"
@@ -14,7 +14,7 @@
     ]
   },
   "breathweapon.fire": {
-    "subtitle": "Dragon Fire breath",
+    "subtitle": "Dragon fire breath",
     "sounds": [
       {
         "name": "wyrmroost:entity/other/breath/fire_breath"
