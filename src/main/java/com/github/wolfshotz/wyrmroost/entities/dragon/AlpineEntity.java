@@ -105,7 +105,8 @@ public class AlpineEntity extends AbstractDragonEntity
                 for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get()))
                 {
                     AlpineEntity alpine = ((AlpineEntity) entity);
-                    if (alpine.noActiveAnimation() && alpine.isIdling() && !alpine.isSleeping()) alpine.setAnimation(ROAR_ANIMATION);
+                    if (alpine.noActiveAnimation() && alpine.isIdling() && !alpine.isSleeping())
+                        alpine.setAnimation(ROAR_ANIMATION);
                 }
             }
         }
@@ -195,7 +196,10 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int determineVariant() { return getRNG().nextInt(6); }
+    public int determineVariant()
+    {
+        return getRNG().nextInt(6);
+    }
 
     @Override
     protected boolean canBeRidden(Entity entity)
@@ -217,18 +221,30 @@ public class AlpineEntity extends AbstractDragonEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_ALPINE_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_ALPINE_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_ALPINE_ROAR.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_ALPINE_ROAR.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_ALPINE_DEATH.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_ALPINE_DEATH.get();
+    }
 
     @Override
-    public Animation[] getAnimations() { return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION}; }
+    public Animation[] getAnimations()
+    {
+        return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION};
+    }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {

@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Calendar;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -24,15 +23,9 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
 {
     public static final String BASE_PATH = "textures/entity/dragon/";
 
-    public final boolean itsChristmasOMG;
-
     public AbstractDragonRenderer(EntityRendererManager manager, M model, float shadowSize)
     {
         super(manager, model, shadowSize);
-
-        Calendar calendar = Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        this.itsChristmasOMG = calendar.get(Calendar.MONTH) == Calendar.DECEMBER && (day > 14 && day < 26);
     }
 
     @Override
@@ -93,8 +86,12 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         {
             if (conditions.test(entity))
             {
-                IVertexBuilder builder = buffer.getBuffer(RenderHelper.getAdditiveGlow(texture.apply(entity)));
-                getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                ResourceLocation rl = texture.apply(entity);
+                if (rl != null)
+                {
+                    IVertexBuilder builder = buffer.getBuffer(RenderHelper.getAdditiveGlow(rl));
+                    getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                }
             }
         }
     }

@@ -63,6 +63,7 @@ public class CommonEvents
     {
         event.enqueueWork(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
         IAnimatable.registerCapability();
+        WRWorld.Features.init();
     }
     // @formatter: on
 

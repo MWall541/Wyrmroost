@@ -18,14 +18,23 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Calendar;
 import java.util.Set;
 
 /**
- * Created by com.github.WolfShotz 7/9/19 - 00:31
+ * Created by WolfShotz 7/9/19 - 00:31
  */
 public final class ModUtils
 {
     private ModUtils() {} // NU CONSTRUCTOR
+
+    public static final boolean DECK_THE_HALLS;
+
+    static
+    {
+        Calendar calendar = Calendar.getInstance();
+        DECK_THE_HALLS = calendar.get(Calendar.MONTH) == Calendar.DECEMBER && calendar.get(Calendar.DAY_OF_MONTH) >= 19;
+    }
 
     /**
      * @param registry the DeferredRegistry instance holding the objects

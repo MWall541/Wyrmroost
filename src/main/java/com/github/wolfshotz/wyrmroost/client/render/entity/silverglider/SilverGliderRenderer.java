@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.silverglider;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
@@ -16,10 +17,10 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     // Constant textures
     public static final ResourceLocation FEMALE = resource("female.png");
     public static final ResourceLocation FEMALE_GLOW = resource("female_glow.png");
-    public static final ResourceLocation BODY_SPE = resource("spe.png");
-    public static final ResourceLocation BODY_SPE_GLOW = resource("spe_glow.png");
-    public static final ResourceLocation XMAS_LAYER = resource("body_christmas.png");
-    public static final ResourceLocation XMAS_GLOW = resource("body_christmas_glow.png");
+    public static final ResourceLocation SPECIAL = resource("spe.png");
+    public static final ResourceLocation SPECIAL_GLOW = resource("spe_glow.png");
+    public static final ResourceLocation CHRISTMAS = resource("christmas.png");
+    public static final ResourceLocation CHRISTMAS_MALE_LAYER = resource("christmas_male_layer.png");
     public static final ResourceLocation SLEEP = resource("sleep.png");
 
     public SilverGliderRenderer(EntityRendererManager manager)
@@ -27,21 +28,15 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         super(manager, new SilverGliderModel(), 1f);
 
         addLayer(new GlowLayer(this::getGlowTexture));
-        if (itsChristmasOMG)
-        {
-            addLayer(new ConditionalLayer(c -> true, d -> RenderType.getEntityCutoutNoCull(XMAS_LAYER)));
-            addLayer(new GlowLayer(sg -> XMAS_GLOW));
-        }
         addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
-
-    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "silver_glider/" + png); }
 
     @Nullable
     @Override
     public ResourceLocation getEntityTexture(SilverGliderEntity sg)
     {
-        if (sg.getVariant() == -1) return BODY_SPE;
+        if (sg.getVariant() == -1) return SPECIAL;
+        if (WRConfig.deckTheHalls) return CHRISTMAS;
         if (!sg.isMale()) return FEMALE;
         int index = sg.getVariant();
         if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = resource("male_" + index + ".png");
@@ -50,11 +45,17 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
 
     private ResourceLocation getGlowTexture(SilverGliderEntity sg)
     {
-        if (sg.getVariant() == -1) return BODY_SPE_GLOW;
+        if (sg.getVariant() == -1) return SPECIAL_GLOW;
+        if (WRConfig.deckTheHalls) return sg.isMale()? CHRISTMAS_MALE_LAYER : null;
         if (!sg.isMale()) return FEMALE_GLOW;
         int index = sg.getVariant() + 3;
         if (MALE_TEXTURES[index] == null)
             return MALE_TEXTURES[index] = resource("male_" + sg.getVariant() + "_glow.png");
         return MALE_TEXTURES[index];
+    }
+
+    public static ResourceLocation resource(String png)
+    {
+        return Wyrmroost.rl(BASE_PATH + "silver_glider/" + png);
     }
 }

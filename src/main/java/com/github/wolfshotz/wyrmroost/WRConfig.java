@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost;
 
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -23,6 +24,7 @@ public class WRConfig
 
     // Client
     public static boolean disableFrustumCheck = true;
+    public static boolean deckTheHalls = true;
 
     // Server
     public static double fireBreathFlammability = 0.8d;
@@ -97,6 +99,7 @@ public class WRConfig
         }
 
         public final ForgeConfigSpec.BooleanValue disableFrustumCheck;
+        public final ForgeConfigSpec.BooleanValue deckTheHalls;
 
         Client(ForgeConfigSpec.Builder builder)
         {
@@ -104,6 +107,9 @@ public class WRConfig
             disableFrustumCheck = builder.comment("Disables Frustum check when rendering (Dragons parts dont go poof when looking too far) - Only applies to bigger bois")
                     .translation("config.wyrmroost.disableFrustumCheck")
                     .define("disableFrustumCheck", true);
+            deckTheHalls = builder.comment("When the time comes, allows for christmas textures")
+                    .translation("config.wyrmroost.deckTheHalls")
+                    .define("deckTheHalls", true);
 
             builder.pop();
         }
@@ -111,6 +117,7 @@ public class WRConfig
         public static void reload()
         {
             WRConfig.disableFrustumCheck = INSTANCE.disableFrustumCheck.get();
+            WRConfig.deckTheHalls = INSTANCE.deckTheHalls.get() && ModUtils.DECK_THE_HALLS;
         }
     }
 

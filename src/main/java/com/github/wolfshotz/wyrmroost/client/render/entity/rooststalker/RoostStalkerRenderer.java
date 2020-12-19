@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.rooststalker;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.RoostStalkerEntity;
@@ -20,24 +21,32 @@ import javax.annotation.Nullable;
 public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEntity, RoostStalkerModel>
 {
     public static final ResourceLocation BODY = resource("body.png");
-    public static final ResourceLocation BODY_SPE = resource("body_spe.png");
-    public static final ResourceLocation BODY_XMAS = resource("body_christmas.png");
-    public static final ResourceLocation BODY_GLOW = resource("body_glow.png");
-    public static final ResourceLocation BODY_SPE_GLOW = resource("body_spe_glow.png");
+    public static final ResourceLocation SHINY = resource("body_spe.png");
+    public static final ResourceLocation CHRISTMAS = resource("christmas.png");
+
+    public static final ResourceLocation EYES = resource("body_glow.png");
+    public static final ResourceLocation SHINY_EYES = resource("body_spe_glow.png");
+    public static final ResourceLocation CHRISTMAS_EYES = resource("christmas_layer.png");
 
     public RoostStalkerRenderer(EntityRendererManager manager)
     {
         super(manager, new RoostStalkerModel(), 0.5f);
         addLayer(new MouthItemLayer());
-        addLayer(new GlowLayer(stalker -> stalker.getVariant() == -1? BODY_SPE_GLOW : BODY_GLOW).addCondition(r -> !r.isSleeping()));
+        addLayer(new GlowLayer(this::getGlowTexture).addCondition(r -> !r.isSleeping()));
     }
 
     @Nullable
     @Override
     public ResourceLocation getEntityTexture(RoostStalkerEntity entity)
     {
-        if (entity.getVariant() == -1) return BODY_SPE;
-        return itsChristmasOMG? BODY_XMAS : BODY;
+        if (entity.getVariant() == -1) return SHINY;
+        return WRConfig.deckTheHalls? CHRISTMAS : BODY;
+    }
+
+    public ResourceLocation getGlowTexture(RoostStalkerEntity entity)
+    {
+        if (entity.getVariant() == -1) return SHINY_EYES;
+        return WRConfig.deckTheHalls? CHRISTMAS_EYES : EYES;
     }
 
     public static ResourceLocation resource(String png)

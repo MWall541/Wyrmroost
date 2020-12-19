@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.alpine;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AlpineEntity;
@@ -17,7 +18,11 @@ public class AlpineRenderer extends AbstractDragonRenderer<AlpineEntity, AlpineM
     {
         int variant = entity.getVariant();
         if (TEXTURES[variant] == null)
-            return TEXTURES[variant] = Wyrmroost.rl(BASE_PATH + "alpine/body_" + variant + ".png");
+        {
+            String path = BASE_PATH + "alpine/body_" + variant;
+            if (WRConfig.deckTheHalls) path += "_christmas";
+            return TEXTURES[variant] = Wyrmroost.rl(path + ".png");
+        }
         return TEXTURES[variant];
     }
 }

@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.dragon_fruit;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.DragonFruitDrakeEntity;
@@ -30,10 +31,15 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
         {
             String path = entity.isMale()? "male" : "female";
             if (entity.getVariant() == -1) path += "_s";
+            else if (WRConfig.deckTheHalls) path += "_christmas";
+
             return TEXTURES[texture] = resource(path + ".png");
         }
         return TEXTURES[texture];
     }
 
-    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "dragon_fruit_drake/" + png); }
+    public static ResourceLocation resource(String png)
+    {
+        return Wyrmroost.rl(BASE_PATH + "dragon_fruit_drake/" + png);
+    }
 }
