@@ -437,8 +437,8 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
 
         if (drake.isSleeping())
         {
-            eyeL.rotateAngleY = 180;
-            eyeR.rotateAngleY = 180;
+            eyeL.rotateAngleY = 90;
+            eyeR.rotateAngleY = -90;
         }
 
         idle(frame);
