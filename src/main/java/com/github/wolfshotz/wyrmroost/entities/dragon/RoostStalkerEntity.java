@@ -42,6 +42,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
@@ -170,7 +171,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         ItemStack heldItem = getItem();
         Item item = stack.getItem();
 
-        if (!isTamed() && net.minecraftforge.common.Tags.Items.EGGS.contains(item))
+        if (!isTamed() && Tags.Items.EGGS.contains(item))
         {
             eat(stack);
             if (tame(getRNG().nextDouble() < 0.25, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
@@ -186,7 +187,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 return COMMON_SUCCESS;
             }
 
-            if (stack.isEmpty() && heldItem.isEmpty() && player.getPassengers().size() < 3)
+            if (stack.isEmpty() && heldItem.isEmpty() && !getLeashed() && player.getPassengers().size() < 3)
             {
                 setSit(false);
                 startRiding(player, true);

@@ -134,7 +134,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             return ActionResultType.func_233537_a_(world.isRemote);
         }
 
-        if (isOwner(player) && player.getPassengers().size() < 3 && !player.isSneaking())
+        if (isOwner(player) && player.getPassengers().size() < 3 && !player.isSneaking() && !getLeashed())
         {
             setSit(true);
             setFlying(false);
