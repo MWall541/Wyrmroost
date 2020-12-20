@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.coin_dragon;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.entities.dragon.CoinDragonEntity;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -8,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class CoinDragonRenderer extends MobRenderer<CoinDragonEntity, CoinDragonModel>
 {
+    private static final ResourceLocation CHRISTMAS = Wyrmroost.rl("textures/entity/dragon/coin_dragon/christmas.png");
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[5];
 
     static
@@ -22,5 +24,8 @@ public class CoinDragonRenderer extends MobRenderer<CoinDragonEntity, CoinDragon
     }
 
     @Override
-    public ResourceLocation getEntityTexture(CoinDragonEntity entity) { return TEXTURES[entity.getVariant()]; }
+    public ResourceLocation getEntityTexture(CoinDragonEntity entity)
+    {
+        return WRConfig.deckTheHalls? CHRISTMAS : TEXTURES[entity.getVariant()];
+    }
 }

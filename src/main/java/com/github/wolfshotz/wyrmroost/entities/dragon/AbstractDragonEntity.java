@@ -300,6 +300,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 ((LessShitLookController) getLookController()).restore();
                 if (getHealth() < getMaxHealth() && getRNG().nextDouble() < 0.005) heal(1);
             }
+
+            // todo figure out a better target system?
+            LivingEntity target = getAttackTarget();
+            if (target != null && (!target.isAlive() || !canAttack(target) || !shouldAttackEntity(target, getOwner())))
+                setAttackTarget(null);
         }
         else
         {
