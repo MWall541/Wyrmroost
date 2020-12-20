@@ -6,7 +6,6 @@ import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.mojang.blaze3d.vertex.VertexBuilderUtils;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -111,9 +110,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         {
             if (entity.hasArmor())
             {
-                IVertexBuilder builder = type.getBuffer(RenderType.getEntityCutoutNoCull(getArmorTexture(entity)));
-                if (entity.getStackInSlot(slotIndex).hasEffect())
-                    builder = VertexBuilderUtils.newDelegate(type.getBuffer(RenderType.getEntityGlint()), builder);
+                IVertexBuilder builder = type.getBuffer(RenderType.getEntityCutout(getArmorTexture(entity)));
                 getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
         }
