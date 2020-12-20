@@ -11,6 +11,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHom
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.network.packets.AddPassengerPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
@@ -198,8 +199,11 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
             if (stack.isEmpty() && heldItem.isEmpty() && !getLeashed() && player.getPassengers().size() < 3)
             {
-                setSit(false);
-                startRiding(player, true);
+                if (!world.isRemote && startRiding(player, true))
+                {
+                    setSit(false);
+                    AddPassengerPacket.send(this, player);
+                }
 
                 return COMMON_SUCCESS;
             }
