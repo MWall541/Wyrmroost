@@ -103,7 +103,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
         goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.1d, true));
-        goalSelector.addGoal(7, new BreedGoal());
+        goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 5f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
@@ -157,9 +157,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             ItemStack item = getStackInSlot(ITEM_SLOT);
             if (isFoodItem(item) && getHealth() < getMaxHealth() && getRNG().nextDouble() <= 0.0075)
                 eat(item);
-
-            if (isBreedingItem(item) && canBreed() && getGrowingAge() == 0 && getRNG().nextDouble() < 0.01)
-                setInLove(this);
         }
     }
 
@@ -179,6 +176,18 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             return COMMON_SUCCESS;
         }
 
+        if (isTamed() && isBreedingItem(stack))
+        {
+            if (!world.isRemote && canFallInLove() && getGrowingAge() == 0)
+            {
+                setInLove(player);
+                stack.shrink(1);
+                return ActionResultType.SUCCESS;
+            }
+
+            return ActionResultType.CONSUME;
+        }
+
         if (isOwner(player))
         {
             if (player.isSneaking())
@@ -195,7 +204,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 return COMMON_SUCCESS;
             }
 
-            if (!stack.isEmpty() || !heldItem.isEmpty())
+            if ((!stack.isEmpty() && !isBreedingItem(stack)) || !heldItem.isEmpty())
             {
                 setStackInSlot(ITEM_SLOT, stack);
                 player.setHeldItem(hand, heldItem);
@@ -324,16 +333,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         return new DragonInvHandler(this, 1);
     }
 
-    private static void setInLove(RoostStalkerEntity entity)
-    {
-        ItemStack item = entity.getStackInSlot(ITEM_SLOT);
-
-        item.shrink(1);
-        entity.setInLove(600);
-        entity.setStackInSlot(ITEM_SLOT, item.copy());
-        entity.world.setEntityState(entity, (byte) 18);
-    }
-
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         Biome.Category category = event.getCategory();
@@ -452,20 +451,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
             chest.numPlayersUsing = open? 1 : 0;
             chest.getWorld().addBlockEvent(chest.getPos(), chest.getBlockState().getBlock(), 1, chest.numPlayersUsing);
-        }
-    }
-
-    class BreedGoal extends DragonBreedGoal
-    {
-        public BreedGoal()
-        {
-            super(RoostStalkerEntity.this); // UNLIMITED OFFSPRING, ARMIES ARISE
-        }
-
-        @Override
-        public void startExecuting()
-        {
-            setInLove((RoostStalkerEntity) targetMate);
         }
     }
 }
