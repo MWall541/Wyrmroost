@@ -9,6 +9,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.EntityTypeTagsProvider;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.Items;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -61,12 +62,16 @@ public class TagData
             getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).add(WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
             getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM).add(WRBlocks.PLATINUM_BLOCK.get());
             getOrCreateBuilder(net.minecraftforge.common.Tags.Blocks.STORAGE_BLOCKS).addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
+            getOrCreateBuilder(BlockTags.DRAGON_IMMUNE).add(WRBlocks.PURPLE_GEODE_ORE.get());
         }
     }
 
     private static class EntityData extends EntityTypeTagsProvider
     {
-        private EntityData(DataGenerator generatorIn) { super(generatorIn); }
+        private EntityData(DataGenerator generatorIn)
+        {
+            super(generatorIn);
+        }
 
         @Override
         protected void registerTags()

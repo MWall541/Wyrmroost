@@ -670,7 +670,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         setSleeping(false);
-        if (getOwner() != null && getOwner().isAlive() && amount != 0) setSit(false);
+        setSit(false);
         return super.attackEntityFrom(source, amount);
     }
 
