@@ -195,10 +195,13 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 return COMMON_SUCCESS;
             }
 
-            setStackInSlot(ITEM_SLOT, stack);
-            player.setHeldItem(hand, heldItem);
+            if (!stack.isEmpty() || !heldItem.isEmpty())
+            {
+                setStackInSlot(ITEM_SLOT, stack);
+                player.setHeldItem(hand, heldItem);
 
-            return COMMON_SUCCESS;
+                return COMMON_SUCCESS;
+            }
         }
 
         return ActionResultType.PASS;
