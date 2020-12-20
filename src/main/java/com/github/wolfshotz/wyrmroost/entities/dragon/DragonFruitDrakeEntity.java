@@ -23,7 +23,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -341,13 +340,13 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos pos, Random random)
     {
         BlockState state = world.getBlockState(pos.down());
-        return (state.isIn(Blocks.GRASS_BLOCK) || state.isIn(BlockTags.LEAVES)) && world.getLightSubtracted(pos, 0) > 8;
+        return world.getBlockState(pos.down()).isIn(Blocks.GRASS_BLOCK) && world.getLightSubtracted(pos, 0) > 8;
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.JUNGLE)
-            event.getSpawns().func_242575_a(EntityClassification.AMBIENT, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 14, 4, 5));
+            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 30, 4, 5));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()
