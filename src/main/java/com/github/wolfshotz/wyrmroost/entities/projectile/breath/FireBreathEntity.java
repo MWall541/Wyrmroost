@@ -21,7 +21,10 @@ import net.minecraft.world.World;
 
 public class FireBreathEntity extends BreathWeaponEntity
 {
-    public FireBreathEntity(EntityType<?> type, World world) { super(type, world); }
+    public FireBreathEntity(EntityType<?> type, World world)
+    {
+        super(type, world);
+    }
 
     public FireBreathEntity(AbstractDragonEntity shooter)
     {
@@ -80,16 +83,27 @@ public class FireBreathEntity extends BreathWeaponEntity
         float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
         if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;
 
-        entity.setFire(8);
+        if (entity.isImmuneToFire()) damage *= 0.25; // impact damage
+        else entity.setFire(8);
+
         entity.attackEntityFrom(getDamageSource(rand.nextDouble() > 0.2? "fireBreath0" : "fireBreath1"), damage);
     }
 
     @Override
-    public DamageSource getDamageSource(String name) { return super.getDamageSource(name).setFireDamage(); }
+    public DamageSource getDamageSource(String name)
+    {
+        return super.getDamageSource(name).setFireDamage();
+    }
 
     @Override // Because we do it better.
-    public boolean canRenderOnFire() { return false; }
+    public boolean canRenderOnFire()
+    {
+        return false;
+    }
 
     @Override
-    public boolean isBurning() { return true; }
+    public boolean isBurning()
+    {
+        return true;
+    }
 }

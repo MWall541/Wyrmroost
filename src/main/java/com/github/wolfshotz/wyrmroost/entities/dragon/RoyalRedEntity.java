@@ -414,7 +414,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean isInRangeToRenderDist(double distance)
+    public boolean isInRangeToRender3d(double x, double y, double z)
     {
         return true;
     }
@@ -518,7 +518,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             getLookController().setLookPositionWithEntity(target, 90, 90);
 
             double headAngle = Math.abs(MathHelper.wrapDegrees(degrees - rotationYawHead));
-            boolean shouldBreatheFire = (!detachHome() || !isWithinHomeDistanceCurrentPosition()) && (distFromTarget > 100 || isFlying()) && headAngle < 30;
+            boolean shouldBreatheFire = (!detachHome() || !isWithinHomeDistanceCurrentPosition()) && (distFromTarget > 100 || target.getPosY() - getPosY() > 3 || isFlying()) && headAngle < 30;
             if (isBreathingFire != shouldBreatheFire) setBreathingFire(isBreathingFire = shouldBreatheFire);
 
             if (getRNG().nextDouble() < 0.001 || distFromTarget > 900) setFlying(true);
@@ -529,7 +529,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
             }
 
             if (getNavigator().noPath() || ticksExisted % 10 == 0)
-                getNavigator().tryMoveToXYZ(target.getPosX(), target.getPosY() + (isFlying() && getRNG().nextDouble() < 0.1? 0 : 8), target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
+            {
+                boolean isFlyingTarget = target instanceof AbstractDragonEntity && ((AbstractDragonEntity) target).isFlying();
+                double y = target.getPosY() + (!isFlyingTarget && getRNG().nextDouble() > 0.1? 8 : 0);
+                getNavigator().tryMoveToXYZ(target.getPosX(), y, target.getPosZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
+            }
         }
     }
 }
