@@ -87,6 +87,7 @@ public class RenderHelper extends RenderType
         ENTITY_OUTLINE_MAP.put(entity, ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF)));
     }
 
+    // todo: find a better, shaders friendly way to do this
     public static void renderEntities(RenderLivingEvent.Pre<? super LivingEntity, ?> event)
     {
         LivingEntity entity = event.getEntity();
@@ -141,9 +142,12 @@ public class RenderHelper extends RenderType
         if (dragon == null) return;
 
         DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
-        renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
-        LivingEntity target = dragon.getAttackTarget();
-        if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
+        if (WRConfig.renderEntityOutlines)
+        {
+            renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
+            LivingEntity target = dragon.getAttackTarget();
+            if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
+        }
         dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
     }
 

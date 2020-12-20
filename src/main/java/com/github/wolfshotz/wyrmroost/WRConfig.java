@@ -25,6 +25,7 @@ public class WRConfig
     // Client
     public static boolean disableFrustumCheck = true;
     public static boolean deckTheHalls = true;
+    public static boolean renderEntityOutlines = true;
 
     // Server
     public static double fireBreathFlammability = 0.8d;
@@ -99,6 +100,7 @@ public class WRConfig
         }
 
         public final ForgeConfigSpec.BooleanValue disableFrustumCheck;
+        public final ForgeConfigSpec.BooleanValue renderEntityOutlines;
         public final ForgeConfigSpec.BooleanValue deckTheHalls;
 
         Client(ForgeConfigSpec.Builder builder)
@@ -107,7 +109,10 @@ public class WRConfig
             disableFrustumCheck = builder.comment("Disables Frustum check when rendering (Dragons parts dont go poof when looking too far) - Only applies to bigger bois")
                     .translation("config.wyrmroost.disableFrustumCheck")
                     .define("disableFrustumCheck", true);
-            deckTheHalls = builder.comment("When the time comes, allows for christmas textures")
+            renderEntityOutlines = builder.comment("Toggles Rendering of the Dragon Staff's Entity Color shaders", "Disable this if you're having issues with shaders")
+                    .translation("config.wyrmroost.renderEntityOutlines")
+                    .define("renderEntityOutlines", true);
+            deckTheHalls = builder.comment("Only when the time comes...")
                     .translation("config.wyrmroost.deckTheHalls")
                     .define("deckTheHalls", true);
 
