@@ -25,7 +25,7 @@ public class WRSitGoal extends SitGoal
     {
         if (!dragon.isTamed()) return false;
         if (dragon.isInWaterOrBubbleColumn() && dragon.getCreatureAttribute() != CreatureAttribute.WATER) return false;
-        if (!dragon.canFly() && !dragon.isOnGround()) return false;
+        if (!dragon.isOnGround()) return false;
         LivingEntity owner = dragon.getOwner();
         if (owner == null) return true;
         return (dragon.getDistanceSq(owner) > 144d || owner.getRevengeTarget() == null) && super.shouldContinueExecuting();
@@ -69,6 +69,6 @@ public class WRSitGoal extends SitGoal
         ground.setX(ox);
         ground.setZ(oz);
 
-        return ground.toImmutable();
+        return ground;
     }
 }
