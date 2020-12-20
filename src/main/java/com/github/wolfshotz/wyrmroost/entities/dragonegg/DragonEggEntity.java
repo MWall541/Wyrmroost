@@ -4,12 +4,13 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
-import com.github.wolfshotz.wyrmroost.registry.WRItems;
+import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -213,13 +214,17 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public void crack(int intensity)
     {
         world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_CRACK, SoundCategory.BLOCKS, 1, 1, false);
-        float width = getWidth();
-        for (int i = 0; i < width * intensity; ++i)
+        float f = getWidth() * getHeight();
+        f += f;
+        for (int i = 0; i < f * intensity; ++i)
         {
-            double xMot = rand.nextGaussian() * 0.2f;
-            double yMot = rand.nextDouble() * 0.45f;
-            double zMot = rand.nextGaussian() * 0.2f;
-            world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(WRItems.DRAGON_EGG.get())), getPosX(), getPosY(), getPosZ(), xMot, yMot, zMot);
+            double x = getPosX() + (Mafs.nextDouble(rand) * getWidth() / 2);
+            double y = getPosY() + (Mafs.nextDouble(rand) * getHeight());
+            double z = getPosZ() + (Mafs.nextDouble(rand) * getWidth() / 2);
+            double xMot = Mafs.nextDouble(rand) * getWidth() * 0.35;
+            double yMot = rand.nextDouble() * getHeight() * 0.5;
+            double zMot = Mafs.nextDouble(rand) * getWidth() * 0.35;
+            world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(Items.EGG)), x, y, z, xMot, yMot, zMot);
         }
     }
 
