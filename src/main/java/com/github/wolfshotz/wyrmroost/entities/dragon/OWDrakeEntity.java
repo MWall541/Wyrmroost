@@ -177,8 +177,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
         if (animation == ROAR_ANIMATION)
         {
-
-
             if (tick == 0) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f, true);
             else if (tick == 15)
             {
@@ -336,7 +334,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         boolean flag = getAttackTarget() != null;
         setSprinting(flag);
 
-        if (flag && prev != target && !isTamed() && noActiveAnimation())
+        if (flag && prev != target && target.getType() == EntityType.PLAYER && !isTamed() && noActiveAnimation())
             AnimationPacket.send(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
     }
 
