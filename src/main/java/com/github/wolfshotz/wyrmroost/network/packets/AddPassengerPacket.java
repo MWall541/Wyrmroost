@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -40,6 +41,7 @@ public class AddPassengerPacket
         return true;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void handleClient()
     {
         World world = ClientEvents.getWorld();
