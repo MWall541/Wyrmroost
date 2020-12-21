@@ -25,7 +25,7 @@ public class AnonymousGoals
      * @param scaredByMovement should fast movement reset this task
      * @param temptedItems     the items to temp the goal owner
      */
-    public static TemptGoal nonTamedTemptGoal(TameableEntity tameable, double speed, boolean scaredByMovement, Ingredient temptedItems)
+    public static TemptGoal nonTamedTemp6tGoal(TameableEntity tameable, double speed, boolean scaredByMovement, Ingredient temptedItems)
     {
         return new TemptGoal(tameable, speed, scaredByMovement, temptedItems)
         {

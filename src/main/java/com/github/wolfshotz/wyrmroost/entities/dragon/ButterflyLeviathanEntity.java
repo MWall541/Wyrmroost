@@ -92,34 +92,26 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     @Override
     protected void registerGoals()
     {
-        if (isTamed())
-        {
-            goalSelector.addGoal(0, new WRSitGoal(this));
-            goalSelector.addGoal(1, new MoveToHomeGoal(this));
-            goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
-
-            targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
-            targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
-            targetSelector.addGoal(4, new DefendHomeGoal(this));
-        }
-        else
-        {
-            // add wild targets when not tamed.
-            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e ->
-            {
-                EntityType<?> type = e.getType();
-                return e.isInWater() == isInWater() && (type == EntityType.PLAYER || type == EntityType.GUARDIAN || type == EntityType.SQUID);
-            }));
-        }
-
+        goalSelector.addGoal(0, new WRSitGoal(this));
+        goalSelector.addGoal(1, new MoveToHomeGoal(this));
         goalSelector.addGoal(2, new AttackGoal());
+        goalSelector.addGoal(3, new WRFollowOwnerGoal(this));
+
         goalSelector.addGoal(4, new DragonBreedGoal(this));
         goalSelector.addGoal(5, new JumpOutOfWaterGoal());
         goalSelector.addGoal(6, new RandomSwimmingGoal(this, 1, 40));
         goalSelector.addGoal(7, new LookAtGoal(this, LivingEntity.class, 14f));
         goalSelector.addGoal(8, new LookRandomlyGoal(this));
 
+        targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new HurtByTargetGoal(this));
+        targetSelector.addGoal(4, new DefendHomeGoal(this));
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, e ->
+        {
+            EntityType<?> type = e.getType();
+            return e.isInWater() == isInWater() && (type == EntityType.PLAYER || type == EntityType.GUARDIAN || type == EntityType.SQUID);
+        }));
     }
 
     @Override

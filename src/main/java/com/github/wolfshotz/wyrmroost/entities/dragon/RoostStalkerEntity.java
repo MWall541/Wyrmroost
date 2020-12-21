@@ -78,38 +78,29 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        if (isTamed())
-        {
-            goalSelector.addGoal(5, new MoveToHomeGoal(this));
-            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-
-            targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-            targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-            targetSelector.addGoal(3, new DefendHomeGoal(this));
-        }
-        else
-        {
-            goalSelector.addGoal(8, new AvoidEntityGoal<PlayerEntity>(this, PlayerEntity.class, 7f, 1.15f, 1f)
-            {
-                @Override
-                public boolean shouldExecute()
-                {
-                    return !getItem().isEmpty() && super.shouldExecute();
-                }
-            });
-            goalSelector.addGoal(9, new ScavengeGoal(1.1d));
-
-            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, true, false, target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity));
-        }
-
         goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
         goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.1d, true));
+        goalSelector.addGoal(5, new MoveToHomeGoal(this));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
+        goalSelector.addGoal(9, new ScavengeGoal(1.1d));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 5f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
+        goalSelector.addGoal(8, new AvoidEntityGoal<PlayerEntity>(this, PlayerEntity.class, 7f, 1.15f, 1f)
+        {
+            @Override
+            public boolean shouldExecute()
+            {
+                return !isTamed() && !getItem().isEmpty() && super.shouldExecute();
+            }
+        });
 
+        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this).setCallsForHelp());
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, true, target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity));
     }
 
     @Override

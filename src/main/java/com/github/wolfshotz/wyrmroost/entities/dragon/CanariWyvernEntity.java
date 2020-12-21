@@ -55,27 +55,19 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        if (isTamed())
-        {
-            goalSelector.addGoal(3, new MoveToHomeGoal(this));
-            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-
-            targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
-            targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
-            targetSelector.addGoal(2, new DefendHomeGoal(this));
-        }
-        else
-        {
-            goalSelector.addGoal(5, new ThreatenGoal());
-        }
-
+        goalSelector.addGoal(3, new MoveToHomeGoal(this));
         goalSelector.addGoal(4, new AttackGoal());
+        goalSelector.addGoal(5, new ThreatenGoal());
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 8f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
-        targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(0, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(1, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(2, new DefendHomeGoal(this));
+        targetSelector.addGoal(3, new HurtByTargetGoal(this));
     }
 
     @Override
@@ -113,7 +105,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         {
             int tick = getAnimationTick();
             if (tick == 5 || tick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.7f, 2, true);
-            if (!world.isRemote && tick == 9 && getRNG().nextDouble() <= 0.25) entityDropItem(new ItemStack(Items.FEATHER), 0.5f);
+            if (!world.isRemote && tick == 9 && getRNG().nextDouble() <= 0.25)
+                entityDropItem(new ItemStack(Items.FEATHER), 0.5f);
         }
         else if (getAnimation() == THREAT_ANIMATION && isPissed())
         {
@@ -208,7 +201,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int determineVariant() { return getRNG().nextInt(5); }
+    public int determineVariant()
+    {
+        return getRNG().nextInt(5);
+    }
 
     @Override
     public int getYawRotationSpeed()
@@ -222,7 +218,10 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         return stack.getItem() == Items.SWEET_BERRIES;
     }
 
-    public boolean isPissed() { return pissedOffTarget != null; }
+    public boolean isPissed()
+    {
+        return pissedOffTarget != null;
+    }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
@@ -288,8 +287,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         @Override
         public void resetTask()
         {
-             target = null;
-             pissedOffTarget = null;
+            target = null;
+            pissedOffTarget = null;
         }
     }
 

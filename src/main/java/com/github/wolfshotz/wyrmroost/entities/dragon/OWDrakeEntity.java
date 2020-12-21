@@ -92,27 +92,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        if (isTamed())
-        {
-            goalSelector.addGoal(4, new MoveToHomeGoal(this));
-            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-
-            targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-            targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-            targetSelector.addGoal(3, new DefendHomeGoal(this));
-        }
-        else
-        {
-            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, EntityPredicates.CAN_AI_TARGET::test));
-        }
-
+        goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new ControlledAttackGoal(this, 1.425, true, d -> AnimationPacket.send(d, HORN_ATTACK_ANIMATION)));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
+        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, EntityPredicates.CAN_AI_TARGET::test));
     }
 
     // ================================

@@ -64,17 +64,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        if (isTamed())
-        {
-            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        }
-        else
-        {
-            goalSelector.addGoal(3, temptGoal = new TemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
-            goalSelector.addGoal(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
-        }
-
+        goalSelector.addGoal(3, temptGoal = new TemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
+        goalSelector.addGoal(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
         goalSelector.addGoal(5, new DragonBreedGoal(this));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new SwoopGoal());
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 7f));
@@ -202,24 +195,42 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     @Nullable
     @Override
-    protected SoundEvent getAmbientSound() { return WRSounds.ENTITY_SILVERGLIDER_IDLE.get(); }
+    protected SoundEvent getAmbientSound()
+    {
+        return WRSounds.ENTITY_SILVERGLIDER_IDLE.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getHurtSound(DamageSource damageSourceIn) { return WRSounds.ENTITY_SILVERGLIDER_HURT.get(); }
+    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
+    {
+        return WRSounds.ENTITY_SILVERGLIDER_HURT.get();
+    }
 
     @Nullable
     @Override
-    protected SoundEvent getDeathSound() { return WRSounds.ENTITY_SILVERGLIDER_DEATH.get(); }
+    protected SoundEvent getDeathSound()
+    {
+        return WRSounds.ENTITY_SILVERGLIDER_DEATH.get();
+    }
 
     @Override
-    public Vector3d getRidingPosOffset(int passengerIndex) { return new Vector3d(0, 1.81, 0.5d); }
+    public Vector3d getRidingPosOffset(int passengerIndex)
+    {
+        return new Vector3d(0, 1.81, 0.5d);
+    }
 
     @Override
-    public boolean shouldFly() { return isRiding()? isGliding() : super.shouldFly(); }
+    public boolean shouldFly()
+    {
+        return isRiding()? isGliding() : super.shouldFly();
+    }
 
     @Override
-    public int getVerticalFaceSpeed() { return 30; }
+    public int getVerticalFaceSpeed()
+    {
+        return 30;
+    }
 
     @Override
     public int getYawRotationSpeed()
@@ -227,7 +238,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
         return isFlying()? 5 : 75;
     }
 
-    public boolean isGliding() { return isGliding; }
+    public boolean isGliding()
+    {
+        return isGliding;
+    }
 
     @Override
     public boolean isFoodItem(ItemStack stack)
@@ -272,7 +286,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
             if (!isFlying()) return false;
             if (isRiding()) return false;
             if (getRNG().nextDouble() > 0.001) return false;
-            if (world.getFluidState(this.pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, getPosition()).down()).isEmpty()) return false;
+            if (world.getFluidState(this.pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, getPosition()).down()).isEmpty())
+                return false;
             return getPosY() - pos.getY() > 8;
         }
 

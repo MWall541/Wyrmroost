@@ -25,7 +25,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.controller.BodyController;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -134,7 +133,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     protected void registerGoals()
     {
         goalSelector.addGoal(1, new SwimGoal(this));
-        if (isTamed()) goalSelector.addGoal(2, new WRSitGoal(this));
+        goalSelector.addGoal(2, new WRSitGoal(this));
     }
 
     // ================================
@@ -255,13 +254,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         super.func_233686_v_(sitting);
         if (sitting) clearAI();
-    }
-
-    @Override
-    public void setTamed(boolean tamed)
-    {
-        super.setTamed(tamed);
-        resetGoals();
     }
 
     public DragonInvHandler getInvHandler()
@@ -1067,15 +1059,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return isOwner(player) && (!world.isRemote || player.isUser()); // fix vehicle-desync
         }
         return false;
-    }
-
-    public void resetGoals()
-    {
-        goalSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
-        targetSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
-        goalSelector.goals.clear();
-        targetSelector.goals.clear();
-        registerGoals();
     }
 
     @Nullable

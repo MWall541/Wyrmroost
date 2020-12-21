@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.criterion.EntityFlagsPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.NBTPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
@@ -20,16 +19,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.loot.*;
 import net.minecraft.loot.conditions.EntityHasProperty;
-import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.KilledByPlayer;
 import net.minecraft.loot.conditions.RandomChance;
 import net.minecraft.loot.functions.LootingEnchantBonus;
 import net.minecraft.loot.functions.SetCount;
 import net.minecraft.loot.functions.Smelt;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +83,6 @@ class LootTableData extends LootTableProvider
 
     private static class Entities extends EntityLootTables
     {
-        private static final ILootCondition.IBuilder UNTAMED_AND_ADULT = EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(new EntityFlagsPredicate(null, null, null, null, false)).nbt(new NBTPredicate(Util.make(new CompoundNBT(), c -> c.putString("OwnerUUID", "")))));
         private static final LootFunction.Builder<?> ON_FIRE_SMELT = Smelt.func_215953_b().acceptCondition(EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build())));
 
         private final Map<EntityType<?>, LootTable.Builder> lootTables = new HashMap<>();
@@ -145,7 +140,7 @@ class LootTableData extends LootTableProvider
             registerLootTable(WREntities.OVERWORLD_DRAKE.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(item(Items.LEATHER, 5, 10).acceptFunction(looting(1, 4))))
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_COMMON_MEAT.get(), 1, 7, 2, 3)))
-                    .addLootPool(singleRollPool().addEntry(item(WRItems.DRAKE_BACKPLATE.get(), 1)).acceptCondition(KilledByPlayer.builder()).acceptCondition(UNTAMED_AND_ADULT).acceptCondition(RandomChance.builder(0.15f))));
+                    .addLootPool(singleRollPool().addEntry(item(WRItems.DRAKE_BACKPLATE.get(), 1)).acceptCondition(KilledByPlayer.builder()).acceptCondition(RandomChance.builder(0.15f)).acceptFunction(looting(0, 1))));
 
             registerLootTable(WREntities.ROOSTSTALKER.get(), LootTable.builder()
                     .addLootPool(singleRollPool().addEntry(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 2, 1, 2)))

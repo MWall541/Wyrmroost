@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.butterfly;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
@@ -26,10 +27,13 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
 {
     public static final ResourceLocation BLUE = resource("body_blue.png");
     public static final ResourceLocation PURPLE = resource("body_purple.png");
+    public static final ResourceLocation CHRISTMAS = resource("christmas.png");
     // Special
     public static final ResourceLocation ALBINO = resource("body_albino.png");
+    public static final ResourceLocation CHRISTMAS_SPECIAL = resource("christmas_special.png");
     // Glow
     public static final ResourceLocation GLOW = resource("activated.png");
+    public static final ResourceLocation CHRISTMAS_GLOW = resource("christmas_activated.png");
 
     private static final RenderMaterial CONDUIT_CAGE_TEXTURE = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/cage"));
     private static final RenderMaterial CONDUIT_WIND_TEXTURE = new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation("entity/conduit/wind"));
@@ -54,7 +58,14 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     @Override
     public ResourceLocation getEntityTexture(ButterflyLeviathanEntity entity)
     {
-        switch (entity.getVariant())
+        int variant = entity.getVariant();
+
+        if (WRConfig.deckTheHalls)
+        {
+            return variant == -1? CHRISTMAS_SPECIAL : CHRISTMAS;
+        }
+
+        switch (variant)
         {
             default:
             case 0:
@@ -82,7 +93,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         public void render(MatrixStack ms, IRenderTypeBuffer buffer, int packedLight, ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
         {
             float alpha = MathHelper.clamp(entity.lightningCooldown, 1, 255);
-            IVertexBuilder builder = buffer.getBuffer(RenderHelper.getTranslucentGlow(GLOW));
+            IVertexBuilder builder = buffer.getBuffer(RenderHelper.getTranslucentGlow(WRConfig.deckTheHalls? CHRISTMAS_GLOW : GLOW));
             getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
         }
     }

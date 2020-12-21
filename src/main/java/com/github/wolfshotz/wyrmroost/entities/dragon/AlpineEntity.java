@@ -56,23 +56,16 @@ public class AlpineEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
+        goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1, 0.01f));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
         targetSelector.addGoal(0, new HurtByTargetGoal(this));
-
-        if (isTamed())
-        {
-            goalSelector.addGoal(4, new MoveToHomeGoal(this));
-            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        }
-        else
-        {
-            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, BeeEntity.class, 10, false, false, e -> ((BeeEntity) e).hasNectar()));
-        }
+        targetSelector.addGoal(1, new NonTamedTargetGoal<>(this, BeeEntity.class, false, e -> ((BeeEntity) e).hasNectar()));
     }
 
     @Override

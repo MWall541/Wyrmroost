@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -80,41 +81,33 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     {
         super.registerGoals();
 
-        if (isTamed())
-        {
-            goalSelector.addGoal(3, new MoveToCropsGoal());
-            goalSelector.addGoal(4, new MoveToHomeGoal(this));
-            goalSelector.addGoal(8, new WRFollowOwnerGoal(this));
-        }
-        else
-        {
-            goalSelector.addGoal(9, AnonymousGoals.followParent(this, 1));
-            goalSelector.addGoal(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.fromItems(Items.APPLE))
-            {
-                @Override
-                public boolean shouldExecute()
-                {
-                    return isChild() && super.shouldExecute();
-                }
-            });
-
-            targetSelector.addGoal(2, new NearestAttackableTargetGoal<PlayerEntity>(this, PlayerEntity.class, 10, true, false, EntityPredicates.CAN_AI_TARGET::test)
-            {
-                @Override
-                public boolean shouldExecute()
-                {
-                    return !isChild() && super.shouldExecute();
-                }
-            });
-        }
-
+        goalSelector.addGoal(3, new MoveToCropsGoal());
+        goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new DragonBreedGoal(this));
         goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.3, false));
+        goalSelector.addGoal(8, new WRFollowOwnerGoal(this));
+        goalSelector.addGoal(9, AnonymousGoals.followParent(this, 1));
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 7f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
+        goalSelector.addGoal(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.fromItems(Items.APPLE))
+        {
+            @Override
+            public boolean shouldExecute()
+            {
+                return !isTamed() && isChild() && super.shouldExecute();
+            }
+        });
 
-        targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
+        targetSelector.addGoal(0, new HurtByTargetGoal(this).setCallsForHelp());
+        targetSelector.addGoal(1, new NonTamedTargetGoal<PlayerEntity>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test)
+        {
+            @Override
+            public boolean shouldExecute()
+            {
+                return !isChild() && super.shouldExecute();
+            }
+        });
     }
 
     @Override
@@ -330,8 +323,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         if (data == null)
         {
             data = new AgeableData(true);
-            if (reason == SpawnReason.NATURAL)
-                setGrowingAge(DragonEggProperties.get(getType()).getGrowthTime()); // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
+            if (reason == SpawnReason.NATURAL) setGrowingAge(DragonEggProperties.get(getType()).getGrowthTime()); // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
         }
 
         return super.onInitialSpawn(world, difficulty, reason, data, dataTag);
@@ -340,13 +332,13 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos pos, Random random)
     {
         BlockState state = world.getBlockState(pos.down());
-        return world.getBlockState(pos.down()).isIn(Blocks.GRASS_BLOCK) && world.getLightSubtracted(pos, 0) > 8;
+        return state.isIn(Blocks.GRASS_BLOCK) || (state.isIn(BlockTags.LEAVES) && pos.getY() < world.getSeaLevel() + 13) && world.getLightSubtracted(pos, 0) > 8;
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.JUNGLE)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 30, 4, 5));
+            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 23, 4, 5));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributes()

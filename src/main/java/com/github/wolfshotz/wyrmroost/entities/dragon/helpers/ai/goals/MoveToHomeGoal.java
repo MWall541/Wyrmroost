@@ -20,13 +20,22 @@ public class MoveToHomeGoal extends Goal
     }
 
     @Override
-    public boolean shouldExecute() { return !dragon.isWithinHomeDistanceCurrentPosition(); }
+    public boolean shouldExecute()
+    {
+        return !dragon.isWithinHomeDistanceCurrentPosition();
+    }
 
     @Override
-    public void startExecuting() { dragon.clearAI(); }
+    public void startExecuting()
+    {
+        dragon.clearAI();
+    }
 
     @Override
-    public void resetTask() { this.time = 0; }
+    public void resetTask()
+    {
+        this.time = 0;
+    }
 
     @Override
     public void tick()

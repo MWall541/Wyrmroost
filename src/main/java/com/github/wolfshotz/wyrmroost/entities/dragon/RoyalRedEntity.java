@@ -103,27 +103,19 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         super.registerGoals();
 
-        if (isTamed())
-        {
-            goalSelector.addGoal(4, new MoveToHomeGoal(this));
-            goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-
-            targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-            targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-            targetSelector.addGoal(3, new DefendHomeGoal(this));
-        }
-        else
-        {
-            targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 10, false, false, e -> e.getType() == EntityType.PLAYER || e instanceof AnimalEntity));
-        }
-
+        goalSelector.addGoal(4, new MoveToHomeGoal(this));
         goalSelector.addGoal(5, new AttackGoal());
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(7, new DragonBreedGoal(this));
         goalSelector.addGoal(9, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(10, new LookAtGoal(this, LivingEntity.class, 10f));
         goalSelector.addGoal(11, new LookRandomlyGoal(this));
 
+        targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, false, e -> e.getType() == EntityType.PLAYER || e instanceof AnimalEntity));
     }
 
     @Override
