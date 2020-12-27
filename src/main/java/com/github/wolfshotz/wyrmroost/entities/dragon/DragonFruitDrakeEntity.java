@@ -206,18 +206,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
-    public boolean preventDespawn()
-    {
-        return isTamed();
-    }
-
-    @Override
-    public boolean canDespawn(double distanceToClosestPlayer)
-    {
-        return ticksExisted > 2400;
-    }
-
-    @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
         return getHeight();
