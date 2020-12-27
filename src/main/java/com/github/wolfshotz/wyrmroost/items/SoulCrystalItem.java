@@ -96,7 +96,7 @@ public class SoulCrystalItem extends Item
         TameableEntity dragon = getContained(stack, world);
         BlockPos pos = context.getPos().offset(context.getFace());
 
-        dragon.setPositionAndUpdate(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5); // update the position now for collision checking
+        dragon.setPositionAndRotation(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, dragon.rotationYaw, dragon.rotationPitch); // update the position now for collision checking
         if (!world.hasNoCollisions(dragon, dragon.getBoundingBox()))
         {
             player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").mergeStyle(TextFormatting.RED), true);
