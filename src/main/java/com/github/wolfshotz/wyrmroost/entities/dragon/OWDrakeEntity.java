@@ -56,7 +56,7 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
-    // inventory slot const's
+    // inventory slot constants
     public static final int SADDLE_SLOT = 0;
     public static final int ARMOR_SLOT = 1;
     public static final int CHEST_SLOT = 2;
@@ -104,7 +104,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
-        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, false, false, EntityPredicates.CAN_AI_TARGET::test));
+        targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test));
     }
 
     // ================================
