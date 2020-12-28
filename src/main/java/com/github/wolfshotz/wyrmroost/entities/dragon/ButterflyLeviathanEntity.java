@@ -6,7 +6,6 @@ import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
@@ -81,12 +80,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         setPathPriority(PathNodeType.WATER, 0);
 
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
-    }
-
-    @Override
-    protected SleepController createSleepController()
-    {
-        return null;
     }
 
     @Override

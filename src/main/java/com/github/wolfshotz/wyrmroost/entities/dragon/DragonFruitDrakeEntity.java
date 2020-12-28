@@ -1,8 +1,8 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.SleepGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
@@ -71,12 +71,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     }
 
     @Override
-    protected SleepController createSleepController()
-    {
-        return new SleepController(this).addWakeConditions(() -> --napTime <= 0);
-    }
-
-    @Override
     protected void registerGoals()
     {
         super.registerGoals();
@@ -108,6 +102,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
                 return !isChild() && super.shouldExecute();
             }
         });
+    }
+
+    @Override
+    protected Goal createSleepGoal()
+    {
+        return new SleepGoal(this, () -> SleepGoal.shouldSleep(this, false), () -> --napTime <= 0 && SleepGoal.shouldWakeUp(this));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.github.wolfshotz.wyrmroost.client.sounds.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.SleepGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
@@ -25,6 +26,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.controller.BodyController;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -89,7 +91,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
     public final LazyOptional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
-    private final SleepController sleepController;
     public boolean wingsDown;
     public int breedCount;
     private Animation animation = NO_ANIMATION;
@@ -103,7 +104,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         DragonInvHandler inv = createInv();
         invHandler = LazyOptional.of(inv == null? null : () -> inv);
-        sleepController = createSleepController();
         lookController = new LessShitLookController(this);
         if (hasDataParameter(FLYING)) moveController = new FlyerMoveController(this);
 
@@ -124,21 +124,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return new DragonBodyController(this);
     }
 
-    protected SleepController createSleepController()
-    {
-        return new SleepController(this);
-    }
-
     @Override
     protected void registerGoals()
     {
-        goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, new WRSitGoal(this));
+        goalSelector.addGoal(0, new SwimGoal(this));
+        goalSelector.addGoal(1, new WRSitGoal(this));
+        goalSelector.addGoal(1, createSleepGoal());
     }
 
-    // ================================
-    //           Entity Data
-    // ================================
+    protected Goal createSleepGoal()
+    {
+        return new SleepGoal(this, false);
+    }
 
     @Override
     public void writeAdditional(CompoundNBT nbt)
@@ -204,11 +201,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSleeping() == sleep) return;
 
         dataManager.set(SLEEPING, sleep);
-        if (!world.isRemote)
-        {
-            if (sleep) clearAI();
-            else sleepController.coolDown = 350;
-        }
+        if (!world.isRemote && sleep) clearAI();
     }
 
     public boolean isFlying()
@@ -266,8 +259,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return null;
     }
 
-    // ================================
-
     @Override
     public void tick()
     {
@@ -286,7 +277,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             boolean flying = shouldFly();
             if (flying != isFlying()) setFlying(flying);
 
-            if (!isAIDisabled() && sleepController != null) sleepController.tick();
             if (isSleeping())
             {
                 ((LessShitLookController) getLookController()).restore();
@@ -938,12 +928,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isIdling()
     {
         return getNavigator().noPath() && getAttackTarget() == null && !isBeingRidden() && !isInWaterOrBubbleColumn() && !isFlying();
-    }
-
-    @Nullable
-    public SleepController getSleepController()
-    {
-        return sleepController;
     }
 
     /**

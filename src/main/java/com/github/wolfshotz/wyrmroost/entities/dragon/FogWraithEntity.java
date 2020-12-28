@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -36,12 +35,6 @@ public class FogWraithEntity extends AbstractDragonEntity
     {
         super(dragon, world);
         registerDataEntry("IsStealth", EntityDataEntry.BOOLEAN, STEALTH, false);
-    }
-
-    @Override
-    protected SleepController createSleepController()
-    {
-        return null;
     }
 
     @Override

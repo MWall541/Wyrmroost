@@ -4,11 +4,7 @@ import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AddPassengerPacket;
@@ -68,12 +64,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected SleepController createSleepController()
-    {
-        return new SleepController(this).setHomeDefender();
-    }
-
-    @Override
     protected void registerGoals()
     {
         super.registerGoals();
@@ -101,6 +91,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this).setCallsForHelp());
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, true, target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity));
+    }
+
+    @Override
+    protected Goal createSleepGoal()
+    {
+        return new SleepGoal(this, true);
     }
 
     @Override

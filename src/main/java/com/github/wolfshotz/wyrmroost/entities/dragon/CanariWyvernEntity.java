@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
@@ -71,15 +70,15 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected BodyController createBodyController()
+    protected Goal createSleepGoal()
     {
-        return new BodyController(this);
+        return new SleepGoal(this, () -> SleepGoal.shouldSleep(this, true) && !isPissed(), () -> SleepGoal.shouldWakeUp(this));
     }
 
     @Override
-    protected SleepController createSleepController()
+    protected BodyController createBodyController()
     {
-        return new SleepController(this).setHomeDefender().addSleepCondition(() -> !isPissed());
+        return new BodyController(this);
     }
 
     @Override

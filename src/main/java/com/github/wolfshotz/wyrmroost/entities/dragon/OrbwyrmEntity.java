@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -32,12 +31,6 @@ public class OrbwyrmEntity extends AbstractDragonEntity
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, false);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
-    }
-
-    @Override
-    protected SleepController createSleepController()
-    {
-        return new SleepController(this).setNocturnal().setHomeDefender();
     }
 
     @Override

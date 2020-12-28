@@ -5,7 +5,6 @@ import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.SleepController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
@@ -82,12 +81,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected SleepController createSleepController()
-    {
-        return new SleepController(this).setHomeDefender();
-    }
-
-    @Override
     protected void registerGoals()
     {
         super.registerGoals();
@@ -105,6 +98,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
         targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test));
+    }
+
+    @Override
+    protected Goal createSleepGoal()
+    {
+        return new SleepGoal(this, true);
     }
 
     // ================================
