@@ -129,10 +129,11 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             if (!entity.canSwim()) headPitch /= 2;
 
             ms.push();
+            ms.scale(0.33f, 0.33f, 0.33f);
             ms.translate(entityModel.head.rotationPointX / 16, entityModel.head.rotationPointY / 16, entityModel.head.rotationPointZ / 16);
-            ms.rotate(Vector3f.YP.rotationDegrees(netHeadYaw / 2)); // rotate to match head rotations
+            ms.rotate(Vector3f.YP.rotationDegrees(netHeadYaw * 0.75f)); // rotate to match head rotations
             ms.rotate(Vector3f.XP.rotationDegrees(headPitch));
-            ms.translate(0, -2.25f - (entity.beachedTimer.get(partialTicks) * 1.1f), -3.65);
+            ms.translate(0,  0.5f - (entity.beachedTimer.get(partialTicks) * 1.1f), -3.65);
 
             // Cage
             ms.push();
