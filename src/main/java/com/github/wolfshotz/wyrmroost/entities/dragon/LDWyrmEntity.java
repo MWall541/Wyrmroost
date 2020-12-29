@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.items.LDWyrmItem;
-import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -21,6 +20,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -76,7 +76,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
-        return new ItemStack(LazySpawnEggItem.getEggFor(getType()));
+        return new ItemStack(SpawnEggItem.getEgg(getType()));
     }
 
     // ================================

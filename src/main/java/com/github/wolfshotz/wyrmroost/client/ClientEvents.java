@@ -76,8 +76,8 @@ public class ClientEvents
     public static void itemColors(ColorHandlerEvent.Item evt)
     {
         ItemColors handler = evt.getItemColors();
-        IItemColor eggColor = (stack, tintIndex) -> ((LazySpawnEggItem) stack.getItem()).getColor(tintIndex);
-        for (LazySpawnEggItem e : LazySpawnEggItem.EGG_TYPES) handler.register(eggColor, e);
+        IItemColor func = (stack, tintIndex) -> ((LazySpawnEggItem) stack.getItem()).getColor(tintIndex);
+        for (LazySpawnEggItem e : LazySpawnEggItem.SPAWN_EGGS) handler.register(func, e);
     }
 
     // =====================
@@ -98,15 +98,30 @@ public class ClientEvents
     // =====================
 
     // for class loading issues
-    public static Minecraft getClient() { return Minecraft.getInstance(); }
+    public static Minecraft getClient()
+    {
+        return Minecraft.getInstance();
+    }
 
-    public static ClientWorld getWorld() { return getClient().world; }
+    public static ClientWorld getWorld()
+    {
+        return getClient().world;
+    }
 
-    public static PlayerEntity getPlayer() { return getClient().player; }
+    public static PlayerEntity getPlayer()
+    {
+        return getClient().player;
+    }
 
-    public static Vector3d getProjectedView() { return getClient().gameRenderer.getActiveRenderInfo().getProjectedView(); }
+    public static Vector3d getProjectedView()
+    {
+        return getClient().gameRenderer.getActiveRenderInfo().getProjectedView();
+    }
 
-    public static float getPartialTicks() { return getClient().getRenderPartialTicks(); }
+    public static float getPartialTicks()
+    {
+        return getClient().getRenderPartialTicks();
+    }
 
     public static boolean handleAnimationPacket(int entityID, int animationIndex)
     {

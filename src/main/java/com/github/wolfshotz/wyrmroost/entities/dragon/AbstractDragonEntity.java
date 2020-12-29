@@ -8,10 +8,10 @@ import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
+import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
-import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -20,6 +20,7 @@ import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -35,6 +36,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -56,9 +58,11 @@ import net.minecraft.world.*;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
@@ -867,36 +871,60 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return super.canMateWith(mate);
     }
 
+    @Override
+    public void setChild(boolean child)
+    {
+        setGrowingAge(child? DragonEggProperties.get(getType()).getGrowthTime() : 0);
+    }
+
     @Nullable
     @Override
-    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+    public AgeableEntity func_241840_a(ServerWorld serverWorld, AgeableEntity mate)
     {
-        return null;
+        return (AgeableEntity) getType().create(world);
     }
 
     @Override
     public void func_234177_a_(ServerWorld world, AnimalEntity mate)
     {
-        ItemStack eggStack = DragonEggItem.getStack(getType());
-        ItemEntity eggItem = new ItemEntity(world, getPosX(), getPosY(), getPosZ(), eggStack);
+        final BabyEntitySpawnEvent event = new BabyEntitySpawnEvent(this, mate, null);
+        if (MinecraftForge.EVENT_BUS.post(event)) // cancelled
+            return;
 
-        eggItem.setMotion(0, getHeight() / 3, 0);
-        world.addEntity(eggItem);
+        final AgeableEntity child = event.getChild();
+        if (child == null)
+        {
+            ItemStack eggStack = DragonEggItem.getStack(getType());
+            ItemEntity eggItem = new ItemEntity(world, getPosX(), getPosY(), getPosZ(), eggStack);
+            eggItem.setMotion(0, getHeight() / 3, 0);
+            world.addEntity(eggItem);
+        }
+        else
+        {
+            child.setChild(true);
+            child.setLocationAndAngles(getPosX(), getPosY(), getPosZ(), 0, 0);
+            world.func_242417_l(child);
+        }
 
         breedCount++;
         ((AbstractDragonEntity) mate).breedCount++;
 
-        ServerPlayerEntity serverplayerentity = getLoveCause();
+        ServerPlayerEntity serverPlayer = getLoveCause();
 
-        if (serverplayerentity == null && mate.getLoveCause() != null)
-            serverplayerentity = mate.getLoveCause();
+        if (serverPlayer == null && mate.getLoveCause() != null)
+            serverPlayer = mate.getLoveCause();
 
-        if (serverplayerentity != null) serverplayerentity.addStat(Stats.ANIMALS_BRED);
+        if (serverPlayer != null)
+        {
+            serverPlayer.addStat(Stats.ANIMALS_BRED);
+            CriteriaTriggers.BRED_ANIMALS.trigger(serverPlayer, this, mate, child);
+        }
 
         setGrowingAge(6000);
         mate.setGrowingAge(6000);
         resetInLove();
         mate.resetInLove();
+        world.setEntityState(this, (byte) 18);
         if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
             world.addEntity(new ExperienceOrbEntity(world, getPosX(), getPosY(), getPosZ(), getRNG().nextInt(7) + 1));
     }
@@ -963,7 +991,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
-        return new ItemStack(LazySpawnEggItem.getEggFor(getType()));
+        return new ItemStack(SpawnEggItem.getEgg(getType()));
     }
 
     public List<LivingEntity> getEntitiesNearby(double radius, Predicate<LivingEntity> filter)
