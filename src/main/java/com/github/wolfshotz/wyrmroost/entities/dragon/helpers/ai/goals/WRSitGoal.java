@@ -32,12 +32,6 @@ public class WRSitGoal extends SitGoal
     }
 
     @Override
-    public void startExecuting()
-    {
-        dragon.getNavigator().clearPath();
-    }
-
-    @Override
     public void tick()
     {
         if (dragon.isFlying()) // get to ground first

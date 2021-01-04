@@ -2,10 +2,8 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.SleepGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
-import com.github.wolfshotz.wyrmroost.entities.util.AnonymousGoals;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -80,7 +78,16 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         goalSelector.addGoal(5, new DragonBreedGoal(this));
         goalSelector.addGoal(6, new MeleeAttackGoal(this, 1.3, false));
         goalSelector.addGoal(8, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(9, AnonymousGoals.followParent(this, 1));
+        goalSelector.addGoal(9, new FollowParentGoal(this, 1)
+        {
+            { setMutexFlags(EnumSet.of(Flag.MOVE)); }
+
+            @Override
+            public boolean shouldExecute()
+            {
+                return !isTamed() && super.shouldExecute();
+            }
+        });
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.addGoal(11, new LookAtGoal(this, LivingEntity.class, 7f));
         goalSelector.addGoal(12, new LookRandomlyGoal(this));
@@ -102,12 +109,6 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
                 return !isChild() && super.shouldExecute();
             }
         });
-    }
-
-    @Override
-    protected Goal createSleepGoal()
-    {
-        return new SleepGoal(this, () -> SleepGoal.shouldSleep(this, false), () -> --napTime <= 0 && SleepGoal.shouldWakeUp(this));
     }
 
     @Override
@@ -149,6 +150,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         {
             setSprinting(getAttackTarget() != null);
             if (shearCooldownTime > 0) --shearCooldownTime;
+            if (napTime > 0) --napTime;
 
             if (growCropsTime >= 0)
             {
@@ -258,6 +260,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public boolean canFly()
     {
         return false;
+    }
+
+    @Override
+    public boolean shouldSleep()
+    {
+        return napTime <= 0 && super.shouldSleep();
     }
 
     @Override

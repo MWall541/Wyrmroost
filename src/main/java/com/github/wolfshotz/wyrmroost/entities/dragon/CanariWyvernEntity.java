@@ -70,12 +70,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected Goal createSleepGoal()
-    {
-        return new SleepGoal(this, () -> SleepGoal.shouldSleep(this, true) && !isPissed(), () -> SleepGoal.shouldWakeUp(this));
-    }
-
-    @Override
     protected BodyController createBodyController()
     {
         return new BodyController(this);
@@ -170,6 +164,18 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super.addScreenInfo(screen);
         screen.addAction(StaffAction.TARGET);
+    }
+
+    @Override
+    public boolean shouldSleep()
+    {
+        return !isPissed() && super.shouldSleep();
+    }
+
+    @Override
+    public boolean defendsHome()
+    {
+        return true;
     }
 
     @Nullable

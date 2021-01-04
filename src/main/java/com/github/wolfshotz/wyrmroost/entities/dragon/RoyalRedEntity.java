@@ -112,12 +112,6 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected Goal createSleepGoal()
-    {
-        return new SleepGoal(this, true);
-    }
-
-    @Override
     public DragonInvHandler createInv()
     {
         return new DragonInvHandler(this, 1);
@@ -406,6 +400,18 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     @Override
     public boolean isInRangeToRender3d(double x, double y, double z)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean shouldSleep()
+    {
+        return !isKnockedOut() && super.shouldSleep();
+    }
+
+    @Override
+    public boolean defendsHome()
     {
         return true;
     }

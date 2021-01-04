@@ -7,7 +7,6 @@ import com.github.wolfshotz.wyrmroost.client.sounds.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.SleepGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
@@ -27,7 +26,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.controller.BodyController;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -99,6 +97,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public int breedCount;
     private Animation animation = NO_ANIMATION;
     private int animationTick;
+    private int sleepCooldown;
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
@@ -133,12 +132,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         goalSelector.addGoal(0, new SwimGoal(this));
         goalSelector.addGoal(1, new WRSitGoal(this));
-        goalSelector.addGoal(1, createSleepGoal());
-    }
-
-    protected Goal createSleepGoal()
-    {
-        return new SleepGoal(this, false);
     }
 
     @Override
@@ -205,7 +198,38 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSleeping() == sleep) return;
 
         dataManager.set(SLEEPING, sleep);
-        if (!world.isRemote && sleep) clearAI();
+        if (!world.isRemote && sleep)
+        {
+            this.sleepCooldown = 350;
+            clearAI();
+        }
+    }
+
+    public boolean shouldSleep()
+    {
+        if (sleepCooldown > 0) return false;
+        if (world.isDaytime()) return false;
+        if (!isIdling()) return false;
+        if (isTamed())
+        {
+            if (isAtHome())
+            {
+                if (defendsHome()) return getHealth() < getMaxHealth() * 0.25;
+            }
+            else if (!func_233684_eK_()) return false;
+        }
+
+        return getRNG().nextDouble() < 0.0065;
+    }
+
+    public boolean shouldWakeUp()
+    {
+        return world.isDaytime() && getRNG().nextDouble() < 0.0065;
+    }
+
+    public boolean defendsHome()
+    {
+        return false;
     }
 
     public boolean isFlying()
@@ -281,10 +305,20 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             boolean flying = shouldFly();
             if (flying != isFlying()) setFlying(flying);
 
+            if (sleepCooldown > 0) --sleepCooldown;
             if (isSleeping())
             {
                 ((LessShitLookController) getLookController()).restore();
                 if (getHealth() < getMaxHealth() && getRNG().nextDouble() < 0.005) heal(1);
+
+                if (shouldWakeUp())
+                {
+                    setSleeping(false);
+                }
+            }
+            else if (shouldSleep())
+            {
+                setSleeping(true);
             }
 
             // todo figure out a better target system?

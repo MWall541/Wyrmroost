@@ -397,6 +397,12 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         return stack.getItem().isFood() && stack.getItem().getFood().isMeat();
     }
 
+    @Override
+    public boolean defendsHome()
+    {
+        return true;
+    }
+
     @Nullable
     @Override
     protected SoundEvent getAmbientSound()

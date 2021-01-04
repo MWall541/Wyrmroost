@@ -31,7 +31,10 @@ public class DefendHomeGoal extends TargetGoal
         setMutexFlags(EnumSet.of(Flag.TARGET));
     }
 
-    public DefendHomeGoal(AbstractDragonEntity defender) { this(defender, e -> true); }
+    public DefendHomeGoal(AbstractDragonEntity defender)
+    {
+        this(defender, e -> true);
+    }
 
     @Override
     public boolean shouldExecute()
@@ -58,7 +61,10 @@ public class DefendHomeGoal extends TargetGoal
     }
 
     @Override
-    protected double getTargetDistance() { return defender.getMaximumHomeDistance(); }
+    protected double getTargetDistance()
+    {
+        return defender.getMaximumHomeDistance();
+    }
 
     public LivingEntity findPotentialTarget()
     {

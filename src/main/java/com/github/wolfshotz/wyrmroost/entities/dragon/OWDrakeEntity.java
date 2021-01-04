@@ -100,12 +100,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test));
     }
 
-    @Override
-    protected Goal createSleepGoal()
-    {
-        return new SleepGoal(this, true);
-    }
-
     // ================================
     //           Entity Data
     // ================================
@@ -368,6 +362,12 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         playSound(SoundEvents.ENTITY_COW_STEP, 0.3f, 1f);
         super.playStepSound(pos, blockIn);
+    }
+
+    @Override
+    public boolean defendsHome()
+    {
+        return true;
     }
 
     @Nullable
