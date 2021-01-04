@@ -5,7 +5,7 @@ import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.AbstractButton;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.StringTextComponent;
 
 public class DebugScreen extends Screen
@@ -27,15 +27,11 @@ public class DebugScreen extends Screen
             for (int i = 0; i < animations.length; i++)
             {
                 Animation animation = animations[i];
-                addButton(new AbstractButton((i * 50) + (width / 2) - (animations.length * 25), 200, 50, 12, new StringTextComponent("Anim: " + i))
+                addButton(new Button((i * 50) + (width / 2) - (animations.length * 25), 200, 50, 12, new StringTextComponent("Anim: " + i), b ->
                 {
-                    @Override
-                    public void onPress()
-                    {
-                        dragon.setAnimation(animation);
-                        closeScreen();
-                    }
-                });
+                    dragon.setAnimation(animation);
+                    closeScreen();
+                }));
             }
     }
 

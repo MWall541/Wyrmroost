@@ -19,7 +19,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @SuppressWarnings("ConstantConditions")
 class ModelData
@@ -38,7 +37,7 @@ class ModelData
     {
         private final List<String> MISSING_TEXTURES = new ArrayList<>();
 
-        public Blocks(DataGenerator generator)
+        Blocks(DataGenerator generator)
         {
             super(generator, Wyrmroost.MOD_ID, theGOODExistingFileHelper);
         }
@@ -68,7 +67,7 @@ class ModelData
     {
         private final List<Item> REGISTERED = new ArrayList<>();
 
-        public Items(DataGenerator generator)
+        Items(DataGenerator generator)
         {
             super(generator, Wyrmroost.MOD_ID, theGOODExistingFileHelper);
         }
@@ -78,7 +77,7 @@ class ModelData
             return Wyrmroost.rl("item/" + path);
         }
 
-        public ItemModelBuilder item(Item item)
+        private ItemModelBuilder item(Item item)
         {
             ItemModelBuilder builder = itemBare(item);
 
@@ -96,7 +95,7 @@ class ModelData
             return builder;
         }
 
-        public ItemModelBuilder itemBare(Item item)
+        private ItemModelBuilder itemBare(Item item)
         {
             REGISTERED.add(item);
             return getBuilder(item.getRegistryName().getPath());
@@ -106,8 +105,12 @@ class ModelData
         @SuppressWarnings("ConstantConditions")
         protected void registerModels()
         {
+            // path constants
+            final ResourceLocation itemGenerated = mcLoc("item/generated");
+            final ResourceLocation spawnEggTemplate = mcLoc("item/template_spawn_egg");
+
             itemBare(WRItems.DRAGON_EGG.get())
-                    .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
+                    .parent(uncheckedModel("builtin/entity"))
                     .guiLight(BlockModel.GuiLight.FRONT)
                     .transforms()
                     .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0).scale(1.5f).end()
@@ -118,40 +121,43 @@ class ModelData
                     .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
 
             getBuilder("desert_wyrm_alive")
-                    .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+                    .parent(uncheckedModel(itemGenerated))
                     .texture("layer0", resource("desert_wyrm_alive"));
             item(WRItems.LDWYRM.get())
                     .override()
                     .predicate(Wyrmroost.rl("is_alive"), 1f)
-                    .model(new ModelFile.UncheckedModelFile(resource("desert_wyrm_alive")));
+                    .model(uncheckedModel(resource("desert_wyrm_alive")));
+
+            item(WRItems.DRAGON_STAFF.get()).parent(uncheckedModel("item/handheld"));
 
             final ItemModelBuilder cdBuilder = item(WRItems.COIN_DRAGON.get());
-            IntStream.range(1, 5).forEach(i ->
+            for (int i = 1; i < 5; i++)
             {
                 String path = "coin_dragon" + i;
                 getBuilder(path)
-                        .parent(new ModelFile.UncheckedModelFile(mcLoc("item/generated")))
+                        .parent(uncheckedModel(itemGenerated))
                         .texture("layer0", resource(path));
                 cdBuilder.override()
                         .predicate(CoinDragonItem.VARIANT_OVERRIDE, i)
-                        .model(new ModelFile.UncheckedModelFile(resource(path)));
-            });
+                        .model(uncheckedModel(resource(path)));
+            }
 
-            item(WRItems.DRAGON_STAFF.get()).parent(new ModelFile.UncheckedModelFile("item/handheld"));
-            for (LazySpawnEggItem i : LazySpawnEggItem.EGG_TYPES)
-                itemBare(i).parent(new ModelFile.UncheckedModelFile(mcLoc("item/template_spawn_egg")));
+            // spawn eggs
+            for (LazySpawnEggItem e : LazySpawnEggItem.SPAWN_EGGS)
+                itemBare(e).parent(uncheckedModel(spawnEggTemplate));
 
-            for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY)) // All Standard ItemBlocks
+            // All standard item blocks
+            for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
             {
                 if (REGISTERED.contains(block.asItem())) continue;
                 if (block instanceof FlowingFluidBlock) // Buckets
                 {
-                    itemBare(((FlowingFluidBlock) block).getFluid().getFilledBucket()).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"));
+                    itemBare(((FlowingFluidBlock) block).getFluid().getFilledBucket()).parent(uncheckedModel("forge:item/bucket"));
                     continue;
                 }
 
                 ResourceLocation path = block.getRegistryName();
-                itemBare(block.asItem()).parent(new ModelFile.UncheckedModelFile(path.getNamespace() + ":block/" + path.getPath()));
+                itemBare(block.asItem()).parent(uncheckedModel(path.getNamespace() + ":block/" + path.getPath()));
             }
 
             // All items that do not require custom attention
@@ -159,6 +165,19 @@ class ModelData
         }
 
         @Override
-        public String getName() { return "Wyrmroost Item Models"; }
+        public String getName()
+        {
+            return "Wyrmroost Item Models";
+        }
+
+        private static ModelFile.UncheckedModelFile uncheckedModel(ResourceLocation path)
+        {
+            return new ModelFile.UncheckedModelFile(path);
+        }
+
+        private static ModelFile.UncheckedModelFile uncheckedModel(String path)
+        {
+            return new ModelFile.UncheckedModelFile(path);
+        }
     }
 }

@@ -1,52 +1,37 @@
 package com.github.wolfshotz.wyrmroost.items;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
-import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.entity.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.MobSpawnerTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.item.SpawnEggItem;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class LazySpawnEggItem extends Item
+public class LazySpawnEggItem extends SpawnEggItem
 {
-    public static Set<LazySpawnEggItem> EGG_TYPES = new HashSet<>();
-    public final Lazy<EntityType<?>> type;
-    private final int PRIMARY_COLOR, SECONDARY_COLOR;
+    public static final Set<LazySpawnEggItem> SPAWN_EGGS = new HashSet<>();
 
+    public final Lazy<EntityType<?>> type;
+
+    @SuppressWarnings("ConstantConditions")
     public LazySpawnEggItem(Supplier<EntityType<? extends Entity>> type, int primaryColor, int secondaryColor)
     {
-        super(WRItems.builder());
+        super(null, primaryColor, secondaryColor, WRItems.builder());
 
         this.type = Lazy.of(type);
-        this.PRIMARY_COLOR = primaryColor;
-        this.SECONDARY_COLOR = secondaryColor;
-        EGG_TYPES.add(this);
+        SPAWN_EGGS.add(this);
     }
 
     @Override
@@ -58,94 +43,28 @@ public class LazySpawnEggItem extends Item
                 .append(new TranslationTextComponent("item.wyrmroost.spawn_egg"));
     }
 
-    public ActionResultType onItemUse(ItemUseContext context)
+    public EntityType<?> getType(@Nullable CompoundNBT tag)
     {
-        World world = context.getWorld();
-        if (world.isRemote) return ActionResultType.SUCCESS;
-
-        ItemStack itemstack = context.getItem();
-        BlockPos blockpos = context.getPos();
-        Direction direction = context.getFace();
-        BlockState blockstate = world.getBlockState(blockpos);
-        if (blockstate.getBlock() == Blocks.SPAWNER)
+        if (tag != null && tag.contains("EntityTag", 10))
         {
-            TileEntity tileentity = world.getTileEntity(blockpos);
-            if (tileentity instanceof MobSpawnerTileEntity)
-            {
-                AbstractSpawner abstractspawner = ((MobSpawnerTileEntity) tileentity).getSpawnerBaseLogic();
-                abstractspawner.setEntityType(type.get());
-                tileentity.markDirty();
-                world.notifyBlockUpdate(blockpos, blockstate, blockstate, 3);
-                itemstack.shrink(1);
-                return ActionResultType.SUCCESS;
-            }
-        }
-        
-        BlockPos blockpos1;
-        if (blockstate.getCollisionShape(world, blockpos).isEmpty()) blockpos1 = blockpos;
-        else blockpos1 = blockpos.offset(direction);
-        
-        if (type.get().spawn((ServerWorld) world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null)
-            itemstack.shrink(1);
-        
-        return ActionResultType.SUCCESS;
-    }
-    
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn)
-    {
-        ItemStack itemstack = playerIn.getHeldItem(handIn);
-        
-        if (worldIn.isRemote) return new ActionResult<>(ActionResultType.PASS, itemstack);
-        
-        BlockRayTraceResult raytraceresult = rayTrace(worldIn, playerIn, RayTraceContext.FluidMode.SOURCE_ONLY);
-        
-        if (raytraceresult.getType() != RayTraceResult.Type.BLOCK)
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
-
-        BlockPos blockpos = raytraceresult.getPos();
-        
-        if (!(worldIn.getBlockState(blockpos).getBlock() instanceof FlowingFluidBlock))
-            return new ActionResult<>(ActionResultType.PASS, itemstack);
-        
-        if (worldIn.isBlockModifiable(playerIn, blockpos) && playerIn.canPlayerEdit(blockpos, raytraceresult.getFace(), itemstack))
-        {
-            if (type.get().spawn((ServerWorld) worldIn, itemstack, playerIn, blockpos, SpawnReason.SPAWN_EGG, false, false) == null)
-                return new ActionResult<>(ActionResultType.PASS, itemstack);
-            if (!playerIn.abilities.isCreativeMode) itemstack.shrink(1);
-            
-            playerIn.addStat(Stats.ITEM_USED.get(this));
-            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
-        }
-        
-        return new ActionResult<>(ActionResultType.FAIL, itemstack);
-    }
-    
-    @Override
-    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
-    {
-        if (!(target instanceof AgeableEntity)) return ActionResultType.PASS;
-        if (!target.isAlive()) return ActionResultType.PASS;
-        if (target.getType() != type.get()) return ActionResultType.PASS;
-
-        if (!target.world.isRemote)
-        {
-            AgeableEntity entity = ((AgeableEntity) type.get().spawn(((ServerWorld) target.world), stack, playerIn, target.getPosition(), SpawnReason.SPAWN_EGG, false, false));
-            entity.setGrowingAge(entity instanceof AbstractDragonEntity? DragonEggProperties.get(type.get()).getGrowthTime() : -24000);
+            CompoundNBT childTag = tag.getCompound("EntityTag");
+            if (childTag.contains("id", 8))
+                return EntityType.byKey(childTag.getString("id")).orElse(type.get());
         }
 
-        return ActionResultType.func_233537_a_(playerIn.world.isRemote);
+        return type.get();
     }
 
-    public int getColor(int index) { return index == 0? PRIMARY_COLOR : SECONDARY_COLOR; }
-
-    /**
-     * Do note that using this method is entirely dependent on the provided EntityType's registry name with addition to:
-     * "_spawn_egg"
-     */
-    @Nullable
-    public static Item getEggFor(EntityType<?> type)
+    public static void addEggsToMap()
     {
-        ResourceLocation loc = type.getRegistryName();
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(loc.getNamespace(), loc.getPath() + "_spawn_egg"));
+        try
+        {
+            Map<EntityType<?>, SpawnEggItem> eggMap = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "field_195987_b");
+            for (LazySpawnEggItem item : SPAWN_EGGS) eggMap.put(item.type.get(), item);
+        }
+        catch (Exception e)
+        {
+            Wyrmroost.LOG.fatal("Something threw a fit when trying to touch the SpawnEgg map", e);
+        }
     }
 }

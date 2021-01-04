@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.data.DataGatherer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
+import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
@@ -64,6 +65,7 @@ public class CommonEvents
         event.enqueueWork(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
         IAnimatable.registerCapability();
         WRWorld.Features.init();
+        LazySpawnEggItem.addEggsToMap();
     }
     // @formatter: on
 

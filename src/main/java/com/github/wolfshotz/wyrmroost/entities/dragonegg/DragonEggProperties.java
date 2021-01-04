@@ -29,23 +29,35 @@ public class DragonEggProperties
     /**
      * Get the size of the egg
      */
-    public EntitySize getSize() { return size; }
+    public EntitySize getSize()
+    {
+        return size;
+    }
 
     /**
      * Get the hatch time of the egg
      */
-    public int getHatchTime() { return hatchTime; }
+    public int getHatchTime()
+    {
+        return hatchTime;
+    }
 
     /**
      * Gets the growth time for the dragon
      * This is typically just doubled the hatch time as a negative value (for some reason non adults are defined as non-positives)
      */
-    public int getGrowthTime() { return -hatchTime * 2; }
+    public int getGrowthTime()
+    {
+        return -hatchTime * 2;
+    }
 
     /**
      * Get the conditions the egg has to be under to continue hatching
      */
-    public Predicate<DragonEggEntity> getConditions() { return conditions; }
+    public Predicate<DragonEggEntity> getConditions()
+    {
+        return conditions;
+    }
 
     /**
      * Set custom conditions this egg has to be under to hatch
