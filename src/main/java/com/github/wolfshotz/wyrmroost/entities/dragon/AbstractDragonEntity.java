@@ -93,11 +93,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
     public final LazyOptional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
+    private int sleepCooldown;
     public boolean wingsDown;
     public int breedCount;
     private Animation animation = NO_ANIMATION;
     private int animationTick;
-    private int sleepCooldown;
 
     public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
