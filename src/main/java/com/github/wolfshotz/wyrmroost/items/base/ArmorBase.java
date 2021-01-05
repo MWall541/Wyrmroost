@@ -48,9 +48,14 @@ public class ArmorBase extends ArmorItem
         }
     }
 
-    protected boolean hasDescription() { return false; }
+    protected boolean hasDescription()
+    {
+        return false;
+    }
 
-    public void applyFullSetBonus(LivingEntity entity, boolean hasFullSet) {}
+    public void applyFullSetBonus(LivingEntity entity, boolean hasFullSet)
+    {
+    }
 
     public static boolean hasFullSet(LivingEntity entity)
     {

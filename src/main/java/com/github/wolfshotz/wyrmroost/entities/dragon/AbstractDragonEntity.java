@@ -198,10 +198,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSleeping() == sleep) return;
 
         dataManager.set(SLEEPING, sleep);
-        if (!world.isRemote && sleep)
+        if (!world.isRemote)
         {
-            this.sleepCooldown = 350;
-            clearAI();
+            if (sleep) clearAI();
+            else sleepCooldown = 350;
         }
     }
 
@@ -225,11 +225,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean shouldWakeUp()
     {
         return world.isDaytime() && getRNG().nextDouble() < 0.0065;
-    }
-
-    public boolean defendsHome()
-    {
-        return false;
     }
 
     public boolean isFlying()
@@ -1140,6 +1135,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Override
     public boolean canBeRiddenInWater(Entity rider)
+    {
+        return false;
+    }
+
+    public boolean defendsHome()
     {
         return false;
     }

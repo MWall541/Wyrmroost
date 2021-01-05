@@ -59,15 +59,17 @@ public class CommonEvents
     //       Mod Bus
     // ====================
 
-    // @formatter:off
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() -> { CALLBACKS.forEach(Runnable::run); CALLBACKS.clear(); });
+        event.enqueueWork(() ->
+        {
+            CALLBACKS.forEach(Runnable::run);
+            CALLBACKS.clear();
+            LazySpawnEggItem.addEggsToMap();
+        });
         IAnimatable.registerCapability();
         WRWorld.Features.init();
-        LazySpawnEggItem.addEggsToMap();
     }
-    // @formatter: on
 
     // =====================
     //      Forge Bus
@@ -112,6 +114,9 @@ public class CommonEvents
     public static void loadLoot(LootTableLoadEvent evt)
     {
         if (evt.getName().equals(LootTables.CHESTS_ABANDONED_MINESHAFT))
-            evt.getTable().addPool(LootPool.builder().addEntry(CoinDragonItem.getLootEntry()).build());
+            evt.getTable().addPool(LootPool.builder()
+                    .name("coin_dragon_inject")
+                    .addEntry(CoinDragonItem.getLootEntry())
+                    .build());
     }
 }

@@ -18,5 +18,8 @@ public class EXPBlock extends OreBlock
     }
 
     @Override
-    protected int getExperience(Random rand) { return MathHelper.nextInt(rand, minXp, maxXp); }
+    protected int getExperience(Random rand)
+    {
+        return MathHelper.nextInt(rand, minXp, maxXp);
+    }
 }

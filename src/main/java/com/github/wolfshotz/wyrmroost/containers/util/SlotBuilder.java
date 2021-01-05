@@ -24,14 +24,18 @@ public class SlotBuilder extends SlotItemHandler
     private Predicate<ItemStack> isItemValid = super::isItemValid;
     private Predicate<PlayerEntity> canTakeStack = super::canTakeStack;
     private Consumer<SlotBuilder> onSlotUpdate = s ->
-    {};
+    {
+    };
 
     public SlotBuilder(IItemHandler handler, int index, int posX, int posY)
     {
         super(handler, index, posX, posY);
     }
 
-    public SlotBuilder(IItemHandler handler, int index) { this(handler, index, CENTER_X, CENTER_Y); }
+    public SlotBuilder(IItemHandler handler, int index)
+    {
+        this(handler, index, CENTER_X, CENTER_Y);
+    }
 
     public SlotBuilder condition(BooleanSupplier isEnabled)
     {
@@ -51,7 +55,10 @@ public class SlotBuilder extends SlotItemHandler
         return this;
     }
 
-    public SlotBuilder only(IItemProvider item) { return only(s -> s.getItem() == item); }
+    public SlotBuilder only(IItemProvider item)
+    {
+        return only(s -> s.getItem() == item);
+    }
 
     public SlotBuilder only(Class<? extends IItemProvider> clazz)
     {
@@ -81,20 +88,38 @@ public class SlotBuilder extends SlotItemHandler
     // ===
 
     @Override
-    public boolean isEnabled() { return isEnabled.getAsBoolean(); }
+    public boolean isEnabled()
+    {
+        return isEnabled.getAsBoolean();
+    }
 
     @Override
-    public void onSlotChanged() { this.onSlotUpdate.accept(this); }
+    public void onSlotChanged()
+    {
+        this.onSlotUpdate.accept(this);
+    }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) { return isEnabled() && isItemValid.test(stack); }
+    public boolean isItemValid(@Nonnull ItemStack stack)
+    {
+        return isEnabled() && isItemValid.test(stack);
+    }
 
     @Override
-    public boolean canTakeStack(PlayerEntity playerIn) { return this.canTakeStack.test(playerIn); }
+    public boolean canTakeStack(PlayerEntity playerIn)
+    {
+        return this.canTakeStack.test(playerIn);
+    }
 
     @Override
-    public int getSlotStackLimit() { return limit; }
+    public int getSlotStackLimit()
+    {
+        return limit;
+    }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) { return limit; }
+    public int getItemStackLimit(@Nonnull ItemStack stack)
+    {
+        return limit;
+    }
 }
