@@ -4,10 +4,13 @@ import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
+import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -63,6 +66,10 @@ public class ClientEvents
         CALLBACKS.clear();
         WRKeybind.registerKeys();
         WRIO.screenSetup();
+
+        RenderTypeLookup.setRenderLayer(WRBlocks.GILLA.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS_BODY.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS.get(), RenderType.getCutout());
     }
 
     public static void stitchTextures(TextureStitchEvent.Pre evt)

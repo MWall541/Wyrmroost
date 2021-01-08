@@ -13,6 +13,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.item.TieredItem;
 import net.minecraft.resources.ResourcePackType;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -45,6 +46,10 @@ class ModelData
         @Override
         protected void registerStatesAndModels()
         {
+            cross(WRBlocks.GILLA.get());
+            cross(WRBlocks.SILVER_MOSS_BODY.get());
+            cross(WRBlocks.SILVER_MOSS.get());
+
             // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
             // If this is unwanted, it is important to define so above
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
@@ -60,6 +65,13 @@ class ModelData
 
             if (!MISSING_TEXTURES.isEmpty())
                 Wyrmroost.LOG.error("Blocks are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
+        }
+
+        void cross(Block block)
+        {
+            getVariantBuilder(block)
+                    .partialState()
+                    .setModels(new ConfiguredModel(models().cross(block.getRegistryName().getPath(), blockTexture(block))));
         }
     }
 
@@ -77,28 +89,31 @@ class ModelData
             return Wyrmroost.rl("item/" + path);
         }
 
-        private ItemModelBuilder item(Item item)
+        private ItemModelBuilder item(IItemProvider item)
         {
-            ItemModelBuilder builder = itemBare(item);
+            return item(item, Wyrmroost.rl((item instanceof Block? "block/" : "item/") + item.asItem().getRegistryName().getPath()));
+        }
+
+        private ItemModelBuilder item(IItemProvider item, ResourceLocation path)
+        {
+            ItemModelBuilder builder = getBuilderFor(item);
 
             // model
-            String parent = (item instanceof TieredItem)? "item/handheld" : "item/generated";
-            builder.parent(new ModelFile.UncheckedModelFile(parent));
+            builder.parent(uncheckedModel(item instanceof TieredItem? "item/handheld" : "item/generated"));
 
             // texture
-            ResourceLocation texture = resource(item.getRegistryName().getPath());
-            if (theGOODExistingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
-                builder.texture("layer0", texture);
+            if (theGOODExistingFileHelper.exists(path, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+                builder.texture("layer0", path);
             else
-                Wyrmroost.LOG.warn("Missing Texture for Item: {} , model will not be registered.", texture.getPath().replace("item/", ""));
+                Wyrmroost.LOG.warn("Missing Texture for Item: {} , model will not be registered.", path.getPath().replace("item/", ""));
 
             return builder;
         }
 
-        private ItemModelBuilder itemBare(Item item)
+        private ItemModelBuilder getBuilderFor(IItemProvider item)
         {
-            REGISTERED.add(item);
-            return getBuilder(item.getRegistryName().getPath());
+            REGISTERED.add(item.asItem());
+            return getBuilder(item.asItem().getRegistryName().getPath());
         }
 
         @Override
@@ -106,10 +121,11 @@ class ModelData
         protected void registerModels()
         {
             // path constants
-            final ResourceLocation itemGenerated = mcLoc("item/generated");
-            final ResourceLocation spawnEggTemplate = mcLoc("item/template_spawn_egg");
+            final ModelFile itemGenerated = uncheckedModel(mcLoc("item/generated"));
+            final ModelFile spawnEggTemplate = uncheckedModel(mcLoc("item/template_spawn_egg"));
+            final ModelFile bucket = uncheckedModel("forge:item/bucket");
 
-            itemBare(WRItems.DRAGON_EGG.get())
+            getBuilderFor(WRItems.DRAGON_EGG.get())
                     .parent(uncheckedModel("builtin/entity"))
                     .guiLight(BlockModel.GuiLight.FRONT)
                     .transforms()
@@ -121,7 +137,7 @@ class ModelData
                     .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
 
             getBuilder("desert_wyrm_alive")
-                    .parent(uncheckedModel(itemGenerated))
+                    .parent(itemGenerated)
                     .texture("layer0", resource("desert_wyrm_alive"));
             item(WRItems.LDWYRM.get())
                     .override()
@@ -134,17 +150,21 @@ class ModelData
             for (int i = 1; i < 5; i++)
             {
                 String path = "coin_dragon" + i;
+                ResourceLocation rl = resource(path);
                 getBuilder(path)
-                        .parent(uncheckedModel(itemGenerated))
-                        .texture("layer0", resource(path));
+                        .parent(itemGenerated)
+                        .texture("layer0", rl);
                 cdBuilder.override()
                         .predicate(CoinDragonItem.VARIANT_OVERRIDE, i)
-                        .model(uncheckedModel(resource(path)));
+                        .model(uncheckedModel(rl));
             }
 
             // spawn eggs
             for (LazySpawnEggItem e : LazySpawnEggItem.SPAWN_EGGS)
-                itemBare(e).parent(uncheckedModel(spawnEggTemplate));
+                getBuilderFor(e).parent(spawnEggTemplate);
+
+            item(WRBlocks.GILLA.get());
+            item(WRBlocks.SILVER_MOSS.get());
 
             // All standard item blocks
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
@@ -152,12 +172,12 @@ class ModelData
                 if (REGISTERED.contains(block.asItem())) continue;
                 if (block instanceof FlowingFluidBlock) // Buckets
                 {
-                    itemBare(((FlowingFluidBlock) block).getFluid().getFilledBucket()).parent(uncheckedModel("forge:item/bucket"));
+                    getBuilderFor(((FlowingFluidBlock) block).getFluid().getFilledBucket()).parent(bucket);
                     continue;
                 }
 
                 ResourceLocation path = block.getRegistryName();
-                itemBare(block.asItem()).parent(uncheckedModel(path.getNamespace() + ":block/" + path.getPath()));
+                getBuilderFor(block).parent(uncheckedModel(path.getNamespace() + ":block/" + path.getPath()));
             }
 
             // All items that do not require custom attention

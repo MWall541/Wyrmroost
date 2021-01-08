@@ -78,11 +78,20 @@ public class StaffScreen extends Screen
     }
 
     @Override
-    public boolean isPauseScreen() { return false; }
+    public boolean isPauseScreen()
+    {
+        return false;
+    }
 
-    public void addAction(StaffAction action) { actions.add(action); }
+    public void addAction(StaffAction action)
+    {
+        actions.add(action);
+    }
 
-    public void addTooltip(String string) { toolTip.add(IReorderingProcessor.func_242239_a(string, Style.EMPTY)); }
+    public void addTooltip(String string)
+    {
+        toolTip.add(IReorderingProcessor.func_242239_a(string, Style.EMPTY));
+    }
 
     public static void open(AbstractDragonEntity dragon, ItemStack stack)
     {

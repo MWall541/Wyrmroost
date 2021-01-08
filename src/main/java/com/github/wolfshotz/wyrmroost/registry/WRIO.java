@@ -19,7 +19,6 @@ public class WRIO
 
     public static final RegistryObject<ContainerType<DragonInvContainer>> DRAGON_INVENTORY = register("dragon_inventory", getDragonInvContainer());
 
-
     public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, ContainerType<T> type)
     {
         return REGISTRY.register(name, () -> type);

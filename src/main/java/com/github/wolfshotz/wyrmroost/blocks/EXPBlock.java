@@ -1,4 +1,4 @@
-package com.github.wolfshotz.wyrmroost.blocks.base;
+package com.github.wolfshotz.wyrmroost.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.OreBlock;
