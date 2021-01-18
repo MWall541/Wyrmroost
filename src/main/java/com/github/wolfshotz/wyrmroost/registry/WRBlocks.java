@@ -3,8 +3,6 @@ package com.github.wolfshotz.wyrmroost.registry;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.EXPBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GillaBushBlock;
-import com.github.wolfshotz.wyrmroost.blocks.HangingPlantBodyBlock;
-import com.github.wolfshotz.wyrmroost.blocks.SilverMossBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -38,8 +36,8 @@ public class WRBlocks
     public static final RegistryObject<Block> RED_GEODE_BLOCK = register("red_geode_block", () -> new Block(builder(Material.ROCK).harvestLevel(3).hardnessAndResistance(5).sound(SoundType.METAL)));
     public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", () -> new EXPBlock(8, 11, builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.STONE)));
     public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", () -> new Block(builder(Material.ROCK).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new HangingPlantBodyBlock(builder(Material.PLANTS).zeroHardnessAndResistance(), WRBlocks.SILVER_MOSS), null);
-    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", SilverMossBlock::new);
+//    public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(builder(Material.PLANTS).zeroHardnessAndResistance(), WRBlocks.SILVER_MOSS), null);
+//    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", SilverMossBlock::new);
     public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new);
 
     public static RegistryObject<Block> register(String name, Supplier<Block> block)

@@ -515,7 +515,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             getLookController().setLookPositionWithEntity(target, 90, 90);
 
             double headAngle = Math.abs(MathHelper.wrapDegrees(degrees - rotationYawHead));
-            boolean shouldBreatheFire = (!detachHome() || !isWithinHomeDistanceCurrentPosition()) && (distFromTarget > 100 || target.getPosY() - getPosY() > 3 || isFlying()) && headAngle < 30;
+            boolean shouldBreatheFire = !isAtHome() && (distFromTarget > 100 || target.getPosY() - getPosY() > 3 || isFlying()) && headAngle < 30;
             if (isBreathingFire != shouldBreatheFire) setBreathingFire(isBreathingFire = shouldBreatheFire);
 
             if (getRNG().nextDouble() < 0.001 || distFromTarget > 900) setFlying(true);

@@ -56,7 +56,10 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
 
     class MouthItemLayer extends LayerRenderer<RoostStalkerEntity, RoostStalkerModel>
     {
-        public MouthItemLayer() { super(RoostStalkerRenderer.this); }
+        public MouthItemLayer()
+        {
+            super(RoostStalkerRenderer.this);
+        }
 
         @Override
         public void render(MatrixStack ms, IRenderTypeBuffer bufferIn, int packedLightIn, RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
