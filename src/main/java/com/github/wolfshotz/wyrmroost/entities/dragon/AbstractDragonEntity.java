@@ -466,11 +466,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (canBeRidden(player) && !player.isSneaking())
         {
-            if (!world.isRemote)
-            {
-                player.startRiding(this);
-                clearAI();
-            }
+            if (!world.isRemote) player.startRiding(this);
             return COMMON_SUCCESS;
         }
 
@@ -957,6 +953,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             clearAI();
             setSit(false);
             clearHome();
+            if (getLeashed()) clearLeashed(true, true);
         }
     }
 
@@ -1157,7 +1154,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean canFly()
     {
-        return !isChild() && !canSwim() && !isRiding();
+        return !isChild() && !canSwim() && !isRiding() && !getLeashed();
     }
 
     /**
@@ -1199,6 +1196,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
+    }
+
+    @Override
+    public void clearLeashed(boolean sendPacket, boolean dropLead)
+    {
+        super.clearLeashed(sendPacket, dropLead);
+        clearHome();
     }
 
     public boolean isImmuneToArrows()
