@@ -880,9 +880,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canMateWith(AnimalEntity mate)
     {
+        if (!(mate instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) mate;
         if (func_233684_eK_() || dragon.func_233684_eK_()) return false;
-        if (hasDataParameter(GENDER) && isMale() == dragon.isMale()) return false;
+        if (isMale() == dragon.isMale()) return false;
         return super.canMateWith(mate);
     }
 
