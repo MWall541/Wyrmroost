@@ -89,6 +89,15 @@
           "condition": "minecraft:random_chance",
           "chance": 0.15
         }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:looting_enchant",
+          "count": {
+            "min": 0.0,
+            "max": 1.0
+          }
+        }
       ]
     }
   ]

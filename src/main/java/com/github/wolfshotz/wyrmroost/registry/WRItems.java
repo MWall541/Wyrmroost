@@ -104,11 +104,20 @@ public class WRItems
     public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(13, ArmorMaterials.RED_GEODE.getEnchantability()));
     public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterials.PURPLE_GEODE.getEnchantability()));
 
-    static RegistryObject<Item> register(String name, Supplier<Item> item) { return REGISTRY.register(name, item); }
+    static RegistryObject<Item> register(String name, Supplier<Item> item)
+    {
+        return REGISTRY.register(name, item);
+    }
 
-    static RegistryObject<Item> register(String name) { return REGISTRY.register(name, () -> new Item(builder())); }
+    static RegistryObject<Item> register(String name)
+    {
+        return REGISTRY.register(name, () -> new Item(builder()));
+    }
 
-    public static Item.Properties builder() { return new Item.Properties().group(Wyrmroost.ITEM_GROUP); }
+    public static Item.Properties builder()
+    {
+        return new Item.Properties().group(Wyrmroost.ITEM_GROUP);
+    }
 
     private static class Foods
     {
@@ -132,13 +141,18 @@ public class WRItems
 
     public static class Tags
     {
-        public static final INamedTag<Item> GEODES = tag("geodes");
-        public static final INamedTag<Item> MEATS = forgeTag("meats");
+        public static final INamedTag<Item> GEMS_GEODE = forge("gems/geodes");
         public static final INamedTag<Item> DRAGON_MEATS = tag("dragon_meats");
-        public static final INamedTag<Item> PLATINUM = forgeTag("ingots/platinum");
+        public static final INamedTag<Item> INGOTS_PLATINUM = forge("ingots/platinum");
 
-        private static INamedTag<Item> tag(String name) { return ItemTags.makeWrapperTag(Wyrmroost.MOD_ID + ":" + name); }
+        private static INamedTag<Item> tag(String path)
+        {
+            return ItemTags.makeWrapperTag(Wyrmroost.MOD_ID + ":" + path);
+        }
 
-        private static INamedTag<Item> forgeTag(String name) { return ItemTags.makeWrapperTag("forge:" + name); }
+        private static INamedTag<Item> forge(String path)
+        {
+            return ItemTags.makeWrapperTag("forge:" + path);
+        }
     }
 }

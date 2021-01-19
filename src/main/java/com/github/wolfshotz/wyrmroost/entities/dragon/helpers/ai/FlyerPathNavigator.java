@@ -23,16 +23,20 @@ public class FlyerPathNavigator extends FlyingPathNavigator
         {
             AbstractDragonEntity dragon = ((AbstractDragonEntity) entity);
             BlockPos target = getTargetPos();
-            if (target != null) entity.getMoveHelper().setMoveTo(target.getX(), target.getY(), target.getZ(), speed);
-
-            maxDistanceToWaypoint = entity.getWidth() * entity.getWidth() * dragon.getYawRotationSpeed() * dragon.getYawRotationSpeed();
-            Vector3d entityPos = getEntityPosition();
-            if (target.distanceSq(entityPos.x, entityPos.y, entityPos.z, true) <= maxDistanceToWaypoint)
-                currentPath = null;
+            if (target != null)
+            {
+                entity.getMoveHelper().setMoveTo(target.getX(), target.getY(), target.getZ(), speed);
+                maxDistanceToWaypoint = entity.getWidth() * entity.getWidth() * dragon.getYawRotationSpeed() * dragon.getYawRotationSpeed();
+                Vector3d entityPos = getEntityPosition();
+                if (target.distanceSq(entityPos.x, entityPos.y, entityPos.z, true) <= maxDistanceToWaypoint)
+                    currentPath = null;
+            }
         }
-
     }
 
     @Override
-    public boolean canEntityStandOnPos(BlockPos pos) { return true; }
+    public boolean canEntityStandOnPos(BlockPos pos)
+    {
+        return true;
+    }
 }
