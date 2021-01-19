@@ -123,6 +123,7 @@ public class WRConfig
         {
             WRConfig.disableFrustumCheck = INSTANCE.disableFrustumCheck.get();
             WRConfig.deckTheHalls = INSTANCE.deckTheHalls.get() && ModUtils.DECK_THE_HALLS;
+            WRConfig.renderEntityOutlines = INSTANCE.renderEntityOutlines.get();
         }
     }
 
