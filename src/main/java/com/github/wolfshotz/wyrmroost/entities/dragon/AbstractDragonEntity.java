@@ -667,7 +667,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canAttack(LivingEntity target)
     {
-        return !isChild() && !canPassengerSteer() && super.canAttack(target);
+        return !isChild() && super.canAttack(target);
     }
 
     @Override
