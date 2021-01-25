@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sounds.FlyingSound;
@@ -883,7 +884,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (!(mate instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) mate;
         if (func_233684_eK_() || dragon.func_233684_eK_()) return false;
-        if (isMale() == dragon.isMale()) return false;
+        if (hasDataParameter(GENDER) && isMale() == dragon.isMale()) return false;
         return super.canMateWith(mate);
     }
 
@@ -983,6 +984,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isIdling()
     {
         return getNavigator().noPath() && getAttackTarget() == null && !isBeingRidden() && !isInWaterOrBubbleColumn() && !isFlying();
+    }
+
+    @Override
+    public void remove()
+    {
+        Wyrmroost.LOG.info("Removing {}, with name: {}, with StackTrace:", getType().getRegistryName(), getName().getString());
+        new Throwable().printStackTrace();
+        super.remove();
     }
 
     /**
