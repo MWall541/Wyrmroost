@@ -570,8 +570,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (key.equals(SLEEPING) || key.equals(FLYING) || key.equals(TAMED))
         {
             recalculateSize();
-            if (world.isRemote && key == FLYING && isFlying() && canPassengerSteer())
-                FlyingSound.play(this);
+            if (world.isRemote && key == FLYING && isFlying() && canPassengerSteer()) FlyingSound.play(this);
         }
         else if (key == ARMOR)
         {
@@ -967,8 +966,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public PlayerEntity getControllingPlayer()
     {
         Entity passenger = getControllingPassenger();
-        if (passenger instanceof PlayerEntity) return (PlayerEntity) passenger;
-        return null;
+        return passenger instanceof PlayerEntity? (PlayerEntity) passenger : null;
     }
 
     public void clearAI()
@@ -986,12 +984,26 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         return getNavigator().noPath() && getAttackTarget() == null && !isBeingRidden() && !isInWaterOrBubbleColumn() && !isFlying();
     }
 
+    // todo remove this debugging shit.
     @Override
-    public void remove()
+    public void setRawPosition(double x, double y, double z)
     {
-        Wyrmroost.LOG.info("Removing {}, with name: {}, with StackTrace:", getType().getRegistryName(), getName().getString());
-        new Throwable().printStackTrace();
-        super.remove();
+        boolean flag = getControllingPlayer() != null && hasCustomName();
+        if (flag)
+        {
+            Wyrmroost.LOG.info("Dragon is teleporting! {}, {}", getType().getRegistryName(), getName().getString());
+            Wyrmroost.LOG.info("Current Position: {}", getPosition());
+        }
+        super.setRawPosition(x, y, z);
+        if (flag)
+        {
+            Wyrmroost.LOG.info("New Position: {}, with Stacktrace:", getPosition());
+            StackTraceElement[] elements = new Throwable().getStackTrace();
+            for (int i = 0; i < Math.min(5, elements.length); i++)
+            {
+                System.err.println(elements[i].toString());
+            }
+        }
     }
 
     /**
