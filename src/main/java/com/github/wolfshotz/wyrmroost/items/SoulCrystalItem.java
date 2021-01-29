@@ -1,8 +1,9 @@
 package com.github.wolfshotz.wyrmroost.items;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -15,8 +16,7 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
 public class SoulCrystalItem extends Item
@@ -84,52 +85,26 @@ public class SoulCrystalItem extends Item
     @Override
     public ActionResultType onItemUse(ItemUseContext context)
     {
-        ItemStack stack = context.getItem();
-        if (!containsDragon(stack)) return ActionResultType.PASS;
-        World world = context.getWorld();
-        PlayerEntity player = context.getPlayer();
-        if (!stack.getChildTag(DATA_DRAGON).getUniqueId("Owner").equals(player.getUniqueID()))
-        {
-            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").mergeStyle(TextFormatting.RED), true);
-            return ActionResultType.FAIL;
-        }
-        TameableEntity dragon = getContained(stack, world);
-        BlockPos pos = context.getPos().offset(context.getFace());
+        return releaseDragon(context.getWorld(), context.getPlayer(), context.getItem(), context.getPos(), context.getFace());
+    }
 
-        dragon.setPositionAndRotation(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, dragon.rotationYaw, dragon.rotationPitch); // update the position now for collision checking
-        if (!world.hasNoCollisions(dragon, dragon.getBoundingBox()))
-        {
-            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").mergeStyle(TextFormatting.RED), true);
-            return ActionResultType.FAIL;
-        }
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
+    {
+        BlockRayTraceResult rt = rayTrace(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
+        ItemStack stack = player.getHeldItem(hand);
+        if (rt.getType() == RayTraceResult.Type.MISS) return ActionResult.resultPass(stack);
+        BlockPos pos = rt.getPos();
+        if (!(world.getBlockState(pos).getBlock() instanceof FlowingFluidBlock)) return ActionResult.resultPass(stack);
+        return new ActionResult<>(releaseDragon(world, player, stack, pos, rt.getFace()), stack);
+    }
 
-        if (!world.isRemote) // Spawn the entity on the server side only
-        {
-            stack.removeChildTag(DATA_DRAGON);
-            world.addEntity(dragon);
-            world.playSound(null, dragon.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
-        }
-        else // Client Side Aesthetics
-        {
-            EntitySize size = dragon.getSize(dragon.getPose());
-
-            double posX = pos.getX() + 0.5d;
-            double posY = pos.getY() + (size.height / 2);
-            double posZ = pos.getZ() + 0.5d;
-            for (int i = 0; i < dragon.getWidth() * 25; ++i)
-            {
-                double x = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
-                double z = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
-                double xMot = x / 10f;
-                double yMot = dragon.getHeight() / 18f;
-                double zMot = z / 10f;
-
-                world.addParticle(ParticleTypes.END_ROD, posX, posY, posZ, xMot, yMot, zMot);
-                world.addParticle(ParticleTypes.CLOUD, posX, posY + (i * 0.25), posZ, 0, 0, 0);
-            }
-        }
-
-        return ActionResultType.SUCCESS;
+    @Override
+    public ITextComponent getDisplayName(ItemStack stack)
+    {
+        TranslationTextComponent name = (TranslationTextComponent) super.getDisplayName(stack);
+        if (containsDragon(stack)) name.mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC);
+        return name;
     }
 
     @Override
@@ -150,14 +125,6 @@ public class SoulCrystalItem extends Item
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack)
-    {
-        TranslationTextComponent name = (TranslationTextComponent) super.getDisplayName(stack);
-        if (containsDragon(stack)) name.mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC);
-        return name;
-    }
-
-    @Override
     public boolean hasEffect(ItemStack stack)
     {
         return containsDragon(stack);
@@ -168,36 +135,94 @@ public class SoulCrystalItem extends Item
         return stack.hasTag() && stack.getTag().contains(DATA_DRAGON);
     }
 
-    @Nullable
-    private static TameableEntity getContained(ItemStack stack, World world)
-    {
-        if (!containsDragon(stack)) return null;
-        CompoundNBT tag = stack.getTag().getCompound(DATA_DRAGON);
-        EntityType<?> type = EntityType.byKey(tag.getString("id")).orElse(null);
-        if (type == null) return null;
-        TameableEntity dragon = (TameableEntity) type.create(world);
-        dragon.deserializeNBT(tag);
-        return dragon;
-    }
-
     private static boolean isSuitableEntity(LivingEntity entity)
     {
         if (entity instanceof TameableEntity)
         {
-            if (entity instanceof AbstractDragonEntity) return true;
             ResourceLocation rl = entity.getType().getRegistryName();
             switch (rl.getNamespace())
             {
+                case "wyrmroost":
                 case "dragonmounts":
                 case "wings":
                     return true;
                 case "iceandfire":
                     String path = rl.getPath();
-                    return path.contains("dragon") || path.contains("amphithere");
+                    return path.contains("dragon");
                 default:
                     break;
             }
         }
         return false;
+    }
+
+    private static ActionResultType releaseDragon(World world, PlayerEntity player, ItemStack stack, BlockPos pos, Direction direction)
+    {
+        if (!containsDragon(stack)) return ActionResultType.PASS;
+
+        CompoundNBT tag = stack.getTag().getCompound(DATA_DRAGON);
+        EntityType<?> type = EntityType.byKey(tag.getString("id")).orElse(null);
+        TameableEntity dragon;
+
+        // just in case...
+        if (type == null || (dragon = (TameableEntity) type.create(world)) == null)
+        {
+            Wyrmroost.LOG.error("Something went wrong summoning from a SoulCrystal!");
+            return ActionResultType.FAIL;
+        }
+
+        // Ensuring the owner is the one summoning
+        if (!tag.getUniqueId("Owner").equals(player.getUniqueID()))
+        {
+            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").mergeStyle(TextFormatting.RED), true);
+            return ActionResultType.FAIL;
+        }
+
+        EntitySize size = dragon.getSize(dragon.getPose());
+        if (!world.getBlockState(pos).getCollisionShape(world, pos).isEmpty())
+            pos = pos.offset(direction, (int) (direction.getAxis().isHorizontal()? size.width : 1));
+
+        // check area for collision to ensure the area is safe.
+        dragon.moveForced(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        AxisAlignedBB aabb = dragon.getBoundingBox();
+        if (!world.hasNoCollisions(dragon, new AxisAlignedBB(aabb.minX, dragon.getPosYEye() - 0.35, aabb.minZ, aabb.maxX, dragon.getPosYEye() + 0.35, aabb.maxZ)))
+        {
+            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").mergeStyle(TextFormatting.RED), true);
+            return ActionResultType.FAIL;
+        }
+
+        // Spawn the entity on the server side only
+        if (!world.isRemote)
+        {
+            // no conflicting id's!
+            UUID id = dragon.getUniqueID();
+            dragon.deserializeNBT(tag);
+            dragon.setUniqueId(id);
+            dragon.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.rotationYaw, 0f);
+
+            if (stack.hasDisplayName()) dragon.setCustomName(stack.getDisplayName());
+            stack.removeChildTag(DATA_DRAGON);
+            world.addEntity(dragon);
+            world.playSound(null, dragon.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
+        }
+        else // Client Side Aesthetics
+        {
+            double posX = pos.getX() + 0.5d;
+            double posY = pos.getY() + (size.height / 2);
+            double posZ = pos.getZ() + 0.5d;
+            for (int i = 0; i < dragon.getWidth() * 25; ++i)
+            {
+                double x = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double z = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (dragon.getWidth() * 1.5d);
+                double xMot = x / 10f;
+                double yMot = dragon.getHeight() / 18f;
+                double zMot = z / 10f;
+
+                world.addParticle(ParticleTypes.END_ROD, posX, posY, posZ, xMot, yMot, zMot);
+                world.addParticle(ParticleTypes.CLOUD, posX, posY + (i * 0.25), posZ, 0, 0, 0);
+            }
+        }
+
+        return ActionResultType.SUCCESS;
     }
 }

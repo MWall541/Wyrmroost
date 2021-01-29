@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
@@ -26,7 +27,7 @@ public class DragonBreedGoal extends Goal
                 .allowInvulnerable()
                 .allowFriendlyFire()
                 .setLineOfSiteRequired()
-                .setCustomPredicate(e -> ((AbstractDragonEntity) e).canMateWith(dragon));
+                .setCustomPredicate(e -> ((AnimalEntity) e).canMateWith(dragon));
     }
 
     /**

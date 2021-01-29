@@ -466,11 +466,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (canBeRidden(player) && !player.isSneaking())
         {
-            if (!world.isRemote)
-            {
-                player.startRiding(this);
-                clearAI();
-            }
+            if (!world.isRemote) player.startRiding(this);
             return COMMON_SUCCESS;
         }
 
@@ -573,8 +569,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (key.equals(SLEEPING) || key.equals(FLYING) || key.equals(TAMED))
         {
             recalculateSize();
-            if (world.isRemote && key == FLYING && isFlying() && canPassengerSteer())
-                FlyingSound.play(this);
+            if (world.isRemote && key == FLYING && isFlying() && canPassengerSteer()) FlyingSound.play(this);
         }
         else if (key == ARMOR)
         {
@@ -671,7 +666,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canAttack(LivingEntity target)
     {
-        return !isChild() && !canPassengerSteer() && super.canAttack(target);
+        return !isChild() && super.canAttack(target);
     }
 
     @Override
@@ -884,6 +879,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canMateWith(AnimalEntity mate)
     {
+        if (!(mate instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) mate;
         if (func_233684_eK_() || dragon.func_233684_eK_()) return false;
         if (hasDataParameter(GENDER) && isMale() == dragon.isMale()) return false;
@@ -907,8 +903,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void func_234177_a_(ServerWorld world, AnimalEntity mate)
     {
         final BabyEntitySpawnEvent event = new BabyEntitySpawnEvent(this, mate, null);
-        if (MinecraftForge.EVENT_BUS.post(event)) // cancelled
-            return;
+        if (MinecraftForge.EVENT_BUS.post(event)) return; // cancelled
 
         final AgeableEntity child = event.getChild();
         if (child == null)
@@ -957,6 +952,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             clearAI();
             setSit(false);
             clearHome();
+            if (getLeashed()) clearLeashed(true, true);
         }
     }
 
@@ -968,8 +964,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public PlayerEntity getControllingPlayer()
     {
         Entity passenger = getControllingPassenger();
-        if (passenger instanceof PlayerEntity) return (PlayerEntity) passenger;
-        return null;
+        return passenger instanceof PlayerEntity? (PlayerEntity) passenger : null;
     }
 
     public void clearAI()
@@ -1157,7 +1152,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean canFly()
     {
-        return !isChild() && !canSwim() && !isRiding();
+        return !isChild() && !canSwim() && !getLeashed();
     }
 
     /**
@@ -1199,6 +1194,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
+    }
+
+    @Override
+    public void clearLeashed(boolean sendPacket, boolean dropLead)
+    {
+        super.clearLeashed(sendPacket, dropLead);
+        clearHome();
     }
 
     public boolean isImmuneToArrows()

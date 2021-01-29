@@ -9,9 +9,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -55,8 +54,7 @@ public class WRBlocks
     public static Block.Properties builder(Material material)
     {
         Block.Properties properties = Block.Properties.create(material);
-        if (material == Material.WOOD)
-            properties.harvestTool(ToolType.AXE).hardnessAndResistance(2).sound(SoundType.WOOD);
+        if (material == Material.WOOD) properties.harvestTool(ToolType.AXE).hardnessAndResistance(2).sound(SoundType.WOOD);
         else if (material == Material.ROCK) properties.harvestTool(ToolType.PICKAXE);
         else if (material == Material.SAND) properties.harvestTool(ToolType.SHOVEL).sound(SoundType.SAND);
         else if (material == Material.PLANTS) properties.sound(SoundType.PLANT).doesNotBlockMovement();
@@ -65,20 +63,27 @@ public class WRBlocks
 
     public static class Tags
     {
-        public static final Map<IOptionalNamedTag<Block>, IOptionalNamedTag<Item>> ITEM_BLOCK_TAGS = new HashMap<>();
+        public static final Map<INamedTag<Block>, INamedTag<Item>> ITEM_BLOCK_TAGS = new HashMap<>();
 
-        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_GEODE = tag(new ResourceLocation("forge", "storage_blocks/geode"));
-        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_PLATINUM = tag(new ResourceLocation("forge", "storage_blocks/platinum"));
+        public static final INamedTag<Block> ORES_GEODE = forge("ores/geode");
 
-        public static IOptionalNamedTag<Block> tag(String name)
+        public static final INamedTag<Block> STORAGE_BLOCKS_GEODE = forge("storage_blocks/geode");
+        public static final INamedTag<Block> STORAGE_BLOCKS_PLATINUM = forge("storage_blocks/platinum");
+
+        static INamedTag<Block> forge(String path)
         {
-            return tag(Wyrmroost.rl(name));
+            return getFor("forge:" + path);
         }
 
-        public static IOptionalNamedTag<Block> tag(ResourceLocation name)
+        public static INamedTag<Block> tag(String path)
         {
-            IOptionalNamedTag<Block> tag = BlockTags.createOptional(name);
-            ITEM_BLOCK_TAGS.put(tag, ItemTags.createOptional(name));
+            return getFor(Wyrmroost.MOD_ID + ":" + path);
+        }
+
+        public static INamedTag<Block> getFor(String path)
+        {
+            INamedTag<Block> tag = BlockTags.makeWrapperTag(path);
+            ITEM_BLOCK_TAGS.put(tag, ItemTags.makeWrapperTag(path));
             return tag;
         }
     }

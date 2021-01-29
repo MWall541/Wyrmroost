@@ -10,7 +10,7 @@
       "item": "minecraft:apple"
     },
     "G": {
-      "tag": "wyrmroost:geodes"
+      "tag": "forge:gems/geodes"
     }
   },
   "result": {

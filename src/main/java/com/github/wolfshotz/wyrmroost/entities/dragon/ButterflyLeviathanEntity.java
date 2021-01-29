@@ -349,11 +349,17 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         }
     }
 
+    @Override
+    public boolean shouldSleep()
+    {
+        return false;
+    }
+
     public Vector3d getConduitPos()
     {
         return getEyePosition(1)
-                .add(0, 0.4, 0)
-                .add(getVectorForRotation(rotationPitch, rotationYaw).mul(-4d, -4d, -4));
+                .add(0, 0.4, 0.35)
+                .add(getVectorForRotation(rotationPitch, rotationYawHead).scale(4.15));
     }
 
     @Override

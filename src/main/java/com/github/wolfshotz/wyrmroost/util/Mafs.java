@@ -18,7 +18,8 @@ import java.util.function.Predicate;
  */
 public final class Mafs
 {
-    private Mafs() {/* good try */}
+    private Mafs()
+    {/* good try */}
 
     /**
      * Float Version of PI.
@@ -29,7 +30,10 @@ public final class Mafs
     /**
      * Returns a new pseudo random double value constrained to the values of {@code (-1.0d)} and {@code (1.0d)}
      */
-    public static double nextDouble(Random rand) { return 2 * rand.nextDouble() - 1; }
+    public static double nextDouble(Random rand)
+    {
+        return 2 * rand.nextDouble() - 1;
+    }
 
     /**
      * A good way to get a position offset by the direction of a yaw angle.
@@ -41,7 +45,7 @@ public final class Mafs
 
     /**
      * Get the angle between 2 sources
-     *
+     * <p>
      * TODO: Adjust so that the angle is closest to 0 in the SOUTH direction!, currently it is only doing it for east!
      */
     public static double getAngle(double sourceX, double sourceZ, double targetX, double targetZ)
