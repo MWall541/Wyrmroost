@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
 public class SoulCrystalItem extends Item
@@ -177,15 +178,12 @@ public class SoulCrystalItem extends Item
             return ActionResultType.FAIL;
         }
 
-        // deserialize before setting position, otherwise we end up in original location.
-        if (!world.isRemote) dragon.deserializeNBT(tag);
-
         EntitySize size = dragon.getSize(dragon.getPose());
         if (!world.getBlockState(pos).getCollisionShape(world, pos).isEmpty())
             pos = pos.offset(direction, (int) (direction.getAxis().isHorizontal()? size.width : 1));
 
         // check area for collision to ensure the area is safe.
-        dragon.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.rotationYaw, 0f);
+        dragon.moveForced(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         AxisAlignedBB aabb = dragon.getBoundingBox();
         if (!world.hasNoCollisions(dragon, new AxisAlignedBB(aabb.minX, dragon.getPosYEye() - 0.35, aabb.minZ, aabb.maxX, dragon.getPosYEye() + 0.35, aabb.maxZ)))
         {
@@ -196,6 +194,13 @@ public class SoulCrystalItem extends Item
         // Spawn the entity on the server side only
         if (!world.isRemote)
         {
+            // no conflicting id's!
+            UUID id = dragon.getUniqueID();
+            dragon.deserializeNBT(tag);
+            dragon.setUniqueId(id);
+            dragon.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.rotationYaw, 0f);
+
+            if (stack.hasDisplayName()) dragon.setCustomName(stack.getDisplayName());
             stack.removeChildTag(DATA_DRAGON);
             world.addEntity(dragon);
             world.playSound(null, dragon.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);

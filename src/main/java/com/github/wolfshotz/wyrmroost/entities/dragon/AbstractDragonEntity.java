@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sounds.FlyingSound;
@@ -904,8 +903,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void func_234177_a_(ServerWorld world, AnimalEntity mate)
     {
         final BabyEntitySpawnEvent event = new BabyEntitySpawnEvent(this, mate, null);
-        if (MinecraftForge.EVENT_BUS.post(event)) // cancelled
-            return;
+        if (MinecraftForge.EVENT_BUS.post(event)) return; // cancelled
 
         final AgeableEntity child = event.getChild();
         if (child == null)
@@ -982,28 +980,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean isIdling()
     {
         return getNavigator().noPath() && getAttackTarget() == null && !isBeingRidden() && !isInWaterOrBubbleColumn() && !isFlying();
-    }
-
-    // todo remove this debugging shit.
-    @Override
-    public void setRawPosition(double x, double y, double z)
-    {
-        boolean flag = getControllingPlayer() != null && hasCustomName();
-        if (flag)
-        {
-            Wyrmroost.LOG.info("Dragon is teleporting! {}, {}", getType().getRegistryName(), getName().getString());
-            Wyrmroost.LOG.info("Current Position: {}", getPosition());
-        }
-        super.setRawPosition(x, y, z);
-        if (flag)
-        {
-            Wyrmroost.LOG.info("New Position: {}, with Stacktrace:", getPosition());
-            StackTraceElement[] elements = new Throwable().getStackTrace();
-            for (int i = 0; i < Math.min(5, elements.length); i++)
-            {
-                System.err.println(elements[i].toString());
-            }
-        }
     }
 
     /**
