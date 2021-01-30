@@ -47,8 +47,8 @@ class ModelData
         protected void registerStatesAndModels()
         {
             cross(WRBlocks.GILLA.get());
-//            cross(WRBlocks.SILVER_MOSS_BODY.get());
-//            cross(WRBlocks.SILVER_MOSS.get());
+            cross(WRBlocks.SILVER_MOSS_BODY.get());
+            cross(WRBlocks.SILVER_MOSS.get());
 
             // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
             // If this is unwanted, it is important to define so above
@@ -164,7 +164,7 @@ class ModelData
                 getBuilderFor(e).parent(spawnEggTemplate);
 
             item(WRBlocks.GILLA.get());
-//            item(WRBlocks.SILVER_MOSS.get());
+            item(WRBlocks.SILVER_MOSS.get());
 
             // All standard item blocks
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))

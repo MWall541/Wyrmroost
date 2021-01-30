@@ -1,10 +1,8 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
 import net.minecraft.block.*;
-import net.minecraft.state.BooleanProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.server.ServerWorld;
 
@@ -13,8 +11,6 @@ import java.util.function.Supplier;
 
 public class GrowingPlantBlock extends AbstractTopPlantBlock
 {
-    public static final BooleanProperty TIP = BooleanProperty.create("is_tip");
-
     private final Supplier<Block> body;
     private final int maxGrowthHeight;
 
@@ -22,13 +18,7 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     {
         super(properties, dir, WeepingVinesBlock.field_235637_d_, false, 0.1);
         this.body = body;
-        this.maxGrowthHeight = maxGrowthHeight == 0? maxGrowthHeight : Integer.MAX_VALUE;
-    }
-
-    @Override
-    public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
-    {
-        return !state.get(TIP) && super.canGrow(worldIn, pos, state, isClient);
+        this.maxGrowthHeight = maxGrowthHeight;
     }
 
     @Override

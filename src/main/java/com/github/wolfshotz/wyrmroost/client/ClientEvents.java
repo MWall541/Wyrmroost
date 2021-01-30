@@ -68,8 +68,8 @@ public class ClientEvents
         WRIO.screenSetup();
 
         RenderTypeLookup.setRenderLayer(WRBlocks.GILLA.get(), RenderType.getCutout());
-//        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS_BODY.get(), RenderType.getCutout());
-//        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS_BODY.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS.get(), RenderType.getCutout());
     }
 
     public static void stitchTextures(TextureStitchEvent.Pre evt)

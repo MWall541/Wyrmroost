@@ -31,11 +31,13 @@ public class GillaBushBlock extends BushBlock
         return SHAPE;
     }
 
+    @Override
     public AbstractBlock.OffsetType getOffsetType()
     {
         return AbstractBlock.OffsetType.XZ;
     }
 
+    @Override
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entity)
     {
         if (entity instanceof LivingEntity)
