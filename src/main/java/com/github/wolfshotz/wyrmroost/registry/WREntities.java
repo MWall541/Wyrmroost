@@ -47,12 +47,6 @@ import java.util.function.Supplier;
 import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS;
 import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.ON_GROUND;
 
-/**
- * Created by com.github.WolfShotz - 7/3/19 19:03 <p>
- * <p>
- * Class responsible for the setup and registration of entities, and their spawning.
- * Entity type generics are defined because a) forge told me so and b) because its broken without it.
- */
 public class WREntities
 {
     public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
@@ -142,15 +136,6 @@ public class WREntities
             .renderer(() -> AlpineRenderer::new)
             .build(b -> b.size(2f, 2f));
 
-//    public static final RegistryObject<EntityType<OrbwyrmEntity>> ORBWYRM = Builder.creature("orbwyrm", OrbwyrmEntity::new)
-//            .attributes(OrbwyrmEntity::getAttributes)
-////            .spawnPlacement()
-////            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
-//            .spawnEgg(0x41444F, 0x16171C)
-////            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
-//            .renderer(() -> OrbwyrmRenderer::new)
-//            .build(b -> b.size(2.8f, 3.76f));
-
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = Builder.<DragonEggEntity>withClassification("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
             .renderer(() -> DragonEggRenderer::new)
             .build(b -> b.disableSummoning().setCustomClientFactory(DragonEggEntity::new));
@@ -166,10 +151,6 @@ public class WREntities
     public static final RegistryObject<EntityType<WindGustEntity>> WIND_GUST = Builder.<WindGustEntity>withClassification("wind_gust", WindGustEntity::new, EntityClassification.MISC)
             .renderer(() -> EmptyRenderer::new)
             .build(b -> b.size(4, 4).disableSerialization().disableSummoning());
-
-//    public static final RegistryObject<EntityType<SilkProjectileEntity>> SILK = Builder.withClassification("silk", SilkProjectileEntity::new, EntityClassification.MISC)
-//            .renderer(() -> EmptyRenderer::new) // todo
-//            .build(b -> b.size(0.5f, 0.5f).disableSerialization().disableSummoning());
 
     @SuppressWarnings("unchecked")
     private static class Builder<T extends Entity>
@@ -214,14 +195,7 @@ public class WREntities
 
         private <F extends MobEntity> Builder<T> spawnPlacement(EntitySpawnPlacementRegistry.PlacementType type, Heightmap.Type height, EntitySpawnPlacementRegistry.IPlacementPredicate<F> predicate)
         {
-            try
-            {
-                CommonEvents.CALLBACKS.add(() -> EntitySpawnPlacementRegistry.register((EntityType<F>) registered.get(), type, height, predicate));
-            }
-            catch (ClassCastException e)
-            {
-                throw new ClassCastException("Entity Spawn Placement cannot be applied to non-mob! Erroring Entity: " + name);
-            }
+            CommonEvents.CALLBACKS.add(() -> EntitySpawnPlacementRegistry.register((EntityType<F>) registered.get(), type, height, predicate));
             return this;
         }
 
