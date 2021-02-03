@@ -38,14 +38,15 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     }
 
     @Override
-    public void grow(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state)
+    public void grow(ServerWorld world, Random rand, BlockPos pos, BlockState state)
     {
         BlockPos.Mutable mutable = pos.toMutable().move(growthDirection);
         int i = 0;
+        int amount = Math.min(getGrowthAmount(rand), maxGrowthHeight - getHeight(world, pos));
 
-        for (int k = getHeight(worldIn, pos); k < maxGrowthHeight && canGrowIn(worldIn.getBlockState(mutable)); k++)
+        for (int k = 0; k < amount && canGrowIn(world.getBlockState(mutable)); k++)
         {
-            worldIn.setBlockState(mutable, state.with(AGE, k == maxGrowthHeight - 1? 25 : (i = Math.min(i + 1, 25))));
+            world.setBlockState(mutable, state.with(AGE, k == maxGrowthHeight - 1? 25 : (i = Math.min(i + 1, 25))));
             mutable.move(growthDirection);
         }
     }
