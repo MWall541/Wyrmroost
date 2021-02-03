@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/vine_2_opposite",
+  "textures": {
+    "vine": "wyrmroost:block/moss_vine"
+  }
+}
