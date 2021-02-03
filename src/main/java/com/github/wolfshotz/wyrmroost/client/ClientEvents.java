@@ -67,9 +67,11 @@ public class ClientEvents
         WRKeybind.registerKeys();
         WRIO.screenSetup();
 
+        // todo: better render layer setting
         RenderTypeLookup.setRenderLayer(WRBlocks.GILLA.get(), RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS_BODY.get(), RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.MOSS_VINE.get(), RenderType.getCutout());
     }
 
     public static void stitchTextures(TextureStitchEvent.Pre evt)

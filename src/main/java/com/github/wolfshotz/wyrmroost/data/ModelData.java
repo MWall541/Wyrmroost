@@ -36,7 +36,7 @@ class ModelData
 
     private static class Blocks extends BlockStateProvider
     {
-        private final List<String> MISSING_TEXTURES = new ArrayList<>();
+        private final List<Block> ignored = new ArrayList<>();
 
         Blocks(DataGenerator generator)
         {
@@ -50,11 +50,15 @@ class ModelData
             cross(WRBlocks.SILVER_MOSS_BODY.get());
             cross(WRBlocks.SILVER_MOSS.get());
 
+            vine(WRBlocks.MOSS_VINE.get());
+
             // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
             // If this is unwanted, it is important to define so above
+            List<String> MISSING_TEXTURES = new ArrayList<>();
+            ignored.addAll(registeredBlocks.keySet());
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
             {
-                if (registeredBlocks.containsKey(block)) continue;
+                if (ignored.contains(block)) continue;
                 if (block instanceof FlowingFluidBlock) continue;
 
                 ResourceLocation name = block.getRegistryName();
@@ -72,6 +76,34 @@ class ModelData
             getVariantBuilder(block)
                     .partialState()
                     .setModels(new ConfiguredModel(models().cross(block.getRegistryName().getPath(), blockTexture(block))));
+        }
+
+        void vine(Block block)
+        {
+            final String fileName = block.getRegistryName().getPath();
+            final ResourceLocation texture = blockTexture(block);
+
+            Wyrmroost.LOG.warn("VINE MODELS REGISTERED FOR: {}, A BLOCKSTATE JSON MUST BE MADE MANUALLY!",  fileName);
+
+            ignored.add(block);
+
+            models().singleTexture(fileName + "_" + "u", mcLoc("vine_" + "u"), "vine", texture);
+            for (int i = 1; i <= 4; i++)
+            {
+                for (int j = 1; j <= 2; j++)
+                {
+                    boolean flag = j == 2;
+                    String name = formatVine(fileName, i, flag);
+                    String parent = formatVine("vine", i, flag);
+                    models().singleTexture(name, mcLoc(parent), "vine", texture);
+                    if (i == 2) models().singleTexture(name + "_opposite", mcLoc(parent + "_opposite"), "vine", texture);
+                }
+            }
+        }
+
+        static String formatVine(String pre, int i, boolean u)
+        {
+            return pre + "_" + i + (u? "u" : "");
         }
     }
 
@@ -165,11 +197,12 @@ class ModelData
 
             item(WRBlocks.GILLA.get());
             item(WRBlocks.SILVER_MOSS.get());
+            item(WRBlocks.MOSS_VINE.get());
 
             // All standard item blocks
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
             {
-                if (REGISTERED.contains(block.asItem())) continue;
+                if (block.asItem() == net.minecraft.item.Items.AIR || REGISTERED.contains(block.asItem())) continue;
                 if (block instanceof FlowingFluidBlock) // Buckets
                 {
                     getBuilderFor(((FlowingFluidBlock) block).getFluid().getFilledBucket()).parent(bucket);

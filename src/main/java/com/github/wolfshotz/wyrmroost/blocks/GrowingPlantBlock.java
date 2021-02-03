@@ -1,11 +1,15 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
 import net.minecraft.block.*;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -22,6 +26,12 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     }
 
     @Override
+    public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
+    {
+        return getHeight((IWorldReader) worldIn, pos) < maxGrowthHeight && super.canGrow(worldIn, pos, state, isClient);
+    }
+
+    @Override
     protected boolean canGrowIn(BlockState state)
     {
         return state.isAir();
@@ -30,24 +40,30 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     @Override
     public void grow(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state)
     {
-        BlockPos.Mutable blockpos = pos.toMutable().move(growthDirection);
-        int i = Math.min(state.get(AGE) + 1, 25);
-        int j = Math.min(getGrowthAmount(rand), getHeight(worldIn, pos));
+        BlockPos.Mutable mutable = pos.toMutable().move(growthDirection);
+        int i = 0;
 
-        for (int k = 0; k < j && canGrowIn(worldIn.getBlockState(blockpos)); ++k)
+        for (int k = getHeight(worldIn, pos); k < maxGrowthHeight && canGrowIn(worldIn.getBlockState(mutable)); k++)
         {
-            worldIn.setBlockState(blockpos, state.with(AGE, i = Math.min(i + 1, 25)));
-            blockpos.move(growthDirection);
+            worldIn.setBlockState(mutable, state.with(AGE, k == maxGrowthHeight - 1? 25 : (i = Math.min(i + 1, 25))));
+            mutable.move(growthDirection);
         }
     }
 
-    int getHeight(IWorldReader world, BlockPos pos)
+    @Override
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
-        BlockPos.Mutable mutable = pos.toMutable();
-        BlockState state = world.getBlockState(mutable.move(growthDirection.getOpposite()));
-        int i = 0;
-        while (i < maxGrowthHeight + 1 && state.isIn(getBodyPlantBlock())) i++;
-        return i;
+        return getHeight(worldIn, pos.offset(growthDirection.getOpposite()), true) + 1 <= maxGrowthHeight && super.isValidPosition(state, worldIn, pos);
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context)
+    {
+        World world = context.getWorld();
+        BlockPos pos = context.getPos().offset(growthDirection.getOpposite());
+        if (getHeight(world, pos, true) + 1 >= maxGrowthHeight) return getDefaultState().with(AGE, 25);
+        return super.getStateForPlacement(context);
     }
 
     @Override
@@ -60,6 +76,25 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     protected Block getBodyPlantBlock()
     {
         return body.get();
+    }
+
+    public int getHeight(IWorldReader world, BlockPos pos)
+    {
+        return getHeight(world, pos, true) + getHeight(world, pos, false) - 1;
+    }
+
+    public int getHeight(IWorldReader world, BlockPos pos, boolean below)
+    {
+        Direction dir = below? growthDirection.getOpposite() : growthDirection;
+        BlockPos.Mutable mutable = pos.toMutable();
+        BlockState state = world.getBlockState(mutable);
+        int i = 0;
+        while (i < maxGrowthHeight + 1 && (state.isIn(getBodyPlantBlock()) || state.isIn(this)))
+        {
+            i++;
+            state = world.getBlockState(mutable.move(dir));
+        }
+        return i;
     }
 
     public int getMaxGrowthHeight()
