@@ -90,11 +90,8 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
         BlockPos.Mutable mutable = pos.toMutable();
         BlockState state = world.getBlockState(mutable);
         int i = 0;
-        while (i < maxGrowthHeight + 1 && (state.isIn(getBodyPlantBlock()) || state.isIn(this)))
-        {
-            i++;
+        for (; i < maxGrowthHeight + 1 && (state.isIn(getBodyPlantBlock()) || state.isIn(this)); ++i)
             state = world.getBlockState(mutable.move(dir));
-        }
         return i;
     }
 

@@ -8,6 +8,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.SnowyDirtBlock;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
@@ -49,8 +50,9 @@ class ModelData
             cross(WRBlocks.GILLA.get());
             cross(WRBlocks.SILVER_MOSS_BODY.get());
             cross(WRBlocks.SILVER_MOSS.get());
-
             vine(WRBlocks.MOSS_VINE.get());
+            snowy(WRBlocks.MULCH.get());
+
 
             // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
             // If this is unwanted, it is important to define so above
@@ -78,12 +80,26 @@ class ModelData
                     .setModels(new ConfiguredModel(models().cross(block.getRegistryName().getPath(), blockTexture(block))));
         }
 
+        void snowy(Block block)
+        {
+            String name = block.getRegistryName().getPath();
+
+            getVariantBuilder(block).forAllStates(state ->
+            {
+                boolean snowy = state.get(SnowyDirtBlock.SNOWY);
+                if (snowy)
+                    return ConfiguredModel.builder().modelFile(models().getExistingFile(mcLoc("grass_block_snow"))).build();
+                else
+                    return ConfiguredModel.builder().modelFile(models().cubeBottomTop(name, modLoc("block/" + name + "_side"), mcLoc("block/dirt"), modLoc("block/" + name + "_top"))).build();
+            });
+        }
+
         void vine(Block block)
         {
             final String fileName = block.getRegistryName().getPath();
             final ResourceLocation texture = blockTexture(block);
 
-            Wyrmroost.LOG.warn("VINE MODELS REGISTERED FOR: {}, A BLOCKSTATE JSON MUST BE MADE MANUALLY!",  fileName);
+            Wyrmroost.LOG.warn("VINE MODELS REGISTERED FOR: {}, A BLOCKSTATE JSON MUST BE MADE MANUALLY!", fileName);
 
             ignored.add(block);
 

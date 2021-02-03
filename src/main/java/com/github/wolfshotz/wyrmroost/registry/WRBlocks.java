@@ -5,9 +5,7 @@ import com.github.wolfshotz.wyrmroost.blocks.EXPBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GillaBushBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBodyBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.VineBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -41,20 +39,21 @@ public class WRBlocks
 
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", () -> new Block(builder(Material.ROCK).harvestLevel(1).hardnessAndResistance(3).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", () -> new Block(builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(1).hardnessAndResistance(5).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", () -> new Block(mineable(Material.ROCK, ToolType.PICKAXE, 1, 3f, SoundType.STONE)));
+    public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", () -> new Block(mineable(Material.IRON, ToolType.PICKAXE, 1, 5f, SoundType.METAL)));
 
-    public static final RegistryObject<Block> BLUE_GEODE_ORE = register("blue_geode_ore", () -> new EXPBlock(3, 7, builder(Material.ROCK).harvestLevel(2).hardnessAndResistance(3).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> BLUE_GEODE_BLOCK = register("blue_geode_block", () -> new Block(builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(2).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> RED_GEODE_ORE = register("red_geode_ore", () -> new EXPBlock(4, 8, builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(3).hardnessAndResistance(5).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> RED_GEODE_BLOCK = register("red_geode_block", () -> new Block(builder(Material.ROCK).harvestLevel(3).hardnessAndResistance(5).sound(SoundType.METAL)));
-    public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", () -> new EXPBlock(8, 11, builder(Material.IRON).harvestTool(ToolType.PICKAXE).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.STONE)));
-    public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", () -> new Block(builder(Material.ROCK).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> BLUE_GEODE_ORE = register("blue_geode_ore", () -> new EXPBlock(3, 7, mineable(Material.ROCK, ToolType.PICKAXE, 2, 3f, SoundType.STONE)));
+    public static final RegistryObject<Block> BLUE_GEODE_BLOCK = register("blue_geode_block", () -> new Block(mineable(Material.IRON, ToolType.PICKAXE, 2, 5f, SoundType.METAL)));
+    public static final RegistryObject<Block> RED_GEODE_ORE = register("red_geode_ore", () -> new EXPBlock(4, 8, mineable(Material.ROCK, ToolType.PICKAXE, 3, 3f, SoundType.NETHER_ORE)));
+    public static final RegistryObject<Block> RED_GEODE_BLOCK = register("red_geode_block", () -> new Block(mineable(Material.IRON, ToolType.PICKAXE, 3, 5f, SoundType.METAL)));
+    public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", () -> new EXPBlock(8, 11, mineable(Material.IRON, ToolType.PICKAXE, 4, 5f, SoundType.GILDED_BLACKSTONE)));
+    public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", () -> new Block(mineable(Material.IRON, ToolType.PICKAXE, 4, 7f, SoundType.METAL)));
 
-    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(builder(Material.PLANTS).zeroHardnessAndResistance().tickRandomly(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY));
-    public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(builder(Material.PLANTS).zeroHardnessAndResistance(), WRBlocks.SILVER_MOSS), null);
+    public static final RegistryObject<Block> MULCH = register("mulch", () -> new SnowyDirtBlock(properties(Material.EARTH, SoundType.GROUND).hardnessAndResistance(0.5f).harvestTool(ToolType.SHOVEL)));
+    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(plant().tickRandomly(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY));
+    public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null);
     public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new);
-    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(builder(Material.TALL_PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0.2f).sound(SoundType.VINE)));
+    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.TALL_PLANTS, SoundType.VINE).tickRandomly().doesNotBlockMovement().hardnessAndResistance(0.2f)));
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
@@ -68,15 +67,27 @@ public class WRBlocks
         return reg;
     }
 
-    public static Block.Properties builder(Material material)
+    public static AbstractBlock.Properties properties(Material material, SoundType sound)
     {
-        Block.Properties properties = Block.Properties.create(material);
-        if (material == Material.WOOD)
-            properties.harvestTool(ToolType.AXE).hardnessAndResistance(2).sound(SoundType.WOOD);
-        else if (material == Material.ROCK) properties.harvestTool(ToolType.PICKAXE);
-        else if (material == Material.SAND) properties.harvestTool(ToolType.SHOVEL).sound(SoundType.SAND);
-        else if (material == Material.PLANTS) properties.sound(SoundType.PLANT).doesNotBlockMovement();
-        return properties;
+        return AbstractBlock.Properties
+                .create(material)
+                .sound(sound);
+    }
+
+    public static AbstractBlock.Properties plant()
+    {
+        return properties(Material.PLANTS, SoundType.PLANT).doesNotBlockMovement();
+    }
+
+    public static AbstractBlock.Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardnessResistance, SoundType sound)
+    {
+        return AbstractBlock.Properties
+                .create(material)
+                .harvestTool(harvestTool)
+                .harvestLevel(harvestLevel)
+                .setRequiresTool()
+                .hardnessAndResistance(hardnessResistance)
+                .sound(sound);
     }
 
     public static class Tags

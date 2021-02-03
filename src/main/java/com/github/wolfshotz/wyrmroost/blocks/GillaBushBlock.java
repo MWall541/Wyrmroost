@@ -5,7 +5,6 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BushBlock;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
@@ -22,7 +21,7 @@ public class GillaBushBlock extends BushBlock
 
     public GillaBushBlock()
     {
-        super(WRBlocks.builder(Material.PLANTS).zeroHardnessAndResistance());
+        super(WRBlocks.plant());
     }
 
     @Override
