@@ -30,7 +30,14 @@ import java.util.function.Supplier;
 
 public class WRBlocks
 {
-    public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(builder(Material.PLANTS).zeroHardnessAndResistance(), WRBlocks.SILVER_MOSS), null);
+    static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroostDimension")
+    {
+        @Override
+        public ItemStack createIcon()
+        {
+            return new ItemStack(PURPLE_GEODE_BLOCK.get());
+        }
+    };
 
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
 
@@ -45,14 +52,7 @@ public class WRBlocks
     public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", () -> new Block(builder(Material.ROCK).harvestLevel(4).hardnessAndResistance(5).sound(SoundType.METAL)));
 
     public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(builder(Material.PLANTS).zeroHardnessAndResistance().tickRandomly(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY));
-    static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroostDimension")
-    {
-        @Override
-        public ItemStack createIcon()
-        {
-            return new ItemStack(PURPLE_GEODE_BLOCK.get());
-        }
-    };
+    public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(builder(Material.PLANTS).zeroHardnessAndResistance(), WRBlocks.SILVER_MOSS), null);
     public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new);
     public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(builder(Material.TALL_PLANTS).doesNotBlockMovement().tickRandomly().hardnessAndResistance(0.2f).sound(SoundType.VINE)));
 
