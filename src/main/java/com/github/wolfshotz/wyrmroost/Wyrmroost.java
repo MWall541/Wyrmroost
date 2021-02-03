@@ -3,12 +3,7 @@ package com.github.wolfshotz.wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.network.packets.*;
 import com.github.wolfshotz.wyrmroost.registry.*;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -27,7 +22,6 @@ public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
     public static final Logger LOG = LogManager.getLogger(MOD_ID);
-    public static final ItemGroup ITEM_GROUP = new WRItemGroup();
     public static final SimpleChannel NETWORK = buildChannel();
 
     public Wyrmroost()
@@ -78,24 +72,8 @@ public class Wyrmroost
      *
      * @return somethin related to a resource idk
      */
-    public static ResourceLocation rl(String path) { return new ResourceLocation(MOD_ID, path); }
-
-    /**
-     * C R E A T I V E  T A B. F U C K  Y O U.
-     */
-    static class WRItemGroup extends ItemGroup
+    public static ResourceLocation rl(String path)
     {
-        public WRItemGroup() { super("wyrmroost"); }
-
-        @Override
-        public ItemStack createIcon() { return new ItemStack(WRItems.BLUE_GEODE.get()); }
-
-        @Override
-        public void fill(NonNullList<ItemStack> items)
-        {
-            super.fill(items);
-            if (WRConfig.debugMode)
-                items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
-        }
+        return new ResourceLocation(MOD_ID, path);
     }
 }

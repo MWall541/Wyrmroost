@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.items.*;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
@@ -12,6 +13,8 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,6 +23,23 @@ import java.util.function.Supplier;
 
 public class WRItems
 {
+    static final ItemGroup MAIN_ITEM_GROUP = new ItemGroup("wyrmroost")
+    {
+        @Override
+        public ItemStack createIcon()
+        {
+            return new ItemStack(COIN_DRAGON.get());
+        }
+
+        @Override
+        public void fill(NonNullList<ItemStack> items)
+        {
+            super.fill(items);
+            if (WRConfig.debugMode)
+                items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
+        }
+    };
+
     public static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, Wyrmroost.MOD_ID);
 
     public static final RegistryObject<Item> LDWYRM = register("desert_wyrm", LDWyrmItem::new);
@@ -116,7 +136,7 @@ public class WRItems
 
     public static Item.Properties builder()
     {
-        return new Item.Properties().group(Wyrmroost.ITEM_GROUP);
+        return new Item.Properties().group(MAIN_ITEM_GROUP);
     }
 
     private static class Foods
