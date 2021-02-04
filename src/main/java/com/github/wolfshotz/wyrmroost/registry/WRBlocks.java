@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 
 public class WRBlocks
 {
-    static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroostDimension")
+    static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroost_dimension")
     {
         @Override
         public ItemStack createIcon()

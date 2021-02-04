@@ -17,12 +17,12 @@ public class DataGatherer
     {
         DataGenerator gen = event.getGenerator();
 
-//        if (event.includeServer())
-//        {
-//            TagData.provide(gen, event.getExistingFileHelper());
-//            gen.addProvider(new RecipeData(gen));
-//            gen.addProvider(new LootTableData(gen));
-//        }
+        if (event.includeServer())
+        {
+            TagData.provide(gen, event.getExistingFileHelper());
+            gen.addProvider(new RecipeData(gen));
+            gen.addProvider(new LootTableData(gen));
+        }
         if (event.includeClient())
         {
             ModelData.provide(gen, event.getExistingFileHelper());

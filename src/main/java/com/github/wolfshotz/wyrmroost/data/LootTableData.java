@@ -9,6 +9,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.criterion.EntityFlagsPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
@@ -36,30 +37,40 @@ import java.util.function.Supplier;
 
 import static com.github.wolfshotz.wyrmroost.registry.WRBlocks.*;
 
+
 class LootTableData extends LootTableProvider
 {
-    LootTableData(DataGenerator gen) { super(gen); }
+    LootTableData(DataGenerator gen)
+    {
+        super(gen);
+    }
 
     @Override
     protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables()
     {
-        return ImmutableList.of(Pair.of(Blocks::new, LootParameterSets.BLOCK), Pair.of(Entities::new, LootParameterSets.ENTITY));
+        return ImmutableList.of(Pair.of(BlookLoot::new, LootParameterSets.BLOCK), Pair.of(Entities::new, LootParameterSets.ENTITY));
     }
 
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {}
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker)
+    {
+    }
 
-    private static class Blocks extends BlockLootTables
+    private static class BlookLoot extends BlockLootTables
     {
         public final Map<Block, LootTable.Builder> lootTables = new HashMap<>();
 
         @Override
-        @SuppressWarnings("ConstantConditions")
         protected void addTables()
         {
             registerOre(BLUE_GEODE_ORE.get(), WRItems.BLUE_GEODE.get());
             registerOre(RED_GEODE_ORE.get(), WRItems.RED_GEODE.get());
             registerOre(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
+            registerLootTable(MULCH.get(), droppingWithSilkTouch(MULCH.get(), Blocks.DIRT));
+            registerLootTable(SILVER_MOSS.get(), onlyWithShears(SILVER_MOSS.get()));
+            registerLootTable(SILVER_MOSS_BODY.get(), onlyWithShears(SILVER_MOSS.get()));
+            registerLootTable(GILLA.get(), onlyWithShears(GILLA.get()));
+            registerLootTable(MOSS_VINE.get(), onlyWithShears(MOSS_VINE.get()));
 
             for (Block block : getKnownBlocks()) // All blocks that have not been given special treatment above, drop themselves!
             {
@@ -69,9 +80,15 @@ class LootTableData extends LootTableProvider
         }
 
         @Override
-        protected Iterable<Block> getKnownBlocks() { return ModUtils.getRegistryEntries(REGISTRY); }
+        protected Iterable<Block> getKnownBlocks()
+        {
+            return ModUtils.getRegistryEntries(REGISTRY);
+        }
 
-        private void registerOre(Block ore, Item output) { registerLootTable(ore, block -> droppingItemWithFortune(block, output)); }
+        private void registerOre(Block ore, Item output)
+        {
+            registerLootTable(ore, block -> droppingItemWithFortune(block, output));
+        }
 
         @Override
         protected void registerLootTable(Block blockIn, LootTable.Builder table)

@@ -112,7 +112,8 @@ class ModelData
                     String name = formatVine(fileName, i, flag);
                     String parent = formatVine("vine", i, flag);
                     models().singleTexture(name, mcLoc(parent), "vine", texture);
-                    if (i == 2) models().singleTexture(name + "_opposite", mcLoc(parent + "_opposite"), "vine", texture);
+                    if (i == 2)
+                        models().singleTexture(name + "_opposite", mcLoc(parent + "_opposite"), "vine", texture);
                 }
             }
         }

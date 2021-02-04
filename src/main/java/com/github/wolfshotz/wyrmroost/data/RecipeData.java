@@ -27,7 +27,10 @@ class RecipeData extends RecipeProvider
 
     private Consumer<IFinishedRecipe> consumer;
 
-    RecipeData(DataGenerator generatorIn) { super(generatorIn); }
+    RecipeData(DataGenerator generatorIn)
+    {
+        super(generatorIn);
+    }
 
     @Override
     public void act(DirectoryCache cache) throws IOException
@@ -48,7 +51,10 @@ class RecipeData extends RecipeProvider
         return ShapedRecipeBuilder.shapedRecipe(result, count);
     }
 
-    private ShapedRecipeBuilder shaped(IItemProvider result) { return shaped(result, 1); }
+    private ShapedRecipeBuilder shaped(IItemProvider result)
+    {
+        return shaped(result, 1);
+    }
 
     private ShapelessRecipeBuilder shapeless(IItemProvider result, int count)
     {
@@ -56,7 +62,10 @@ class RecipeData extends RecipeProvider
         return ShapelessRecipeBuilder.shapelessRecipe(result, count);
     }
 
-    private ShapelessRecipeBuilder shapeless(IItemProvider result) { return shapeless(result, 1); }
+    private ShapelessRecipeBuilder shapeless(IItemProvider result)
+    {
+        return shapeless(result, 1);
+    }
 
     /**
      * @param ingredients first element is used for criterion, design accordingly.
@@ -126,7 +135,10 @@ class RecipeData extends RecipeProvider
         REGISTERED.add(result);
     }
 
-    private void smelt(IItemProvider ingredient, IItemProvider result, float experience, int time) { smelt(ingredient, result, experience, time, false); }
+    private void smelt(IItemProvider ingredient, IItemProvider result, float experience, int time)
+    {
+        smelt(ingredient, result, experience, time, false);
+    }
 
     @Override
     protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
@@ -192,7 +204,10 @@ class RecipeData extends RecipeProvider
         shaped(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get()).key('X', WRItems.PURPLE_GEODE.get()).key('#', WRBlocks.PURPLE_GEODE_BLOCK.get()).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_purple_geode", hasItem(WRItems.PURPLE_GEODE.get())).build(consumer);
     }
 
-    private static void exempt(IItemProvider... exempts) { Collections.addAll(REGISTERED, exempts); }
+    private static void exempt(IItemProvider... exempts)
+    {
+        Collections.addAll(REGISTERED, exempts);
+    }
 
     private static void exempt(Class<? extends IItemProvider> exemptClass)
     {
