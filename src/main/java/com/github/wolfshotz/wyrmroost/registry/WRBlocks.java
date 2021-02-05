@@ -5,8 +5,10 @@ import com.github.wolfshotz.wyrmroost.blocks.EXPBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GillaBushBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBodyBlock;
+import com.github.wolfshotz.wyrmroost.registry.WRBlocks.WoodType;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -54,6 +56,7 @@ public class WRBlocks
     public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null);
     public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new);
     public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.TALL_PLANTS, SoundType.VINE).tickRandomly().doesNotBlockMovement().hardnessAndResistance(0.2f)));
+    public static final WoodType OSERI_WOOD = new WoodType("oseri");
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
@@ -114,6 +117,72 @@ public class WRBlocks
             INamedTag<Block> tag = BlockTags.makeWrapperTag(path);
             ITEM_BLOCK_TAGS.put(tag, ItemTags.makeWrapperTag(path));
             return tag;
+        }
+    }
+
+    static class WoodType
+    {
+        final RegistryObject<Block> planks;
+        final RegistryObject<Block> log;
+        final RegistryObject<Block> strippedLog;
+        final RegistryObject<Block> wood;
+        final RegistryObject<Block> strippedWood;
+        final RegistryObject<Block> slab;
+        final RegistryObject<Block> pressurePlate;
+        final RegistryObject<Block> fence;
+        final RegistryObject<Block> fenceGate;
+        final RegistryObject<Block> trapDoor;
+        final RegistryObject<Block> stairs;
+        final RegistryObject<Block> button;
+        final RegistryObject<Block> door;
+        final RegistryObject<Block> sign;
+        final RegistryObject<Block> wallSign;
+
+        public WoodType(String name, MaterialColor color, MaterialColor logColor)
+        {
+            this.planks = register(name, () -> new Block(props(color)));
+            this.log = register(name, createLogBlock(color, logColor));
+            this.strippedLog = register(name, createLogBlock(color, color));
+            this.wood = register(name, createLogBlock(logColor, logColor));
+            this.strippedWood = register(name, createLogBlock(color, color));
+            this.slab = register(name, () -> new SlabBlock(props(color)));
+            this.pressurePlate = register(name, () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).doesNotBlockMovement().hardnessAndResistance(0.5f)));
+            this.fence = register(name, () -> new FenceBlock(props(color)));
+            this.fenceGate = register(name, () -> new FenceGateBlock(props(color)));
+            this.trapDoor = register(name, () -> new TrapDoorBlock(props(color).hardnessAndResistance(3f).notSolid().setAllowsSpawn((s, r, p, e) -> false)));
+            this.stairs = register(name, () -> new StairsBlock(() -> getPlanks().getDefaultState(), props(color)));
+            this.button = register(name, () -> new WoodButtonBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().harvestTool(ToolType.AXE).hardnessAndResistance(0.5f).sound(SoundType.WOOD)));
+            this.door = register(name + "_door", () -> new DoorBlock(props(color).hardnessAndResistance(3f).notSolid()));
+            this.sign = register(name + "_sign", () -> new StandingSignBlock(props(color).doesNotBlockMovement().hardnessAndResistance(1f), WoodType));
+            this.wallSign = null;
+        }
+
+        public Block getPlanks()
+        {
+            return planks.get();
+        }
+
+        public Block getLog()
+        {
+            return log.get();
+        }
+
+        private static AbstractBlock.Properties props(MaterialColor color)
+        {
+            return AbstractBlock.Properties
+                    .create(Material.WOOD, color)
+                    .hardnessAndResistance(2f, 3f)
+                    .harvestTool(ToolType.AXE)
+                    .sound(SoundType.WOOD);
+        }
+
+        private static Supplier<Block> createLogBlock(MaterialColor top, MaterialColor bark)
+        {
+            return () -> new RotatedPillarBlock(AbstractBlock.Properties
+                    .create(Material.WOOD, state -> (top == bark || state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y)? top : bark)
+                    .hardnessAndResistance(2f)
+                    .harvestTool(ToolType.AXE)
+                    .sound(SoundType.WOOD));
         }
     }
 }
