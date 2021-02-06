@@ -140,21 +140,21 @@ public class WRBlocks
 
         public WoodType(String name, MaterialColor color, MaterialColor logColor)
         {
-            this.planks = register(name, () -> new Block(props(color)));
-            this.log = register(name, createLogBlock(color, logColor));
-            this.strippedLog = register(name, createLogBlock(color, color));
-            this.wood = register(name, createLogBlock(logColor, logColor));
-            this.strippedWood = register(name, createLogBlock(color, color));
-            this.slab = register(name, () -> new SlabBlock(props(color)));
-            this.pressurePlate = register(name, () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).doesNotBlockMovement().hardnessAndResistance(0.5f)));
-            this.fence = register(name, () -> new FenceBlock(props(color)));
-            this.fenceGate = register(name, () -> new FenceGateBlock(props(color)));
-            this.trapDoor = register(name, () -> new TrapDoorBlock(props(color).hardnessAndResistance(3f).notSolid().setAllowsSpawn((s, r, p, e) -> false)));
-            this.stairs = register(name, () -> new StairsBlock(() -> getPlanks().getDefaultState(), props(color)));
-            this.button = register(name, () -> new WoodButtonBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().harvestTool(ToolType.AXE).hardnessAndResistance(0.5f).sound(SoundType.WOOD)));
+            this.planks = register(name + "_planks", () -> new Block(props(color)));
+            this.log = register(name + "_log", createLogBlock(color, logColor));
+            this.strippedLog = register("stripped_" + name + "_log", createLogBlock(color, color));
+            this.wood = register(name + "_wood", createLogBlock(logColor, logColor));
+            this.strippedWood = register("stripped_" + name + "_wood", createLogBlock(color, color));
+            this.slab = register(name + "_slab", () -> new SlabBlock(props(color)));
+            this.pressurePlate = register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).doesNotBlockMovement().hardnessAndResistance(0.5f)));
+            this.fence = register(name + "_fence", () -> new FenceBlock(props(color)));
+            this.fenceGate = register(name + "_fence_gate", () -> new FenceGateBlock(props(color)));
+            this.trapDoor = register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).hardnessAndResistance(3f).notSolid().setAllowsSpawn((s, r, p, e) -> false)));
+            this.stairs = register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().getDefaultState(), props(color)));
+            this.button = register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().harvestTool(ToolType.AXE).hardnessAndResistance(0.5f).sound(SoundType.WOOD)));
             this.door = register(name + "_door", () -> new DoorBlock(props(color).hardnessAndResistance(3f).notSolid()));
             this.sign = register(name + "_sign", () -> new StandingSignBlock(props(color).doesNotBlockMovement().hardnessAndResistance(1f), WoodType));
-            this.wallSign = null;
+            this.wallSign = register(name + "_wall_sign", () -> );
         }
 
         public Block getPlanks()
@@ -165,6 +165,71 @@ public class WRBlocks
         public Block getLog()
         {
             return log.get();
+        }
+
+        public Block getStrippedLog()
+        {
+            return strippedLog.get();
+        }
+
+        public Block getWood()
+        {
+            return wood.get();
+        }
+
+        public Block getStrippedWood()
+        {
+            return strippedWood.get();
+        }
+
+        public Block getSlab()
+        {
+            return slab.get();
+        }
+
+        public Block getPressurePlate()
+        {
+            return pressurePlate.get();
+        }
+
+        public Block getFence()
+        {
+            return fence.get();
+        }
+
+        public Block getFenceGate()
+        {
+            return fenceGate.get();
+        }
+
+        public Block getTrapDoor()
+        {
+            return trapDoor.get();
+        }
+
+        public Block getStairs()
+        {
+            return stairs.get();
+        }
+
+        public Block getButton()
+        {
+            return button.get();
+        }
+
+        public Block getDoor()
+        {
+            return door.get();
+        }
+
+        public Block getSign()
+        {
+            return sign.get();
+        }
+
+        public Block getWallSign()
+        {
+            return wallSign.get();
         }
 
         private static AbstractBlock.Properties props(MaterialColor color)
