@@ -1,11 +1,7 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.blocks.EXPBlock;
-import com.github.wolfshotz.wyrmroost.blocks.GillaBushBlock;
-import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBlock;
-import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBodyBlock;
-import com.github.wolfshotz.wyrmroost.registry.WRBlocks.WoodType;
+import com.github.wolfshotz.wyrmroost.blocks.*;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -56,7 +52,7 @@ public class WRBlocks
     public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null);
     public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new);
     public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.TALL_PLANTS, SoundType.VINE).tickRandomly().doesNotBlockMovement().hardnessAndResistance(0.2f)));
-    public static final WoodType OSERI_WOOD = new WoodType("oseri");
+    public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
@@ -120,7 +116,7 @@ public class WRBlocks
         }
     }
 
-    static class WoodType
+    public static class WoodGroup
     {
         final RegistryObject<Block> planks;
         final RegistryObject<Block> log;
@@ -135,10 +131,10 @@ public class WRBlocks
         final RegistryObject<Block> stairs;
         final RegistryObject<Block> button;
         final RegistryObject<Block> door;
-        final RegistryObject<Block> sign;
-        final RegistryObject<Block> wallSign;
+//        final RegistryObject<Block> sign; todo signs
+//        final RegistryObject<Block> wallSign;
 
-        public WoodType(String name, MaterialColor color, MaterialColor logColor)
+        public WoodGroup(String name, MaterialColor color, MaterialColor logColor)
         {
             this.planks = register(name + "_planks", () -> new Block(props(color)));
             this.log = register(name + "_log", createLogBlock(color, logColor));
@@ -153,8 +149,6 @@ public class WRBlocks
             this.stairs = register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().getDefaultState(), props(color)));
             this.button = register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().harvestTool(ToolType.AXE).hardnessAndResistance(0.5f).sound(SoundType.WOOD)));
             this.door = register(name + "_door", () -> new DoorBlock(props(color).hardnessAndResistance(3f).notSolid()));
-            this.sign = register(name + "_sign", () -> new StandingSignBlock(props(color).doesNotBlockMovement().hardnessAndResistance(1f), WoodType));
-            this.wallSign = register(name + "_wall_sign", () -> );
         }
 
         public Block getPlanks()
@@ -222,15 +216,15 @@ public class WRBlocks
             return door.get();
         }
 
-        public Block getSign()
-        {
-            return sign.get();
-        }
+//        public Block getSign()
+//        {
+//            return sign.get();
+//        }
 
-        public Block getWallSign()
-        {
-            return wallSign.get();
-        }
+//        public Block getWallSign()
+//        {
+//            return wallSign.get();
+//        }
 
         private static AbstractBlock.Properties props(MaterialColor color)
         {

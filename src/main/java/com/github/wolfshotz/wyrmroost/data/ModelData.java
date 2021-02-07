@@ -2,18 +2,16 @@ package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
-import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.SnowyDirtBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Item;
-import net.minecraft.item.TieredItem;
+import net.minecraft.item.*;
 import net.minecraft.resources.ResourcePackType;
+import net.minecraft.state.properties.AttachFace;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.*;
@@ -44,18 +42,21 @@ class ModelData
             super(generator, Wyrmroost.MOD_ID, theGOODExistingFileHelper);
         }
 
-        @Override
-        protected void registerStatesAndModels()
+        void manualOverrides()
         {
             cross(WRBlocks.GILLA.get());
             cross(WRBlocks.SILVER_MOSS_BODY.get());
             cross(WRBlocks.SILVER_MOSS.get());
             vine(WRBlocks.MOSS_VINE.get());
             snowy(WRBlocks.MULCH.get());
+            woodGroup(WRBlocks.OSERI_WOOD);
+        }
 
+        @Override
+        protected void registerStatesAndModels()
+        {
+            manualOverrides();
 
-            // All unregistered blocks will be done here. They will be simple blocks with all sides of the same texture
-            // If this is unwanted, it is important to define so above
             List<String> MISSING_TEXTURES = new ArrayList<>();
             ignored.addAll(registeredBlocks.keySet());
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
@@ -65,12 +66,86 @@ class ModelData
 
                 ResourceLocation name = block.getRegistryName();
                 if (!theGOODExistingFileHelper.exists(new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+                {
                     MISSING_TEXTURES.add(name.getPath().replace("block/", ""));
-                else simpleBlock(block);
+                    continue;
+                }
+
+                simpleBlock(block);
             }
 
             if (!MISSING_TEXTURES.isEmpty())
                 Wyrmroost.LOG.error("Blocks are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
+        }
+
+        void woodGroup(WRBlocks.WoodGroup group)
+        {
+            ResourceLocation planks = blockTexture(group.getPlanks());
+
+            simpleBlock(group.getPlanks());
+            logBlock((RotatedPillarBlock) group.getLog());
+            logBlock((RotatedPillarBlock) group.getStrippedLog());
+            allSidedAxis((RotatedPillarBlock) group.getWood(), blockTexture(group.getLog()));
+            allSidedAxis((RotatedPillarBlock) group.getStrippedWood(), blockTexture(group.getStrippedLog()));
+            slabBlock((SlabBlock) group.getSlab(), planks, planks);
+            pressurePlate(group.getPressurePlate(), planks);
+            fenceBlock((FenceBlock) group.getFence(), planks);
+            fenceGateBlock((FenceGateBlock) group.getFenceGate(), planks);
+            TrapDoorBlock trapDoor = (TrapDoorBlock) group.getTrapDoor();
+            trapdoorBlock(trapDoor, blockTexture(trapDoor), true);
+            stairsBlock((StairsBlock) group.getStairs(), planks);
+            button((AbstractButtonBlock) group.getButton(), planks);
+            String door = group.getDoor().getRegistryName().getPath();
+            doorBlock((DoorBlock) group.getDoor(), modLoc("block/" + door + "_bottom"), modLoc("block/" + door + "_top"));
+        }
+
+        void button(AbstractButtonBlock block, ResourceLocation texture)
+        {
+            getVariantBuilder(block).forAllStates(state ->
+            {
+                boolean powered = state.get(AbstractButtonBlock.POWERED);
+                AttachFace face = state.get(HorizontalFaceBlock.FACE);
+                Direction direction = state.get(HorizontalBlock.HORIZONTAL_FACING);
+
+                int x = 0;
+                int y = (int) direction.getOpposite().getHorizontalAngle();
+
+                switch (face)
+                {
+                    case WALL:
+                        x = 90; break;
+                    case CEILING:
+                        x = 180; break;
+                    case FLOOR:
+                    default:
+                        break;
+                }
+
+                String path = block.getRegistryName().getPath() + (powered? "_pressed" : "");
+                ResourceLocation parent = mcLoc("button" + (powered? "_pressed" : ""));
+                ModelBuilder<?> model = models().withExistingParent(path, parent).texture("texture", texture);
+                return ConfiguredModel.builder().modelFile(model).rotationX(x).rotationY(y).uvLock(face == AttachFace.WALL).build();
+            });
+        }
+
+        void allSidedAxis(RotatedPillarBlock pillar, ResourceLocation texture)
+        {
+            ModelBuilder<?> model = models().cubeColumn(pillar.getRegistryName().getPath(), texture, texture);
+            axisBlock(pillar, model, model);
+        }
+
+        void pressurePlate(Block block, ResourceLocation texture)
+        {
+            String path = block.getRegistryName().getPath();
+
+            getVariantBuilder(block).forAllStates(state ->
+            {
+                boolean powered = state.get(PressurePlateBlock.POWERED);
+                String actualPath = path + (powered? "_down" : "");
+                ResourceLocation parent = mcLoc("block/pressure_plate_" + (powered? "down" : "up"));
+                ModelBuilder<?> model = models().withExistingParent(actualPath, parent).texture("texture", texture);
+                return ConfiguredModel.builder().modelFile(model).build();
+            });
         }
 
         void cross(Block block)
@@ -159,10 +234,24 @@ class ModelData
             return builder;
         }
 
+        ItemModelBuilder customInventoryItem(IItemProvider item, ResourceLocation texture, String parent)
+        {
+            ResourceLocation registry = item.asItem().getRegistryName();
+            String path = registry.getPath();
+            ModelBuilder<?> inv = getBuilder(path + "_inventory").parent(uncheckedModel("block/" + parent + "_inventory")).texture("texture", texture);
+            return getBuilderFor(item).parent(inv);
+        }
+
         private ItemModelBuilder getBuilderFor(IItemProvider item)
         {
             REGISTERED.add(item.asItem());
             return getBuilder(item.asItem().getRegistryName().getPath());
+        }
+
+        private ResourceLocation fromBlockTexture(Block block)
+        {
+            ResourceLocation reg = block.getRegistryName();
+            return new ResourceLocation(reg.getNamespace() + ":block/" + reg.getPath());
         }
 
         @Override
@@ -208,30 +297,48 @@ class ModelData
                         .model(uncheckedModel(rl));
             }
 
-            // spawn eggs
-            for (LazySpawnEggItem e : LazySpawnEggItem.SPAWN_EGGS)
-                getBuilderFor(e).parent(spawnEggTemplate);
-
             item(WRBlocks.GILLA.get());
             item(WRBlocks.SILVER_MOSS.get());
             item(WRBlocks.MOSS_VINE.get());
+            customInventoryItem(WRBlocks.OSERI_WOOD.getFence(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "fence");
+            customInventoryItem(WRBlocks.OSERI_WOOD.getButton(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "button");
 
-            // All standard item blocks
-            for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
+            // All items that do not require custom attention
+            for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY))
             {
-                if (block.asItem() == net.minecraft.item.Items.AIR || REGISTERED.contains(block.asItem())) continue;
-                if (block instanceof FlowingFluidBlock) // Buckets
+                if (REGISTERED.contains(item) || item == net.minecraft.item.Items.AIR) continue;
+
+                if (item instanceof SpawnEggItem)
                 {
-                    getBuilderFor(((FlowingFluidBlock) block).getFluid().getFilledBucket()).parent(bucket);
+                    getBuilderFor(item).parent(spawnEggTemplate);
                     continue;
                 }
 
-                ResourceLocation path = block.getRegistryName();
-                getBuilderFor(block).parent(uncheckedModel(path.getNamespace() + ":block/" + path.getPath()));
-            }
+                if (item instanceof BucketItem)
+                {
+                    getBuilderFor(item).parent(bucket);
+                    continue;
+                }
 
-            // All items that do not require custom attention
-            for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY)) if (!REGISTERED.contains(item)) item(item);
+                if (item instanceof BlockItem)
+                {
+                    Block block = ((BlockItem) item).getBlock();
+                    ResourceLocation registry = item.getRegistryName();
+                    String path = registry.getPath();
+
+                    if (block instanceof TrapDoorBlock) path += "_bottom";
+                    else if (block instanceof DoorBlock)
+                    {
+                        item(item);
+                        continue;
+                    }
+
+                    getBuilderFor(item).parent(uncheckedModel(registry.getNamespace() + ":block/" + path));
+                    continue;
+                }
+
+                item(item);
+            }
         }
 
         @Override

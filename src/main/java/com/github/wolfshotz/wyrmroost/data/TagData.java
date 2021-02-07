@@ -11,6 +11,7 @@ import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -24,7 +25,7 @@ public class TagData
         BlockData blockGen = new BlockData(gen, fileHelper);
         gen.addProvider(blockGen);
         gen.addProvider(new ItemData(gen, blockGen, fileHelper));
-        gen.addProvider(new EntityData(gen));
+        gen.addProvider(new EntityData(gen, fileHelper));
     }
 
     private static class ItemData extends ItemTagsProvider
@@ -83,9 +84,9 @@ public class TagData
 
     private static class EntityData extends EntityTypeTagsProvider
     {
-        private EntityData(DataGenerator generatorIn)
+        private EntityData(DataGenerator generatorIn, ExistingFileHelper helper)
         {
-            super(generatorIn);
+            super(generatorIn, Wyrmroost.MOD_ID, helper);
         }
 
         @Override
