@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "wyrmroost:oseri_log",
+    "wyrmroost:stripped_oseri_log",
+    "wyrmroost:oseri_wood",
+    "wyrmroost:stripped_oseri_wood"
+  ]
+}

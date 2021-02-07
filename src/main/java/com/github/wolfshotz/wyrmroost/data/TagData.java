@@ -4,18 +4,21 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
+import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.EntityTypeTagsProvider;
 import net.minecraft.data.ItemTagsProvider;
+import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nullable;
+import java.util.*;
 
 public class TagData
 {
@@ -30,19 +33,23 @@ public class TagData
 
     private static class ItemData extends ItemTagsProvider
     {
+        private final BlockData blockProvider;
+
         public ItemData(DataGenerator gen, BlockData blockGen, ExistingFileHelper fileHelper)
         {
             super(gen, blockGen, Wyrmroost.MOD_ID, fileHelper);
+            this.blockProvider = blockGen;
         }
 
         @Override
         protected void registerTags()
         {
             WRBlocks.Tags.ITEM_BLOCK_TAGS.forEach(this::copy);
+            blockProvider.tags.forEach(this::copy);
 
             getOrCreateBuilder(Tags.Items.EGGS).add(WRItems.DRAGON_EGG.get());
 
-            getOrCreateBuilder(ItemTags.field_232902_M_).add(WRItems.DRAGON_ARMOR_GOLD.get()); // PIGLIN_LOVED
+            getOrCreateBuilder(ItemTags.field_232903_N_).add(WRItems.DRAGON_ARMOR_GOLD.get()); // PIGLIN_LOVED
 
             getOrCreateBuilder(Tags.Items.GEMS).addTag(WRItems.Tags.GEMS_GEODE);
             getOrCreateBuilder(WRItems.Tags.GEMS_GEODE).add(WRItems.BLUE_GEODE.get(), WRItems.RED_GEODE.get(), WRItems.PURPLE_GEODE.get());
@@ -60,6 +67,8 @@ public class TagData
 
     private static class BlockData extends BlockTagsProvider
     {
+        final Map<ITag.INamedTag<Block>, ITag.INamedTag<Item>> tags = new HashMap<>();
+
         public BlockData(DataGenerator generatorIn, @Nullable ExistingFileHelper existingFileHelper)
         {
             super(generatorIn, Wyrmroost.MOD_ID, existingFileHelper);
@@ -69,16 +78,44 @@ public class TagData
         @SuppressWarnings("unchecked")
         protected void registerTags()
         {
-            getOrCreateBuilder(BlockTags.BEACON_BASE_BLOCKS).addTag(WRBlocks.Tags.STORAGE_BLOCKS_GEODE);
+            getOrCreateBuilder(BlockTags.BEACON_BASE_BLOCKS).addTag(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).addTag(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
 
-            getOrCreateBuilder(Tags.Blocks.ORES).addTag(WRBlocks.Tags.ORES_GEODE);
+            cloneToItem(Tags.Blocks.ORES, Tags.Items.ORES).addTag(WRBlocks.Tags.ORES_GEODE).addTag(WRBlocks.Tags.ORES_PLATINUM);
             getOrCreateBuilder(WRBlocks.Tags.ORES_GEODE).add(WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
+            getOrCreateBuilder(WRBlocks.Tags.ORES_PLATINUM).add(WRBlocks.PLATINUM_ORE.get());
 
-            getOrCreateBuilder(Tags.Blocks.STORAGE_BLOCKS).addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
+            cloneToItem(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS).addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
             getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).add(WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
             getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM).add(WRBlocks.PLATINUM_BLOCK.get());
 
             getOrCreateBuilder(BlockTags.DRAGON_IMMUNE).add(WRBlocks.PURPLE_GEODE_ORE.get());
+
+            tagWoodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS);
+        }
+
+        private void tagWoodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag)
+        {
+            getOrCreateBuilder(logTag).add(group.getLog(), group.getStrippedLog(), group.getWood(), group.getStrippedWood());
+
+            cloneToItem(BlockTags.PLANKS, ItemTags.PLANKS).add(group.getPlanks());
+            cloneToItem(BlockTags.WOODEN_BUTTONS, ItemTags.WOODEN_BUTTONS).add(group.getButton());
+            cloneToItem(BlockTags.WOODEN_DOORS, ItemTags.WOODEN_DOORS).add(group.getDoor());
+            cloneToItem(BlockTags.WOODEN_STAIRS, ItemTags.WOODEN_STAIRS).add(group.getStairs());
+            cloneToItem(BlockTags.WOODEN_SLABS, ItemTags.WOODEN_SLABS).add(group.getSlab());
+            cloneToItem(BlockTags.WOODEN_FENCES, ItemTags.WOODEN_FENCES).add(group.getFence());
+            cloneToItem(BlockTags.WOODEN_PRESSURE_PLATES, ItemTags.WOODEN_PRESSURE_PLATES).add(group.getPressurePlate());
+            cloneToItem(BlockTags.WOODEN_TRAPDOORS, ItemTags.WOODEN_TRAPDOORS).add(group.getTrapDoor());
+            getOrCreateBuilder(BlockTags.LOGS_THAT_BURN).addTag(logTag);
+            getOrCreateBuilder(BlockTags.FENCE_GATES).add(group.getFenceGate());
+        }
+
+        /**
+         * For use with vanilla tags for ease of generating
+         */
+        private Builder<Block> cloneToItem(ITag.INamedTag<Block> blockTag, ITag.INamedTag<Item> itemTag)
+        {
+            tags.put(blockTag, itemTag);
+            return getOrCreateBuilder(blockTag);
         }
     }
 

@@ -1,7 +1,10 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.blocks.*;
+import com.github.wolfshotz.wyrmroost.blocks.EXPBlock;
+import com.github.wolfshotz.wyrmroost.blocks.GillaBushBlock;
+import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBlock;
+import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBodyBlock;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -94,9 +97,11 @@ public class WRBlocks
         public static final Map<INamedTag<Block>, INamedTag<Item>> ITEM_BLOCK_TAGS = new HashMap<>();
 
         public static final INamedTag<Block> ORES_GEODE = forge("ores/geode");
+        public static final INamedTag<Block> ORES_PLATINUM = forge("ores/platinum");
 
         public static final INamedTag<Block> STORAGE_BLOCKS_GEODE = forge("storage_blocks/geode");
         public static final INamedTag<Block> STORAGE_BLOCKS_PLATINUM = forge("storage_blocks/platinum");
+        public static final INamedTag<Block> OSERI_LOGS = tag("oseri_logs");
 
         static INamedTag<Block> forge(String path)
         {
@@ -113,6 +118,11 @@ public class WRBlocks
             INamedTag<Block> tag = BlockTags.makeWrapperTag(path);
             ITEM_BLOCK_TAGS.put(tag, ItemTags.makeWrapperTag(path));
             return tag;
+        }
+
+        public static INamedTag<Item> getItemTagFor(INamedTag<Block> blockTag)
+        {
+            return ITEM_BLOCK_TAGS.get(blockTag);
         }
     }
 

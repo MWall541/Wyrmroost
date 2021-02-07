@@ -66,15 +66,20 @@ class LootTableData extends LootTableProvider
             registerOre(BLUE_GEODE_ORE.get(), WRItems.BLUE_GEODE.get());
             registerOre(RED_GEODE_ORE.get(), WRItems.RED_GEODE.get());
             registerOre(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
-            registerLootTable(MULCH.get(), droppingWithSilkTouch(MULCH.get(), Blocks.DIRT));
-            registerLootTable(SILVER_MOSS.get(), onlyWithShears(SILVER_MOSS.get()));
-            registerLootTable(SILVER_MOSS_BODY.get(), onlyWithShears(SILVER_MOSS.get()));
-            registerLootTable(GILLA.get(), onlyWithShears(GILLA.get()));
-            registerLootTable(MOSS_VINE.get(), onlyWithShears(MOSS_VINE.get()));
 
-            for (Block block : getKnownBlocks()) // All blocks that have not been given special treatment above, drop themselves!
+            registerLootTable(MULCH.get(), droppingWithSilkTouch(MULCH.get(), Blocks.DIRT));
+            registerLootTable(SILVER_MOSS.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(SILVER_MOSS_BODY.get(), onlyWithShears(SILVER_MOSS.get()));
+            registerLootTable(GILLA.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(MOSS_VINE.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(OSERI_WOOD.getDoor(), BlockLootTables::registerDoor);
+
+            // All blocks that have not been given special treatment above, drop themselves!
+            for (Block block : getKnownBlocks())
             {
-                if (!lootTables.containsKey(block) && block.getLootTable() != LootTables.EMPTY) // Loottable is already set to not have one, ignore.
+                ResourceLocation lootTable = block.getLootTable();
+                boolean notInheriting = lootTable.getPath().replace("blocks/", "").equals(block.getRegistryName().getPath());
+                if (!lootTables.containsKey(block) && lootTable != LootTables.EMPTY && notInheriting)
                     registerDropSelfLootTable(block);
             }
         }
@@ -87,7 +92,7 @@ class LootTableData extends LootTableProvider
 
         private void registerOre(Block ore, Item output)
         {
-            registerLootTable(ore, block -> droppingItemWithFortune(block, output));
+            registerLootTable(ore, droppingItemWithFortune(ore, output));
         }
 
         @Override

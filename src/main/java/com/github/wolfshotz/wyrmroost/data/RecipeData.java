@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
+import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -112,6 +113,23 @@ class RecipeData extends RecipeProvider
         shaped(hoe).key('X', materials).key('|', Items.STICK).patternLine("XX").patternLine(" |").patternLine(" |").addCriterion("has_material", hasItem(materials)).build(consumer);
     }
 
+    private void woodGroup(WRBlocks.WoodGroup group, ITag<Item> logTag)
+    {
+        InventoryChangeTrigger.Instance hasPlanks = hasItem(group.getPlanks());
+
+        shapeless(group.getPlanks(), 4).addIngredient(logTag).addCriterion("has_wood", hasItem(logTag)).build(consumer);
+        shaped(group.getWood(), 3).patternLine("##").patternLine("##").key('#', group.getLog()).addCriterion("has_log", hasItem(group.getLog())).build(consumer);
+        shaped(group.getStrippedWood(), 3).patternLine("##").patternLine("##").key('#', group.getStrippedLog()).addCriterion("has_log", hasItem(group.getStrippedLog())).build(consumer);
+        shaped(group.getSlab(), 6).patternLine("###").key('#', group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
+        shaped(group.getPressurePlate()).patternLine("##").key('#', group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
+        shaped(group.getFence(), 3).patternLine("W#W").patternLine("W#W").key('W', group.getPlanks()).key('#', Items.STICK).addCriterion("has_planks", hasPlanks).build(consumer);
+        shaped(group.getFenceGate()).patternLine("#W#").patternLine("#W#").key('W', group.getPlanks()).key('#', Items.STICK).addCriterion("has_planks", hasPlanks).build(consumer);
+        shaped(group.getTrapDoor(), 2).patternLine("###").patternLine("###").key('#', group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
+        shaped(group.getStairs(), 4).patternLine("#  ").patternLine("## ").patternLine("###").key('#', group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
+        shapeless(group.getButton()).addIngredient(group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
+        shaped(group.getDoor(), 3).patternLine("##").patternLine("##").patternLine("##").key('#', group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
+    }
+
     private void storageBlock(IItemProvider material, IItemProvider block)
     {
         shaped(block).key('X', material).patternLine("XXX").patternLine("XXX").patternLine("XXX").addCriterion("has_" + material.asItem().getRegistryName().getPath(), hasItem(material)).build(consumer);
@@ -202,6 +220,8 @@ class RecipeData extends RecipeProvider
         shaped(WRItems.DRAGON_ARMOR_BLUE_GEODE.get()).key('X', WRItems.BLUE_GEODE.get()).key('#', WRBlocks.BLUE_GEODE_BLOCK.get()).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_blue_geode", hasItem(WRItems.BLUE_GEODE.get())).build(consumer);
         shaped(WRItems.DRAGON_ARMOR_RED_GEODE.get()).key('X', WRItems.RED_GEODE.get()).key('#', WRBlocks.RED_GEODE_BLOCK.get()).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_red_geode", hasItem(WRItems.RED_GEODE.get())).build(consumer);
         shaped(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get()).key('X', WRItems.PURPLE_GEODE.get()).key('#', WRBlocks.PURPLE_GEODE_BLOCK.get()).patternLine("X# ").patternLine("X #").patternLine(" X ").addCriterion("has_purple_geode", hasItem(WRItems.PURPLE_GEODE.get())).build(consumer);
+
+        woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.OSERI_LOGS));
     }
 
     private static void exempt(IItemProvider... exempts)

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:oseri_planks"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:oseri_trapdoor",
+    "count": 2
+  }
+}
