@@ -48,7 +48,7 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     {
         BlockPos.Mutable mutable = pos.toMutable();
         BlockState bstate = state;
-        int j = ((GrowingPlantBlock) getTopPlantBlock()).getMaxGrowthHeight();
+        int j = getTopPlantBlock().getMaxGrowthHeight();
         for (int i = 0; i < j && bstate.isIn(state.getBlock()); i++)
         {
             if ((bstate = reader.getBlockState(mutable.move(growthDirection))).isIn(getTopPlantBlock()))
@@ -59,8 +59,8 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     }
 
     @Override
-    protected AbstractTopPlantBlock getTopPlantBlock()
+    protected GrowingPlantBlock getTopPlantBlock()
     {
-        return (AbstractTopPlantBlock) tip.get();
+        return (GrowingPlantBlock) tip.get();
     }
 }

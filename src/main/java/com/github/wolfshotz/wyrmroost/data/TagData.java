@@ -90,6 +90,7 @@ public class TagData
 
             getOrCreateBuilder(BlockTags.DRAGON_IMMUNE).add(WRBlocks.PURPLE_GEODE_ORE.get());
 
+            getOrCreateBuilder(Tags.Blocks.DIRT).add(WRBlocks.MULCH.get());
             tagWoodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS);
         }
 

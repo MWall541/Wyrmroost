@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.blocks.EXPBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GillaBushBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBlock;
 import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBodyBlock;
+import com.github.wolfshotz.wyrmroost.world.features.OseriTree;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
@@ -55,6 +56,10 @@ public class WRBlocks
     public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null);
     public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new);
     public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.TALL_PLANTS, SoundType.VINE).tickRandomly().doesNotBlockMovement().hardnessAndResistance(0.2f)));
+    public static final RegistryObject<Block> BLUE_OSERI_SAPLING = register("blue_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.BLUE), plant().tickRandomly()));
+    public static final RegistryObject<Block> BLUE_OSERI_LEAVES = register("blue_oseri_leaves", () -> new LeavesBlock(leaves()));
+    public static final RegistryObject<Block> BLUE_OSERI_VINES = register("blue_oseri_vines", () -> new GrowingPlantBlock(plant().tickRandomly(), Direction.DOWN, 0, WRBlocks.BLUE_OSERI_VINES_BODY));
+    public static final RegistryObject<Block> BLUE_OSERI_VINES_BODY = register("blue_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.BLUE_OSERI_VINES), null);
     public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
@@ -79,6 +84,15 @@ public class WRBlocks
     public static AbstractBlock.Properties plant()
     {
         return properties(Material.PLANTS, SoundType.PLANT).doesNotBlockMovement();
+    }
+
+    public static AbstractBlock.Properties leaves()
+    {
+        return properties(Material.LEAVES, SoundType.PLANT)
+                .hardnessAndResistance(0.2f)
+                .tickRandomly()
+                .notSolid()
+                .setAllowsSpawn((s, r, p, e) -> false).setSuffocates((s, r, p) -> false).setBlocksVision((s, r, p) -> false);
     }
 
     public static AbstractBlock.Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardnessResistance, SoundType sound)
