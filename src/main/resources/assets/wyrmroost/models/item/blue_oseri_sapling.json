@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:block/blue_oseri_sapling"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "wyrmroost:block/blue_oseri_sapling"
+  }
 }

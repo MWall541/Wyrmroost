@@ -72,6 +72,18 @@ public class ClientEvents
         RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS_BODY.get(), RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS.get(), RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(WRBlocks.MOSS_VINE.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.BLUE_OSERI_SAPLING.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.BLUE_OSERI_VINES.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.BLUE_OSERI_VINES_BODY.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.GOLD_OSERI_SAPLING.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.GOLD_OSERI_VINES.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.GOLD_OSERI_VINES_BODY.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.PINK_OSERI_SAPLING.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.PINK_OSERI_VINES.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.PINK_OSERI_VINES_BODY.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.PURPLE_OSERI_SAPLING.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.PURPLE_OSERI_VINES.get(), RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WRBlocks.PURPLE_OSERI_VINES_BODY.get(), RenderType.getCutout());
     }
 
     public static void stitchTextures(TextureStitchEvent.Pre evt)

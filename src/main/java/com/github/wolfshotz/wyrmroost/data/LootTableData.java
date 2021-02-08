@@ -14,6 +14,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.data.loot.EntityLootTables;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -22,6 +23,7 @@ import net.minecraft.loot.*;
 import net.minecraft.loot.conditions.EntityHasProperty;
 import net.minecraft.loot.conditions.KilledByPlayer;
 import net.minecraft.loot.conditions.RandomChance;
+import net.minecraft.loot.conditions.TableBonus;
 import net.minecraft.loot.functions.LootingEnchantBonus;
 import net.minecraft.loot.functions.SetCount;
 import net.minecraft.loot.functions.Smelt;
@@ -69,9 +71,21 @@ class LootTableData extends LootTableProvider
 
             registerLootTable(MULCH.get(), droppingWithSilkTouch(MULCH.get(), Blocks.DIRT));
             registerLootTable(SILVER_MOSS.get(), BlockLootTables::onlyWithShears);
-            registerLootTable(SILVER_MOSS_BODY.get(), onlyWithShears(SILVER_MOSS.get()));
+            registerLootTable(SILVER_MOSS_BODY.get(), BlockLootTables::onlyWithShears);
             registerLootTable(GILLA.get(), BlockLootTables::onlyWithShears);
             registerLootTable(MOSS_VINE.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(BLUE_OSERI_VINES.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(BLUE_OSERI_VINES_BODY.get(), BlockLootTables::onlyWithShears);
+            registerLeaves(BLUE_OSERI_LEAVES.get(), BLUE_OSERI_SAPLING.get());
+            registerLootTable(GOLD_OSERI_VINES.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(GOLD_OSERI_VINES_BODY.get(), BlockLootTables::onlyWithShears);
+            registerLeaves(GOLD_OSERI_LEAVES.get(), GOLD_OSERI_SAPLING.get());
+            registerLootTable(PINK_OSERI_VINES.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(PINK_OSERI_VINES_BODY.get(), BlockLootTables::onlyWithShears);
+            registerLeaves(PINK_OSERI_LEAVES.get(), PINK_OSERI_SAPLING.get());
+            registerLootTable(PURPLE_OSERI_VINES.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(PURPLE_OSERI_VINES_BODY.get(), BlockLootTables::onlyWithShears);
+            registerLeaves(PURPLE_OSERI_LEAVES.get(), PURPLE_OSERI_SAPLING.get());
             registerLootTable(OSERI_WOOD.getDoor(), BlockLootTables::registerDoor);
 
             // All blocks that have not been given special treatment above, drop themselves!
@@ -88,6 +102,11 @@ class LootTableData extends LootTableProvider
         protected Iterable<Block> getKnownBlocks()
         {
             return ModUtils.getRegistryEntries(REGISTRY);
+        }
+
+        private void registerLeaves(Block leaves, Block sapling)
+        {
+            registerLootTable(leaves, droppingWithChancesSticksAndApples(leaves, sapling, 0.02f, 0.022222223f, 0.025f, 0.033333335f, 0.1f));
         }
 
         private void registerOre(Block ore, Item output)

@@ -78,23 +78,47 @@ public class TagData
         @SuppressWarnings("unchecked")
         protected void registerTags()
         {
-            getOrCreateBuilder(BlockTags.BEACON_BASE_BLOCKS).addTag(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).addTag(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
+            getOrCreateBuilder(BlockTags.BEACON_BASE_BLOCKS)
+                    .addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
 
-            cloneToItem(Tags.Blocks.ORES, Tags.Items.ORES).addTag(WRBlocks.Tags.ORES_GEODE).addTag(WRBlocks.Tags.ORES_PLATINUM);
-            getOrCreateBuilder(WRBlocks.Tags.ORES_GEODE).add(WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
-            getOrCreateBuilder(WRBlocks.Tags.ORES_PLATINUM).add(WRBlocks.PLATINUM_ORE.get());
 
-            cloneToItem(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS).addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
-            getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).add(WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
-            getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM).add(WRBlocks.PLATINUM_BLOCK.get());
+            cloneToItem(Tags.Blocks.ORES, Tags.Items.ORES)
+                    .addTags(WRBlocks.Tags.ORES_GEODE, WRBlocks.Tags.ORES_PLATINUM);
 
-            getOrCreateBuilder(BlockTags.DRAGON_IMMUNE).add(WRBlocks.PURPLE_GEODE_ORE.get());
+            getOrCreateBuilder(WRBlocks.Tags.ORES_GEODE)
+                    .add(WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
 
-            getOrCreateBuilder(Tags.Blocks.DIRT).add(WRBlocks.MULCH.get());
-            tagWoodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS);
+            getOrCreateBuilder(WRBlocks.Tags.ORES_PLATINUM)
+                    .add(WRBlocks.PLATINUM_ORE.get());
+
+
+            cloneToItem(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS)
+                    .addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
+
+            getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_GEODE)
+                    .add(WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
+
+            getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM)
+                    .add(WRBlocks.PLATINUM_BLOCK.get());
+
+
+            getOrCreateBuilder(BlockTags.DRAGON_IMMUNE)
+                    .add(WRBlocks.PURPLE_GEODE_ORE.get());
+
+
+            getOrCreateBuilder(Tags.Blocks.DIRT)
+                    .add(WRBlocks.MULCH.get());
+
+            cloneToItem(BlockTags.LEAVES, ItemTags.LEAVES)
+                    .add(WRBlocks.BLUE_OSERI_LEAVES.get(), WRBlocks.GOLD_OSERI_LEAVES.get(), WRBlocks.PINK_OSERI_LEAVES.get(), WRBlocks.PURPLE_OSERI_LEAVES.get());
+
+            cloneToItem(BlockTags.SAPLINGS, ItemTags.SAPLINGS)
+                    .add(WRBlocks.BLUE_OSERI_SAPLING.get(), WRBlocks.GOLD_OSERI_SAPLING.get(), WRBlocks.PINK_OSERI_SAPLING.get(), WRBlocks.PURPLE_OSERI_SAPLING.get());
+
+            tagWoodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS, true);
         }
 
-        private void tagWoodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag)
+        private void tagWoodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag, boolean flammable)
         {
             getOrCreateBuilder(logTag).add(group.getLog(), group.getStrippedLog(), group.getWood(), group.getStrippedWood());
 
@@ -106,8 +130,10 @@ public class TagData
             cloneToItem(BlockTags.WOODEN_FENCES, ItemTags.WOODEN_FENCES).add(group.getFence());
             cloneToItem(BlockTags.WOODEN_PRESSURE_PLATES, ItemTags.WOODEN_PRESSURE_PLATES).add(group.getPressurePlate());
             cloneToItem(BlockTags.WOODEN_TRAPDOORS, ItemTags.WOODEN_TRAPDOORS).add(group.getTrapDoor());
-            getOrCreateBuilder(BlockTags.LOGS_THAT_BURN).addTag(logTag);
             getOrCreateBuilder(BlockTags.FENCE_GATES).add(group.getFenceGate());
+
+            if (flammable) getOrCreateBuilder(BlockTags.LOGS_THAT_BURN).addTag(logTag);
+            else getOrCreateBuilder(BlockTags.NON_FLAMMABLE_WOOD).addTag(logTag).add(group.getPlanks(), group.getButton(), group.getDoor(), group.getStairs(), group.getSlab(), group.getFence(), group.getFenceGate(), group.getPressurePlate(), group.getTrapDoor());
         }
 
         /**

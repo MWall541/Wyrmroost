@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cross",
   "textures": {
-    "cross": "wyrmroost:block/blue_oseri_sapling"
+    "cross": "wyrmroost:block/pink_oseri_sapling"
   }
 }

@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 public class GillaBushBlock extends BushBlock
 {
-    static final VoxelShape SHAPE = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
+    static final VoxelShape SHAPE = Block.makeCuboidShape(2, 0, 2, 14, 12, 14);
 
     public GillaBushBlock()
     {

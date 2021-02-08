@@ -4,6 +4,7 @@ import net.minecraft.block.*;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
@@ -18,6 +19,16 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     {
         super(properties, Direction.DOWN, WeepingVinesBlock.field_235637_d_, false);
         this.tip = tip;
+    }
+
+    @Override
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
+    {
+        BlockPos below = pos.offset(growthDirection.getOpposite());
+        BlockState belowState = worldIn.getBlockState(below);
+        Block belowBlock = belowState.getBlock();
+
+        return canGrowOn(belowBlock) && (belowBlock == getTopPlantBlock() || belowBlock == getBodyPlantBlock() || Block.doesSideFillSquare(belowState.getCollisionShape(worldIn, pos), growthDirection));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import net.minecraft.data.DataGenerator;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 /**
@@ -16,16 +17,18 @@ public class DataGatherer
     public static void gather(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
+        ExistingFileHelper fileHelper = event.getExistingFileHelper();
 
         if (event.includeServer())
         {
-            TagData.provide(gen, event.getExistingFileHelper());
+            TagData.provide(gen, fileHelper);
             gen.addProvider(new RecipeData(gen));
             gen.addProvider(new LootTableData(gen));
         }
         if (event.includeClient())
         {
-            ModelData.provide(gen, event.getExistingFileHelper());
+            gen.addProvider(new BlockModelData(gen, fileHelper));
+            gen.addProvider(new ItemModelData(gen, fileHelper));
 //            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
         }
     }

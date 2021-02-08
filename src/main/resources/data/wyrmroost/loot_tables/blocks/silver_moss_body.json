@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "wyrmroost:silver_moss"
+          "name": "minecraft:air"
         }
       ],
       "conditions": [

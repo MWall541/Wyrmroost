@@ -35,7 +35,7 @@
                   ]
                 }
               ],
-              "name": "wyrmroost:blue_oseri_leaves"
+              "name": "wyrmroost:pink_oseri_leaves"
             },
             {
               "type": "minecraft:item",
@@ -55,7 +55,7 @@
                   ]
                 }
               ],
-              "name": "wyrmroost:blue_oseri_sapling"
+              "name": "wyrmroost:pink_oseri_sapling"
             }
           ]
         }
