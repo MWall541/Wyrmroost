@@ -71,7 +71,7 @@ class LootTableData extends LootTableProvider
 
             registerLootTable(MULCH.get(), droppingWithSilkTouch(MULCH.get(), Blocks.DIRT));
             registerLootTable(SILVER_MOSS.get(), BlockLootTables::onlyWithShears);
-            registerLootTable(SILVER_MOSS_BODY.get(), BlockLootTables::onlyWithShears);
+            registerLootTable(SILVER_MOSS_BODY.get(), onlyWithShears(SILVER_MOSS.get()));
             registerLootTable(GILLA.get(), BlockLootTables::onlyWithShears);
             registerLootTable(MOSS_VINE.get(), BlockLootTables::onlyWithShears);
             registerLootTable(BLUE_OSERI_VINES.get(), BlockLootTables::onlyWithShears);
