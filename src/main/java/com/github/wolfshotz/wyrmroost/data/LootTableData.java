@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
@@ -75,7 +76,7 @@ class LootTableData extends LootTableProvider
             // All blocks that have not been given special treatment above, drop themselves!
             for (Block block : getKnownBlocks())
             {
-                if (block instanceof VineBlock || block instanceof AbstractPlantBlock || (block instanceof BushBlock && !(block instanceof SaplingBlock)))
+                if (block instanceof PetalsBlock || block instanceof VineBlock || block instanceof AbstractPlantBlock || (block instanceof BushBlock && !(block instanceof SaplingBlock)))
                 {
                     registerLootTable(block, BlockLootTables::onlyWithShears);
                     continue;
