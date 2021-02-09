@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client;
 
+import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
@@ -7,7 +8,12 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
+import net.minecraft.block.AbstractPlantBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BushBlock;
+import net.minecraft.block.VineBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -68,22 +74,13 @@ public class ClientEvents
         WRIO.screenSetup();
 
         // todo: better render layer setting
-        RenderTypeLookup.setRenderLayer(WRBlocks.GILLA.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS_BODY.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.SILVER_MOSS.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.MOSS_VINE.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.BLUE_OSERI_SAPLING.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.BLUE_OSERI_VINES.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.BLUE_OSERI_VINES_BODY.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.GOLD_OSERI_SAPLING.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.GOLD_OSERI_VINES.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.GOLD_OSERI_VINES_BODY.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.PINK_OSERI_SAPLING.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.PINK_OSERI_VINES.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.PINK_OSERI_VINES_BODY.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.PURPLE_OSERI_SAPLING.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.PURPLE_OSERI_VINES.get(), RenderType.getCutout());
-        RenderTypeLookup.setRenderLayer(WRBlocks.PURPLE_OSERI_VINES_BODY.get(), RenderType.getCutout());
+        for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
+        {
+            if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock || block instanceof PetalsBlock)
+            {
+                RenderTypeLookup.setRenderLayer(block, RenderType.getCutout());
+            }
+        }
     }
 
     public static void stitchTextures(TextureStitchEvent.Pre evt)

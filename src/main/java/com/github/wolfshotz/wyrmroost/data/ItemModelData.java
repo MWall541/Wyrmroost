@@ -5,9 +5,7 @@ import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.TrapDoorBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.*;
@@ -42,6 +40,13 @@ class ItemModelData extends ItemModelProvider
         final ModelFile spawnEggTemplate = uncheckedModel(mcLoc("item/template_spawn_egg"));
         final ModelFile bucket = uncheckedModel("forge:item/bucket");
 
+        item(WRItems.DRAGON_STAFF.get()).parent(uncheckedModel("item/handheld"));
+        customInventoryItem(WRBlocks.OSERI_WOOD.getFence(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "fence");
+        customInventoryItem(WRBlocks.OSERI_WOOD.getButton(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "button");
+
+        getBuilder("desert_wyrm_alive").parent(itemGenerated).texture("layer0", resource("desert_wyrm_alive"));
+        item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.rl("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
+
         getBuilderFor(WRItems.DRAGON_EGG.get())
                 .parent(uncheckedModel("builtin/entity"))
                 .guiLight(BlockModel.GuiLight.FRONT)
@@ -52,16 +57,6 @@ class ItemModelData extends ItemModelProvider
                 .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).rotation(253, 65, 0).translation(8, 2, 10).scale(0.75f).end()
                 .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
                 .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
-
-        getBuilder("desert_wyrm_alive")
-                .parent(itemGenerated)
-                .texture("layer0", resource("desert_wyrm_alive"));
-        item(WRItems.LDWYRM.get())
-                .override()
-                .predicate(Wyrmroost.rl("is_alive"), 1f)
-                .model(uncheckedModel(resource("desert_wyrm_alive")));
-
-        item(WRItems.DRAGON_STAFF.get()).parent(uncheckedModel("item/handheld"));
 
         final ItemModelBuilder cdBuilder = item(WRItems.COIN_DRAGON.get());
         for (int i = 1; i < 5; i++)
@@ -75,20 +70,6 @@ class ItemModelData extends ItemModelProvider
                     .predicate(CoinDragonItem.VARIANT_OVERRIDE, i)
                     .model(uncheckedModel(rl));
         }
-
-        item(WRBlocks.GILLA.get());
-        item(WRBlocks.SILVER_MOSS.get());
-        item(WRBlocks.MOSS_VINE.get());
-        item(WRBlocks.BLUE_OSERI_SAPLING.get());
-        item(WRBlocks.BLUE_OSERI_VINES.get());
-        item(WRBlocks.GOLD_OSERI_SAPLING.get());
-        item(WRBlocks.GOLD_OSERI_VINES.get());
-        item(WRBlocks.PINK_OSERI_SAPLING.get());
-        item(WRBlocks.PINK_OSERI_VINES.get());
-        item(WRBlocks.PURPLE_OSERI_SAPLING.get());
-        item(WRBlocks.PURPLE_OSERI_VINES.get());
-        customInventoryItem(WRBlocks.OSERI_WOOD.getFence(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "fence");
-        customInventoryItem(WRBlocks.OSERI_WOOD.getButton(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "button");
 
         // All items that do not require custom attention
         for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY))
@@ -114,9 +95,14 @@ class ItemModelData extends ItemModelProvider
                 String path = registry.getPath();
 
                 if (block instanceof TrapDoorBlock) path += "_bottom";
+                else if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock)
+                {
+                    item(item, Wyrmroost.rl("block/" + block.getRegistryName().getPath()));
+                    continue;
+                }
                 else if (block instanceof DoorBlock)
                 {
-                    item(item);
+                    item(block);
                     continue;
                 }
 
@@ -141,26 +127,23 @@ class ItemModelData extends ItemModelProvider
 
     private ItemModelBuilder item(IItemProvider item)
     {
-        return item(item, Wyrmroost.rl((item instanceof Block? "block/" : "item/") + item.asItem().getRegistryName().getPath()));
+        return item(item, resource(item.asItem().getRegistryName().getPath()));
     }
 
     private ItemModelBuilder item(IItemProvider item, ResourceLocation path)
     {
-        ItemModelBuilder builder = getBuilderFor(item);
-
-        // model
-        builder.parent(uncheckedModel(item instanceof TieredItem? "item/handheld" : "item/generated"));
+        ItemModelBuilder builder = getBuilderFor(item).parent(uncheckedModel(item instanceof TieredItem? "item/handheld" : "item/generated"));
 
         // texture
         if (existingFileHelper.exists(path, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
             builder.texture("layer0", path);
         else
-            Wyrmroost.LOG.warn("Missing Texture for Item: {} , model will not be registered.", path.getPath().replace("item/", ""));
+            Wyrmroost.LOG.warn("Missing Texture for Item: {}, model will not be registered.", item.asItem().getRegistryName());
 
         return builder;
     }
 
-    ItemModelBuilder customInventoryItem(IItemProvider item, ResourceLocation texture, String parent)
+    private ItemModelBuilder customInventoryItem(IItemProvider item, ResourceLocation texture, String parent)
     {
         ResourceLocation registry = item.asItem().getRegistryName();
         String path = registry.getPath();

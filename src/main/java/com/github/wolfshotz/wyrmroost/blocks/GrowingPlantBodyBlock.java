@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
 import net.minecraft.block.*;
+import net.minecraft.item.Item;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -70,7 +71,13 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     }
 
     @Override
-    protected GrowingPlantBlock getTopPlantBlock()
+    public Item asItem()
+    {
+        return getTopPlantBlock().asItem();
+    }
+
+    @Override
+    public GrowingPlantBlock getTopPlantBlock()
     {
         return (GrowingPlantBlock) tip.get();
     }

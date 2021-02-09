@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:air"
+          "name": "wyrmroost:gold_oseri_vines"
         }
       ],
       "conditions": [

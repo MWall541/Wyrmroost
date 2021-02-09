@@ -24,5 +24,5 @@ public class OseriTree extends Tree
         return null;
     }
 
-    public enum Type { BLUE, GOLD, PINK, PURPLE }
+    public enum Type { BLUE, GOLD, PINK, PURPLE, WHITE }
 }

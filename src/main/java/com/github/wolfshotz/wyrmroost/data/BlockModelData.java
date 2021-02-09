@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
@@ -30,21 +31,6 @@ class BlockModelData extends BlockStateProvider
 
     void manualOverrides()
     {
-        cross(WRBlocks.GILLA.get());
-        cross(WRBlocks.SILVER_MOSS_BODY.get());
-        cross(WRBlocks.SILVER_MOSS.get());
-        cross(WRBlocks.BLUE_OSERI_SAPLING.get());
-        cross(WRBlocks.BLUE_OSERI_VINES.get());
-        cross(WRBlocks.BLUE_OSERI_VINES_BODY.get());
-        cross(WRBlocks.GOLD_OSERI_SAPLING.get());
-        cross(WRBlocks.GOLD_OSERI_VINES.get());
-        cross(WRBlocks.GOLD_OSERI_VINES_BODY.get());
-        cross(WRBlocks.PINK_OSERI_SAPLING.get());
-        cross(WRBlocks.PINK_OSERI_VINES.get());
-        cross(WRBlocks.PINK_OSERI_VINES_BODY.get());
-        cross(WRBlocks.PURPLE_OSERI_SAPLING.get());
-        cross(WRBlocks.PURPLE_OSERI_VINES.get());
-        cross(WRBlocks.PURPLE_OSERI_VINES_BODY.get());
         vine(WRBlocks.MOSS_VINE.get());
         snowy(WRBlocks.MULCH.get());
         woodGroup(WRBlocks.OSERI_WOOD);
@@ -66,6 +52,18 @@ class BlockModelData extends BlockStateProvider
             if (!models().existingFileHelper.exists(new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
             {
                 MISSING_TEXTURES.add(name.getPath().replace("block/", ""));
+                continue;
+            }
+
+            if (block instanceof BushBlock || block instanceof AbstractPlantBlock)
+            {
+                cross(block);
+                continue;
+            }
+
+            if (block instanceof PetalsBlock)
+            {
+                petals(block);
                 continue;
             }
 
@@ -144,6 +142,14 @@ class BlockModelData extends BlockStateProvider
             ModelBuilder<?> model = models().withExistingParent(actualPath, parent).texture("texture", texture);
             return ConfiguredModel.builder().modelFile(model).build();
         });
+    }
+
+    void petals(Block block)
+    {
+        getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder()
+                .modelFile(models().withExistingParent(block.getRegistryName().getPath(), modLoc("petals")).texture("particle", blockTexture(block)))
+                .rotationY(state.get(PetalsBlock.AXIS) == Direction.Axis.X? 90 : 0)
+                .build());
     }
 
     void cross(Block block)
