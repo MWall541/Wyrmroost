@@ -93,6 +93,19 @@ class BlockModelData extends BlockStateProvider
         button((AbstractButtonBlock) group.getButton(), planks);
         String door = group.getDoor().getRegistryName().getPath();
         doorBlock((DoorBlock) group.getDoor(), modLoc("block/" + door + "_bottom"), modLoc("block/" + door + "_top"));
+        sign((StandingSignBlock) group.getSign(), planks);
+        sign((WallSignBlock) group.getWallSign(), planks);
+    }
+
+    void sign(AbstractSignBlock block, ResourceLocation texture)
+    {
+        getVariantBuilder(block)
+                .partialState()
+                .setModels(ConfiguredModel.builder()
+                        .modelFile(models()
+                                .getBuilder(block.getRegistryName().getPath())
+                                .texture("particle", texture))
+                        .build());
     }
 
     void button(AbstractButtonBlock block, ResourceLocation texture)

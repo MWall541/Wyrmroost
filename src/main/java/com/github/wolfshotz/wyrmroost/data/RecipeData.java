@@ -128,6 +128,7 @@ class RecipeData extends RecipeProvider
         shaped(group.getStairs(), 4).patternLine("#  ").patternLine("## ").patternLine("###").key('#', group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
         shapeless(group.getButton()).addIngredient(group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
         shaped(group.getDoor(), 3).patternLine("##").patternLine("##").patternLine("##").key('#', group.getPlanks()).addCriterion("has_planks", hasPlanks).build(consumer);
+        shaped(group.getSign(), 3).patternLine("###").patternLine("###").patternLine(" X ").key('#', group.getPlanks()).key('X', Items.STICK).addCriterion("has_planks", hasPlanks).build(consumer);
     }
 
     private void storageBlock(IItemProvider material, IItemProvider block)

@@ -70,6 +70,7 @@ public class ClientEvents
     {
         CALLBACKS.forEach(Runnable::run);
         CALLBACKS.clear();
+
         WRKeybind.registerKeys();
         WRIO.screenSetup();
 

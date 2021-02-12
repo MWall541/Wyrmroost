@@ -18,7 +18,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TagData
 {
@@ -131,9 +132,11 @@ public class TagData
             cloneToItem(BlockTags.WOODEN_PRESSURE_PLATES, ItemTags.WOODEN_PRESSURE_PLATES).add(group.getPressurePlate());
             cloneToItem(BlockTags.WOODEN_TRAPDOORS, ItemTags.WOODEN_TRAPDOORS).add(group.getTrapDoor());
             getOrCreateBuilder(BlockTags.FENCE_GATES).add(group.getFenceGate());
+            getOrCreateBuilder(BlockTags.STANDING_SIGNS).add(group.getSign());
+            getOrCreateBuilder(BlockTags.WALL_SIGNS).add(group.getWallSign());
 
             if (flammable) getOrCreateBuilder(BlockTags.LOGS_THAT_BURN).addTag(logTag);
-            else getOrCreateBuilder(BlockTags.NON_FLAMMABLE_WOOD).addTag(logTag).add(group.getPlanks(), group.getButton(), group.getDoor(), group.getStairs(), group.getSlab(), group.getFence(), group.getFenceGate(), group.getPressurePlate(), group.getTrapDoor());
+            else getOrCreateBuilder(BlockTags.NON_FLAMMABLE_WOOD).addTag(logTag).add(group.getPlanks(), group.getButton(), group.getDoor(), group.getStairs(), group.getSlab(), group.getFence(), group.getFenceGate(), group.getPressurePlate(), group.getTrapDoor(), group.getSign(), group.getWallSign());
         }
 
         /**

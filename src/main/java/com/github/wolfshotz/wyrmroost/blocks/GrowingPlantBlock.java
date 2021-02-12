@@ -94,7 +94,7 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
 
     public boolean hasMaxHeight()
     {
-        return maxGrowthHeight != -1;
+        return maxGrowthHeight != 0;
     }
 
     public int getHeight(IWorldReader world, BlockPos pos)

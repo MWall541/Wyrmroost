@@ -100,7 +100,7 @@ class ItemModelData extends ItemModelProvider
                     item(item, Wyrmroost.rl("block/" + block.getRegistryName().getPath()));
                     continue;
                 }
-                else if (block instanceof DoorBlock)
+                else if (block instanceof DoorBlock || block instanceof StandingSignBlock)
                 {
                     item(block);
                     continue;
