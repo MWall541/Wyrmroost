@@ -76,7 +76,7 @@ public class WRBlocks
     public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new GrowingPlantBlock(plant().tickRandomly(), Direction.DOWN, 0, WRBlocks.WHITE_OSERI_VINES_BODY));
     public static final RegistryObject<Block> WHITE_OSERI_VINES_BODY = register("white_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.WHITE_OSERI_VINES), null);
     public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()));
-    public static final WoodGroup OSERI_WOOD = new WoodGroup(WRWoodType.OSERI, MaterialColor.SAND, MaterialColor.STONE);
+    public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
@@ -156,7 +156,7 @@ public class WRBlocks
         }
     }
 
-    public static class WoodGroup
+    public static class WoodGroup extends WoodType
     {
         final RegistryObject<Block> planks;
         final RegistryObject<Block> log;
@@ -174,25 +174,26 @@ public class WRBlocks
         final RegistryObject<Block> sign;
         final RegistryObject<Block> wallSign;
 
-        public WoodGroup(WoodType type, MaterialColor color, MaterialColor logColor)
+        public WoodGroup(String name, MaterialColor color, MaterialColor logColor)
         {
-            String name = type.getName();
+            super(name);
+            WoodType.register(this);
 
-            this.planks = register(name + "_planks", () -> new Block(props(color)));
-            this.log = register(name + "_log", () -> new LogBlock(color, logColor, self().strippedLog));
-            this.strippedLog = register("stripped_" + name + "_log", () -> new RotatedPillarBlock(LogBlock.properties(color, logColor)));
-            this.wood = register(name + "_wood", () -> new LogBlock(logColor, logColor, self().strippedWood));
-            this.strippedWood = register("stripped_" + name + "_wood", () -> new RotatedPillarBlock(LogBlock.properties(color, color)));
-            this.slab = register(name + "_slab", () -> new SlabBlock(props(color)));
-            this.pressurePlate = register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).doesNotBlockMovement().hardnessAndResistance(0.5f)));
-            this.fence = register(name + "_fence", () -> new FenceBlock(props(color)));
-            this.fenceGate = register(name + "_fence_gate", () -> new FenceGateBlock(props(color)));
-            this.trapDoor = register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).hardnessAndResistance(3f).notSolid().setAllowsSpawn((s, r, p, e) -> false)));
-            this.stairs = register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().getDefaultState(), props(color)));
-            this.button = register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().harvestTool(ToolType.AXE).hardnessAndResistance(0.5f).sound(SoundType.WOOD)));
-            this.door = register(name + "_door", () -> new DoorBlock(props(color).hardnessAndResistance(3f).notSolid()));
-            this.wallSign = register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).doesNotBlockMovement().hardnessAndResistance(1f).lootFrom(self().sign), type), null);
-            this.sign = register(name + "_sign", () -> new WRSignBlock(props(color).doesNotBlockMovement().hardnessAndResistance(1f), type), b -> new SignItem(new Item.Properties().maxStackSize(16).group(BLOCKS_ITEM_GROUP), b, getWallSign()));
+            this.planks = WRBlocks.register(name + "_planks", () -> new Block(props(color)));
+            this.log = WRBlocks.register(name + "_log", () -> new LogBlock(color, logColor, self().strippedLog));
+            this.strippedLog = WRBlocks.register("stripped_" + name + "_log", () -> new RotatedPillarBlock(LogBlock.properties(color, logColor)));
+            this.wood = WRBlocks.register(name + "_wood", () -> new LogBlock(logColor, logColor, self().strippedWood));
+            this.strippedWood = WRBlocks.register("stripped_" + name + "_wood", () -> new RotatedPillarBlock(LogBlock.properties(color, color)));
+            this.slab = WRBlocks.register(name + "_slab", () -> new SlabBlock(props(color)));
+            this.pressurePlate = WRBlocks.register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).doesNotBlockMovement().hardnessAndResistance(0.5f)));
+            this.fence = WRBlocks.register(name + "_fence", () -> new FenceBlock(props(color)));
+            this.fenceGate = WRBlocks.register(name + "_fence_gate", () -> new FenceGateBlock(props(color)));
+            this.trapDoor = WRBlocks.register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).hardnessAndResistance(3f).notSolid().setAllowsSpawn((s, r, p, e) -> false)));
+            this.stairs = WRBlocks.register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().getDefaultState(), props(color)));
+            this.button = WRBlocks.register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().harvestTool(ToolType.AXE).hardnessAndResistance(0.5f).sound(SoundType.WOOD)));
+            this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).hardnessAndResistance(3f).notSolid()));
+            this.wallSign = WRBlocks.register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).doesNotBlockMovement().hardnessAndResistance(1f).lootFrom(self().sign), this), null);
+            this.sign = WRBlocks.register(name + "_sign", () -> new WRSignBlock(props(color).doesNotBlockMovement().hardnessAndResistance(1f), this), b -> new SignItem(new Item.Properties().maxStackSize(16).group(BLOCKS_ITEM_GROUP), b, getWallSign()));
         }
 
         public Block getPlanks()

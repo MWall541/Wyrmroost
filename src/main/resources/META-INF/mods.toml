@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 license="All Rights Reserved (See Github)"
 
 issueTrackerURL="https://github.com/WolfShotz/Wyrmroost/issues"
@@ -17,7 +17,7 @@ authors="WolfShotz, Kingdomall, Shannieann, Ukan"
 [[dependencies.wyrmroost]]
     modId="forge"
     mandatory=true
-    versionRange="[34.1.35,)"
+    versionRange="[35.1.4,)"
     ordering="NONE"
     side="BOTH"
 

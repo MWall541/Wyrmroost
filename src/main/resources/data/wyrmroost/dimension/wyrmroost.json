@@ -1,0 +1,15 @@
+{
+  "type": "wyrmroost:wyrmroost",
+  "generator": {
+    "type": "minecraft:noise",
+    "seed": 0,
+    "biome_source": {
+      "type": "minecraft:checkerboard",
+      "seed": 0,
+      "biomes": [
+        "wyrmroost:tincture_weald"
+      ]
+    },
+    "settings": "minecraft:overworld"
+  }
+}

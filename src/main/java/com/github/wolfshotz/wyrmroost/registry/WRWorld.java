@@ -3,8 +3,10 @@ package com.github.wolfshotz.wyrmroost.registry;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.world.features.NoExposureReplacementFeature;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
@@ -20,6 +22,8 @@ import java.util.function.Consumer;
 public class WRWorld
 {
     public static List<Consumer<BiomeLoadingEvent>> BIOME_LISTENERS = new ArrayList<>();
+
+    public static final RegistryKey<Biome> TINCTURE_WEALD = biomeKey("tincture_weald");
 
     public static void onBiomeLoad(BiomeLoadingEvent evt)
     {
@@ -39,6 +43,11 @@ public class WRWorld
                 generator.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PLATINUM_ORE_FEATURE);
                 generator.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, Features.BLUE_GEODE_FEATURE);
         }
+    }
+
+    static RegistryKey<Biome> biomeKey(String name)
+    {
+        return RegistryKey.func_240903_a_(Registry.BIOME_KEY, Wyrmroost.rl(name));
     }
 
     public static class Features

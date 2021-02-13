@@ -1,0 +1,74 @@
+{
+  "surface_builder": "wyrmroost:mulch",
+  "depth": 0.2,
+  "scale": 0.2,
+  "temperature": 0.7,
+  "downfall": 0.8,
+  "precipitation": "rain",
+  "category": "taiga",
+  "player_spawn_friendly": false,
+  "effects": {
+    "sky_color": 10469887,
+    "fog_color": 12638463,
+    "water_color": 2551967,
+    "water_fog_color": 732455,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    }
+  },
+  "starts": [],
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:cave",
+      "minecraft:canyon"
+    ]
+  },
+  "features": [
+    [],
+    [
+      "minecraft:lake_water",
+      "minecraft:lake_lava"
+    ],
+    [
+      "minecraft:forest_rock"
+    ],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_dirt",
+      "minecraft:ore_gravel",
+      "minecraft:ore_granite",
+      "minecraft:ore_diorite",
+      "minecraft:ore_andesite",
+      "minecraft:ore_coal",
+      "minecraft:ore_iron",
+      "minecraft:ore_gold",
+      "minecraft:ore_redstone",
+      "minecraft:ore_diamond",
+      "minecraft:ore_lapis",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
+    ],
+    [],
+    [
+      "minecraft:patch_large_fern",
+      "minecraft:brown_mushroom_normal",
+      "minecraft:red_mushroom_normal",
+      "minecraft:patch_sugar_cane",
+      "minecraft:patch_pumpkin",
+      "minecraft:spring_water",
+      "minecraft:spring_lava",
+      "wyrmroost:patch_gilla_bush"
+    ],
+    [
+      "minecraft:freeze_top_layer"
+    ]
+  ]
+}
