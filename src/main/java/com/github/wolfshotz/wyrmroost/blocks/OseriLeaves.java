@@ -1,14 +1,14 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class OseriLeaves extends Block
+public class OseriLeaves extends LeavesBlock
 {
     public OseriLeaves(Properties properties)
     {

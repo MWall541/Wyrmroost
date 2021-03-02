@@ -49,7 +49,8 @@ public class Wyrmroost
     {
         final String PROTOCOL_VERSION = "1.0";
         final SimpleChannel network = NetworkRegistry.ChannelBuilder
-                .named(rl("network")).clientAcceptedVersions(PROTOCOL_VERSION::equals)
+                .named(rl("network"))
+                .clientAcceptedVersions(PROTOCOL_VERSION::equals)
                 .serverAcceptedVersions(PROTOCOL_VERSION::equals)
                 .networkProtocolVersion(() -> PROTOCOL_VERSION)
                 .simpleChannel();

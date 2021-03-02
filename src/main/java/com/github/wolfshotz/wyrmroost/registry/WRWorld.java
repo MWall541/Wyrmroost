@@ -6,6 +6,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
+import net.minecraft.world.Dimension;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
@@ -22,6 +23,8 @@ import java.util.function.Consumer;
 public class WRWorld
 {
     public static List<Consumer<BiomeLoadingEvent>> BIOME_LISTENERS = new ArrayList<>();
+
+    public static final RegistryKey<Dimension> THE_WYRMROOST = RegistryKey.func_240903_a_(Registry.DIMENSION_KEY, Wyrmroost.rl("wyrmroost"));
 
     public static final RegistryKey<Biome> TINCTURE_WEALD = biomeKey("tincture_weald");
 

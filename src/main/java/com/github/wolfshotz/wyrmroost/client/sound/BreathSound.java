@@ -1,4 +1,4 @@
-package com.github.wolfshotz.wyrmroost.client.sounds;
+package com.github.wolfshotz.wyrmroost.client.sound;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.RoyalRedEntity;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;

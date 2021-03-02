@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
-import com.github.wolfshotz.wyrmroost.client.sounds.BreathSound;
+import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;

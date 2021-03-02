@@ -45,6 +45,5 @@ public class WRSignBlock extends StandingSignBlock
         {
             return new WRSignTileEntity();
         }
-
     }
 }

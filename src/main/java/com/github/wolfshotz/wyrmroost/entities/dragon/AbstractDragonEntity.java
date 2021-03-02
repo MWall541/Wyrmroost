@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
-import com.github.wolfshotz.wyrmroost.client.sounds.FlyingSound;
+import com.github.wolfshotz.wyrmroost.client.sound.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;

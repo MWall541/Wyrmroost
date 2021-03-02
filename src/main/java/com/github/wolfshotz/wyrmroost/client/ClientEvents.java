@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.client;
 
-import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
@@ -10,10 +9,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
-import net.minecraft.block.AbstractPlantBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BushBlock;
-import net.minecraft.block.VineBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -30,6 +26,7 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -44,6 +41,11 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class ClientEvents
 {
+    static
+    {
+        WRDimensionRenderInfo.init();
+    }
+
     public static final List<Runnable> CALLBACKS = new ArrayList<>();
 
     public static void load()
@@ -77,9 +79,13 @@ public class ClientEvents
         // todo: better render layer setting
         for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
         {
-            if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock || block instanceof PetalsBlock)
+            if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock)
             {
                 RenderTypeLookup.setRenderLayer(block, RenderType.getCutout());
+            }
+            else if (block instanceof LeavesBlock)
+            {
+                RenderTypeLookup.setRenderLayer(block, RenderType.getCutoutMipped());
             }
         }
     }
@@ -112,6 +118,11 @@ public class ClientEvents
 
         if (view != PointOfView.FIRST_PERSON)
             ((AbstractDragonEntity) entity).setMountCameraAngles(view == PointOfView.THIRD_PERSON_BACK, event);
+    }
+
+    public static void onClientWorldLoad(WorldEvent.Load event)
+    {
+//        event.getWorld()
     }
 
     // =====================
