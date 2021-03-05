@@ -13,9 +13,9 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'net.minecraftforge.gradle'
 
-version = "${project.mc_version}-${project.mod_version}"
+version = "$project.mc_version-$project.mod_version"
 group = 'com.github.wolfShotz.wyrmroost'
-archivesBaseName = "${project.archiveBaseName}"
+archivesBaseName = "$project.archiveBaseName"
 
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
@@ -25,8 +25,18 @@ sourceSets {
     main.resources.srcDirs += 'src/main/generated_resources'
 }
 
+repositories {
+    maven {
+        url "https://maven.tterrag.com/"
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
+}
+
 minecraft {
-    mappings channel: project.mcp_channel, version: "${project.mcp_mappings}-${project.mappings_version}"
+    mappings channel: 'snapshot', version: '20210305-yarn-1.16.5'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -62,10 +72,6 @@ minecraft {
             }
         }
     }
-}
-
-dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 }
 
 jar {
