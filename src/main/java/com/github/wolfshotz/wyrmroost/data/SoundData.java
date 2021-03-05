@@ -93,10 +93,9 @@ public class SoundData implements IDataProvider
 
         getBuilder(WRSounds.ENTITY_COINDRAGON_IDLE.get()).subtitle("Coin Dragon chirps").sounds(Wyrmroost::rl, "entity/coin_dragon/%s", "idle", "idle1", "idle2").build(json);
 
-//        getBuilder(WRSounds.ENTITY_ORBWYRM_IDLE.get()).subtitle("Orbwyrm Hissing").sounds(Wyrmroost::rl, "entity/orbwyrm/%s", "idle1", "idle2", "idle3").build(json);
-//        getBuilder(WRSounds.ENTITY_ORBWYRM_HURT.get()).subtitle("Orbwyrm Screech").sounds(Wyrmroost::rl, "entity/orbwyrm/%s", "hurt1", "hurt2", "hurt3").build(json);
-//        getBuilder(WRSounds.ENTITY_ORBWYRM_HISS.get()).subtitle("Orbwyrm Hiss").sound(Wyrmroost.rl("entity/orbwyrm/hiss")).build(json);
-//        getBuilder(WRSounds.ENTITY_ORBWYRM_DEATH.get()).subtitle("Orbwyrm Cry").sound(Wyrmroost.rl("entity/orbwyrm/death")).build(json);
+        getBuilder(WRSounds.WEATHER_SANDSTORM.get()).sounds(Wyrmroost::rl, "weather/sandstorm/%s", "sandstorm1", "sandstorm2", "sandstorm3", "sandstorm4", "sandstorm5", "sandstorm6").build(json);
+
+        getBuilder(WRSounds.MUSIC_ASHEN_DESERT.get()).sound(Wyrmroost.rl("music/game/wyrmroost/ashen_desert")).build(json);
     }
 
     private Builder getBuilder(SoundEvent sound)

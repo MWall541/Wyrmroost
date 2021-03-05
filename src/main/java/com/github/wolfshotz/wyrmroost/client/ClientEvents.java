@@ -7,6 +7,7 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
+import com.github.wolfshotz.wyrmroost.registry.WRParticles;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.*;
@@ -20,10 +21,12 @@ import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -59,9 +62,8 @@ public class ClientEvents
 
         forgeBus.addListener(RenderHelper::renderWorld);
         forgeBus.addListener(RenderHelper::renderEntities);
-//        forgeBus.addListener(RenderHelper::renderFog);
-//        forgeBus.addListener(RenderHelper::fogColors);
         forgeBus.addListener(ClientEvents::cameraPerspective);
+        forgeBus.addListener(ClientEvents::consumeParticles);
     }
 
     // ====================
@@ -86,6 +88,18 @@ public class ClientEvents
             else if (block instanceof LeavesBlock)
             {
                 RenderTypeLookup.setRenderLayer(block, RenderType.getCutoutMipped());
+            }
+        }
+    }
+
+    public static void consumeParticles(ParticleFactoryRegisterEvent event)
+    {
+        for (ParticleType<?> entry : ModUtils.getRegistryEntries(WRParticles.REGISTRY))
+        {
+            if (entry instanceof WRParticles.WRParticleType<?>)
+            {
+                WRParticles.WRParticleType<?> type = (WRParticles.WRParticleType<?>) entry;
+                getClient().particles.registerFactory(type, sprite -> ((t, w, x, y, z, xS, yS, zS) -> type.getFactory().create(ModUtils.cast(t), w, sprite, x, y, z, xS, yS, zS)));
             }
         }
     }

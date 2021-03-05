@@ -1,6 +1,6 @@
 {
   "wing.flap": {
-    "subtitle": "Dragon wing flap",
+    "subtitle": "Dragon wing flaps",
     "sounds": [
       {
         "name": "wyrmroost:entity/other/wings/flap1"
@@ -14,7 +14,7 @@
     ]
   },
   "breathweapon.fire": {
-    "subtitle": "Dragon fire breath",
+    "subtitle": "Dragon breathes fire",
     "sounds": [
       {
         "name": "wyrmroost:entity/other/breath/fire_breath"
@@ -22,7 +22,7 @@
     ]
   },
   "entity.ldwyrm.idle": {
-    "subtitle": "Desertwyrm click",
+    "subtitle": "Desertwyrm clicks",
     "sounds": [
       {
         "name": "wyrmroost:entity/lesser_desertwyrm/idle1"
@@ -124,7 +124,7 @@
     ]
   },
   "entity.stalker.hurt": {
-    "subtitle": "Rooststalker ccreeches",
+    "subtitle": "Rooststalker screeches",
     "sounds": [
       {
         "name": "wyrmroost:entity/roost_stalker/hurt"
@@ -165,7 +165,7 @@
     ]
   },
   "entity.bfly.roar": {
-    "subtitle": "Butterfly Leviathan ascension",
+    "subtitle": "Butterfly Leviathan ascends",
     "sounds": [
       {
         "name": "wyrmroost:entity/butterfly_leviathan/roar"
@@ -311,7 +311,7 @@
     ]
   },
   "entity.alpine.hurt": {
-    "subtitle": "Alpine whines",
+    "subtitle": "Alpine whinse",
     "sounds": [
       {
         "name": "wyrmroost:entity/alpine/hurt1"
@@ -357,6 +357,35 @@
       },
       {
         "name": "wyrmroost:entity/coin_dragon/idle2"
+      }
+    ]
+  },
+  "weather.sandstorm": {
+    "sounds": [
+      {
+        "name": "wyrmroost:weather/sandstorm/sandstorm1"
+      },
+      {
+        "name": "wyrmroost:weather/sandstorm/sandstorm2"
+      },
+      {
+        "name": "wyrmroost:weather/sandstorm/sandstorm3"
+      },
+      {
+        "name": "wyrmroost:weather/sandstorm/sandstorm4"
+      },
+      {
+        "name": "wyrmroost:weather/sandstorm/sandstorm5"
+      },
+      {
+        "name": "wyrmroost:weather/sandstorm/sandstorm6"
+      }
+    ]
+  },
+  "music.ashen_desert": {
+    "sounds": [
+      {
+        "name": "wyrmroost:music/game/wyrmroost/ashen_desert"
       }
     ]
   }

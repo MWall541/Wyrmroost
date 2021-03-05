@@ -53,10 +53,9 @@ public class WRSounds
 
     public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_IDLE = entity("coindragon.idle");
 
-//    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_IDLE = entity("orbwyrm.idle");
-//    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_HURT = entity("orbwyrm.hurt");
-//    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_HISS = entity("orbwyrm.hiss");
-//    public static final RegistryObject<SoundEvent> ENTITY_ORBWYRM_DEATH = entity("orbwyrm.death");
+    public static final RegistryObject<SoundEvent> WEATHER_SANDSTORM = register("weather.sandstorm");
+
+    public static final RegistryObject<SoundEvent> MUSIC_ASHEN_DESERT = register("music.ashen_desert");
 
     public static RegistryObject<SoundEvent> register(String name)
     {

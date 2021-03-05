@@ -112,4 +112,10 @@ public final class ModUtils
         for (T t : comparing) if (comparator.equals(t)) return true;
         return false;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <F,T> F cast(T obj)
+    {
+        return (F) obj;
+    }
 }

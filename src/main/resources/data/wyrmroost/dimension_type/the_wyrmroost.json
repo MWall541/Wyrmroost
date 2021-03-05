@@ -10,6 +10,6 @@
   "coordinate_scale": 1,
   "ambient_light": 0,
   "logical_height": 256,
-  "effects": "minecraft:overworld",
+  "effects": "wyrmroost:the_wyrmroost",
   "infiniburn": "minecraft:infiniburn_overworld"
 }

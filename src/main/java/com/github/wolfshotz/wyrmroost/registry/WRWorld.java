@@ -24,7 +24,7 @@ public class WRWorld
 {
     public static List<Consumer<BiomeLoadingEvent>> BIOME_LISTENERS = new ArrayList<>();
 
-    public static final RegistryKey<Dimension> THE_WYRMROOST = RegistryKey.func_240903_a_(Registry.DIMENSION_KEY, Wyrmroost.rl("wyrmroost"));
+    public static final RegistryKey<Dimension> THE_WYRMROOST = RegistryKey.func_240903_a_(Registry.DIMENSION_KEY, Wyrmroost.rl("the_wyrmroost"));
 
     public static final RegistryKey<Biome> TINCTURE_WEALD = biomeKey("tincture_weald");
 

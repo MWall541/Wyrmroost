@@ -1,7 +1,7 @@
 {
   "surface_builder": "wyrmroost:mulch",
   "depth": 0.2,
-  "scale": 0.125,
+  "scale": 0.12,
   "temperature": 0.7,
   "downfall": 0.8,
   "precipitation": "rain",

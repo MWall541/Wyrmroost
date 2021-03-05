@@ -29,7 +29,7 @@ public class DataGatherer
         {
             gen.addProvider(new BlockModelData(gen, fileHelper));
             gen.addProvider(new ItemModelData(gen, fileHelper));
-//            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
+            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
         }
     }
 }

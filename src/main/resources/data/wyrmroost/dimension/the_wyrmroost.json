@@ -1,5 +1,5 @@
 {
-  "type": "wyrmroost:wyrmroost",
+  "type": "wyrmroost:the_wyrmroost",
   "generator": {
     "type": "minecraft:noise",
     "seed": 0,
