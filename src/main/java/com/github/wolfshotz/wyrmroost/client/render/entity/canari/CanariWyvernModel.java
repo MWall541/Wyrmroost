@@ -94,227 +94,227 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         textureWidth = 150;
         textureHeight = 150;
         feathers3L = new WRModelRenderer(this, 87, 85);
-        feathers3L.setRotationPoint(-1.0F, -0.9F, -0.6F);
+        feathers3L.setPivot(-1.0F, -0.9F, -0.6F);
         feathers3L.addBox(0.0F, 0.0F, 0.0F, 12, 0, 10, 0.0F);
         claw4L = new WRModelRenderer(this, 34, 56);
-        claw4L.setRotationPoint(0.0F, 0.5F, 0.7F);
+        claw4L.setPivot(0.0F, 0.5F, 0.7F);
         claw4L.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 2, 0.0F);
         feathers2L = new WRModelRenderer(this, 33, 85);
-        feathers2L.setRotationPoint(5.0F, -1.12F, -1.4F);
+        feathers2L.setPivot(5.0F, -1.12F, -1.4F);
         feathers2L.addBox(-5.0F, 0.0F, 0.0F, 10, 0, 10, 0.0F);
         claw4R = new WRModelRenderer(this, 34, 56);
-        claw4R.setRotationPoint(0.0F, 0.5F, 0.7F);
+        claw4R.setPivot(0.0F, 0.5F, 0.7F);
         claw4R.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 2, 0.0F);
         stinger12 = new WRModelRenderer(this, 114, 10);
-        stinger12.setRotationPoint(0.0F, -0.3F, 1.5F);
+        stinger12.setPivot(0.0F, -0.3F, 1.5F);
         stinger12.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 2, 0.0F);
         setRotateAngle(stinger12, -0.4553564018453205F, 0.0F, 0.0F);
         claw1R = new WRModelRenderer(this, 26, 56);
-        claw1R.setRotationPoint(0.5F, 0.5F, -1.5F);
+        claw1R.setPivot(0.5F, 0.5F, -1.5F);
         claw1R.addBox(-0.5F, -0.5F, -2.0F, 1, 1, 2, 0.0F);
         setRotateAngle(claw1R, 0.0F, -0.7740535232594852F, 0.0F);
         tail3 = new WRModelRenderer(this, 91, 0);
-        tail3.setRotationPoint(0.0F, -0.6F, 7.0F);
+        tail3.setPivot(0.0F, -0.6F, 7.0F);
         tail3.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 8, 0.0F);
         setRotateAngle(tail3, 0.31869712141416456F, 0.0F, 0.0F);
         wing1R = new WRModelRenderer(this, 24, 45);
-        wing1R.setRotationPoint(-2.5F, -1.0F, -2.5F);
+        wing1R.setPivot(-2.5F, -1.0F, -2.5F);
         wing1R.addBox(-10.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
         body2 = new WRModelRenderer(this, 33, 0);
-        body2.setRotationPoint(0.05F, -0.9F, 2.0F);
+        body2.setPivot(0.05F, -0.9F, 2.0F);
         body2.addBox(-3.0F, -2.0F, 0.0F, 6, 5, 8, 0.0F);
         setRotateAngle(body2, -0.045553093477052F, 0.0F, 0.0F);
         claw3L = new WRModelRenderer(this, 26, 56);
-        claw3L.setRotationPoint(-0.5F, 0.5F, -1.5F);
+        claw3L.setPivot(-0.5F, 0.5F, -1.5F);
         claw3L.addBox(-0.5F, -0.5F, -2.0F, 1, 1, 2, 0.0F);
         setRotateAngle(claw3L, 0.0F, 0.7740535232594852F, 0.0F);
         claw2L = new WRModelRenderer(this, 26, 56);
-        claw2L.setRotationPoint(0.0F, 0.5F, -1.6F);
+        claw2L.setPivot(0.0F, 0.5F, -1.6F);
         claw2L.addBox(-0.5F, -0.5F, -2.0F, 1, 1, 2, 0.0F);
         tailflap1 = new WRModelRenderer(this, 106, 17);
-        tailflap1.setRotationPoint(0.0F, -1.0F, 1.0F);
+        tailflap1.setPivot(0.0F, -1.0F, 1.0F);
         tailflap1.addBox(-4.5F, 0.0F, 0.0F, 9, 0, 7, 0.0F);
         phalang1L = new WRModelRenderer(this, 86, 38);
-        phalang1L.setRotationPoint(2.0F, -0.2F, -0.8F);
+        phalang1L.setPivot(2.0F, -0.2F, -0.8F);
         phalang1L.addBox(0.0F, -0.5F, -0.5F, 23, 1, 1, 0.0F);
         setRotateAngle(phalang1L, 0.0F, -0.36425021489121656F, 0.0F);
         membrane2L = new WRModelRenderer(this, 34, 68);
-        membrane2L.setRotationPoint(0.0F, -0.02F, 0.0F);
+        membrane2L.setPivot(0.0F, -0.02F, 0.0F);
         membrane2L.addBox(0.0F, 0.0F, 0.0F, 20, 0, 12, 0.0F);
         feathers1L = new WRModelRenderer(this, 60, 84);
-        feathers1L.setRotationPoint(0.0F, -1.1F, 0.02F);
+        feathers1L.setPivot(0.0F, -1.1F, 0.02F);
         feathers1L.addBox(0.0F, 0.0F, -1.5F, 10, 0, 10, 0.0F);
         stinger11 = new WRModelRenderer(this, 119, 4);
-        stinger11.setRotationPoint(0.01F, 0.2F, 7.0F);
+        stinger11.setPivot(0.01F, 0.2F, 7.0F);
         stinger11.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 2, 0.0F);
         setRotateAngle(stinger11, -0.136659280431156F, 0.0F, 0.0F);
         membrane3L_1 = new WRModelRenderer(this, -6, 68);
-        membrane3L_1.setRotationPoint(0.0F, -0.04F, 0.0F);
+        membrane3L_1.setPivot(0.0F, -0.04F, 0.0F);
         membrane3L_1.addBox(0.0F, 0.0F, 0.0F, 17, 0, 12, 0.0F);
         phalang3R = new WRModelRenderer(this, 86, 62);
-        phalang3R.setRotationPoint(-1.0F, -0.2F, 0.8F);
+        phalang3R.setPivot(-1.0F, -0.2F, 0.8F);
         phalang3R.addBox(-17.0F, -0.5F, -0.5F, 17, 1, 1, 0.0F);
         setRotateAngle(phalang3R, 0.0F, 1.6845917940249266F, 0.0F);
         membrane3L = new WRModelRenderer(this, -9, 83);
-        membrane3L.setRotationPoint(10.0F, 0.0F, 0.0F);
+        membrane3L.setPivot(10.0F, 0.0F, 0.0F);
         membrane3L.addBox(-10.0F, 0.0F, 0.0F, 10, 0, 16, 0.0F);
         leg3L = new WRModelRenderer(this, 14, 53);
-        leg3L.setRotationPoint(0.02F, 4.0F, 0.0F);
+        leg3L.setPivot(0.02F, 4.0F, 0.0F);
         leg3L.addBox(-1.0F, 0.0F, -1.0F, 2, 5, 2, 0.0F);
         setRotateAngle(leg3L, -1.0471975511965976F, 0.0F, 0.0F);
         phalang2L = new WRModelRenderer(this, 86, 43);
-        phalang2L.setRotationPoint(2.0F, -0.2F, 0.8F);
+        phalang2L.setPivot(2.0F, -0.2F, 0.8F);
         phalang2L.addBox(0.0F, -0.5F, -0.5F, 20, 1, 1, 0.0F);
         setRotateAngle(phalang2L, 0.0F, -0.9105382707654417F, 0.0F);
         feathers3R = new WRModelRenderer(this, 87, 100);
-        feathers3R.setRotationPoint(1.0F, -0.9F, -0.6F);
+        feathers3R.setPivot(1.0F, -0.9F, -0.6F);
         feathers3R.addBox(-12.0F, 0.0F, 0.0F, 12, 0, 10, 0.0F);
         leg2R = new WRModelRenderer(this, 14, 45);
-        leg2R.setRotationPoint(-0.98F, 4.0F, -1.0F);
+        leg2R.setPivot(-0.98F, 4.0F, -1.0F);
         leg2R.addBox(-1.0F, 0.0F, -1.0F, 2, 5, 2, 0.0F);
         setRotateAngle(leg2R, 1.0927506446736497F, 0.0F, 0.0F);
         phalang1R = new WRModelRenderer(this, 86, 52);
-        phalang1R.setRotationPoint(-2.0F, -0.2F, -0.8F);
+        phalang1R.setPivot(-2.0F, -0.2F, -0.8F);
         phalang1R.addBox(-23.0F, -0.5F, -0.5F, 23, 1, 1, 0.0F);
         setRotateAngle(phalang1R, 0.0F, 0.36425021489121656F, 0.0F);
         membrane1L = new WRModelRenderer(this, 78, 68);
-        membrane1L.setRotationPoint(0.0F, 0.0F, 0.0F);
+        membrane1L.setPivot(0.0F, 0.0F, 0.0F);
         membrane1L.addBox(0.0F, 0.0F, 0.0F, 23, 0, 12, 0.0F);
         wing1L = new WRModelRenderer(this, 24, 45);
         wing1L.mirror = true;
-        wing1L.setRotationPoint(2.5F, -1.0F, -2.5F);
+        wing1L.setPivot(2.5F, -1.0F, -2.5F);
         wing1L.addBox(0.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
         footL = new WRModelRenderer(this, 0, 57);
-        footL.setRotationPoint(0.02F, 4.0F, -0.5F);
+        footL.setPivot(0.02F, 4.0F, -0.5F);
         footL.addBox(-1.0F, 0.0F, -2.0F, 2, 1, 3, 0.0F);
         setRotateAngle(footL, 0.22759093446006054F, 0.0F, 0.0F);
         head_1 = new WRModelRenderer(this, 53, 29);
-        head_1.setRotationPoint(0.0F, -1.52F, -0.5F);
+        head_1.setPivot(0.0F, -1.52F, -0.5F);
         head_1.addBox(-2.5F, 0.0F, -0.2F, 5, 0, 4, 0.0F);
         setRotateAngle(head_1, 0.8196066167365371F, 0.0F, 0.0F);
         feathers2R = new WRModelRenderer(this, 33, 100);
-        feathers2R.setRotationPoint(-5.0F, -1.12F, -1.4F);
+        feathers2R.setPivot(-5.0F, -1.12F, -1.4F);
         feathers2R.addBox(-5.0F, 0.0F, 0.0F, 10, 0, 10, 0.0F);
         feathers1R = new WRModelRenderer(this, 60, 100);
-        feathers1R.setRotationPoint(0.0F, -1.1F, 0.02F);
+        feathers1R.setPivot(0.0F, -1.1F, 0.02F);
         feathers1R.addBox(-10.0F, 0.0F, -1.5F, 10, 0, 10, 0.0F);
         phalang3L = new WRModelRenderer(this, 86, 47);
-        phalang3L.setRotationPoint(1.0F, -0.2F, 0.8F);
+        phalang3L.setPivot(1.0F, -0.2F, 0.8F);
         phalang3L.addBox(0.0F, -0.5F, -0.5F, 17, 1, 1, 0.0F);
         setRotateAngle(phalang3L, 0.0F, -1.6845917940249266F, 0.0F);
         claw1L = new WRModelRenderer(this, 26, 56);
-        claw1L.setRotationPoint(0.5F, 0.5F, -1.5F);
+        claw1L.setPivot(0.5F, 0.5F, -1.5F);
         claw1L.addBox(-0.5F, -0.5F, -2.0F, 1, 1, 2, 0.0F);
         setRotateAngle(claw1L, 0.0F, -0.7740535232594852F, 0.0F);
         footL_1 = new WRModelRenderer(this, 0, 57);
-        footL_1.setRotationPoint(-0.02F, 4.0F, -0.5F);
+        footL_1.setPivot(-0.02F, 4.0F, -0.5F);
         footL_1.addBox(-1.0F, 0.0F, -2.0F, 2, 1, 3, 0.0F);
         setRotateAngle(footL_1, 0.22759093446006054F, 0.0F, 0.0F);
         tailflap2 = new WRModelRenderer(this, 63, 27);
-        tailflap2.setRotationPoint(0.0F, -0.98F, 1.0F);
+        tailflap2.setPivot(0.0F, -0.98F, 1.0F);
         tailflap2.addBox(-4.5F, 0.0F, 0.0F, 9, 0, 7, 0.0F);
         head = new WRModelRenderer(this, 45, 18);
-        head.setRotationPoint(0.0F, -0.52F, -5.0F);
+        head.setPivot(0.0F, -0.52F, -5.0F);
         head.addBox(-2.0F, -1.5F, -3.0F, 4, 3, 3, 0.0F);
         setRotateAngle(head, 0.7740535232594852F, 0.0F, 0.0F);
         stinger13 = new WRModelRenderer(this, 122, 10);
-        stinger13.setRotationPoint(0.0F, -0.1F, 1.6F);
+        stinger13.setPivot(0.0F, -0.1F, 1.6F);
         stinger13.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 2, 0.0F);
         setRotateAngle(stinger13, -0.6829473363053812F, 0.0F, 0.0F);
         membrane3R = new WRModelRenderer(this, -9, 102);
-        membrane3R.setRotationPoint(-10.0F, 0.0F, 0.0F);
+        membrane3R.setPivot(-10.0F, 0.0F, 0.0F);
         membrane3R.addBox(0.0F, 0.0F, 0.0F, 10, 0, 16, 0.0F);
         leg1R = new WRModelRenderer(this, 0, 45);
-        leg1R.setRotationPoint(-2.5F, 1.1F, 3.4F);
+        leg1R.setPivot(-2.5F, 1.1F, 3.4F);
         leg1R.addBox(-2.0F, -1.0F, -2.0F, 2, 6, 4, 0.0F);
         setRotateAngle(leg1R, 0.27314402793711257F, 0.0F, 0.0F);
         neck2 = new WRModelRenderer(this, 22, 18);
-        neck2.setRotationPoint(0.0F, 0.0F, -5.1F);
+        neck2.setPivot(0.0F, 0.0F, -5.1F);
         neck2.addBox(-1.5F, -1.5F, -6.0F, 3, 3, 6, 0.0F);
         setRotateAngle(neck2, 0.40980330836826856F, 0.0F, 0.0F);
         phalang2R = new WRModelRenderer(this, 86, 57);
-        phalang2R.setRotationPoint(-2.0F, -0.2F, 0.8F);
+        phalang2R.setPivot(-2.0F, -0.2F, 0.8F);
         phalang2R.addBox(-20.0F, -0.5F, -0.5F, 20, 1, 1, 0.0F);
         setRotateAngle(phalang2R, 0.0F, 0.9105382707654417F, 0.0F);
         tail1 = new WRModelRenderer(this, 66, 0);
-        tail1.setRotationPoint(0.0F, 0.3F, 7.0F);
+        tail1.setPivot(0.0F, 0.3F, 7.0F);
         tail1.addBox(-2.0F, -2.0F, 0.0F, 4, 3, 8, 0.0F);
         setRotateAngle(tail1, 0.27314402793711257F, 0.0F, 0.0F);
         palmR = new WRModelRenderer(this, 52, 52);
-        palmR.setRotationPoint(-9.0F, -0.02F, 0.02F);
+        palmR.setPivot(-9.0F, -0.02F, 0.02F);
         palmR.addBox(-3.0F, -1.0F, -1.5F, 3, 2, 3, 0.0F);
         beak = new WRModelRenderer(this, 7, 32);
-        beak.setRotationPoint(0.0F, -0.2F, -3.4F);
+        beak.setPivot(0.0F, -0.2F, -3.4F);
         beak.addBox(-1.0F, -1.0F, -1.0F, 2, 3, 1, 0.0F);
         setRotateAngle(beak, -0.6373942428283291F, 0.0F, 0.0F);
         membrane1R = new WRModelRenderer(this, 78, 121);
-        membrane1R.setRotationPoint(0.0F, 0.0F, 0.0F);
+        membrane1R.setPivot(0.0F, 0.0F, 0.0F);
         membrane1R.addBox(-23.0F, 0.0F, 0.0F, 23, 0, 12, 0.0F);
         wing2R = new WRModelRenderer(this, 52, 45);
-        wing2R.setRotationPoint(-9.0F, -0.02F, 0.02F);
+        wing2R.setPivot(-9.0F, -0.02F, 0.02F);
         wing2R.addBox(-10.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
         setRotateAngle(wing2R, 0.0F, -0.18203784098300857F, 0.0F);
         tail2 = new WRModelRenderer(this, 66, 14);
-        tail2.setRotationPoint(0.02F, 0.02F, 7.0F);
+        tail2.setPivot(0.02F, 0.02F, 7.0F);
         tail2.addBox(-2.0F, -2.0F, 0.0F, 4, 3, 8, 0.0F);
         setRotateAngle(tail2, 0.27314402793711257F, 0.0F, 0.0F);
         tailflap3 = new WRModelRenderer(this, 86, 27);
-        tailflap3.setRotationPoint(0.0F, -0.38F, 1.0F);
+        tailflap3.setPivot(0.0F, -0.38F, 1.0F);
         tailflap3.addBox(-4.0F, 0.0F, 0.0F, 8, 0, 7, 0.0F);
         jaw = new WRModelRenderer(this, 21, 30);
-        jaw.setRotationPoint(0.0F, 1.0F, -3.0F);
+        jaw.setPivot(0.0F, 1.0F, -3.0F);
         jaw.addBox(-1.0F, -0.5F, -4.0F, 2, 1, 4, 0.0F);
         leg1L = new WRModelRenderer(this, 0, 45);
-        leg1L.setRotationPoint(2.5F, 1.1F, 3.4F);
+        leg1L.setPivot(2.5F, 1.1F, 3.4F);
         leg1L.addBox(0.0F, -1.0F, -2.0F, 2, 6, 4, 0.0F);
         setRotateAngle(leg1L, 0.27314402793711257F, 0.0F, 0.0F);
         membrane3R_1 = new WRModelRenderer(this, -6, 121);
-        membrane3R_1.setRotationPoint(0.0F, -0.04F, 0.0F);
+        membrane3R_1.setPivot(0.0F, -0.04F, 0.0F);
         membrane3R_1.addBox(-17.0F, 0.0F, 0.0F, 17, 0, 12, 0.0F);
         neck1 = new WRModelRenderer(this, 0, 18);
-        neck1.setRotationPoint(0.0F, -0.6F, -3.5F);
+        neck1.setPivot(0.0F, -0.6F, -3.5F);
         neck1.addBox(-2.0F, -2.0F, -6.0F, 4, 4, 6, 0.0F);
         setRotateAngle(neck1, -0.40980330836826856F, 0.0F, 0.0F);
         claw2R = new WRModelRenderer(this, 26, 56);
-        claw2R.setRotationPoint(0.0F, 0.5F, -1.6F);
+        claw2R.setPivot(0.0F, 0.5F, -1.6F);
         claw2R.addBox(-0.5F, -0.5F, -2.0F, 1, 1, 2, 0.0F);
         tailflap4 = new WRModelRenderer(this, 107, 27);
-        tailflap4.setRotationPoint(0.0F, -0.36F, 1.0F);
+        tailflap4.setPivot(0.0F, -0.36F, 1.0F);
         tailflap4.addBox(-3.5F, 0.0F, 0.0F, 7, 0, 7, 0.0F);
         wing2L = new WRModelRenderer(this, 52, 45);
         wing2L.mirror = true;
-        wing2L.setRotationPoint(9.0F, -0.02F, 0.02F);
+        wing2L.setPivot(9.0F, -0.02F, 0.02F);
         wing2L.addBox(0.0F, -1.0F, -1.5F, 10, 2, 3, 0.0F);
         setRotateAngle(wing2L, 0.0F, 0.18203784098300857F, 0.0F);
         claw3R = new WRModelRenderer(this, 26, 56);
-        claw3R.setRotationPoint(-0.5F, 0.5F, -1.5F);
+        claw3R.setPivot(-0.5F, 0.5F, -1.5F);
         claw3R.addBox(-0.5F, -0.5F, -2.0F, 1, 1, 2, 0.0F);
         setRotateAngle(claw3R, 0.0F, 0.7740535232594852F, 0.0F);
         leg3R = new WRModelRenderer(this, 14, 53);
-        leg3R.setRotationPoint(-0.02F, 4.0F, 0.0F);
+        leg3R.setPivot(-0.02F, 4.0F, 0.0F);
         leg3R.addBox(-1.0F, 0.0F, -1.0F, 2, 5, 2, 0.0F);
         setRotateAngle(leg3R, -1.0471975511965976F, 0.0F, 0.0F);
         membrane2R = new WRModelRenderer(this, 34, 121);
-        membrane2R.setRotationPoint(0.0F, -0.02F, 0.0F);
+        membrane2R.setPivot(0.0F, -0.02F, 0.0F);
         membrane2R.addBox(-20.0F, 0.0F, 0.0F, 20, 0, 12, 0.0F);
         body1 = new WRModelRenderer(this, 0, 0);
-        body1.setRotationPoint(0.0F, 17.0F, 0.0F);
+        body1.setPivot(0.0F, 17.0F, 0.0F);
         body1.addBox(-3.5F, -3.0F, -5.0F, 7, 5, 8, 0.0F);
         setRotateAngle(body1, -0.5009094953223726F, 0.0F, 0.0F);
         snout = new WRModelRenderer(this, 38, 29);
-        snout.setRotationPoint(0.0F, -0.2F, -3.0F);
+        snout.setPivot(0.0F, -0.2F, -3.0F);
         snout.addBox(-1.5F, -1.0F, -4.0F, 3, 2, 5, 0.0F);
         tail4 = new WRModelRenderer(this, 91, 15);
-        tail4.setRotationPoint(0.0F, 0.0F, 7.0F);
+        tail4.setPivot(0.0F, 0.0F, 7.0F);
         tail4.addBox(-1.0F, -0.5F, 0.0F, 2, 1, 8, 0.0F);
         setRotateAngle(tail4, 0.18203784098300857F, 0.0F, 0.0F);
         leg2L = new WRModelRenderer(this, 14, 45);
-        leg2L.setRotationPoint(0.98F, 4.0F, -1.0F);
+        leg2L.setPivot(0.98F, 4.0F, -1.0F);
         leg2L.addBox(-1.0F, 0.0F, -1.0F, 2, 5, 2, 0.0F);
         setRotateAngle(leg2L, 1.0927506446736497F, 0.0F, 0.0F);
         palmL = new WRModelRenderer(this, 52, 52);
         palmL.mirror = true;
-        palmL.setRotationPoint(9.0F, -0.02F, 0.02F);
+        palmL.setPivot(9.0F, -0.02F, 0.02F);
         palmL.addBox(0.0F, -1.0F, -1.5F, 3, 2, 3, 0.0F);
         phalang1L.addChild(feathers3L);
         footL.addChild(claw4L);
@@ -397,18 +397,18 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     }
 
     @Override
-    public void setRotationAngles(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setAngles(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         if (entity.isFlying() && entityIn.getAnimation() != CanariWyvernEntity.ATTACK_ANIMATION)
-            body1.rotateAngleX = headPitch * (Mafs.PI / 180f);
+            body1.pitch = headPitch * (Mafs.PI / 180f);
         faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, head);
     }
 
     @Override
-    public void setLivingAnimations(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float partialTick)
+    public void animateModel(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float partialTick)
     {
         this.entity = canari;
-        float frame = canari.ticksExisted + partialTick;
+        float frame = canari.age + partialTick;
 
         resetToDefaultPose();
         animator.update(canari, partialTick);
@@ -423,8 +423,8 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         }
         else
         {
-            wing1L.rotateAngleZ -= limbSwingAmount * 0.35;
-            wing1R.rotateAngleZ += limbSwingAmount * 0.35;
+            wing1L.roll -= limbSwingAmount * 0.35;
+            wing1R.roll += limbSwingAmount * 0.35;
 
             bob(body1, globalSpeed + 0.5f, 0.25f, true, limbSwing, limbSwingAmount);
 
@@ -445,7 +445,7 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
             walk(footL_1, globalSpeed + 0.5f, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
         }
 
-        if (canari.func_233684_eK_() && !canari.isFlying()) sitPose();
+        if (canari.isInSittingPose() && !canari.isFlying()) sitPose();
         if (canari.isSleeping()) sleepPose();
 
         if (animator.setAnimation(CanariWyvernEntity.FLAP_WINGS_ANIMATION)) flapWingsAnim();
@@ -461,98 +461,98 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     {
         if (entity.isFlying())
         {
-            body2.rotateAngleX = 0f;
+            body2.pitch = 0f;
 
-            for (ModelRenderer model : headArray) model.rotateAngleX = 0f;
-            head.rotateAngleX = 0f;
-            head_1.rotateAngleX = 0.5f;
+            for (ModelRenderer model : headArray) model.pitch = 0f;
+            head.pitch = 0f;
+            head_1.pitch = 0.5f;
 
-            for (ModelRenderer model : tailArray) model.rotateAngleX = 0f;
+            for (ModelRenderer model : tailArray) model.pitch = 0f;
 
-            leg1L.rotateAngleX = -1f;
-            leg2L.rotateAngleX = 2.7f;
-            leg3L.rotateAngleX = -2f;
-            footL.rotateAngleX = 1f;
-            claw1L.rotateAngleX = 0.2f;
-            claw2L.rotateAngleX = 0.2f;
-            claw3L.rotateAngleX = 0.2f;
+            leg1L.pitch = -1f;
+            leg2L.pitch = 2.7f;
+            leg3L.pitch = -2f;
+            footL.pitch = 1f;
+            claw1L.pitch = 0.2f;
+            claw2L.pitch = 0.2f;
+            claw3L.pitch = 0.2f;
 
-            leg1R.rotateAngleX = -1f;
-            leg2R.rotateAngleX = 2.7f;
-            leg3R.rotateAngleX = -2f;
-            footL_1.rotateAngleX = 1f;
-            claw1R.rotateAngleX = 0.2f;
-            claw2R.rotateAngleX = 0.2f;
-            claw3R.rotateAngleX = 0.2f;
+            leg1R.pitch = -1f;
+            leg2R.pitch = 2.7f;
+            leg3R.pitch = -2f;
+            footL_1.pitch = 1f;
+            claw1R.pitch = 0.2f;
+            claw2R.pitch = 0.2f;
+            claw3R.pitch = 0.2f;
         }
         else
         {
             // left wing
-            wing1L.rotateAngleX = 1f;
-            wing1L.rotateAngleY = -0.8f;
-            wing2L.rotateAngleY = 2.5f;
-            palmL.rotateAngleY = -0.8f;
-            phalang1L.rotateAngleY = -1.4f;
-            phalang2L.rotateAngleY = -1.85f;
-            phalang3L.rotateAngleY = -2.15f;
-            feathers1L.rotateAngleX = 0.05f;
-            feathers1L.rotateAngleY = 0.3f;
-            feathers2L.rotateAngleY = -1.2f;
-            feathers3L.rotateAngleX = 0.001f;
-            membrane3L.rotateAngleY = 3f;
-            membrane3L_1.rotateAngleY = 0.8f;
+            wing1L.pitch = 1f;
+            wing1L.yaw = -0.8f;
+            wing2L.yaw = 2.5f;
+            palmL.yaw = -0.8f;
+            phalang1L.yaw = -1.4f;
+            phalang2L.yaw = -1.85f;
+            phalang3L.yaw = -2.15f;
+            feathers1L.pitch = 0.05f;
+            feathers1L.yaw = 0.3f;
+            feathers2L.yaw = -1.2f;
+            feathers3L.pitch = 0.001f;
+            membrane3L.yaw = 3f;
+            membrane3L_1.yaw = 0.8f;
 
             // right wing
-            wing1R.rotateAngleX = 1f;
-            wing1R.rotateAngleY = 0.8f;
-            wing2R.rotateAngleY = -2.5f;
-            palmR.rotateAngleY = 0.8f;
-            phalang1R.rotateAngleY = 1.4f;
-            phalang2R.rotateAngleY = 1.85f;
-            phalang3R.rotateAngleY = 2.15f;
-            feathers1R.rotateAngleX = 0.05f;
-            feathers1R.rotateAngleY = -0.3f;
-            feathers2R.rotateAngleY = 1.2f;
-            feathers3R.rotateAngleX = 0.001f;
-            membrane3R.rotateAngleY = -3f;
-            membrane3R_1.rotateAngleY = -0.8f;
+            wing1R.pitch = 1f;
+            wing1R.yaw = 0.8f;
+            wing2R.yaw = -2.5f;
+            palmR.yaw = 0.8f;
+            phalang1R.yaw = 1.4f;
+            phalang2R.yaw = 1.85f;
+            phalang3R.yaw = 2.15f;
+            feathers1R.pitch = 0.05f;
+            feathers1R.yaw = -0.3f;
+            feathers2R.yaw = 1.2f;
+            feathers3R.pitch = 0.001f;
+            membrane3R.yaw = -3f;
+            membrane3R_1.yaw = -0.8f;
         }
     }
 
     public void sitPose()
     {
-        boolean shouldSwap = entity.getRidingEntity() instanceof PlayerEntity && entity.getRidingEntity().getPassengers().indexOf(entity) == 1;
+        boolean shouldSwap = entity.getVehicle() instanceof PlayerEntity && entity.getVehicle().getPassengerList().indexOf(entity) == 1;
         float tailRot = shouldSwap? 0.5f : -0.5f;
 
-        body1.rotationPointY = 24f;
+        body1.pivotY = 24f;
 
-        wing1L.rotateAngleX = 0.6f;
-        wing1R.rotateAngleX = 0.6f;
+        wing1L.pitch = 0.6f;
+        wing1R.pitch = 0.6f;
 
-        if (entity.getRidingEntity() instanceof PlayerEntity)
+        if (entity.getVehicle() instanceof PlayerEntity)
         {
-            wing1L.rotateAngleY = -1.85f;
-            wing1R.rotateAngleY = 1.85f;
+            wing1L.yaw = -1.85f;
+            wing1R.yaw = 1.85f;
             tailRot *= 0.7f;
         }
 
-        leg1L.rotateAngleX = -0.75f;
-        leg2L.rotateAngleX = 2.3f;
-        leg3L.rotateAngleX = -2f;
-        footL.rotateAngleX = 1f;
+        leg1L.pitch = -0.75f;
+        leg2L.pitch = 2.3f;
+        leg3L.pitch = -2f;
+        footL.pitch = 1f;
 
-        leg1R.rotateAngleX = -0.75f;
-        leg2R.rotateAngleX = 2.3f;
-        leg3R.rotateAngleX = -2f;
-        footL_1.rotateAngleX = 1f;
+        leg1R.pitch = -0.75f;
+        leg2R.pitch = 2.3f;
+        leg3R.pitch = -2f;
+        footL_1.pitch = 1f;
 
-        tail1.rotateAngleX = -0.1f;
-        tail2.rotateAngleX = -0.3f;
-        tail3.rotateAngleX = -0.2f;
-        tail4.rotateAngleX = -0.1f;
+        tail1.pitch = -0.1f;
+        tail2.pitch = -0.3f;
+        tail3.pitch = -0.2f;
+        tail4.pitch = -0.1f;
 
         for (WRModelRenderer tail : tailArray)
-            tail.rotateAngleY = tailRot;
+            tail.yaw = tailRot;
     }
 
 
@@ -560,9 +560,9 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     {
         sitPose();
 
-        neck1.rotateAngleX = -0.8f;
-        neck2.rotateAngleX = 0.6f;
-        head.rotateAngleX = 1.8f;
+        neck1.pitch = -0.8f;
+        neck2.pitch = 0.6f;
+        head.pitch = 1.8f;
     }
 
     @Override
@@ -577,8 +577,8 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         }
         else
         {
-            body1.rotateAngleX += Math.cos(frame * (globalSpeed - 0.45f)) * 0.08f;
-            body2.rotateAngleX -= Math.cos(frame * (globalSpeed - 0.45f)) * 0.08f;
+            body1.pitch += Math.cos(frame * (globalSpeed - 0.45f)) * 0.08f;
+            body2.pitch -= Math.cos(frame * (globalSpeed - 0.45f)) * 0.08f;
 
             chainWave(headArray, 0.45f - globalSpeed, 0.1f, 2.5, frame, 0.5f);
             chainWave(tailArray, 0.44f - globalSpeed, 0.05f, 2.5, frame, 0.5f);

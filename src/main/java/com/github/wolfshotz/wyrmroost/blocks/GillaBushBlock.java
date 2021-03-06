@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 public class GillaBushBlock extends BushBlock
 {
-    static final VoxelShape SHAPE = Block.makeCuboidShape(2, 0, 2, 14, 12, 14);
+    static final VoxelShape SHAPE = Block.createCuboidShape(2, 0, 2, 14, 12, 14);
 
     public GillaBushBlock()
     {
@@ -25,7 +25,7 @@ public class GillaBushBlock extends BushBlock
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+    public VoxelShape getOutlineShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_)
     {
         return SHAPE;
     }
@@ -41,13 +41,13 @@ public class GillaBushBlock extends BushBlock
     {
         if (entity instanceof LivingEntity)
         {
-            entity.setMotionMultiplier(state, new Vector3d(0.5d, 0.6d, 0.5d));
-            if (!worldIn.isRemote && (entity.lastTickPosX != entity.getPosX() || entity.lastTickPosZ != entity.getPosZ()))
+            entity.slowMovement(state, new Vector3d(0.5d, 0.6d, 0.5d));
+            if (!worldIn.isClient && (entity.lastRenderX != entity.getX() || entity.lastRenderZ != entity.getZ()))
             {
-                double x = Math.abs(entity.getPosX() - entity.lastTickPosX);
-                double z = Math.abs(entity.getPosZ() - entity.lastTickPosZ);
+                double x = Math.abs(entity.getX() - entity.lastRenderX);
+                double z = Math.abs(entity.getZ() - entity.lastRenderZ);
                 if (x >= 0.003 || z >= 0.003)
-                    entity.attackEntityFrom(DamageSource.SWEET_BERRY_BUSH, 1f);
+                    entity.damage(DamageSource.SWEET_BERRY_BUSH, 1f);
             }
 
         }

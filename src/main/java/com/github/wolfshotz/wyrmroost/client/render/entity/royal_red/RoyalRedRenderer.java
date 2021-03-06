@@ -17,17 +17,17 @@ public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, Roy
     public RoyalRedRenderer(EntityRendererManager manager)
     {
         super(manager, new RoyalRedModel(), 2.5f);
-        addLayer(new ArmorLayer(RoyalRedEntity.ARMOR_SLOT));
+        addFeature(new ArmorLayer(RoyalRedEntity.ARMOR_SLOT));
     }
 
     @Override
-    public ResourceLocation getEntityTexture(RoyalRedEntity entity)
+    public ResourceLocation getTexture(RoyalRedEntity entity)
     {
         boolean shiny = entity.getVariant() == -1;
 
         if (WRConfig.deckTheHalls && !shiny) return entity.isMale()? CHRISTMAS_MALE : CHRISTMAS_FEMALE;
 
-        if (entity.isChild()) return CHILD;
+        if (entity.isBaby()) return CHILD;
         int index = (entity.isMale()? 0 : 1) + (shiny? 2 : 0);
         if (TEXTURES[index] == null)
         {

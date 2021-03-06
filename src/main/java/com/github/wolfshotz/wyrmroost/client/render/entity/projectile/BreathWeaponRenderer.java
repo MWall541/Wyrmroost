@@ -20,23 +20,29 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
 {
     public static final ResourceLocation BLUE_FIRE = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire");
 
-    public BreathWeaponRenderer(EntityRendererManager renderManager) { super(renderManager); }
+    public BreathWeaponRenderer(EntityRendererManager renderManager)
+    {
+        super(renderManager);
+    }
 
     @Override
     public void render(DragonProjectileEntity entity, float yaw, float partialTicks, MatrixStack ms, IRenderTypeBuffer typeBuffer, int packedLine)
     {
-        if (entity.isBurning())
+        if (entity.isOnFire())
         {
             renderFire(ms, typeBuffer, entity);
         }
     }
 
     @Override
-    public ResourceLocation getEntityTexture(DragonProjectileEntity entity) { return null; }
+    public ResourceLocation getTexture(DragonProjectileEntity entity)
+    {
+        return null;
+    }
 
     private void renderFire(MatrixStack ms, IRenderTypeBuffer typeBuffer, Entity entity)
     {
-        Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getSpriteAtlas(AtlasTexture.BLOCK_ATLAS_TEXTURE);
         TextureAtlasSprite fireSprite1 = func.apply(BLUE_FIRE);
         ms.push();
         float width = entity.getWidth() * 1.4F;
@@ -44,11 +50,11 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
         float x = 0.5F;
         float height = entity.getHeight() / width;
         float y = 0.0F;
-        ms.rotate(renderManager.getCameraOrientation());
+        ms.multiply(getRenderManager().getRotation());
         ms.translate(0, 0, (-0.3f + (float) ((int) height) * 0.02f));
         float z = 0;
-        IVertexBuilder vertex = typeBuffer.getBuffer(Atlases.getCutoutBlockType());
-        MatrixStack.Entry msEntry = ms.getLast();
+        IVertexBuilder vertex = typeBuffer.getBuffer(Atlases.getEntityCutout());
+        MatrixStack.Entry msEntry = ms.peek();
 
         for (int i = 0; height > 0; i++)
         {
@@ -78,6 +84,6 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
 
     private static void vertex(MatrixStack.Entry msEntry, IVertexBuilder bufferIn, float x, float y, float z, float texU, float texV)
     {
-        bufferIn.pos(msEntry.getMatrix(), x, y, z).color(255, 255, 255, 255).tex(texU, texV).overlay(0, 10).lightmap(240).normal(msEntry.getNormal(), 0.0F, 1.0F, 0.0F).endVertex();
+        bufferIn.vertex(msEntry.getModel(), x, y, z).color(255, 255, 255, 255).texture(texU, texV).overlay(0, 10).light(240).normal(msEntry.getNormal(), 0.0F, 1.0F, 0.0F).next();
     }
 }

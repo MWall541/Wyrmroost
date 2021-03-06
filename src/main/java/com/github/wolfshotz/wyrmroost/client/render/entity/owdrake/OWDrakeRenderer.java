@@ -23,25 +23,25 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
     public OWDrakeRenderer(EntityRendererManager manager)
     {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ArmorLayer(OWDrakeEntity.ARMOR_SLOT));
-        addLayer(new ConditionalLayer(OWDrakeEntity::isSaddled, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
+        addFeature(new ArmorLayer(OWDrakeEntity.ARMOR_SLOT));
+        addFeature(new ConditionalLayer(OWDrakeEntity::isSaddled, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
     }
 
     public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "overworld_drake/" + png); }
 
     @Nullable
     @Override
-    public ResourceLocation getEntityTexture(OWDrakeEntity drake)
+    public ResourceLocation getTexture(OWDrakeEntity drake)
     {
         if (drake.hasCustomName())
         {
-            String name = drake.getCustomName().getUnformattedComponentText();
+            String name = drake.getCustomName().asString();
             if (name.equals("Daisy")) return DAISY;
             if (name.equalsIgnoreCase("Jeb_")) return JEB_;
         }
 
         int index = 0;
-        if (drake.isChild()) index |= 1;
+        if (drake.isBaby()) index |= 1;
         else if (!drake.isMale()) index |= 2;
         if (drake.getVariant() == -1) index |= 4;
         else if (drake.getVariant() == 1) index |= 8;

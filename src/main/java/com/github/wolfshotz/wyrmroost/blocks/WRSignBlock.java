@@ -21,8 +21,9 @@ public class WRSignBlock extends StandingSignBlock
         return true;
     }
 
+
     @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn)
+    public TileEntity createBlockEntity(IBlockReader p_196283_1_)
     {
         return new WRSignTileEntity();
     }
@@ -41,7 +42,7 @@ public class WRSignBlock extends StandingSignBlock
         }
 
         @Override
-        public TileEntity createNewTileEntity(IBlockReader worldIn)
+        public TileEntity createBlockEntity(IBlockReader p_196283_1_)
         {
             return new WRSignTileEntity();
         }

@@ -13,7 +13,7 @@ public class EmptyRenderer<T extends Entity> extends EntityRenderer<T>
     }
 
     @Override
-    public ResourceLocation getEntityTexture(T entity)
+    public ResourceLocation getTexture(T entity)
     {
         return null;
     }

@@ -14,7 +14,7 @@ public class AlpineRenderer extends AbstractDragonRenderer<AlpineEntity, AlpineM
     public AlpineRenderer(EntityRendererManager manager) { super(manager, new AlpineModel(), 2f); }
 
     @Override
-    public ResourceLocation getEntityTexture(AlpineEntity entity)
+    public ResourceLocation getTexture(AlpineEntity entity)
     {
         int variant = entity.getVariant();
         if (TEXTURES[variant] == null)

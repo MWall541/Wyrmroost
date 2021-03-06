@@ -28,11 +28,13 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
     }
 
     @Override
-    protected void preRenderCallback(T entity, MatrixStack ms, float partialTicks)
+    protected void scale(T entity, MatrixStack ms, float partialTicks)
     {
-        float scale = entity.getRenderScale();
+        float scale = entity.getScaleFactor();
         ms.scale(scale, scale, scale);
     }
+
+
 
     /**
      * A conditional layer that can only render if certain conditions are met.
@@ -60,7 +62,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         public void renderLayer(MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
         {
             IVertexBuilder builder = buffer.getBuffer(type.apply(entity));
-            getEntityModel().render(ms, builder, packedLightIn, LivingRenderer.getPackedOverlay(entity, 0.0F), 1, 1, 1, 1);
+            getModel().render(ms, builder, packedLightIn, LivingRenderer.getOverlay(entity, 0.0F), 1, 1, 1, 1);
         }
 
         public ConditionalLayer addCondition(Predicate<T> condition)
@@ -89,7 +91,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
                 if (rl != null)
                 {
                     IVertexBuilder builder = buffer.getBuffer(RenderHelper.getAdditiveGlow(rl));
-                    getEntityModel().render(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                    getModel().render(ms, builder, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
                 }
             }
         }
@@ -111,13 +113,13 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
             if (entity.hasArmor())
             {
                 IVertexBuilder builder = type.getBuffer(RenderType.getEntityCutout(getArmorTexture(entity)));
-                getEntityModel().render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                getModel().render(ms, builder, packedLightIn, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
             }
         }
 
         public ResourceLocation getArmorTexture(T entity)
         {
-            String path = entity.getArmor().getItem().getRegistryName().getPath().replace("_dragon_armor", "");
+            String path = entity.getArmorStack().getItem().getRegistryName().getPath().replace("_dragon_armor", "");
             return Wyrmroost.rl(String.format("%s%s/accessories/armor_%s.png", BASE_PATH, entity.getType().getRegistryName().getPath(), path));
         }
     }

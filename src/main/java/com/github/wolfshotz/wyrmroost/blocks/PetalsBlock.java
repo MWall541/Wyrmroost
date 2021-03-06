@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 public class PetalsBlock extends Block
 {
-    public static final VoxelShape SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
+    public static final VoxelShape SHAPE = Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
 
     public PetalsBlock(Properties properties)
@@ -30,41 +30,42 @@ public class PetalsBlock extends Block
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+    protected void appendProperties(StateContainer.Builder<Block, BlockState> builder)
     {
+        super.appendProperties(builder);
         builder.add(AXIS);
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+    public VoxelShape getOutlineShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
     {
         return SHAPE;
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context)
+    public BlockState getPlacementState(BlockItemUseContext context)
     {
-        return getDefaultState().with(AXIS, context.getPlacementHorizontalFacing().getAxis());
+        return getDefaultState().with(AXIS, context.getPlayerFacing().getAxis());
     }
 
     @Override
-    public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
     {
-        return !state.isValidPosition(worldIn, currentPos)? Blocks.AIR.getDefaultState() : super.updatePostPlacement(state, facing, facingState, worldIn, currentPos, facingPos);
+        return !state.canPlaceAt(worldIn, currentPos)? Blocks.AIR.getDefaultState() : super.getStateForNeighborUpdate(state, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
+    public boolean canPlaceAt(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
         BlockState floor = worldIn.getBlockState(pos.down());
         if (!ModUtils.equalsAny(floor.getBlock(), Blocks.ICE, Blocks.PACKED_ICE, Blocks.BARRIER, Blocks.HONEY_BLOCK, Blocks.SOUL_SAND))
-                return Block.doesSideFillSquare(floor.getCollisionShape(worldIn, pos.down()), Direction.UP);
+                return Block.isFaceFullSquare(floor.getCollisionShape(worldIn, pos.down()), Direction.UP);
         return false;
     }
 
     @Override
-    public boolean isTransparent(BlockState state)
+    public boolean hasSidedTransparency(BlockState state)
     {
         return true;
     }

@@ -59,8 +59,8 @@ public final class ModUtils
     @Nullable
     public static ItemStack getHeldStack(PlayerEntity player, Item item)
     {
-        ItemStack main = player.getHeldItemMainhand();
-        ItemStack off = player.getHeldItemOffhand();
+        ItemStack main = player.getMainHandStack();
+        ItemStack off = player.getOffHandStack();
         return item == main.getItem()? main : item == off.getItem()? off : null;
     }
 
@@ -71,7 +71,7 @@ public final class ModUtils
     @SuppressWarnings("unchecked")
     public static <T extends Entity> EntityType<T> getEntityTypeByKey(@Nonnull String key)
     {
-        return (EntityType<T>) EntityType.byKey(key).orElse(null);
+        return (EntityType<T>) EntityType.get(key).orElse(null);
     }
 
     /**
@@ -95,9 +95,9 @@ public final class ModUtils
      *
      * @param aabb please tell me your not asking what this is for
      */
-    public static Iterable<BlockPos> getBlockPosesInAABB(AxisAlignedBB aabb)
+    public static Iterable<BlockPos> iterateThrough(AxisAlignedBB aabb)
     {
-        return BlockPos.getAllInBoxMutable(
+        return BlockPos.iterate(
                 MathHelper.floor(aabb.minX),
                 MathHelper.floor(aabb.minY),
                 MathHelper.floor(aabb.minZ),

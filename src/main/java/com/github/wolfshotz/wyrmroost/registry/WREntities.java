@@ -114,7 +114,7 @@ public class WREntities
             .build(b -> b.size(0.65f, 0.85f));
 
     public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = Builder.creature("royal_red", RoyalRedEntity::new)
-            .attributes(RoyalRedEntity::getAttributes)
+            .attributes(RoyalRedEntity::getAttributeMap)
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
             .spawnBiomes(RoyalRedEntity::setSpawnBiomes)
             .spawnEgg(0x8a0900, 0x0)

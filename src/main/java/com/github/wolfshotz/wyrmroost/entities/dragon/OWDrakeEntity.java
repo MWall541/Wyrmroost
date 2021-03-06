@@ -48,8 +48,6 @@ import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
-
 /**
  * Created by com.github.WolfShotz 7/10/19 - 22:18
  */
@@ -185,7 +183,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f, true);
                 AxisAlignedBB box = getOffsetBox(getWidth()).grow(-0.075);
                 attackInBox(box);
-                for (BlockPos pos : ModUtils.getBlockPosesInAABB(box))
+                for (BlockPos pos : ModUtils.iterateThrough(box))
                 {
                     if (world.getBlockState(pos).isIn(BlockTags.LEAVES))
                         world.destroyBlock(pos, false, this);

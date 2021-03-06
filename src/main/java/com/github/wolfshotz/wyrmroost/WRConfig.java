@@ -36,7 +36,7 @@ public class WRConfig
 
     public static boolean canGrief(World world)
     {
-        return respectMobGriefing? world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) : dragonGriefing;
+        return respectMobGriefing? world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) : dragonGriefing;
     }
 
     public static void configLoad(ModConfig.ModConfigEvent evt)

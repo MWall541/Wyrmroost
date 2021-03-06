@@ -37,9 +37,9 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
     public void setRotateAngle(ModelRenderer model, float x, float y, float z)
     {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
+        model.pitch = x;
+        model.yaw = y;
+        model.roll = z;
     }
 
     public void faceTarget(float yaw, float pitch, float rotationDivisor, ModelRenderer... boxes)
@@ -50,8 +50,8 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
         for (ModelRenderer box : boxes)
         {
-            box.rotateAngleX += pitch;
-            box.rotateAngleY += yaw;
+            box.pitch += pitch;
+            box.yaw += yaw;
         }
     }
 
@@ -96,7 +96,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
-            boxes[index].rotateAngleX += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
+            boxes[index].pitch += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
-            boxes[index].rotateAngleY += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
+            boxes[index].yaw += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
-            boxes[index].rotateAngleZ += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
+            boxes[index].roll += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
     private float calculateChainRotation(float speed, float degree, float swing, float swingAmount, float offset, int boxIndex)
@@ -138,28 +138,28 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
             if (modelRenderer instanceof WRModelRenderer)
             {
                 WRModelRenderer box = (WRModelRenderer) modelRenderer;
-                box.rotationPointX = Mafs.linTerp(box.rotationPointX, box.defaultPositionX, time);
-                box.rotationPointY = Mafs.linTerp(box.rotationPointY, box.defaultPositionY, time);
-                box.rotationPointZ = Mafs.linTerp(box.rotationPointZ, box.defaultPositionZ, time);
-                box.rotateAngleX = Mafs.linTerp(box.rotateAngleX, box.defaultRotationX, time);
-                box.rotateAngleY = Mafs.linTerp(box.rotateAngleY, box.defaultRotationY, time);
-                box.rotateAngleZ = Mafs.linTerp(box.rotateAngleZ, box.defaultRotationZ, time);
+                box.pivotX = Mafs.linTerp(box.pivotX, box.defaultPositionX, time);
+                box.pivotY = Mafs.linTerp(box.pivotY, box.defaultPositionY, time);
+                box.pivotZ = Mafs.linTerp(box.pivotZ, box.defaultPositionZ, time);
+                box.pitch = Mafs.linTerp(box.pitch, box.defaultRotationX, time);
+                box.yaw = Mafs.linTerp(box.yaw, box.defaultRotationY, time);
+                box.roll = Mafs.linTerp(box.roll, box.defaultRotationZ, time);
             }
         }
     }
 
     public void move(ModelRenderer box, float x, float y, float z)
     {
-        box.rotationPointX += time * x;
-        box.rotationPointY += time * y;
-        box.rotationPointZ += time * z;
+        box.pivotX += time * x;
+        box.pivotY += time * y;
+        box.pivotZ += time * z;
     }
 
     public void rotate(ModelRenderer box, float x, float y, float z)
     {
-        box.rotateAngleX += time * x;
-        box.rotateAngleY += time * y;
-        box.rotateAngleZ += time * z;
+        box.pitch += time * x;
+        box.yaw += time * y;
+        box.roll += time * z;
     }
 
     public void idle(float frame) {}

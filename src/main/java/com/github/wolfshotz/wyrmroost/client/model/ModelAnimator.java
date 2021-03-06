@@ -96,12 +96,12 @@ public class ModelAnimator
                     {
                         ModelRenderer box = entry.getKey();
                         BoxPosCache cache = entry.getValue();
-                        box.rotateAngleX += cache.getRotationX();
-                        box.rotateAngleY += cache.getRotationY();
-                        box.rotateAngleZ += cache.getRotationZ();
-                        box.rotationPointX += cache.getOffsetX();
-                        box.rotationPointY += cache.getOffsetY();
-                        box.rotationPointZ += cache.getOffsetZ();
+                        box.pitch += cache.getRotationX();
+                        box.yaw += cache.getRotationY();
+                        box.roll += cache.getRotationZ();
+                        box.pivotX += cache.getOffsetX();
+                        box.pivotY += cache.getOffsetY();
+                        box.pivotZ += cache.getOffsetZ();
                     }
                 }
                 else
@@ -114,24 +114,24 @@ public class ModelAnimator
                     {
                         ModelRenderer box = entry.getKey();
                         BoxPosCache cache = entry.getValue();
-                        box.rotateAngleX += dec * cache.getRotationX();
-                        box.rotateAngleY += dec * cache.getRotationY();
-                        box.rotateAngleZ += dec * cache.getRotationZ();
-                        box.rotationPointX += dec * cache.getOffsetX();
-                        box.rotationPointY += dec * cache.getOffsetY();
-                        box.rotationPointZ += dec * cache.getOffsetZ();
+                        box.pitch += dec * cache.getRotationX();
+                        box.yaw += dec * cache.getRotationY();
+                        box.roll += dec * cache.getRotationZ();
+                        box.pivotX += dec * cache.getOffsetX();
+                        box.pivotY += dec * cache.getOffsetY();
+                        box.pivotZ += dec * cache.getOffsetZ();
                     }
 
                     for (Map.Entry<WRModelRenderer, BoxPosCache> entry : boxPosCache.entrySet())
                     {
                         ModelRenderer box = entry.getKey();
                         BoxPosCache cache = entry.getValue();
-                        box.rotateAngleX += inc * cache.getRotationX();
-                        box.rotateAngleY += inc * cache.getRotationY();
-                        box.rotateAngleZ += inc * cache.getRotationZ();
-                        box.rotationPointX += inc * cache.getOffsetX();
-                        box.rotationPointY += inc * cache.getOffsetY();
-                        box.rotationPointZ += inc * cache.getOffsetZ();
+                        box.pitch += inc * cache.getRotationX();
+                        box.yaw += inc * cache.getRotationY();
+                        box.roll += inc * cache.getRotationZ();
+                        box.pivotX += inc * cache.getOffsetX();
+                        box.pivotY += inc * cache.getOffsetY();
+                        box.pivotZ += inc * cache.getOffsetZ();
                     }
                 }
             }

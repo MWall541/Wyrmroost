@@ -79,15 +79,15 @@ public class CommonEvents
     {
         if (!WRConfig.debugMode) return;
         PlayerEntity player = evt.getPlayer();
-        ItemStack stack = player.getHeldItem(evt.getHand());
-        if (stack.getItem() != Items.STICK || !stack.getDisplayName().getUnformattedComponentText().equals("Debug Stick"))
+        ItemStack stack = player.getStackInHand(evt.getHand());
+        if (stack.getItem() != Items.STICK || !stack.getName().getString().equals("Debug Stick"))
             return;
 
         evt.setCanceled(true);
         evt.setCancellationResult(ActionResultType.SUCCESS);
 
         Entity entity = evt.getTarget();
-        entity.recalculateSize();
+        entity.calculateDimensions();
 
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
@@ -95,8 +95,8 @@ public class CommonEvents
         if (player.isSneaking()) dragon.tame(true, player);
         else
         {
-            if (dragon.world.isRemote) DebugScreen.open(dragon);
-            else Wyrmroost.LOG.info(dragon.getNavigator().getPath() == null? "null" : dragon.getNavigator().getPath().getTarget().toString());
+            if (dragon.world.isClient) DebugScreen.open(dragon);
+            else Wyrmroost.LOG.info(dragon.getNavigation().getCurrentPath() == null? "null" : dragon.getNavigation().getCurrentPath().getTarget().toString());
         }
     }
 
@@ -113,10 +113,10 @@ public class CommonEvents
 
     public static void loadLoot(LootTableLoadEvent evt)
     {
-        if (evt.getName().equals(LootTables.CHESTS_ABANDONED_MINESHAFT))
+        if (evt.getName().equals(LootTables.ABANDONED_MINESHAFT_CHEST))
             evt.getTable().addPool(LootPool.builder()
                     .name("coin_dragon_inject")
-                    .addEntry(CoinDragonItem.getLootEntry())
+                    .with(CoinDragonItem.getLootEntry())
                     .build());
     }
 }

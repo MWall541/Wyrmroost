@@ -14,7 +14,7 @@ public class PetalParticle extends SpriteTexturedParticle
     }
 
     @Override
-    public IParticleRenderType getRenderType()
+    public IParticleRenderType getType()
     {
         return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }

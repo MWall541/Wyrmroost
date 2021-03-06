@@ -43,29 +43,29 @@ public class RenderHelper extends RenderType
 
     public static RenderType getAdditiveGlow(ResourceLocation locationIn)
     {
-        return makeType("glow_additive", DefaultVertexFormats.ENTITY, 7, 256, false, true, State.getBuilder()
+        return of("glow_additive", DefaultVertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, false, true, State.builder()
                 .texture(new TextureState(locationIn, false, false))
                 .transparency(ADDITIVE_TRANSPARENCY)
-                .alpha(DEFAULT_ALPHA)
+                .alpha(ONE_TENTH_ALPHA)
                 .build(false));
     }
 
     public static RenderType getTranslucentGlow(ResourceLocation texture)
     {
-        return makeType("glow_transluscent", DefaultVertexFormats.ENTITY, 7, 256, false, true, State.getBuilder()
+        return of("glow_transluscent", DefaultVertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, false, true, State.builder()
                 .texture(new TextureState(texture, false, false))
-                .cull(CULL_DISABLED)
+                .cull(DISABLE_CULLING)
                 .transparency(TRANSLUCENT_TRANSPARENCY)
-                .alpha(DEFAULT_ALPHA)
+                .alpha(ONE_TENTH_ALPHA)
                 .build(false));
     }
 
     public static RenderType getThiccLines(double thickness)
     {
-        return makeType("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, State.getBuilder()
-                        .line(new LineState(OptionalDouble.of(thickness)))
+        return of("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, State.builder()
+                        .lineWidth(new LineState(OptionalDouble.of(thickness)))
                         .transparency(TRANSLUCENT_TRANSPARENCY)
-                        .writeMask(COLOR_WRITE)
+                        .writeMaskState(COLOR_MASK)
                         .build(false));
     }
 
@@ -97,15 +97,15 @@ public class RenderHelper extends RenderType
             event.setCanceled(true);
 
             Minecraft mc = ClientEvents.getClient();
-            OutlineLayerBuffer buffer = mc.getRenderTypeBuffers().getOutlineBufferSource();
+            OutlineLayerBuffer buffer = mc.getBufferBuilders().getOutlineVertexConsumers();
             MatrixStack ms = event.getMatrixStack();
             LivingRenderer<? super LivingEntity, ?> renderer = event.getRenderer();
             float partialTicks = event.getPartialRenderTick();
-            float yaw = MathHelper.lerp(partialTicks, entity.prevRotationYaw, entity.rotationYaw);
+            float yaw = MathHelper.lerp(partialTicks, entity.prevYaw, entity.prevYaw);
 
             buffer.setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF);
             renderer.render(entity, yaw, partialTicks, ms, buffer, 15728640);
-            buffer.finish();
+            buffer.draw();
         }
     }
 
@@ -144,8 +144,8 @@ public class RenderHelper extends RenderType
         DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
         if (WRConfig.renderEntityOutlines)
         {
-            renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.ticksExisted + partialTicks) * 0.2f) * 35 + 45));
-            LivingEntity target = dragon.getAttackTarget();
+            renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.age + partialTicks) * 0.2f) * 35 + 45));
+            LivingEntity target = dragon.getTarget();
             if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
         }
         dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
@@ -153,11 +153,11 @@ public class RenderHelper extends RenderType
 
     public static void drawShape(MatrixStack ms, IVertexBuilder buffer, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
     {
-        Matrix4f matrix4f = ms.getLast().getMatrix();
+        Matrix4f matrix4f = ms.peek().getModel();
         shapeIn.forEachEdge((x1, y1, z1, x2, y2, z2) ->
         {
-            buffer.pos(matrix4f, (float) (x1 + xIn), (float) (y1 + yIn), (float) (z1 + zIn)).color(red, green, blue, alpha).endVertex();
-            buffer.pos(matrix4f, (float) (x2 + xIn), (float) (y2 + yIn), (float) (z2 + zIn)).color(red, green, blue, alpha).endVertex();
+            buffer.vertex(matrix4f, (float) (x1 + xIn), (float) (y1 + yIn), (float) (z1 + zIn)).color(red, green, blue, alpha).next();
+            buffer.vertex(matrix4f, (float) (x2 + xIn), (float) (y2 + yIn), (float) (z2 + zIn)).color(red, green, blue, alpha).next();
         });
     }
 
@@ -168,14 +168,14 @@ public class RenderHelper extends RenderType
         double y = pos.getY() - view.y;
         double z = pos.getZ() - view.z;
 
-        IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-        RenderHelper.drawShape(ms,
+        IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        drawShape(ms,
                 impl.getBuffer(getThiccLines(lineThickness)),
-                world.getBlockState(pos).getShape(world, pos),
+                world.getBlockState(pos).getOutlineShape(world, pos),
                 x, y, z,
                 ((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >> 24) & 0xFF) / 255f);
 
-        impl.finish();
+        impl.draw();
     }
 
     public enum DebugBox
@@ -220,8 +220,8 @@ public class RenderHelper extends RenderType
             double y = view.y;
             double z = view.z;
 
-            IRenderTypeBuffer.Impl type = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
-            WorldRenderer.drawBoundingBox(
+            IRenderTypeBuffer.Impl type = Minecraft.getInstance().getBufferBuilders().getEntityVertexConsumers();
+            WorldRenderer.drawBox(
                     ms, type.getBuffer(RenderType.getLines()),
                     aabb.minX - x,
                     aabb.minY - y,
@@ -233,7 +233,7 @@ public class RenderHelper extends RenderType
                     ((color >> 8) & 0xff) / 255f,
                     ((color >> 16) & 0xff) / 255f,
                     ((color >> 24) & 0xff) / 255f);
-            type.finish();
+            type.draw();
 
             if (--time <= 0) aabb = null;
         }

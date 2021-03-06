@@ -21,9 +21,9 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
 
     @Nullable
     @Override
-    public ResourceLocation getEntityTexture(DragonFruitDrakeEntity entity)
+    public ResourceLocation getTexture(DragonFruitDrakeEntity entity)
     {
-        if (entity.isChild()) return CHILD;
+        if (entity.isBaby()) return CHILD;
 
         int texture = entity.isMale()? 0 : 2;
         if (entity.getVariant() == -1) texture += 1;

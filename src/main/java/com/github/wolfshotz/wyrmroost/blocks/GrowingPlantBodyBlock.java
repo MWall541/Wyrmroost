@@ -18,28 +18,28 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
 
     public GrowingPlantBodyBlock(Properties properties, Supplier<Block> tip)
     {
-        super(properties, Direction.DOWN, WeepingVinesBlock.field_235637_d_, false);
+        super(properties, Direction.DOWN, WeepingVinesBlock.SHAPE, false);
         this.tip = tip;
     }
 
     @Override
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos)
+    public boolean canPlaceAt(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
         BlockPos below = pos.offset(growthDirection.getOpposite());
         BlockState belowState = worldIn.getBlockState(below);
         Block belowBlock = belowState.getBlock();
 
-        return canGrowOn(belowBlock) && (belowBlock == getTopPlantBlock() || belowBlock == getBodyPlantBlock() || Block.doesSideFillSquare(belowState.getCollisionShape(worldIn, pos), growthDirection));
+        return canAttachTo(belowBlock) && (belowBlock == getStem() || belowBlock == getPlant() || Block.isFaceFullSquare(belowState.getCollisionShape(worldIn, pos), growthDirection));
     }
 
     @Override
-    public boolean canGrow(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
+    public boolean isFertilizable(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
     {
         BlockPos tipPos = getTipPos(worldIn, pos, state);
         if (tipPos != null)
         {
             BlockState tip = worldIn.getBlockState(tipPos);
-            return getTopPlantBlock().canGrow(worldIn, tipPos, tip, isClient);
+            return getStem().isFertilizable(worldIn, tipPos, tip, isClient);
         }
         return false;
     }
@@ -58,12 +58,12 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     @Nullable
     private BlockPos getTipPos(IBlockReader reader, BlockPos pos, BlockState state)
     {
-        BlockPos.Mutable mutable = pos.toMutable();
+        BlockPos.Mutable mutable = pos.mutableCopy();
         BlockState bstate = state;
-        int j = getTopPlantBlock().getMaxGrowthHeight();
-        for (int i = 0; i < j && bstate.isIn(state.getBlock()); i++)
+        int j = getStem().getMaxGrowthHeight();
+        for (int i = 0; i < j && bstate.isOf(state.getBlock()); i++)
         {
-            if ((bstate = reader.getBlockState(mutable.move(growthDirection))).isIn(getTopPlantBlock()))
+            if ((bstate = reader.getBlockState(mutable.move(growthDirection))).isOf(getStem()))
                 return mutable.toImmutable();
         }
 
@@ -73,11 +73,11 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     @Override
     public Item asItem()
     {
-        return getTopPlantBlock().asItem();
+        return getStem().asItem();
     }
 
     @Override
-    public GrowingPlantBlock getTopPlantBlock()
+    protected GrowingPlantBlock getStem()
     {
         return (GrowingPlantBlock) tip.get();
     }

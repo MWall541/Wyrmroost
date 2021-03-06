@@ -34,11 +34,11 @@ public class SoulCrystalItem extends Item
 
     public SoulCrystalItem()
     {
-        super(WRItems.builder().maxStackSize(1));
+        super(WRItems.builder().maxCount(1));
     }
 
     @Override
-    public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
+    public ActionResultType useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
     {
         World world = player.world;
         if (containsDragon(stack)) return ActionResultType.PASS;
@@ -46,21 +46,21 @@ public class SoulCrystalItem extends Item
         TameableEntity dragon = (TameableEntity) target;
         if (dragon.getOwner() != player)
         {
-            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").mergeStyle(TextFormatting.RED), true);
+            player.sendMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").formatted(TextFormatting.RED), true);
             return ActionResultType.FAIL;
         }
 
-        if (!dragon.getPassengers().isEmpty()) dragon.removePassengers();
-        if (!world.isRemote)
+        if (!dragon.getPassengerList().isEmpty()) dragon.removeAllPassengers();
+        if (!world.isClient)
         {
             CompoundNBT tag = stack.getOrCreateTag();
             CompoundNBT dragonTag = dragon.serializeNBT();
-            dragonTag.putString("OwnerName", player.getName().getUnformattedComponentText());
+            dragonTag.putString("OwnerName", player.getName().asString());
             tag.put(DATA_DRAGON, dragonTag); // Serializing the dragons data, including its id.
             stack.setTag(tag);
             dragon.remove();
-            player.setHeldItem(hand, stack);
-            world.playSound(null, player.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
+            player.setStackInHand(hand, stack);
+            world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
         }
         else // Client side Aesthetics
         {
@@ -69,9 +69,9 @@ public class SoulCrystalItem extends Item
             {
                 double calcX = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (width * 1.5);
                 double calcZ = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (width * 1.5);
-                double x = dragon.getPosX() + calcX;
-                double y = dragon.getPosY() + (dragon.getHeight() * 1.8);
-                double z = dragon.getPosZ() + calcZ;
+                double x = dragon.getX() + calcX;
+                double y = dragon.getY() + (dragon.getHeight() * 1.8);
+                double z = dragon.getZ() + calcZ;
                 double xMot = -calcX / 5f;
                 double yMot = -(dragon.getHeight() / 8);
                 double zMot = -calcZ / 5f;
@@ -79,36 +79,36 @@ public class SoulCrystalItem extends Item
                 world.addParticle(ParticleTypes.END_ROD, x, y, z, xMot, yMot, zMot);
             }
         }
-        return ActionResultType.func_233537_a_(world.isRemote);
+        return ActionResultType.success(world.isClient);
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context)
+    public ActionResultType useOnBlock(ItemUseContext context)
     {
-        return releaseDragon(context.getWorld(), context.getPlayer(), context.getItem(), context.getPos(), context.getFace());
+        return releaseDragon(context.getWorld(), context.getPlayer(), context.getStack(), context.getBlockPos(), context.getSide());
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand)
     {
-        BlockRayTraceResult rt = rayTrace(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
-        ItemStack stack = player.getHeldItem(hand);
-        if (rt.getType() == RayTraceResult.Type.MISS) return ActionResult.resultPass(stack);
-        BlockPos pos = rt.getPos();
-        if (!(world.getBlockState(pos).getBlock() instanceof FlowingFluidBlock)) return ActionResult.resultPass(stack);
-        return new ActionResult<>(releaseDragon(world, player, stack, pos, rt.getFace()), stack);
+        BlockRayTraceResult rt = raycast(world, player, RayTraceContext.FluidMode.SOURCE_ONLY);
+        ItemStack stack = player.getStackInHand(hand);
+        if (rt.getType() == RayTraceResult.Type.MISS) return ActionResult.pass(stack);
+        BlockPos pos = rt.getBlockPos();
+        if (!(world.getBlockState(pos).getBlock() instanceof FlowingFluidBlock)) return ActionResult.pass(stack);
+        return new ActionResult<>(releaseDragon(world, player, stack, pos, rt.getSide()), stack);
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack)
+    public ITextComponent getName(ItemStack stack)
     {
-        TranslationTextComponent name = (TranslationTextComponent) super.getDisplayName(stack);
-        if (containsDragon(stack)) name.mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC);
+        TranslationTextComponent name = (TranslationTextComponent) super.getName(stack);
+        if (containsDragon(stack)) name.formatted(TextFormatting.AQUA, TextFormatting.ITALIC);
         return name;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
         if (containsDragon(stack))
         {
@@ -116,16 +116,16 @@ public class SoulCrystalItem extends Item
             ITextComponent name;
 
             if (tag.contains("CustomName"))
-                name = ITextComponent.Serializer.func_240643_a_(tag.getString("CustomName"));
-            else name = EntityType.byKey(tag.getString("id")).orElse(null).getName();
+                name = ITextComponent.Serializer.fromJson(tag.getString("CustomName"));
+            else name = EntityType.get(tag.getString("id")).orElse(null).getName();
 
-            tooltip.add(name.copyRaw().mergeStyle(TextFormatting.BOLD));
-            tooltip.add(new StringTextComponent("Tamed by ").append(new StringTextComponent(tag.getString("OwnerName")).mergeStyle(TextFormatting.ITALIC)));
+            tooltip.add(name.copy().formatted(TextFormatting.BOLD));
+            tooltip.add(new StringTextComponent("Tamed by ").append(new StringTextComponent(tag.getString("OwnerName")).formatted(TextFormatting.ITALIC)));
         }
     }
 
     @Override
-    public boolean hasEffect(ItemStack stack)
+    public boolean hasGlint(ItemStack stack)
     {
         return containsDragon(stack);
     }
@@ -161,7 +161,7 @@ public class SoulCrystalItem extends Item
         if (!containsDragon(stack)) return ActionResultType.PASS;
 
         CompoundNBT tag = stack.getTag().getCompound(DATA_DRAGON);
-        EntityType<?> type = EntityType.byKey(tag.getString("id")).orElse(null);
+        EntityType<?> type = EntityType.get(tag.getString("id")).orElse(null);
         TameableEntity dragon;
 
         // just in case...
@@ -172,38 +172,38 @@ public class SoulCrystalItem extends Item
         }
 
         // Ensuring the owner is the one summoning
-        if (!tag.getUniqueId("Owner").equals(player.getUniqueID()))
+        if (!tag.getUuid("Owner").equals(player.getUuid()))
         {
-            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").mergeStyle(TextFormatting.RED), true);
+            player.sendMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.not_owner").formatted(TextFormatting.RED), true);
             return ActionResultType.FAIL;
         }
 
-        EntitySize size = dragon.getSize(dragon.getPose());
+        EntitySize size = dragon.getDimensions(dragon.getPose());
         if (!world.getBlockState(pos).getCollisionShape(world, pos).isEmpty())
             pos = pos.offset(direction, (int) (direction.getAxis().isHorizontal()? size.width : 1));
 
         // check area for collision to ensure the area is safe.
-        dragon.moveForced(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        dragon.updatePosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         AxisAlignedBB aabb = dragon.getBoundingBox();
-        if (!world.hasNoCollisions(dragon, new AxisAlignedBB(aabb.minX, dragon.getPosYEye() - 0.35, aabb.minZ, aabb.maxX, dragon.getPosYEye() + 0.35, aabb.maxZ)))
+        if (!world.isSpaceEmpty(dragon, new AxisAlignedBB(aabb.minX, dragon.getEyeY() - 0.35, aabb.minZ, aabb.maxX, dragon.getEyeY() + 0.35, aabb.maxZ)))
         {
-            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").mergeStyle(TextFormatting.RED), true);
+            player.sendMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").formatted(TextFormatting.RED), true);
             return ActionResultType.FAIL;
         }
 
         // Spawn the entity on the server side only
-        if (!world.isRemote)
+        if (!world.isClient)
         {
             // no conflicting id's!
-            UUID id = dragon.getUniqueID();
+            UUID id = dragon.getUuid();
             dragon.deserializeNBT(tag);
-            dragon.setUniqueId(id);
-            dragon.setLocationAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.rotationYaw, 0f);
+            dragon.setUuid(id);
+            dragon.refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.yaw, 0f);
 
-            if (stack.hasDisplayName()) dragon.setCustomName(stack.getDisplayName());
-            stack.removeChildTag(DATA_DRAGON);
-            world.addEntity(dragon);
-            world.playSound(null, dragon.getPosition(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
+            if (stack.hasCustomName()) dragon.setCustomName(stack.getName());
+            stack.removeSubTag(DATA_DRAGON);
+            world.spawnEntity(dragon);
+            world.playSound(null, dragon.getBlockPos(), SoundEvents.ENTITY_EVOKER_CAST_SPELL, SoundCategory.AMBIENT, 1, 1);
         }
         else // Client Side Aesthetics
         {

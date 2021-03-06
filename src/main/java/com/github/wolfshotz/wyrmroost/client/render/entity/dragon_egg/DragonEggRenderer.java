@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,25 +37,34 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
         scale(entity, ms);
         ms.translate(0, -1.5, 0);
         MODEL.animate(entity, partialTicks);
-        IVertexBuilder builder = buffer.getBuffer(MODEL.getRenderType(getEntityTexture(entity)));
-        MODEL.render(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        IVertexBuilder builder = buffer.getBuffer(MODEL.getLayer(getTexture(entity)));
+        MODEL.render(ms, builder, packedLightIn, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
         ms.pop();
 
         super.render(entity, entityYaw, partialTicks, ms, buffer, packedLightIn);
     }
 
     @Override
-    protected boolean canRenderName(DragonEggEntity entity) { return false; }
+    protected boolean hasLabel(DragonEggEntity p_177070_1_)
+    {
+        return false;
+    }
 
     @Override
-    public ResourceLocation getEntityTexture(DragonEggEntity entity) { return getDragonEggTexture(entity.containedDragon); }
+    protected void renderLabelIfPresent(DragonEggEntity p_225629_1_, ITextComponent p_225629_2_, MatrixStack p_225629_3_, IRenderTypeBuffer p_225629_4_, int p_225629_5_)
+    {
+        super.renderLabelIfPresent(p_225629_1_, p_225629_2_, p_225629_3_, p_225629_4_, p_225629_5_);
+    }
+
+    @Override
+    public ResourceLocation getTexture(DragonEggEntity entity) { return getDragonEggTexture(entity.containedDragon); }
 
     public static ResourceLocation getDragonEggTexture(EntityType<?> type)
     {
         return TEXTURE_MAP.computeIfAbsent(type, t ->
         {
             ResourceLocation textureLoc = Wyrmroost.rl(String.format("textures/entity/dragon/%s/egg.png", type.getRegistryName().getPath()));
-            if (Minecraft.getInstance().getResourceManager().hasResource(textureLoc)) return textureLoc;
+            if (Minecraft.getInstance().getResourceManager().containsResource(textureLoc)) return textureLoc;
             return DEFAULT_TEXTURE;
         });
     }
@@ -86,16 +96,16 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
             textureWidth = 64;
             textureHeight = 32;
             four = new ModelRenderer(this, 0, 19);
-            four.setRotationPoint(0.0F, -1.3F, 0.0F);
-            four.addBox(-1.5F, -1.5F, -1.5F, 3, 3, 3, 0.0F);
+            four.setPivot(0.0F, -1.3F, 0.0F);
+            four.addCuboid(-1.5F, -1.5F, -1.5F, 3, 3, 3, 0.0F);
             two = new ModelRenderer(this, 17, 0);
-            two.setRotationPoint(0.0F, -1.5F, 0.0F);
-            two.addBox(-2.5F, -3.0F, -2.5F, 5, 6, 5, 0.0F);
+            two.setPivot(0.0F, -1.5F, 0.0F);
+            two.addCuboid(-2.5F, -3.0F, -2.5F, 5, 6, 5, 0.0F);
             three = new ModelRenderer(this, 0, 9);
-            three.setRotationPoint(0.0F, -2.0F, 0.0F);
-            three.addBox(-2.0F, -2.0F, -2.0F, 4, 4, 4, 0.0F);
+            three.setPivot(0.0F, -2.0F, 0.0F);
+            three.addCuboid(-2.0F, -2.0F, -2.0F, 4, 4, 4, 0.0F);
             base = new WRModelRenderer(this, 0, 0);
-            base.setRotationPoint(0.0F, 22.0F, 0.0F);
+            base.setPivot(0.0F, 22.0F, 0.0F);
             base.addBox(-2.0F, -2.0F, -2.0F, 4, 4, 4, 0.0F);
             three.addChild(four);
             base.addChild(two);
@@ -105,13 +115,13 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
         }
 
         @Override
-        public void setRotationAngles(DragonEggEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+        public void setAngles(DragonEggEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
 
         public void animate(DragonEggEntity entity, float partialTicks)
         {
             float time = entity.wiggleTime.get(partialTicks);
-            base.rotateAngleX = time * entity.wiggleDirection.getXOffset();
-            base.rotateAngleZ = time * entity.wiggleDirection.getZOffset();
+            base.pitch = time * entity.wiggleDirection.getOffsetX();
+            base.roll = time * entity.wiggleDirection.getOffsetZ();
         }
 
         @Override

@@ -46,8 +46,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
-import static net.minecraft.entity.ai.attributes.Attributes.*;
-
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IForgeShearable
 {
     private static final int CROP_GROWTH_RADIUS = 5;
@@ -187,7 +185,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         {
             attackInBox(getOffsetBox(getWidth()));
             AxisAlignedBB aabb = getBoundingBox().grow(2).offset(Mafs.getYawVec(rotationYawHead, 0, 2));
-            for (BlockPos pos : ModUtils.getBlockPosesInAABB(aabb))
+            for (BlockPos pos : ModUtils.iterateThrough(aabb))
             {
                 if (world.getBlockState(pos).getBlock() instanceof BushBlock)
                     world.destroyBlock(pos, true, this);

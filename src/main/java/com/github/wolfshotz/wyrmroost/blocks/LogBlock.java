@@ -35,9 +35,9 @@ public class LogBlock extends RotatedPillarBlock
     public static AbstractBlock.Properties properties(MaterialColor top, MaterialColor bark)
     {
         return AbstractBlock.Properties
-                .create(Material.WOOD, state -> (top == bark || state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y)? top : bark)
-                .hardnessAndResistance(2f)
+                .of(Material.WOOD, state -> (top == bark || state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y)? top : bark)
+                .strength(2f)
                 .harvestTool(ToolType.AXE)
-                .sound(SoundType.WOOD);
+                .sounds(SoundType.WOOD);
     }
 }

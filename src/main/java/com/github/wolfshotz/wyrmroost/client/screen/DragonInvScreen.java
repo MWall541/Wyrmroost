@@ -17,8 +17,8 @@ public class DragonInvScreen extends ContainerScreen<DragonInvContainer>
     public DragonInvScreen(DragonInvContainer screenContainer, PlayerInventory inv, ITextComponent titleIn)
     {
         super(screenContainer, inv, titleIn);
-        xSize = 194;
-        ySize = 220;
+        x = 194;
+        y = 220;
     }
 
     @Override
@@ -26,30 +26,30 @@ public class DragonInvScreen extends ContainerScreen<DragonInvContainer>
     {
         renderBackground(ms);
         super.render(ms, mouseX, mouseY, partialTicks);
-        renderHoveredTooltip(ms, mouseX, mouseY);
+        drawMouseoverTooltip(ms, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack ms, float partialTicks, int x, int y)
+    protected void drawBackground(MatrixStack ms, float partialTicks, int x, int y)
     {
         renderBackground(ms);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bindTexture(TEXTURE);
-        int midX = (width - xSize) / 2;
-        int midY = (height - ySize) / 2;
-        blit(ms, midX, midY, 0, 0, xSize, ySize);
+        client.getTextureManager().bindTexture(TEXTURE);
+        int midX = (width - x) / 2;
+        int midY = (height - y) / 2;
+        drawTexture(ms, midX, midY, 0, 0, x, y);
 
-        for (Slot slot : container.inventorySlots)
-            if (slot.isEnabled())
-                blit(ms, (midX + slot.xPos) - 1, (midY + slot.yPos) - 1, 194, 0, 18, 18);
+        for (Slot slot : handler.slots)
+            if (slot.doDrawHoveringEffect())
+                drawTexture(ms, (midX + slot.x) - 1, (midY + slot.y) - 1, 194, 0, 18, 18);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack ms, int x, int y)
+    protected void drawForeground(MatrixStack ms, int x, int y)
     {
-        String name = container.inventory.dragon.getName().getUnformattedComponentText();
-        font.drawString(ms, name, (float) (xSize / 2 - font.getStringWidth(name) / 2), 6f, 0x404040);
+        String name = handler.inventory.dragon.getName().asString();
+        textRenderer.draw(ms, name, (float) (x / 2 - textRenderer.getWidth(name) / 2), 6f, 0x404040);
 
-        font.drawString(ms, playerInventory.getDisplayName().getString(), 8.0F, (float)(this.ySize - 96 + 2), 4210752);
+        textRenderer.draw(ms, playerInventory.getDisplayName().getString(), 8.0F, this.y - 96f + 2f, 4210752);
     }
 }

@@ -22,7 +22,7 @@ public class LDWyrmRenderer extends MobRenderer<LDWyrmEntity, EntityModel<LDWyrm
 
     @Nullable
     @Override
-    public ResourceLocation getEntityTexture(LDWyrmEntity entity)
+    public ResourceLocation getTexture(LDWyrmEntity entity)
     {
         return WRConfig.deckTheHalls? CHRISTMAS : TEXTURE;
     }

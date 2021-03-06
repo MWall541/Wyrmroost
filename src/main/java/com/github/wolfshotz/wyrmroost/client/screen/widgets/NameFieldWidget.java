@@ -14,13 +14,13 @@ public class NameFieldWidget extends TextFieldWidget
         super(font, posX, posY, sizeX, sizeY, dragon.getName());
 
         setText(getMessage().getString());
-        setCanLoseFocus(true);
+        setFocusUnlocked(true);
         changeFocus(true);
-        setEnableBackgroundDrawing(false);
-        setMaxStringLength(35);
-        setResponder(s ->
+        setDrawsBackground(false);
+        setMaxLength(35);
+        setChangedListener(s ->
         {
-            if (s.equals(dragon.getName().getUnformattedComponentText())) return;
+            if (s.equals(dragon.getName().asString())) return;
             StringTextComponent name = s.isEmpty()? null : new StringTextComponent(s);
             Wyrmroost.NETWORK.sendToServer(new RenameEntityPacket(dragon, name));
         });

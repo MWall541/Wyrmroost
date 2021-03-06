@@ -30,7 +30,7 @@ public class DebugScreen extends Screen
                 addButton(new Button((i * 50) + (width / 2) - (animations.length * 25), 200, 50, 12, new StringTextComponent("Anim: " + i), b ->
                 {
                     dragon.setAnimation(animation);
-                    closeScreen();
+                    onClose();
                 }));
             }
     }
@@ -42,17 +42,17 @@ public class DebugScreen extends Screen
         super.render(ms, mouseX, mouseY, partialTicks);
         String gender = dragon.isMale()? "male" : "female";
 
-        drawCenteredString(ms, font, dragon.getDisplayName().getUnformattedComponentText(), (width / 2), 15, 0xffffff);
-        drawCenteredString(ms, font, "isSleeping: " + dragon.isSleeping(), (width / 2) + 50, 50, 0xffffff);
-        drawCenteredString(ms, font, "isTamed: " + dragon.isTamed(), (width / 2) - 50, 50, 0xffffff);
-        drawCenteredString(ms, font, "isSitting: " + dragon.func_233684_eK_(), (width / 2) - 50, 75, 0xffffff);
-        drawCenteredString(ms, font, "isFlying: " + dragon.isFlying(), (width / 2) + 50, 75, 0xffffff);
-        drawCenteredString(ms, font, "variant: " + dragon.getVariant(), (width / 2) - 50, 100, 0xffffff);
-        drawCenteredString(ms, font, "gender: " + gender, (width / 2) + 50, 100, 0xffffff);
-        drawCenteredString(ms, font, "health: " + dragon.getHealth() + " / " + dragon.getMaxHealth(), (width / 2) - 50, 125, 0xffffff);
-        drawCenteredString(ms, font, "noAI: " + dragon.isAIDisabled(), (width / 2) + 50, 125, 0xffffff);
-        drawCenteredString(ms, font, "position: " + dragon.getPositionVec(), (width / 2), 150, 0xffffff);
-        drawCenteredString(ms, font, "motion: " + dragon.getMotion(), (width / 2), 175, 0xffffff);
+        drawCenteredString(ms, textRenderer, dragon.getDisplayName().asString(), (width / 2), 15, 0xffffff);
+        drawCenteredString(ms, textRenderer, "isSleeping: " + dragon.isSleeping(), (width / 2) + 50, 50, 0xffffff);
+        drawCenteredString(ms, textRenderer, "isTamed: " + dragon.isTamed(), (width / 2) - 50, 50, 0xffffff);
+        drawCenteredString(ms, textRenderer, "isSitting: " + dragon.isInSittingPose(), (width / 2) - 50, 75, 0xffffff);
+        drawCenteredString(ms, textRenderer, "isFlying: " + dragon.isFlying(), (width / 2) + 50, 75, 0xffffff);
+        drawCenteredString(ms, textRenderer, "variant: " + dragon.getVariant(), (width / 2) - 50, 100, 0xffffff);
+        drawCenteredString(ms, textRenderer, "gender: " + gender, (width / 2) + 50, 100, 0xffffff);
+        drawCenteredString(ms, textRenderer, "health: " + dragon.getHealth() + " / " + dragon.getMaxHealth(), (width / 2) - 50, 125, 0xffffff);
+        drawCenteredString(ms, textRenderer, "noAI: " + dragon.isAiDisabled(), (width / 2) + 50, 125, 0xffffff);
+        drawCenteredString(ms, textRenderer, "position: " + dragon.getPos(), (width / 2), 150, 0xffffff);
+        drawCenteredString(ms, textRenderer, "motion: " + dragon.getVelocity(), (width / 2), 175, 0xffffff);
     }
 
     @Override
@@ -63,6 +63,6 @@ public class DebugScreen extends Screen
 
     public static void open(AbstractDragonEntity dragon)
     {
-        Minecraft.getInstance().displayGuiScreen(new DebugScreen(dragon));
+        Minecraft.getInstance().openScreen(new DebugScreen(dragon));
     }
 }
