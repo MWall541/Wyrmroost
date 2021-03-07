@@ -31,23 +31,29 @@ public class DragonInvContainer extends Container
 
     // override method for public exposure
     @Override
-    public Slot addSlot(Slot slotIn) { return super.addSlot(slotIn); }
-
-    @Override
-    public boolean canInteractWith(PlayerEntity playerIn) { return inventory.dragon.getOwner() == playerIn; }
-
-    @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index)
+    public Slot addSlot(Slot slotIn)
     {
-        Slot slot = inventorySlots.get(index);
-        if (slot != null && slot.getHasStack())
+        return super.addSlot(slotIn);
+    }
+
+    @Override
+    public boolean canUse(PlayerEntity playerIn)
+    {
+        return inventory.dragon.getOwner() == playerIn;
+    }
+
+    @Override
+    public ItemStack transferSlot(PlayerEntity playerIn, int index)
+    {
+        Slot slot = slots.get(index);
+        if (slot != null && slot.hasStack())
         {
             ItemStack transferring = slot.getStack();
-            if ((index < MAX_PLAYER_SLOTS && mergeItemStack(transferring, MAX_PLAYER_SLOTS, inventorySlots.size(), false))
-                    || (index >= MAX_PLAYER_SLOTS && mergeItemStack(transferring, 0, MAX_PLAYER_SLOTS, true)))
+            if ((index < MAX_PLAYER_SLOTS && insertItem(transferring, MAX_PLAYER_SLOTS, slots.size(), false))
+                    || (index >= MAX_PLAYER_SLOTS && insertItem(transferring, 0, MAX_PLAYER_SLOTS, true)))
             {
-                if (transferring.isEmpty()) slot.putStack(ItemStack.EMPTY);
-                else slot.onSlotChanged();
+                if (transferring.isEmpty()) slot.setStack(ItemStack.EMPTY);
+                else slot.markDirty();
                 return transferring.copy();
             }
         }
@@ -76,7 +82,7 @@ public class DragonInvContainer extends Container
         {
             for (int x = 0; x < length; ++x)
             {
-                if (inventory.getSizeInventory() <= index)
+                if (inventory.size() <= index)
                 {
                     Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST!");
                     return;
@@ -97,7 +103,10 @@ public class DragonInvContainer extends Container
         return new INamedContainerProvider()
         {
             @Override
-            public ITextComponent getDisplayName() { return new StringTextComponent("Dragon Inventory"); }
+            public ITextComponent getDisplayName()
+            {
+                return new StringTextComponent("Dragon Inventory");
+            }
 
             @Override
             public Container createMenu(int id, PlayerInventory playersInv, PlayerEntity player)

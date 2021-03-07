@@ -147,7 +147,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         {
             if (animTime == 0) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1, true);
             ((LessShitLookController) getLookControl()).restore();
-            for (LivingEntity entity : getEntitiesNearby(10, this::isOnSameTeam))
+            for (LivingEntity entity : getEntitiesNearby(10, this::isTeammate))
                 entity.addStatusEffect(new EffectInstance(Effects.STRENGTH, 60));
         }
         else if (anim == SLAP_ATTACK_ANIMATION && (animTime == 7 || animTime == 12))
@@ -261,7 +261,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public EntitySize getSize(Pose poseIn)
+    public EntitySize getDimensions(Pose poseIn)
     {
         EntitySize size = getType().getDimensions().scaled(getScaleFactor());
         float heightFactor = isSleeping()? 0.5f : isInSittingPose()? 0.9f : 1;
@@ -296,9 +296,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean isMovementBlocked()
+    public boolean isImmobile()
     {
-        return super.isMovementBlocked() || isKnockedOut();
+        return super.isImmobile() || isKnockedOut();
     }
 
     @Override
@@ -308,7 +308,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean canBeRidden(Entity entity)
+    protected boolean canStartRiding(Entity entity)
     {
         return !isBaby() && !isKnockedOut() && isTamed();
     }
@@ -374,10 +374,10 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public boolean onLivingFall(float distance, float damageMultiplier)
+    public boolean handleFallDamage(float distance, float damageMultiplier)
     {
         if (isKnockedOut()) return false;
-        return super.onLivingFall(distance, damageMultiplier);
+        return super.handleFallDamage(distance, damageMultiplier);
     }
 
     @Override
@@ -489,16 +489,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
         public boolean canStart()
         {
             LivingEntity target = getTarget();
-            return target != null && target.isAlive();
-        }
-
-        @Override
-        public boolean shouldContinue()
-        {
-            LivingEntity target = getTarget();
             if (target != null && target.isAlive())
             {
-                if (!isWithinHomeDistanceFromPosition(target.getBlockPos())) return false;
+                if (!isInWalkTargetRange(target.getBlockPos())) return false;
                 return EntityPredicates.EXCEPT_CREATIVE_SPECTATOR_OR_PEACEFUL.test(target);
             }
             return false;

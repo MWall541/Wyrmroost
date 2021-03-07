@@ -26,7 +26,7 @@ public class BreathSound extends TickableSound
         float tick = dragon.breathTimer.get();
         if (!dragon.isAlive() || tick == 0)
         {
-            finishPlaying();
+            setDone();
             return;
         }
         volume = tick;
@@ -38,6 +38,6 @@ public class BreathSound extends TickableSound
 
     public static void play(RoyalRedEntity dragon)
     {
-        Minecraft.getInstance().getSoundHandler().play(new BreathSound(dragon));
+        Minecraft.getInstance().getSoundManager().play(new BreathSound(dragon));
     }
 }

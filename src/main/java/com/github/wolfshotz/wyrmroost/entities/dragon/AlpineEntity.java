@@ -52,39 +52,39 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected void registerGoals()
+    protected void initGoals()
     {
-        super.registerGoals();
+        super.initGoals();
 
-        goalSelector.addGoal(4, new MoveToHomeGoal(this));
-        goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
-        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(7, new DragonBreedGoal(this));
-        goalSelector.addGoal(8, new FlyerWanderGoal(this, 1, 0.01f));
-        goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
-        goalSelector.addGoal(10, new LookRandomlyGoal(this));
+        goalSelector.add(4, new MoveToHomeGoal(this));
+        goalSelector.add(5, new MeleeAttackGoal(this, 1.1d, true));
+        goalSelector.add(6, new WRFollowOwnerGoal(this));
+        goalSelector.add(7, new DragonBreedGoal(this));
+        goalSelector.add(8, new FlyerWanderGoal(this, 1, 0.01f));
+        goalSelector.add(9, new LookAtGoal(this, LivingEntity.class, 10));
+        goalSelector.add(10, new LookRandomlyGoal(this));
 
-        targetSelector.addGoal(0, new HurtByTargetGoal(this));
-        targetSelector.addGoal(1, new NonTamedTargetGoal<>(this, BeeEntity.class, false, e -> ((BeeEntity) e).hasNectar()));
+        targetSelector.add(0, new HurtByTargetGoal(this));
+        targetSelector.add(1, new NonTamedTargetGoal<>(this, BeeEntity.class, false, e -> ((BeeEntity) e).hasNectar()));
     }
 
     @Override
-    protected void registerData()
+    protected void initDataTracker()
     {
-        super.registerData();
-        dataManager.register(FLYING, false);
+        super.initDataTracker();
+        dataTracker.startTracking(FLYING, false);
     }
 
     @Override
-    public void livingTick()
+    public void tickMovement()
     {
-        super.livingTick();
+        super.tickMovement();
 
-        sitTimer.add(func_233684_eK_() || isSleeping()? 0.1f : -0.1f);
+        sitTimer.add(isInSittingPose() || isSleeping()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
 
-        if (!world.isRemote && noActiveAnimation() && !isSleeping() && !isChild() && getRNG().nextDouble() < 0.0005)
+        if (!world.isClient && noActiveAnimation() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
             AnimationPacket.send(this, ROAR_ANIMATION);
 
         Animation animation = getAnimation();
@@ -105,27 +105,27 @@ public class AlpineEntity extends AbstractDragonEntity
         }
         else if (animation == WIND_GUST_ANIMATION)
         {
-            if (tick == 0) setMotion(getMotion().add(0, -0.35, 0));
+            if (tick == 0) setVelocity(getVelocity().add(0, -0.35, 0));
             if (tick == 4)
             {
-                if (!world.isRemote) world.addEntity(new WindGustEntity(this));
-                setMotion(getMotion().add(getLookVec().inverse().mul(1.5, 0, 1.5).add(0, 1, 0)));
+                if (!world.isClient) world.spawnEntity(new WindGustEntity(this));
+                setVelocity(getVelocity().add(getRotationVector().negate().multiply(1.5, 0, 1.5).add(0, 1, 0)));
                 playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
             }
         }
     }
 
     @Override
-    public boolean attackEntityAsMob(Entity enemy)
+    public boolean tryAttack(Entity enemy)
     {
-        boolean flag = super.attackEntityAsMob(enemy);
+        boolean flag = super.tryAttack(enemy);
 
         if (!isTamed() && flag && !enemy.isAlive() && enemy.getType() == EntityType.BEE)
         {
             BeeEntity bee = (BeeEntity) enemy;
-            if (bee.hasNectar() && bee.getLeashed())
+            if (bee.hasNectar() && bee.isLeashed())
             {
-                Entity holder = bee.getLeashHolder();
+                Entity holder = bee.getHoldingEntity();
                 if (holder instanceof PlayerEntity) tame(true, (PlayerEntity) holder);
             }
         }
@@ -135,20 +135,20 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
-        Entity attacker = source.getImmediateSource();
+        Entity attacker = source.getSource();
         if (attacker != null && attacker.getType() == EntityType.BEE)
         {
-            setAttackTarget((BeeEntity) attacker);
+            setTarget((BeeEntity) attacker);
             return true;
         }
         return super.isInvulnerableTo(source);
     }
 
     @Override
-    public EntitySize getSize(Pose poseIn)
+    public EntitySize getDimensions(Pose poseIn)
     {
-        EntitySize size = getType().getSize().scale(getRenderScale());
-        return size.scale(1, func_233684_eK_() || isSleeping()? 0.7f : 1);
+        EntitySize size = getType().getDimensions().scaled(getScaleFactor());
+        return size.scaled(1, isInSittingPose() || isSleeping()? 0.7f : 1);
     }
 
     @Override
@@ -161,43 +161,43 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) event.getInfo().movePosition(-5d, 0.75d, 0);
-        else event.getInfo().movePosition(-3, 0.3, 0);
+        if (backView) event.getInfo().moveBy(-5d, 0.75d, 0);
+        else event.getInfo().moveBy(-3, 0.3, 0);
     }
 
     @Override
     protected void jump()
     {
         super.jump();
-        if (!world.isRemote)
-            world.addEntity(new WindGustEntity(this, getPositionVec().add(0, 7, 0), getVectorForRotation(90, rotationYaw)));
+        if (!world.isClient)
+            world.spawnEntity(new WindGustEntity(this, getPos().add(0, 7, 0), getRotationVector(90, yaw)));
     }
 
     @Override
-    protected float getJumpUpwardsMotion()
+    protected float getJumpVelocity()
     {
-        if (canFly()) return (getHeight() * getJumpFactor());
-        else return super.getJumpUpwardsMotion();
+        if (canFly()) return (getHeight() * getJumpVelocityMultiplier());
+        else return super.getJumpVelocity();
     }
 
     @Override
-    public void swingArm(Hand hand)
+    public void swingHand(Hand hand)
     {
         setAnimation(BITE_ANIMATION);
         playSound(SoundEvents.ENTITY_GENERIC_EAT, 1, 1, true);
-        super.swingArm(hand);
+        super.swingHand(hand);
     }
 
     @Override
     public int determineVariant()
     {
-        return getRNG().nextInt(6);
+        return getRandom().nextInt(6);
     }
 
     @Override
-    protected boolean canBeRidden(Entity entity)
+    protected boolean canStartRiding(Entity entity)
     {
-        return !isChild() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
+        return !isBaby() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
+    protected float getActiveEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
         return sizeIn.height * (isFlying()? 0.8f : 1.25f);
     }
@@ -242,17 +242,17 @@ public class AlpineEntity extends AbstractDragonEntity
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.EXTREME_HILLS)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ALPINE.get(), 2, 1, 4));
+            event.getSpawns().spawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ALPINE.get(), 2, 1, 4));
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 40)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.22)
-                .createMutableAttribute(KNOCKBACK_RESISTANCE, 1)
-                .createMutableAttribute(ATTACK_DAMAGE, 3)
-                .createMutableAttribute(FLYING_SPEED, 0.185f)
-                .createMutableAttribute(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 1);
+        return MobEntity.createMobAttributes()
+                .add(GENERIC_MAX_HEALTH, 40)
+                .add(GENERIC_MOVEMENT_SPEED, 0.22)
+                .add(GENERIC_KNOCKBACK_RESISTANCE, 1)
+                .add(GENERIC_ATTACK_DAMAGE, 3)
+                .add(GENERIC_FLYING_SPEED, 0.185f)
+                .add(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 1);
     }
 }

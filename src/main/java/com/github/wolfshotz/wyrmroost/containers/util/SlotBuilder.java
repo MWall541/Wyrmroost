@@ -19,10 +19,10 @@ public class SlotBuilder extends SlotItemHandler
     public static final int CENTER_X = 89;
     public static final int CENTER_Y = 60;
 
-    private int limit = super.getSlotStackLimit();
+    private int limit = super.getMaxItemCount();
     private BooleanSupplier isEnabled = () -> true;
-    private Predicate<ItemStack> isItemValid = super::isItemValid;
-    private Predicate<PlayerEntity> canTakeStack = super::canTakeStack;
+    private Predicate<ItemStack> isItemValid = super::canInsert;
+    private Predicate<PlayerEntity> canTakeStack = super::canTakeItems;
     private Consumer<SlotBuilder> onSlotUpdate = s ->
     {
     };
@@ -88,37 +88,42 @@ public class SlotBuilder extends SlotItemHandler
     // ===
 
     @Override
+    public boolean doDrawHoveringEffect()
+    {
+        return isEnabled();
+    }
+
     public boolean isEnabled()
     {
         return isEnabled.getAsBoolean();
     }
 
     @Override
-    public void onSlotChanged()
+    public void markDirty()
     {
         this.onSlotUpdate.accept(this);
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack)
+    public boolean canInsert(@Nonnull ItemStack stack)
     {
         return isEnabled() && isItemValid.test(stack);
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity playerIn)
+    public boolean canTakeItems(PlayerEntity playerIn)
     {
         return this.canTakeStack.test(playerIn);
     }
 
     @Override
-    public int getSlotStackLimit()
+    public int getMaxItemCount()
     {
         return limit;
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack)
+    public int getMaxItemCount(@Nonnull ItemStack stack)
     {
         return limit;
     }

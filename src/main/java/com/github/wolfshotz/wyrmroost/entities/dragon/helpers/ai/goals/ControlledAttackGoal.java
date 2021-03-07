@@ -4,14 +4,12 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 
-import java.util.function.Consumer;
-
 public class ControlledAttackGoal extends MeleeAttackGoal
 {
     private final AbstractDragonEntity dragon;
-    private final Consumer<AbstractDragonEntity> attack;
+    private final Runnable attack;
 
-    public ControlledAttackGoal(AbstractDragonEntity dragon, double speed, boolean longMemory, Consumer<AbstractDragonEntity> attack)
+    public ControlledAttackGoal(AbstractDragonEntity dragon, double speed, boolean longMemory, Runnable attack)
     {
         super(dragon, speed, longMemory);
         this.attack = attack;
@@ -19,39 +17,39 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canStart()
     {
-        return super.shouldExecute() && !dragon.isBeingRidden();
+        return super.canStart() && !dragon.hasPassengers();
     }
 
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean shouldContinue()
     {
-        LivingEntity target = dragon.getAttackTarget();
+        LivingEntity target = dragon.getTarget();
         if (target == null) return false;
-        return !dragon.isBeingRidden() && dragon.shouldAttackEntity(target, dragon.getOwner()) && super.shouldContinueExecuting();
+        return !dragon.hasPassengers() && dragon.canAttackWithOwner(target, dragon.getOwner()) && super.shouldContinue();
     }
 
     @Override
-    public void startExecuting()
+    public void start()
     {
-        attacker.setAggroed(true);
+        dragon.setAttacking(true);
     }
 
     @Override
-    protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
+    protected void attack(LivingEntity enemy, double distToEnemySqr)
     {
-        double reach = getAttackReachSqr(enemy);
-        if (distToEnemySqr <= reach && func_234040_h_() && enemy.getRidingEntity() != dragon && dragon.noActiveAnimation())
-        {
-            attack.accept(dragon);
-            func_234039_g_();
+        double reach = this.getSquaredMaxAttackDistance(enemy);
+        if (distToEnemySqr <= reach && method_28347()) {
+            attack.run();
+            method_28346();
         }
+
     }
 
     @Override
-    protected double getAttackReachSqr(LivingEntity attackTarget)
+    protected double getSquaredMaxAttackDistance(LivingEntity attackTarget)
     {
-        return attacker.getWidth() * 2 * attacker.getWidth() * 2 + attackTarget.getWidth();
+        return dragon.getWidth() * 2 * dragon.getWidth() * 2 + attackTarget.getWidth();
     }
 }

@@ -31,19 +31,19 @@ public class FlyingSound extends TickableSound
         }
         if (entity.isAlive() && entity.isFlying() && entity.getControllingPlayer() == ClientEvents.getPlayer())
         {
-            x = (float) entity.getPosX();
-            y = (float) entity.getPosY();
-            z = (float) entity.getPosZ();
-            double length = entity.getMotion().lengthSquared();
+            x = (float) entity.getX();
+            y = (float) entity.getY();
+            z = (float) entity.getZ();
+            double length = entity.getVelocity().lengthSquared();
             volume = Math.min((float) length * 2f, 0.75f);
             if (volume > 0.4f) pitch = 1f + (volume - 0.6f);
             else pitch = 1f;
         }
-        else finishPlaying();
+        else setDone();
     }
 
     public static void play(AbstractDragonEntity dragon)
     {
-        Minecraft.getInstance().getSoundHandler().play(new FlyingSound(dragon));
+        Minecraft.getInstance().getSoundManager().play(new FlyingSound(dragon));
     }
 }

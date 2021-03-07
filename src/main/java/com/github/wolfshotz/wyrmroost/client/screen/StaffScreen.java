@@ -11,10 +11,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,7 @@ import java.util.List;
 public class StaffScreen extends Screen
 {
     private final AbstractDragonEntity dragon;
-    public final List<IReorderingProcessor> toolTip = new ArrayList<>();
+    public final List<ITextComponent> toolTip = new ArrayList<>();
     public final List<StaffAction> actions = new ArrayList<>();
 
     public StaffScreen(AbstractDragonEntity dragon)
@@ -38,7 +36,7 @@ public class StaffScreen extends Screen
         toolTip.clear();
         dragon.addScreenInfo(this);
 
-        addButton(new NameFieldWidget(font, (width / 2) - 63, (height / 2) + 25, 120, 12, dragon));
+        addButton(new NameFieldWidget(textRenderer, (width / 2) - 63, (height / 2) + 25, 120, 12, dragon));
 
         initActions();
     }
@@ -69,10 +67,10 @@ public class StaffScreen extends Screen
         int y = (height / 2) + (int) (dragon.getHeight() / 2);
 
         if (dragon.getVariant() < 0)
-            drawString(ms, font, Character.toString('\u2726'), x - 40, y - 40, 0xffff00);
+            drawCenteredString(ms, textRenderer, Character.toString('\u2726'), x - 40, y - 40, 0xffff00);
 
         int scale = (int) -(dragon.getWidth() * dragon.getHeight()) + 23; // linear decay: smaller scale bigger the dragon. if things get problematic, exponential?
-        InventoryScreen.drawEntityOnScreen(x, y, scale, x - mouseX, y - mouseY, dragon);
+        InventoryScreen.drawEntity(x, y, scale, x - mouseX, y - mouseY, dragon);
         if (mouseX >= x - 40 && mouseY >= y - 40 && mouseX < x + 45 && mouseY < y + 15)
             renderTooltip(ms, toolTip, mouseX, mouseY);
     }
@@ -88,14 +86,14 @@ public class StaffScreen extends Screen
         actions.add(action);
     }
 
-    public void addTooltip(String string)
+    public void addTooltip(ITextComponent text)
     {
-        toolTip.add(IReorderingProcessor.func_242239_a(string, Style.EMPTY));
+        toolTip.add(text);
     }
 
     public static void open(AbstractDragonEntity dragon, ItemStack stack)
     {
         DragonStaffItem.bindDragon(dragon, stack);
-        if (dragon.world.isRemote) Minecraft.getInstance().displayGuiScreen(new StaffScreen(dragon));
+        if (dragon.world.isClient) Minecraft.getInstance().openScreen(new StaffScreen(dragon));
     }
 }
