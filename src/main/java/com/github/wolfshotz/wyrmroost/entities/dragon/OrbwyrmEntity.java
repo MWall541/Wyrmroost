@@ -38,7 +38,7 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     {
         super.livingTick();
 
-        sitTimer.add(func_233684_eK_() || isSleeping()? 0.065f : -0.065f);
+        sitTimer.add(isInSittingPose() || isSleeping()? 0.065f : -0.065f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
 
         Animation animation = getAnimation();
@@ -68,8 +68,8 @@ public class OrbwyrmEntity extends AbstractDragonEntity
     @Override
     public int determineVariant()
     {
-        if (getRNG().nextDouble() < 0.01) return -1;
-        return getRNG().nextInt(3);
+        if (getRandom().nextDouble() < 0.01) return -1;
+        return getRandom().nextInt(3);
     }
 
     @Override

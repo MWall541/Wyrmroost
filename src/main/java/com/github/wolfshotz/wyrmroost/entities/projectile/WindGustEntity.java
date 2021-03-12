@@ -31,7 +31,7 @@ public class WindGustEntity extends DragonProjectileEntity
 
     public WindGustEntity(AbstractDragonEntity shooter)
     {
-        this(shooter, shooter.getLookVec().add(shooter.getPositionVec().add(0, -1.5, 0)), shooter.getLookVec());
+        this(shooter, shooter.getRotationVector().add(shooter.getPos().add(0, -1.5, 0)), shooter.getRotationVector());
     }
 
     @Override
@@ -45,7 +45,7 @@ public class WindGustEntity extends DragonProjectileEntity
             Vector3d motion = getMotion().inverse().mul(0.1, 0.1, 0.1);
             for (int i = 0; i < 30; i++)
             {
-                Vector3d vec3d = getPositionVec().add(getMotion()).add(Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier);
+                Vector3d vec3d = getPos().add(getMotion()).add(Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier, Mafs.nextDouble(rand) * multiplier);
                 double xMot = motion.x + Mafs.nextDouble(rand) * 0.1;
                 double yMot = motion.y + Mafs.nextDouble(rand) * 0.1;
                 double zMot = motion.z + Mafs.nextDouble(rand) * 0.1;
@@ -88,7 +88,7 @@ public class WindGustEntity extends DragonProjectileEntity
         {
             for (LivingEntity e : world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox().grow(1), this::canImpactEntity))
             {
-                double angle = Mafs.getAngle(getPosX(), getPosZ(), e.getPosX(), e.getPosZ()) * Math.PI / 180;
+                double angle = Mafs.getAngle(getX(), getZ(), e.getX(), e.getZ()) * Math.PI / 180;
                 e.addVelocity(2 * -Math.cos(angle), 0.5d, 2 * -Math.sin(angle));
             }
         }

@@ -61,7 +61,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         super(dragon, world);
 
         registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRandom().nextBoolean());
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
@@ -78,12 +78,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         goalSelector.addGoal(8, new WRFollowOwnerGoal(this));
         goalSelector.addGoal(9, new FollowParentGoal(this, 1)
         {
-            { setMutexFlags(EnumSet.of(Flag.MOVE)); }
+            { setControls(EnumSet.of(Flag.MOVE)); }
 
             @Override
-            public boolean shouldExecute()
+            public boolean canStart()
             {
-                return !isTamed() && super.shouldExecute();
+                return !isTamed() && super.canStart();
             }
         });
         goalSelector.addGoal(10, new WaterAvoidingRandomWalkingGoal(this, 1));
@@ -92,9 +92,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         goalSelector.addGoal(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.fromItems(Items.APPLE))
         {
             @Override
-            public boolean shouldExecute()
+            public boolean canStart()
             {
-                return !isTamed() && isChild() && super.shouldExecute();
+                return !isTamed() && isChild() && super.canStart();
             }
         });
 
@@ -102,9 +102,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         targetSelector.addGoal(1, new NonTamedTargetGoal<PlayerEntity>(this, PlayerEntity.class, true, EntityPredicates.CAN_AI_TARGET::test)
         {
             @Override
-            public boolean shouldExecute()
+            public boolean canStart()
             {
-                return !isChild() && super.shouldExecute();
+                return !isChild() && super.canStart();
             }
         });
     }
@@ -119,7 +119,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         {
             if (!world.isRemote && temptGoal.isRunning())
             {
-                tame(getRNG().nextDouble() <= 0.2d, player);
+                tame(getRandom().nextDouble() <= 0.2d, player);
                 eat(stack);
                 return ActionResultType.SUCCESS;
             }
@@ -141,7 +141,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     {
         super.livingTick();
 
-        sitTimer.add((func_233684_eK_() || isSleeping())? 0.1f : -0.1f);
+        sitTimer.add((isInSittingPose() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.05f : -0.1f);
 
         if (!world.isRemote)
@@ -153,12 +153,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
             if (growCropsTime >= 0)
             {
                 --growCropsTime;
-                if (getRNG().nextBoolean())
+                if (getRandom().nextBoolean())
                 {
                     AxisAlignedBB aabb = getBoundingBox().grow(CROP_GROWTH_RADIUS);
-                    int x = MathHelper.nextInt(getRNG(), (int) aabb.minX, (int) aabb.maxX);
-                    int y = MathHelper.nextInt(getRNG(), (int) aabb.minY, (int) aabb.maxY);
-                    int z = MathHelper.nextInt(getRNG(), (int) aabb.minZ, (int) aabb.maxZ);
+                    int x = MathHelper.nextInt(getRandom(), (int) aabb.minX, (int) aabb.maxX);
+                    int y = MathHelper.nextInt(getRandom(), (int) aabb.minY, (int) aabb.maxY);
+                    int z = MathHelper.nextInt(getRandom(), (int) aabb.minZ, (int) aabb.maxZ);
                     BlockPos pos = new BlockPos(x, y, z);
                     BlockState state = world.getBlockState(pos);
                     Block block = state.getBlock();
@@ -167,21 +167,21 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
                         IGrowable plant = (IGrowable) block;
                         if (plant.canGrow(world, pos, state, false))
                         {
-                            plant.grow((ServerWorld) world, getRNG(), pos, state);
+                            plant.grow((ServerWorld) world, getRandom(), pos, state);
                             world.playEvent(Constants.WorldEvents.BONEMEAL_PARTICLES, pos, 0);
                         }
                     }
                 }
             }
 
-            if (!isChild() && world.isDaytime() && !isSleeping() && isIdling() && getRNG().nextDouble() < 0.002)
+            if (!isChild() && world.isDay() && !isSleeping() && isIdling() && getRandom().nextDouble() < 0.002)
             {
                 napTime = 1200;
                 setSleeping(true);
             }
         }
 
-        if (getAnimation() == BITE_ANIMATION && getAnimationTick() == 7 && canPassengerSteer())
+        if (getAnimation() == BITE_ANIMATION && getAnimationTick() == 7 && canBeControlledByRider())
         {
             attackInBox(getOffsetBox(getWidth()));
             AxisAlignedBB aabb = getBoundingBox().grow(2).offset(Mafs.getYawVec(rotationYawHead, 0, 2));
@@ -215,7 +215,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        if (func_233684_eK_() || isSleeping()) size = size.scale(1, 0.7f);
+        if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.7f);
         return size;
     }
 
@@ -237,7 +237,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     {
         playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1f, 1f);
         shearCooldownTime = 12000;
-        return Collections.singletonList(new ItemStack(Items.APPLE, 1 + fortune + getRNG().nextInt(2)));
+        return Collections.singletonList(new ItemStack(Items.APPLE, 1 + fortune + getRandom().nextInt(2)));
     }
 
     @Override
@@ -269,7 +269,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     @Override
     public int determineVariant()
     {
-        return getRNG().nextDouble() < 0.01? -1 : 0;
+        return getRandom().nextDouble() < 0.01? -1 : 0;
     }
 
     @Override
@@ -354,11 +354,11 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         public MoveToCropsGoal()
         {
             super(DragonFruitDrakeEntity.this, 1, CROP_GROWTH_RADIUS * 2);
-            setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
+            setControls(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
         }
 
         @Override
-        public boolean shouldExecute()
+        public boolean canStart()
         {
             return growCropsTime >= 0 && searchForDestination();
         }
@@ -370,7 +370,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         }
 
         @Override
-        public boolean shouldContinueExecuting()
+        public boolean shouldContinue()
         {
             return growCropsTime >= 0;
         }
@@ -379,8 +379,8 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         public void tick()
         {
             super.tick();
-            getLookController().setLookPosition(destinationBlock.getX(), destinationBlock.getY(), destinationBlock.getY());
-            if (timeoutCounter >= 200 && getRNG().nextInt(timeoutCounter) >= 100)
+            getLookControl().setLookPosition(destinationBlock.getX(), destinationBlock.getY(), destinationBlock.getY());
+            if (timeoutCounter >= 200 && getRandom().nextInt(timeoutCounter) >= 100)
             {
                 timeoutCounter = 0;
                 searchForDestination();

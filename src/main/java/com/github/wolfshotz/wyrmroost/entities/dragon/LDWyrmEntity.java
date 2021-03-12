@@ -125,7 +125,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 
         if (isBurrowed())
         {
-            if (world.getBlockState(getPosition().down(1)).getMaterial() != Material.SAND) setBurrowed(false);
+            if (world.getBlockState(getBlockPos().down(1)).getMaterial() != Material.SAND) setBurrowed(false);
             attackAbove();
         }
     }
@@ -156,7 +156,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
         List<Entity> entities = world.getEntitiesInAABBexcluding(this, aabb, predicateFilter);
         if (entities.isEmpty()) return;
 
-        Optional<Entity> closest = entities.stream().min(Comparator.comparingDouble(entity -> entity.getDistance(this)));
+        Optional<Entity> closest = entities.stream().min(Comparator.comparingDouble(entity -> entity.distanceTo(this)));
         Entity entity = closest.get();
         if (entity instanceof FishingBobberEntity)
         {
@@ -184,7 +184,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
                 tag.put(LDWyrmItem.DATA_CONTENTS, subTag);
                 if (hasCustomName()) stack.setDisplayName(getCustomName());
                 stack.setTag(tag);
-                InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), stack);
+                InventoryHelper.spawnItemStack(world, getX(), getY(), getZ(), stack);
                 remove();
             }
             return ActionResultType.func_233537_a_(world.isRemote);
@@ -228,7 +228,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
         }
 
         Entity player = world.getClosestPlayer(this, 32);
-        if (player == null && (getRNG().nextDouble() < 0.0075 || !world.isDaytime())) remove();
+        if (player == null && (getRandom().nextDouble() < 0.0075 || !world.isDay())) remove();
         else idleTime = 0;
     }
 
@@ -347,20 +347,20 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 
         public BurrowGoal()
         {
-            setMutexFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
+            setControls(EnumSet.of(Flag.MOVE, Flag.JUMP));
         }
 
         /**
          * Returns whether the EntityAIBase should begin execution.
          */
         @Override
-        public boolean shouldExecute()
+        public boolean canStart()
         {
             return !isBurrowed() && belowIsSand();
         }
 
         @Override
-        public void resetTask()
+        public void stop()
         {
             burrowTicks = 30;
         }
@@ -377,7 +377,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 
         private boolean belowIsSand()
         {
-            return world.getBlockState(getPosition().down(1)).getMaterial() == Material.SAND;
+            return world.getBlockState(getBlockPos().down(1)).getMaterial() == Material.SAND;
         }
     }
 }

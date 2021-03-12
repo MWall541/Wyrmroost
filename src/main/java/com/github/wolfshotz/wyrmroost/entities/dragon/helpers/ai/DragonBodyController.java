@@ -26,14 +26,14 @@ public class DragonBodyController extends BodyController
         if (dragon.isSleeping()) return;
 
         // Clamp the head rotation to 70 degrees while sitting
-        if (dragon.func_233684_eK_())
+        if (dragon.isInSittingPose())
         {
             clampHeadRotation(70f);
             return;
         }
 
         // clamp head to 120 degrees, rotate body according to head
-        if (dragon.canPassengerSteer() || dragon.isFlying())
+        if (dragon.canBeControlledByRider() || dragon.isFlying())
         {
             clampHeadRotation(120f);
             dragon.renderYawOffset = dragon.rotationYaw = MathHelper.wrapDegrees(MathHelper.func_219800_b(dragon.rotationYawHead, dragon.renderYawOffset, dragon.getYawRotationSpeed()));

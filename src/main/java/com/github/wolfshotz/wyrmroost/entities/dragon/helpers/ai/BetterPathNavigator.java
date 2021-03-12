@@ -20,9 +20,9 @@ public class BetterPathNavigator extends GroundPathNavigator
         Vector3d pos = getEntityPosition();
         Vector3d pathPos = Vector3d.copyCenteredHorizontally(currentPath.func_242948_g());
 
-        double xDiff = Math.abs(pathPos.getX() - entity.getPosX());
-        double yDiff = Math.abs(pathPos.getY() - entity.getPosY());
-        double zDiff = Math.abs(pathPos.getZ() - entity.getPosZ());
+        double xDiff = Math.abs(pathPos.getX() - entity.getX());
+        double yDiff = Math.abs(pathPos.getY() - entity.getY());
+        double zDiff = Math.abs(pathPos.getZ() - entity.getZ());
 
         maxDistanceToWaypoint = ((int) (entity.getWidth() + 1f)) * 0.5f;
         boolean isWithinPathPoint = xDiff < maxDistanceToWaypoint && zDiff < maxDistanceToWaypoint && yDiff < 1;

@@ -60,7 +60,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     @Override
     public void tick()
     {
-        if ((!world.isRemote && (!shooter.isAlive() || ticksExisted > life || ticksExisted > getMaxLife())) || !world.isBlockLoaded(getPosition()))
+        if ((!world.isRemote && (!shooter.isAlive() || ticksExisted > life || ticksExisted > getMaxLife())) || !world.isBlockLoaded(getBlockPos()))
         {
             remove();
             return;
@@ -84,7 +84,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
                 for (Entity entity : world.getEntitiesInAABBexcluding(this, box, this::canImpactEntity))
                     onEntityImpact(entity);
 
-                Vector3d position = getPositionVec();
+                Vector3d position = getPos();
                 Vector3d end = position.add(getMotion());
                 BlockRayTraceResult rtr = world.rayTraceBlocks(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
                 if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getPos(), rtr.getFace());
@@ -95,15 +95,15 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
         Vector3d motion = getMotion();
         if (!hasNoGravity()) setMotion(motion = motion.add(0, -0.05, 0));
-        double x = getPosX() + motion.x;
-        double y = getPosY() + motion.y;
-        double z = getPosZ() + motion.z;
+        double x = getX() + motion.x;
+        double y = getY() + motion.y;
+        double z = getZ() + motion.z;
 
         if (isInWater())
         {
             setMotion(motion.scale(0.95f));
             for (int i = 0; i < 4; ++i)
-                world.addParticle(ParticleTypes.BUBBLE, getPosX() * 0.25d, getPosY() * 0.25d, getPosZ() * 0.25D, motion.x, motion.y, motion.z);
+                world.addParticle(ParticleTypes.BUBBLE, getX() * 0.25d, getY() * 0.25d, getZ() * 0.25D, motion.x, motion.y, motion.z);
         }
         setPosition(x, y, z);
     }
@@ -115,7 +115,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         if (!(entity instanceof LivingEntity)) return false;
         if (entity.getLowestRidingEntity() == shooter) return false;
         if (entity.isSpectator() || !entity.canBeCollidedWith() || entity.noClip) return false;
-        return shooter != null && !entity.isOnSameTeam(shooter);
+        return shooter != null && !entity.isTeammate(shooter);
     }
 
     public void hit(RayTraceResult result)

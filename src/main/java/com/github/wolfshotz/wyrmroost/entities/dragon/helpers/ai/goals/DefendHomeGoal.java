@@ -18,7 +18,7 @@ import java.util.function.Predicate;
  */
 public class DefendHomeGoal extends TargetGoal
 {
-    private static final Predicate<LivingEntity> FILTER = e -> e instanceof IMob && !(e instanceof CreeperEntity) && !e.getName().getUnformattedComponentText().equalsIgnoreCase("Ignore Me");
+    private static final Predicate<LivingEntity> FILTER = e -> e instanceof IMob && !(e instanceof CreeperEntity) && !e.getName().asString().equalsIgnoreCase("Ignore Me");
 
     private final AbstractDragonEntity defender;
     private final EntityPredicate predicate;
@@ -27,8 +27,8 @@ public class DefendHomeGoal extends TargetGoal
     {
         super(defender, false, false);
         this.defender = defender;
-        this.predicate = new EntityPredicate().setCustomPredicate(FILTER.and(additionalFilters));
-        setMutexFlags(EnumSet.of(Flag.TARGET));
+        this.predicate = new EntityPredicate().setPredicate(FILTER.and(additionalFilters));
+        setControls(EnumSet.of(Flag.TARGET));
     }
 
     public DefendHomeGoal(AbstractDragonEntity defender)
@@ -37,43 +37,43 @@ public class DefendHomeGoal extends TargetGoal
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canStart()
     {
         if (defender.getHealth() <= defender.getMaxHealth() * 0.25) return false;
         if (!defender.getHomePos().isPresent()) return false;
-        return defender.getRNG().nextDouble() < 0.2 && (target = findPotentialTarget()) != null;
+        return defender.getRandom().nextDouble() < 0.2 && (target = findPotentialTarget()) != null;
     }
 
     @Override
-    public void startExecuting()
+    public void start()
     {
-        super.startExecuting();
+        super.start();
 
         // alert others!
-        for (MobEntity mob : defender.world.getEntitiesWithinAABB(MobEntity.class, defender.getBoundingBox().grow(WRConfig.homeRadius), defender::isOnSameTeam))
-            mob.setAttackTarget(target);
+        for (MobEntity mob : defender.world.getEntitiesByClass(MobEntity.class, defender.getBoundingBox().expand(WRConfig.homeRadius), defender::isTeammate))
+            mob.setTarget(target);
     }
 
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean shouldContinue()
     {
-        return defender.isWithinHomeDistanceFromPosition(target.getPosition()) && super.shouldContinueExecuting();
+        return defender.isInWalkTargetRange(target.getBlockPos()) && super.shouldContinue();
     }
 
     @Override
-    protected double getTargetDistance()
+    protected double getFollowRange()
     {
-        return defender.getMaximumHomeDistance();
+        return defender.getPositionTargetRange();
     }
 
     public LivingEntity findPotentialTarget()
     {
-        return defender.world.func_225318_b(LivingEntity.class,
+        return defender.world.getClosestEntity(LivingEntity.class,
                 predicate,
                 defender,
-                defender.getPosX(),
-                defender.getPosY() + defender.getEyeHeight(),
-                defender.getPosZ(),
-                new AxisAlignedBB(defender.getHomePosition()).grow(WRConfig.homeRadius));
+                defender.getX(),
+                defender.getEyeY(),
+                defender.getZ(),
+                new AxisAlignedBB(defender.getPositionTarget()).expand(WRConfig.homeRadius));
     }
 }

@@ -19,7 +19,7 @@ public class FlyerPathNavigator extends FlyingPathNavigator
     @SuppressWarnings("ConstantConditions") // IT CAN BE NULL DAMNIT
     public void tick()
     {
-        if (!noPath() && canNavigate())
+        if (!isIdle() && canNavigate())
         {
             AbstractDragonEntity dragon = ((AbstractDragonEntity) entity);
             BlockPos target = getTargetPos();

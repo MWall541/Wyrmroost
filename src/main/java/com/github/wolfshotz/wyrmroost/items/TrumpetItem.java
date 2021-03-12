@@ -25,8 +25,8 @@ public class TrumpetItem extends Item
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand)
     {
-        SoundEvent sound = player.getRNG().nextBoolean()? WRSounds.ENTITY_BFLY_IDLE.get() : WRSounds.ENTITY_BFLY_ROAR.get();
-        world.playSound(player, player.getPosition(), sound, SoundCategory.PLAYERS, 0.75f, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        SoundEvent sound = player.getRandom().nextBoolean()? WRSounds.ENTITY_BFLY_IDLE.get() : WRSounds.ENTITY_BFLY_ROAR.get();
+        world.playSound(player, player.getBlockPos(), sound, SoundCategory.PLAYERS, 0.75f, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
         player.getCooldownTracker().setCooldown(this, 50);
         return ActionResult.resultSuccess(player.getHeldItem(hand));
     }

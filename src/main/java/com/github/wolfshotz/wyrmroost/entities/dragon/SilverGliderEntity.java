@@ -54,7 +54,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super(dragon, world);
 
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRNG().nextBoolean());
+        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRandom().nextBoolean());
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
     }
@@ -88,7 +88,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         if (isGliding && !isRiding()) isGliding = false;
 
-        sitTimer.add((func_233684_eK_() || isSleeping())? 0.2f : -0.2f);
+        sitTimer.add((isInSittingPose() || isSleeping())? 0.2f : -0.2f);
         sleepTimer.add(isSleeping()? 0.05f : -0.1f);
         flightTimer.add(isFlying() || isGliding()? 0.1f : -0.1f);
     }
@@ -110,7 +110,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         if (isGliding)
         {
-            Vector3d vec3d = player.getLookVec().scale(0.3);
+            Vector3d vec3d = player.getRotationVector().scale(0.3);
             player.setMotion(player.getMotion().scale(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
             if (!world.isRemote) ((ServerPlayerEntity) player).connection.floating = false;
             player.fallDistance = 0;
@@ -120,7 +120,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public void travel(Vector3d vec3d)
     {
-        Vector3d look = getLookVec();
+        Vector3d look = getRotationVector();
         if (isFlying() && look.y < 0) setMotion(getMotion().add(0, look.y * 0.25, 0));
 
         super.travel(vec3d);
@@ -136,14 +136,14 @@ public class SilverGliderEntity extends AbstractDragonEntity
         {
             if (!world.isRemote && (temptGoal.isRunning() || player.isCreative()))
             {
-                tame(getRNG().nextDouble() < 0.333, player);
+                tame(getRandom().nextDouble() < 0.333, player);
                 eat(stack);
                 return ActionResultType.SUCCESS;
             }
             return ActionResultType.CONSUME;
         }
 
-        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking() && !isBreedingItem(stack) && !getLeashed())
+        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking() && !isBreedingItem(stack) && !isLeashed())
         {
             startRiding(player, true);
             setSit(false);
@@ -171,9 +171,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         if (getVariant() == -1 && ticksExisted % 5 == 0)
         {
-            double x = getPosX() + getRNG().nextGaussian();
-            double y = getPosY() + getRNG().nextDouble();
-            double z = getPosZ() + getRNG().nextGaussian();
+            double x = getX() + getRandom().nextGaussian();
+            double y = getY() + getRandom().nextDouble();
+            double z = getZ() + getRandom().nextGaussian();
             world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.2f, 0);
         }
     }
@@ -182,15 +182,15 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public EntitySize getSize(Pose poseIn)
     {
         EntitySize size = getType().getSize().scale(getRenderScale());
-        if (func_233684_eK_() || isSleeping()) size = size.scale(1, 0.87f);
+        if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.87f);
         return size;
     }
 
     @Override
     public int determineVariant()
     {
-        if (getRNG().nextDouble() < 0.002) return -1;
-        return getRNG().nextInt(3);
+        if (getRandom().nextDouble() < 0.002) return -1;
+        return getRandom().nextInt(3);
     }
 
     @Nullable
@@ -277,31 +277,31 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         public SwoopGoal()
         {
-            setMutexFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            setControls(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
-        public boolean shouldExecute()
+        public boolean canStart()
         {
             if (!isFlying()) return false;
             if (isRiding()) return false;
-            if (getRNG().nextDouble() > 0.001) return false;
-            if (world.getFluidState(this.pos = world.getHeight(Heightmap.Type.WORLD_SURFACE, getPosition()).down()).isEmpty())
+            if (getRandom().nextDouble() > 0.001) return false;
+            if (world.getFluidState(this.pos = world.getTopPosition(Heightmap.Type.WORLD_SURFACE, getBlockPos()).down()).isEmpty())
                 return false;
-            return getPosY() - pos.getY() > 8;
+            return getY() - pos.getY() > 8;
         }
 
         @Override
-        public boolean shouldContinueExecuting()
+        public boolean shouldContinue()
         {
-            return getPosition().distanceSq(pos) > 8;
+            return getBlockPos().distanceSq(pos) > 8;
         }
 
         @Override
         public void tick()
         {
-            if (getNavigator().noPath()) getNavigator().tryMoveToXYZ(pos.getX(), pos.getY() + 2, pos.getZ(), 1);
-            getLookController().setLookPosition(pos.getX(), pos.getY() + 2, pos.getZ());
+            if (getNavigation().isIdle()) getNavigation().startMovingTo(pos.getX(), pos.getY() + 2, pos.getZ(), 1);
+            getLookControl().setLookPosition(pos.getX(), pos.getY() + 2, pos.getZ());
         }
     }
 }

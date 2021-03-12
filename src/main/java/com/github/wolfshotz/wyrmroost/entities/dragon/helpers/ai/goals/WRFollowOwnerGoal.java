@@ -13,51 +13,54 @@ public class WRFollowOwnerGoal extends Goal
 
     public WRFollowOwnerGoal(AbstractDragonEntity tameableEntity)
     {
-        setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        setControls(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
         this.dragon = tameableEntity;
     }
 
     @Override
-    public boolean shouldExecute()
+    public boolean canStart()
     {
         final double MINIMUM_FOLLOW_DIST = dragon.getWidth() * dragon.getWidth() + 100;
 
-        if (dragon.func_233684_eK_() || dragon.getLeashed() || dragon.detachHome()) return false;
+        if (dragon.isInSittingPose() || dragon.isLeashed() || dragon.hasPositionTarget()) return false;
         LivingEntity owner = dragon.getOwner();
         if (owner == null || owner.isSpectator()) return false;
-        return dragon.getDistanceSq(owner) > MINIMUM_FOLLOW_DIST;
+        return dragon.squaredDistanceTo(owner) > MINIMUM_FOLLOW_DIST;
     }
 
     @Override
-    public boolean shouldContinueExecuting()
+    public boolean shouldContinue()
     {
         final double MINIMUM_TRAVEL_DIST = dragon.getWidth() * dragon.getWidth() + 6.25;
 
-        if (dragon.func_233684_eK_() || dragon.getLeashed()) return false;
+        if (dragon.isInSittingPose() || dragon.isLeashed()) return false;
         LivingEntity owner = dragon.getOwner();
         if (owner == null) return false;
         if (owner.isSpectator()) return false;
-        return dragon.getDistanceSq(owner) > MINIMUM_TRAVEL_DIST;
+        return dragon.squaredDistanceTo(owner) > MINIMUM_TRAVEL_DIST;
     }
 
     @Override
-    public void resetTask() { dragon.getNavigator().clearPath(); }
+    public void stop()
+    {
+        dragon.getNavigation().stop();
+    }
 
     @Override
     public void tick()
     {
         LivingEntity owner = dragon.getOwner();
-        dragon.getLookController().setLookPositionWithEntity(owner, 90, 90);
+        dragon.getLookControl().lookAt(owner, 90, 90);
 
-        if (++newPathTicks >= 10 || dragon.getNavigator().noPath())
+        if (++newPathTicks >= 10 || dragon.getNavigation().isIdle())
         {
             newPathTicks = 0;
 
             final double minTeleportDist = (dragon.getWidth() * 5 * dragon.getWidth() * 5 * (dragon.isFlying()? dragon.getWidth() * 5 : 1)) + 196;
 
-            if (dragon.getDistanceSq(owner) > minTeleportDist && (owner.getLowestRidingEntity().isOnGround() || dragon.canFly()) && dragon.tryTeleportToOwner())
-                dragon.getNavigator().clearPath();
-            else dragon.getNavigator().tryMoveToEntityLiving(owner, 1);
+            if (dragon.squaredDistanceTo(owner) > minTeleportDist && (owner.getRootVehicle().isOnGround() || dragon.canFly()) && dragon.tryTeleportToOwner())
+                dragon.getNavigation().stop();
+            else dragon.getNavigation().startMovingTo(owner, 1);
         }
     }
 }

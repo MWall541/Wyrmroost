@@ -101,10 +101,10 @@ public class CoinDragonEntity extends MobEntity
         ActionResultType stackResult = player.getHeldItem(hand).interactWithEntity(player, this, hand);
         if (stackResult.isSuccessOrConsume()) return stackResult;
 
-        ItemEntity itemEntity = new ItemEntity(world, getPosX(), getPosY(), getPosZ(), getItemStack());
-        double x = player.getPosX() - getPosX();
-        double y = player.getPosY() - getPosY();
-        double z = player.getPosZ() - getPosZ();
+        ItemEntity itemEntity = new ItemEntity(world, getX(), getY(), getZ(), getItemStack());
+        double x = player.getX() - getX();
+        double y = player.getY() - getY();
+        double z = player.getZ() - getZ();
         itemEntity.setMotion(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
         world.addEntity(itemEntity);
         remove();
@@ -169,9 +169,9 @@ public class CoinDragonEntity extends MobEntity
 
     public double getAltitude()
     {
-        BlockPos.Mutable pos = getPosition().toMutable().move(0, -1, 0);
+        BlockPos.Mutable pos = getBlockPos().mutableCopy().move(0, -1, 0);
         while (pos.getY() > 0 && !world.getBlockState(pos).isSolid()) pos.setY(pos.getY() - 1);
-        return getPosY() - pos.getY();
+        return getY() - pos.getY();
     }
 
     public ItemStack getItemStack()

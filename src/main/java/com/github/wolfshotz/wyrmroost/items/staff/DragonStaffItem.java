@@ -42,7 +42,7 @@ public class DragonStaffItem extends Item
         if (player.isSneaking() && stack.hasTag() && stack.getTag().contains(DATA_DRAGON_ID))
         {
             reset(stack.getTag());
-            ModUtils.playLocalSound(world, player.getPosition(), SoundEvents.BLOCK_SCAFFOLDING_STEP, 1, 1);
+            ModUtils.playLocalSound(world, player.getBlockPos(), SoundEvents.BLOCK_SCAFFOLDING_STEP, 1, 1);
             return ActionResult.resultSuccess(stack);
         }
 
@@ -64,7 +64,7 @@ public class DragonStaffItem extends Item
             if (dragon.isOwner(player))
             {
                 bindDragon(dragon, stack);
-                ModUtils.playLocalSound(player.world, player.getPosition(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
+                ModUtils.playLocalSound(player.world, player.getBlockPos(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
                 return true;
             }
         }

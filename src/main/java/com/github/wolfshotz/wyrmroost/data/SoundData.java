@@ -38,14 +38,14 @@ public class SoundData implements IDataProvider
     }
 
     @Override
-    public void act(DirectoryCache cache) throws IOException
+    public void run(DirectoryCache cache) throws IOException
     {
         JsonObject json = new JsonObject();
         registerSounds(json);
         for (SoundEvent value : ModUtils.getRegistryEntries(WRSounds.REGISTRY))
             if (!REGISTERED.contains(value))
-                throw new IllegalArgumentException("Unregistered Sound event: " + value.getName());
-        IDataProvider.save(GSON, cache, json, generator.getOutputFolder().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
+                throw new IllegalArgumentException("Unregistered Sound event: " + value.getId());
+        IDataProvider.writeToPath(GSON, cache, json, generator.getOutput().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
     }
 
     public void registerSounds(JsonObject json)
@@ -166,7 +166,7 @@ public class SoundData implements IDataProvider
 
         public void build(JsonObject soundsFile)
         {
-            soundsFile.add(sound.getName().getPath(), json);
+            soundsFile.add(sound.getId().getPath(), json);
             REGISTERED.add(sound);
         }
     }

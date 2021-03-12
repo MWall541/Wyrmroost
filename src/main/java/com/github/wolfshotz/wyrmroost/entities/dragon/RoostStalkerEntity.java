@@ -83,9 +83,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.addGoal(8, new AvoidEntityGoal<PlayerEntity>(this, PlayerEntity.class, 7f, 1.15f, 1f)
         {
             @Override
-            public boolean shouldExecute()
+            public boolean canStart()
             {
-                return !isTamed() && !getItem().isEmpty() && super.shouldExecute();
+                return !isTamed() && !getItem().isEmpty() && super.canStart();
             }
         });
 
@@ -140,7 +140,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         if (!world.isRemote)
         {
             ItemStack item = getStackInSlot(ITEM_SLOT);
-            if (isFoodItem(item) && getHealth() < getMaxHealth() && getRNG().nextDouble() <= 0.0075)
+            if (isFoodItem(item) && getHealth() < getMaxHealth() && getRandom().nextDouble() <= 0.0075)
                 eat(item);
         }
     }
@@ -156,7 +156,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         if (!isTamed() && Tags.Items.EGGS.contains(item))
         {
             eat(stack);
-            if (tame(getRNG().nextDouble() < 0.25, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
+            if (tame(getRandom().nextDouble() < 0.25, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
 
             return COMMON_SUCCESS;
         }
@@ -177,11 +177,11 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         {
             if (player.isSneaking())
             {
-                setSit(!func_233684_eK_());
+                setSit(!isInSittingPose());
                 return COMMON_SUCCESS;
             }
 
-            if (stack.isEmpty() && heldItem.isEmpty() && !getLeashed() && player.getPassengers().size() < 3)
+            if (stack.isEmpty() && heldItem.isEmpty() && !isLeashed() && player.getPassengers().size() < 3)
             {
                 if (!world.isRemote && startRiding(player, true))
                 {
@@ -209,9 +209,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     {
         if (getVariant() == -1 && ticksExisted % 25 == 0)
         {
-            double x = getPosX() + (Mafs.nextDouble(getRNG()) * 0.7d);
-            double y = getPosY() + (getRNG().nextDouble() * 0.5d);
-            double z = getPosZ() + (Mafs.nextDouble(getRNG()) * 0.7d);
+            double x = getX() + (Mafs.nextDouble(getRandom()) * 0.7d);
+            double y = getY() + (getRandom().nextDouble() * 0.5d);
+            double z = getZ() + (Mafs.nextDouble(getRandom()) * 0.7d);
             world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
         }
     }
@@ -265,7 +265,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public int determineVariant()
     {
-        return getRNG().nextDouble() < 0.005? -1 : 0;
+        return getRandom().nextDouble() < 0.005? -1 : 0;
     }
 
     @Override
@@ -353,17 +353,17 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
 
         @Override
-        public boolean shouldExecute()
+        public boolean canStart()
         {
-            boolean flag = !isTamed() && !hasItem() && super.shouldExecute();
+            boolean flag = !isTamed() && !hasItem() && super.canStart();
             if (flag) return (chest = getInventoryAtPosition()) != null && !chest.isEmpty();
             else return false;
         }
 
         @Override
-        public boolean shouldContinueExecuting()
+        public boolean shouldContinue()
         {
-            return !hasItem() && chest != null && super.shouldContinueExecuting();
+            return !hasItem() && chest != null && super.shouldContinue();
         }
 
         @Override
@@ -382,7 +382,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                     interactChest(chest, true);
                 if (!chest.isEmpty() && --searchDelay <= 0)
                 {
-                    int index = getRNG().nextInt(chest.getSizeInventory());
+                    int index = getRandom().nextInt(chest.getSizeInventory());
                     ItemStack stack = chest.getStackInSlot(index);
 
                     if (!stack.isEmpty())
@@ -395,7 +395,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
 
         @Override
-        public void resetTask()
+        public void stop()
         {
             super.resetTask();
             interactChest(chest, false);

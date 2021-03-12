@@ -24,7 +24,7 @@ public class FlyerMoveController extends MovementController
 
     public void tick()
     {
-        if (dragon.canPassengerSteer())
+        if (dragon.canBeControlledByRider())
         {
             action = Action.WAIT;
             return;
@@ -32,9 +32,9 @@ public class FlyerMoveController extends MovementController
 
         if (action == Action.MOVE_TO)
         {
-            double x = posX - dragon.getPosX();
-            double y = posY - dragon.getPosY();
-            double z = posZ - dragon.getPosZ();
+            double x = posX - dragon.getX();
+            double y = posY - dragon.getY();
+            double z = posZ - dragon.getZ();
             double distSq = x * x + y * y + z * z;
             if (distSq < 2.5000003E-7)
             {
@@ -47,8 +47,8 @@ public class FlyerMoveController extends MovementController
 
             if (dragon.isFlying())
             {
-                if (!dragon.getLookController().getIsLooking())
-                    dragon.getLookController().setLookPosition(posX, posY, posZ, dragon.getHorizontalFaceSpeed(), 75);
+                if (!dragon.getLookControl().getIsLooking())
+                    dragon.getLookControl().setLookPosition(posX, posY, posZ, dragon.getHorizontalFaceSpeed(), 75);
 
                 speed = (float) (dragon.getAttributeValue(Attributes.FLYING_SPEED) * this.speed) / 0.225f;
                 if (y != 0) dragon.setMoveVertical(y > 0? speed : -speed);
@@ -56,11 +56,11 @@ public class FlyerMoveController extends MovementController
             else
             {
                 speed = (float) (this.speed * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED));
-                BlockPos blockpos = mob.getPosition();
+                BlockPos blockpos = mob.getBlockPos();
                 BlockState blockstate = mob.world.getBlockState(blockpos);
                 Block block = blockstate.getBlock();
                 VoxelShape voxelshape = blockstate.getCollisionShape(mob.world, blockpos);
-                if (y > (double)mob.stepHeight && x * x + z * z < (double)Math.max(1.0F, mob.getWidth()) || !voxelshape.isEmpty() && mob.getPosY() < voxelshape.getEnd(Direction.Axis.Y) + (double)blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(BlockTags.FENCES)) {
+                if (y > (double)mob.stepHeight && x * x + z * z < (double)Math.max(1.0F, mob.getWidth()) || !voxelshape.isEmpty() && mob.getY() < voxelshape.getEnd(Direction.Axis.Y) + (double)blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(BlockTags.FENCES)) {
                     mob.getJumpController().setJumping();
                     action = MovementController.Action.JUMPING;
                 }

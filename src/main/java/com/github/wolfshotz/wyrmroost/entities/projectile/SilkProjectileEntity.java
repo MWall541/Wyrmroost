@@ -40,7 +40,7 @@ public class SilkProjectileEntity extends DragonProjectileEntity
             LivingEntity living = (LivingEntity) entity;
             living.attackEntityFrom(getDamageSource("silk"), 3f);
             living.addPotionEffect(new EffectInstance(WREffects.SILK.get(), 1200));
-            living.applyKnockback((float) getMotion().length(), entity.getPosX() - getPosX(), entity.getPosZ() - getPosZ());
+            living.applyKnockback((float) getMotion().length(), entity.getX() - getX(), entity.getZ() - getZ());
         }
     }
 

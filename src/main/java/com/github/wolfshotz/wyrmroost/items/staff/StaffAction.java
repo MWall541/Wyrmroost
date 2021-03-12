@@ -50,14 +50,14 @@ public enum StaffAction
                 @Override
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    dragon.setSit(!dragon.func_233684_eK_());
+                    dragon.setSit(!dragon.isInSittingPose());
                     DragonStaffItem.setAction(DEFAULT, player, stack);
                 }
 
                 @Override
                 public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
                 {
-                    if (dragon != null && dragon.func_233684_eK_()) return "item.wyrmroost.dragon_staff.action.sit.come";
+                    if (dragon != null && dragon.isInSittingPose()) return "item.wyrmroost.dragon_staff.action.sit.come";
                     return "item.wyrmroost.dragon_staff.action.sit.stay";
                 }
             },
@@ -135,9 +135,9 @@ public enum StaffAction
                     EntityRayTraceResult ertr = rayTrace(player, dragon);
                     if (ertr != null)
                     {
-                        dragon.setAttackTarget((LivingEntity) ertr.getEntity());
+                        dragon.setTarget((LivingEntity) ertr.getEntity());
                         if (player.world.isRemote)
-                            ModUtils.playLocalSound(player.world, player.getPosition(), SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
+                            ModUtils.playLocalSound(player.world, player.getBlockPos(), SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
                         return true;
                     }
                     return false;

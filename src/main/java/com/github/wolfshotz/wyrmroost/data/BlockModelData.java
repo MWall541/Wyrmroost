@@ -114,10 +114,10 @@ class BlockModelData extends BlockStateProvider
         {
             boolean powered = state.get(AbstractButtonBlock.POWERED);
             AttachFace face = state.get(HorizontalFaceBlock.FACE);
-            Direction direction = state.get(HorizontalBlock.HORIZONTAL_FACING);
+            Direction direction = state.get(HorizontalBlock.FACING);
 
             int x = 0;
-            int y = (int) direction.getOpposite().getHorizontalAngle();
+            int y = (int) direction.getOpposite().asRotation();
 
             switch (face)
             {

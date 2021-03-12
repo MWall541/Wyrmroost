@@ -22,14 +22,14 @@ public class DataGatherer
         if (event.includeServer())
         {
             TagData.provide(gen, fileHelper);
-            gen.addProvider(new RecipeData(gen));
-            gen.addProvider(new LootTableData(gen));
+            gen.install(new RecipeData(gen));
+            gen.install(new LootTableData(gen));
         }
         if (event.includeClient())
         {
-            gen.addProvider(new BlockModelData(gen, fileHelper));
-            gen.addProvider(new ItemModelData(gen, fileHelper));
-            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
+            gen.install(new BlockModelData(gen, fileHelper));
+            gen.install(new ItemModelData(gen, fileHelper));
+            gen.install(new SoundData(gen, event.getExistingFileHelper()));
         }
     }
 }

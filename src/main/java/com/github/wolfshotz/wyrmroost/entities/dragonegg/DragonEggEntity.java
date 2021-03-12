@@ -108,9 +108,9 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
             {
                 if (ticksExisted % 3 == 0)
                 {
-                    double x = getPosX() + rand.nextGaussian() * 0.2d;
-                    double y = getPosY() + rand.nextDouble() + getHeight() / 2;
-                    double z = getPosZ() + rand.nextGaussian() * 0.2d;
+                    double x = getX() + rand.nextGaussian() * 0.2d;
+                    double y = getY() + rand.nextDouble() + getHeight() / 2;
+                    double z = getZ() + rand.nextGaussian() * 0.2d;
                     world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
                 }
                 wiggleTime.add(wiggling? 0.4f : -0.4f);
@@ -143,7 +143,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     private void updateMotion()
     {
         boolean flag = getMotion().y <= 0.0D;
-        double d1 = getPosY();
+        double d1 = getY();
         double d0 = 0.5d;
         
         move(MoverType.SELF, getMotion());
@@ -158,7 +158,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         }
 
         Vector3d vec3d6 = getMotion();
-        if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - getPosY() + d1, vec3d6.z))
+        if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - getY() + d1, vec3d6.z))
         {
             setMotion(vec3d6.x, 0.3F, vec3d6.z);
         }
@@ -198,29 +198,29 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
                 safeError();
                 return;
             }
-            newDragon.setPosition(getPosX(), getPosY(), getPosZ());
+            newDragon.setPosition(getX(), getY(), getZ());
             newDragon.setGrowingAge(getProperties().getGrowthTime());
-            newDragon.onInitialSpawn((ServerWorld) world, world.getDifficultyForLocation(getPosition()), SpawnReason.BREEDING, null, null);
+            newDragon.onInitialSpawn((ServerWorld) world, world.getDifficultyForLocation(getBlockPos()), SpawnReason.BREEDING, null, null);
             world.addEntity(newDragon);
         }
         else
         {
             crack(25);
-            world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
+            world.playSound(getX(), getY(), getZ(), SoundEvents.ENTITY_TURTLE_EGG_HATCH, SoundCategory.BLOCKS, 1, 1, false);
         }
         remove();
     }
 
     public void crack(int intensity)
     {
-        world.playSound(getPosX(), getPosY(), getPosZ(), SoundEvents.ENTITY_TURTLE_EGG_CRACK, SoundCategory.BLOCKS, 1, 1, false);
+        world.playSound(getX(), getY(), getZ(), SoundEvents.ENTITY_TURTLE_EGG_CRACK, SoundCategory.BLOCKS, 1, 1, false);
         float f = getWidth() * getHeight();
         f += f;
         for (int i = 0; i < f * intensity; ++i)
         {
-            double x = getPosX() + (Mafs.nextDouble(rand) * getWidth() / 2);
-            double y = getPosY() + (Mafs.nextDouble(rand) * getHeight());
-            double z = getPosZ() + (Mafs.nextDouble(rand) * getWidth() / 2);
+            double x = getX() + (Mafs.nextDouble(rand) * getWidth() / 2);
+            double y = getY() + (Mafs.nextDouble(rand) * getHeight());
+            double z = getZ() + (Mafs.nextDouble(rand) * getWidth() / 2);
             double xMot = Mafs.nextDouble(rand) * getWidth() * 0.35;
             double yMot = rand.nextDouble() * getHeight() * 0.5;
             double zMot = Mafs.nextDouble(rand) * getWidth() * 0.35;
@@ -241,7 +241,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     private void safeError()
     {
-        Wyrmroost.LOG.error("THIS ISNT A DRAGON WTF KIND OF ABOMINATION IS THIS HATCHING?!?! Unknown Entity Type for Dragon Egg @ {}", getPosition());
+        Wyrmroost.LOG.error("THIS ISNT A DRAGON WTF KIND OF ABOMINATION IS THIS HATCHING?!?! Unknown Entity Type for Dragon Egg @ {}", getBlockPos());
         remove();
     }
     
@@ -249,7 +249,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
         ItemStack stack = DragonEggItem.getStack(containedDragon, hatchTime);
-        InventoryHelper.spawnItemStack(world, getPosX(), getPosY(), getPosZ(), stack);
+        InventoryHelper.spawnItemStack(world, getX(), getY(), getZ(), stack);
         remove();
 
         return true;

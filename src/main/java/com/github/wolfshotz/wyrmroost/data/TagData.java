@@ -27,9 +27,9 @@ public class TagData
     static void provide(DataGenerator gen, ExistingFileHelper fileHelper)
     {
         BlockData blockGen = new BlockData(gen, fileHelper);
-        gen.addProvider(blockGen);
-        gen.addProvider(new ItemData(gen, blockGen, fileHelper));
-        gen.addProvider(new EntityData(gen, fileHelper));
+        gen.install(blockGen);
+        gen.install(new ItemData(gen, blockGen, fileHelper));
+        gen.install(new EntityData(gen, fileHelper));
     }
 
     private static class ItemData extends ItemTagsProvider
@@ -43,26 +43,26 @@ public class TagData
         }
 
         @Override
-        protected void registerTags()
+        protected void configure()
         {
             WRBlocks.Tags.ITEM_BLOCK_TAGS.forEach(this::copy);
             blockProvider.tags.forEach(this::copy);
 
-            getOrCreateBuilder(Tags.Items.EGGS).add(WRItems.DRAGON_EGG.get());
+            getOrCreateTagBuilder(Tags.Items.EGGS).add(WRItems.DRAGON_EGG.get());
 
-            getOrCreateBuilder(ItemTags.field_232903_N_).add(WRItems.DRAGON_ARMOR_GOLD.get()); // PIGLIN_LOVED
+            getOrCreateTagBuilder(ItemTags.PIGLIN_LOVED).add(WRItems.DRAGON_ARMOR_GOLD.get()); // PIGLIN_LOVED
 
-            getOrCreateBuilder(Tags.Items.GEMS).addTag(WRItems.Tags.GEMS_GEODE);
-            getOrCreateBuilder(WRItems.Tags.GEMS_GEODE).add(WRItems.BLUE_GEODE.get(), WRItems.RED_GEODE.get(), WRItems.PURPLE_GEODE.get());
+            getOrCreateTagBuilder(Tags.Items.GEMS).addTag(WRItems.Tags.GEMS_GEODE);
+            getOrCreateTagBuilder(WRItems.Tags.GEMS_GEODE).add(WRItems.BLUE_GEODE.get(), WRItems.RED_GEODE.get(), WRItems.PURPLE_GEODE.get());
 
-            getOrCreateBuilder(WRItems.Tags.DRAGON_MEATS).add(WRItems.RAW_LOWTIER_MEAT.get(), WRItems.COOKED_LOWTIER_MEAT.get(), WRItems.RAW_COMMON_MEAT.get(), WRItems.COOKED_COMMON_MEAT.get(), WRItems.RAW_APEX_MEAT.get(), WRItems.COOKED_APEX_MEAT.get(), WRItems.RAW_BEHEMOTH_MEAT.get(), WRItems.COOKED_BEHEMOTH_MEAT.get());
+            getOrCreateTagBuilder(WRItems.Tags.DRAGON_MEATS).add(WRItems.RAW_LOWTIER_MEAT.get(), WRItems.COOKED_LOWTIER_MEAT.get(), WRItems.RAW_COMMON_MEAT.get(), WRItems.COOKED_COMMON_MEAT.get(), WRItems.RAW_APEX_MEAT.get(), WRItems.COOKED_APEX_MEAT.get(), WRItems.RAW_BEHEMOTH_MEAT.get(), WRItems.COOKED_BEHEMOTH_MEAT.get());
 
-            getOrCreateBuilder(Tags.Items.INGOTS).addTag(WRItems.Tags.INGOTS_PLATINUM);
-            getOrCreateBuilder(WRItems.Tags.INGOTS_PLATINUM).add(WRItems.PLATINUM_INGOT.get());
+            getOrCreateTagBuilder(Tags.Items.INGOTS).addTag(WRItems.Tags.INGOTS_PLATINUM);
+            getOrCreateTagBuilder(WRItems.Tags.INGOTS_PLATINUM).add(WRItems.PLATINUM_INGOT.get());
 
-            getOrCreateBuilder(ItemTags.ARROWS).add(WRItems.BLUE_GEODE_ARROW.get(), WRItems.RED_GEODE_ARROW.get(), WRItems.PURPLE_GEODE_ARROW.get());
+            getOrCreateTagBuilder(ItemTags.ARROWS).add(WRItems.BLUE_GEODE_ARROW.get(), WRItems.RED_GEODE_ARROW.get(), WRItems.PURPLE_GEODE_ARROW.get());
 
-            getOrCreateBuilder(ItemTags.field_232908_Z_).addTag(WRItems.Tags.GEMS_GEODE);
+            getOrCreateTagBuilder(ItemTags.BEACON_PAYMENT_ITEMS).addTag(WRItems.Tags.GEMS_GEODE);
         }
     }
 
@@ -77,37 +77,37 @@ public class TagData
 
         @Override
         @SuppressWarnings("unchecked")
-        protected void registerTags()
+        protected void configure()
         {
-            getOrCreateBuilder(BlockTags.BEACON_BASE_BLOCKS)
+            getOrCreateTagBuilder(BlockTags.BEACON_BASE_BLOCKS)
                     .addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
 
 
             cloneToItem(Tags.Blocks.ORES, Tags.Items.ORES)
                     .addTags(WRBlocks.Tags.ORES_GEODE, WRBlocks.Tags.ORES_PLATINUM);
 
-            getOrCreateBuilder(WRBlocks.Tags.ORES_GEODE)
+            getOrCreateTagBuilder(WRBlocks.Tags.ORES_GEODE)
                     .add(WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
 
-            getOrCreateBuilder(WRBlocks.Tags.ORES_PLATINUM)
+            getOrCreateTagBuilder(WRBlocks.Tags.ORES_PLATINUM)
                     .add(WRBlocks.PLATINUM_ORE.get());
 
 
             cloneToItem(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS)
                     .addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
 
-            getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_GEODE)
+            getOrCreateTagBuilder(WRBlocks.Tags.STORAGE_BLOCKS_GEODE)
                     .add(WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
 
-            getOrCreateBuilder(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM)
+            getOrCreateTagBuilder(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM)
                     .add(WRBlocks.PLATINUM_BLOCK.get());
 
 
-            getOrCreateBuilder(BlockTags.DRAGON_IMMUNE)
+            getOrCreateTagBuilder(BlockTags.DRAGON_IMMUNE)
                     .add(WRBlocks.PURPLE_GEODE_ORE.get());
 
 
-            getOrCreateBuilder(Tags.Blocks.DIRT)
+            getOrCreateTagBuilder(Tags.Blocks.DIRT)
                     .add(WRBlocks.MULCH.get());
 
             cloneToItem(BlockTags.LEAVES, ItemTags.LEAVES)
@@ -121,7 +121,7 @@ public class TagData
 
         private void tagWoodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag, boolean flammable)
         {
-            getOrCreateBuilder(logTag).add(group.getLog(), group.getStrippedLog(), group.getWood(), group.getStrippedWood());
+            getOrCreateTagBuilder(logTag).add(group.getLog(), group.getStrippedLog(), group.getWood(), group.getStrippedWood());
 
             cloneToItem(BlockTags.PLANKS, ItemTags.PLANKS).add(group.getPlanks());
             cloneToItem(BlockTags.WOODEN_BUTTONS, ItemTags.WOODEN_BUTTONS).add(group.getButton());
@@ -131,12 +131,12 @@ public class TagData
             cloneToItem(BlockTags.WOODEN_FENCES, ItemTags.WOODEN_FENCES).add(group.getFence());
             cloneToItem(BlockTags.WOODEN_PRESSURE_PLATES, ItemTags.WOODEN_PRESSURE_PLATES).add(group.getPressurePlate());
             cloneToItem(BlockTags.WOODEN_TRAPDOORS, ItemTags.WOODEN_TRAPDOORS).add(group.getTrapDoor());
-            getOrCreateBuilder(BlockTags.FENCE_GATES).add(group.getFenceGate());
-            getOrCreateBuilder(BlockTags.STANDING_SIGNS).add(group.getSign());
-            getOrCreateBuilder(BlockTags.WALL_SIGNS).add(group.getWallSign());
+            getOrCreateTagBuilder(BlockTags.FENCE_GATES).add(group.getFenceGate());
+            getOrCreateTagBuilder(BlockTags.STANDING_SIGNS).add(group.getSign());
+            getOrCreateTagBuilder(BlockTags.WALL_SIGNS).add(group.getWallSign());
 
-            if (flammable) getOrCreateBuilder(BlockTags.LOGS_THAT_BURN).addTag(logTag);
-            else getOrCreateBuilder(BlockTags.NON_FLAMMABLE_WOOD).addTag(logTag).add(group.getPlanks(), group.getButton(), group.getDoor(), group.getStairs(), group.getSlab(), group.getFence(), group.getFenceGate(), group.getPressurePlate(), group.getTrapDoor(), group.getSign(), group.getWallSign());
+            if (flammable) getOrCreateTagBuilder(BlockTags.LOGS_THAT_BURN).addTag(logTag);
+            else getOrCreateTagBuilder(BlockTags.NON_FLAMMABLE_WOOD).addTag(logTag).add(group.getPlanks(), group.getButton(), group.getDoor(), group.getStairs(), group.getSlab(), group.getFence(), group.getFenceGate(), group.getPressurePlate(), group.getTrapDoor(), group.getSign(), group.getWallSign());
         }
 
         /**
@@ -145,7 +145,7 @@ public class TagData
         private Builder<Block> cloneToItem(ITag.INamedTag<Block> blockTag, ITag.INamedTag<Item> itemTag)
         {
             tags.put(blockTag, itemTag);
-            return getOrCreateBuilder(blockTag);
+            return getOrCreateTagBuilder(blockTag);
         }
     }
 
@@ -157,9 +157,9 @@ public class TagData
         }
 
         @Override
-        protected void registerTags()
+        protected void configure()
         {
-            getOrCreateBuilder(EntityTypeTags.ARROWS).add(WREntities.GEODE_TIPPED_ARROW.get());
+            getOrCreateTagBuilder(EntityTypeTags.ARROWS).add(WREntities.GEODE_TIPPED_ARROW.get());
         }
     }
 }

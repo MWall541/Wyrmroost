@@ -21,14 +21,14 @@ public class WRSitGoal extends SitGoal
         this.dragon = dragon;
     }
 
-    public boolean shouldExecute()
+    public boolean canStart()
     {
         if (!dragon.isTamed()) return false;
-        if (dragon.isInWaterOrBubbleColumn() && dragon.getCreatureAttribute() != CreatureAttribute.WATER) return false;
+        if (dragon.isInsideWaterOrBubbleColumn() && dragon.getGroup() != CreatureAttribute.AQUATIC) return false;
         if (!dragon.isOnGround() && !dragon.isFlying()) return false;
         LivingEntity owner = dragon.getOwner();
         if (owner == null) return true;
-        return (dragon.getDistanceSq(owner) > 144d || owner.getRevengeTarget() == null) && super.shouldContinueExecuting();
+        return (dragon.squaredDistanceTo(owner) > 144d || owner.getAttacker() == null) && super.shouldContinue();
     }
 
     @Override
@@ -36,28 +36,28 @@ public class WRSitGoal extends SitGoal
     {
         if (dragon.isFlying()) // get to ground first
         {
-            if (dragon.getNavigator().noPath())
+            if (dragon.getNavigation().isIdle())
             {
                 BlockPos pos = findLandingPos();
-                dragon.getNavigator().tryMoveToXYZ(pos.getX(), pos.getY(), pos.getZ(), 1.05);
+                dragon.getNavigation().startMovingTo(pos.getX(), pos.getY(), pos.getZ(), 1.05);
             }
         }
-        else dragon.func_233686_v_(true);
+        else dragon.setSitting(true);
     }
 
     private BlockPos findLandingPos()
     {
-        Random rand = dragon.getRNG();
+        Random rand = dragon.getRandom();
 
         // get current entity position
-        BlockPos.Mutable ground = dragon.world.getHeight(Heightmap.Type.WORLD_SURFACE, dragon.getPosition()).toMutable();
+        BlockPos.Mutable ground = dragon.world.getTopPosition(Heightmap.Type.WORLD_SURFACE, dragon.getBlockPos()).mutableCopy();
 
         // make sure the y value is suitable
-        if (ground.getY() <= 0 || ground.getY() > dragon.getPosY() || !dragon.world.getBlockState(ground.down()).getMaterial().isSolid())
-            ground.setY((int) dragon.getPosY() - 5);
+        if (ground.getY() <= 0 || ground.getY() > dragon.getY() || !dragon.world.getBlockState(ground.down()).getMaterial().isSolid())
+            ground.setY((int) dragon.getY() - 5);
 
         // add some variance
-        int followRange = MathHelper.floor(dragon.getAttributeValue(Attributes.FOLLOW_RANGE));
+        int followRange = MathHelper.floor(dragon.getAttributeValue(Attributes.GENERIC_FOLLOW_RANGE));
         int ox = followRange - rand.nextInt(followRange) * 2;
         int oz = followRange - rand.nextInt(followRange) * 2;
         ground.setX(ox);

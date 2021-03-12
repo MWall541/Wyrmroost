@@ -40,15 +40,15 @@ public class FireBreathEntity extends BreathWeaponEntity
         {
             if (rand.nextDouble() <= 0.25d) playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 1);
             for (int i = 0; i < 15; i++)
-                world.addParticle(ParticleTypes.SMOKE, getPosX(), getPosY(), getPosZ(), Mafs.nextDouble(rand) * 0.2f, rand.nextDouble() * 0.08f, Mafs.nextDouble(rand) * 0.2f);
+                world.addParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), Mafs.nextDouble(rand) * 0.2f, rand.nextDouble() * 0.08f, Mafs.nextDouble(rand) * 0.2f);
             remove();
             return;
         }
 
         Vector3d motion = getMotion();
-        double x = getPosX() + motion.x + (rand.nextGaussian() * 0.2);
-        double y = getPosY() + motion.y + (rand.nextGaussian() * 0.2) + 0.5d;
-        double z = getPosZ() + motion.z + (rand.nextGaussian() * 0.2);
+        double x = getX() + motion.x + (rand.nextGaussian() * 0.2);
+        double y = getY() + motion.y + (rand.nextGaussian() * 0.2) + 0.5d;
+        double z = getZ() + motion.z + (rand.nextGaussian() * 0.2);
         world.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
     }
 
@@ -81,7 +81,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (world.isRemote) return;
 
         float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
-        if (world.isRainingAt(entity.getPosition())) damage *= 0.75f;
+        if (world.isRainingAt(entity.getBlockPos())) damage *= 0.75f;
 
         if (entity.isImmuneToFire()) damage *= 0.25; // impact damage
         else entity.setFire(8);
