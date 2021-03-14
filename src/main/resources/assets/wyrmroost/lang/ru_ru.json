@@ -9,10 +9,10 @@
 
   "entity.wyrmroost.overworld_drake": "Дрейк верхнего мира",
   "entity.wyrmroost.silver_glider": "Серебрянный глайдер",
-  "entity.wyrmroost.roost_stalker": "Гнездоразоритель",
+  "entity.wyrmroost.roost_stalker": "Разоритель гнёзд",
   "entity.wyrmroost.lesser_desertwyrm": "Малый пустынный червь",
   "entity.wyrmroost.butterfly_leviathan": "Бабочковый левиафан",
-  "entity.wyrmroost.dragon_fruit_drake": "Пихтайевый дракон",
+  "entity.wyrmroost.dragon_fruit_drake": "Пихтайевый дрейк",
   "entity.wyrmroost.canari_wyvern": "Канарейковая виверна",
   "entity.wyrmroost.coin_dragon": "Монетковый дракон",
   "entity.wyrmroost.royal_red": "Королевский красный дракон",
@@ -98,7 +98,7 @@
   "item.wyrmroost.spawn_egg": "- яйцо призыва",
 
   "item.wyrmroost.jewelled_apple": "Жемчужное яблоко",
-  "item.wyrmroost.dragon_fruit": "Драконий фрукт",
+  "item.wyrmroost.dragon_fruit": "Питайя",
   "item.wyrmroost.desert_wyrm": "Малый пустынный червь",
   "item.wyrmroost.cooked_desertwyrm": "Жареный пустынный червь",
   "item.wyrmroost.raw_lowtier_meat": "Сырое мясо низшего дракона",
@@ -111,22 +111,22 @@
   "item.wyrmroost.cooked_behemoth_meat": "Жареное мясо исполинского дракона",
 
   "item.wyrmroost.dragon_egg": "- яйцо",
-  "item.wyrmroost.egg.tooltip": "Вылупится через: %smin",
-  "item.wyrmroost.egg.creativetooltip": "В творческом режиме ты можешь изменить тип яйца, нажав ПКМ по дракону",
+  "item.wyrmroost.egg.tooltip": "Вылупится через: %s мин",
+  "item.wyrmroost.egg.creativetooltip": "В творческом режиме ты можешь изменить тип яйца, нажав ЛЛКМ по дракону",
 
   "item.wyrmroost.soul_crystal": "Кристалл драконьей души",
   "item.wyrmroost.soul_crystal.jeidesc": "Наполненный загадочными свойствами жеод, он имеет способность хранить души драконов, которые вы доверили. Душа дракона может привести тебя к %s...",
   "item.wyrmroost.soul_crystal.fail": "Здесь не безопастно...",
 
   "item.wyrmroost.dragon_staff": "Драконий посох",
-  "item.wyrmroost.dragon_staff.desc": "Ударь дракона!",
+  "item.wyrmroost.dragon_staff.desc": "Шлепни дракона!",
   "item.wyrmroost.dragon_staff.bound": "Привязан к: %s",
   "item.wyrmroost.dragon_staff.action": "Действие: %s",
   "item.wyrmroost.dragon_staff.action.default": "Открыть меню",
   "item.wyrmroost.dragon_staff.action.inventory": "Открыть инвентарь",
   "item.wyrmroost.dragon_staff.action.home.set": "Установить домашкюю позицию",
   "item.wyrmroost.dragon_staff.action.home.remove": "Удалить домашнюю позицию",
-  "item.wyrmroost.dragon_staff.action.target": "Отдать приказ цели",
+  "item.wyrmroost.dragon_staff.action.target": "Указать цель",
   "item.wyrmroost.dragon_staff.action.sit.come": "Следовать",
   "item.wyrmroost.dragon_staff.action.sit.stay": "Остаться",
 
