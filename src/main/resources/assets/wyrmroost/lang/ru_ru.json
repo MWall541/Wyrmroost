@@ -111,8 +111,8 @@
   "item.wyrmroost.cooked_behemoth_meat": "Жареное мясо исполинского дракона",
 
   "item.wyrmroost.dragon_egg": "- яйцо",
-  "item.wyrmroost.egg.tooltip": "Вылупится через: %s мин",
-  "item.wyrmroost.egg.creativetooltip": "В творческом режиме ты можешь изменить тип яйца, нажав ЛЛКМ по дракону",
+  "item.wyrmroost.egg.tooltip": "Вылупится через: %s мин.",
+  "item.wyrmroost.egg.creativetooltip": "В творческом режиме ты можешь изменить тип яйца, нажав ЛКМ по дракону",
 
   "item.wyrmroost.soul_crystal": "Кристалл драконьей души",
   "item.wyrmroost.soul_crystal.jeidesc": "Наполненный загадочными свойствами жеод, он имеет способность хранить души драконов, которые вы доверили. Душа дракона может привести тебя к %s...",
