@@ -24,7 +24,7 @@ public class LDWyrmItem extends Item
     {
         super(WRItems.builder());
 
-        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CALLBACKS.add(() -> ItemModelsProperties.func_239418_a_(this, Wyrmroost.rl("is_alive"), (stack, world, player) ->
+        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CALLBACKS.add(() -> ItemModelsProperties.register(this, Wyrmroost.id("is_alive"), (stack, world, player) ->
         {
             if (stack.hasTag() && stack.getTag().contains(DATA_CONTENTS)) return 1f;
             return 0f;
@@ -32,27 +32,27 @@ public class LDWyrmItem extends Item
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context)
+    public ActionResultType useOnBlock(ItemUseContext context)
     {
-        ItemStack stack = context.getItem();
+        ItemStack stack = context.getStack();
         if (stack.hasTag())
         {
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_CONTENTS))
             {
                 World world = context.getWorld();
-                if (!world.isRemote)
+                if (!world.isClient)
                 {
-                    BlockPos pos = context.getPos().offset(context.getFace());
+                    BlockPos pos = context.getBlockPos().offset(context.getSide());
                     CompoundNBT contents = tag.getCompound(DATA_CONTENTS);
                     LDWyrmEntity entity = WREntities.LESSER_DESERTWYRM.get().create(world);
 
                     entity.deserializeNBT(contents);
-                    if (stack.hasDisplayName())
-                        entity.setCustomName(stack.getDisplayName()); // Item name takes priority
-                    entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
-                    world.addEntity(entity);
-                    stack.shrink(1);
+                    if (stack.hasCustomName())
+                        entity.setCustomName(stack.getName()); // Item name takes priority
+                    entity.updatePosition(pos.getX(), pos.getY(), pos.getZ());
+                    world.spawnEntity(entity);
+                    stack.decrement(1);
                 }
                 return ActionResultType.SUCCESS;
             }

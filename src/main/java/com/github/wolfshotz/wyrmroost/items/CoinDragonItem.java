@@ -29,43 +29,43 @@ import java.util.Random;
 public class CoinDragonItem extends Item
 {
     public static final String DATA_ENTITY = "CoinDragonData";
-    public static final ResourceLocation VARIANT_OVERRIDE = Wyrmroost.rl("variant");
+    public static final ResourceLocation VARIANT_OVERRIDE = Wyrmroost.id("variant");
 
     public CoinDragonItem()
     {
-        super(WRItems.builder().maxStackSize(1));
-        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CALLBACKS.add(() -> ItemModelsProperties.func_239418_a_(this, VARIANT_OVERRIDE, (s, w, p) -> s.getOrCreateTag().getCompound(DATA_ENTITY).getInt(CoinDragonEntity.DATA_VARIANT))));
+        super(WRItems.builder().maxCount(1));
+        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CALLBACKS.add(() -> ItemModelsProperties.register(this, VARIANT_OVERRIDE, (s, w, p) -> s.getOrCreateTag().getCompound(DATA_ENTITY).getInt(CoinDragonEntity.DATA_VARIANT))));
     }
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public ActionResultType onItemUse(ItemUseContext context)
+    public ActionResultType useOnBlock(ItemUseContext context)
     {
         World world = context.getWorld();
         CoinDragonEntity entity = WREntities.COIN_DRAGON.get().create(context.getWorld());
-        BlockPos pos = context.getPos().offset(context.getFace());
-        ItemStack stack = context.getItem();
+        BlockPos pos = context.getBlockPos().offset(context.getSide());
+        ItemStack stack = context.getStack();
         PlayerEntity player = context.getPlayer();
 
-        if (!world.isRemote && stack.hasTag()) // read data first!: setting position before reading will reset that position!
+        if (!world.isClient && stack.hasTag()) // read data first!: setting position before reading will reset that position!
         {
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_ENTITY)) entity.deserializeNBT(tag.getCompound(DATA_ENTITY));
-            if (stack.hasDisplayName()) entity.setCustomName(stack.getDisplayName()); // set entity name from stack name
+            if (stack.hasCustomName()) entity.setCustomName(stack.getName()); // set entity name from stack name
         }
 
-        entity.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        if (!world.hasNoCollisions(entity))
+        entity.updatePosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        if (!world.isSpaceEmpty(entity))
         {
-            player.sendStatusMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").mergeStyle(TextFormatting.RED), true);
+            player.sendMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").formatted(TextFormatting.RED), true);
             return ActionResultType.FAIL;
         }
 
         if (!player.isCreative() || stack.getOrCreateTag().contains(DATA_ENTITY))
-            player.setHeldItem(context.getHand(), ItemStack.EMPTY);
-        entity.setMotion(Vector3d.ZERO);
-        entity.rotationYaw = entity.rotationYawHead = player.rotationYawHead + 180;
-        world.addEntity(entity);
+            player.setStackInHand(context.getHand(), ItemStack.EMPTY);
+        entity.setVelocity(Vector3d.ZERO);
+        entity.yaw = entity.headYaw = player.headYaw + 180;
+        world.spawnEntity(entity);
         return ActionResultType.SUCCESS;
     }
 
@@ -75,6 +75,6 @@ public class CoinDragonItem extends Item
         CompoundNBT child = new CompoundNBT(); // because the parent nbt gets merged with the stack, we need to nest a child within the one getting merged
         child.putInt(CoinDragonEntity.DATA_VARIANT, new Random().nextInt(5));
         parent.put(DATA_ENTITY, child);
-        return ItemLootEntry.builder(WRItems.COIN_DRAGON.get()).acceptFunction(SetNBT.builder(parent));
+        return ItemLootEntry.builder(WRItems.COIN_DRAGON.get()).apply(SetNBT.builder(parent));
     }
 }

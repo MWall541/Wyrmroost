@@ -26,14 +26,14 @@ public class WRIO
 
     public static void screenSetup()
     {
-        ScreenManager.registerFactory(DRAGON_INVENTORY.get(), DragonInvScreen::new);
+        ScreenManager.register(DRAGON_INVENTORY.get(), DragonInvScreen::new);
     }
 
     private static ContainerType<DragonInvContainer> getDragonInvContainer()
     {
         return IForgeContainerType.create(((windowId, inv, data) ->
         {
-            AbstractDragonEntity dragon = (AbstractDragonEntity) ClientEvents.getWorld().getEntityByID(data.readInt());
+            AbstractDragonEntity dragon = (AbstractDragonEntity) ClientEvents.getWorld().getEntityById(data.readInt());
             return new DragonInvContainer(dragon.getInvHandler(), inv, windowId);
         }));
     }

@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
 {
-    public static final ResourceLocation BLUE_FIRE = Wyrmroost.rl("entity/projectiles/rr_breath/blue_fire");
+    public static final ResourceLocation BLUE_FIRE = Wyrmroost.id("entity/projectiles/rr_breath/blue_fire");
 
     public BreathWeaponRenderer(EntityRendererManager renderManager)
     {

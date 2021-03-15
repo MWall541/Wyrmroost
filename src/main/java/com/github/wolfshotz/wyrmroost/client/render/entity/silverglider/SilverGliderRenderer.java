@@ -27,13 +27,13 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     {
         super(manager, new SilverGliderModel(), 1f);
 
-        addLayer(new GlowLayer(this::getGlowTexture));
-        addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
+        addFeature(new GlowLayer(this::getGlowTexture));
+        addFeature(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
 
     @Nullable
     @Override
-    public ResourceLocation getEntityTexture(SilverGliderEntity sg)
+    public ResourceLocation getTexture(SilverGliderEntity sg)
     {
         if (sg.getVariant() == -1) return SPECIAL;
         if (WRConfig.deckTheHalls) return CHRISTMAS;
@@ -56,6 +56,6 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
 
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(BASE_PATH + "silver_glider/" + png);
+        return Wyrmroost.id(BASE_PATH + "silver_glider/" + png);
     }
 }

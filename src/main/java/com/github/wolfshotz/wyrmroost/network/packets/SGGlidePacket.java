@@ -31,9 +31,9 @@ public class SGGlidePacket
     public boolean handle(Supplier<NetworkEvent.Context> context)
     {
         ServerPlayerEntity reciever = context.get().getSender();
-        if (reciever != null && !reciever.getPassengers().isEmpty())
+        if (reciever != null && !reciever.getPassengerList().isEmpty())
         {
-            Entity entity = reciever.getPassengers().get(0);
+            Entity entity = reciever.getPassengerList().get(0);
             if (entity instanceof SilverGliderEntity)
             {
                 ((SilverGliderEntity) entity).isGliding = gliding;

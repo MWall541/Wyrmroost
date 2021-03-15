@@ -15,7 +15,7 @@ public class WREffects
 {
     public static final DeferredRegister<Effect> REGISTRY = DeferredRegister.create(ForgeRegistries.POTIONS, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<Effect> SILK = register("silk", () -> new WREffect(EffectType.HARMFUL, 0x242424).addAttributesModifier(Attributes.MOVEMENT_SPEED, "9b2a8a43-9d6b-40f9-a8d3-7b9219f07271", -0.9, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    public static final RegistryObject<Effect> SILK = register("silk", () -> new WREffect(EffectType.HARMFUL, 0x242424).addAttributeModifier(Attributes.GENERIC_MOVEMENT_SPEED, "9b2a8a43-9d6b-40f9-a8d3-7b9219f07271", -0.9, AttributeModifier.Operation.MULTIPLY_TOTAL));
 
     public static RegistryObject<Effect> register(String name, Supplier<Effect> sup)
     {

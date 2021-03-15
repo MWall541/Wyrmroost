@@ -22,8 +22,7 @@ public class GeodeTippedArrowItem extends ArrowItem
     public AbstractArrowEntity createArrow(World world, ItemStack stack, LivingEntity shooter)
     {
         GeodeTippedArrowEntity arrow = new GeodeTippedArrowEntity(world, this);
-        arrow.setPosition(shooter.getX(), shooter.getPosYEye() - 0.1d, shooter.getZ());
-        arrow.setShooter(shooter);
+        arrow.updatePosition(shooter.getX(), shooter.getEyeY() - 0.1d, shooter.getZ());
         arrow.setDamage(damage);
         return arrow;
     }

@@ -29,7 +29,7 @@ public class AnimationPacket
         entityID = buf.readInt();
         animationIndex = buf.readInt();
     }
-    
+
     public void encode(PacketBuffer buf)
     {
         buf.writeInt(entityID);
@@ -43,7 +43,7 @@ public class AnimationPacket
 
     public static <T extends Entity & IAnimatable> void send(T entity, Animation animation)
     {
-        if (!entity.world.isRemote)
+        if (!entity.world.isClient)
         {
             entity.setAnimation(animation);
             Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),

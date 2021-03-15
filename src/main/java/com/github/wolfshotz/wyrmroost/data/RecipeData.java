@@ -142,14 +142,14 @@ class RecipeData extends RecipeProvider
         String id = result.asItem().getRegistryName().getPath();
         String criterion = "has_" + ingredient.asItem().getRegistryName().getPath();
 
-        CookingRecipeBuilder.createSmelting(Ingredient.ofItems(ingredient), result, experience, time).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.rl((id + "_from_smelting")));
+        CookingRecipeBuilder.createSmelting(Ingredient.ofItems(ingredient), result, experience, time).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id((id + "_from_smelting")));
         if (food)
         {
-            CookingRecipeBuilder.create(Ingredient.ofItems(ingredient), result, experience, time + 500, CookingRecipeSerializer.CAMPFIRE_COOKING).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.rl(id + "_from_campfire"));
-            CookingRecipeBuilder.create(Ingredient.ofItems(ingredient), result, experience, time - 100, CookingRecipeSerializer.SMOKING).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.rl(id + "_from_smoking"));
+            CookingRecipeBuilder.create(Ingredient.ofItems(ingredient), result, experience, time + 500, CookingRecipeSerializer.CAMPFIRE_COOKING).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id(id + "_from_campfire"));
+            CookingRecipeBuilder.create(Ingredient.ofItems(ingredient), result, experience, time - 100, CookingRecipeSerializer.SMOKING).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id(id + "_from_smoking"));
         }
         else
-            CookingRecipeBuilder.createBlasting(Ingredient.ofItems(ingredient), result, experience, time - 100).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.rl(id + "_from_blasting"));
+            CookingRecipeBuilder.createBlasting(Ingredient.ofItems(ingredient), result, experience, time - 100).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id(id + "_from_blasting"));
 
         REGISTERED.add(result);
     }

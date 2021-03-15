@@ -23,6 +23,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -45,7 +46,10 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public boolean wiggling = false;
     public int hatchTime;
 
-    public DragonEggEntity(EntityType<? extends DragonEggEntity> type, World world) { super(type, world);}
+    public DragonEggEntity(EntityType<? extends DragonEggEntity> type, World world)
+    {
+        super(type, world);
+    }
 
     public DragonEggEntity(EntityType<AbstractDragonEntity> type, int hatchTime, World world)
     {
@@ -64,30 +68,35 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     //           Entity NBT
     // ================================
     @Override
-    protected void registerData() {}
+    protected void initDataTracker()
+    {
+    }
 
     @Override
-    public void readAdditional(CompoundNBT compound)
+    public void readCustomDataFromTag(CompoundNBT compound)
     {
         containedDragon = ModUtils.getEntityTypeByKey(compound.getString(DATA_DRAGON_TYPE));
         hatchTime = compound.getInt(DATA_HATCH_TIME);
     }
-    
+
     @Override
-    public void writeAdditional(CompoundNBT compound)
+    public void writeCustomDataToTag(CompoundNBT compound)
     {
         compound.putString(DATA_DRAGON_TYPE, getDragonKey());
         compound.putInt(DATA_HATCH_TIME, hatchTime);
     }
 
-    public String getDragonKey() { return EntityType.getKey(containedDragon).toString(); }
-    
+    public String getDragonKey()
+    {
+        return EntityType.getId(containedDragon).toString();
+    }
+
     // ================================
 
     @Override
     public void tick()
     {
-        if (!world.isRemote && containedDragon == null)
+        if (!world.isClient && containedDragon == null)
         {
             safeError();
             return;
@@ -96,7 +105,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         super.tick();
         updateMotion();
 
-        if (ticksExisted % UPDATE_CONDITIONS_INTERVAL == 0)
+        if (age % UPDATE_CONDITIONS_INTERVAL == 0)
         {
             boolean flag = getProperties().getConditions().test(this);
             if (flag != correctConditions) this.correctConditions = flag;
@@ -104,13 +113,13 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
 
         if (correctConditions)
         {
-            if (world.isRemote)
+            if (world.isClient)
             {
-                if (ticksExisted % 3 == 0)
+                if (age % 3 == 0)
                 {
-                    double x = getX() + rand.nextGaussian() * 0.2d;
-                    double y = getY() + rand.nextDouble() + getHeight() / 2;
-                    double z = getZ() + rand.nextGaussian() * 0.2d;
+                    double x = getX() + random.nextGaussian() * 0.2d;
+                    double y = getY() + random.nextDouble() + getHeight() / 2;
+                    double z = getZ() + random.nextGaussian() * 0.2d;
                     world.addParticle(new RedstoneParticleData(1f, 1f, 0, 0.5f), x, y, z, 0, 0, 0);
                 }
                 wiggleTime.add(wiggling? 0.4f : -0.4f);
@@ -120,17 +129,17 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
             {
                 if (--hatchTime <= 0)
                 {
-                    world.setEntityState(this, (byte) HATCH_ID); // notify client
+                    world.sendEntityStatus(this, (byte) HATCH_ID); // notify client
                     hatch();
                 }
-                else if (rand.nextInt(Math.max(hatchTime / 2, 5)) == 0)
-                    world.setEntityState(this, (byte) WIGGLE_ID);
+                else if (random.nextInt(Math.max(hatchTime / 2, 5)) == 0)
+                    world.sendEntityStatus(this, (byte) WIGGLE_ID);
             }
         }
     }
 
     @Override
-    public boolean onLivingFall(float distance, float damageMultiplier)
+    public boolean handleFallDamage(float distance, float damageMultiplier)
     {
         if (distance > 3)
         {
@@ -142,30 +151,30 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
 
     private void updateMotion()
     {
-        boolean flag = getMotion().y <= 0.0D;
+        boolean flag = getVelocity().y <= 0.0D;
         double d1 = getY();
         double d0 = 0.5d;
-        
-        move(MoverType.SELF, getMotion());
+
+        move(MoverType.SELF, getVelocity());
         if (!hasNoGravity() && !isSprinting())
         {
-            Vector3d vec3d2 = getMotion();
+            Vector3d vec3d2 = getVelocity();
             double d2;
             if (flag && Math.abs(vec3d2.y - 0.005D) >= 0.003D && Math.abs(vec3d2.y - d0 / 16.0D) < 0.003D) d2 = -0.003D;
             else d2 = vec3d2.y - d0 / 16.0D;
 
-            setMotion(vec3d2.x, d2, vec3d2.z);
+            setVelocity(vec3d2.x, d2, vec3d2.z);
         }
 
-        Vector3d vec3d6 = getMotion();
-        if (collidedHorizontally && isOffsetPositionInLiquid(vec3d6.x, vec3d6.y + (double) 0.6F - getY() + d1, vec3d6.z))
+        Vector3d vec3d6 = getVelocity();
+        if (horizontalCollision && doesNotCollide(vec3d6.x, vec3d6.y + (double) 0.6F - getY() + d1, vec3d6.z))
         {
-            setMotion(vec3d6.x, 0.3F, vec3d6.z);
+            setVelocity(vec3d6.x, 0.3F, vec3d6.z);
         }
     }
 
     @Override
-    public void handleStatusUpdate(byte id)
+    public void handleStatus(byte id)
     {
         switch (id)
         {
@@ -176,7 +185,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
                 wiggle();
                 break;
             default:
-                super.handleStatusUpdate(id);
+                super.handleStatus(id);
         }
     }
 
@@ -190,7 +199,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     public void hatch()
     {
-        if (!world.isRemote)
+        if (!world.isClient)
         {
             AbstractDragonEntity newDragon = containedDragon.create(world);
             if (newDragon == null)
@@ -198,10 +207,10 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
                 safeError();
                 return;
             }
-            newDragon.setPosition(getX(), getY(), getZ());
-            newDragon.setGrowingAge(getProperties().getGrowthTime());
-            newDragon.onInitialSpawn((ServerWorld) world, world.getDifficultyForLocation(getBlockPos()), SpawnReason.BREEDING, null, null);
-            world.addEntity(newDragon);
+            newDragon.refreshPositionAndAngles(getX(), getY(), getZ(), 0, 0);
+            newDragon.setBreedingAge(getProperties().getGrowthTime());
+            newDragon.initialize((IServerWorld) world, world.getLocalDifficulty(getBlockPos()), SpawnReason.BREEDING, null, null);
+            world.spawnEntity(newDragon);
         }
         else
         {
@@ -218,12 +227,12 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         f += f;
         for (int i = 0; i < f * intensity; ++i)
         {
-            double x = getX() + (Mafs.nextDouble(rand) * getWidth() / 2);
-            double y = getY() + (Mafs.nextDouble(rand) * getHeight());
-            double z = getZ() + (Mafs.nextDouble(rand) * getWidth() / 2);
-            double xMot = Mafs.nextDouble(rand) * getWidth() * 0.35;
-            double yMot = rand.nextDouble() * getHeight() * 0.5;
-            double zMot = Mafs.nextDouble(rand) * getWidth() * 0.35;
+            double x = getX() + (Mafs.nextDouble(random) * getWidth() / 2);
+            double y = getY() + (Mafs.nextDouble(random) * getHeight());
+            double z = getZ() + (Mafs.nextDouble(random) * getWidth() / 2);
+            double xMot = Mafs.nextDouble(random) * getWidth() * 0.35;
+            double yMot = random.nextDouble() * getHeight() * 0.5;
+            double zMot = Mafs.nextDouble(random) * getWidth() * 0.35;
             world.addParticle(new ItemParticleData(ParticleTypes.ITEM, new ItemStack(Items.EGG)), x, y, z, xMot, yMot, zMot);
         }
     }
@@ -231,7 +240,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public void wiggle()
     {
         if (wiggleTime.get() > 0) return;
-        wiggleDirection = Direction.Plane.HORIZONTAL.random(rand);
+        wiggleDirection = Direction.Plane.HORIZONTAL.random(random);
         wiggling = true;
         crack(5);
     }
@@ -244,17 +253,17 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         Wyrmroost.LOG.error("THIS ISNT A DRAGON WTF KIND OF ABOMINATION IS THIS HATCHING?!?! Unknown Entity Type for Dragon Egg @ {}", getBlockPos());
         remove();
     }
-    
+
     @Override
-    public boolean attackEntityFrom(DamageSource source, float amount)
+    public boolean damage(DamageSource source, float amount)
     {
         ItemStack stack = DragonEggItem.getStack(containedDragon, hatchTime);
-        InventoryHelper.spawnItemStack(world, getX(), getY(), getZ(), stack);
+        InventoryHelper.spawn(world, getX(), getY(), getZ(), stack);
         remove();
 
         return true;
     }
-    
+
     public DragonEggProperties getProperties()
     {
         if (properties == null) return properties = DragonEggProperties.get(containedDragon);
@@ -262,25 +271,48 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     }
 
     @Override
-    public ItemStack getPickedResult(RayTraceResult target) { return DragonEggItem.getStack(containedDragon); }
+    public ItemStack getPickedResult(RayTraceResult target)
+    {
+        return DragonEggItem.getStack(containedDragon);
+    }
 
     @Override
-    public EntitySize getSize(Pose poseIn) { return getProperties().getSize(); }
+    public EntitySize getDimensions(Pose poseIn)
+    {
+        return getProperties().getDimensions();
+    }
 
-    public EntitySize getSize() { return getProperties().getSize(); }
-
-    @Override
-    public boolean canBePushed() { return false; }
-
-    @Override
-    public boolean canBeCollidedWith() { return true; }
-
-    @Override
-    public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+    public EntitySize getDimensions()
+    {
+        return getProperties().getDimensions();
+    }
 
     @Override
-    public void writeSpawnData(PacketBuffer buffer) { buffer.writeString(getDragonKey()); }
+    public boolean isPushable()
+    {
+        return false;
+    }
 
     @Override
-    public void readSpawnData(PacketBuffer buffer) {}
+    public boolean collides()
+    {
+        return true;
+    }
+
+    @Override
+    public IPacket<?> createSpawnPacket()
+    {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    @Override
+    public void writeSpawnData(PacketBuffer buffer)
+    {
+        buffer.writeString(getDragonKey());
+    }
+
+    @Override
+    public void readSpawnData(PacketBuffer buffer)
+    {
+    }
 }

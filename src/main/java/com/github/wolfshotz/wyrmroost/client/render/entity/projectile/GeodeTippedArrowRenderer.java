@@ -10,9 +10,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class GeodeTippedArrowRenderer extends ArrowRenderer<GeodeTippedArrowEntity>
 {
-    private static final ResourceLocation BLUE = Wyrmroost.rl("textures/entity/projectiles/arrow/blue_geode_tipped_arrow.png");
-    private static final ResourceLocation RED = Wyrmroost.rl("textures/entity/projectiles/arrow/red_geode_tipped_arrow.png");
-    private static final ResourceLocation PURPLE = Wyrmroost.rl("textures/entity/projectiles/arrow/purple_geode_tipped_arrow.png");
+    private static final ResourceLocation BLUE = Wyrmroost.id("textures/entity/projectiles/arrow/blue_geode_tipped_arrow.png");
+    private static final ResourceLocation RED = Wyrmroost.id("textures/entity/projectiles/arrow/red_geode_tipped_arrow.png");
+    private static final ResourceLocation PURPLE = Wyrmroost.id("textures/entity/projectiles/arrow/purple_geode_tipped_arrow.png");
 
     public GeodeTippedArrowRenderer(EntityRendererManager renderManagerIn)
     {

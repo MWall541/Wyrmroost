@@ -50,7 +50,7 @@ public class Wyrmroost
     {
         final String PROTOCOL_VERSION = "1.0";
         final SimpleChannel network = NetworkRegistry.ChannelBuilder
-                .named(rl("network"))
+                .named(id("network"))
                 .clientAcceptedVersions(PROTOCOL_VERSION::equals)
                 .serverAcceptedVersions(PROTOCOL_VERSION::equals)
                 .networkProtocolVersion(() -> PROTOCOL_VERSION)
@@ -75,7 +75,7 @@ public class Wyrmroost
      *
      * @return somethin related to a resource idk
      */
-    public static ResourceLocation rl(String path)
+    public static ResourceLocation id(String path)
     {
         return new ResourceLocation(MOD_ID, path);
     }

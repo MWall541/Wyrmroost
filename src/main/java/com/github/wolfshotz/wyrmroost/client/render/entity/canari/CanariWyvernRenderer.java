@@ -38,5 +38,8 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
         return TEXTURES[texture];
     }
 
-    private static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "canari_wyvern/" + png); }
+    private static ResourceLocation resource(String png)
+    {
+        return Wyrmroost.id(BASE_PATH + "canari_wyvern/" + png);
+    }
 }

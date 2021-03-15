@@ -9,13 +9,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class CoinDragonRenderer extends MobRenderer<CoinDragonEntity, CoinDragonModel>
 {
-    private static final ResourceLocation CHRISTMAS = Wyrmroost.rl("textures/entity/dragon/coin_dragon/christmas.png");
+    private static final ResourceLocation CHRISTMAS = Wyrmroost.id("textures/entity/dragon/coin_dragon/christmas.png");
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[5];
 
     static
     {
         for (int i = 0; i < TEXTURES.length; i++)
-            TEXTURES[i] = Wyrmroost.rl("textures/entity/dragon/coin_dragon/body_" + i + ".png");
+            TEXTURES[i] = Wyrmroost.id("textures/entity/dragon/coin_dragon/body_" + i + ".png");
     }
 
     public CoinDragonRenderer(EntityRendererManager renderManagerIn)

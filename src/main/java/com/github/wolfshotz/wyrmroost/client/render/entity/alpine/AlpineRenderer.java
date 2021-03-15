@@ -21,7 +21,7 @@ public class AlpineRenderer extends AbstractDragonRenderer<AlpineEntity, AlpineM
         {
             String path = BASE_PATH + "alpine/body_" + variant;
             if (WRConfig.deckTheHalls) path += "_christmas";
-            return TEXTURES[variant] = Wyrmroost.rl(path + ".png");
+            return TEXTURES[variant] = Wyrmroost.id(path + ".png");
         }
         return TEXTURES[variant];
     }

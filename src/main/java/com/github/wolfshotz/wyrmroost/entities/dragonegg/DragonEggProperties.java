@@ -29,7 +29,7 @@ public class DragonEggProperties
     /**
      * Get the size of the egg
      */
-    public EntitySize getSize()
+    public EntitySize getDimensions()
     {
         return size;
     }

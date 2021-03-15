@@ -30,23 +30,26 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public int life;
     public boolean hasCollided;
 
-    protected DragonProjectileEntity(EntityType<?> type, World world) { super(type, world); }
+    protected DragonProjectileEntity(EntityType<?> type, World world)
+    {
+        super(type, world);
+    }
 
     public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vector3d position, Vector3d velocity)
     {
         super(type, shooter.world);
 
-        velocity = velocity.add(rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset(), rand.nextGaussian() * getAccelerationOffset());
+        velocity = velocity.add(random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset());
         double length = velocity.length();
         this.acceleration = new Vector3d(velocity.x / length * getMotionFactor(), velocity.y / length * getMotionFactor(), velocity.z / length * getMotionFactor());
 
         this.shooter = shooter;
         this.life = 50;
 
-        setMotion(getMotion().add(acceleration));
-        position = position.add(getMotion());
+        setVelocity(getVelocity().add(acceleration));
+        position = position.add(getVelocity());
 
-        Vector3d motion = getMotion();
+        Vector3d motion = getVelocity();
         float x = (float) (motion.x - position.x);
         float y = (float) (motion.y - position.y);
         float z = (float) (motion.z - position.z);
@@ -54,58 +57,58 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         float yaw = (float) MathHelper.atan2(z, x) * 180f / Mafs.PI - 90f;
         float pitch = (float) -(MathHelper.atan2(y, planeSqrt) * 180f / Mafs.PI);
 
-        setLocationAndAngles(position.x, position.y, position.z, yaw, pitch);
+        refreshPositionAndAngles(position.x, position.y, position.z, yaw, pitch);
     }
 
     @Override
     public void tick()
     {
-        if ((!world.isRemote && (!shooter.isAlive() || ticksExisted > life || ticksExisted > getMaxLife())) || !world.isBlockLoaded(getBlockPos()))
+        if ((!world.isClient && (!shooter.isAlive() || age > life || age > getMaxLife())) || !world.isChunkLoaded(getBlockPos()))
         {
             remove();
             return;
         }
 
         super.tick();
-        if (growthRate != 1) recalculateSize();
+        if (growthRate != 1) calculateDimensions();
 
         switch (getEffectType())
         {
             case RAYTRACE:
             {
-                RayTraceResult rayTrace = ProjectileHelper.func_234618_a_(this, this::canImpactEntity);
+                RayTraceResult rayTrace = ProjectileHelper.getCollision(this, this::canImpactEntity);
                 if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
                     hit(rayTrace);
                 break;
             }
             case COLLIDING:
             {
-                AxisAlignedBB box = getBoundingBox().grow(0.05);
-                for (Entity entity : world.getEntitiesInAABBexcluding(this, box, this::canImpactEntity))
+                AxisAlignedBB box = getBoundingBox().expand(0.05);
+                for (Entity entity : world.getOtherEntities(this, box, this::canImpactEntity))
                     onEntityImpact(entity);
 
                 Vector3d position = getPos();
-                Vector3d end = position.add(getMotion());
-                BlockRayTraceResult rtr = world.rayTraceBlocks(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
-                if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getPos(), rtr.getFace());
+                Vector3d end = position.add(getVelocity());
+                BlockRayTraceResult rtr = world.raycast(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
+                if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getBlockPos(), rtr.getSide());
             }
             default:
                 break;
         }
 
-        Vector3d motion = getMotion();
-        if (!hasNoGravity()) setMotion(motion = motion.add(0, -0.05, 0));
+        Vector3d motion = getVelocity();
+        if (!hasNoGravity()) setVelocity(motion = motion.add(0, -0.05, 0));
         double x = getX() + motion.x;
         double y = getY() + motion.y;
         double z = getZ() + motion.z;
 
-        if (isInWater())
+        if (isTouchingWater())
         {
-            setMotion(motion.scale(0.95f));
+            setVelocity(motion.multiply(0.95f));
             for (int i = 0; i < 4; ++i)
                 world.addParticle(ParticleTypes.BUBBLE, getX() * 0.25d, getY() * 0.25d, getZ() * 0.25D, motion.x, motion.y, motion.z);
         }
-        setPosition(x, y, z);
+        updatePosition(x, y, z);
     }
 
     public boolean canImpactEntity(Entity entity)
@@ -113,8 +116,8 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         if (entity == shooter) return false;
         if (!entity.isAlive()) return false;
         if (!(entity instanceof LivingEntity)) return false;
-        if (entity.getLowestRidingEntity() == shooter) return false;
-        if (entity.isSpectator() || !entity.canBeCollidedWith() || entity.noClip) return false;
+        if (entity.getRootVehicle() == shooter) return false;
+        if (entity.isSpectator() || !entity.collides() || entity.noClip) return false;
         return shooter != null && !entity.isTeammate(shooter);
     }
 
@@ -124,40 +127,47 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         if (type == RayTraceResult.Type.BLOCK)
         {
             final BlockRayTraceResult brtr = (BlockRayTraceResult) result;
-            onBlockImpact(brtr.getPos(), brtr.getFace());
+            onBlockImpact(brtr.getBlockPos(), brtr.getSide());
         }
         else if (type == RayTraceResult.Type.ENTITY) onEntityImpact(((EntityRayTraceResult) result).getEntity());
     }
 
-    public void onEntityImpact(Entity entity) {}
-
-    public void onBlockImpact(BlockPos pos, Direction direction) {}
-
-    @Override
-    public void setMotion(Vector3d motionIn)
+    public void onEntityImpact(Entity entity)
     {
-        super.setMotion(motionIn);
-        ProjectileHelper.rotateTowardsMovement(this, 1);
+    }
+
+    public void onBlockImpact(BlockPos pos, Direction direction)
+    {
     }
 
     @Override
-    public EntitySize getSize(Pose poseIn)
+    public void setVelocity(Vector3d motionIn)
     {
-        if (growthRate == 1) return getType().getSize();
+        super.setVelocity(motionIn);
+        ProjectileHelper.method_7484(this, 1);
+    }
+
+    @Override
+    public EntitySize getDimensions(Pose poseIn)
+    {
+        if (growthRate == 1) return getType().getDimensions();
         float size = Math.min(getWidth() * growthRate, 2.25f);
-        return EntitySize.flexible(size, size);
+        return EntitySize.changing(size, size);
     }
 
     @Override
-    public boolean isInRangeToRenderDist(double distance)
+    public boolean shouldRender(double distance)
     {
-        double d0 = getBoundingBox().getAverageEdgeLength() * 4;
+        double d0 = getBoundingBox().getAverageSideLength() * 4;
         if (Double.isNaN(d0)) d0 = 4;
         d0 *= 64;
         return distance < d0 * d0;
     }
 
-    public DamageSource getDamageSource(String name) { return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setDifficultyScaled(); }
+    public DamageSource getDamageSource(String name)
+    {
+        return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setScaledWithDifficulty();
+    }
 
     protected EffectType getEffectType()
     {
@@ -186,37 +196,43 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     }
 
     @Override
-    protected boolean canTriggerWalking()
+    protected boolean canClimb()
     {
         return false;
     }
 
     @Override
-    public float getBrightness()
+    public float getBrightnessAtEyes()
     {
         return 1f;
     }
 
     @Override
-    public boolean attackEntityFrom(DamageSource source, float amount)
+    public boolean damage(DamageSource source, float amount)
     {
         return false;
     }
 
     @Override
-    public float getCollisionBorderSize()
+    public float getTargetingMargin()
     {
         return getWidth();
     }
 
     @Override
-    protected void registerData() {}
+    protected void initDataTracker()
+    {
+    }
 
     @Override // Does not Serialize
-    protected void readAdditional(CompoundNBT compound) {}
+    protected void readCustomDataFromTag(CompoundNBT compound)
+    {
+    }
 
     @Override // Does not Serialize
-    protected void writeAdditional(CompoundNBT compound) {}
+    protected void writeCustomDataToTag(CompoundNBT compound)
+    {
+    }
 
     @Override
     public IPacket<?> createSpawnPacket()
@@ -234,7 +250,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     @Override
     public void readSpawnData(PacketBuffer buf)
     {
-        this.shooter = (AbstractDragonEntity) world.getEntityByID(buf.readInt());
+        this.shooter = (AbstractDragonEntity) world.getEntityById(buf.readInt());
         this.growthRate = buf.readFloat();
     }
 

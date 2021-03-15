@@ -27,7 +27,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
         addFeature(new ConditionalLayer(OWDrakeEntity::isSaddled, d -> RenderType.getEntityCutoutNoCull(SADDLE_LAYER)));
     }
 
-    public static ResourceLocation resource(String png) { return Wyrmroost.rl(BASE_PATH + "overworld_drake/" + png); }
+    public static ResourceLocation resource(String png) { return Wyrmroost.id(BASE_PATH + "overworld_drake/" + png); }
 
     @Nullable
     @Override

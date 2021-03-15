@@ -59,7 +59,7 @@ public class WRSounds
 
     public static RegistryObject<SoundEvent> register(String name)
     {
-        return REGISTRY.register(name, () -> new SoundEvent(Wyrmroost.rl(name)));
+        return REGISTRY.register(name, () -> new SoundEvent(Wyrmroost.id(name)));
     }
 
     public static RegistryObject<SoundEvent> entity(String name)

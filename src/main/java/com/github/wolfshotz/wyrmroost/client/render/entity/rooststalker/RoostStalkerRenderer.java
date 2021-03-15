@@ -51,7 +51,7 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
 
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(BASE_PATH + "roost_stalker/" + png);
+        return Wyrmroost.id(BASE_PATH + "roost_stalker/" + png);
     }
 
     class MouthItemLayer extends LayerRenderer<RoostStalkerEntity, RoostStalkerModel>

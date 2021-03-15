@@ -36,19 +36,19 @@ public class FireBreathEntity extends BreathWeaponEntity
     {
         super.tick();
 
-        if (isInWater())
+        if (isTouchingWater())
         {
-            if (rand.nextDouble() <= 0.25d) playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 1);
+            if (random.nextDouble() <= 0.25d) playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 1);
             for (int i = 0; i < 15; i++)
-                world.addParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), Mafs.nextDouble(rand) * 0.2f, rand.nextDouble() * 0.08f, Mafs.nextDouble(rand) * 0.2f);
+                world.addParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), Mafs.nextDouble(random) * 0.2f, random.nextDouble() * 0.08f, Mafs.nextDouble(random) * 0.2f);
             remove();
             return;
         }
 
-        Vector3d motion = getMotion();
-        double x = getX() + motion.x + (rand.nextGaussian() * 0.2);
-        double y = getY() + motion.y + (rand.nextGaussian() * 0.2) + 0.5d;
-        double z = getZ() + motion.z + (rand.nextGaussian() * 0.2);
+        Vector3d motion = getVelocity();
+        double x = getX() + motion.x + (random.nextGaussian() * 0.2);
+        double y = getY() + motion.y + (random.nextGaussian() * 0.2) + 0.5d;
+        double z = getZ() + motion.z + (random.nextGaussian() * 0.2);
         world.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
     }
 
@@ -56,10 +56,10 @@ public class FireBreathEntity extends BreathWeaponEntity
     public void onBlockImpact(BlockPos pos, Direction direction)
     {
         super.onBlockImpact(pos, direction);
-        if (world.isRemote) return;
+        if (world.isClient) return;
 
         BlockState state = world.getBlockState(pos);
-        if (CampfireBlock.canBeLit(state))
+        if (CampfireBlock.method_30035(state))
         {
             world.setBlockState(pos, state.with(BlockStateProperties.LIT, true), 11);
             return;
@@ -70,39 +70,39 @@ public class FireBreathEntity extends BreathWeaponEntity
         {
             BlockPos offset = pos.offset(direction);
 
-            if (world.getBlockState(offset).isAir(world, offset) && (flammability == 1 || rand.nextDouble() <= flammability))
-                world.setBlockState(offset, AbstractFireBlock.getFireForPlacement(world, offset), 11);
+            if (world.getBlockState(offset).isAir(world, offset) && (flammability == 1 || random.nextDouble() <= flammability))
+                world.setBlockState(offset, AbstractFireBlock.getState(world, offset), 11);
         }
     }
 
     @Override
     public void onEntityImpact(Entity entity)
     {
-        if (world.isRemote) return;
+        if (world.isClient) return;
 
         float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
-        if (world.isRainingAt(entity.getBlockPos())) damage *= 0.75f;
+        if (world.hasRain(entity.getBlockPos())) damage *= 0.75f;
 
-        if (entity.isImmuneToFire()) damage *= 0.25; // impact damage
-        else entity.setFire(8);
+        if (entity.isFireImmune()) damage *= 0.25; // impact damage
+        else entity.setOnFireFor(8);
 
-        entity.attackEntityFrom(getDamageSource(rand.nextDouble() > 0.2? "fireBreath0" : "fireBreath1"), damage);
+        entity.damage(getDamageSource(random.nextDouble() > 0.2? "fireBreath0" : "fireBreath1"), damage);
     }
 
     @Override
     public DamageSource getDamageSource(String name)
     {
-        return super.getDamageSource(name).setFireDamage();
+        return super.getDamageSource(name).setFire();
     }
 
     @Override // Because we do it better.
-    public boolean canRenderOnFire()
+    public boolean doesRenderOnFire()
     {
         return false;
     }
 
     @Override
-    public boolean isBurning()
+    public boolean isOnFire()
     {
         return true;
     }

@@ -53,7 +53,7 @@ public class KeybindPacket
         {
             case MOUNT_KEY1:
             case MOUNT_KEY2:
-                Entity vehicle = player.getRidingEntity();
+                Entity vehicle = player.getVehicle();
                 if (vehicle instanceof AbstractDragonEntity)
                 {
                     AbstractDragonEntity dragon = ((AbstractDragonEntity) vehicle);

@@ -40,7 +40,7 @@ public class WRParticles
         }
 
         @Override
-        public Codec<T> func_230522_e_()
+        public Codec<T> getCodec()
         {
             return codec;
         }

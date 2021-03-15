@@ -10,12 +10,7 @@ import javax.annotation.Nullable;
 
 public interface IAnimatable
 {
-
-    Animation NO_ANIMATION = new Animation(0)
-    {
-        @Override
-        public String toString() { return "NO_ANIMATION"; }
-    };
+    Animation NO_ANIMATION = new Animation(0);
 
     int getAnimationTick();
 

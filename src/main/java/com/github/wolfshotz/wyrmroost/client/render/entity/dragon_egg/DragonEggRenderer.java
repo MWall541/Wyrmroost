@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 {
-    public static final ResourceLocation DEFAULT_TEXTURE = Wyrmroost.rl("textures/entity/dragon/dragon_egg.png");
+    public static final ResourceLocation DEFAULT_TEXTURE = Wyrmroost.id("textures/entity/dragon/dragon_egg.png");
     public static final Model MODEL = new Model();
 
     private static final Map<EntityType<?>, ResourceLocation> TEXTURE_MAP = new HashMap<>();
@@ -63,7 +63,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
     {
         return TEXTURE_MAP.computeIfAbsent(type, t ->
         {
-            ResourceLocation textureLoc = Wyrmroost.rl(String.format("textures/entity/dragon/%s/egg.png", type.getRegistryName().getPath()));
+            ResourceLocation textureLoc = Wyrmroost.id(String.format("textures/entity/dragon/%s/egg.png", type.getRegistryName().getPath()));
             if (Minecraft.getInstance().getResourceManager().containsResource(textureLoc)) return textureLoc;
             return DEFAULT_TEXTURE;
         });
@@ -75,7 +75,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
      */
     private void scale(DragonEggEntity entity, MatrixStack ms)
     {
-        EntitySize size = entity.getSize();
+        EntitySize size = entity.getDimensions();
         if (size != null) ms.scale(size.width * 2.95f, -(size.height * 2), -(size.width * 2.95f));
     }
 

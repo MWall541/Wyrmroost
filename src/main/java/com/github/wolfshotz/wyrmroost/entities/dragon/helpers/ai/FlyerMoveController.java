@@ -16,29 +16,29 @@ public class FlyerMoveController extends MovementController
 {
     private final AbstractDragonEntity dragon;
 
-    public FlyerMoveController(AbstractDragonEntity mob)
+    public FlyerMoveController(AbstractDragonEntity dragon)
     {
-        super(mob);
-        this.dragon = mob;
+        super(dragon);
+        this.dragon = dragon;
     }
 
     public void tick()
     {
         if (dragon.canBeControlledByRider())
         {
-            action = Action.WAIT;
+            state = Action.WAIT;
             return;
         }
 
-        if (action == Action.MOVE_TO)
+        if (state == Action.MOVE_TO)
         {
-            double x = posX - dragon.getX();
-            double y = posY - dragon.getY();
-            double z = posZ - dragon.getZ();
+            double x = targetX - dragon.getX();
+            double y = targetY - dragon.getY();
+            double z = targetZ - dragon.getZ();
             double distSq = x * x + y * y + z * z;
             if (distSq < 2.5000003E-7)
             {
-                dragon.setMoveForward(0f);
+                dragon.setForwardSpeed(0f);
                 return;
             }
             if (y > dragon.getFlightThreshold() + 1) dragon.setFlying(true);
@@ -47,34 +47,35 @@ public class FlyerMoveController extends MovementController
 
             if (dragon.isFlying())
             {
-                if (!dragon.getLookControl().getIsLooking())
-                    dragon.getLookControl().setLookPosition(posX, posY, posZ, dragon.getHorizontalFaceSpeed(), 75);
+                if (!dragon.getLookControl().isActive())
+                    dragon.getLookControl().lookAt(targetX, targetY, targetZ, dragon.getLookYawSpeed(), 75);
 
-                speed = (float) (dragon.getAttributeValue(Attributes.FLYING_SPEED) * this.speed) / 0.225f;
-                if (y != 0) dragon.setMoveVertical(y > 0? speed : -speed);
+                speed = (float) (dragon.getAttributeValue(Attributes.GENERIC_FLYING_SPEED) * this.speed) / 0.225f;
+                if (y != 0) dragon.setUpwardSpeed(y > 0? speed : -speed);
             }
             else
             {
-                speed = (float) (this.speed * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED));
-                BlockPos blockpos = mob.getBlockPos();
-                BlockState blockstate = mob.world.getBlockState(blockpos);
+                speed = (float) (this.speed * dragon.getAttributeValue(Attributes.GENERIC_MOVEMENT_SPEED));
+                BlockPos blockpos = dragon.getBlockPos();
+                BlockState blockstate = dragon.world.getBlockState(blockpos);
                 Block block = blockstate.getBlock();
-                VoxelShape voxelshape = blockstate.getCollisionShape(mob.world, blockpos);
-                if (y > (double)mob.stepHeight && x * x + z * z < (double)Math.max(1.0F, mob.getWidth()) || !voxelshape.isEmpty() && mob.getY() < voxelshape.getEnd(Direction.Axis.Y) + (double)blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(BlockTags.FENCES)) {
-                    mob.getJumpController().setJumping();
-                    action = MovementController.Action.JUMPING;
+                VoxelShape voxelshape = blockstate.getCollisionShape(dragon.world, blockpos);
+                if (y > (double) dragon.stepHeight && x * x + z * z < (double) Math.max(1.0F, dragon.getWidth()) || !voxelshape.isEmpty() && dragon.getY() < voxelshape.getMax(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(BlockTags.FENCES))
+                {
+                    dragon.getJumpControl().setActive();
+                    state = MovementController.Action.JUMPING;
                 }
             }
-            dragon.rotationYaw = limitAngle(dragon.rotationYaw, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getYawRotationSpeed());
-            dragon.setAIMoveSpeed(speed);
-            action = Action.WAIT;
+            dragon.yaw = changeAngle(dragon.yaw, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getYawRotationSpeed());
+            dragon.setMovementSpeed(speed);
+            state = Action.WAIT;
         }
         else
         {
-            dragon.setAIMoveSpeed(0);
-            dragon.setMoveStrafing(0);
-            dragon.setMoveVertical(0);
-            dragon.setMoveForward(0);
+            dragon.setMovementSpeed(0);
+            dragon.setSidewaysSpeed(0);
+            dragon.setUpwardSpeed(0);
+            dragon.setForwardSpeed(0);
         }
     }
 }

@@ -25,15 +25,14 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.entity.ai.attributes.Attributes.MAX_HEALTH;
-import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
+import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 /**
  * Simple Entity really, just bob and down in the same spot, and land to sleep at night. Easy.
  */
 public class CoinDragonEntity extends MobEntity
 {
-    public static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(CoinDragonEntity.class, DataSerializers.VARINT);
+    public static final DataParameter<Integer> VARIANT = EntityDataManager.registerData(CoinDragonEntity.class, DataSerializers.INTEGER);
     public static String DATA_VARIANT = "Variant";
 
     public CoinDragonEntity(EntityType<? extends CoinDragonEntity> type, World worldIn)
@@ -42,77 +41,77 @@ public class CoinDragonEntity extends MobEntity
     }
 
     @Override
-    protected void registerGoals()
+    protected void initGoals()
     {
-        goalSelector.addGoal(0, new LookAtGoal(this, PlayerEntity.class, 4));
+        goalSelector.add(0, new LookAtGoal(this, PlayerEntity.class, 4));
     }
 
     @Override
-    protected void registerData()
+    protected void initDataTracker()
     {
-        super.registerData();
-        dataManager.register(VARIANT, rand.nextInt(5));
+        super.initDataTracker();
+        dataTracker.startTracking(VARIANT, getRandom().nextInt(5));
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound)
+    public void writeCustomDataToTag(CompoundNBT compound)
     {
-        super.writeAdditional(compound);
+        super.writeCustomDataToTag(compound);
         compound.putInt(DATA_VARIANT, getVariant());
     }
 
     @Override
-    public void readAdditional(CompoundNBT compound)
+    public void readCustomDataFromTag(CompoundNBT compound)
     {
-        super.readAdditional(compound);
+        super.readCustomDataFromTag(compound);
         setVariant(compound.getInt(DATA_VARIANT));
     }
 
     public int getVariant()
     {
-        return dataManager.get(VARIANT);
+        return dataTracker.get(VARIANT);
     }
 
     public void setVariant(int variant)
     {
-        dataManager.set(VARIANT, variant);
+        dataTracker.set(VARIANT, variant);
     }
 
     // move up if too low, move down if too high, else, just bob up and down
     @Override
     public void travel(Vector3d positionIn)
     {
-        if (isAIDisabled()) return;
+        if (isAiDisabled()) return;
         double moveSpeed = 0.02;
         double yMot;
         double altitiude = getAltitude();
         if (altitiude < 1.5) yMot = moveSpeed;
         else if (altitiude > 3) yMot = -moveSpeed;
-        else yMot = Math.sin(ticksExisted * 0.1) * 0.0035;
+        else yMot = Math.sin(age * 0.1) * 0.0035;
 
-        setMotion(getMotion().add(0, yMot, 0));
-        move(MoverType.SELF, getMotion());
-        setMotion(getMotion().scale(0.91));
+        setVelocity(getVelocity().add(0, yMot, 0));
+        move(MoverType.SELF, getVelocity());
+        setVelocity(getVelocity().multiply(0.91));
     }
 
     @Override
-    protected ActionResultType func_230254_b_(PlayerEntity player, Hand hand)
+    protected ActionResultType interactMob(PlayerEntity player, Hand hand)
     {
-        ActionResultType stackResult = player.getHeldItem(hand).interactWithEntity(player, this, hand);
-        if (stackResult.isSuccessOrConsume()) return stackResult;
+        ActionResultType stackResult = player.getStackInHand(hand).useOnEntity(player, this, hand);
+        if (stackResult.isAccepted()) return stackResult;
 
         ItemEntity itemEntity = new ItemEntity(world, getX(), getY(), getZ(), getItemStack());
         double x = player.getX() - getX();
         double y = player.getY() - getY();
         double z = player.getZ() - getZ();
-        itemEntity.setMotion(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
-        world.addEntity(itemEntity);
+        itemEntity.setVelocity(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
+        world.spawnEntity(itemEntity);
         remove();
-        return ActionResultType.func_233537_a_(world.isRemote);
+        return ActionResultType.success(world.isClient);
     }
 
     @Override
-    protected float getStandingEyeHeight(Pose pose, EntitySize size)
+    protected float getActiveEyeHeight(Pose pose, EntitySize size)
     {
         return size.height * 0.8645f;
     }
@@ -124,25 +123,25 @@ public class CoinDragonEntity extends MobEntity
     }
 
     @Override
-    public boolean preventDespawn()
+    public boolean cannotDespawn()
     {
         return true;
     }
 
     @Override
-    public boolean isOnLadder()
+    public boolean isHoldingOntoLadder()
     {
         return false;
     }
 
     @Override
-    public boolean onLivingFall(float distance, float damageMultiplier)
+    public boolean handleFallDamage(float distance, float damageMultiplier)
     {
         return false;
     }
 
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos)
+    protected void fall(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
     }
 
@@ -170,7 +169,7 @@ public class CoinDragonEntity extends MobEntity
     public double getAltitude()
     {
         BlockPos.Mutable pos = getBlockPos().mutableCopy().move(0, -1, 0);
-        while (pos.getY() > 0 && !world.getBlockState(pos).isSolid()) pos.setY(pos.getY() - 1);
+        while (pos.getY() > 0 && !world.getBlockState(pos).isOpaque()) pos.setY(pos.getY() - 1);
         return getY() - pos.getY();
     }
 
@@ -178,12 +177,14 @@ public class CoinDragonEntity extends MobEntity
     {
         ItemStack stack = new ItemStack(WRItems.COIN_DRAGON.get());
         stack.getOrCreateTag().put(CoinDragonItem.DATA_ENTITY, serializeNBT());
-        if (hasCustomName()) stack.setDisplayName(getCustomName());
+        if (hasCustomName()) stack.setCustomName(getCustomName());
         return stack;
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
-        return MobEntity.func_233666_p_().createMutableAttribute(MAX_HEALTH, 4).createMutableAttribute(MOVEMENT_SPEED, 0.02);
+        return MobEntity.createMobAttributes()
+                .add(GENERIC_MAX_HEALTH, 4)
+                .add(GENERIC_MOVEMENT_SPEED, 0.02);
     }
 }

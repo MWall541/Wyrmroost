@@ -36,27 +36,38 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
         super(WREntities.GEODE_TIPPED_ARROW.get(), world);
 
         PacketBuffer buf = packet.getAdditionalData();
-        Entity shooter = world.getEntityByID(buf.readInt());
-        if (shooter != null) setShooter(shooter);
-        this.item = (GeodeTippedArrowItem) Item.getItemById(buf.readVarInt());
+        Entity shooter = world.getEntityById(buf.readInt());
+        if (shooter != null) setOwner(shooter);
+        this.item = (GeodeTippedArrowItem) Item.byRawId(buf.readVarInt());
     }
 
-    public GeodeTippedArrowItem getItem() { return item; }
+    public GeodeTippedArrowItem getItem()
+    {
+        return item;
+    }
 
     @Override
-    protected ItemStack getArrowStack() { return new ItemStack(item); }
+    protected ItemStack asItemStack()
+    {
+        return new ItemStack(item);
+    }
 
     @Override
-    public IPacket<?> createSpawnPacket() { return NetworkHooks.getEntitySpawningPacket(this); }
+    public IPacket<?> createSpawnPacket()
+    {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
 
     @Override
     public void writeSpawnData(PacketBuffer buf)
     {
-        Entity shooter = func_234616_v_();
+        Entity shooter = getOwner();
         buf.writeInt(shooter == null? 0 : shooter.getEntityId());
-        buf.writeVarInt(Item.getIdFromItem(item));
+        buf.writeVarInt(Item.getRawId(item));
     }
 
     @Override
-    public void readSpawnData(PacketBuffer additionalData) {}
+    public void readSpawnData(PacketBuffer additionalData)
+    {
+    }
 }

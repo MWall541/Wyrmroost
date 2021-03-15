@@ -45,7 +45,7 @@ class ItemModelData extends ItemModelProvider
         customInventoryItem(WRBlocks.OSERI_WOOD.getButton(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "button");
 
         getBuilder("desert_wyrm_alive").parent(itemGenerated).texture("layer0", resource("desert_wyrm_alive"));
-        item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.rl("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
+        item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.id("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
 
         getBuilderFor(WRItems.DRAGON_EGG.get())
                 .parent(uncheckedModel("builtin/entity"))
@@ -97,7 +97,7 @@ class ItemModelData extends ItemModelProvider
                 if (block instanceof TrapDoorBlock) path += "_bottom";
                 else if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock)
                 {
-                    item(item, Wyrmroost.rl("block/" + block.getRegistryName().getPath()));
+                    item(item, Wyrmroost.id("block/" + block.getRegistryName().getPath()));
                     continue;
                 }
                 else if (block instanceof DoorBlock || block instanceof StandingSignBlock)
@@ -122,7 +122,7 @@ class ItemModelData extends ItemModelProvider
 
     private static ResourceLocation resource(String path)
     {
-        return Wyrmroost.rl("item/" + path);
+        return Wyrmroost.id("item/" + path);
     }
 
     private ItemModelBuilder item(IItemProvider item)

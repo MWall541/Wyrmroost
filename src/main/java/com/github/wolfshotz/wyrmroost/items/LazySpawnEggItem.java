@@ -35,11 +35,11 @@ public class LazySpawnEggItem extends SpawnEggItem
     }
 
     @Override
-    public ITextComponent getDisplayName(ItemStack stack)
+    public ITextComponent getName(ItemStack stack)
     {
         ResourceLocation regName = type.get().getRegistryName();
         return new TranslationTextComponent("entity." + regName.getNamespace() + "." + regName.getPath())
-                .appendString(" ")
+                .append(" ")
                 .append(new TranslationTextComponent("item.wyrmroost.spawn_egg"));
     }
 
@@ -49,7 +49,7 @@ public class LazySpawnEggItem extends SpawnEggItem
         {
             CompoundNBT childTag = tag.getCompound("EntityTag");
             if (childTag.contains("id", 8))
-                return EntityType.byKey(childTag.getString("id")).orElse(type.get());
+                return EntityType.get(childTag.getString("id")).orElse(type.get());
         }
 
         return type.get();

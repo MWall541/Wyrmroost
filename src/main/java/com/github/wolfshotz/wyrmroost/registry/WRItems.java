@@ -32,11 +32,11 @@ public class WRItems
         }
 
         @Override
-        public void fill(NonNullList<ItemStack> items)
+        public void appendStacks(NonNullList<ItemStack> items)
         {
-            super.fill(items);
+            super.appendStacks(items);
             if (WRConfig.debugMode)
-                items.add(new ItemStack(Items.STICK).setDisplayName(new StringTextComponent("Debug Stick")));
+                items.add(new ItemStack(Items.STICK).setCustomName(new StringTextComponent("Debug Stick")));
         }
     };
 
@@ -141,16 +141,16 @@ public class WRItems
 
     private static class Foods
     {
-        static final Food RAW_LOWTIER_MEAT = new Food.Builder().hunger(1).saturation(0.1f).meat().build();
-        static final Food RAW_COMMON_MEAT = new Food.Builder().hunger(3).saturation(0.3f).meat().build();
-        static final Food RAW_APEX_MEAT = new Food.Builder().hunger(5).saturation(0.45f).meat().build();
-        static final Food RAW_BEHEMOTH_MEAT = new Food.Builder().hunger(7).saturation(0.7f).meat().build();
-        static final Food COOKED_LOWTIER_MEAT = new Food.Builder().hunger(3).saturation(0.7f).meat().build();
-        static final Food COOKED_COMMON_MEAT = new Food.Builder().hunger(8).saturation(0.8f).meat().build();
-        static final Food COOKED_APEX_MEAT = new Food.Builder().hunger(16).saturation(1f).meat().build();
-        static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().hunger(20).saturation(2f).meat().build();
-        static final Food COOKED_DESERTWYRM = new Food.Builder().hunger(10).saturation(1f).meat().build();
-        static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturation(0.9f).setAlwaysEdible()
+        static final Food RAW_LOWTIER_MEAT = new Food.Builder().hunger(1).saturationModifier(0.1f).meat().build();
+        static final Food RAW_COMMON_MEAT = new Food.Builder().hunger(3).saturationModifier(0.3f).meat().build();
+        static final Food RAW_APEX_MEAT = new Food.Builder().hunger(5).saturationModifier(0.45f).meat().build();
+        static final Food RAW_BEHEMOTH_MEAT = new Food.Builder().hunger(7).saturationModifier(0.7f).meat().build();
+        static final Food COOKED_LOWTIER_MEAT = new Food.Builder().hunger(3).saturationModifier(0.7f).meat().build();
+        static final Food COOKED_COMMON_MEAT = new Food.Builder().hunger(8).saturationModifier(0.8f).meat().build();
+        static final Food COOKED_APEX_MEAT = new Food.Builder().hunger(16).saturationModifier(1f).meat().build();
+        static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().hunger(20).saturationModifier(2f).meat().build();
+        static final Food COOKED_DESERTWYRM = new Food.Builder().hunger(10).saturationModifier(1f).meat().build();
+        static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturationModifier(0.9f).alwaysEdible()
                 .effect(() -> new EffectInstance(Effects.GLOWING, 800), 1f)
                 .effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1f)
                 .effect(() -> new EffectInstance(Effects.RESISTANCE, 800), 1f)
@@ -167,12 +167,12 @@ public class WRItems
 
         private static INamedTag<Item> tag(String path)
         {
-            return ItemTags.makeWrapperTag(Wyrmroost.MOD_ID + ":" + path);
+            return ItemTags.register(Wyrmroost.MOD_ID + ":" + path);
         }
 
         private static INamedTag<Item> forge(String path)
         {
-            return ItemTags.makeWrapperTag("forge:" + path);
+            return ItemTags.register("forge:" + path);
         }
     }
 }

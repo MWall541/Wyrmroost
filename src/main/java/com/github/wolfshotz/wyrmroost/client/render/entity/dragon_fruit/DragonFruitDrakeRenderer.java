@@ -40,6 +40,6 @@ public class DragonFruitDrakeRenderer extends AbstractDragonRenderer<DragonFruit
 
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(BASE_PATH + "dragon_fruit_drake/" + png);
+        return Wyrmroost.id(BASE_PATH + "dragon_fruit_drake/" + png);
     }
 }

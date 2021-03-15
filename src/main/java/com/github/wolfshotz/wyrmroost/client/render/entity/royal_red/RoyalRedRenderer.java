@@ -9,9 +9,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, RoyalRedModel>
 {
-    public static final ResourceLocation CHILD = Wyrmroost.rl(BASE_PATH + "royal_red/child.png");
-    public static final ResourceLocation CHRISTMAS_MALE = Wyrmroost.rl(BASE_PATH + "royal_red/male_christmas.png");
-    public static final ResourceLocation CHRISTMAS_FEMALE = Wyrmroost.rl(BASE_PATH + "royal_red/female_christmas.png");
+    public static final ResourceLocation CHILD = Wyrmroost.id(BASE_PATH + "royal_red/child.png");
+    public static final ResourceLocation CHRISTMAS_MALE = Wyrmroost.id(BASE_PATH + "royal_red/male_christmas.png");
+    public static final ResourceLocation CHRISTMAS_FEMALE = Wyrmroost.id(BASE_PATH + "royal_red/female_christmas.png");
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[4];
 
     public RoyalRedRenderer(EntityRendererManager manager)
@@ -33,7 +33,7 @@ public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, Roy
         {
             String path = BASE_PATH + "royal_red/" + ((index & 1) != 0? "female" : "male");
             if ((index & 2) != 0) path += "_spe";
-            return TEXTURES[index] = Wyrmroost.rl(path + ".png");
+            return TEXTURES[index] = Wyrmroost.id(path + ".png");
         }
         return TEXTURES[index];
     }

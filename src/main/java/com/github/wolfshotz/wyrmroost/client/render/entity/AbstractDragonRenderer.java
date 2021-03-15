@@ -120,7 +120,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         public ResourceLocation getArmorTexture(T entity)
         {
             String path = entity.getArmorStack().getItem().getRegistryName().getPath().replace("_dragon_armor", "");
-            return Wyrmroost.rl(String.format("%s%s/accessories/armor_%s.png", BASE_PATH, entity.getType().getRegistryName().getPath(), path));
+            return Wyrmroost.id(String.format("%s%s/accessories/armor_%s.png", BASE_PATH, entity.getType().getRegistryName().getPath(), path));
         }
     }
 }

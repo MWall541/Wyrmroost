@@ -19,8 +19,8 @@ public class LessShitLookController extends LookController
         if (restore)
         {
             this.restore = false;
-            mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, mob.getHorizontalFaceSpeed());
-            mob.rotationPitch = clampedRotate(mob.rotationPitch, 0, mob.getVerticalFaceSpeed());
+            entity.headYaw = changeAngle(entity.headYaw, entity.bodyYaw, entity.getLookPitchSpeed());
+            entity.pitch = changeAngle(entity.pitch, 0, entity.getLookYawSpeed());
             return;
         }
 
@@ -30,17 +30,17 @@ public class LessShitLookController extends LookController
             return;
         }
 
-        mob.rotationPitch = 0;
-        if (isLooking)
+        entity.pitch = 0;
+        if (active)
         {
-            this.isLooking = false;
-            mob.rotationYawHead = clampedRotate(mob.rotationYawHead, getTargetYaw(), deltaLookYaw);
-            mob.rotationPitch = clampedRotate(mob.rotationPitch, getTargetPitch(), deltaLookPitch);
+            this.active = false;
+            entity.headYaw = changeAngle(entity.headYaw, getTargetYaw(), yawSpeed);
+            entity.pitch = changeAngle(entity.pitch, getTargetPitch(), pitchSpeed);
         }
-        else mob.rotationYawHead = clampedRotate(mob.rotationYawHead, mob.renderYawOffset, deltaLookYaw);
+        else entity.headYaw = changeAngle(entity.headYaw, entity.bodyYaw, yawSpeed);
 
-        if (!mob.getNavigation().isIdle())
-            mob.rotationYawHead = MathHelper.func_219800_b(mob.rotationYawHead, mob.renderYawOffset, deltaLookYaw);
+        if (!entity.getNavigation().isIdle())
+            entity.headYaw = MathHelper.stepAngleTowards(entity.headYaw, entity.bodyYaw, yawSpeed);
     }
 
     protected boolean func_220680_b() { return !frozen; }
@@ -48,13 +48,13 @@ public class LessShitLookController extends LookController
     public void freeze()
     {
         this.frozen = true;
-        this.isLooking = false;
+        this.active = false;
     }
 
     public void restore()
     {
         this.restore = true;
         this.frozen = true;
-        this.isLooking = false;
+        this.active = false;
     }
 }

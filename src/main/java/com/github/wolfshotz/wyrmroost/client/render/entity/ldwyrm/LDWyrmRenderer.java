@@ -12,8 +12,8 @@ import javax.annotation.Nullable;
 
 public class LDWyrmRenderer extends MobRenderer<LDWyrmEntity, EntityModel<LDWyrmEntity>>
 {
-    private final ResourceLocation TEXTURE = Wyrmroost.rl("textures/entity/dragon/lesser_desertwyrm/body.png");
-    private final ResourceLocation CHRISTMAS = Wyrmroost.rl("textures/entity/dragon/lesser_desertwyrm/christmas.png");
+    private final ResourceLocation TEXTURE = Wyrmroost.id("textures/entity/dragon/lesser_desertwyrm/body.png");
+    private final ResourceLocation CHRISTMAS = Wyrmroost.id("textures/entity/dragon/lesser_desertwyrm/christmas.png");
 
     public LDWyrmRenderer(EntityRendererManager manager)
     {

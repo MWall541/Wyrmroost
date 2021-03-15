@@ -8,6 +8,7 @@ import net.minecraft.item.Rarity;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraftforge.common.util.Lazy;
 
 import java.util.function.Supplier;
 
@@ -27,7 +28,7 @@ public enum ArmorMaterials implements IArmorMaterial
     private final int[] dmgReduction; // boots[0], legs[1], chest[2], helm[3]
     private final float toughness;
     private final SoundEvent sound;
-    private final Supplier<Item> repairMaterial;
+    private final Lazy<Ingredient> repairMaterial;
     private final Rarity rarity;
 
     ArmorMaterials(int[] dmgReduction, float toughness, int durability, int enchantability, SoundEvent sound, Supplier<Item> repairMaterial)
@@ -43,20 +44,20 @@ public enum ArmorMaterials implements IArmorMaterial
         this.toughness = toughness;
         this.knockbackResistance = knockbackResistance;
         this.sound = sound;
-        this.repairMaterial = repairMaterial;
+        this.repairMaterial = Lazy.of(() -> Ingredient.ofItems(repairMaterial.get()));
         this.rarity = rarity;
     }
 
     @Override
     public int getDurability(EquipmentSlotType slotIn)
     {
-        return DURABILITY_ARRAY[slotIn.getIndex()] * durability;
+        return DURABILITY_ARRAY[slotIn.getEntitySlotId()] * durability;
     }
 
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType slot)
+    public int getProtectionAmount(EquipmentSlotType slot)
     {
-        return dmgReduction[slot.getIndex()];
+        return dmgReduction[slot.getEntitySlotId()];
     }
 
     @Override
@@ -66,15 +67,15 @@ public enum ArmorMaterials implements IArmorMaterial
     }
 
     @Override
-    public SoundEvent getSoundEvent()
+    public SoundEvent getEquipSound()
     {
         return sound;
     }
 
     @Override
-    public Ingredient getRepairMaterial()
+    public Ingredient getRepairIngredient()
     {
-        return Ingredient.fromItems(repairMaterial.get());
+        return repairMaterial.get();
     }
 
     @Override
@@ -99,6 +100,4 @@ public enum ArmorMaterials implements IArmorMaterial
     {
         return rarity;
     }
-
-
 }

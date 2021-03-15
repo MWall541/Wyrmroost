@@ -21,7 +21,7 @@ public class WRKeybind extends KeyBinding
 
     public WRKeybind(String name, int keyCode, byte packetKeyID)
     {
-        super(name, KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM.getOrMakeInput(keyCode), "keyCategory.wyrmroost");
+        super(name, KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM.createFromCode(keyCode), "keyCategory.wyrmroost");
         this.id = packetKeyID;
     }
 

@@ -60,31 +60,31 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected void registerGoals()
+    protected void initGoals()
     {
-        super.registerGoals();
+        super.initGoals();
 
-        goalSelector.addGoal(3, temptGoal = new TemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
-        goalSelector.addGoal(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
-        goalSelector.addGoal(5, new DragonBreedGoal(this));
-        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
-        goalSelector.addGoal(7, new SwoopGoal());
-        goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
-        goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 7f));
-        goalSelector.addGoal(10, new LookRandomlyGoal(this));
+        goalSelector.add(3, temptGoal = new TemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
+        goalSelector.add(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
+        goalSelector.add(5, new DragonBreedGoal(this));
+        goalSelector.add(6, new WRFollowOwnerGoal(this));
+        goalSelector.add(7, new SwoopGoal());
+        goalSelector.add(8, new FlyerWanderGoal(this, 1));
+        goalSelector.add(9, new LookAtGoal(this, LivingEntity.class, 7f));
+        goalSelector.add(10, new LookRandomlyGoal(this));
     }
 
     @Override
-    protected void registerData()
+    protected void initDataTracker()
     {
-        super.registerData();
-        dataManager.register(FLYING, false);
+        super.initDataTracker();
+        dataTracker.startTracking(FLYING, false);
     }
 
     @Override
-    public void livingTick()
+    public void tickMovement()
     {
-        super.livingTick();
+        super.tickMovement();
 
         if (isGliding && !isRiding()) isGliding = false;
 
@@ -94,15 +94,15 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void updateRidden()
+    public void tickRiding()
     {
-        super.updateRidden();
+        super.tickRiding();
 
-        if (!(getRidingEntity() instanceof PlayerEntity)) return;
-        PlayerEntity player = (PlayerEntity) getRidingEntity();
+        if (!(getVehicle() instanceof PlayerEntity)) return;
+        PlayerEntity player = (PlayerEntity) getVehicle();
         final boolean FLAG = shouldGlide(player);
 
-        if (world.isRemote && isGliding != FLAG)
+        if (world.isClient && isGliding != FLAG)
         {
             SGGlidePacket.send(FLAG);
             isGliding = FLAG;
@@ -110,9 +110,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         if (isGliding)
         {
-            Vector3d vec3d = player.getRotationVector().scale(0.3);
-            player.setMotion(player.getMotion().scale(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
-            if (!world.isRemote) ((ServerPlayerEntity) player).connection.floating = false;
+            Vector3d vec3d = player.getRotationVector().multiply(0.3);
+            player.setVelocity(player.getVelocity().multiply(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
+            if (!world.isClient) ((ServerPlayerEntity) player).networkHandler.floating = false;
             player.fallDistance = 0;
         }
     }
@@ -121,7 +121,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public void travel(Vector3d vec3d)
     {
         Vector3d look = getRotationVector();
-        if (isFlying() && look.y < 0) setMotion(getMotion().add(0, look.y * 0.25, 0));
+        if (isFlying() && look.y < 0) setVelocity(getVelocity().add(0, look.y * 0.25, 0));
 
         super.travel(vec3d);
     }
@@ -130,11 +130,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         ActionResultType result = super.playerInteraction(player, hand, stack);
-        if (result.isSuccessOrConsume()) return result;
+        if (result.isAccepted()) return result;
 
         if (!isTamed() && isBreedingItem(stack))
         {
-            if (!world.isRemote && (temptGoal.isRunning() || player.isCreative()))
+            if (!world.isClient && (temptGoal.isActive() || player.isCreative()))
             {
                 tame(getRandom().nextDouble() < 0.333, player);
                 eat(stack);
@@ -143,12 +143,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
             return ActionResultType.CONSUME;
         }
 
-        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking() && !isBreedingItem(stack) && !isLeashed())
+        if (isOwner(player) && player.getPassengerList().isEmpty() && !player.isSneaking() && !isBreedingItem(stack) && !isLeashed())
         {
             startRiding(player, true);
-            setSit(false);
+            setSitting(false);
             clearAI();
-            return ActionResultType.func_233537_a_(world.isRemote);
+            return ActionResultType.success(world.isClient);
         }
 
         return ActionResultType.PASS;
@@ -156,12 +156,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     public boolean shouldGlide(PlayerEntity player)
     {
-        if (isChild()) return false;
-        if (!player.isJumping) return false;
-        if (player.abilities.isFlying) return false;
-        if (player.isElytraFlying()) return false;
-        if (player.isInWater()) return false;
-        if (player.getMotion().y > 0) return false;
+        if (isBaby()) return false;
+        if (!player.jumping) return false;
+        if (player.abilities.flying) return false;
+        if (player.isFallFlying()) return false;
+        if (player.isTouchingWater()) return false;
+        if (player.getVelocity().y > 0) return false;
         if (isGliding() && !player.isOnGround()) return true;
         return getAltitude() - 1.8 > 4;
     }
@@ -169,7 +169,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public void doSpecialEffects()
     {
-        if (getVariant() == -1 && ticksExisted % 5 == 0)
+        if (getVariant() == -1 && age % 5 == 0)
         {
             double x = getX() + getRandom().nextGaussian();
             double y = getY() + getRandom().nextDouble();
@@ -179,10 +179,10 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public EntitySize getSize(Pose poseIn)
+    public EntitySize getDimensions(Pose poseIn)
     {
-        EntitySize size = getType().getSize().scale(getRenderScale());
-        if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.87f);
+        EntitySize size = getType().getDimensions().scaled(getScaleFactor());
+        if (isInSittingPose() || isSleeping()) size = size.scaled(1, 0.87f);
         return size;
     }
 
@@ -227,7 +227,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getVerticalFaceSpeed()
+    public int getLookYawSpeed()
     {
         return 30;
     }
@@ -253,22 +253,22 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         if (spawnReason == SpawnReason.SPAWNER) return true;
         Block block = world.getBlockState(blockPos.down()).getBlock();
-        return block == Blocks.AIR || block == Blocks.SAND && world.getLightSubtracted(blockPos, 0) > 8;
+        return block == Blocks.AIR || block == Blocks.SAND && world.getBaseLightLevel(blockPos, 0) > 8;
     }
 
     @Nullable
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.OCEAN || event.getCategory() == Biome.Category.BEACH)
-            event.getSpawns().func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
+            event.getSpawns().spawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
     }
 
-    public static AttributeModifierMap.MutableAttribute getAttributes()
+    public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
-        return MobEntity.func_233666_p_()
-                .createMutableAttribute(MAX_HEALTH, 20)
-                .createMutableAttribute(MOVEMENT_SPEED, 0.23)
-                .createMutableAttribute(FLYING_SPEED, 0.12);
+        return MobEntity.createMobAttributes()
+                .add(GENERIC_MAX_HEALTH, 20)
+                .add(GENERIC_MOVEMENT_SPEED, 0.23)
+                .add(GENERIC_FLYING_SPEED, 0.12);
     }
 
     public class SwoopGoal extends Goal
@@ -294,14 +294,14 @@ public class SilverGliderEntity extends AbstractDragonEntity
         @Override
         public boolean shouldContinue()
         {
-            return getBlockPos().distanceSq(pos) > 8;
+            return getBlockPos().getSquaredDistance(pos) > 8;
         }
 
         @Override
         public void tick()
         {
             if (getNavigation().isIdle()) getNavigation().startMovingTo(pos.getX(), pos.getY() + 2, pos.getZ(), 1);
-            getLookControl().setLookPosition(pos.getX(), pos.getY() + 2, pos.getZ());
+            getLookControl().lookAt(pos.getX(), pos.getY() + 2, pos.getZ());
         }
     }
 }

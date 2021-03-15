@@ -48,10 +48,10 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     }
 
     @Override
-    protected void preRenderCallback(ButterflyLeviathanEntity entity, MatrixStack ms, float partialTicks)
+    protected void scale(ButterflyLeviathanEntity entity, MatrixStack ms, float partialTicks)
     {
         ms.scale(3, 3, 3);
-        super.preRenderCallback(entity, ms, partialTicks);
+        super.scale(entity, ms, partialTicks);
     }
 
     @Nullable
@@ -79,7 +79,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
 
     public static ResourceLocation resource(String png)
     {
-        return Wyrmroost.rl(BASE_PATH + "butterfly_leviathan/" + png);
+        return Wyrmroost.id(BASE_PATH + "butterfly_leviathan/" + png);
     }
 
     public class LightningLayer extends LayerRenderer<ButterflyLeviathanEntity, ButterflyLeviathanModel>
