@@ -90,7 +90,7 @@ class LootTableData extends LootTableProvider
                 ResourceLocation lootTable = block.getLootTableId();
                 boolean notInheriting = lootTable.getPath().replace("blocks/", "").equals(block.getRegistryName().getPath());
                 if (!lootTables.containsKey(block) && lootTable != LootTables.EMPTY && notInheriting)
-                    drops(block);
+                    addDrop(block);
             }
         }
 
