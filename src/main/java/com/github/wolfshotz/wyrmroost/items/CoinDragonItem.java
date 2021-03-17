@@ -47,7 +47,7 @@ public class CoinDragonItem extends Item
         ItemStack stack = context.getStack();
         PlayerEntity player = context.getPlayer();
 
-        if (!world.isClient && stack.hasTag()) // read data first!: setting position before reading will reset that position!
+        if (!world.isClientSide && stack.hasTag()) // read data first!: setting position before reading will reset that position!
         {
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_ENTITY)) entity.deserializeNBT(tag.getCompound(DATA_ENTITY));

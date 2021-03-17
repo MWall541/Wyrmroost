@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 
 public class GillaBushBlock extends BushBlock
 {
-    static final VoxelShape SHAPE = Block.createCuboidShape(2, 0, 2, 14, 12, 14);
+    static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
 
     public GillaBushBlock()
     {
@@ -25,7 +25,7 @@ public class GillaBushBlock extends BushBlock
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_)
+    public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_)
     {
         return SHAPE;
     }
@@ -37,19 +37,18 @@ public class GillaBushBlock extends BushBlock
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entity)
+    public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entity)
     {
         if (entity instanceof LivingEntity)
         {
-            entity.slowMovement(state, new Vector3d(0.5d, 0.6d, 0.5d));
-            if (!worldIn.isClient && (entity.lastRenderX != entity.getX() || entity.lastRenderZ != entity.getZ()))
+            entity.makeStuckInBlock(state, new Vector3d(0.5d, 0.6d, 0.5d));
+            if (!worldIn.isClientSide && (entity.xOld != entity.getX() || entity.zOld != entity.getZ()))
             {
-                double x = Math.abs(entity.getX() - entity.lastRenderX);
-                double z = Math.abs(entity.getZ() - entity.lastRenderZ);
+                double x = Math.abs(entity.getX() - entity.xOld);
+                double z = Math.abs(entity.getZ() - entity.zOld);
                 if (x >= 0.003 || z >= 0.003)
-                    entity.damage(DamageSource.SWEET_BERRY_BUSH, 1f);
+                    entity.hurt(DamageSource.SWEET_BERRY_BUSH, 1f);
             }
-
         }
     }
 }

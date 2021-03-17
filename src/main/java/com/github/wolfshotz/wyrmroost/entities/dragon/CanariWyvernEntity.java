@@ -87,7 +87,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super.tickMovement();
 
-        if (!world.isClient && !isPissed() && !isSleeping() && !isFlying() && !isRiding() && noActiveAnimation())
+        if (!world.isClientSide && !isPissed() && !isSleeping() && !isFlying() && !isRiding() && noActiveAnimation())
         {
             double rand = getRandom().nextDouble();
             if (rand < 0.001) AnimationPacket.send(this, FLAP_WINGS_ANIMATION);
@@ -98,7 +98,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         {
             int tick = getAnimationTick();
             if (tick == 5 || tick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.7f, 2, true);
-            if (!world.isClient && tick == 9 && getRandom().nextDouble() <= 0.25)
+            if (!world.isClientSide && tick == 9 && getRandom().nextDouble() <= 0.25)
                 dropStack(new ItemStack(Items.FEATHER), 0.5f);
         }
         else if (getAnimation() == THREAT_ANIMATION && isPissed())
@@ -116,8 +116,8 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         if (!isTamed() && isFoodItem(stack) && (isPissed() || player.isCreative() || isBaby()))
         {
             eat(stack);
-            if (!world.isClient) tame(getRandom().nextDouble() < 0.2, player);
-            return ActionResultType.success(world.isClient);
+            if (!world.isClientSide) tame(getRandom().nextDouble() < 0.2, player);
+            return ActionResultType.success(world.isClientSide);
         }
 
         if (isOwner(player) && player.getPassengerList().size() < 3 && !player.isSneaking() && !isLeashed())
@@ -126,7 +126,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             setFlying(false);
             clearAI();
             startRiding(player, true);
-            return ActionResultType.success(world.isClient);
+            return ActionResultType.success(world.isClientSide);
         }
 
         return ActionResultType.PASS;

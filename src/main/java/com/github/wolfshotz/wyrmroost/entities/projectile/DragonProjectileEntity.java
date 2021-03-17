@@ -63,7 +63,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     @Override
     public void tick()
     {
-        if ((!world.isClient && (!shooter.isAlive() || age > life || age > getMaxLife())) || !world.isChunkLoaded(getBlockPos()))
+        if ((!world.isClientSide && (!shooter.isAlive() || age > life || age > getMaxLife())) || !world.isChunkLoaded(getBlockPos()))
         {
             remove();
             return;

@@ -127,7 +127,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
         breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
         knockOutTimer.add(isKnockedOut()? 0.05f : -0.1f);
 
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             if (isBreathingFire() && getControllingPlayer() == null && getTarget() == null)
                 setBreathingFire(false);
@@ -173,12 +173,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 eat(stack);
                 tame(getRandom().nextDouble() < 0.1, player);
                 setKnockedOut(false);
-                return ActionResultType.success(world.isClient);
+                return ActionResultType.success(world.isClientSide);
             }
 
             if (isKnockedOut() && knockOutTime <= MAX_KNOCKOUT_TIME / 2)
             {
-                if (!world.isClient)
+                if (!world.isClientSide)
                 {
                     // base taming chances on consciousness; the closer it is to waking up the better the chances
                     if (tame(getRandom().nextInt(knockOutTime) < MAX_KNOCKOUT_TIME * 0.2d, player))
@@ -213,7 +213,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public void onTrackedDataSet(DataParameter<?> key)
     {
-        if (world.isClient && key.equals(BREATHING_FIRE) && isBreathingFire())
+        if (world.isClientSide && key.equals(BREATHING_FIRE) && isBreathingFire())
             BreathSound.play(this);
         else super.onTrackedDataSet(key);
     }
@@ -247,7 +247,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public void meleeAttack()
     {
-        if (!world.isClient)
+        if (!world.isClientSide)
             AnimationPacket.send(this, isFlying() || getRandom().nextBoolean()? BITE_ATTACK_ANIMATION : SLAP_ATTACK_ANIMATION);
     }
 
@@ -344,7 +344,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public void setBreathingFire(boolean b)
     {
-        if (!world.isClient) dataTracker.set(BREATHING_FIRE, b);
+        if (!world.isClientSide) dataTracker.set(BREATHING_FIRE, b);
     }
 
     public boolean isKnockedOut()
@@ -355,7 +355,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public void setKnockedOut(boolean b)
     {
         dataTracker.set(KNOCKED_OUT, b);
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             knockOutTime = b? MAX_KNOCKOUT_TIME : 0;
             if (b)

@@ -107,7 +107,7 @@ public class CoinDragonEntity extends MobEntity
         itemEntity.setVelocity(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
         world.spawnEntity(itemEntity);
         remove();
-        return ActionResultType.success(world.isClient);
+        return ActionResultType.success(world.isClientSide);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class CoinDragonEntity extends MobEntity
 
     public double getAltitude()
     {
-        BlockPos.Mutable pos = getBlockPos().mutableCopy().move(0, -1, 0);
+        BlockPos.Mutable pos = getBlockPos().mutable().move(0, -1, 0);
         while (pos.getY() > 0 && !world.getBlockState(pos).isOpaque()) pos.setY(pos.getY() - 1);
         return getY() - pos.getY();
     }

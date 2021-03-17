@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
-import com.github.wolfshotz.wyrmroost.blocks.tile.WRSignTileEntity;
+import com.github.wolfshotz.wyrmroost.blocks.tile.WRSignBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StandingSignBlock;
 import net.minecraft.block.WallSignBlock;
@@ -23,9 +23,9 @@ public class WRSignBlock extends StandingSignBlock
 
 
     @Override
-    public TileEntity createBlockEntity(IBlockReader p_196283_1_)
+    public TileEntity newBlockEntity(IBlockReader level)
     {
-        return new WRSignTileEntity();
+        return new WRSignBlockEntity();
     }
 
     public static class Wall extends WallSignBlock
@@ -42,9 +42,9 @@ public class WRSignBlock extends StandingSignBlock
         }
 
         @Override
-        public TileEntity createBlockEntity(IBlockReader p_196283_1_)
+        public TileEntity newBlockEntity(IBlockReader level)
         {
-            return new WRSignTileEntity();
+            return new WRSignBlockEntity();
         }
     }
 }

@@ -102,7 +102,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         PlayerEntity player = (PlayerEntity) getVehicle();
         final boolean FLAG = shouldGlide(player);
 
-        if (world.isClient && isGliding != FLAG)
+        if (world.isClientSide && isGliding != FLAG)
         {
             SGGlidePacket.send(FLAG);
             isGliding = FLAG;
@@ -112,7 +112,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         {
             Vector3d vec3d = player.getRotationVector().multiply(0.3);
             player.setVelocity(player.getVelocity().multiply(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
-            if (!world.isClient) ((ServerPlayerEntity) player).networkHandler.floating = false;
+            if (!world.isClientSide) ((ServerPlayerEntity) player).networkHandler.floating = false;
             player.fallDistance = 0;
         }
     }
@@ -134,7 +134,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         if (!isTamed() && isBreedingItem(stack))
         {
-            if (!world.isClient && (temptGoal.isActive() || player.isCreative()))
+            if (!world.isClientSide && (temptGoal.isActive() || player.isCreative()))
             {
                 tame(getRandom().nextDouble() < 0.333, player);
                 eat(stack);
@@ -148,7 +148,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             startRiding(player, true);
             setSitting(false);
             clearAI();
-            return ActionResultType.success(world.isClient);
+            return ActionResultType.success(world.isClientSide);
         }
 
         return ActionResultType.PASS;

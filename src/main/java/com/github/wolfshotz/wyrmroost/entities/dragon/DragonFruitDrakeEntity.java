@@ -116,11 +116,11 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         if (stack.getItem() == Items.SHEARS && isShearable(stack, world, getBlockPos()))
-            return ActionResultType.success(world.isClient);
+            return ActionResultType.success(world.isClientSide);
 
         if (!isTamed() && isBaby() && isFoodItem(stack))
         {
-            if (!world.isClient && temptGoal.isActive())
+            if (!world.isClientSide && temptGoal.isActive())
             {
                 tame(getRandom().nextDouble() <= 0.2d, player);
                 eat(stack);
@@ -133,7 +133,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         {
             eat(stack);
             growCropsTime = CROP_GROWTH_TIME;
-            return ActionResultType.success(world.isClient);
+            return ActionResultType.success(world.isClientSide);
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -147,7 +147,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         sitTimer.add((isInSittingPose() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.05f : -0.1f);
 
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             setSprinting(getTarget() != null);
             if (shearCooldownTime > 0) --shearCooldownTime;

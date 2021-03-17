@@ -50,7 +50,7 @@ public class WRSitGoal extends SitGoal
         Random rand = dragon.getRandom();
 
         // get current entity position
-        BlockPos.Mutable ground = dragon.world.getTopPosition(Heightmap.Type.WORLD_SURFACE, dragon.getBlockPos()).mutableCopy();
+        BlockPos.Mutable ground = dragon.world.getTopPosition(Heightmap.Type.WORLD_SURFACE, dragon.getBlockPos()).mutable();
 
         // make sure the y value is suitable
         if (ground.getY() <= 0 || ground.getY() > dragon.getY() || !dragon.world.getBlockState(ground.down()).getMaterial().isSolid())

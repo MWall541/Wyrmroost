@@ -26,68 +26,68 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     }
 
     @Override
-    public boolean isFertilizable(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
+    public boolean isValidBonemealTarget(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
     {
-        return (!hasMaxHeight() || getHeight((IWorldReader) worldIn, pos) < maxGrowthHeight) && super.isFertilizable(worldIn, pos, state, isClient);
+        return (!hasMaxHeight() || getHeight((IWorldReader) worldIn, pos) < maxGrowthHeight) && super.isValidBonemealTarget(worldIn, pos, state, isClient);
     }
 
     @Override
-    protected boolean chooseStemState(BlockState state)
+    protected boolean canGrowInto(BlockState state)
     {
         return state.isAir();
     }
 
     @Override
-    public void grow(ServerWorld world, Random rand, BlockPos pos, BlockState state)
+    public void performBonemeal(ServerWorld world, Random rand, BlockPos pos, BlockState state)
     {
-        BlockPos.Mutable mutable = pos.mutableCopy().move(growthDirection);
+        BlockPos.Mutable mutable = pos.mutable().move(growthDirection);
         int i = 0;
-        int amount = method_26376(rand);
+        int amount = getBlocksToGrowWhenBonemealed(rand);
         if (hasMaxHeight()) amount = Math.min(amount, maxGrowthHeight - getHeight(world, pos));
 
-        for (int k = 0; k < amount && chooseStemState(world.getBlockState(mutable)); k++)
+        for (int k = 0; k < amount && canGrowInto(world.getBlockState(mutable)); k++)
         {
-            world.setBlockState(mutable, state.with(AGE, k == maxGrowthHeight - 1? 25 : (i = Math.min(i + 1, 25))));
+            world.setBlockAndUpdate(mutable, state.setValue(AGE, k == maxGrowthHeight - 1? 25 : (i = Math.min(i + 1, 25))));
             mutable.move(growthDirection);
         }
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, IWorldReader worldIn, BlockPos pos)
+    public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
-        BlockPos below = pos.offset(growthDirection.getOpposite());
+        BlockPos below = pos.relative(growthDirection.getOpposite());
         BlockState belowState = worldIn.getBlockState(below);
         Block belowBlock = belowState.getBlock();
 
-        if (canAttachTo(belowBlock))
+        if (canAttachToBlock(belowBlock))
         {
-            if (belowBlock == getStem() || belowBlock == getPlant() || Block.isFaceFullSquare(belowState.getCollisionShape(worldIn, pos), growthDirection))
-                return (!hasMaxHeight() || getHeight(worldIn, pos.offset(growthDirection.getOpposite()), true) + 1 <= maxGrowthHeight);
+            if (belowBlock == getHeadBlock() || belowBlock == getBodyBlock() || Block.isFaceFull(belowState.getCollisionShape(worldIn, pos), growthDirection))
+                return (!hasMaxHeight() || getHeight(worldIn, pos.relative(growthDirection.getOpposite()), true) + 1 <= maxGrowthHeight);
         }
         return false;
     }
 
     @Nullable
     @Override
-    public BlockState getPlacementState(BlockItemUseContext context)
+    public BlockState getStateForPlacement(BlockItemUseContext context)
     {
         if (hasMaxHeight())
         {
-            World world = context.getWorld();
-            BlockPos pos = context.getBlockPos().offset(growthDirection.getOpposite());
-            if (getHeight(world, pos, true) + 1 >= maxGrowthHeight) return getDefaultState().with(AGE, 25);
+            World world = context.getLevel();
+            BlockPos pos = context.getClickedPos().relative(growthDirection.getOpposite());
+            if (getHeight(world, pos, true) + 1 >= maxGrowthHeight) return defaultBlockState().setValue(AGE, 25);
         }
-        return super.getPlacementState(context);
+        return super.getStateForPlacement(context);
     }
 
     @Override
-    protected int method_26376(Random rand)
+    protected int getBlocksToGrowWhenBonemealed(Random rand)
     {
-        return PlantBlockHelper.method_26381(rand);
+        return PlantBlockHelper.getBlocksToGrowWhenBonemealed(rand);
     }
 
     @Override
-    protected Block getPlant()
+    protected Block getBodyBlock()
     {
         return body.get();
     }
@@ -105,10 +105,10 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     public int getHeight(IWorldReader world, BlockPos pos, boolean below)
     {
         Direction dir = below? growthDirection.getOpposite() : growthDirection;
-        BlockPos.Mutable mutable = pos.mutableCopy();
+        BlockPos.Mutable mutable = pos.mutable();
         BlockState state = world.getBlockState(mutable);
         int i = 0;
-        for (; i < maxGrowthHeight + 1 && (state.isOf(getPlant()) || state.isOf(this)); ++i)
+        for (; i < maxGrowthHeight + 1 && (state.is(getBodyBlock()) || state.is(this)); ++i)
             state = world.getBlockState(mutable.move(dir));
         return i;
     }

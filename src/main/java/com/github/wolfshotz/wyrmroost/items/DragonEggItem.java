@@ -72,7 +72,7 @@ public class DragonEggItem extends Item
         DragonEggEntity eggEntity = new DragonEggEntity(ModUtils.getEntityTypeByKey(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE)), tag.getInt(DragonEggEntity.DATA_HATCH_TIME), world);
         eggEntity.updatePosition(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d);
 
-        if (!world.isClient) world.spawnEntity(eggEntity);
+        if (!world.isClientSide) world.spawnEntity(eggEntity);
         if (!player.isCreative()) player.setStackInHand(ctx.getHand(), ItemStack.EMPTY);
         
         return ActionResultType.SUCCESS;

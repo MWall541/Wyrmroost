@@ -28,7 +28,7 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 //        BlockState state = world.getBlockState(pos);
 //        state.onProjectileCollision(world, state, result, this); todo.. somehow
 
-        if (!world.isClient && !noClip && !world.getBlockState(pos).getCollisionShape(world, pos).equals(VoxelShapes.empty()))
+        if (!world.isClientSide && !noClip && !world.getBlockState(pos).getCollisionShape(world, pos).equals(VoxelShapes.empty()))
         {
             setVelocity(acceleration.multiply(-Math.abs(direction.getOffsetX()) + 1, -Math.abs(direction.getOffsetY()) + 1, -Math.abs(direction.getOffsetZ()) + 1));
 

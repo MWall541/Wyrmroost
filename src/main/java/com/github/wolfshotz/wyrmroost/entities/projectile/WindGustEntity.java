@@ -39,7 +39,7 @@ public class WindGustEntity extends DragonProjectileEntity
     {
         super.tick();
 
-        if (world.isClient)
+        if (world.isClientSide)
         {
             double multiplier = Math.min(age / 5d, 4d);
             Vector3d motion = getVelocity().negate().multiply(0.1, 0.1, 0.1);
@@ -57,7 +57,7 @@ public class WindGustEntity extends DragonProjectileEntity
     @Override
     public void onEntityImpact(Entity entity)
     {
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
             entity.damage(getDamageSource("windGust"), 3);
@@ -72,7 +72,7 @@ public class WindGustEntity extends DragonProjectileEntity
         final int PARTICLE_COUNT = 75;
         BlockParticleData blockParticle = new BlockParticleData(ParticleTypes.BLOCK, world.getBlockState(pos));
         pos = pos.offset(direction);
-        if (world.isClient)
+        if (world.isClientSide)
         {
             for (int i = 0; i < PARTICLE_COUNT; i++)
             {

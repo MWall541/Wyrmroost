@@ -173,7 +173,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     {
         if (player.getStackInHand(hand).isEmpty())
         {
-            if (!world.isClient)
+            if (!world.isClientSide)
             {
                 ItemStack stack = new ItemStack(WRItems.LDWYRM.get());
                 CompoundNBT tag = new CompoundNBT();
@@ -184,7 +184,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
                 InventoryHelper.spawn(world, getX(), getY(), getZ(), stack);
                 remove();
             }
-            return ActionResultType.success(world.isClient);
+            return ActionResultType.success(world.isClientSide);
         }
 
         return super.interactMob(player, hand);

@@ -43,7 +43,7 @@ public class AnimationPacket
 
     public static <T extends Entity & IAnimatable> void send(T entity, Animation animation)
     {
-        if (!entity.world.isClient)
+        if (!entity.world.isClientSide)
         {
             entity.setAnimation(animation);
             Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),

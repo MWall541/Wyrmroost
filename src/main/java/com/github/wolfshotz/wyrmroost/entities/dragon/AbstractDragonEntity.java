@@ -152,7 +152,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
     {
-        if (!world.isClient) dataEntries.add(new EntityDataEntry<>(key, type, write, read));
+        if (!world.isClientSide) dataEntries.add(new EntityDataEntry<>(key, type, write, read));
     }
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, DataParameter<T> param, T value)
@@ -199,7 +199,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSleeping() == sleep) return;
 
         dataTracker.set(SLEEPING, sleep);
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             if (sleep) clearAI();
             else sleepCooldown = 350;
@@ -413,7 +413,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     // That way, the server never sends the arm swing packet.
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        final ActionResultType SUCCESS = ActionResultType.success(world.isClient);
+        final ActionResultType SUCCESS = ActionResultType.success(world.isClientSide);
 
         if (isOwner(player) && player.isSneaking() && !isFlying())
         {
@@ -428,7 +428,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 boolean flag = getHealth() < getMaxHealth();
                 if (isBaby())
                 {
-                    if (!world.isClient) growUp((int) ((-getBreedingAge() / 20) * 0.1F), true);
+                    if (!world.isClientSide) growUp((int) ((-getBreedingAge() / 20) * 0.1F), true);
                     flag = true;
                 }
 
@@ -441,7 +441,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
             if (isBreedingItem(stack) && getBreedingAge() == 0)
             {
-                if (!world.isClient && !isInLove())
+                if (!world.isClientSide && !isInLove())
                 {
                     eat(stack);
                     lovePlayer(player);
@@ -453,7 +453,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (canStartRiding(player) && !player.isSneaking())
         {
-            if (!world.isClient) player.startRiding(this);
+            if (!world.isClientSide) player.startRiding(this);
             return SUCCESS;
         }
 
@@ -555,11 +555,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (key.equals(SLEEPING) || key.equals(FLYING) || key.equals(TAMEABLE_FLAGS))
         {
             calculateDimensions();
-            if (world.isClient && key == FLYING && isFlying() && canBeControlledByRider()) FlyingSound.play(this);
+            if (world.isClientSide && key == FLYING && isFlying() && canBeControlledByRider()) FlyingSound.play(this);
         }
         else if (key == ARMOR)
         {
-            if (!world.isClient)
+            if (!world.isClientSide)
             {
                 ModifiableAttributeInstance attribute = getAttributeInstance(Attributes.GENERIC_ARMOR);
                 if (attribute.getModifier(DragonArmorItem.ARMOR_UUID) != null)
@@ -614,7 +614,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void attackInBox(AxisAlignedBB box, int disabledShieldTime)
     {
         List<LivingEntity> attackables = world.getEntitiesByClass(LivingEntity.class, box, entity -> entity != this && !hasPassenger(entity) && canAttackWithOwner(entity, getOwner()));
-        if (WRConfig.debugMode && world.isClient) RenderHelper.DebugBox.INSTANCE.queue(box);
+        if (WRConfig.debugMode && world.isClientSide) RenderHelper.DebugBox.INSTANCE.queue(box);
         for (LivingEntity attacking : attackables)
         {
             tryAttack(attacking);
@@ -771,7 +771,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public double getAltitude()
     {
-        BlockPos.Mutable pos = getBlockPos().mutableCopy();
+        BlockPos.Mutable pos = getBlockPos().mutable();
 
         // cap to the world void (y = 0)
         while (pos.getY() > 0 && !world.getBlockState(pos.down()).getMaterial().isSolid()) pos.move(0, -1, 0);
@@ -790,7 +790,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     {
         Vector3d mouth = getApproximateMouthPos();
 
-        if (world.isClient)
+        if (world.isClientSide)
         {
             double width = getWidth();
             for (int i = 0; i < Math.max(width * width * 2, 12); ++i)
@@ -811,7 +811,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (item.isFood())
             {
                 for (Pair<EffectInstance, Float> pair : item.getFoodComponent().getStatusEffects())
-                    if (!world.isClient && pair.getFirst() != null && getRandom().nextFloat() < pair.getSecond())
+                    if (!world.isClientSide && pair.getFirst() != null && getRandom().nextFloat() < pair.getSecond())
                         addStatusEffect(new EffectInstance(pair.getFirst()));
             }
             if (item.hasContainerItem(stack))
@@ -825,7 +825,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public boolean tame(boolean tame, @Nullable PlayerEntity tamer)
     {
         if (isTamed()) return true;
-        if (world.isClient) return false;
+        if (world.isClientSide) return false;
         if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer))
         {
             setOwner(tamer);
@@ -1071,7 +1071,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (entity instanceof PlayerEntity)
         {
             PlayerEntity player = (PlayerEntity) entity;
-            return isOwner(player) && (!world.isClient || player.isMainPlayer()); // fix vehicle-desync
+            return isOwner(player) && (!world.isClientSide || player.isMainPlayer()); // fix vehicle-desync
         }
         return false;
     }

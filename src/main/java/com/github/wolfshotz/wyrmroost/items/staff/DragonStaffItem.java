@@ -86,8 +86,8 @@ public class DragonStaffItem extends Item
             if (dragon.isOwner(playerIn))
             {
                 bindDragon(dragon, stack);
-                if (playerIn.world.isClient) StaffScreen.open(dragon, stack);
-                return ActionResultType.success(playerIn.world.isClient);
+                if (playerIn.world.isClientSide) StaffScreen.open(dragon, stack);
+                return ActionResultType.success(playerIn.world.isClientSide);
             }
         }
         return ActionResultType.PASS;

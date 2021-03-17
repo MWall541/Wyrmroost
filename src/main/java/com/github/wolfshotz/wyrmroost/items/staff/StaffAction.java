@@ -29,7 +29,7 @@ public enum StaffAction
                 @Override
                 public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    if (player.world.isClient) StaffScreen.open(dragon, stack);
+                    if (player.world.isClientSide) StaffScreen.open(dragon, stack);
                     return true;
                 }
             },
@@ -40,7 +40,7 @@ public enum StaffAction
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     DragonStaffItem.setAction(DEFAULT, player, stack);
-                    if (!player.world.isClient)
+                    if (!player.world.isClientSide)
                         NetworkHooks.openGui((ServerPlayerEntity) player, DragonInvContainer.getProvider(dragon), b -> b.writeInt(dragon.getEntityId()));
                 }
             },
@@ -137,7 +137,7 @@ public enum StaffAction
                     if (ertr != null)
                     {
                         dragon.setTarget((LivingEntity) ertr.getEntity());
-                        if (player.world.isClient)
+                        if (player.world.isClientSide)
                             ModUtils.playLocalSound(player.world, player.getBlockPos(), SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
                         return true;
                     }

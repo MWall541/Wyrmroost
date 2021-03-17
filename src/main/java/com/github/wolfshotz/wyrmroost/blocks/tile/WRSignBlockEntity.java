@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRBlockEntities;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
-public class WRSignTileEntity extends SignTileEntity
+public class WRSignBlockEntity extends SignTileEntity
 {
     @Override
     public TileEntityType<?> getType()

@@ -96,7 +96,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     @Override
     public void tick()
     {
-        if (!world.isClient && containedDragon == null)
+        if (!world.isClientSide && containedDragon == null)
         {
             safeError();
             return;
@@ -113,7 +113,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
 
         if (correctConditions)
         {
-            if (world.isClient)
+            if (world.isClientSide)
             {
                 if (age % 3 == 0)
                 {
@@ -199,7 +199,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     public void hatch()
     {
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             AbstractDragonEntity newDragon = containedDragon.create(world);
             if (newDragon == null)

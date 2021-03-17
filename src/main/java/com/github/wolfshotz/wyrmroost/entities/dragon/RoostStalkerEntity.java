@@ -137,7 +137,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
         sleepTimer.add(isSleeping()? 0.08f : -0.15f);
 
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             ItemStack item = getStackInSlot(ITEM_SLOT);
             if (isFoodItem(item) && getHealth() < getMaxHealth() && getRandom().nextDouble() <= 0.0075)
@@ -148,7 +148,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        final ActionResultType COMMON_SUCCESS = ActionResultType.success(world.isClient);
+        final ActionResultType COMMON_SUCCESS = ActionResultType.success(world.isClientSide);
 
         ItemStack heldItem = getItem();
         Item item = stack.getItem();
@@ -163,7 +163,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
         if (isTamed() && isBreedingItem(stack))
         {
-            if (!world.isClient && canEat() && getBreedingAge() == 0)
+            if (!world.isClientSide && canEat() && getBreedingAge() == 0)
             {
                 lovePlayer(player);
                 stack.decrement(1);
@@ -183,7 +183,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
             if (stack.isEmpty() && heldItem.isEmpty() && !isLeashed() && player.getPassengerList().size() < 3)
             {
-                if (!world.isClient && startRiding(player, true))
+                if (!world.isClientSide && startRiding(player, true))
                 {
                     setSitting(false);
                     AddPassengerPacket.send(this, player);

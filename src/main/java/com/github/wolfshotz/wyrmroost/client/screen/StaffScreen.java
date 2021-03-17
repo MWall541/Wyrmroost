@@ -94,6 +94,6 @@ public class StaffScreen extends Screen
     public static void open(AbstractDragonEntity dragon, ItemStack stack)
     {
         DragonStaffItem.bindDragon(dragon, stack);
-        if (dragon.world.isClient) Minecraft.getInstance().openScreen(new StaffScreen(dragon));
+        if (dragon.world.isClientSide) Minecraft.getInstance().openScreen(new StaffScreen(dragon));
     }
 }

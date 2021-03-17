@@ -96,7 +96,7 @@ public class ClientEvents
 
     public static void consumeParticles(ParticleFactoryRegisterEvent event)
     {
-        boolean yarnIsClient = getWorld().isClient;
+        boolean yarnIsClient = getWorld().isClientSide;
         MinecraftServer forgeHook = ServerLifecycleHooks.getCurrentServer();
 
         for (ParticleType<?> entry : ModUtils.getRegistryEntries(WRParticles.REGISTRY))

@@ -56,7 +56,7 @@ public class FireBreathEntity extends BreathWeaponEntity
     public void onBlockImpact(BlockPos pos, Direction direction)
     {
         super.onBlockImpact(pos, direction);
-        if (world.isClient) return;
+        if (world.isClientSide) return;
 
         BlockState state = world.getBlockState(pos);
         if (CampfireBlock.method_30035(state))
@@ -78,7 +78,7 @@ public class FireBreathEntity extends BreathWeaponEntity
     @Override
     public void onEntityImpact(Entity entity)
     {
-        if (world.isClient) return;
+        if (world.isClientSide) return;
 
         float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
         if (world.hasRain(entity.getBlockPos())) damage *= 0.75f;

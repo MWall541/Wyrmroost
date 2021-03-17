@@ -51,7 +51,7 @@ public class SoulCrystalItem extends Item
         }
 
         if (!dragon.getPassengerList().isEmpty()) dragon.removeAllPassengers();
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             CompoundNBT tag = stack.getOrCreateTag();
             CompoundNBT dragonTag = dragon.serializeNBT();
@@ -79,7 +79,7 @@ public class SoulCrystalItem extends Item
                 world.addParticle(ParticleTypes.END_ROD, x, y, z, xMot, yMot, zMot);
             }
         }
-        return ActionResultType.success(world.isClient);
+        return ActionResultType.success(world.isClientSide);
     }
 
     @Override
@@ -192,7 +192,7 @@ public class SoulCrystalItem extends Item
         }
 
         // Spawn the entity on the server side only
-        if (!world.isClient)
+        if (!world.isClientSide)
         {
             // no conflicting id's!
             UUID id = dragon.getUuid();

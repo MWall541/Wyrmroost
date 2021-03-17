@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
     }
 }
 
@@ -25,18 +25,12 @@ sourceSets {
     main.resources.srcDirs += 'src/main/generated_resources'
 }
 
-repositories {
-    maven {
-        url "https://maven.tterrag.com/"
-    }
-}
-
 dependencies {
     minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20210309-yarn-1.16.5'
+    mappings channel: 'official', version: "$mc_version"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {

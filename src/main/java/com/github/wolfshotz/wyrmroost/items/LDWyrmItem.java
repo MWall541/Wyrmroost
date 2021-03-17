@@ -41,7 +41,7 @@ public class LDWyrmItem extends Item
             if (tag.contains(DATA_CONTENTS))
             {
                 World world = context.getWorld();
-                if (!world.isClient)
+                if (!world.isClientSide)
                 {
                     BlockPos pos = context.getBlockPos().offset(context.getSide());
                     CompoundNBT contents = tag.getCompound(DATA_CONTENTS);

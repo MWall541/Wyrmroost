@@ -84,7 +84,7 @@ public class AlpineEntity extends AbstractDragonEntity
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
 
-        if (!world.isClient && noActiveAnimation() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
+        if (!world.isClientSide && noActiveAnimation() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
             AnimationPacket.send(this, ROAR_ANIMATION);
 
         Animation animation = getAnimation();
@@ -108,7 +108,7 @@ public class AlpineEntity extends AbstractDragonEntity
             if (tick == 0) setVelocity(getVelocity().add(0, -0.35, 0));
             if (tick == 4)
             {
-                if (!world.isClient) world.spawnEntity(new WindGustEntity(this));
+                if (!world.isClientSide) world.spawnEntity(new WindGustEntity(this));
                 setVelocity(getVelocity().add(getRotationVector().negate().multiply(1.5, 0, 1.5).add(0, 1, 0)));
                 playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
             }
@@ -169,7 +169,7 @@ public class AlpineEntity extends AbstractDragonEntity
     protected void jump()
     {
         super.jump();
-        if (!world.isClient)
+        if (!world.isClientSide)
             world.spawnEntity(new WindGustEntity(this, getPos().add(0, 7, 0), getRotationVector(90, yaw)));
     }
 

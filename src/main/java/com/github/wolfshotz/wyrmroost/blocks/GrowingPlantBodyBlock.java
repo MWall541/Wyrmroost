@@ -23,48 +23,48 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, IWorldReader worldIn, BlockPos pos)
+    public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
-        BlockPos below = pos.offset(growthDirection.getOpposite());
+        BlockPos below = pos.relative(growthDirection.getOpposite());
         BlockState belowState = worldIn.getBlockState(below);
         Block belowBlock = belowState.getBlock();
 
-        return canAttachTo(belowBlock) && (belowBlock == getStem() || belowBlock == getPlant() || Block.isFaceFullSquare(belowState.getCollisionShape(worldIn, pos), growthDirection));
+        return canAttachToBlock(belowBlock) && (belowBlock == getHeadBlock() || belowBlock == getBodyBlock() || Block.isFaceFull(belowState.getCollisionShape(worldIn, pos), growthDirection));
     }
 
     @Override
-    public boolean isFertilizable(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
+    public boolean isValidBonemealTarget(IBlockReader worldIn, BlockPos pos, BlockState state, boolean isClient)
     {
-        BlockPos tipPos = getTipPos(worldIn, pos, state);
+        BlockPos tipPos = getHeadPos(worldIn, pos, state);
         if (tipPos != null)
         {
             BlockState tip = worldIn.getBlockState(tipPos);
-            return getStem().isFertilizable(worldIn, tipPos, tip, isClient);
+            return getHeadBlock().isValidBonemealTarget(worldIn, tipPos, tip, isClient);
         }
         return false;
     }
 
     @Override
-    public void grow(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state)
+    public void performBonemeal(ServerWorld worldIn, Random rand, BlockPos pos, BlockState state)
     {
-        BlockPos tipPos = getTipPos(worldIn, pos, state);
-        if (tipPos != null)
+        BlockPos headPos = getHeadPos(worldIn, pos, state);
+        if (headPos != null)
         {
-            BlockState bstate = worldIn.getBlockState(tipPos);
-            ((AbstractTopPlantBlock) bstate.getBlock()).grow(worldIn, rand, tipPos, bstate);
+            BlockState bstate = worldIn.getBlockState(headPos);
+            ((AbstractTopPlantBlock) bstate.getBlock()).performBonemeal(worldIn, rand, headPos, bstate);
         }
     }
 
     @Nullable
-    private BlockPos getTipPos(IBlockReader reader, BlockPos pos, BlockState state)
+    private BlockPos getHeadPos(IBlockReader reader, BlockPos pos, BlockState state)
     {
-        BlockPos.Mutable mutable = pos.mutableCopy();
+        BlockPos.Mutable mutable = pos.mutable();
         BlockState bstate = state;
-        int j = getStem().getMaxGrowthHeight();
-        for (int i = 0; i < j && bstate.isOf(state.getBlock()); i++)
+        int j = getHeadBlock().getMaxGrowthHeight();
+        for (int i = 0; i < j && bstate.is(state.getBlock()); i++)
         {
-            if ((bstate = reader.getBlockState(mutable.move(growthDirection))).isOf(getStem()))
-                return mutable.toImmutable();
+            if ((bstate = reader.getBlockState(mutable.move(growthDirection))).is(getHeadBlock()))
+                return mutable.immutable();
         }
 
         return null;
@@ -73,11 +73,11 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
     @Override
     public Item asItem()
     {
-        return getStem().asItem();
+        return getHeadBlock().asItem();
     }
 
     @Override
-    protected GrowingPlantBlock getStem()
+    protected GrowingPlantBlock getHeadBlock()
     {
         return (GrowingPlantBlock) tip.get();
     }

@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.blocks.tile.WRSignTileEntity;
+import com.github.wolfshotz.wyrmroost.blocks.tile.WRSignBlockEntity;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
@@ -27,7 +27,7 @@ public class WRBlockEntities
 {
     public static final DeferredRegister<TileEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<TileEntityType<SignTileEntity>> CUSTOM_SIGN = register("sign", WRSignTileEntity::new, () -> SignTileEntityRenderer::new, () -> setOf(WRBlocks.OSERI_WOOD.getSign(), WRBlocks.OSERI_WOOD.getWallSign()));
+    public static final RegistryObject<TileEntityType<SignTileEntity>> CUSTOM_SIGN = register("sign", WRSignBlockEntity::new, () -> SignTileEntityRenderer::new, () -> setOf(WRBlocks.OSERI_WOOD.getSign(), WRBlocks.OSERI_WOOD.getWallSign()));
 
     public static <T extends TileEntity> RegistryObject<TileEntityType<T>> register(String name, Supplier<T> factory, Supplier<Set<Block>> blocks)
     {

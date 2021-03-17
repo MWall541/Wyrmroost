@@ -142,7 +142,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         // conduit effects
         if (hasConduit())
         {
-            if (world.isClient && isWet() && getRandom().nextDouble() <= 0.1)
+            if (world.isClientSide && isWet() && getRandom().nextDouble() <= 0.1)
             {
                 for (int i = 0; i < 16; ++i)
                     world.addParticle(ParticleTypes.NAUTILUS,
@@ -173,7 +173,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
             }
 
             // play some sounds because immersion is important for some reason
-            if (world.isClient && age % 100 == 0)
+            if (world.isClientSide && age % 100 == 0)
                 if (getRandom().nextBoolean()) playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT, 1f, 1f, true);
                 else playSound(SoundEvents.BLOCK_CONDUIT_AMBIENT_SHORT, 1f, 1f, true);
         }
@@ -187,7 +187,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         {
             lightningCooldown += 6;
             if (animTick == 10) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f, true);
-            if (!world.isClient && isWet() && animTick >= 10)
+            if (!world.isClientSide && isWet() && animTick >= 10)
             {
                 LivingEntity target = getTarget();
                 if (target != null)
@@ -211,7 +211,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
             else if (animTick == 15)
             {
                 playSound(SoundEvents.BLOCK_BEACON_ACTIVATE, 1, 1);
-                if (!world.isClient) createLightning(world, getConduitPos().add(0, 1, 0), true);
+                if (!world.isClientSide) createLightning(world, getConduitPos().add(0, 1, 0), true);
                 else
                 {
                     for (int i = 0; i < 26; ++i)
@@ -237,8 +237,8 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         if (((beached && lightningCooldown > 60 && world.hasRain(getBlockPos())) || player.isCreative() || isBaby()) && isFoodItem(stack))
         {
             eat(stack);
-            if (!world.isClient) tame(getRandom().nextDouble() < 0.2, player);
-            return ActionResultType.success(world.isClient);
+            if (!world.isClientSide) tame(getRandom().nextDouble() < 0.2, player);
+            return ActionResultType.success(world.isClientSide);
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -337,7 +337,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         if (pressed && noActiveAnimation())
         {
             if (key == KeybindPacket.MOUNT_KEY1) setAnimation(BITE_ANIMATION);
-            else if (key == KeybindPacket.MOUNT_KEY2 && !world.isClient && canZap())
+            else if (key == KeybindPacket.MOUNT_KEY2 && !world.isClientSide && canZap())
             {
                 EntityRayTraceResult ertr = Mafs.rayTraceEntities(getControllingPlayer(), 40, e -> e instanceof LivingEntity && e != this);
                 if (ertr != null && canAttackWithOwner((LivingEntity) ertr.getEntity(), getOwner()))
@@ -547,7 +547,7 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
 
     private static void createLightning(World world, Vector3d position, boolean effectOnly)
     {
-        if (world.isClient) return;
+        if (world.isClientSide) return;
         LightningBoltEntity entity = EntityType.LIGHTNING_BOLT.create(world);
         entity.refreshPositionAfterTeleport(position);
         entity.setCosmetic(effectOnly);

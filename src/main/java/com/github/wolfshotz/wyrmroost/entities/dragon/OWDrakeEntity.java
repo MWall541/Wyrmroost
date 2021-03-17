@@ -153,7 +153,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             thrownPassenger = null;
         }
 
-        if (!world.isClient && getTarget() == null && !isInSittingPose() && !isSleeping() && world.getBlockState(getBlockPos().down()).getBlock() == Blocks.GRASS_BLOCK && getRandom().nextDouble() < (isBaby() || getHealth() < getMaxHealth()? 0.005 : 0.001))
+        if (!world.isClientSide && getTarget() == null && !isInSittingPose() && !isSleeping() && world.getBlockState(getBlockPos().down()).getBlock() == Blocks.GRASS_BLOCK && getRandom().nextDouble() < (isBaby() || getHealth() < getMaxHealth()? 0.005 : 0.001))
             AnimationPacket.send(this, GRAZE_ANIMATION);
 
         Animation animation = getAnimation();
@@ -193,7 +193,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
             }
         }
 
-        if (!world.isClient && animation == GRAZE_ANIMATION && tick == 13)
+        if (!world.isClientSide && animation == GRAZE_ANIMATION && tick == 13)
         {
             BlockPos pos = new BlockPos(Mafs.getYawVec(bodyYaw, 0, getWidth() / 2 + 1).add(getPos()));
             if (world.getBlockState(pos).isOf(Blocks.GRASS) && WRConfig.canGrief(world))
@@ -215,19 +215,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         if (stack.getItem() == Items.SADDLE && !isSaddled() && !isBaby())
         {
-            if (!world.isClient)
+            if (!world.isClientSide)
             {
                 getInvHandler().insertItem(SADDLE_SLOT, stack.copy(), false);
                 stack.decrement(1);
             }
-            return ActionResultType.success(world.isClient);
+            return ActionResultType.success(world.isClientSide);
         }
 
         if (!isTamed() && isBaby() && isFoodItem(stack))
         {
             tame(getRandom().nextInt(10) == 0, player);
             stack.decrement(1);
-            return ActionResultType.success(world.isClient);
+            return ActionResultType.success(world.isClientSide);
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -242,7 +242,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         {
             LivingEntity passenger = ((LivingEntity) entity);
             if (isTamed()) setSprinting(passenger.isSprinting());
-            else if (!world.isClient && passenger instanceof PlayerEntity)
+            else if (!world.isClientSide && passenger instanceof PlayerEntity)
             {
                 double rng = getRandom().nextDouble();
 

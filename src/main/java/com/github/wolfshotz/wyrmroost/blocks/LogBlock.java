@@ -28,16 +28,16 @@ public class LogBlock extends RotatedPillarBlock
     public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
         return toolType == ToolType.AXE?
-                stripped.get().getDefaultState().with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS)) :
+                stripped.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)) :
                 super.getToolModifiedState(state, world, pos, player, stack, toolType);
     }
 
     public static AbstractBlock.Properties properties(MaterialColor top, MaterialColor bark)
     {
         return AbstractBlock.Properties
-                .of(Material.WOOD, state -> (top == bark || state.get(RotatedPillarBlock.AXIS) == Direction.Axis.Y)? top : bark)
+                .of(Material.WOOD, state -> (top == bark || state.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y)? top : bark)
                 .strength(2f)
                 .harvestTool(ToolType.AXE)
-                .sounds(SoundType.WOOD);
+                .sound(SoundType.WOOD);
     }
 }
