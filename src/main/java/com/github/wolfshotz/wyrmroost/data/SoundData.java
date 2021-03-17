@@ -96,6 +96,7 @@ public class SoundData implements IDataProvider
         getBuilder(WRSounds.WEATHER_SANDSTORM.get()).sounds(Wyrmroost::id, "weather/sandstorm/%s", "sandstorm1", "sandstorm2", "sandstorm3", "sandstorm4", "sandstorm5", "sandstorm6").build(json);
 
         getBuilder(WRSounds.MUSIC_ASHEN_DESERT.get()).sound(Wyrmroost.id("music/game/wyrmroost/ashen_desert")).build(json);
+        getBuilder(WRSounds.MUSIC_TINCTURE_WEALD.get()).sound(Wyrmroost.id("music/game/wyrmroost/tincture_weald")).build(json);
     }
 
     private Builder getBuilder(SoundEvent sound)

@@ -388,5 +388,12 @@
         "name": "wyrmroost:music/game/wyrmroost/ashen_desert"
       }
     ]
+  },
+  "music.tincture_weald": {
+    "sounds": [
+      {
+        "name": "wyrmroost:music/game/wyrmroost/tincture_weald"
+      }
+    ]
   }
 }

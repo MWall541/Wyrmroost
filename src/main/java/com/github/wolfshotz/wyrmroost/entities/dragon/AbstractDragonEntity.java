@@ -351,7 +351,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 return;
             }
 
-            prevPitch = pitch = player.pitch / 2;
+            pitch = player.pitch / 2;
             headYaw = bodyYaw = prevYaw = yaw = player.yaw;
             setRotation(player.headYaw, player.pitch);
 

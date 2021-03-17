@@ -179,7 +179,7 @@ public class WRBlocks
         public WoodGroup(String name, MaterialColor color, MaterialColor logColor)
         {
             super(name);
-            WoodType.register(this);
+            WoodType.register(this); //todo: https://github.com/MinecraftForge/MinecraftForge/pull/7623
 
             this.planks = WRBlocks.register(name + "_planks", () -> new Block(props(color)));
             this.log = WRBlocks.register(name + "_log", () -> new LogBlock(color, logColor, self().strippedLog));
