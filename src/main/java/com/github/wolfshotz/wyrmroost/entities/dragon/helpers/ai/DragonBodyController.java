@@ -36,7 +36,7 @@ public class DragonBodyController extends BodyController
         if (dragon.canBeControlledByRider() || dragon.isFlying())
         {
             clampHeadRotation(120f);
-            dragon.bodyYaw = dragon.yaw = MathHelper.wrapDegrees(MathHelper.stepAngleTowards(dragon.headYaw, dragon.bodyYaw, dragon.getYawRotationSpeed()));
+            dragon.bodyYaw = dragon.yRot = MathHelper.wrapDegrees(MathHelper.stepAngleTowards(dragon.headYaw, dragon.bodyYaw, dragon.getYawRotationSpeed()));
             return;
         }
 

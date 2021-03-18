@@ -10,11 +10,11 @@ public class PetalParticle extends SpriteTexturedParticle
 {
     public PetalParticle(RedstoneParticleData data, ClientWorld world, IAnimatedSprite sprite, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
     {
-        super(world, x, y, z, xSpeed, ySpeed, zSpeed);
+        super(level, x, y, z, xSpeed, ySpeed, zSpeed);
     }
 
     @Override
-    public IParticleRenderType getType()
+    public IParticleRenderType getRenderType()
     {
         return IParticleRenderType.PARTICLE_SHEET_OPAQUE;
     }

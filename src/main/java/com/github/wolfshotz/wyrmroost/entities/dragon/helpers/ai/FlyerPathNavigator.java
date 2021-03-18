@@ -12,14 +12,14 @@ public class FlyerPathNavigator extends FlyingPathNavigator
 {
     public FlyerPathNavigator(AbstractDragonEntity entity)
     {
-        super(entity, entity.world);
+        super(entity, entity.level);
     }
 
     @Override
     @SuppressWarnings("ConstantConditions") // IT CAN BE NULL DAMNIT
     public void tick()
     {
-        if (!isIdle() && isAtValidPosition())
+        if (!isDone() && isAtValidPosition())
         {
             AbstractDragonEntity dragon = ((AbstractDragonEntity) entity);
             BlockPos target = getTargetPos();

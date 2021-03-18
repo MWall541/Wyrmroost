@@ -16,11 +16,11 @@ public class MoveToHomeGoal extends Goal
     public MoveToHomeGoal(AbstractDragonEntity creatureIn)
     {
         this.dragon = creatureIn;
-        setControls(EnumSet.of(Flag.MOVE));
+        setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override
-    public boolean canStart()
+    public boolean canUse()
     {
         return !dragon.isInWalkTargetRange();
     }
@@ -41,17 +41,17 @@ public class MoveToHomeGoal extends Goal
     public void tick()
     {
         int sq = WRConfig.homeRadius * WRConfig.homeRadius;
-        Vector3d home = Vector3d.of(dragon.getPositionTarget());
+        Vector3d home = Vector3d.atLowerCornerOf(dragon.getPositionTarget());
         final int TIME_UNTIL_TELEPORT = 600; // 30 seconds
 
         time++;
-        if (dragon.squaredDistanceTo(home) > sq + 35 || time >= TIME_UNTIL_TELEPORT)
-            dragon.trySafeTeleport(dragon.getPositionTarget().up());
+        if (dragon.distanceToSqr(home) > sq + 35 || time >= TIME_UNTIL_TELEPORT)
+            dragon.trySafeTeleport(dragon.getPositionTarget().above());
         else
         {
             Vector3d movePos;
-            if (dragon.getNavigation().isIdle() && (movePos = RandomPositionGenerator.findTargetTowards(dragon, WRConfig.homeRadius, 10, home)) != null)
-                dragon.getNavigation().startMovingTo(movePos.x, movePos.y, movePos.y, 1.1);
+            if (dragon.getNavigation().isDone() && (movePos = RandomPositionGenerator.getPosTowards(dragon, WRConfig.homeRadius, 10, home)) != null)
+                dragon.getNavigation().moveTo(movePos.x, movePos.y, movePos.y, 1.1);
         }
     }
 }

@@ -29,7 +29,7 @@ public enum StaffAction
                 @Override
                 public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    if (player.world.isClientSide) StaffScreen.open(dragon, stack);
+                    if (player.level.isClientSide) StaffScreen.open(dragon, stack);
                     return true;
                 }
             },
@@ -40,7 +40,7 @@ public enum StaffAction
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     DragonStaffItem.setAction(DEFAULT, player, stack);
-                    if (!player.world.isClientSide)
+                    if (!player.level.isClientSide)
                         NetworkHooks.openGui((ServerPlayerEntity) player, DragonInvContainer.getProvider(dragon), b -> b.writeInt(dragon.getEntityId()));
                 }
             },
@@ -82,16 +82,16 @@ public enum StaffAction
                     World world = context.getWorld();
                     ItemStack stack = context.getStack();
                     DragonStaffItem.setAction(DEFAULT, context.getPlayer(), stack);
-                    if (world.getBlockState(pos).getMaterial().isSolid())
+                    if (level.getBlockState(pos).getMaterial().isSolid())
                     {
                         dragon.setHomePos(pos);
-                        ModUtils.playLocalSound(world, pos, SoundEvents.BLOCK_BEEHIVE_ENTER, 1, 1);
+                        ModUtils.playLocalSound(level, pos, SoundEvents.BLOCK_BEEHIVE_ENTER, 1, 1);
                     }
                     else
                     {
-                        ModUtils.playLocalSound(world, pos, SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, 1, 1);
+                        ModUtils.playLocalSound(level, pos, SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, 1, 1);
                         for (int i = 0; i < 10; i++)
-                            world.addParticle(ParticleTypes.SMOKE, pos.getX() + 0.5d, pos.getY() + 1, pos.getZ() + 0.5d, 0, i * 0.025, 0);
+                            level.addParticle(ParticleTypes.SMOKE, pos.getX() + 0.5d, pos.getY() + 1, pos.getZ() + 0.5d, 0, i * 0.025, 0);
                     }
 
                     return true;
@@ -104,8 +104,8 @@ public enum StaffAction
                     if (rtr instanceof BlockRayTraceResult)
                         RenderHelper.drawBlockPos(ms,
                                 ((BlockRayTraceResult) rtr).getBlockPos(),
-                                dragon.world,
-                                Math.cos((dragon.age + partialTicks) * 0.2) * 4.5 + 4.5,
+                                dragon.level,
+                                Math.cos((dragon.tickCount + partialTicks) * 0.2) * 4.5 + 4.5,
                                 0x4d0000ff);
                 }
 
@@ -137,8 +137,8 @@ public enum StaffAction
                     if (ertr != null)
                     {
                         dragon.setTarget((LivingEntity) ertr.getEntity());
-                        if (player.world.isClientSide)
-                            ModUtils.playLocalSound(player.world, player.getBlockPos(), SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
+                        if (player.level.isClientSide)
+                            ModUtils.playLocalSound(player.level, player.blockPosition(), SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
                         return true;
                     }
                     return false;
@@ -149,7 +149,7 @@ public enum StaffAction
                 {
                     EntityRayTraceResult rtr = rayTrace(ClientEvents.getPlayer(), dragon);
                     if (rtr != null && rtr.getEntity() != dragon.getTarget())
-                        RenderHelper.renderEntityOutline(rtr.getEntity(), 255, 0, 0, (int) (MathHelper.cos((dragon.age + partialTicks) * 0.2f) * 35 + 45));
+                        RenderHelper.renderEntityOutline(rtr.getEntity(), 255, 0, 0, (int) (MathHelper.cos((dragon.tickCount + partialTicks) * 0.2f) * 35 + 45));
                 }
 
                 @Nullable

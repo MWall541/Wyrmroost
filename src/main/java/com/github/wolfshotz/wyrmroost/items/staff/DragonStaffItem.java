@@ -45,11 +45,11 @@ public class DragonStaffItem extends Item
         if (player.isSneaking() && stack.hasTag() && stack.getTag().contains(DATA_DRAGON_ID))
         {
             reset(stack.getTag());
-            ModUtils.playLocalSound(world, player.getBlockPos(), SoundEvents.BLOCK_SCAFFOLDING_STEP, 1, 1);
+            ModUtils.playLocalSound(level, player.blockPosition(), SoundEvents.BLOCK_SCAFFOLDING_STEP, 1, 1);
             return ActionResult.success(stack);
         }
 
-        AbstractDragonEntity dragon = getBoundDragon(world, stack);
+        AbstractDragonEntity dragon = getBoundDragon(level, stack);
         if (dragon != null && getAction(stack).rightClick(dragon, player, stack))
             return ActionResult.success(stack);
         return ActionResult.pass(stack);
@@ -67,7 +67,7 @@ public class DragonStaffItem extends Item
             if (dragon.isOwner(player))
             {
                 bindDragon(dragon, stack);
-                ModUtils.playLocalSound(player.world, player.getBlockPos(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
+                ModUtils.playLocalSound(player.level, player.blockPosition(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
                 return true;
             }
         }
@@ -86,8 +86,8 @@ public class DragonStaffItem extends Item
             if (dragon.isOwner(playerIn))
             {
                 bindDragon(dragon, stack);
-                if (playerIn.world.isClientSide) StaffScreen.open(dragon, stack);
-                return ActionResultType.success(playerIn.world.isClientSide);
+                if (playerIn.level.isClientSide) StaffScreen.open(dragon, stack);
+                return ActionResultType.success(playerIn.level.isClientSide);
             }
         }
         return ActionResultType.PASS;
@@ -152,7 +152,7 @@ public class DragonStaffItem extends Item
         assertStaff(stack);
         CompoundNBT tag = stack.getOrCreateTag();
         tag.putInt(DATA_ACTION, action.ordinal());
-        getAction(stack).onSelected(getBoundDragon(player.world, stack), player, stack);
+        getAction(stack).onSelected(getBoundDragon(player.level, stack), player, stack);
     }
 
     public static StaffAction getAction(ItemStack stack)
@@ -182,7 +182,7 @@ public class DragonStaffItem extends Item
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_DRAGON_ID))
             {
-                Entity entity = world.getEntityById(tag.getInt(DATA_DRAGON_ID));
+                Entity entity = level.getEntity(tag.getInt(DATA_DRAGON_ID));
                 if (entity instanceof AbstractDragonEntity) return ((AbstractDragonEntity) entity);
             }
         }

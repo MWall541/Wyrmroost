@@ -35,33 +35,33 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
     }
 
     @Override
-    public ResourceLocation getTexture(DragonProjectileEntity entity)
+    public ResourceLocation getTextureLocation(DragonProjectileEntity entity)
     {
         return null;
     }
 
     private void renderFire(MatrixStack ms, IRenderTypeBuffer typeBuffer, Entity entity)
     {
-        Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getSpriteAtlas(AtlasTexture.BLOCK_ATLAS_TEXTURE);
+        Function<ResourceLocation, TextureAtlasSprite> func = Minecraft.getInstance().getTextureAtlas(AtlasTexture.LOCATION_BLOCKS);
         TextureAtlasSprite fireSprite1 = func.apply(BLUE_FIRE);
-        ms.push();
-        float width = entity.getWidth() * 1.4F;
+        ms.pushPose();
+        float width = entity.getBbWidth() * 1.4F;
         ms.scale(width, width, width);
         float x = 0.5F;
-        float height = entity.getHeight() / width;
+        float height = entity.getBbHeight() / width;
         float y = 0.0F;
-        ms.multiply(getRenderManager().getRotation());
+        ms.mulPose(getDispatcher().cameraOrientation());
         ms.translate(0, 0, (-0.3f + (float) ((int) height) * 0.02f));
         float z = 0;
-        IVertexBuilder vertex = typeBuffer.getBuffer(Atlases.getEntityCutout());
-        MatrixStack.Entry msEntry = ms.peek();
+        IVertexBuilder vertex = typeBuffer.getBuffer(Atlases.cutoutBlockSheet());
+        MatrixStack.Entry msEntry = ms.last();
 
         for (int i = 0; height > 0; i++)
         {
-            float minU = fireSprite1.getMinU();
-            float minV = fireSprite1.getMinV();
-            float maxU = fireSprite1.getMaxU();
-            float maxV = fireSprite1.getMaxV();
+            float minU = fireSprite1.getU0();
+            float minV = fireSprite1.getV0();
+            float maxU = fireSprite1.getU1();
+            float maxV = fireSprite1.getV1();
             if (i / 2 % 2 == 0)
             {
                 float prevMaxU = maxU;
@@ -79,11 +79,17 @@ public class BreathWeaponRenderer extends EntityRenderer<DragonProjectileEntity>
             z += 0.03f;
         }
 
-        ms.pop();
+        ms.popPose();
     }
 
     private static void vertex(MatrixStack.Entry msEntry, IVertexBuilder bufferIn, float x, float y, float z, float texU, float texV)
     {
-        bufferIn.vertex(msEntry.getModel(), x, y, z).color(255, 255, 255, 255).texture(texU, texV).overlay(0, 10).light(240).normal(msEntry.getNormal(), 0.0F, 1.0F, 0.0F).next();
+        bufferIn.vertex(msEntry.pose(), x, y, z)
+                .color(255, 255, 255, 255)
+                .uv(texU, texV)
+                .overlayCoords(0, 10)
+                .uv2(240)
+                .normal(msEntry.normal(), 0.0F, 1.0F, 0.0F)
+                .endVertex();
     }
 }

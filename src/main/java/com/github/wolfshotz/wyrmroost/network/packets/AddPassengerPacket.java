@@ -45,8 +45,8 @@ public class AddPassengerPacket
     public void handleClient()
     {
         World world = ClientEvents.getWorld();
-        Entity passenger = world.getEntityById(passengerID);
-        Entity vehicle = world.getEntityById(vehicleID);
+        Entity passenger = level.getEntity(passengerID);
+        Entity vehicle = level.getEntity(vehicleID);
         if (passenger == null || vehicle == null || !passenger.startRiding(vehicle, true))
         {
             Wyrmroost.LOG.warn("Could not add passenger on client...");

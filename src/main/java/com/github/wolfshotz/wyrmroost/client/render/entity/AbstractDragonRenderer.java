@@ -30,7 +30,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
     @Override
     protected void scale(T entity, MatrixStack ms, float partialTicks)
     {
-        float scale = entity.getScaleFactor();
+        float scale = entity.getScale();
         ms.scale(scale, scale, scale);
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         public void renderLayer(MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
         {
             IVertexBuilder builder = buffer.getBuffer(type.apply(entity));
-            getModel().render(ms, builder, packedLightIn, LivingRenderer.getOverlay(entity, 0.0F), 1, 1, 1, 1);
+            getModel().renderToBuffer(ms, builder, packedLightIn, LivingRenderer.getOverlayCoords(entity, 0.0F), 1, 1, 1, 1);
         }
 
         public ConditionalLayer addCondition(Predicate<T> condition)
@@ -91,7 +91,7 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
                 if (rl != null)
                 {
                     IVertexBuilder builder = buffer.getBuffer(RenderHelper.getAdditiveGlow(rl));
-                    getModel().render(ms, builder, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                    getModel().renderToBuffer(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
                 }
             }
         }
@@ -112,8 +112,8 @@ public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M e
         {
             if (entity.hasArmor())
             {
-                IVertexBuilder builder = type.getBuffer(RenderType.getEntityCutout(getArmorTexture(entity)));
-                getModel().render(ms, builder, packedLightIn, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                IVertexBuilder builder = type.getBuffer(RenderType.entityCutout(getArmorTexture(entity)));
+                getModel().renderToBuffer(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }
         }
 

@@ -44,7 +44,7 @@ public enum ArmorMaterials implements IArmorMaterial
         this.toughness = toughness;
         this.knockbackResistance = knockbackResistance;
         this.sound = sound;
-        this.repairMaterial = Lazy.of(() -> Ingredient.ofItems(repairMaterial.get()));
+        this.repairMaterial = Lazy.of(() -> Ingredient.of(repairMaterial.get()));
         this.rarity = rarity;
     }
 

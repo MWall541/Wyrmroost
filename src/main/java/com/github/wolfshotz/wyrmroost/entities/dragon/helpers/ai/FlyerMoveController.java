@@ -48,7 +48,7 @@ public class FlyerMoveController extends MovementController
             if (dragon.isFlying())
             {
                 if (!dragon.getLookControl().isActive())
-                    dragon.getLookControl().lookAt(targetX, targetY, targetZ, dragon.getLookYawSpeed(), 75);
+                    dragon.getLookControl().setLookAt(targetX, targetY, targetZ, dragon.getLookYawSpeed(), 75);
 
                 speed = (float) (dragon.getAttributeValue(Attributes.GENERIC_FLYING_SPEED) * this.speed) / 0.225f;
                 if (y != 0) dragon.setUpwardSpeed(y > 0? speed : -speed);
@@ -56,17 +56,17 @@ public class FlyerMoveController extends MovementController
             else
             {
                 speed = (float) (this.speed * dragon.getAttributeValue(Attributes.GENERIC_MOVEMENT_SPEED));
-                BlockPos blockpos = dragon.getBlockPos();
-                BlockState blockstate = dragon.world.getBlockState(blockpos);
+                BlockPos blockpos = dragon.blockPosition();
+                BlockState blockstate = dragon.level.getBlockState(blockpos);
                 Block block = blockstate.getBlock();
-                VoxelShape voxelshape = blockstate.getCollisionShape(dragon.world, blockpos);
-                if (y > (double) dragon.stepHeight && x * x + z * z < (double) Math.max(1.0F, dragon.getWidth()) || !voxelshape.isEmpty() && dragon.getY() < voxelshape.getMax(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(BlockTags.FENCES))
+                VoxelShape voxelshape = blockstate.getCollisionShape(dragon.level, blockpos);
+                if (y > (double) dragon.stepHeight && x * x + z * z < (double) Math.max(1.0F, dragon.getBbWidth()) || !voxelshape.isEmpty() && dragon.getY() < voxelshape.getMax(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(BlockTags.FENCES))
                 {
                     dragon.getJumpControl().setActive();
                     state = MovementController.Action.JUMPING;
                 }
             }
-            dragon.yaw = changeAngle(dragon.yaw, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getYawRotationSpeed());
+            dragon.yRot = changeAngle(dragon.yRot, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getYawRotationSpeed());
             dragon.setMovementSpeed(speed);
             state = Action.WAIT;
         }

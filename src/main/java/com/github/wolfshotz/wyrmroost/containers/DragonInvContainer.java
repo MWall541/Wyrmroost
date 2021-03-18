@@ -37,23 +37,23 @@ public class DragonInvContainer extends Container
     }
 
     @Override
-    public boolean canUse(PlayerEntity playerIn)
+    public boolean stillValid(PlayerEntity playerIn)
     {
         return inventory.dragon.getOwner() == playerIn;
     }
 
     @Override
-    public ItemStack transferSlot(PlayerEntity playerIn, int index)
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index)
     {
         Slot slot = slots.get(index);
-        if (slot != null && slot.hasStack())
+        if (slot != null && slot.hasItem())
         {
-            ItemStack transferring = slot.getStack();
-            if ((index < MAX_PLAYER_SLOTS && insertItem(transferring, MAX_PLAYER_SLOTS, slots.size(), false))
-                    || (index >= MAX_PLAYER_SLOTS && insertItem(transferring, 0, MAX_PLAYER_SLOTS, true)))
+            ItemStack transferring = slot.getItem();
+            if ((index < MAX_PLAYER_SLOTS && moveItemStackTo(transferring, MAX_PLAYER_SLOTS, slots.size(), false))
+                    || (index >= MAX_PLAYER_SLOTS && moveItemStackTo(transferring, 0, MAX_PLAYER_SLOTS, true)))
             {
-                if (transferring.isEmpty()) slot.setStack(ItemStack.EMPTY);
-                else slot.markDirty();
+                if (transferring.isEmpty()) slot.set(ItemStack.EMPTY);
+                else slot.setChanged();
                 return transferring.copy();
             }
         }
@@ -82,7 +82,7 @@ public class DragonInvContainer extends Container
         {
             for (int x = 0; x < length; ++x)
             {
-                if (inventory.size() <= index)
+                if (inventory.getContainerSize() <= index)
                 {
                     Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST!");
                     return;

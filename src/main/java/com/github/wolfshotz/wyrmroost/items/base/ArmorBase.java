@@ -39,7 +39,7 @@ public class ArmorBase extends ArmorItem
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<ITextComponent> lines, ITooltipFlag flags)
     {
-        super.appendTooltip(stack, world, lines, flags);
+        super.appendTooltip(stack, level, lines, flags);
         lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + type.getName()).formatted(((ArmorMaterials) type).getRarity().formatting)));
 
         if (hasDescription())

@@ -112,12 +112,12 @@ class BlockModelData extends BlockStateProvider
     {
         getVariantBuilder(block).forAllStates(state ->
         {
-            boolean powered = state.get(AbstractButtonBlock.POWERED);
-            AttachFace face = state.get(HorizontalFaceBlock.FACE);
-            Direction direction = state.get(HorizontalBlock.FACING);
+            boolean powered = state.getValue(AbstractButtonBlock.POWERED);
+            AttachFace face = state.getValue(HorizontalFaceBlock.FACE);
+            Direction direction = state.getValue(HorizontalBlock.FACING);
 
             int x = 0;
-            int y = (int) direction.getOpposite().asRotation();
+            int y = (int) direction.getOpposite().toYRot();
 
             switch (face)
             {
@@ -149,7 +149,7 @@ class BlockModelData extends BlockStateProvider
 
         getVariantBuilder(block).forAllStates(state ->
         {
-            boolean powered = state.get(PressurePlateBlock.POWERED);
+            boolean powered = state.getValue(PressurePlateBlock.POWERED);
             String actualPath = path + (powered? "_down" : "");
             ResourceLocation parent = mcLoc("block/pressure_plate_" + (powered? "down" : "up"));
             ModelBuilder<?> model = models().withExistingParent(actualPath, parent).texture("texture", texture);
@@ -161,7 +161,7 @@ class BlockModelData extends BlockStateProvider
     {
         getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder()
                 .modelFile(models().withExistingParent(block.getRegistryName().getPath(), modLoc("petals")).texture("particle", blockTexture(block)))
-                .rotationY(state.get(PetalsBlock.AXIS) == Direction.Axis.X? 90 : 0)
+                .rotationY(state.getValue(PetalsBlock.AXIS) == Direction.Axis.X? 90 : 0)
                 .build());
     }
 
@@ -178,7 +178,7 @@ class BlockModelData extends BlockStateProvider
 
         getVariantBuilder(block).forAllStates(state ->
         {
-            boolean snowy = state.get(SnowyDirtBlock.SNOWY);
+            boolean snowy = state.getValue(SnowyDirtBlock.SNOWY);
             if (snowy)
                 return ConfiguredModel.builder().modelFile(models().getExistingFile(mcLoc("grass_block_snow"))).build();
             else

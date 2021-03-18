@@ -57,7 +57,7 @@ public class KeybindPacket
                 if (vehicle instanceof AbstractDragonEntity)
                 {
                     AbstractDragonEntity dragon = ((AbstractDragonEntity) vehicle);
-                    if (dragon.isTamed() && dragon.getControllingPlayer() == player)
+                    if (dragon.isTame() && dragon.getControllingPlayer() == player)
                         dragon.recievePassengerKeybind(key, mods, pressed);
                 }
                 break;

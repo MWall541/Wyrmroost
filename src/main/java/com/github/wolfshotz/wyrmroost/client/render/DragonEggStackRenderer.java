@@ -17,10 +17,10 @@ import net.minecraft.util.ResourceLocation;
 public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
 {
     @Override
-    public void render(ItemStack stack, ItemCameraTransforms.TransformType transform, MatrixStack ms, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay)
+    public void renderByItem(ItemStack stack, ItemCameraTransforms.TransformType transform, MatrixStack ms, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay)
     {
-        IVertexBuilder builder = ItemRenderer.getItemGlintConsumer(buffer, DragonEggRenderer.MODEL.getLayer(getEggTexture(stack)), false, stack.hasGlint());
-        DragonEggRenderer.MODEL.render(ms, builder, combinedLight, combinedOverlay, 1, 1, 1, 1);
+        IVertexBuilder builder = ItemRenderer.getFoilBuffer(buffer, DragonEggRenderer.MODEL.renderType(getEggTexture(stack)), false, stack.hasFoil());
+        DragonEggRenderer.MODEL.renderToBuffer(ms, builder, combinedLight, combinedOverlay, 1, 1, 1, 1);
     }
 
     private ResourceLocation getEggTexture(ItemStack stack)

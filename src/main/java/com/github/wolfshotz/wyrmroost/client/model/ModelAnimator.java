@@ -19,11 +19,19 @@ public class ModelAnimator
     private final HashMap<WRModelRenderer, BoxPosCache> boxPosCache = new HashMap<>();
     private final HashMap<WRModelRenderer, BoxPosCache> prevPosCache = new HashMap<>();
 
-    private ModelAnimator() {}
+    private ModelAnimator()
+    {
+    }
 
-    public static ModelAnimator create() { return new ModelAnimator(); }
+    public static ModelAnimator create()
+    {
+        return new ModelAnimator();
+    }
 
-    public IAnimatable getEntity() { return entity; }
+    public IAnimatable getEntity()
+    {
+        return entity;
+    }
 
     public void update(IAnimatable entity, float partialTicks)
     {
@@ -34,7 +42,7 @@ public class ModelAnimator
         boxPosCache.clear();
         prevPosCache.clear();
     }
-    
+
     public boolean setAnimation(Animation animation)
     {
         tempTick = prevTempTick = 0;
@@ -77,12 +85,12 @@ public class ModelAnimator
     {
         return boxPosCache.computeIfAbsent(box, (b) -> new BoxPosCache());
     }
-    
+
     public void endKeyframe()
     {
         endKeyframe(false);
     }
-    
+
     private void endKeyframe(boolean stationary)
     {
         if (correctAnimation)
@@ -96,12 +104,12 @@ public class ModelAnimator
                     {
                         ModelRenderer box = entry.getKey();
                         BoxPosCache cache = entry.getValue();
-                        box.pitch += cache.getRotationX();
-                        box.yaw += cache.getRotationY();
-                        box.roll += cache.getRotationZ();
-                        box.pivotX += cache.getOffsetX();
-                        box.pivotY += cache.getOffsetY();
-                        box.pivotZ += cache.getOffsetZ();
+                        box.xRot += cache.getRotationX();
+                        box.yRot += cache.getRotationY();
+                        box.zRot += cache.getRotationZ();
+                        box.x += cache.getOffsetX();
+                        box.y += cache.getOffsetY();
+                        box.z += cache.getOffsetZ();
                     }
                 }
                 else
@@ -114,28 +122,28 @@ public class ModelAnimator
                     {
                         ModelRenderer box = entry.getKey();
                         BoxPosCache cache = entry.getValue();
-                        box.pitch += dec * cache.getRotationX();
-                        box.yaw += dec * cache.getRotationY();
-                        box.roll += dec * cache.getRotationZ();
-                        box.pivotX += dec * cache.getOffsetX();
-                        box.pivotY += dec * cache.getOffsetY();
-                        box.pivotZ += dec * cache.getOffsetZ();
+                        box.xRot += dec * cache.getRotationX();
+                        box.yRot += dec * cache.getRotationY();
+                        box.zRot += dec * cache.getRotationZ();
+                        box.x += dec * cache.getOffsetX();
+                        box.y += dec * cache.getOffsetY();
+                        box.z += dec * cache.getOffsetZ();
                     }
 
                     for (Map.Entry<WRModelRenderer, BoxPosCache> entry : boxPosCache.entrySet())
                     {
                         ModelRenderer box = entry.getKey();
                         BoxPosCache cache = entry.getValue();
-                        box.pitch += inc * cache.getRotationX();
-                        box.yaw += inc * cache.getRotationY();
-                        box.roll += inc * cache.getRotationZ();
-                        box.pivotX += inc * cache.getOffsetX();
-                        box.pivotY += inc * cache.getOffsetY();
-                        box.pivotZ += inc * cache.getOffsetZ();
+                        box.xRot += inc * cache.getRotationX();
+                        box.yRot += inc * cache.getRotationY();
+                        box.zRot += inc * cache.getRotationZ();
+                        box.x += inc * cache.getOffsetX();
+                        box.y += inc * cache.getOffsetY();
+                        box.z += inc * cache.getOffsetZ();
                     }
                 }
             }
-            
+
             if (!stationary)
             {
                 prevPosCache.clear();

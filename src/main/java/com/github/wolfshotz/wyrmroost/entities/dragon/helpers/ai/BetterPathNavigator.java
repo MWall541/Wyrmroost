@@ -11,36 +11,36 @@ public class BetterPathNavigator extends GroundPathNavigator
 {
     public BetterPathNavigator(MobEntity entity)
     {
-        super(entity, entity.world);
+        super(entity, entity.level);
     }
 
     @Override
-    protected void continueFollowingPath()
+    protected void followThePath()
     {
-        Vector3d pos = getPos();
-        Vector3d pathPos = Vector3d.ofBottomCenter(currentPath.method_31032());
+        Vector3d pos = getTempMobPos();
+        Vector3d pathPos = Vector3d.atBottomCenterOf(path.getNextNodePos());
 
-        double xDiff = Math.abs(pathPos.getX() - entity.getX());
-        double yDiff = Math.abs(pathPos.getY() - entity.getY());
-        double zDiff = Math.abs(pathPos.getZ() - entity.getZ());
+        double xDiff = Math.abs(pathPos.x() - mob.getX());
+        double yDiff = Math.abs(pathPos.y() - mob.getY());
+        double zDiff = Math.abs(pathPos.z() - mob.getZ());
 
-        nodeReachProximity = ((int) (entity.getWidth() + 1f)) * 0.5f;
+        nodeReachProximity = ((int) (mob.getBbHeight() + 1f)) * 0.5f;
         boolean isWithinPathPoint = xDiff < nodeReachProximity && zDiff < nodeReachProximity && yDiff < 1;
 
-        if (isWithinPathPoint || (entity.method_29244(currentPath.method_29301().type) && isPathLongEnough(pos)))
-            currentPath.next();
+        if (isWithinPathPoint || (mob.method_29244(path.method_29301().type) && isPathLongEnough(pos)))
+            path.next();
 
         checkTimeouts(pos);
     }
 
     private boolean isPathLongEnough(Vector3d entityPosition)
     {
-        if (currentPath.getCurrentNodeIndex() + 1 >= currentPath.getLength()) return false;
+        if (path.getCurrentNodeIndex() + 1 >= path.getLength()) return false;
 
-        Vector3d pathPos = Vector3d.ofBottomCenter(currentPath.method_31032());
+        Vector3d pathPos = Vector3d.ofBottomCenter(path.method_31032());
         if (!entityPosition.isInRange(pathPos, nodeReachProximity)) return false;
 
-        Vector3d nextPathPos = Vector3d.ofBottomCenter(currentPath.method_31031(currentPath.getCurrentNodeIndex() + 1));
+        Vector3d nextPathPos = Vector3d.ofBottomCenter(path.method_31031(path.getCurrentNodeIndex() + 1));
         Vector3d midOfNextAndCurrent = nextPathPos.subtract(pathPos);
         Vector3d midOfEntityAndCurrent = entityPosition.subtract(pathPos);
         return midOfNextAndCurrent.dotProduct(midOfEntityAndCurrent) > 0;

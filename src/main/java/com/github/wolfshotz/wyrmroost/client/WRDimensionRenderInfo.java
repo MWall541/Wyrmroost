@@ -31,13 +31,13 @@ public class WRDimensionRenderInfo extends DimensionRenderInfo
     }
 
     @Override
-    public Vector3d adjustFogColor(Vector3d color, float density)
+    public Vector3d getBrightnessDependentFogColor(Vector3d color, float density)
     {
         return color.multiply(density * 0.94F + 0.06F, density * 0.94F + 0.06F, density * 0.91F + 0.09F);
     }
 
     @Override
-    public boolean useThickFog(int p_230493_1_, int p_230493_2_)
+    public boolean isFoggyAt(int p_230493_1_, int p_230493_2_)
     {
         return false;
     }
@@ -47,13 +47,13 @@ public class WRDimensionRenderInfo extends DimensionRenderInfo
 
     }
 
-    private void renderWeatherParticles(int ticks, ClientWorld world, Minecraft client, ActiveRenderInfo renderInfo)
+    private void renderWeatherParticles(int ticks, ClientWorld level, Minecraft client, ActiveRenderInfo renderInfo)
     {
-        float rainDelta = client.world.getRainGradient(1f) / (Minecraft.isFancyGraphicsOrBetter()? 1f : 2f);
+        float rainDelta = client.level.getRainLevel(1f) / (Minecraft.useFancyGraphics()? 1f : 2f);
         if (rainDelta > 0)
         {
             Random random = new Random(ticks * 312987231L);
-            BlockPos view = new BlockPos(renderInfo.getPos());
+            BlockPos view = new BlockPos(renderInfo.getBlockPosition());
             BlockPos at = null;
             int tries = (int) (100f * rainDelta * rainDelta) / (client.options.particles == ParticleStatus.DECREASED? 2 : 1);
 
@@ -61,7 +61,7 @@ public class WRDimensionRenderInfo extends DimensionRenderInfo
             {
                 int k = random.nextInt(21) - 10;
                 int l = random.nextInt(21) - 10;
-                BlockPos altitude = world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, view.add(k, 0, l)).down();
+                BlockPos altitude = level.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, view.offset(k, 0, l)).below();
                 if (altitude.getY() > 0 && altitude.getY() <= view.getY() + 10 && altitude.getY() >= view.getY() - 10)
                 {
                     at = altitude;
@@ -69,13 +69,13 @@ public class WRDimensionRenderInfo extends DimensionRenderInfo
                 }
             }
 
-            if (at != null && world.getBiome(view).getRegistryName().equals(WRWorld.TINCTURE_WEALD.getValue()) && random.nextInt(20) < weatherTime++)
+            if (at != null && level.getBiome(view).getRegistryName().equals(WRWorld.TINCTURE_WEALD.location()) && random.nextInt(20) < weatherTime++)
             {
                 weatherTime = 0;
                 float pitch = 1f;
-                if (at.getY() > view.getY() + 1 && world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, view).getY() > MathHelper.floor((float) view.getY()))
+                if (at.getY() > view.getY() + 1 && level.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, view).getY() > MathHelper.floor((float) view.getY()))
                     pitch = 0.5f;
-                client.world.playSound(at, WRSounds.WEATHER_SANDSTORM.get(), SoundCategory.WEATHER, 0.2f, pitch, false);
+                client.level.playLocalSound(at, WRSounds.WEATHER_SANDSTORM.get(), SoundCategory.WEATHER, 0.2f, pitch, false);
             }
         }
     }
@@ -86,7 +86,7 @@ public class WRDimensionRenderInfo extends DimensionRenderInfo
         try
         {
             Object2ObjectMap<ResourceLocation, DimensionRenderInfo> infoMap = ObfuscationReflectionHelper.getPrivateValue(DimensionRenderInfo.class, null, "field_239208_a_");
-            infoMap.put(WRWorld.THE_WYRMROOST.getValue(), new WRDimensionRenderInfo());
+            infoMap.put(WRWorld.THE_WYRMROOST.location(), new WRDimensionRenderInfo());
         }
         catch (Throwable e)
         {

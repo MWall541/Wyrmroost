@@ -20,7 +20,7 @@ public class GeodeTippedArrowRenderer extends ArrowRenderer<GeodeTippedArrowEnti
     }
 
     @Override
-    public ResourceLocation getTexture(GeodeTippedArrowEntity entity)
+    public ResourceLocation getTextureLocation(GeodeTippedArrowEntity entity)
     {
         Item item = entity.getItem();
         if (item == WRItems.RED_GEODE_ARROW.get()) return RED;

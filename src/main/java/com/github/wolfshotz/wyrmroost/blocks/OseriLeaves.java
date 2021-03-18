@@ -18,10 +18,10 @@ public class OseriLeaves extends LeavesBlock
     @Override
     public void animateTick(BlockState state, World world, BlockPos pos, Random random)
     {
-        if (random.nextDouble() < 0.1 && world.getBlockState(pos = pos.below()).isAir())
+        if (random.nextDouble() < 0.1 && level.getBlockState(pos = pos.below()).isAir())
         {
             // todo: make falling petals?
-            world.addParticle(ParticleTypes.DRIPPING_HONEY, pos.getX(), pos.getY() + 0.9, pos.getZ(), 0, 0, 0);
+            level.addParticle(ParticleTypes.DRIPPING_HONEY, pos.getX(), pos.getY() + 0.9, pos.getZ(), 0, 0, 0);
         }
     }
 }

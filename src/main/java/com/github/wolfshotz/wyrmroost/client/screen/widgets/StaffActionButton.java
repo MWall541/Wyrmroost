@@ -39,20 +39,20 @@ public class StaffActionButton extends AbstractButton
             DragonStaffItem.setAction(action, player, stack);
             Wyrmroost.NETWORK.sendToServer(new StaffActionPacket(action));
         }
-        Minecraft.getInstance().openScreen(null);
+        Minecraft.getInstance().setScreen(null);
     }
 
     @Override
     public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
     {
-        if (wasHovered != hovered) onFocusedChanged(wasHovered = hovered);
+        if (wasHovered != isHovered) onFocusedChanged(wasHovered = isHovered);
 
         float time = 0.5f * partialTicks; // adjust speed for framerate
-        focusTime.add(hovered? time : -time);
+        focusTime.add(isHovered? time : -time);
         float amount = focusTime.get(partialTicks) * 6;
         drawCenteredString(ms,
-                Minecraft.getInstance().textRenderer,
-                getMessage().asString(),
+                Minecraft.getInstance().font,
+                getMessage().getString(),
                 x + width / 2,
                 (y + (height - 8) / 2) - (int) amount,
                 (int) MathHelper.lerp(amount, 0xffffff, 0xfffd8a));
@@ -62,6 +62,6 @@ public class StaffActionButton extends AbstractButton
     protected void onFocusedChanged(boolean focusing)
     {
         if (focusing)
-            Minecraft.getInstance().getSoundManager().play(SimpleSound.master(SoundEvents.BLOCK_NOTE_BLOCK_BASS, -1f));
+            Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.NOTE_BLOCK_BASS, -1f));
     }
 }

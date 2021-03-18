@@ -45,7 +45,7 @@ public class AlpineEntity extends AbstractDragonEntity
 
     public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
-        super(dragon, world);
+        super(dragon, level);
 
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
@@ -84,7 +84,7 @@ public class AlpineEntity extends AbstractDragonEntity
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
 
-        if (!world.isClientSide && noActiveAnimation() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
+        if (!level.isClientSide && noActiveAnimation() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
             AnimationPacket.send(this, ROAR_ANIMATION);
 
         Animation animation = getAnimation();
@@ -105,11 +105,11 @@ public class AlpineEntity extends AbstractDragonEntity
         }
         else if (animation == WIND_GUST_ANIMATION)
         {
-            if (tick == 0) setVelocity(getVelocity().add(0, -0.35, 0));
+            if (tick == 0) setVelocity(getDeltaMovement().add(0, -0.35, 0));
             if (tick == 4)
             {
-                if (!world.isClientSide) world.spawnEntity(new WindGustEntity(this));
-                setVelocity(getVelocity().add(getRotationVector().negate().multiply(1.5, 0, 1.5).add(0, 1, 0)));
+                if (!level.isClientSide) level.spawnEntity(new WindGustEntity(this));
+                setVelocity(getDeltaMovement().add(getRotationVector().negate().multiply(1.5, 0, 1.5).add(0, 1, 0)));
                 playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
             }
         }
@@ -120,7 +120,7 @@ public class AlpineEntity extends AbstractDragonEntity
     {
         boolean flag = super.tryAttack(enemy);
 
-        if (!isTamed() && flag && !enemy.isAlive() && enemy.getType() == EntityType.BEE)
+        if (!isTame() && flag && !enemy.isAlive() && enemy.getType() == EntityType.BEE)
         {
             BeeEntity bee = (BeeEntity) enemy;
             if (bee.hasNectar() && bee.isLeashed())
@@ -169,14 +169,14 @@ public class AlpineEntity extends AbstractDragonEntity
     protected void jump()
     {
         super.jump();
-        if (!world.isClientSide)
-            world.spawnEntity(new WindGustEntity(this, getPos().add(0, 7, 0), getRotationVector(90, yaw)));
+        if (!level.isClientSide)
+            level.spawnEntity(new WindGustEntity(this, position().add(0, 7, 0), getRotationVector(90, yRot)));
     }
 
     @Override
     protected float getJumpVelocity()
     {
-        if (canFly()) return (getHeight() * getJumpVelocityMultiplier());
+        if (canFly()) return (getBbHeight() * getJumpVelocityMultiplier());
         else return super.getJumpVelocity();
     }
 

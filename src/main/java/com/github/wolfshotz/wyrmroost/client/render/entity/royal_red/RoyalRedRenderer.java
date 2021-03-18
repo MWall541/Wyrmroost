@@ -17,11 +17,11 @@ public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, Roy
     public RoyalRedRenderer(EntityRendererManager manager)
     {
         super(manager, new RoyalRedModel(), 2.5f);
-        addFeature(new ArmorLayer(RoyalRedEntity.ARMOR_SLOT));
+        addLayer(new ArmorLayer(RoyalRedEntity.ARMOR_SLOT));
     }
 
     @Override
-    public ResourceLocation getTexture(RoyalRedEntity entity)
+    public ResourceLocation getTextureLocation(RoyalRedEntity entity)
     {
         boolean shiny = entity.getVariant() == -1;
 

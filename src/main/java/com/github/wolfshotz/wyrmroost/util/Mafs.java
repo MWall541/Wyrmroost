@@ -76,9 +76,9 @@ public final class Mafs
 
         Entity result = null;
         double distance = range * range;
-        for (Entity entity : shooter.world.getOtherEntities(shooter, shooter.getBoundingBox().expand(range), filter))
+        for (Entity entity : shooter.level.getOtherEntities(shooter, shooter.getBoundingBox().inflate(range), filter))
         {
-            Optional<Vector3d> opt = entity.getBoundingBox().expand(0.3).raycast(eyes, end);
+            Optional<Vector3d> opt = entity.getBoundingBox().inflate(0.3).raycast(eyes, end);
             if (opt.isPresent())
             {
                 double dist = eyes.squaredDistanceTo(opt.get());

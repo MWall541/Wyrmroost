@@ -36,7 +36,7 @@ public class StaffScreen extends Screen
         toolTip.clear();
         dragon.addScreenInfo(this);
 
-        addButton(new NameFieldWidget(textRenderer, (width / 2) - 63, (height / 2) + 25, 120, 12, dragon));
+        addButton(new NameFieldWidget(font, (width / 2) - 63, (height / 2) + 25, 120, 12, dragon));
 
         initActions();
     }
@@ -64,15 +64,15 @@ public class StaffScreen extends Screen
         renderBackground(ms);
         for (Widget b : buttons) b.render(ms, mouseX, mouseY, partialTicks);
         int x = width / 2;
-        int y = (height / 2) + (int) (dragon.getHeight() / 2);
+        int y = (height / 2) + (int) (dragon.getBbHeight() / 2);
 
         if (dragon.getVariant() < 0)
-            drawCenteredString(ms, textRenderer, Character.toString('\u2726'), x - 40, y - 40, 0xffff00);
+            drawCenteredString(ms, font, Character.toString('\u2726'), x - 40, y - 40, 0xffff00);
 
-        int scale = (int) -(dragon.getWidth() * dragon.getHeight()) + 23; // linear decay: smaller scale bigger the dragon. if things get problematic, exponential?
-        InventoryScreen.drawEntity(x, y, scale, x - mouseX, y - mouseY, dragon);
+        int scale = (int) -(dragon.getBbWidth() * dragon.getBbHeight()) + 23; // linear decay: smaller scale bigger the dragon. if things get problematic, exponential?
+        InventoryScreen.renderEntityInInventory(x, y, scale, x - mouseX, y - mouseY, dragon);
         if (mouseX >= x - 40 && mouseY >= y - 40 && mouseX < x + 45 && mouseY < y + 15)
-            renderTooltip(ms, toolTip, mouseX, mouseY);
+            renderComponentTooltip(ms, toolTip, mouseX, mouseY);
     }
 
     @Override
@@ -94,6 +94,6 @@ public class StaffScreen extends Screen
     public static void open(AbstractDragonEntity dragon, ItemStack stack)
     {
         DragonStaffItem.bindDragon(dragon, stack);
-        if (dragon.world.isClientSide) Minecraft.getInstance().openScreen(new StaffScreen(dragon));
+        if (dragon.level.isClientSide) Minecraft.getInstance().setScreen(new StaffScreen(dragon));
     }
 }

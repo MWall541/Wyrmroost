@@ -15,8 +15,8 @@ public class BreathSound extends TickableSound
     {
         super(WRSounds.FIRE_BREATH.get(), SoundCategory.PLAYERS);
         this.dragon = dragon;
-        this.repeat = true;
-        this.repeatDelay = 0;
+        this.looping = true;
+        this.delay = 0;
         this.volume = 0.1f;
     }
 
@@ -26,7 +26,7 @@ public class BreathSound extends TickableSound
         float tick = dragon.breathTimer.get();
         if (!dragon.isAlive() || tick == 0)
         {
-            setDone();
+            stop();
             return;
         }
         volume = tick;

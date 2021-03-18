@@ -47,7 +47,7 @@ public class CoinDragonItem extends Item
         ItemStack stack = context.getStack();
         PlayerEntity player = context.getPlayer();
 
-        if (!world.isClientSide && stack.hasTag()) // read data first!: setting position before reading will reset that position!
+        if (!level.isClientSide && stack.hasTag()) // read data first!: setting position before reading will reset that position!
         {
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_ENTITY)) entity.deserializeNBT(tag.getCompound(DATA_ENTITY));
@@ -55,7 +55,7 @@ public class CoinDragonItem extends Item
         }
 
         entity.updatePosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        if (!world.isSpaceEmpty(entity))
+        if (!level.isSpaceEmpty(entity))
         {
             player.sendMessage(new TranslationTextComponent("item.wyrmroost.soul_crystal.fail").formatted(TextFormatting.RED), true);
             return ActionResultType.FAIL;
@@ -64,8 +64,8 @@ public class CoinDragonItem extends Item
         if (!player.isCreative() || stack.getOrCreateTag().contains(DATA_ENTITY))
             player.setStackInHand(context.getHand(), ItemStack.EMPTY);
         entity.setVelocity(Vector3d.ZERO);
-        entity.yaw = entity.headYaw = player.headYaw + 180;
-        world.spawnEntity(entity);
+        entity.yRot = entity.headYaw = player.headYaw + 180;
+        level.spawnEntity(entity);
         return ActionResultType.SUCCESS;
     }
 

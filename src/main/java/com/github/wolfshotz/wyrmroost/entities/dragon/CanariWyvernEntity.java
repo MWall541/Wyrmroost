@@ -42,7 +42,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
-        super(dragon, world);
+        super(dragon, level);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
@@ -87,7 +87,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     {
         super.tickMovement();
 
-        if (!world.isClientSide && !isPissed() && !isSleeping() && !isFlying() && !isRiding() && noActiveAnimation())
+        if (!level.isClientSide && !isPissed() && !isSleeping() && !isFlying() && !isRiding() && noActiveAnimation())
         {
             double rand = getRandom().nextDouble();
             if (rand < 0.001) AnimationPacket.send(this, FLAP_WINGS_ANIMATION);
@@ -98,12 +98,12 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         {
             int tick = getAnimationTick();
             if (tick == 5 || tick == 12) playSound(SoundEvents.ENTITY_PHANTOM_FLAP, 0.7f, 2, true);
-            if (!world.isClientSide && tick == 9 && getRandom().nextDouble() <= 0.25)
+            if (!level.isClientSide && tick == 9 && getRandom().nextDouble() <= 0.25)
                 dropStack(new ItemStack(Items.FEATHER), 0.5f);
         }
         else if (getAnimation() == THREAT_ANIMATION && isPissed())
         {
-            yaw = bodyYaw = headYaw = (float) Mafs.getAngle(CanariWyvernEntity.this, pissedOffTarget) - 270f;
+            yRot = bodyYaw = headYaw = (float) Mafs.getAngle(CanariWyvernEntity.this, pissedOffTarget) - 270f;
         }
     }
 
@@ -113,20 +113,20 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         ActionResultType result = super.playerInteraction(player, hand, stack);
         if (result.isAccepted()) return result;
 
-        if (!isTamed() && isFoodItem(stack) && (isPissed() || player.isCreative() || isBaby()))
+        if (!isTame() && isFoodItem(stack) && (isPissed() || player.isCreative() || isBaby()))
         {
             eat(stack);
-            if (!world.isClientSide) tame(getRandom().nextDouble() < 0.2, player);
-            return ActionResultType.success(world.isClientSide);
+            if (!level.isClientSide) tame(getRandom().nextDouble() < 0.2, player);
+            return ActionResultType.success(level.isClientSide);
         }
 
-        if (isOwner(player) && player.getPassengerList().size() < 3 && !player.isSneaking() && !isLeashed())
+        if (isOwner(player) && player.getPassengers().size() < 3 && !player.isSneaking() && !isLeashed())
         {
             setSitting(true);
             setFlying(false);
             clearAI();
             startRiding(player, true);
-            return ActionResultType.success(world.isClientSide);
+            return ActionResultType.success(level.isClientSide);
         }
 
         return ActionResultType.PASS;
@@ -138,7 +138,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         if (super.tryAttack(entity) && entity instanceof LivingEntity)
         {
             int i = 5;
-            switch (world.getDifficulty())
+            switch (level.getDifficulty())
             {
                 case HARD:
                     i = 15; break;
@@ -246,16 +246,16 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
         public ThreatenGoal()
         {
-            setControls(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP, Flag.TARGET));
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP, Flag.TARGET));
         }
 
         @Override
-        public boolean canStart()
+        public boolean canUse()
         {
             if (isTamed()) return false;
             if (isFlying()) return false;
             if (getTarget() != null) return false;
-            if ((target = world.getClosestPlayer(getX(), getY(), getZ(), 12d, true)) == null)
+            if ((target = level.getClosestPlayer(getX(), getY(), getZ(), 12d, true)) == null)
                 return false;
             return canTarget(target);
         }
@@ -266,15 +266,15 @@ public class CanariWyvernEntity extends AbstractDragonEntity
             double distFromTarget = squaredDistanceTo(target);
             if (distFromTarget > 30 && !isPissed())
             {
-                if (getNavigation().isIdle())
+                if (getNavigation().isDone())
                 {
-                    Vector3d vec3d = RandomPositionGenerator.findTargetAwayFrom(CanariWyvernEntity.this, 16, 7, target.getPos());
-                    if (vec3d != null) getNavigation().startMovingTo(vec3d.x, vec3d.y, vec3d.z, 1.5);
+                    Vector3d vec3d = RandomPositionGenerator.findTargetAwayFrom(CanariWyvernEntity.this, 16, 7, target.position());
+                    if (vec3d != null) getNavigation().moveTo(vec3d.x, vec3d.y, vec3d.z, 1.5);
                 }
             }
             else
             {
-                getLookControl().lookAt(target, 90, 90);
+                getLookControl().setLookAt(target, 90, 90);
                 if (!isPissed())
                 {
                     pissedOffTarget = target;
@@ -301,21 +301,21 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
         public AttackGoal()
         {
-            setControls(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
         }
 
         @Override
-        public boolean canStart()
+        public boolean canUse()
         {
             LivingEntity target = getTarget();
             return target != null && target.isAlive();
         }
 
         @Override
-        public boolean shouldContinue()
+        public boolean canContinueToUse()
         {
             LivingEntity target = getTarget();
-            return target != null && target.isAlive() && isInWalkTargetRange(target.getBlockPos()) && EntityPredicates.EXCEPT_CREATIVE_SPECTATOR_OR_PEACEFUL.test(target);
+            return target != null && target.isAlive() && isInWalkTargetRange(target.blockPosition()) && EntityPredicates.EXCEPT_CREATIVE_SPECTATOR_OR_PEACEFUL.test(target);
         }
 
         @Override
@@ -323,15 +323,15 @@ public class CanariWyvernEntity extends AbstractDragonEntity
         {
             LivingEntity target = getTarget();
 
-            if ((++repathTimer >= 10 || getNavigation().isIdle()) && getVisibilityCache().canSee(target))
+            if ((++repathTimer >= 10 || getNavigation().isDone()) && getVisibilityCache().canSee(target))
             {
                 repathTimer = 0;
                 if (!isFlying()) setFlying(true);
-                getNavigation().startMovingTo(target.getX(), target.getBoundingBox().maxY - 2, target.getZ(), 1);
-                getLookControl().lookAt(target, 90, 90);
+                getNavigation().moveTo(target.getX(), target.getBoundingBox().maxY - 2, target.getZ(), 1);
+                getLookControl().setLookAt(target, 90, 90);
             }
 
-            if (--attackDelay <= 0 && squaredDistanceTo(target.getPos().add(0, target.getBoundingBox().getYLength(), 0)) <= 2.25 + target.getWidth())
+            if (--attackDelay <= 0 && squaredDistanceTo(target.position().add(0, target.getBoundingBox().getYLength(), 0)) <= 2.25 + target.getBbWidth())
             {
                 attackDelay = 20 + getRandom().nextInt(10);
                 AnimationPacket.send(CanariWyvernEntity.this, ATTACK_ANIMATION);

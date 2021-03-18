@@ -49,7 +49,7 @@ class RecipeData extends RecipeProvider
     private ShapedRecipeBuilder shaped(IItemProvider result, int count)
     {
         REGISTERED.add(result);
-        return ShapedRecipeBuilder.create(result, count);
+        return ShapedRecipeBuilder.shaped(result, count);
     }
 
     private ShapedRecipeBuilder shaped(IItemProvider result)
@@ -60,7 +60,7 @@ class RecipeData extends RecipeProvider
     private ShapelessRecipeBuilder shapeless(IItemProvider result, int count)
     {
         REGISTERED.add(result);
-        return ShapelessRecipeBuilder.create(result, count);
+        return ShapelessRecipeBuilder.shapeless(result, count);
     }
 
     private ShapelessRecipeBuilder shapeless(IItemProvider result)
@@ -69,87 +69,87 @@ class RecipeData extends RecipeProvider
     }
 
     /**
-     * @param ingredients first element is used for criterion, design accordingly.
+     * @param ingredients first element is used for unlockedBy(), design accordingly.
      */
     private void shapeless(IItemProvider result, @Nonnull ShapelessPair... ingredients)
     {
-        final ShapelessRecipeBuilder offerToer = shapeless(result);
-        for (ShapelessPair ingredient : ingredients) offerToer.input(ingredient.item, ingredient.count);
+        final ShapelessRecipeBuilder builder = shapeless(result);
+        for (ShapelessPair ingredient : ingredients) builder.requires(ingredient.item, ingredient.count);
         IItemProvider firstIngredient = ingredients[0].item;
-        offerToer.criterion("has_" + firstIngredient.asItem().getRegistryName().getPath(), conditionsFromItem(firstIngredient)).offerTo(consumer);
+        builder.unlockedBy("has_" + firstIngredient.asItem().getRegistryName().getPath(), has(firstIngredient)).save(consumer);
     }
 
     private void armorSet(IItemProvider material, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots)
     {
-        shaped(helmet).input('X', material).pattern("XXX").pattern("X X").criterion("has_material", conditionsFromItem(material)).offerTo(consumer);
-        shaped(chest).input('X', material).pattern("X X").pattern("XXX").criterion("has_material", conditionsFromItem(material)).pattern("XXX").offerTo(consumer);
-        shaped(legs).input('X', material).pattern("XXX").pattern("X X").criterion("has_material", conditionsFromItem(material)).pattern("X X").offerTo(consumer);
-        shaped(boots).input('X', material).pattern("X X").pattern("X X").criterion("has_material", conditionsFromItem(material)).offerTo(consumer);
+        shaped(helmet).define('X', material).pattern("XXX").pattern("X X").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(chest).define('X', material).pattern("X X").pattern("XXX").unlockedBy("has_material", has(material)).pattern("XXX").save(consumer);
+        shaped(legs).define('X', material).pattern("XXX").pattern("X X").unlockedBy("has_material", has(material)).pattern("X X").save(consumer);
+        shaped(boots).define('X', material).pattern("X X").pattern("X X").unlockedBy("has_material", has(material)).save(consumer);
     }
 
     private void armorSet(ITag<Item> materials, IItemProvider helmet, IItemProvider chest, IItemProvider legs, IItemProvider boots)
     {
-        shaped(helmet).input('X', materials).pattern("XXX").pattern("X X").criterion("has_material", conditionsFromTag(materials)).offerTo(consumer);
-        shaped(chest).input('X', materials).pattern("X X").pattern("XXX").criterion("has_material", conditionsFromTag(materials)).pattern("XXX").offerTo(consumer);
-        shaped(legs).input('X', materials).pattern("XXX").pattern("X X").criterion("has_material", conditionsFromTag(materials)).pattern("X X").offerTo(consumer);
-        shaped(boots).input('X', materials).pattern("X X").pattern("X X").criterion("has_material", conditionsFromTag(materials)).offerTo(consumer);
+        shaped(helmet).define('X', materials).pattern("XXX").pattern("X X").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(chest).define('X', materials).pattern("X X").pattern("XXX").unlockedBy("has_material", has(materials)).pattern("XXX").save(consumer);
+        shaped(legs).define('X', materials).pattern("XXX").pattern("X X").unlockedBy("has_material", has(materials)).pattern("X X").save(consumer);
+        shaped(boots).define('X', materials).pattern("X X").pattern("X X").unlockedBy("has_material", has(materials)).save(consumer);
     }
 
     private void toolSet(IItemProvider material, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
     {
-        shaped(sword).input('X', material).input('|', Items.STICK).pattern("X").pattern("X").pattern("|").criterion("has_material", conditionsFromItem(material)).offerTo(consumer);
-        shaped(pick).input('X', material).input('|', Items.STICK).pattern("XXX").pattern(" | ").pattern(" | ").criterion("has_material", conditionsFromItem(material)).offerTo(consumer);
-        shaped(axe).input('X', material).input('|', Items.STICK).pattern("XX").pattern("X|").pattern(" |").criterion("has_material", conditionsFromItem(material)).offerTo(consumer);
-        shaped(shovel).input('X', material).input('|', Items.STICK).pattern("X").pattern("|").pattern("|").criterion("has_material", conditionsFromItem(material)).offerTo(consumer);
-        shaped(hoe).input('X', material).input('|', Items.STICK).pattern("XX").pattern(" |").pattern(" |").criterion("has_material", conditionsFromItem(material)).offerTo(consumer);
+        shaped(sword).define('X', material).define('|', Items.STICK).pattern("X").pattern("X").pattern("|").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(pick).define('X', material).define('|', Items.STICK).pattern("XXX").pattern(" | ").pattern(" | ").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(axe).define('X', material).define('|', Items.STICK).pattern("XX").pattern("X|").pattern(" |").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(shovel).define('X', material).define('|', Items.STICK).pattern("X").pattern("|").pattern("|").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(hoe).define('X', material).define('|', Items.STICK).pattern("XX").pattern(" |").pattern(" |").unlockedBy("has_material", has(material)).save(consumer);
     }
 
     private void toolSet(ITag<Item> materials, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
     {
-        shaped(sword).input('X', materials).input('|', Items.STICK).pattern("X").pattern("X").pattern("|").criterion("has_material", conditionsFromTag(materials)).offerTo(consumer);
-        shaped(pick).input('X', materials).input('|', Items.STICK).pattern("XXX").pattern(" | ").pattern(" | ").criterion("has_material", conditionsFromTag(materials)).offerTo(consumer);
-        shaped(axe).input('X', materials).input('|', Items.STICK).pattern("XX").pattern("X|").pattern(" |").criterion("has_material", conditionsFromTag(materials)).offerTo(consumer);
-        shaped(shovel).input('X', materials).input('|', Items.STICK).pattern("X").pattern("|").pattern("|").criterion("has_material", conditionsFromTag(materials)).offerTo(consumer);
-        shaped(hoe).input('X', materials).input('|', Items.STICK).pattern("XX").pattern(" |").pattern(" |").criterion("has_material", conditionsFromTag(materials)).offerTo(consumer);
+        shaped(sword).define('X', materials).define('|', Items.STICK).pattern("X").pattern("X").pattern("|").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(pick).define('X', materials).define('|', Items.STICK).pattern("XXX").pattern(" | ").pattern(" | ").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(axe).define('X', materials).define('|', Items.STICK).pattern("XX").pattern("X|").pattern(" |").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(shovel).define('X', materials).define('|', Items.STICK).pattern("X").pattern("|").pattern("|").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(hoe).define('X', materials).define('|', Items.STICK).pattern("XX").pattern(" |").pattern(" |").unlockedBy("has_material", has(materials)).save(consumer);
     }
 
     private void woodGroup(WRBlocks.WoodGroup group, ITag<Item> logTag)
     {
-        InventoryChangeTrigger.Instance hasPlanks = conditionsFromItem(group.getPlanks());
+        InventoryChangeTrigger.Instance hasPlanks = has(group.getPlanks());
 
-        shapeless(group.getPlanks(), 4).input(logTag).criterion("has_wood", conditionsFromTag(logTag)).offerTo(consumer);
-        shaped(group.getWood(), 3).pattern("##").pattern("##").input('#', group.getLog()).criterion("has_log", conditionsFromItem(group.getLog())).offerTo(consumer);
-        shaped(group.getStrippedWood(), 3).pattern("##").pattern("##").input('#', group.getStrippedLog()).criterion("has_log", conditionsFromItem(group.getStrippedLog())).offerTo(consumer);
-        shaped(group.getSlab(), 6).pattern("###").input('#', group.getPlanks()).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shaped(group.getPressurePlate()).pattern("##").input('#', group.getPlanks()).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shaped(group.getFence(), 3).pattern("W#W").pattern("W#W").input('W', group.getPlanks()).input('#', Items.STICK).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shaped(group.getFenceGate()).pattern("#W#").pattern("#W#").input('W', group.getPlanks()).input('#', Items.STICK).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shaped(group.getTrapDoor(), 2).pattern("###").pattern("###").input('#', group.getPlanks()).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shaped(group.getStairs(), 4).pattern("#  ").pattern("## ").pattern("###").input('#', group.getPlanks()).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shapeless(group.getButton()).input(group.getPlanks()).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shaped(group.getDoor(), 3).pattern("##").pattern("##").pattern("##").input('#', group.getPlanks()).criterion("has_planks", hasPlanks).offerTo(consumer);
-        shaped(group.getSign(), 3).pattern("###").pattern("###").pattern(" X ").input('#', group.getPlanks()).input('X', Items.STICK).criterion("has_planks", hasPlanks).offerTo(consumer);
+        shapeless(group.getPlanks(), 4).requires(logTag).unlockedBy("has_wood", has(logTag)).save(consumer);
+        shaped(group.getWood(), 3).pattern("##").pattern("##").define('#', group.getLog()).unlockedBy("has_log", has(group.getLog())).save(consumer);
+        shaped(group.getStrippedWood(), 3).pattern("##").pattern("##").define('#', group.getStrippedLog()).unlockedBy("has_log", has(group.getStrippedLog())).save(consumer);
+        shaped(group.getSlab(), 6).pattern("###").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getPressurePlate()).pattern("##").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getFence(), 3).pattern("W#W").pattern("W#W").define('W', group.getPlanks()).define('#', Items.STICK).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getFenceGate()).pattern("#W#").pattern("#W#").define('W', group.getPlanks()).define('#', Items.STICK).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getTrapDoor(), 2).pattern("###").pattern("###").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getStairs(), 4).pattern("#  ").pattern("## ").pattern("###").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shapeless(group.getButton()).requires(group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getDoor(), 3).pattern("##").pattern("##").pattern("##").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getSign(), 3).pattern("###").pattern("###").pattern(" X ").define('#', group.getPlanks()).define('X', Items.STICK).unlockedBy("has_planks", hasPlanks).save(consumer);
     }
 
     private void storageBlock(IItemProvider material, IItemProvider block)
     {
-        shaped(block).input('X', material).pattern("XXX").pattern("XXX").pattern("XXX").criterion("has_" + material.asItem().getRegistryName().getPath(), conditionsFromItem(material)).offerTo(consumer);
-        shapeless(material, 9).input(block).criterion("has_" + block.asItem().getRegistryName().getPath(), conditionsFromItem(block)).offerTo(consumer);
+        shaped(block).define('X', material).pattern("XXX").pattern("XXX").pattern("XXX").unlockedBy("has_" + material.asItem().getRegistryName().getPath(), has(material)).save(consumer);
+        shapeless(material, 9).requires(block).unlockedBy("has_" + block.asItem().getRegistryName().getPath(), has(block)).save(consumer);
     }
 
     private void smelt(IItemProvider ingredient, IItemProvider result, float experience, int time, boolean food)
     {
         String id = result.asItem().getRegistryName().getPath();
-        String criterion = "has_" + ingredient.asItem().getRegistryName().getPath();
+        String hasMaterial = "has_" + ingredient.asItem().getRegistryName().getPath();
 
-        CookingRecipeBuilder.createSmelting(Ingredient.ofItems(ingredient), result, experience, time).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id((id + "_from_smelting")));
+        CookingRecipeBuilder.smelting(Ingredient.of(ingredient), result, experience, time).unlockedBy(hasMaterial, has(ingredient)).save(consumer, Wyrmroost.id((id + "_from_smelting")));
         if (food)
         {
-            CookingRecipeBuilder.create(Ingredient.ofItems(ingredient), result, experience, time + 500, CookingRecipeSerializer.CAMPFIRE_COOKING).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id(id + "_from_campfire"));
-            CookingRecipeBuilder.create(Ingredient.ofItems(ingredient), result, experience, time - 100, CookingRecipeSerializer.SMOKING).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id(id + "_from_smoking"));
+            CookingRecipeBuilder.cooking(Ingredient.of(ingredient), result, experience, time + 500, CookingRecipeSerializer.CAMPFIRE_COOKING_RECIPE).unlockedBy(hasMaterial, has(ingredient)).save(consumer, Wyrmroost.id(id + "_from_campfire"));
+            CookingRecipeBuilder.cooking(Ingredient.of(ingredient), result, experience, time - 100, CookingRecipeSerializer.SMOKING_RECIPE).unlockedBy(hasMaterial, has(ingredient)).save(consumer, Wyrmroost.id(id + "_from_smoking"));
         }
         else
-            CookingRecipeBuilder.createBlasting(Ingredient.ofItems(ingredient), result, experience, time - 100).criterion(criterion, conditionsFromItem(ingredient)).offerTo(consumer, Wyrmroost.id(id + "_from_blasting"));
+            CookingRecipeBuilder.blasting(Ingredient.of(ingredient), result, experience, time - 100).unlockedBy(hasMaterial, has(ingredient)).save(consumer, Wyrmroost.id(id + "_from_blasting"));
 
         REGISTERED.add(result);
     }
@@ -159,8 +159,8 @@ class RecipeData extends RecipeProvider
         smelt(ingredient, result, experience, time, false);
     }
 
-    @Override
-    protected void generate(Consumer<IFinishedRecipe> consumer)
+    @Override // tf is this name mojang
+    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer)
     {
         this.consumer = consumer;
 
@@ -170,12 +170,12 @@ class RecipeData extends RecipeProvider
                 WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get(), WRBlocks.PLATINUM_ORE.get());
 
         // Misc stuff
-        shaped(WRItems.SOUL_CRYSTAL.get()).input('X', WRItems.BLUE_GEODE.get()).input('#', Items.ENDER_EYE).pattern(" X ").pattern("X#X").pattern(" X ").criterion("has_eye", conditionsFromItem(Items.ENDER_EYE)).offerTo(consumer);
-        shaped(WRItems.DRAGON_STAFF.get()).input('X', WRItems.RED_GEODE.get()).input('|', Items.BLAZE_ROD).pattern("X").pattern("|").criterion("has_geode", conditionsFromItem(WRItems.RED_GEODE.get())).offerTo(consumer);
+        shaped(WRItems.SOUL_CRYSTAL.get()).define('X', WRItems.BLUE_GEODE.get()).define('#', Items.ENDER_EYE).pattern(" X ").pattern("X#X").pattern(" X ").unlockedBy("has_eye", has(Items.ENDER_EYE)).save(consumer);
+        shaped(WRItems.DRAGON_STAFF.get()).define('X', WRItems.RED_GEODE.get()).define('|', Items.BLAZE_ROD).pattern("X").pattern("|").unlockedBy("has_geode", has(WRItems.RED_GEODE.get())).save(consumer);
 
-        shaped(WRItems.BLUE_GEODE_ARROW.get(), 8).input('G', WRItems.BLUE_GEODE.get()).input('|', Items.STICK).input('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").criterion("has_geode", conditionsFromItem(WRItems.BLUE_GEODE.get())).offerTo(consumer);
-        shaped(WRItems.RED_GEODE_ARROW.get(), 8).input('G', WRItems.RED_GEODE.get()).input('|', Items.STICK).input('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").criterion("has_geode", conditionsFromItem(WRItems.RED_GEODE.get())).offerTo(consumer);
-        shaped(WRItems.PURPLE_GEODE_ARROW.get(), 8).input('G', WRItems.PURPLE_GEODE.get()).input('|', Items.STICK).input('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").criterion("has_geode", conditionsFromItem(WRItems.PURPLE_GEODE.get())).offerTo(consumer);
+        shaped(WRItems.BLUE_GEODE_ARROW.get(), 8).define('G', WRItems.BLUE_GEODE.get()).define('|', Items.STICK).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
+        shaped(WRItems.RED_GEODE_ARROW.get(), 8).define('G', WRItems.RED_GEODE.get()).define('|', Items.STICK).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.RED_GEODE.get())).save(consumer);
+        shaped(WRItems.PURPLE_GEODE_ARROW.get(), 8).define('G', WRItems.PURPLE_GEODE.get()).define('|', Items.STICK).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.PURPLE_GEODE.get())).save(consumer);
 
         // Materials
         storageBlock(WRItems.BLUE_GEODE.get(), WRBlocks.BLUE_GEODE_BLOCK.get());
@@ -185,8 +185,8 @@ class RecipeData extends RecipeProvider
         storageBlock(WRItems.PURPLE_GEODE.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
         smelt(WRBlocks.PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get(), 2f, 200);
 
-        shaped(WRBlocks.PLATINUM_BLOCK.get()).input('X', WRItems.Tags.INGOTS_PLATINUM).pattern("XXX").pattern("XXX").pattern("XXX").criterion("has_platinum", conditionsFromItem(WRItems.PLATINUM_INGOT.get())).offerTo(consumer);
-        shapeless(WRItems.PLATINUM_INGOT.get(), 9).input(WRBlocks.PLATINUM_BLOCK.get()).criterion("has_platinum", conditionsFromItem(WRBlocks.PLATINUM_BLOCK.get())).offerTo(consumer);
+        shaped(WRBlocks.PLATINUM_BLOCK.get()).define('X', WRItems.Tags.INGOTS_PLATINUM).pattern("XXX").pattern("XXX").pattern("XXX").unlockedBy("has_platinum", has(WRItems.PLATINUM_INGOT.get())).save(consumer);
+        shapeless(WRItems.PLATINUM_INGOT.get(), 9).requires(WRBlocks.PLATINUM_BLOCK.get()).unlockedBy("has_platinum", has(WRBlocks.PLATINUM_BLOCK.get())).save(consumer);
         smelt(WRBlocks.PLATINUM_ORE.get(), WRItems.PLATINUM_INGOT.get(), 0.7f, 200);
 
         // Tools
@@ -211,16 +211,16 @@ class RecipeData extends RecipeProvider
         smelt(WRItems.RAW_COMMON_MEAT.get(), WRItems.COOKED_COMMON_MEAT.get(), 0.35f, 200, true);
         smelt(WRItems.RAW_APEX_MEAT.get(), WRItems.COOKED_APEX_MEAT.get(), 0.35f, 200, true);
         smelt(WRItems.RAW_BEHEMOTH_MEAT.get(), WRItems.COOKED_BEHEMOTH_MEAT.get(), 0.5f, 250, true);
-        shaped(WRItems.JEWELLED_APPLE.get()).input('A', Items.APPLE).input('G', WRItems.Tags.GEMS_GEODE).pattern(" G ").pattern("GAG").pattern(" G ").criterion("has_geode", conditionsFromItem(WRItems.BLUE_GEODE.get())).offerTo(consumer);
+        shaped(WRItems.JEWELLED_APPLE.get()).define('A', Items.APPLE).define('G', WRItems.Tags.GEMS_GEODE).pattern(" G ").pattern("GAG").pattern(" G ").unlockedBy("has_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
 
         // Dragon armor
-        shaped(WRItems.DRAGON_ARMOR_IRON.get()).input('X', Items.IRON_INGOT).input('#', Items.IRON_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").criterion("has_iron", conditionsFromItem(Items.IRON_INGOT)).offerTo(consumer);
-        shaped(WRItems.DRAGON_ARMOR_GOLD.get()).input('X', Items.GOLD_INGOT).input('#', Items.GOLD_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").criterion("has_gold", conditionsFromItem(Items.GOLD_INGOT)).offerTo(consumer);
-        shaped(WRItems.DRAGON_ARMOR_DIAMOND.get()).input('X', Items.DIAMOND).input('#', Items.DIAMOND_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").criterion("has_diamond", conditionsFromItem(Items.DIAMOND)).offerTo(consumer);
-        shaped(WRItems.DRAGON_ARMOR_PLATINUM.get()).input('X', WRItems.PLATINUM_INGOT.get()).input('#', WRBlocks.PLATINUM_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").criterion("has_platinum", conditionsFromItem(WRItems.PLATINUM_INGOT.get())).offerTo(consumer);
-        shaped(WRItems.DRAGON_ARMOR_BLUE_GEODE.get()).input('X', WRItems.BLUE_GEODE.get()).input('#', WRBlocks.BLUE_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").criterion("has_blue_geode", conditionsFromItem(WRItems.BLUE_GEODE.get())).offerTo(consumer);
-        shaped(WRItems.DRAGON_ARMOR_RED_GEODE.get()).input('X', WRItems.RED_GEODE.get()).input('#', WRBlocks.RED_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").criterion("has_red_geode", conditionsFromItem(WRItems.RED_GEODE.get())).offerTo(consumer);
-        shaped(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get()).input('X', WRItems.PURPLE_GEODE.get()).input('#', WRBlocks.PURPLE_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").criterion("has_purple_geode", conditionsFromItem(WRItems.PURPLE_GEODE.get())).offerTo(consumer);
+        shaped(WRItems.DRAGON_ARMOR_IRON.get()).define('X', Items.IRON_INGOT).define('#', Items.IRON_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_iron", has(Items.IRON_INGOT)).save(consumer);
+        shaped(WRItems.DRAGON_ARMOR_GOLD.get()).define('X', Items.GOLD_INGOT).define('#', Items.GOLD_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_gold", has(Items.GOLD_INGOT)).save(consumer);
+        shaped(WRItems.DRAGON_ARMOR_DIAMOND.get()).define('X', Items.DIAMOND).define('#', Items.DIAMOND_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_diamond", has(Items.DIAMOND)).save(consumer);
+        shaped(WRItems.DRAGON_ARMOR_PLATINUM.get()).define('X', WRItems.PLATINUM_INGOT.get()).define('#', WRBlocks.PLATINUM_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_platinum", has(WRItems.PLATINUM_INGOT.get())).save(consumer);
+        shaped(WRItems.DRAGON_ARMOR_BLUE_GEODE.get()).define('X', WRItems.BLUE_GEODE.get()).define('#', WRBlocks.BLUE_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_blue_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
+        shaped(WRItems.DRAGON_ARMOR_RED_GEODE.get()).define('X', WRItems.RED_GEODE.get()).define('#', WRBlocks.RED_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_red_geode", has(WRItems.RED_GEODE.get())).save(consumer);
+        shaped(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get()).define('X', WRItems.PURPLE_GEODE.get()).define('#', WRBlocks.PURPLE_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_purple_geode", has(WRItems.PURPLE_GEODE.get())).save(consumer);
 
         woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.OSERI_LOGS));
     }

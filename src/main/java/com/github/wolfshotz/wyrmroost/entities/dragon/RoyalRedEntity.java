@@ -68,7 +68,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
-        super(dragon, world);
+        super(dragon, level);
         ignoreCameraFrustum = WRConfig.disableFrustumCheck;
 
         setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0);
@@ -127,12 +127,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
         breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
         knockOutTimer.add(isKnockedOut()? 0.05f : -0.1f);
 
-        if (!world.isClientSide)
+        if (!level.isClientSide)
         {
             if (isBreathingFire() && getControllingPlayer() == null && getTarget() == null)
                 setBreathingFire(false);
 
-            if (breathTimer.get() == 1) world.spawnEntity(new FireBreathEntity(this));
+            if (breathTimer.get() == 1) level.spawnEntity(new FireBreathEntity(this));
 
             if (noActiveAnimation() && !isKnockedOut() && !isSleeping() && !isBreathingFire() && !isBaby() && getRandom().nextDouble() < 0.0004)
                 AnimationPacket.send(this, ROAR_ANIMATION);
@@ -152,13 +152,13 @@ public class RoyalRedEntity extends AbstractDragonEntity
         }
         else if (anim == SLAP_ATTACK_ANIMATION && (animTime == 7 || animTime == 12))
         {
-            attackInBox(getOffsetBox(getWidth()).expand(0.2), 50);
+            attackInBox(getOffsetBox(getBbWidth()).inflate(0.2), 50);
             if (animTime == 7) playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
-            yaw = headYaw;
+            yRot = headYaw;
         }
         else if (anim == BITE_ATTACK_ANIMATION && animTime == 4)
         {
-            attackInBox(getOffsetBox(getWidth()).expand(-0.3), 100);
+            attackInBox(getOffsetBox(getBbWidth()).inflate(-0.3), 100);
             playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
         }
     }
@@ -166,19 +166,19 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (!isTamed() && isFoodItem(stack))
+        if (!isTame() && isFoodItem(stack))
         {
             if (isBaby() || player.isCreative())
             {
                 eat(stack);
                 tame(getRandom().nextDouble() < 0.1, player);
                 setKnockedOut(false);
-                return ActionResultType.success(world.isClientSide);
+                return ActionResultType.success(level.isClientSide);
             }
 
             if (isKnockedOut() && knockOutTime <= MAX_KNOCKOUT_TIME / 2)
             {
-                if (!world.isClientSide)
+                if (!level.isClientSide)
                 {
                     // base taming chances on consciousness; the closer it is to waking up the better the chances
                     if (tame(getRandom().nextInt(knockOutTime) < MAX_KNOCKOUT_TIME * 0.2d, player))
@@ -201,7 +201,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public void onDeath(DamageSource cause)
     {
-        if (isTamed() || isKnockedOut() || cause.getName().equals(DamageSource.OUT_OF_WORLD.getName()))
+        if (isTame() || isKnockedOut() || cause.getName().equals(DamageSource.OUT_OF_WORLD.getName()))
             super.onDeath(cause);
         else // knockout RR's instead of killing them
         {
@@ -213,7 +213,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     public void onTrackedDataSet(DataParameter<?> key)
     {
-        if (world.isClientSide && key.equals(BREATHING_FIRE) && isBreathingFire())
+        if (level.isClientSide && key.equals(BREATHING_FIRE) && isBreathingFire())
             BreathSound.play(this);
         else super.onTrackedDataSet(key);
     }
@@ -247,7 +247,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public void meleeAttack()
     {
-        if (!world.isClientSide)
+        if (!level.isClientSide)
             AnimationPacket.send(this, isFlying() || getRandom().nextBoolean()? BITE_ATTACK_ANIMATION : SLAP_ATTACK_ANIMATION);
     }
 
@@ -256,7 +256,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         Vector3d rotVector = getRotationVector(pitch, bodyYaw);
         Vector3d position = getCameraPosVec(1).subtract(0, 1.3d, 0);
-        position = position.add(rotVector).multiply(getWidth() / 2); // base of neck
+        position = position.add(rotVector).multiply(getBbWidth() / 2); // base of neck
         return position.add(rotVector.multiply(2.75));
     }
 
@@ -304,25 +304,25 @@ public class RoyalRedEntity extends AbstractDragonEntity
     @Override
     protected float getActiveEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
-        return getHeight() * (isFlying()? 0.95f : 1.13f);
+        return getBbHeight() * (isFlying()? 0.95f : 1.13f);
     }
 
     @Override
     protected boolean canStartRiding(Entity entity)
     {
-        return !isBaby() && !isKnockedOut() && isTamed();
+        return !isBaby() && !isKnockedOut() && isTame();
     }
 
     @Override
     protected boolean canAddPassenger(Entity passenger)
     {
-        return getPassengerList().size() < 3;
+        return getPassengers().size() < 3;
     }
 
     @Override
     public Vector3d getPassengerPosOffset(Entity entity, int index)
     {
-        return new Vector3d(0, getHeight() * 0.85f, index == 0? 0.5f : -1);
+        return new Vector3d(0, getBbHeight() * 0.85f, index == 0? 0.5f : -1);
     }
 
     @Override
@@ -344,7 +344,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
     public void setBreathingFire(boolean b)
     {
-        if (!world.isClientSide) dataTracker.set(BREATHING_FIRE, b);
+        if (!level.isClientSide) dataTracker.set(BREATHING_FIRE, b);
     }
 
     public boolean isKnockedOut()
@@ -355,12 +355,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public void setKnockedOut(boolean b)
     {
         dataTracker.set(KNOCKED_OUT, b);
-        if (!world.isClientSide)
+        if (!level.isClientSide)
         {
             knockOutTime = b? MAX_KNOCKOUT_TIME : 0;
             if (b)
             {
-                headYaw = yaw;
+                headYaw = yRot;
                 clearAI();
                 setFlying(false);
             }
@@ -482,16 +482,16 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         public AttackGoal()
         {
-            setControls(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
-        public boolean canStart()
+        public boolean canUse()
         {
             LivingEntity target = getTarget();
             if (target != null && target.isAlive())
             {
-                if (!isInWalkTargetRange(target.getBlockPos())) return false;
+                if (!isInWalkTargetRange(target.blockPosition())) return false;
                 return EntityPredicates.EXCEPT_CREATIVE_SPECTATOR_OR_PEACEFUL.test(target);
             }
             return false;
@@ -506,7 +506,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
             boolean isBreathingFire = isBreathingFire();
             boolean canSeeTarget = getVisibilityCache().canSee(target);
 
-            getLookControl().lookAt(target, 90, 90);
+            getLookControl().setLookAt(target, 90, 90);
 
             double headAngle = Math.abs(MathHelper.wrapDegrees(degrees - headYaw));
             boolean shouldBreatheFire = !isAtHome() && (distFromTarget > 100 || target.getY() - getY() > 3 || isFlying()) && headAngle < 30;
@@ -519,11 +519,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 meleeAttack();
             }
 
-            if (getNavigation().isIdle() || age % 10 == 0)
+            if (getNavigation().isDone() || age % 10 == 0)
             {
                 boolean isFlyingTarget = target instanceof AbstractDragonEntity && ((AbstractDragonEntity) target).isFlying();
                 double y = target.getY() + (!isFlyingTarget && getRandom().nextDouble() > 0.1? 8 : 0);
-                getNavigation().startMovingTo(target.getX(), y, target.getZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
+                getNavigation().moveTo(target.getX(), y, target.getZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
             }
         }
     }

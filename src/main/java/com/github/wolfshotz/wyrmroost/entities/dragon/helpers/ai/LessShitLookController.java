@@ -39,7 +39,7 @@ public class LessShitLookController extends LookController
         }
         else entity.headYaw = changeAngle(entity.headYaw, entity.bodyYaw, yawSpeed);
 
-        if (!entity.getNavigation().isIdle())
+        if (!entity.getNavigation().isDone())
             entity.headYaw = MathHelper.stepAngleTowards(entity.headYaw, entity.bodyYaw, yawSpeed);
     }
 

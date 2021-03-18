@@ -23,8 +23,8 @@ public class NoExposureReplacementFeature extends Feature<ReplaceBlockConfig>
     @Override
     public boolean generate(ISeedReader world, ChunkGenerator chunkGenerator, Random random, BlockPos pos, ReplaceBlockConfig config)
     {
-        if (world.getBlockState(pos).isOf(config.target.getBlock()) && checkExposure(world, pos))
-            world.setBlockState(pos, config.state, 2);
+        if (level.getBlockState(pos).isOf(config.target.getBlock()) && checkExposure(level, pos))
+            level.setBlockState(pos, config.state, 2);
 
         return true;
     }
@@ -34,8 +34,8 @@ public class NoExposureReplacementFeature extends Feature<ReplaceBlockConfig>
         BlockPos.Mutable pos = new BlockPos.Mutable();
         for (Direction direction : DIRECTIONS)
         {
-            BlockState state = world.getBlockState(pos.set(initialPos, direction));
-            if (state.isAir(world, pos)) return false;
+            BlockState state = level.getBlockState(pos.set(initialPos, direction));
+            if (state.isAir(level, pos)) return false;
         }
         return true;
     }

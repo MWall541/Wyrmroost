@@ -11,10 +11,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.OutlineLayerBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -43,30 +40,30 @@ public class RenderHelper extends RenderType
 
     public static RenderType getAdditiveGlow(ResourceLocation locationIn)
     {
-        return of("glow_additive", DefaultVertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, false, true, State.builder()
-                .texture(new TextureState(locationIn, false, false))
-                .transparency(ADDITIVE_TRANSPARENCY)
-                .alpha(ONE_TENTH_ALPHA)
-                .build(false));
+        return create("glow_additive", DefaultVertexFormats.NEW_ENTITY, 7, 256, false, true, State.builder()
+                .setTextureState(new TextureState(locationIn, false, false))
+                .setTransparencyState(ADDITIVE_TRANSPARENCY)
+                .setAlphaState(DEFAULT_ALPHA)
+                .createCompositeState(false));
     }
 
     public static RenderType getTranslucentGlow(ResourceLocation texture)
     {
-        return of("glow_transluscent", DefaultVertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, false, true, State.builder()
-                .texture(new TextureState(texture, false, false))
-                .cull(DISABLE_CULLING)
-                .transparency(TRANSLUCENT_TRANSPARENCY)
-                .alpha(ONE_TENTH_ALPHA)
-                .build(false));
+        return create("glow_transluscent", DefaultVertexFormats.NEW_ENTITY, 7, 256, false, true, State.builder()
+                .setTextureState(new TextureState(texture, false, false))
+                .setCullState(NO_CULL)
+                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                .setAlphaState(DEFAULT_ALPHA)
+                .createCompositeState(false));
     }
 
     public static RenderType getThiccLines(double thickness)
     {
-        return of("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, State.builder()
-                        .lineWidth(new LineState(OptionalDouble.of(thickness)))
-                        .transparency(TRANSLUCENT_TRANSPARENCY)
-                        .writeMaskState(COLOR_MASK)
-                        .build(false));
+        return create("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, State.builder()
+                        .setLineState(new LineState(OptionalDouble.of(thickness)))
+                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                        .setWriteMaskState(COLOR_WRITE)
+                        .createCompositeState(false));
     }
 
     // == [Rendering] ==
@@ -97,15 +94,15 @@ public class RenderHelper extends RenderType
             event.setCanceled(true);
 
             Minecraft mc = ClientEvents.getClient();
-            OutlineLayerBuffer buffer = mc.getBufferBuilders().getOutlineVertexConsumers();
+            OutlineLayerBuffer buffer = mc.renderBuffers().outlineBufferSource();
             MatrixStack ms = event.getMatrixStack();
             LivingRenderer<? super LivingEntity, ?> renderer = event.getRenderer();
             float partialTicks = event.getPartialRenderTick();
-            float yaw = MathHelper.lerp(partialTicks, entity.prevYaw, entity.prevYaw);
+            float yaw = MathHelper.lerp(partialTicks, entity.yRotO, entity.yRot);
 
             buffer.setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF);
             renderer.render(entity, yaw, partialTicks, ms, buffer, 15728640);
-            buffer.draw();
+            buffer.endOutlineBatch();
         }
     }
 
@@ -138,26 +135,26 @@ public class RenderHelper extends RenderType
         PlayerEntity player = mc.player;
         ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
         if (stack == null) return;
-        AbstractDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.world, stack);
+        AbstractDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.level, stack);
         if (dragon == null) return;
 
         DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
         if (WRConfig.renderEntityOutlines)
         {
-            renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.age + partialTicks) * 0.2f) * 35 + 45));
+            renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.tickCount + partialTicks) * 0.2f) * 35 + 45));
             LivingEntity target = dragon.getTarget();
             if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
         }
-        dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.world, 4, 0xff0000ff));
+        dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.level, 4, 0xff0000ff));
     }
 
     public static void drawShape(MatrixStack ms, IVertexBuilder buffer, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
     {
-        Matrix4f matrix4f = ms.peek().getModel();
-        shapeIn.forEachEdge((x1, y1, z1, x2, y2, z2) ->
+        Matrix4f matrix4f = ms.last().pose();
+        shapeIn.forAllEdges((x1, y1, z1, x2, y2, z2) ->
         {
-            buffer.vertex(matrix4f, (float) (x1 + xIn), (float) (y1 + yIn), (float) (z1 + zIn)).color(red, green, blue, alpha).next();
-            buffer.vertex(matrix4f, (float) (x2 + xIn), (float) (y2 + yIn), (float) (z2 + zIn)).color(red, green, blue, alpha).next();
+            buffer.vertex(matrix4f, (float) (x1 + xIn), (float) (y1 + yIn), (float) (z1 + zIn)).color(red, green, blue, alpha).endVertex();
+            buffer.vertex(matrix4f, (float) (x2 + xIn), (float) (y2 + yIn), (float) (z2 + zIn)).color(red, green, blue, alpha).endVertex();
         });
     }
 
@@ -168,14 +165,14 @@ public class RenderHelper extends RenderType
         double y = pos.getY() - view.y;
         double z = pos.getZ() - view.z;
 
-        IRenderTypeBuffer.Impl impl = Minecraft.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        IRenderTypeBuffer.Impl impl = Minecraft.getInstance().renderBuffers().bufferSource();
         drawShape(ms,
                 impl.getBuffer(getThiccLines(lineThickness)),
-                world.getBlockState(pos).getOutlineShape(world, pos),
+                world.getBlockState(pos).getShape(world, pos),
                 x, y, z,
                 ((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >> 24) & 0xFF) / 255f);
 
-        impl.draw();
+        impl.endBatch();
     }
 
     public enum DebugBox
@@ -220,9 +217,9 @@ public class RenderHelper extends RenderType
             double y = view.y;
             double z = view.z;
 
-            IRenderTypeBuffer.Impl type = Minecraft.getInstance().getBufferBuilders().getEntityVertexConsumers();
-            WorldRenderer.drawBox(
-                    ms, type.getBuffer(RenderType.getLines()),
+            IRenderTypeBuffer.Impl type = Minecraft.getInstance().renderBuffers().bufferSource();
+            WorldRenderer.renderLineBox(
+                    ms, type.getBuffer(RenderType.lines()),
                     aabb.minX - x,
                     aabb.minY - y,
                     aabb.minZ - z,
@@ -233,7 +230,7 @@ public class RenderHelper extends RenderType
                     ((color >> 8) & 0xff) / 255f,
                     ((color >> 16) & 0xff) / 255f,
                     ((color >> 24) & 0xff) / 255f);
-            type.draw();
+            type.endBatch();
 
             if (--time <= 0) aabb = null;
         }

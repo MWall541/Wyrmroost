@@ -19,17 +19,17 @@ public class DataGatherer
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
 
-//        if (event.includeServer())
-//        {
-//            TagData.provide(gen, fileHelper);
-//            gen.install(new RecipeData(gen));
-//            gen.install(new LootTableData(gen));
-//        }
+        if (event.includeServer())
+        {
+            TagData.provide(gen, fileHelper);
+            gen.addProvider(new RecipeData(gen));
+            gen.addProvider(new LootTableData(gen));
+        }
         if (event.includeClient())
         {
-//            gen.install(new BlockModelData(gen, fileHelper));
-//            gen.install(new ItemModelData(gen, fileHelper));
-            gen.install(new SoundData(gen, event.getExistingFileHelper()));
+            gen.addProvider(new BlockModelData(gen, fileHelper));
+            gen.addProvider(new ItemModelData(gen, fileHelper));
+            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
         }
     }
 }

@@ -35,16 +35,16 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     public static final ResourceLocation GLOW = resource("activated.png");
     public static final ResourceLocation CHRISTMAS_GLOW = resource("christmas_activated.png");
 
-    private static final RenderMaterial CONDUIT_CAGE_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS_TEXTURE, new ResourceLocation("entity/conduit/cage"));
-    private static final RenderMaterial CONDUIT_WIND_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS_TEXTURE, new ResourceLocation("entity/conduit/wind"));
-    private static final RenderMaterial CONDUIT_VERTICAL_WIND_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS_TEXTURE, new ResourceLocation("entity/conduit/wind_vertical"));
-    private static final RenderMaterial CONDUIT_OPEN_EYE_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS_TEXTURE, new ResourceLocation("entity/conduit/open_eye"));
+    private static final RenderMaterial CONDUIT_CAGE_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS, new ResourceLocation("entity/conduit/cage"));
+    private static final RenderMaterial CONDUIT_WIND_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS, new ResourceLocation("entity/conduit/wind"));
+    private static final RenderMaterial CONDUIT_VERTICAL_WIND_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS, new ResourceLocation("entity/conduit/wind_vertical"));
+    private static final RenderMaterial CONDUIT_OPEN_EYE_TEXTURE = new RenderMaterial(PlayerContainer.BLOCK_ATLAS, new ResourceLocation("entity/conduit/open_eye"));
 
     public ButterflyLeviathanRenderer(EntityRendererManager manager)
     {
         super(manager, new ButterflyLeviathanModel(), 2f);
-        addFeature(new LightningLayer());
-        addFeature(new ConduitLayer());
+        addLayer(new LightningLayer());
+        addLayer(new ConduitLayer());
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
 
     @Nullable
     @Override
-    public ResourceLocation getTexture(ButterflyLeviathanEntity entity)
+    public ResourceLocation getTextureLocation(ButterflyLeviathanEntity entity)
     {
         int variant = entity.getVariant();
 
@@ -94,7 +94,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         {
             float alpha = MathHelper.clamp(entity.lightningCooldown, 1, 255);
             IVertexBuilder builder = buffer.getBuffer(RenderHelper.getTranslucentGlow(WRConfig.deckTheHalls? CHRISTMAS_GLOW : GLOW));
-            getModel().render(ms, builder, 15728640, OverlayTexture.DEFAULT_UV, 1, 1, 1, alpha);
+            getModel().renderToBuffer(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
         }
     }
 
@@ -111,9 +111,9 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             conduitEye = new ModelRenderer(16, 16, 0, 0);
             conduitWind = new ModelRenderer(64, 32, 0, 0);
             conduitCage = new ModelRenderer(32, 16, 0, 0);
-            conduitEye.addCuboid(-4.0F, -4.0F, 0.0F, 8.0F, 8.0F, 0.0F, 0.01F);
-            conduitWind.addCuboid(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F);
-            conduitCage.addCuboid(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F);
+            conduitEye.addBox(-4.0F, -4.0F, 0.0F, 8.0F, 8.0F, 0.0F, 0.01F);
+            conduitWind.addBox(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F);
+            conduitCage.addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F);
         }
 
         @Override
@@ -122,57 +122,57 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
             if ((entity.getAnimation() == ButterflyLeviathanEntity.CONDUIT_ANIMATION && entity.getAnimationTick() < 15) || !entity.hasConduit())
                 return;
 
-            int overlay = getOverlay(entity, getAnimationCounter(entity, partialTicks));
+            int overlay = getOverlayCoords(entity, getWhiteOverlayProgress(entity, partialTicks));
             float rotation = (tick * -0.0375f) * (180f / Mafs.PI);
             float translation = MathHelper.sin(tick * 0.1F) / 2.0F + 0.5F;
             translation = translation * translation + translation;
-            if (!entity.isSubmergedInWater()) headPitch /= 2;
+            if (!entity.isUnderWater()) headPitch /= 2;
 
-            ms.push();
+            ms.pushPose();
             ms.scale(0.33f, 0.33f, 0.33f);
-            ms.translate(model.head.pitch / 16, model.head.yaw / 16, model.head.roll / 16);
-            ms.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(netHeadYaw * 0.75f)); // rotate to match head rotations
-            ms.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(headPitch));
+            ms.translate(model.head.xRot / 16, model.head.yRot / 16, model.head.zRot / 16);
+            ms.mulPose(Vector3f.YP.rotationDegrees(netHeadYaw * 0.75f)); // rotate to match head rotations
+            ms.mulPose(Vector3f.XP.rotationDegrees(headPitch));
             ms.translate(0,  0.5f - (entity.beachedTimer.get(partialTicks) * 1.1f), -3.65);
 
             // Cage
-            ms.push();
+            ms.pushPose();
             ms.translate(0, (0.3F + translation * 0.2F), 0);
             Vector3f vector3f = new Vector3f(0.5F, 1.0F, 0.5F);
             vector3f.normalize();
-            ms.multiply(new Quaternion(vector3f, rotation, true));
-            conduitCage.render(ms, CONDUIT_CAGE_TEXTURE.getVertexConsumer(buffer, RenderType::getEntityCutoutNoCull), light, overlay);
-            ms.pop();
+            ms.mulPose(new Quaternion(vector3f, rotation, true));
+            conduitCage.render(ms, CONDUIT_CAGE_TEXTURE.buffer(buffer, RenderType::entityCutoutNoCull), light, overlay);
+            ms.popPose();
 
             // Wind
-            int gen = entity.age / 66 % 3;
-            ms.push();
+            int gen = entity.tickCount / 66 % 3;
+            ms.pushPose();
             ms.translate(0, 0.5d, 0);
-            if (gen == 1) ms.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90));
-            else if (gen == 2) ms.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(90));
-            IVertexBuilder builder = (gen == 1? CONDUIT_VERTICAL_WIND_TEXTURE : CONDUIT_WIND_TEXTURE).getVertexConsumer(buffer, RenderType::getEntityCutoutNoCull);
+            if (gen == 1) ms.mulPose(Vector3f.XP.rotationDegrees(90));
+            else if (gen == 2) ms.mulPose(Vector3f.ZP.rotationDegrees(90));
+            IVertexBuilder builder = (gen == 1? CONDUIT_VERTICAL_WIND_TEXTURE : CONDUIT_WIND_TEXTURE).buffer(buffer, RenderType::entityCutoutNoCull);
             conduitWind.render(ms, builder, light, overlay);
-            ms.pop();
+            ms.popPose();
 
             // Wind but its the second time
-            ms.push();
+            ms.pushPose();
             ms.scale(0.875f, 0.875f, 0.875f);
-            ms.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(180f));
-            ms.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180f));
+            ms.mulPose(Vector3f.XP.rotationDegrees(180f));
+            ms.mulPose(Vector3f.ZP.rotationDegrees(180f));
             conduitWind.render(ms, builder, light, overlay);
-            ms.pop();
+            ms.popPose();
 
             // Eye
-            ms.push();
+            ms.pushPose();
             ms.translate(0, (0.3F + translation * 0.2F), 0);
-            ms.multiply(Vector3f.NEGATIVE_Y.getDegreesQuaternion(entity.yaw)); // negate stack rotation from entity for full rotation control
-            ms.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(getRenderManager().camera.getYaw()));
-            ms.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(getRenderManager().camera.getPitch()));
+            ms.mulPose(Vector3f.YN.rotationDegrees(entity.yRot)); // negate stack rotation from entity for full rotation control
+            ms.mulPose(Vector3f.YP.rotationDegrees(getDispatcher().camera.getYRot()));
+            ms.mulPose(Vector3f.XP.rotationDegrees(getDispatcher().camera.getXRot()));
             ms.scale(0.8f, 0.8f, 0.8f);
-            conduitEye.render(ms, CONDUIT_OPEN_EYE_TEXTURE.getVertexConsumer(buffer, RenderType::getEntityCutoutNoCull), light, overlay);
-            ms.pop();
+            conduitEye.render(ms, CONDUIT_OPEN_EYE_TEXTURE.buffer(buffer, RenderType::entityCutoutNoCull), light, overlay);
+            ms.popPose();
 
-            ms.pop();
+            ms.popPose();
         }
     }
 }

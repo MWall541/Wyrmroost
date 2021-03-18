@@ -23,11 +23,11 @@ public class CanariWyvernRenderer extends AbstractDragonRenderer<CanariWyvernEnt
 
     @Nullable
     @Override
-    public ResourceLocation getTexture(CanariWyvernEntity canari)
+    public ResourceLocation getTextureLocation(CanariWyvernEntity canari)
     {
         if (canari.hasCustomName())
         {
-            String name = canari.getCustomName().asString();
+            String name = canari.getCustomName().getString();
             if (name.equals("Rudy")) return RUDY;
             else if (name.equals("Lady Everlyn Winklestein") && !canari.isMale()) return LADY;
         }

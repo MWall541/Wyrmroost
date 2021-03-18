@@ -95,7 +95,7 @@ public class CommonEvents
         if (player.isSneaking()) dragon.tame(true, player);
         else
         {
-            if (dragon.world.isClientSide) DebugScreen.open(dragon);
+            if (dragon.level.isClientSide) DebugScreen.open(dragon);
             else Wyrmroost.LOG.info(dragon.getNavigation().getCurrentPath() == null? "null" : dragon.getNavigation().getCurrentPath().getTarget().toString());
         }
     }

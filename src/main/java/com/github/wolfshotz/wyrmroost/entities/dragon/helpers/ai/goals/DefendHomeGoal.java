@@ -18,7 +18,7 @@ import java.util.function.Predicate;
  */
 public class DefendHomeGoal extends TargetGoal
 {
-    private static final Predicate<LivingEntity> FILTER = e -> e instanceof IMob && !(e instanceof CreeperEntity) && !e.getName().asString().equalsIgnoreCase("Ignore Me");
+    private static final Predicate<LivingEntity> FILTER = e -> e instanceof IMob && !(e instanceof CreeperEntity) && !e.getName().getString().equalsIgnoreCase("Ignore Me");
 
     private final AbstractDragonEntity defender;
     private final EntityPredicate predicate;
@@ -27,8 +27,8 @@ public class DefendHomeGoal extends TargetGoal
     {
         super(defender, false, false);
         this.defender = defender;
-        this.predicate = new EntityPredicate().setPredicate(FILTER.and(additionalFilters));
-        setControls(EnumSet.of(Flag.TARGET));
+        this.predicate = new EntityPredicate().selector(FILTER.and(additionalFilters));
+        setFlags(EnumSet.of(Flag.TARGET));
     }
 
     public DefendHomeGoal(AbstractDragonEntity defender)
@@ -37,11 +37,11 @@ public class DefendHomeGoal extends TargetGoal
     }
 
     @Override
-    public boolean canStart()
+    public boolean canUse()
     {
         if (defender.getHealth() <= defender.getMaxHealth() * 0.25) return false;
         if (!defender.getHomePos().isPresent()) return false;
-        return defender.getRandom().nextDouble() < 0.2 && (target = findPotentialTarget()) != null;
+        return defender.getRandom().nextDouble() < 0.2 && (targetMob = findPotentialTarget()) != null;
     }
 
     @Override
@@ -50,30 +50,30 @@ public class DefendHomeGoal extends TargetGoal
         super.start();
 
         // alert others!
-        for (MobEntity mob : defender.world.getEntitiesByClass(MobEntity.class, defender.getBoundingBox().expand(WRConfig.homeRadius), defender::isTeammate))
-            mob.setTarget(target);
+        for (MobEntity mob : defender.level.getEntitiesOfClass(MobEntity.class, defender.getBoundingBox().inflate(WRConfig.homeRadius), defender::isTeammate))
+            mob.setTarget(targetMob);
     }
 
     @Override
-    public boolean shouldContinue()
+    public boolean canContinueToUse()
     {
-        return defender.isInWalkTargetRange(target.getBlockPos()) && super.shouldContinue();
+        return defender.isInWalkTargetRange(targetMob.blockPosition()) && super.canContinueToUse();
     }
 
     @Override
-    protected double getFollowRange()
+    protected double getFollowDistance()
     {
         return defender.getPositionTargetRange();
     }
 
     public LivingEntity findPotentialTarget()
     {
-        return defender.world.getClosestEntity(LivingEntity.class,
+        return defender.level.getNearestEntity(LivingEntity.class,
                 predicate,
                 defender,
                 defender.getX(),
                 defender.getEyeY(),
                 defender.getZ(),
-                new AxisAlignedBB(defender.getPositionTarget()).expand(WRConfig.homeRadius));
+                new AxisAlignedBB(defender.getPositionTarget()).inflate(WRConfig.homeRadius));
     }
 }

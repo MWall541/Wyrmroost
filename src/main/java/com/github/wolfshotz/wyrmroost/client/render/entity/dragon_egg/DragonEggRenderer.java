@@ -33,38 +33,38 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
     @Override
     public void render(DragonEggEntity entity, float entityYaw, float partialTicks, MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn)
     {
-        ms.push();
+        ms.pushPose();
         scale(entity, ms);
         ms.translate(0, -1.5, 0);
         MODEL.animate(entity, partialTicks);
-        IVertexBuilder builder = buffer.getBuffer(MODEL.getLayer(getTexture(entity)));
-        MODEL.render(ms, builder, packedLightIn, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
-        ms.pop();
+        IVertexBuilder builder = buffer.getBuffer(MODEL.renderType(getTextureLocation(entity)));
+        MODEL.renderToBuffer(ms, builder, packedLightIn, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        ms.popPose();
 
         super.render(entity, entityYaw, partialTicks, ms, buffer, packedLightIn);
     }
 
     @Override
-    protected boolean hasLabel(DragonEggEntity p_177070_1_)
+    protected boolean shouldShowName(DragonEggEntity entity)
     {
         return false;
     }
 
     @Override
-    protected void renderLabelIfPresent(DragonEggEntity p_225629_1_, ITextComponent p_225629_2_, MatrixStack p_225629_3_, IRenderTypeBuffer p_225629_4_, int p_225629_5_)
+    protected void renderNameTag(DragonEggEntity p_225629_1_, ITextComponent p_225629_2_, MatrixStack p_225629_3_, IRenderTypeBuffer p_225629_4_, int p_225629_5_)
     {
-        super.renderLabelIfPresent(p_225629_1_, p_225629_2_, p_225629_3_, p_225629_4_, p_225629_5_);
+        super.renderNameTag(p_225629_1_, p_225629_2_, p_225629_3_, p_225629_4_, p_225629_5_);
     }
 
     @Override
-    public ResourceLocation getTexture(DragonEggEntity entity) { return getDragonEggTexture(entity.containedDragon); }
+    public ResourceLocation getTextureLocation(DragonEggEntity entity) { return getDragonEggTexture(entity.containedDragon); }
 
     public static ResourceLocation getDragonEggTexture(EntityType<?> type)
     {
         return TEXTURE_MAP.computeIfAbsent(type, t ->
         {
             ResourceLocation textureLoc = Wyrmroost.id(String.format("textures/entity/dragon/%s/egg.png", type.getRegistryName().getPath()));
-            if (Minecraft.getInstance().getResourceManager().containsResource(textureLoc)) return textureLoc;
+            if (Minecraft.getInstance().getResourceManager().hasResource(textureLoc)) return textureLoc;
             return DEFAULT_TEXTURE;
         });
     }
@@ -92,20 +92,20 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 
         public Model()
         {
-            super(RenderType::getEntitySolid);
-            textureWidth = 64;
-            textureHeight = 32;
+            super(RenderType::entitySolid);
+            texWidth = 64;
+            texHeight = 32;
             four = new ModelRenderer(this, 0, 19);
-            four.setPivot(0.0F, -1.3F, 0.0F);
-            four.addCuboid(-1.5F, -1.5F, -1.5F, 3, 3, 3, 0.0F);
+            four.setPos(0.0F, -1.3F, 0.0F);
+            four.addBox(-1.5F, -1.5F, -1.5F, 3, 3, 3, 0.0F);
             two = new ModelRenderer(this, 17, 0);
-            two.setPivot(0.0F, -1.5F, 0.0F);
-            two.addCuboid(-2.5F, -3.0F, -2.5F, 5, 6, 5, 0.0F);
+            two.setPos(0.0F, -1.5F, 0.0F);
+            two.addBox(-2.5F, -3.0F, -2.5F, 5, 6, 5, 0.0F);
             three = new ModelRenderer(this, 0, 9);
-            three.setPivot(0.0F, -2.0F, 0.0F);
-            three.addCuboid(-2.0F, -2.0F, -2.0F, 4, 4, 4, 0.0F);
+            three.setPos(0.0F, -2.0F, 0.0F);
+            three.addBox(-2.0F, -2.0F, -2.0F, 4, 4, 4, 0.0F);
             base = new WRModelRenderer(this, 0, 0);
-            base.setPivot(0.0F, 22.0F, 0.0F);
+            base.setPos(0.0F, 22.0F, 0.0F);
             base.addBox(-2.0F, -2.0F, -2.0F, 4, 4, 4, 0.0F);
             three.addChild(four);
             base.addChild(two);
@@ -115,17 +115,17 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
         }
 
         @Override
-        public void setAngles(DragonEggEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+        public void setupAnim(DragonEggEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
 
         public void animate(DragonEggEntity entity, float partialTicks)
         {
             float time = entity.wiggleTime.get(partialTicks);
-            base.pitch = time * entity.wiggleDirection.getOffsetX();
-            base.roll = time * entity.wiggleDirection.getOffsetZ();
+            base.xRot = time * entity.wiggleDirection.getStepX();
+            base.zRot = time * entity.wiggleDirection.getStepZ();
         }
 
         @Override
-        public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+        public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
         {
             base.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
             base.resetToDefaultPose();

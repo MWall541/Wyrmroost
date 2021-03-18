@@ -45,95 +45,95 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
     public RoostStalkerModel()
     {
-        this.textureWidth = 80;
-        this.textureHeight = 90;
+        this.texWidth = 80;
+        this.texHeight = 90;
         this.legl1 = new WRModelRenderer(this, 20, 72);
-        this.legl1.setPivot(-2.5F, 0.0F, -5.0F);
+        this.legl1.setPos(-2.5F, 0.0F, -5.0F);
         this.legl1.addBox(-5.0F, -1.5F, -1.5F, 5, 3, 3, 0.0F);
         this.setRotateAngle(legl1, 0.091106186954104F, -0.31869712141416456F, -0.33946653951289707F);
         this.tail3 = new WRModelRenderer(this, 0, 55);
-        this.tail3.setPivot(0.0F, 0.0F, 6.5F);
+        this.tail3.setPos(0.0F, 0.0F, 6.5F);
         this.tail3.addBox(-1.5F, -1.5F, 0.0F, 3, 3, 9, 0.0F);
         this.setRotateAngle(tail3, -0.091106186954104F, 0.0F, 0.0F);
         this.torso = new WRModelRenderer(this, 0, 0);
-        this.torso.setPivot(0.0F, 31.0F, 0.0F);
+        this.torso.setPos(0.0F, 31.0F, 0.0F);
         this.torso.addBox(-3.5F, -3.5F, -7.5F, 7, 7, 15, 0.0F);
         this.hornl = new WRModelRenderer(this, 40, 25);
         this.hornl.mirror = true;
-        this.hornl.setPivot(1.5F, -2.0F, -1.5F);
+        this.hornl.setPos(1.5F, -2.0F, -1.5F);
         this.hornl.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 6, 0.0F);
         this.setRotateAngle(hornl, 0.6829473363053812F, 0.27314402793711257F, 0.18203784098300857F);
         this.footl1_1 = new WRModelRenderer(this, 20, 80);
         this.footl1_1.mirror = true;
-        this.footl1_1.setPivot(4.0F, 0.0F, 0.0F);
+        this.footl1_1.setPos(4.0F, 0.0F, 0.0F);
         this.footl1_1.addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2, 0.0F);
         this.setRotateAngle(footl1_1, 0.0F, 0.0F, -0.31869712141416456F);
         this.legl3 = new WRModelRenderer(this, 20, 72);
-        this.legl3.setPivot(-2.5F, 0.0F, 5.0F);
+        this.legl3.setPos(-2.5F, 0.0F, 5.0F);
         this.legl3.addBox(-5.0F, -1.5F, -1.5F, 5, 3, 3, 0.0F);
         this.setRotateAngle(legl3, -0.091106186954104F, 0.31869712141416456F, -0.31869712141416456F);
         this.footl2 = new WRModelRenderer(this, 20, 80);
-        this.footl2.setPivot(-4.0F, 0.0F, 0.0F);
+        this.footl2.setPos(-4.0F, 0.0F, 0.0F);
         this.footl2.addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2, 0.0F);
         this.setRotateAngle(footl2, 0.0F, 0.0F, 0.31869712141416456F);
         this.footl3_1 = new WRModelRenderer(this, 20, 80);
         this.footl3_1.mirror = true;
-        this.footl3_1.setPivot(4.0F, 0.0F, 0.0F);
+        this.footl3_1.setPos(4.0F, 0.0F, 0.0F);
         this.footl3_1.addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2, 0.0F);
         this.setRotateAngle(footl3_1, 0.0F, 0.0F, -0.31869712141416456F);
         this.tail2 = new WRModelRenderer(this, 0, 40);
-        this.tail2.setPivot(0.0F, 0.0F, 6.5F);
+        this.tail2.setPos(0.0F, 0.0F, 6.5F);
         this.tail2.addBox(-2.0F, -2.0F, 0.0F, 4, 4, 7, 0.0F);
         this.setRotateAngle(tail2, -0.091106186954104F, 0.0F, 0.0F);
         this.legr2 = new WRModelRenderer(this, 20, 72);
         this.legr2.mirror = true;
-        this.legr2.setPivot(3.0F, 0.0F, 0.0F);
+        this.legr2.setPos(3.0F, 0.0F, 0.0F);
         this.legr2.addBox(0.0F, -1.5F, -1.5F, 5, 3, 3, 0.0F);
         this.setRotateAngle(legr2, 0.0F, 0.0F, 0.31869712141416456F);
         this.neck = new WRModelRenderer(this, 45, 0);
-        this.neck.setPivot(0.0F, -0.5F, -6.5F);
+        this.neck.setPos(0.0F, -0.5F, -6.5F);
         this.neck.addBox(-2.0F, -2.5F, -4.0F, 4, 5, 4, 0.0F);
         this.setRotateAngle(neck, 0, 0, 0);
         this.jaw = new WRModelRenderer(this, 35, 60);
-        this.jaw.setPivot(0.0F, 1.0F, 0.0F);
+        this.jaw.setPos(0.0F, 1.0F, 0.0F);
         this.jaw.addBox(-2.51F, 0.0F, -10.0F, 5, 2, 10, 0.0F);
         this.footl1 = new WRModelRenderer(this, 20, 80);
-        this.footl1.setPivot(-4.0F, 0.0F, 0.0F);
+        this.footl1.setPos(-4.0F, 0.0F, 0.0F);
         this.footl1.addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2, 0.0F);
         this.setRotateAngle(footl1, 0.0F, 0.0F, 0.31869712141416456F);
         this.head = new WRModelRenderer(this, 35, 40);
-        this.head.setPivot(0.0F, -0.5F, -3.0F);
+        this.head.setPos(0.0F, -0.5F, -3.0F);
         this.head.addBox(-2.5F, -3.0F, -10.0F, 5, 4, 10, 0.0F);
         this.setRotateAngle(head, 0, 0, 0);
         this.legl2 = new WRModelRenderer(this, 20, 72);
-        this.legl2.setPivot(-3.0F, 0.0F, 0.0F);
+        this.legl2.setPos(-3.0F, 0.0F, 0.0F);
         this.legl2.addBox(-5.0F, -1.5F, -1.5F, 5, 3, 3, 0.0F);
         this.setRotateAngle(legl2, 0.0F, 0.0F, -0.31869712141416456F);
         this.footl3 = new WRModelRenderer(this, 20, 80);
-        this.footl3.setPivot(-4.0F, 0.0F, 0.0F);
+        this.footl3.setPos(-4.0F, 0.0F, 0.0F);
         this.footl3.addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2, 0.0F);
         this.setRotateAngle(footl3, 0.0F, 0.0F, 0.31869712141416456F);
         this.tail1 = new WRModelRenderer(this, 0, 25);
-        this.tail1.setPivot(0.0F, -0.5F, 7.0F);
+        this.tail1.setPos(0.0F, -0.5F, 7.0F);
         this.tail1.addBox(-2.5F, -2.4F, 0.0F, 5, 5, 7, 0.0F);
         this.setRotateAngle(tail1, -0.091106186954104F, 0.0F, 0.0F);
         this.hornl_1 = new WRModelRenderer(this, 40, 25);
-        this.hornl_1.setPivot(-1.5F, -2.0F, -1.5F);
+        this.hornl_1.setPos(-1.5F, -2.0F, -1.5F);
         this.hornl_1.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 6, 0.0F);
         this.setRotateAngle(hornl_1, 0.6829473363053812F, -0.27314402793711257F, -0.18203784098300857F);
         this.footl2_1 = new WRModelRenderer(this, 20, 80);
         this.footl2_1.mirror = true;
-        this.footl2_1.setPivot(4.0F, 0.0F, 0.0F);
+        this.footl2_1.setPos(4.0F, 0.0F, 0.0F);
         this.footl2_1.addBox(-1.0F, 0.0F, -1.0F, 2, 6, 2, 0.0F);
         this.setRotateAngle(footl2_1, 0.0F, 0.0F, -0.31869712141416456F);
         this.legr3 = new WRModelRenderer(this, 20, 72);
         this.legr3.mirror = true;
-        this.legr3.setPivot(2.5F, 0.0F, 5.0F);
+        this.legr3.setPos(2.5F, 0.0F, 5.0F);
         this.legr3.addBox(0.0F, -1.5F, -1.5F, 5, 3, 3, 0.0F);
         this.setRotateAngle(legr3, -0.091106186954104F, -0.31869712141416456F, 0.31869712141416456F);
         this.legr1 = new WRModelRenderer(this, 20, 72);
         this.legr1.mirror = true;
-        this.legr1.setPivot(2.5F, 0.0F, -5.0F);
+        this.legr1.setPos(2.5F, 0.0F, -5.0F);
         this.legr1.addBox(0.0F, -1.5F, -1.5F, 5, 3, 3, 0.0F);
         this.setRotateAngle(legr1, 0.091106186954104F, 0.31869712141416456F, 0.31869712141416456F);
         this.torso.addChild(legl1);
@@ -161,30 +161,30 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
     }
 
     @Override
-    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        ms.push();
+        ms.pushPose();
         ms.scale(0.625f, 0.625f, 0.625f);
         torso.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        ms.pop();
+        ms.popPose();
     }
 
     @Override
-    public void setAngles(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         if (!stalker.isSleeping())
         {
-            head.pitch = headPitch * ((float) Math.PI / 180F);
-            head.yaw = netHeadYaw * ((float) Math.PI / 180F);
+            head.xRot = headPitch * ((float) Math.PI / 180F);
+            head.yRot = netHeadYaw * ((float) Math.PI / 180F);
         }
     }
     
     @Override
-    public void animateModel(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTick)
+    public void prepareMobModel(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTick)
     {
         this.entity = stalker;
-        float frame = stalker.age + partialTick;
+        float frame = stalker.tickCount + partialTick;
 
         resetToDefaultPose();
 
@@ -211,8 +211,8 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
         if (!flag)
         {
-            if (stalker.getItem().getItem() instanceof BlockItem) jaw.pitch = 0.3f;
-            else jaw.pitch = 0.15f;
+            if (stalker.getItem().getItem() instanceof BlockItem) jaw.xRot = 0.3f;
+            else jaw.xRot = 0.15f;
         }
     }
 
@@ -254,17 +254,17 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
     public void sit()
     {
-        torso.pivotY = 33f;
+        torso.y = 33f;
 
-        tail1.pitch = 0.01f;
+        tail1.xRot = 0.01f;
 
         float legAngle = 1.4f;
-        footl1.roll = legAngle;
-        footl2.roll = legAngle;
-        footl3.roll = legAngle;
+        footl1.zRot = legAngle;
+        footl2.zRot = legAngle;
+        footl3.zRot = legAngle;
 
-        footl1_1.roll = -legAngle;
-        footl2_1.roll = -legAngle;
-        footl3_1.roll = -legAngle;
+        footl1_1.zRot = -legAngle;
+        footl2_1.zRot = -legAngle;
+        footl3_1.zRot = -legAngle;
     }
 }

@@ -29,7 +29,7 @@ public class LogBlock extends RotatedPillarBlock
     {
         return toolType == ToolType.AXE?
                 stripped.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)) :
-                super.getToolModifiedState(state, world, pos, player, stack, toolType);
+                super.getToolModifiedState(state, level, pos, player, stack, toolType);
     }
 
     public static AbstractBlock.Properties properties(MaterialColor top, MaterialColor bark)

@@ -24,7 +24,7 @@ public class CoinDragonRenderer extends MobRenderer<CoinDragonEntity, CoinDragon
     }
 
     @Override
-    public ResourceLocation getTexture(CoinDragonEntity entity)
+    public ResourceLocation getTextureLocation(CoinDragonEntity entity)
     {
         return WRConfig.deckTheHalls? CHRISTMAS : TEXTURES[entity.getVariant()];
     }

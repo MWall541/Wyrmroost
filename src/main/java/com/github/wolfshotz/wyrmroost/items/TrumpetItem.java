@@ -26,7 +26,7 @@ public class TrumpetItem extends Item
     public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand)
     {
         SoundEvent sound = player.getRandom().nextBoolean()? WRSounds.ENTITY_BFLY_IDLE.get() : WRSounds.ENTITY_BFLY_ROAR.get();
-        world.playSound(player, player.getBlockPos(), sound, SoundCategory.PLAYERS, 0.75f, (RANDOM.nextFloat() - RANDOM.nextFloat()) * 0.2F + 1.0F);
+        level.playSound(player, player.blockPosition(), sound, SoundCategory.PLAYERS, 0.75f, (RANDOM.nextFloat() - RANDOM.nextFloat()) * 0.2F + 1.0F);
         player.getItemCooldownManager().set(this, 50);
         return ActionResult.success(player.getStackInHand(hand));
     }

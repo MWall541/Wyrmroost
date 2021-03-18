@@ -58,7 +58,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World world)
     {
-        super(stalker, world);
+        super(stalker, level);
 
         stepHeight = 0;
 
@@ -83,7 +83,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         goalSelector.add(8, new AvoidEntityGoal<PlayerEntity>(this, PlayerEntity.class, 7f, 1.15f, 1f)
         {
             @Override
-            public boolean canStart()
+            public boolean canUse()
             {
                 return !isTamed() && !getItem().isEmpty() && super.canStart();
             }
@@ -137,7 +137,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
 
         sleepTimer.add(isSleeping()? 0.08f : -0.15f);
 
-        if (!world.isClientSide)
+        if (!level.isClientSide)
         {
             ItemStack item = getStackInSlot(ITEM_SLOT);
             if (isFoodItem(item) && getHealth() < getMaxHealth() && getRandom().nextDouble() <= 0.0075)
@@ -148,12 +148,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        final ActionResultType COMMON_SUCCESS = ActionResultType.success(world.isClientSide);
+        final ActionResultType COMMON_SUCCESS = ActionResultType.success(level.isClientSide);
 
         ItemStack heldItem = getItem();
         Item item = stack.getItem();
 
-        if (!isTamed() && Tags.Items.EGGS.contains(item))
+        if (!isTame() && Tags.Items.EGGS.contains(item))
         {
             eat(stack);
             if (tame(getRandom().nextDouble() < 0.25, player)) getAttributeInstance(GENERIC_MAX_HEALTH).setBaseValue(20d);
@@ -161,9 +161,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
             return COMMON_SUCCESS;
         }
 
-        if (isTamed() && isBreedingItem(stack))
+        if (isTame() && isBreedingItem(stack))
         {
-            if (!world.isClientSide && canEat() && getBreedingAge() == 0)
+            if (!level.isClientSide && canEat() && getBreedingAge() == 0)
             {
                 lovePlayer(player);
                 stack.decrement(1);
@@ -181,9 +181,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
                 return COMMON_SUCCESS;
             }
 
-            if (stack.isEmpty() && heldItem.isEmpty() && !isLeashed() && player.getPassengerList().size() < 3)
+            if (stack.isEmpty() && heldItem.isEmpty() && !isLeashed() && player.getPassengers().size() < 3)
             {
-                if (!world.isClientSide && startRiding(player, true))
+                if (!level.isClientSide && startRiding(player, true))
                 {
                     setSitting(false);
                     AddPassengerPacket.send(this, player);
@@ -207,12 +207,12 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     @Override
     public void doSpecialEffects()
     {
-        if (getVariant() == -1 && age % 25 == 0)
+        if (getVariant() == -1 && tickCount % 25 == 0)
         {
             double x = getX() + (Mafs.nextDouble(getRandom()) * 0.7d);
             double y = getY() + (getRandom().nextDouble() * 0.5d);
             double z = getZ() + (Mafs.nextDouble(getRandom()) * 0.7d);
-            world.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
+            level.addParticle(ParticleTypes.END_ROD, x, y, z, 0, 0.05f, 0);
         }
     }
 
@@ -353,7 +353,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
 
         @Override
-        public boolean canStart()
+        public boolean canUse()
         {
             boolean flag = !isTamed() && !hasItem() && super.canStart();
             if (flag) return (chest = getInventoryAtPosition()) != null && !chest.isEmpty();
@@ -361,9 +361,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         }
 
         @Override
-        public boolean shouldContinue()
+        public boolean canContinueToUse()
         {
-            return !hasItem() && chest != null && super.shouldContinue();
+            return !hasItem() && chest != null && super.canContinueToUse();
         }
 
         @Override
@@ -410,16 +410,16 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         public IInventory getInventoryAtPosition()
         {
             IInventory inv = null;
-            BlockState blockstate = world.getBlockState(targetPos);
+            BlockState blockstate = level.getBlockState(targetPos);
             Block block = blockstate.getBlock();
             if (blockstate.hasTileEntity())
             {
-                TileEntity tileentity = world.getBlockEntity(targetPos);
+                TileEntity tileentity = level.getBlockEntity(targetPos);
                 if (tileentity instanceof IInventory)
                 {
                     inv = (IInventory) tileentity;
                     if (inv instanceof ChestTileEntity && block instanceof ChestBlock)
-                        inv = ChestBlock.getInventory((ChestBlock) block, blockstate, world, targetPos, true);
+                        inv = ChestBlock.getInventory((ChestBlock) block, blockstate, level, targetPos, true);
                 }
             }
 
@@ -432,7 +432,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         @Override
         protected boolean isTargetPos(IWorldReader world, BlockPos pos)
         {
-            return world.getBlockEntity(pos) instanceof IInventory;
+            return level.getBlockEntity(pos) instanceof IInventory;
         }
 
         /**

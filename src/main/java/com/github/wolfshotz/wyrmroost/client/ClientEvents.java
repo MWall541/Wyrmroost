@@ -12,6 +12,7 @@ import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -85,11 +86,11 @@ public class ClientEvents
         {
             if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock)
             {
-                RenderTypeLookup.setRenderLayer(block, RenderType.getCutout());
+                RenderTypeLookup.setRenderLayer(block, RenderType.cutout());
             }
             else if (block instanceof LeavesBlock)
             {
-                RenderTypeLookup.setRenderLayer(block, RenderType.getCutoutMipped());
+                RenderTypeLookup.setRenderLayer(block, RenderType.cutoutMipped());
             }
         }
     }
@@ -104,14 +105,14 @@ public class ClientEvents
             if (entry instanceof WRParticles.WRParticleType<?>)
             {
                 WRParticles.WRParticleType<?> type = (WRParticles.WRParticleType<?>) entry;
-                getClient().particleManager.registerFactory(type, sprite -> ((t, w, x, y, z, xS, yS, zS) -> type.getFactory().create(ModUtils.cast(t), w, sprite, x, y, z, xS, yS, zS)));
+                getClient().particleEngine.register(type, sprite -> ((t, w, x, y, z, xS, yS, zS) -> type.getFactory().create(ModUtils.cast(t), w, sprite, x, y, z, xS, yS, zS)));
             }
         }
     }
 
     public static void stitchTextures(TextureStitchEvent.Pre evt)
     {
-        if (evt.getMap().getId() == AtlasTexture.BLOCK_ATLAS_TEXTURE)
+        if (evt.getMap().location() == AtlasTexture.LOCATION_BLOCKS)
         {
             evt.addSprite(BreathWeaponRenderer.BLUE_FIRE);
         }
@@ -133,7 +134,7 @@ public class ClientEvents
         Minecraft mc = getClient();
         Entity entity = mc.player.getVehicle();
         if (!(entity instanceof AbstractDragonEntity)) return;
-        PointOfView view = mc.options.getPerspective();
+        PointOfView view = mc.options.getCameraType();
 
         if (view != PointOfView.FIRST_PERSON)
             ((AbstractDragonEntity) entity).setMountCameraAngles(view == PointOfView.THIRD_PERSON_BACK, event);
@@ -154,7 +155,7 @@ public class ClientEvents
 
     public static ClientWorld getWorld()
     {
-        return getClient().world;
+        return getClient().level;
     }
 
     public static PlayerEntity getPlayer()
@@ -164,18 +165,18 @@ public class ClientEvents
 
     public static Vector3d getProjectedView()
     {
-        return getClient().gameRenderer.getCamera().getPos();
+        return getClient().gameRenderer.getMainCamera().getPosition();
     }
 
-    public static float getTickDelta()
+    public static float getFrameDelta()
     {
-        return getClient().getTickDelta();
+        return getClient().getDeltaFrameTime();
     }
 
     public static boolean handleAnimationPacket(int entityID, int animationIndex)
     {
         World world = ClientEvents.getWorld();
-        IAnimatable entity = (IAnimatable) world.getEntityById(entityID);
+        IAnimatable entity = (IAnimatable) world.getEntity(entityID);
 
         if (animationIndex < 0) entity.setAnimation(IAnimatable.NO_ANIMATION);
         else entity.setAnimation(entity.getAnimations()[animationIndex]);

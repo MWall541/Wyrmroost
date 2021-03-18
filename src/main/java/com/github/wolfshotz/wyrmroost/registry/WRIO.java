@@ -33,7 +33,7 @@ public class WRIO
     {
         return IForgeContainerType.create(((windowId, inv, data) ->
         {
-            AbstractDragonEntity dragon = (AbstractDragonEntity) ClientEvents.getWorld().getEntityById(data.readInt());
+            AbstractDragonEntity dragon = (AbstractDragonEntity) ClientEvents.getWorld().getEntity(data.readInt());
             return new DragonInvContainer(dragon.getInvHandler(), inv, windowId);
         }));
     }

@@ -20,27 +20,27 @@ public class DragonBreedGoal extends Goal
 
     public DragonBreedGoal(AbstractDragonEntity dragon)
     {
-        setControls(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         this.dragon = dragon;
         this.predicate = new EntityPredicate()
-                .setBaseMaxDistance(dragon.getWidth() * 8)
-                .includeInvulnerable()
-                .includeTeammates()
-                .includeHidden()
-                .setPredicate(e -> ((AnimalEntity) e).canBreedWith(dragon));
+                .range(dragon.getBbWidth() * 8)
+                .allowInvulnerable()
+                .allowSameTeam()
+                .allowUnseeable()
+                .selector(e -> ((AnimalEntity) e).canMate(dragon));
     }
 
     /**
      * Returns whether execution should begin. You can also read and cache any state necessary for execution in this
      * method as well.
      */
-    public boolean canStart()
+    public boolean canUse()
     {
         if (!dragon.isInLove()) return false;
         final int breedLimit = WRConfig.breedLimits.getOrDefault(dragon.getType().getRegistryName().getPath(), 0);
         if (breedLimit > 0 && dragon.breedCount >= breedLimit)
         {
-            dragon.resetLoveTicks();
+            dragon.resetLove();
             return false;
         }
         return (targetMate = getNearbyMate()) != null;
@@ -49,7 +49,7 @@ public class DragonBreedGoal extends Goal
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
-    public boolean shouldContinue()
+    public boolean canContinueToUse()
     {
         return targetMate.isAlive() && targetMate.isInLove() && dragon.isInLove() && spawnBabyDelay < 60;
     }
@@ -68,10 +68,10 @@ public class DragonBreedGoal extends Goal
      */
     public void tick()
     {
-        dragon.getLookControl().lookAt(targetMate, 10f, dragon.getLookYawSpeed());
-        dragon.getNavigation().startMovingTo(targetMate, 1);
-        if (++spawnBabyDelay >= 60 && dragon.distanceTo(targetMate) < dragon.getWidth() * 2)
-            dragon.breed((ServerWorld) dragon.world, targetMate);
+        dragon.getLookControl().setLookAt(targetMate, 10f, dragon.getYawRotationSpeed());
+        dragon.getNavigation().moveTo(targetMate, 1);
+        if (++spawnBabyDelay >= 60 && dragon.distanceTo(targetMate) < dragon.getBbWidth() * 2)
+            dragon.breed((ServerWorld) dragon.level, targetMate);
     }
 
     /**
@@ -81,8 +81,8 @@ public class DragonBreedGoal extends Goal
     @Nullable
     protected AbstractDragonEntity getNearbyMate()
     {
-        return dragon.world.getTargets(dragon.getClass(), predicate, dragon, dragon.getBoundingBox().expand(dragon.getWidth() * 8))
+        return dragon.level.getNearbyEntities(dragon.getClass(), predicate, dragon, dragon.getBoundingBox().inflate(dragon.getBbWidth() * 8))
                 .stream()
-                .min(Comparator.comparingDouble(dragon::squaredDistanceTo)).orElse(null);
+                .min(Comparator.comparingDouble(dragon::distanceToSqr)).orElse(null);
     }
 }

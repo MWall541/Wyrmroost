@@ -62,17 +62,17 @@ public class DragonEggItem extends Item
         World world = ctx.getWorld();
         CompoundNBT tag = ctx.getStack().getTag();
         BlockPos pos = ctx.getBlockPos();
-        BlockState state = world.getBlockState(pos);
+        BlockState state = level.getBlockState(pos);
 
         if (tag == null || !tag.contains(DragonEggEntity.DATA_DRAGON_TYPE)) return ActionResultType.PASS;
-        if (!state.getCollisionShape(world, pos).isEmpty()) pos = pos.offset(ctx.getSide());
-        if (!world.getEntitiesIncludingUngeneratedChunks(DragonEggEntity.class, new AxisAlignedBB(pos)).isEmpty())
+        if (!state.getCollisionShape(level, pos).isEmpty()) pos = pos.offset(ctx.getSide());
+        if (!level.getEntitiesIncludingUngeneratedChunks(DragonEggEntity.class, new AxisAlignedBB(pos)).isEmpty())
             return ActionResultType.FAIL;
 
-        DragonEggEntity eggEntity = new DragonEggEntity(ModUtils.getEntityTypeByKey(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE)), tag.getInt(DragonEggEntity.DATA_HATCH_TIME), world);
+        DragonEggEntity eggEntity = new DragonEggEntity(ModUtils.getEntityTypeByKey(tag.getString(DragonEggEntity.DATA_DRAGON_TYPE)), tag.getInt(DragonEggEntity.DATA_HATCH_TIME), level);
         eggEntity.updatePosition(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d);
 
-        if (!world.isClientSide) world.spawnEntity(eggEntity);
+        if (!level.isClientSide) level.spawnEntity(eggEntity);
         if (!player.isCreative()) player.setStackInHand(ctx.getHand(), ItemStack.EMPTY);
         
         return ActionResultType.SUCCESS;

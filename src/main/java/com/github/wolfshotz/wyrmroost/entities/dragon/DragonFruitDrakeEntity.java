@@ -61,7 +61,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
 
     public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World world)
     {
-        super(dragon, world);
+        super(dragon, level);
 
         registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRandom().nextBoolean());
@@ -81,10 +81,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         goalSelector.add(8, new WRFollowOwnerGoal(this));
         goalSelector.add(9, new FollowParentGoal(this, 1)
         {
-            { setControls(EnumSet.of(Flag.MOVE)); }
+            { setFlags(EnumSet.of(Flag.MOVE)); }
 
             @Override
-            public boolean canStart()
+            public boolean canUse()
             {
                 return !isTamed() && super.canStart();
             }
@@ -92,10 +92,10 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         goalSelector.add(10, new WaterAvoidingRandomWalkingGoal(this, 1));
         goalSelector.add(11, new LookAtGoal(this, LivingEntity.class, 7f));
         goalSelector.add(12, new LookRandomlyGoal(this));
-        goalSelector.add(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.ofItems(Items.APPLE))
+        goalSelector.add(7, temptGoal = new TemptGoal(this, 1d, false, Ingredient.of(Items.APPLE))
         {
             @Override
-            public boolean canStart()
+            public boolean canUse()
             {
                 return !isTamed() && isBaby() && super.canStart();
             }
@@ -105,7 +105,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         targetSelector.add(1, new NonTamedTargetGoal<PlayerEntity>(this, PlayerEntity.class, true, EntityPredicates.EXCEPT_CREATIVE_SPECTATOR_OR_PEACEFUL::test)
         {
             @Override
-            public boolean canStart()
+            public boolean canUse()
             {
                 return !isBaby() && super.canStart();
             }
@@ -115,12 +115,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (stack.getItem() == Items.SHEARS && isShearable(stack, world, getBlockPos()))
-            return ActionResultType.success(world.isClientSide);
+        if (stack.getItem() == Items.SHEARS && isShearable(stack, level, blockPosition()))
+            return ActionResultType.success(level.isClientSide);
 
-        if (!isTamed() && isBaby() && isFoodItem(stack))
+        if (!isTame() && isBaby() && isFoodItem(stack))
         {
-            if (!world.isClientSide && temptGoal.isActive())
+            if (!level.isClientSide && temptGoal.isActive())
             {
                 tame(getRandom().nextDouble() <= 0.2d, player);
                 eat(stack);
@@ -129,11 +129,11 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
             return ActionResultType.CONSUME;
         }
 
-        if (isTamed() && stack.getItem() == Items.GLISTERING_MELON_SLICE && growCropsTime <= 0)
+        if (isTame() && stack.getItem() == Items.GLISTERING_MELON_SLICE && growCropsTime <= 0)
         {
             eat(stack);
             growCropsTime = CROP_GROWTH_TIME;
-            return ActionResultType.success(world.isClientSide);
+            return ActionResultType.success(level.isClientSide);
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -147,7 +147,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         sitTimer.add((isInSittingPose() || isSleeping())? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.05f : -0.1f);
 
-        if (!world.isClientSide)
+        if (!level.isClientSide)
         {
             setSprinting(getTarget() != null);
             if (shearCooldownTime > 0) --shearCooldownTime;
@@ -158,26 +158,26 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
                 --growCropsTime;
                 if (getRandom().nextBoolean())
                 {
-                    AxisAlignedBB aabb = getBoundingBox().expand(CROP_GROWTH_RADIUS);
+                    AxisAlignedBB aabb = getBoundingBox().inflate(CROP_GROWTH_RADIUS);
                     int x = MathHelper.nextInt(getRandom(), (int) aabb.minX, (int) aabb.maxX);
                     int y = MathHelper.nextInt(getRandom(), (int) aabb.minY, (int) aabb.maxY);
                     int z = MathHelper.nextInt(getRandom(), (int) aabb.minZ, (int) aabb.maxZ);
                     BlockPos pos = new BlockPos(x, y, z);
-                    BlockState state = world.getBlockState(pos);
+                    BlockState state = level.getBlockState(pos);
                     Block block = state.getBlock();
                     if (block instanceof IGrowable && !(block instanceof GrassBlock))
                     {
                         IGrowable plant = (IGrowable) block;
-                        if (plant.isFertilizable(world, pos, state, false))
+                        if (plant.isFertilizable(level, pos, state, false))
                         {
-                            plant.grow((ServerWorld) world, getRandom(), pos, state);
-                            world.syncWorldEvent(Constants.WorldEvents.BONEMEAL_PARTICLES, pos, 0);
+                            plant.grow((ServerWorld) level, getRandom(), pos, state);
+                            level.syncWorldEvent(Constants.WorldEvents.BONEMEAL_PARTICLES, pos, 0);
                         }
                     }
                 }
             }
 
-            if (!isBaby() && world.isDay() && !isSleeping() && isIdling() && getRandom().nextDouble() < 0.002)
+            if (!isBaby() && level.isDay() && !isSleeping() && isIdling() && getRandom().nextDouble() < 0.002)
             {
                 napTime = 1200;
                 setSleeping(true);
@@ -186,12 +186,12 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
 
         if (getAnimation() == BITE_ANIMATION && getAnimationTick() == 7 && canBeControlledByRider())
         {
-            attackInBox(getOffsetBox(getWidth()));
-            AxisAlignedBB aabb = getBoundingBox().expand(2).offset(Mafs.getYawVec(headYaw, 0, 2));
+            attackInBox(getOffsetBox(getBbWidth()));
+            AxisAlignedBB aabb = getBoundingBox().inflate(2).offset(Mafs.getYawVec(headYaw, 0, 2));
             for (BlockPos pos : ModUtils.iterateThrough(aabb))
             {
-                if (world.getBlockState(pos).getBlock() instanceof BushBlock)
-                    world.breakBlock(pos, true, this);
+                if (level.getBlockState(pos).getBlock() instanceof BushBlock)
+                    level.breakBlock(pos, true, this);
             }
         }
     }
@@ -211,7 +211,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     @Override
     protected float getActiveEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
-        return getHeight();
+        return getBbHeight();
     }
 
     @Override
@@ -323,13 +323,13 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
             if (reason == SpawnReason.NATURAL) setBreedingAge(DragonEggProperties.get(getType()).getGrowthTime()); // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
         }
 
-        return super.initialize(world, difficulty, reason, data, dataTag);
+        return super.initialize(level, difficulty, reason, data, dataTag);
     }
 
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos pos, Random random)
     {
-        BlockState state = world.getBlockState(pos.down());
-        return state.isOf(Blocks.GRASS_BLOCK) || (state.isIn(BlockTags.LEAVES) && pos.getY() < world.getSeaLevel() + 13) && world.getBaseLightLevel(pos, 0) > 8;
+        BlockState state = level.getBlockState(pos.below());
+        return state.isOf(Blocks.GRASS_BLOCK) || (state.isIn(BlockTags.LEAVES) && pos.getY() < level.getSeaLevel() + 13) && level.getBaseLightLevel(pos, 0) > 8;
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)
@@ -357,11 +357,11 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         public MoveToCropsGoal()
         {
             super(DragonFruitDrakeEntity.this, 1, CROP_GROWTH_RADIUS * 2);
-            setControls(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
+            setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
         }
 
         @Override
-        public boolean canStart()
+        public boolean canUse()
         {
             return growCropsTime >= 0 && findTargetPos();
         }
@@ -373,7 +373,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         }
 
         @Override
-        public boolean shouldContinue()
+        public boolean canContinueToUse()
         {
             return growCropsTime >= 0;
         }
@@ -382,7 +382,7 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         public void tick()
         {
             super.tick();
-            getLookControl().lookAt(targetPos.getX(), targetPos.getY(), targetPos.getY());
+            getLookControl().setLookAt(targetPos.getX(), targetPos.getY(), targetPos.getY());
             if (tryingTime >= 200 && getRandom().nextInt(tryingTime) >= 100)
             {
                 tryingTime = 0;
@@ -393,9 +393,9 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         @Override
         protected boolean isTargetPos(IWorldReader world, BlockPos pos)
         {
-            BlockState state = world.getBlockState(pos);
+            BlockState state = level.getBlockState(pos);
             Block block = state.getBlock();
-            return !pos.equals(targetPos) && isCrop(block) && ((IGrowable) block).isFertilizable(world, pos, state, false);
+            return !pos.equals(targetPos) && isCrop(block) && ((IGrowable) block).isFertilizable(level, pos, state, false);
         }
     }
 }

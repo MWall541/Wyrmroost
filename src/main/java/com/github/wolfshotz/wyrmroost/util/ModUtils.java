@@ -85,7 +85,7 @@ public final class ModUtils
      */
     public static void playLocalSound(World world, BlockPos pos, SoundEvent sound, float volume, float pitch)
     {
-        world.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
+        level.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
     }
 
     /**

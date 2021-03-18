@@ -73,7 +73,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
 
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World world)
     {
-        super(drake, world);
+        super(drake, level);
 
         registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
@@ -126,7 +126,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public int determineVariant()
     {
         if (getRandom().nextDouble() < 0.008) return -1;
-        if (world.getBiome(getBlockPos()).getCategory() == Biome.Category.SAVANNA) return 1;
+        if (level.getBiome(blockPosition()).getCategory() == Biome.Category.SAVANNA) return 1;
         return 0;
     }
 
@@ -149,11 +149,11 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (thrownPassenger != null)
         {
             thrownPassenger.setVelocity(Mafs.nextDouble(getRandom()), 0.1 + getRandom().nextDouble(), Mafs.nextDouble(getRandom()));
-            ((ServerChunkProvider) world.getChunkManager()).sendToNearbyPlayers(thrownPassenger, new SEntityVelocityPacket(thrownPassenger)); // notify client
+            ((ServerChunkProvider) level.getChunkManager()).sendToNearbyPlayers(thrownPassenger, new SEntityVelocityPacket(thrownPassenger)); // notify client
             thrownPassenger = null;
         }
 
-        if (!world.isClientSide && getTarget() == null && !isInSittingPose() && !isSleeping() && world.getBlockState(getBlockPos().down()).getBlock() == Blocks.GRASS_BLOCK && getRandom().nextDouble() < (isBaby() || getHealth() < getMaxHealth()? 0.005 : 0.001))
+        if (!level.isClientSide && getTarget() == null && !isInSittingPose() && !isSleeping() && level.getBlockState(blockPosition().down()).getBlock() == Blocks.GRASS_BLOCK && getRandom().nextDouble() < (isBaby() || getHealth() < getMaxHealth()? 0.005 : 0.001))
             AnimationPacket.send(this, GRAZE_ANIMATION);
 
         Animation animation = getAnimation();
@@ -168,7 +168,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
                 for (LivingEntity entity : getEntitiesNearby(15, e -> !isTeammate(e))) // Dont get too close now ;)
                 {
                     entity.addStatusEffect(new EffectInstance(Effects.SLOWNESS, 200));
-                    if (squaredDistanceTo(entity) <= 10)
+                    if (distanceToSqr(entity) <= 10)
                     {
                         double angle = Mafs.getAngle(getX(), getZ(), entity.getX(), entity.getZ()) * Math.PI / 180;
                         entity.addVelocity(1.2 * -Math.cos(angle), 0.4d, 1.2 * -Math.sin(angle));
@@ -181,30 +181,30 @@ public class OWDrakeEntity extends AbstractDragonEntity
         {
             if (tick == 8)
             {
-                if (target != null) yaw = bodyYaw = (float) Mafs.getAngle(this, target) + 90f;
+                if (target != null) yRot = bodyYaw = (float) Mafs.getAngle(this, target) + 90f;
                 playSound(SoundEvents.ENTITY_IRON_GOLEM_ATTACK, 1, 0.5f, true);
-                AxisAlignedBB box = getOffsetBox(getWidth()).expand(-0.075);
+                AxisAlignedBB box = getOffsetBox(getBbWidth()).inflate(-0.075);
                 attackInBox(box);
                 for (BlockPos pos : ModUtils.iterateThrough(box))
                 {
-                    if (world.getBlockState(pos).isIn(BlockTags.LEAVES))
-                        world.breakBlock(pos, false, this);
+                    if (level.getBlockState(pos).isIn(BlockTags.LEAVES))
+                        level.breakBlock(pos, false, this);
                 }
             }
         }
 
-        if (!world.isClientSide && animation == GRAZE_ANIMATION && tick == 13)
+        if (!level.isClientSide && animation == GRAZE_ANIMATION && tick == 13)
         {
-            BlockPos pos = new BlockPos(Mafs.getYawVec(bodyYaw, 0, getWidth() / 2 + 1).add(getPos()));
-            if (world.getBlockState(pos).isOf(Blocks.GRASS) && WRConfig.canGrief(world))
+            BlockPos pos = new BlockPos(Mafs.getYawVec(bodyYaw, 0, getBbWidth() / 2 + 1).add(position()));
+            if (level.getBlockState(pos).isOf(Blocks.GRASS) && WRConfig.canGrief(level))
             {
-                world.breakBlock(pos, false);
+                level.breakBlock(pos, false);
                 onEatingGrass();
             }
-            else if (world.getBlockState(pos = pos.down()).getBlock() == Blocks.GRASS_BLOCK)
+            else if (level.getBlockState(pos = pos.below()).getBlock() == Blocks.GRASS_BLOCK)
             {
-                world.syncWorldEvent(2001, pos, Block.getRawIdFromState(Blocks.GRASS_BLOCK.getDefaultState()));
-                world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
+                level.syncWorldEvent(2001, pos, Block.getRawIdFromState(Blocks.GRASS_BLOCK.getDefaultState()));
+                level.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
                 onEatingGrass();
             }
         }
@@ -215,19 +215,19 @@ public class OWDrakeEntity extends AbstractDragonEntity
     {
         if (stack.getItem() == Items.SADDLE && !isSaddled() && !isBaby())
         {
-            if (!world.isClientSide)
+            if (!level.isClientSide)
             {
                 getInvHandler().insertItem(SADDLE_SLOT, stack.copy(), false);
                 stack.decrement(1);
             }
-            return ActionResultType.success(world.isClientSide);
+            return ActionResultType.success(level.isClientSide);
         }
 
-        if (!isTamed() && isBaby() && isFoodItem(stack))
+        if (!isTame() && isBaby() && isFoodItem(stack))
         {
             tame(getRandom().nextInt(10) == 0, player);
             stack.decrement(1);
-            return ActionResultType.success(world.isClientSide);
+            return ActionResultType.success(level.isClientSide);
         }
 
         return super.playerInteraction(player, hand, stack);
@@ -241,8 +241,8 @@ public class OWDrakeEntity extends AbstractDragonEntity
         if (entity instanceof LivingEntity)
         {
             LivingEntity passenger = ((LivingEntity) entity);
-            if (isTamed()) setSprinting(passenger.isSprinting());
-            else if (!world.isClientSide && passenger instanceof PlayerEntity)
+            if (isTame()) setSprinting(passenger.isSprinting());
+            else if (!level.isClientSide && passenger instanceof PlayerEntity)
             {
                 double rng = getRandom().nextDouble();
 
@@ -319,7 +319,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
         boolean flag = getTarget() != null;
         setSprinting(flag);
 
-        if (flag && prev != target && target.getType() == EntityType.PLAYER && !isTamed() && noActiveAnimation())
+        if (flag && prev != target && target.getType() == EntityType.PLAYER && !isTame() && noActiveAnimation())
             AnimationPacket.send(OWDrakeEntity.this, OWDrakeEntity.ROAR_ANIMATION);
     }
 
@@ -346,7 +346,7 @@ public class OWDrakeEntity extends AbstractDragonEntity
     @Override
     protected boolean canStartRiding(Entity entity)
     {
-        return isSaddled() && !isBaby() && (isOwner((LivingEntity) entity) || (!isTamed() && ridingCooldown <= 0));
+        return isSaddled() && !isBaby() && (isOwner((LivingEntity) entity) || (!isTame() && ridingCooldown <= 0));
     }
 
     @Override

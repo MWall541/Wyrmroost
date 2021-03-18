@@ -87,11 +87,11 @@ public class CoinDragonEntity extends MobEntity
         double altitiude = getAltitude();
         if (altitiude < 1.5) yMot = moveSpeed;
         else if (altitiude > 3) yMot = -moveSpeed;
-        else yMot = Math.sin(age * 0.1) * 0.0035;
+        else yMot = Math.sin(tickCount * 0.1) * 0.0035;
 
-        setVelocity(getVelocity().add(0, yMot, 0));
-        move(MoverType.SELF, getVelocity());
-        setVelocity(getVelocity().multiply(0.91));
+        setVelocity(getDeltaMovement().add(0, yMot, 0));
+        move(MoverType.SELF, getDeltaMovement());
+        setVelocity(getDeltaMovement().multiply(0.91));
     }
 
     @Override
@@ -100,14 +100,14 @@ public class CoinDragonEntity extends MobEntity
         ActionResultType stackResult = player.getStackInHand(hand).useOnEntity(player, this, hand);
         if (stackResult.isAccepted()) return stackResult;
 
-        ItemEntity itemEntity = new ItemEntity(world, getX(), getY(), getZ(), getItemStack());
+        ItemEntity itemEntity = new ItemEntity(level, getX(), getY(), getZ(), getItemStack());
         double x = player.getX() - getX();
         double y = player.getY() - getY();
         double z = player.getZ() - getZ();
         itemEntity.setVelocity(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
-        world.spawnEntity(itemEntity);
+        level.spawnEntity(itemEntity);
         remove();
-        return ActionResultType.success(world.isClientSide);
+        return ActionResultType.success(level.isClientSide);
     }
 
     @Override
@@ -168,8 +168,8 @@ public class CoinDragonEntity extends MobEntity
 
     public double getAltitude()
     {
-        BlockPos.Mutable pos = getBlockPos().mutable().move(0, -1, 0);
-        while (pos.getY() > 0 && !world.getBlockState(pos).isOpaque()) pos.setY(pos.getY() - 1);
+        BlockPos.Mutable pos = blockPosition().mutable().move(0, -1, 0);
+        while (pos.getY() > 0 && !level.getBlockState(pos).isOpaque()) pos.setY(pos.getY() - 1);
         return getY() - pos.getY();
     }
 

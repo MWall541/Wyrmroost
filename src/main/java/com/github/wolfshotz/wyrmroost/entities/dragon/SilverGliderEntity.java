@@ -52,7 +52,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
     public SilverGliderEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
     {
-        super(dragon, world);
+        super(dragon, level);
 
         registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRandom().nextBoolean());
         registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
@@ -102,7 +102,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         PlayerEntity player = (PlayerEntity) getVehicle();
         final boolean FLAG = shouldGlide(player);
 
-        if (world.isClientSide && isGliding != FLAG)
+        if (level.isClientSide && isGliding != FLAG)
         {
             SGGlidePacket.send(FLAG);
             isGliding = FLAG;
@@ -111,8 +111,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
         if (isGliding)
         {
             Vector3d vec3d = player.getRotationVector().multiply(0.3);
-            player.setVelocity(player.getVelocity().multiply(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
-            if (!world.isClientSide) ((ServerPlayerEntity) player).networkHandler.floating = false;
+            player.setVelocity(player.getDeltaMovement().multiply(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
+            if (!level.isClientSide) ((ServerPlayerEntity) player).networkHandler.floating = false;
             player.fallDistance = 0;
         }
     }
@@ -121,7 +121,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public void travel(Vector3d vec3d)
     {
         Vector3d look = getRotationVector();
-        if (isFlying() && look.y < 0) setVelocity(getVelocity().add(0, look.y * 0.25, 0));
+        if (isFlying() && look.y < 0) setVelocity(getDeltaMovement().add(0, look.y * 0.25, 0));
 
         super.travel(vec3d);
     }
@@ -132,9 +132,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
         ActionResultType result = super.playerInteraction(player, hand, stack);
         if (result.isAccepted()) return result;
 
-        if (!isTamed() && isBreedingItem(stack))
+        if (!isTame() && isBreedingItem(stack))
         {
-            if (!world.isClientSide && (temptGoal.isActive() || player.isCreative()))
+            if (!level.isClientSide && (temptGoal.isActive() || player.isCreative()))
             {
                 tame(getRandom().nextDouble() < 0.333, player);
                 eat(stack);
@@ -143,12 +143,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
             return ActionResultType.CONSUME;
         }
 
-        if (isOwner(player) && player.getPassengerList().isEmpty() && !player.isSneaking() && !isBreedingItem(stack) && !isLeashed())
+        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking() && !isBreedingItem(stack) && !isLeashed())
         {
             startRiding(player, true);
             setSitting(false);
             clearAI();
-            return ActionResultType.success(world.isClientSide);
+            return ActionResultType.success(level.isClientSide);
         }
 
         return ActionResultType.PASS;
@@ -160,8 +160,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
         if (!player.jumping) return false;
         if (player.abilities.flying) return false;
         if (player.isFallFlying()) return false;
-        if (player.isTouchingWater()) return false;
-        if (player.getVelocity().y > 0) return false;
+        if (player.isInWater()) return false;
+        if (player.getDeltaMovement().y > 0) return false;
         if (isGliding() && !player.isOnGround()) return true;
         return getAltitude() - 1.8 > 4;
     }
@@ -169,12 +169,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public void doSpecialEffects()
     {
-        if (getVariant() == -1 && age % 5 == 0)
+        if (getVariant() == -1 && tickCount % 5 == 0)
         {
             double x = getX() + getRandom().nextGaussian();
             double y = getY() + getRandom().nextDouble();
             double z = getZ() + getRandom().nextGaussian();
-            world.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.2f, 0);
+            level.addParticle(new RedstoneParticleData(1f, 0.8f, 0, 1f), x, y, z, 0, 0.2f, 0);
         }
     }
 
@@ -252,8 +252,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public static boolean getSpawnPlacement(EntityType<SilverGliderEntity> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos blockPos, Random random)
     {
         if (spawnReason == SpawnReason.SPAWNER) return true;
-        Block block = world.getBlockState(blockPos.down()).getBlock();
-        return block == Blocks.AIR || block == Blocks.SAND && world.getBaseLightLevel(blockPos, 0) > 8;
+        Block block = level.getBlockState(blockPos.below()).getBlock();
+        return block == Blocks.AIR || block == Blocks.SAND && level.getBaseLightLevel(blockPos, 0) > 8;
     }
 
     @Nullable
@@ -277,22 +277,22 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         public SwoopGoal()
         {
-            setControls(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         }
 
         @Override
-        public boolean canStart()
+        public boolean canUse()
         {
             if (!isFlying()) return false;
             if (isRiding()) return false;
             if (getRandom().nextDouble() > 0.001) return false;
-            if (world.getFluidState(this.pos = world.getTopPosition(Heightmap.Type.WORLD_SURFACE, getBlockPos()).down()).isEmpty())
+            if (level.getFluidState(this.pos = level.getTopPosition(Heightmap.Type.WORLD_SURFACE, getBlockPos()).down()).isEmpty())
                 return false;
             return getY() - pos.getY() > 8;
         }
 
         @Override
-        public boolean shouldContinue()
+        public boolean canContinueToUse()
         {
             return getBlockPos().getSquaredDistance(pos) > 8;
         }
@@ -300,8 +300,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
         @Override
         public void tick()
         {
-            if (getNavigation().isIdle()) getNavigation().startMovingTo(pos.getX(), pos.getY() + 2, pos.getZ(), 1);
-            getLookControl().lookAt(pos.getX(), pos.getY() + 2, pos.getZ());
+            if (getNavigation().isDone()) getNavigation().moveTo(pos.getX(), pos.getY() + 2, pos.getZ(), 1);
+            getLookControl().setLookAt(pos.getX(), pos.getY() + 2, pos.getZ());
         }
     }
 }

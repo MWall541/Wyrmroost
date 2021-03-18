@@ -13,7 +13,7 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 {
     public BreathWeaponEntity(EntityType<?> type, World world)
     {
-        super(type, world);
+        super(type, level);
     }
 
     public BreathWeaponEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter)
@@ -28,13 +28,13 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 //        BlockState state = world.getBlockState(pos);
 //        state.onProjectileCollision(world, state, result, this); todo.. somehow
 
-        if (!world.isClientSide && !noClip && !world.getBlockState(pos).getCollisionShape(world, pos).equals(VoxelShapes.empty()))
+        if (!level.isClientSide && !noClip && !level.getBlockState(pos).getCollisionShape(level, pos).equals(VoxelShapes.empty()))
         {
             setVelocity(acceleration.multiply(-Math.abs(direction.getOffsetX()) + 1, -Math.abs(direction.getOffsetY()) + 1, -Math.abs(direction.getOffsetZ()) + 1));
 
             if (!hasCollided)
             {
-                life = age + 20;
+                life = tickCount + 20;
                 this.hasCollided = true;
             }
         }

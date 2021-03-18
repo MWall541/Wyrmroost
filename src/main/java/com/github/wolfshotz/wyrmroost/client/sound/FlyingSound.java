@@ -14,10 +14,10 @@ public class FlyingSound extends TickableSound
 
     public FlyingSound(AbstractDragonEntity entity)
     {
-        super(SoundEvents.ITEM_ELYTRA_FLYING, SoundCategory.PLAYERS);
+        super(SoundEvents.ELYTRA_FLYING, SoundCategory.PLAYERS);
         this.entity = entity;
-        this.repeat = true;
-        this.repeatDelay = 0;
+        this.looping = true;
+        this.delay = 0;
         this.volume = 0.1f;
     }
 
@@ -34,12 +34,12 @@ public class FlyingSound extends TickableSound
             x = (float) entity.getX();
             y = (float) entity.getY();
             z = (float) entity.getZ();
-            double length = entity.getVelocity().lengthSquared();
+            double length = entity.getDeltaMovement().lengthSqr();
             volume = Math.min((float) length * 2f, 0.75f);
             if (volume > 0.4f) pitch = 1f + (volume - 0.6f);
             else pitch = 1f;
         }
-        else setDone();
+        else stop();
     }
 
     public static void play(AbstractDragonEntity dragon)

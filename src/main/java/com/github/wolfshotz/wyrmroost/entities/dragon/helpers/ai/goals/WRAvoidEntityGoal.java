@@ -31,34 +31,34 @@ public class WRAvoidEntityGoal<T extends LivingEntity> extends Goal
         this.avoidDistance = distance;
         this.farSpeed = nearSpeedIn;
         this.nearSpeed = farSpeedIn;
-        this.builtTargetSelector = new EntityPredicate().setBaseMaxDistance(distance).setPredicate(targetPredicate);
+        this.builtTargetSelector = new EntityPredicate().range(distance).selector(targetPredicate);
 
-        setControls(EnumSet.of(Goal.Flag.MOVE));
+        setFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
     @Override
-    public boolean canStart()
+    public boolean canUse()
     {
-        if (entity.isTamed()) return false;
-        this.avoidTarget = entity.world.getClosestEntityIncludingUngeneratedChunks(classToAvoid, builtTargetSelector, entity, entity.getX(), entity.getY(), entity.getZ(), entity.getBoundingBox().expand(avoidDistance, 3.0D, avoidDistance));
+        if (entity.isTame()) return false;
+        this.avoidTarget = entity.level.getNearestEntity(classToAvoid, builtTargetSelector, entity, entity.getX(), entity.getY(), entity.getZ(), entity.getBoundingBox().inflate(avoidDistance, 3.0D, avoidDistance));
         if (avoidTarget == null) return false;
-        Vector3d pos = RandomPositionGenerator.findTargetAwayFrom(entity, 16, 7, avoidTarget.getPos());
+        Vector3d pos = RandomPositionGenerator.getPosAvoid(entity, 16, 7, avoidTarget.position());
         if (pos == null) return false;
-        if (avoidTarget.getPos().squaredDistanceTo(pos) < avoidTarget.squaredDistanceTo(entity)) return false;
-        return entity.getNavigation().startMovingTo(pos.getX(), pos.getY(), pos.getZ(), farSpeed);
+        if (avoidTarget.position().distanceToSqr(pos) < avoidTarget.distanceToSqr(entity)) return false;
+        return entity.getNavigation().moveTo(pos.x(), pos.y(), pos.z(), farSpeed);
     }
 
     @Override
-    public boolean shouldContinue()
+    public boolean canContinueToUse()
     {
-        return !entity.getNavigation().isIdle();
+        return !entity.getNavigation().isDone();
     }
 
 
     public void tick()
     {
-        if (entity.squaredDistanceTo(avoidTarget) < 49) entity.getNavigation().setSpeed(nearSpeed);
-        else entity.getNavigation().setSpeed(farSpeed);
+        if (entity.distanceToSqr(avoidTarget) < 49) entity.getNavigation().setSpeedModifier(nearSpeed);
+        else entity.getNavigation().setSpeedModifier(farSpeed);
     }
 
     @Override

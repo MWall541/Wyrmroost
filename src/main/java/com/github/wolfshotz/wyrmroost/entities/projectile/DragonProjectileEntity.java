@@ -32,12 +32,12 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
     protected DragonProjectileEntity(EntityType<?> type, World world)
     {
-        super(type, world);
+        super(type, level);
     }
 
     public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vector3d position, Vector3d velocity)
     {
-        super(type, shooter.world);
+        super(type, shooter.level);
 
         velocity = velocity.add(random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset());
         double length = velocity.length();
@@ -46,10 +46,10 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         this.shooter = shooter;
         this.life = 50;
 
-        setVelocity(getVelocity().add(acceleration));
-        position = position.add(getVelocity());
+        setVelocity(getDeltaMovement().add(acceleration));
+        position = position.add(getDeltaMovement());
 
-        Vector3d motion = getVelocity();
+        Vector3d motion = getDeltaMovement();
         float x = (float) (motion.x - position.x);
         float y = (float) (motion.y - position.y);
         float z = (float) (motion.z - position.z);
@@ -57,13 +57,13 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         float yaw = (float) MathHelper.atan2(z, x) * 180f / Mafs.PI - 90f;
         float pitch = (float) -(MathHelper.atan2(y, planeSqrt) * 180f / Mafs.PI);
 
-        refreshPositionAndAngles(position.x, position.y, position.z, yaw, pitch);
+        refreshPositionAndAngles(position.x, position.y, position.z, yRot, pitch);
     }
 
     @Override
     public void tick()
     {
-        if ((!world.isClientSide && (!shooter.isAlive() || age > life || age > getMaxLife())) || !world.isChunkLoaded(getBlockPos()))
+        if ((!level.isClientSide && (!shooter.isAlive() || tickCount > life || tickCount > getMaxLife())) || !level.isChunkLoaded(blockPosition()))
         {
             remove();
             return;
@@ -83,30 +83,30 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
             }
             case COLLIDING:
             {
-                AxisAlignedBB box = getBoundingBox().expand(0.05);
-                for (Entity entity : world.getOtherEntities(this, box, this::canImpactEntity))
+                AxisAlignedBB box = getBoundingBox().inflate(0.05);
+                for (Entity entity : level.getOtherEntities(this, box, this::canImpactEntity))
                     onEntityImpact(entity);
 
-                Vector3d position = getPos();
-                Vector3d end = position.add(getVelocity());
-                BlockRayTraceResult rtr = world.raycast(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
+                Vector3d position = position();
+                Vector3d end = position.add(getDeltaMovement());
+                BlockRayTraceResult rtr = level.raycast(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
                 if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getBlockPos(), rtr.getSide());
             }
             default:
                 break;
         }
 
-        Vector3d motion = getVelocity();
+        Vector3d motion = getDeltaMovement();
         if (!hasNoGravity()) setVelocity(motion = motion.add(0, -0.05, 0));
         double x = getX() + motion.x;
         double y = getY() + motion.y;
         double z = getZ() + motion.z;
 
-        if (isTouchingWater())
+        if (isInWater())
         {
             setVelocity(motion.multiply(0.95f));
             for (int i = 0; i < 4; ++i)
-                world.addParticle(ParticleTypes.BUBBLE, getX() * 0.25d, getY() * 0.25d, getZ() * 0.25D, motion.x, motion.y, motion.z);
+                level.addParticle(ParticleTypes.BUBBLE, getX() * 0.25d, getY() * 0.25d, getZ() * 0.25D, motion.x, motion.y, motion.z);
         }
         updatePosition(x, y, z);
     }
@@ -151,7 +151,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public EntitySize getDimensions(Pose poseIn)
     {
         if (growthRate == 1) return getType().getDimensions();
-        float size = Math.min(getWidth() * growthRate, 2.25f);
+        float size = Math.min(getBbWidth() * growthRate, 2.25f);
         return EntitySize.changing(size, size);
     }
 
@@ -216,7 +216,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     @Override
     public float getTargetingMargin()
     {
-        return getWidth();
+        return getBbWidth();
     }
 
     @Override
@@ -250,7 +250,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     @Override
     public void readSpawnData(PacketBuffer buf)
     {
-        this.shooter = (AbstractDragonEntity) world.getEntityById(buf.readInt());
+        this.shooter = (AbstractDragonEntity) level.getEntity(buf.readInt());
         this.growthRate = buf.readFloat();
     }
 

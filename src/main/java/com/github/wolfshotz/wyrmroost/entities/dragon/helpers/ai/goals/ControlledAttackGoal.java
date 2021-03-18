@@ -17,39 +17,39 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     }
 
     @Override
-    public boolean canStart()
+    public boolean canUse()
     {
-        return super.canStart() && !dragon.hasPassengers();
+        return super.canUse() && !dragon.isVehicle();
     }
 
     @Override
-    public boolean shouldContinue()
+    public boolean canContinueToUse()
     {
         LivingEntity target = dragon.getTarget();
         if (target == null) return false;
-        return !dragon.hasPassengers() && dragon.canAttackWithOwner(target, dragon.getOwner()) && super.shouldContinue();
+        return !dragon.isVehicle() && dragon.canAttackWithOwner(target, dragon.getOwner()) && super.canContinueToUse();
     }
 
     @Override
     public void start()
     {
-        dragon.setAttacking(true);
+        dragon.setAggressive(true);
     }
 
     @Override
-    protected void attack(LivingEntity enemy, double distToEnemySqr)
+    protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr)
     {
-        double reach = this.getSquaredMaxAttackDistance(enemy);
-        if (distToEnemySqr <= reach && method_28347()) {
+        double reach = getAttackReachSqr(enemy);
+        if (distToEnemySqr <= reach && isTimeToAttack()) {
             attack.run();
-            method_28346();
+            resetAttackCooldown();
         }
 
     }
 
     @Override
-    protected double getSquaredMaxAttackDistance(LivingEntity attackTarget)
+    protected double getAttackReachSqr(LivingEntity attackTarget)
     {
-        return dragon.getWidth() * 2 * dragon.getWidth() * 2 + attackTarget.getWidth();
+        return dragon.getBbWidth() * 2 * dragon.getBbWidth() * 2 + attackTarget.getBbWidth();
     }
 }

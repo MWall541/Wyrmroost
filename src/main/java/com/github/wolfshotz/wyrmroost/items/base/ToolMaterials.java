@@ -26,7 +26,7 @@ public enum ToolMaterials implements IItemTier
         this.durability = durability;
         this.harvestLevel = harvestLevel;
         this.enchantibility = enchantibility;
-        this.repairMaterial = Lazy.of(() -> Ingredient.ofItems(repairMaterial.get()));
+        this.repairMaterial = Lazy.of(() -> Ingredient.of(repairMaterial.get()));
     }
 
     @Override

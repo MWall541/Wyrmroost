@@ -41,17 +41,17 @@ public class LDWyrmItem extends Item
             if (tag.contains(DATA_CONTENTS))
             {
                 World world = context.getWorld();
-                if (!world.isClientSide)
+                if (!level.isClientSide)
                 {
                     BlockPos pos = context.getBlockPos().offset(context.getSide());
                     CompoundNBT contents = tag.getCompound(DATA_CONTENTS);
-                    LDWyrmEntity entity = WREntities.LESSER_DESERTWYRM.get().create(world);
+                    LDWyrmEntity entity = WREntities.LESSER_DESERTWYRM.get().create(level);
 
                     entity.deserializeNBT(contents);
                     if (stack.hasCustomName())
                         entity.setCustomName(stack.getName()); // Item name takes priority
                     entity.updatePosition(pos.getX(), pos.getY(), pos.getZ());
-                    world.spawnEntity(entity);
+                    level.spawnEntity(entity);
                     stack.decrement(1);
                 }
                 return ActionResultType.SUCCESS;

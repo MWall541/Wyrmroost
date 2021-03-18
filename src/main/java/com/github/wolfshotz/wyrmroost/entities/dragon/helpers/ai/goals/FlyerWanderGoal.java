@@ -15,7 +15,7 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     public FlyerWanderGoal(AbstractDragonEntity dragon, double speed, float probability)
     {
         super(dragon, speed, probability);
-        setControls(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
+        setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
 
         this.dragon = dragon;
     }
@@ -26,18 +26,18 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     }
 
     @Override
-    public boolean canStart()
+    public boolean canUse()
     {
         if (dragon.isInSittingPose()) return false;
         if (dragon.canBeControlledByRider()) return false;
         if (!dragon.isFlying()) return false;
-        Vector3d vec3d = getWanderTarget();
+        Vector3d vec3d = getPosition();
         if (vec3d != null)
         {
-            this.targetX = vec3d.x;
-            this.targetY = vec3d.y;
-            this.targetZ = vec3d.z;
-            this.ignoringChance = false;
+            this.wantedX = vec3d.x;
+            this.wantedY = vec3d.y;
+            this.wantedZ = vec3d.z;
+            this.forceTrigger = false;
             return true;
         }
 
@@ -45,26 +45,26 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
     }
 
     @Override
-    public Vector3d getWanderTarget()
+    public Vector3d getPosition()
     {
         Vector3d position = null;
 
         if (dragon.isFlying() || (!dragon.isLeashed() && dragon.getRandom().nextFloat() <= probability + 0.02))
         {
-            if ((dragon.hasDataParameter(AbstractDragonEntity.SLEEPING) && !dragon.world.isDay()) || dragon.getRandom().nextFloat() <= probability)
-                position = RandomPositionGenerator.findGroundTarget(dragon, 20, 25);
+            if ((dragon.hasDataParameter(AbstractDragonEntity.SLEEPING) && !dragon.level.isDay()) || dragon.getRandom().nextFloat() <= probability)
+                position = RandomPositionGenerator.getLandPos(dragon, 20, 25);
             else
             {
-                Vector3d vec3d = dragon.getRotationVector();
+                Vector3d vec3d = dragon.getLookAngle();
                 if (!dragon.isInWalkTargetRange())
-                    vec3d = Vector3d.of(dragon.getPositionTarget()).subtract(dragon.getPos()).normalize();
+                    vec3d = Vector3d.atLowerCornerOf(dragon.getPositionTarget()).subtract(dragon.position()).normalize();
 
                 int yOffset = dragon.getAltitude() > 40? 10 : 0;
-                position = RandomPositionGenerator.findAirTarget(dragon, 50, 30, vec3d, Mafs.PI / 2, 10, yOffset);
+                position = RandomPositionGenerator.getAboveLandPos(dragon, 50, 30, vec3d, Mafs.PI / 2, 10, yOffset);
             }
-            if (position != null && position.y > dragon.getY() + dragon.getHeight() && !dragon.isFlying()) dragon.setFlying(true);
+            if (position != null && position.y > dragon.getY() + dragon.getBbHeight() && !dragon.isFlying()) dragon.setFlying(true);
         }
 
-        return position == null? super.getWanderTarget() : position;
+        return position == null? super.getPosition() : position;
     }
 }

@@ -73,181 +73,181 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     public ModelAnimator animator;
 
     public ButterflyLeviathanModel() {
-        this.textureWidth = 150;
-        this.textureHeight = 250;
+        this.texWidth = 150;
+        this.texHeight = 250;
         this.topWingFinPhalangeL2_1 = new WRModelRenderer(this, 21, 173);
-        this.topWingFinPhalangeL2_1.setPivot(5.8F, 0.0F, 0.4F);
-        this.topWingFinPhalangeL2_1.addCuboid(-5.8F, 0.0F, -10.7F, 13.0F, 0.0F, 11.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinPhalangeL2_1.setPos(5.8F, 0.0F, 0.4F);
+        this.topWingFinPhalangeL2_1.addBox(-5.8F, 0.0F, -10.7F, 13.0F, 0.0F, 11.0F, 0.0F, 0.0F, 0.0F);
         this.bottomWingFinPhalangeL2 = new WRModelRenderer(this, 32, 187);
-        this.bottomWingFinPhalangeL2.setPivot(-11.0F, -0.1F, -0.4F);
-        this.bottomWingFinPhalangeL2.addCuboid(-13.8F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinPhalangeL2.setPos(-11.0F, -0.1F, -0.4F);
+        this.bottomWingFinPhalangeL2.addBox(-13.8F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(bottomWingFinPhalangeL2, 0.0F, 0.0F, 0.15358897750445236F);
         this.bottomWingFinMembraneR3 = new WRModelRenderer(this, 67, 200);
-        this.bottomWingFinMembraneR3.setPivot(11.0F, 0.0F, 0.3F);
-        this.bottomWingFinMembraneR3.addCuboid(0.0F, 0.0F, -0.2F, 11.0F, 0.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinMembraneR3.setPos(11.0F, 0.0F, 0.3F);
+        this.bottomWingFinMembraneR3.addBox(0.0F, 0.0F, -0.2F, 11.0F, 0.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(bottomWingFinMembraneR3, 0.0F, 0.0F, -0.1354375539495016F);
         this.neck3 = new WRModelRenderer(this, 0, 0);
-        this.neck3.setPivot(0.0F, 0.0F, -4.7F);
-        this.neck3.addCuboid(-3.0F, -3.9F, -7.1F, 6.0F, 8.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.neck3.setPos(0.0F, 0.0F, -4.7F);
+        this.neck3.addBox(-3.0F, -3.9F, -7.1F, 6.0F, 8.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinMembraneR2 = new WRModelRenderer(this, 84, 162);
-        this.topWingFinMembraneR2.setPivot(6.0F, 0.0F, 0.4F);
-        this.topWingFinMembraneR2.addCuboid(-6.0F, 0.0F, -0.8F, 13.0F, 0.0F, 11.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinMembraneR2.setPos(6.0F, 0.0F, 0.4F);
+        this.topWingFinMembraneR2.addBox(-6.0F, 0.0F, -0.8F, 13.0F, 0.0F, 11.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinPhalangeR1 = new WRModelRenderer(this, 113, 155);
-        this.topWingFinPhalangeR1.setPivot(5.0F, -3.7F, -1.9F);
-        this.topWingFinPhalangeR1.addCuboid(0.0F, -1.1F, -1.5F, 14.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinPhalangeR1.setPos(5.0F, -3.7F, -1.9F);
+        this.topWingFinPhalangeR1.addBox(0.0F, -1.1F, -1.5F, 14.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(topWingFinPhalangeR1, 0.0F, 0.0F, -0.4300491170387584F);
         this.headFrillR = new WRModelRenderer(this, 31, 12);
-        this.headFrillR.setPivot(3.2F, -4.0F, -3.1F);
-        this.headFrillR.addCuboid(0.1F, -4.3F, -4.5F, 0.0F, 5.0F, 9.0F, 0.0F, 0.0F, 0.0F);
+        this.headFrillR.setPos(3.2F, -4.0F, -3.1F);
+        this.headFrillR.addBox(0.1F, -4.3F, -4.5F, 0.0F, 5.0F, 9.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(headFrillR, 0.0F, 0.0F, 0.875631653767622F);
         this.bottomWingFinMembraneR1 = new WRModelRenderer(this, 115, 200);
-        this.bottomWingFinMembraneR1.setPivot(4.7F, -0.1F, -0.4F);
-        this.bottomWingFinMembraneR1.addCuboid(-5.7F, 0.0F, -0.8F, 12.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinMembraneR1.setPos(4.7F, -0.1F, -0.4F);
+        this.bottomWingFinMembraneR1.addBox(-5.7F, 0.0F, -0.8F, 12.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
         this.bottomWingFinPhalangeL1 = new WRModelRenderer(this, 0, 187);
-        this.bottomWingFinPhalangeL1.setPivot(-5.1F, -0.8F, -1.9F);
-        this.bottomWingFinPhalangeL1.addCuboid(-11.9F, -1.1F, -1.5F, 12.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinPhalangeL1.setPos(-5.1F, -0.8F, -1.9F);
+        this.bottomWingFinPhalangeL1.addBox(-11.9F, -1.1F, -1.5F, 12.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(bottomWingFinPhalangeL1, 0.0F, 0.0F, -0.3909537457888271F);
         this.eyeL = new WRModelRenderer(this, 1, 19);
-        this.eyeL.setPivot(-2.8F, -1.5F, -5.5F);
-        this.eyeL.addCuboid(-1.1F, -0.5F, -0.6F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.eyeL.setPos(-2.8F, -1.5F, -5.5F);
+        this.eyeL.addBox(-1.1F, -0.5F, -0.6F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.tailFinBottom = new WRModelRenderer(this, 0, 108);
-        this.tailFinBottom.setPivot(-0.2F, 1.6F, 5.4F);
-        this.tailFinBottom.addCuboid(0.0F, -0.5F, -6.2F, 0.0F, 5.0F, 16.0F, 0.0F, 0.0F, 0.0F);
+        this.tailFinBottom.setPos(-0.2F, 1.6F, 5.4F);
+        this.tailFinBottom.addBox(0.0F, -0.5F, -6.2F, 0.0F, 5.0F, 16.0F, 0.0F, 0.0F, 0.0F);
         this.footR = new WRModelRenderer(this, 74, 56);
-        this.footR.setPivot(0.0F, 3.7F, 0.0F);
-        this.footR.addCuboid(-1.5F, -0.3F, -1.1F, 3.0F, 3.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.footR.setPos(0.0F, 3.7F, 0.0F);
+        this.footR.addBox(-1.5F, -0.3F, -1.1F, 3.0F, 3.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(footR, 0.5337216839282855F, 0.0F, 0.0F);
         this.legSegmentR2 = new WRModelRenderer(this, 76, 46);
-        this.legSegmentR2.setPivot(-0.1F, 3.7F, 0.1F);
-        this.legSegmentR2.addCuboid(-1.5F, -0.8F, -1.0F, 3.0F, 5.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.legSegmentR2.setPos(-0.1F, 3.7F, 0.1F);
+        this.legSegmentR2.addBox(-1.5F, -0.8F, -1.0F, 3.0F, 5.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legSegmentR2, -0.5330235695380348F, 0.0F, 0.0F);
         this.neck2 = new WRModelRenderer(this, 30, 0);
-        this.neck2.setPivot(0.0F, 0.0F, -4.7F);
-        this.neck2.addCuboid(-3.5F, -4.0F, -7.1F, 7.0F, 9.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.neck2.setPos(0.0F, 0.0F, -4.7F);
+        this.neck2.addBox(-3.5F, -4.0F, -7.1F, 7.0F, 9.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinPhalangeR2 = new WRModelRenderer(this, 80, 155);
-        this.topWingFinPhalangeR2.setPivot(13.0F, -0.1F, -0.4F);
-        this.topWingFinPhalangeR2.addCuboid(0.0F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinPhalangeR2.setPos(13.0F, -0.1F, -0.4F);
+        this.topWingFinPhalangeR2.addBox(0.0F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(topWingFinPhalangeR2, 0.0F, 0.0F, 0.23177972000431504F);
         this.head = new WRModelRenderer(this, 0, 21);
-        this.head.setPivot(0.0F, 0.0F, -6.2F);
-        this.head.addCuboid(-3.5F, -4.0F, -7.1F, 7.0F, 8.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.head.setPos(0.0F, 0.0F, -6.2F);
+        this.head.addBox(-3.5F, -4.0F, -7.1F, 7.0F, 8.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.footL = new WRModelRenderer(this, 74, 56);
-        this.footL.setPivot(0.0F, 3.7F, 0.0F);
-        this.footL.addCuboid(-1.5F, -0.3F, -1.1F, 3.0F, 3.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.footL.setPos(0.0F, 3.7F, 0.0F);
+        this.footL.addBox(-1.5F, -0.3F, -1.1F, 3.0F, 3.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(footL, 0.5337216839282855F, 0.0F, 0.0F);
         this.bottomWingFinPhalangeR2 = new WRModelRenderer(this, 32, 187);
-        this.bottomWingFinPhalangeR2.setPivot(11.0F, -0.1F, -0.4F);
-        this.bottomWingFinPhalangeR2.addCuboid(0.0F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinPhalangeR2.setPos(11.0F, -0.1F, -0.4F);
+        this.bottomWingFinPhalangeR2.addBox(0.0F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(bottomWingFinPhalangeR2, 0.0F, 0.0F, -0.1926843487543837F);
         this.headFrillL = new WRModelRenderer(this, 31, 12);
         this.headFrillL.mirror = true;
-        this.headFrillL.setPivot(-3.4F, -4.0F, -3.1F);
-        this.headFrillL.addCuboid(0.0F, -4.3F, -4.5F, 0.0F, 5.0F, 9.0F, 0.0F, 0.0F, 0.0F);
+        this.headFrillL.setPos(-3.4F, -4.0F, -3.1F);
+        this.headFrillL.addBox(0.0F, -4.3F, -4.5F, 0.0F, 5.0F, 9.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(headFrillL, 0.0F, 0.0F, -0.875631653767622F);
         this.legThighR1 = new WRModelRenderer(this, 73, 21);
-        this.legThighR1.setPivot(3.1F, 2.1F, 7.7F);
-        this.legThighR1.addCuboid(0.0F, -1.4F, -2.0F, 3.0F, 7.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.legThighR1.setPos(3.1F, 2.1F, 7.7F);
+        this.legThighR1.addBox(0.0F, -1.4F, -2.0F, 3.0F, 7.0F, 4.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legThighR1, 0.4836307197486622F, 0.0F, 0.0F);
         this.tail4 = new WRModelRenderer(this, 82, 129);
-        this.tail4.setPivot(0.0F, -0.1F, 10.2F);
-        this.tail4.addCuboid(-3.0F, -3.7F, -2.2F, 6.0F, 8.0F, 13.0F, 0.0F, 0.0F, 0.0F);
+        this.tail4.setPos(0.0F, -0.1F, 10.2F);
+        this.tail4.addBox(-3.0F, -3.7F, -2.2F, 6.0F, 8.0F, 13.0F, 0.0F, 0.0F, 0.0F);
         this.legSegmentR1 = new WRModelRenderer(this, 75, 36);
-        this.legSegmentR1.setPivot(1.4F, 4.2F, -0.3F);
-        this.legSegmentR1.addCuboid(-1.5F, 0.1F, -1.6F, 3.0F, 4.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.legSegmentR1.setPos(1.4F, 4.2F, -0.3F);
+        this.legSegmentR1.addBox(-1.5F, 0.1F, -1.6F, 3.0F, 4.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legSegmentR1, 1.011259657024578F, 0.0F, 0.0F);
         this.tail6 = new WRModelRenderer(this, 6, 130);
-        this.tail6.setPivot(0.1F, 0.1F, 10.0F);
-        this.tail6.addCuboid(-2.2F, -3.9F, -2.2F, 4.0F, 6.0F, 14.0F, 0.0F, 0.0F, 0.0F);
+        this.tail6.setPos(0.1F, 0.1F, 10.0F);
+        this.tail6.addBox(-2.2F, -3.9F, -2.2F, 4.0F, 6.0F, 14.0F, 0.0F, 0.0F, 0.0F);
         this.bottomWingFinMembraneL3 = new WRModelRenderer(this, 49, 210);
-        this.bottomWingFinMembraneL3.setPivot(-11.0F, 0.0F, 0.1F);
-        this.bottomWingFinMembraneL3.addCuboid(-11.0F, 0.0F, 0.0F, 11.0F, 0.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinMembraneL3.setPos(-11.0F, 0.0F, 0.1F);
+        this.bottomWingFinMembraneL3.addBox(-11.0F, 0.0F, 0.0F, 11.0F, 0.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(bottomWingFinMembraneL3, 0.0F, 0.0F, 0.25272366769929566F);
         this.bottomWingFinMembraneR2 = new WRModelRenderer(this, 92, 200);
-        this.bottomWingFinMembraneR2.setPivot(5.9F, 0.0F, 0.4F);
-        this.bottomWingFinMembraneR2.addCuboid(-5.9F, 0.0F, -0.8F, 11.0F, 0.0F, 9.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinMembraneR2.setPos(5.9F, 0.0F, 0.4F);
+        this.bottomWingFinMembraneR2.addBox(-5.9F, 0.0F, -0.8F, 11.0F, 0.0F, 9.0F, 0.0F, 0.0F, 0.0F);
         this.bottomWingFinPhalangeR1 = new WRModelRenderer(this, 0, 187);
-        this.bottomWingFinPhalangeR1.setPivot(5.1F, -0.8F, -1.9F);
-        this.bottomWingFinPhalangeR1.addCuboid(0.0F, -1.1F, -1.5F, 12.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinPhalangeR1.setPos(5.1F, -0.8F, -1.9F);
+        this.bottomWingFinPhalangeR1.addBox(0.0F, -1.1F, -1.5F, 12.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(bottomWingFinPhalangeR1, 0.0F, 0.0F, 0.3490658503988659F);
         this.body1 = new WRModelRenderer(this, 96, 0);
-        this.body1.setPivot(0.0F, 17.3F, 0.0F);
-        this.body1.addCuboid(-5.5F, -6.3F, -4.6F, 11.0F, 13.0F, 15.0F, 0.0F, 0.0F, 0.0F);
+        this.body1.setPos(0.0F, 17.3F, 0.0F);
+        this.body1.addBox(-5.5F, -6.3F, -4.6F, 11.0F, 13.0F, 15.0F, 0.0F, 0.0F, 0.0F);
         this.tailFinTop = new WRModelRenderer(this, 0, 97);
-        this.tailFinTop.setPivot(-0.2F, -3.4F, 5.4F);
-        this.tailFinTop.addCuboid(0.0F, -6.8F, -6.2F, 0.0F, 7.0F, 16.0F, 0.0F, 0.0F, 0.0F);
+        this.tailFinTop.setPos(-0.2F, -3.4F, 5.4F);
+        this.tailFinTop.addBox(0.0F, -6.8F, -6.2F, 0.0F, 7.0F, 16.0F, 0.0F, 0.0F, 0.0F);
         this.tail5 = new WRModelRenderer(this, 44, 130);
-        this.tail5.setPivot(0.1F, 0.3F, 10.2F);
-        this.tail5.addCuboid(-2.6F, -3.9F, -2.2F, 5.0F, 7.0F, 13.0F, 0.0F, 0.0F, 0.0F);
+        this.tail5.setPos(0.1F, 0.3F, 10.2F);
+        this.tail5.addBox(-2.6F, -3.9F, -2.2F, 5.0F, 7.0F, 13.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinPhalangeL1 = new WRModelRenderer(this, 113, 155);
-        this.topWingFinPhalangeL1.setPivot(-5.0F, -3.7F, -1.9F);
-        this.topWingFinPhalangeL1.addCuboid(0.0F, -1.1F, -1.5F, 14.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinPhalangeL1.setPos(-5.0F, -3.7F, -1.9F);
+        this.topWingFinPhalangeL1.addBox(0.0F, -1.1F, -1.5F, 14.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(topWingFinPhalangeL1, 0.0F, 3.141592653589793F, 0.41887902047863906F);
         this.topWingFinMembraneR3 = new WRModelRenderer(this, 58, 162);
-        this.topWingFinMembraneR3.setPivot(13.0F, 0.0F, 0.1F);
-        this.topWingFinMembraneR3.addCuboid(0.0F, 0.0F, -0.5F, 13.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinMembraneR3.setPos(13.0F, 0.0F, 0.1F);
+        this.topWingFinMembraneR3.addBox(0.0F, 0.0F, -0.5F, 13.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(topWingFinMembraneR3, 0.0F, 0.0F, -0.2617993877991494F);
         this.tail2 = new WRModelRenderer(this, 106, 82);
-        this.tail2.setPivot(0.0F, 0.0F, 10.2F);
-        this.tail2.addCuboid(-4.0F, -3.9F, -2.2F, 8.0F, 10.0F, 13.0F, 0.0F, 0.0F, 0.0F);
+        this.tail2.setPos(0.0F, 0.0F, 10.2F);
+        this.tail2.addBox(-4.0F, -3.9F, -2.2F, 8.0F, 10.0F, 13.0F, 0.0F, 0.0F, 0.0F);
         this.tail1 = new WRModelRenderer(this, 106, 57);
-        this.tail1.setPivot(0.0F, -2.0F, 10.2F);
-        this.tail1.addCuboid(-4.5F, -4.1F, -2.2F, 9.0F, 11.0F, 13.0F, 0.0F, 0.0F, 0.0F);
+        this.tail1.setPos(0.0F, -2.0F, 10.2F);
+        this.tail1.addBox(-4.5F, -4.1F, -2.2F, 9.0F, 11.0F, 13.0F, 0.0F, 0.0F, 0.0F);
         this.legSegmentL2 = new WRModelRenderer(this, 76, 46);
-        this.legSegmentL2.setPivot(0.1F, 3.7F, 0.1F);
-        this.legSegmentL2.addCuboid(-1.5F, -0.8F, -1.0F, 3.0F, 5.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.legSegmentL2.setPos(0.1F, 3.7F, 0.1F);
+        this.legSegmentL2.addBox(-1.5F, -0.8F, -1.0F, 3.0F, 5.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legSegmentL2, -0.5330235695380348F, 0.0F, 0.0F);
         this.topWingFinMembrane3L = new WRModelRenderer(this, 50, 173);
-        this.topWingFinMembrane3L.setPivot(13.0F, 0.0F, 0.1F);
-        this.topWingFinMembrane3L.addCuboid(0.0F, 0.0F, -9.4F, 13.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinMembrane3L.setPos(13.0F, 0.0F, 0.1F);
+        this.topWingFinMembrane3L.addBox(0.0F, 0.0F, -9.4F, 13.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(topWingFinMembrane3L, 0.0F, 0.0F, -0.2617993877991494F);
         this.tail3 = new WRModelRenderer(this, 108, 107);
-        this.tail3.setPivot(0.0F, 0.1F, 10.2F);
-        this.tail3.addCuboid(-3.5F, -3.9F, -2.2F, 7.0F, 9.0F, 13.0F, 0.0F, 0.0F, 0.0F);
+        this.tail3.setPos(0.0F, 0.1F, 10.2F);
+        this.tail3.addBox(-3.5F, -3.9F, -2.2F, 7.0F, 9.0F, 13.0F, 0.0F, 0.0F, 0.0F);
         this.body2 = new WRModelRenderer(this, 102, 30);
-        this.body2.setPivot(0.0F, 0.1F, 10.2F);
-        this.body2.addCuboid(-5.0F, -6.3F, -2.2F, 10.0F, 12.0F, 13.0F, 0.0F, 0.0F, 0.0F);
+        this.body2.setPos(0.0F, 0.1F, 10.2F);
+        this.body2.addBox(-5.0F, -6.3F, -2.2F, 10.0F, 12.0F, 13.0F, 0.0F, 0.0F, 0.0F);
         this.eyeR = new WRModelRenderer(this, 1, 19);
-        this.eyeR.setPivot(2.8F, -1.5F, -5.5F);
-        this.eyeR.addCuboid(0.1F, -0.5F, -0.6F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.eyeR.setPos(2.8F, -1.5F, -5.5F);
+        this.eyeR.addBox(0.1F, -0.5F, -0.6F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.mouthTop = new WRModelRenderer(this, 0, 40);
-        this.mouthTop.setPivot(0.0F, 0.1F, -6.2F);
-        this.mouthTop.addCuboid(-3.0F, -4.0F, -7.1F, 6.0F, 4.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.mouthTop.setPos(0.0F, 0.1F, -6.2F);
+        this.mouthTop.addBox(-3.0F, -4.0F, -7.1F, 6.0F, 4.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinMembraneR1 = new WRModelRenderer(this, 110, 162);
-        this.topWingFinMembraneR1.setPivot(4.6F, -0.1F, -0.4F);
-        this.topWingFinMembraneR1.addCuboid(-5.6F, 0.0F, -0.8F, 14.0F, 0.0F, 12.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinMembraneR1.setPos(4.6F, -0.1F, -0.4F);
+        this.topWingFinMembraneR1.addBox(-5.6F, 0.0F, -0.8F, 14.0F, 0.0F, 12.0F, 0.0F, 0.0F, 0.0F);
         this.bottomWingFinMembraneL2 = new WRModelRenderer(this, 22, 210);
-        this.bottomWingFinMembraneL2.setPivot(-5.3F, 0.0F, 0.4F);
-        this.bottomWingFinMembraneL2.addCuboid(-5.7F, 0.0F, -0.8F, 11.0F, 0.0F, 9.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinMembraneL2.setPos(-5.3F, 0.0F, 0.4F);
+        this.bottomWingFinMembraneL2.addBox(-5.7F, 0.0F, -0.8F, 11.0F, 0.0F, 9.0F, 0.0F, 0.0F, 0.0F);
         this.mouthBottom = new WRModelRenderer(this, 0, 55);
-        this.mouthBottom.setPivot(0.0F, 1.4F, -6.2F);
-        this.mouthBottom.addCuboid(-3.0F, -1.3F, -7.1F, 6.0F, 4.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.mouthBottom.setPos(0.0F, 1.4F, -6.2F);
+        this.mouthBottom.addBox(-3.0F, -1.3F, -7.1F, 6.0F, 4.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.bottomWingFinMembraneL1 = new WRModelRenderer(this, -7, 210);
-        this.bottomWingFinMembraneL1.setPivot(-5.9F, -0.1F, -0.4F);
-        this.bottomWingFinMembraneL1.addCuboid(-5.1F, 0.0F, -0.8F, 12.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
+        this.bottomWingFinMembraneL1.setPos(-5.9F, -0.1F, -0.4F);
+        this.bottomWingFinMembraneL1.addBox(-5.1F, 0.0F, -0.8F, 12.0F, 0.0F, 10.0F, 0.0F, 0.0F, 0.0F);
         this.legThighL1 = new WRModelRenderer(this, 73, 21);
-        this.legThighL1.setPivot(-3.9F, 2.1F, 7.7F);
-        this.legThighL1.addCuboid(-2.2F, -1.4F, -2.0F, 3.0F, 7.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.legThighL1.setPos(-3.9F, 2.1F, 7.7F);
+        this.legThighL1.addBox(-2.2F, -1.4F, -2.0F, 3.0F, 7.0F, 4.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legThighL1, 0.568802805888113F, 0.0F, 0.03490658503988659F);
         this.legSegmentL1 = new WRModelRenderer(this, 75, 36);
-        this.legSegmentL1.setPivot(-0.6F, 4.2F, -0.3F);
-        this.legSegmentL1.addCuboid(-1.5F, 0.1F, -1.6F, 3.0F, 4.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.legSegmentL1.setPos(-0.6F, 4.2F, -0.3F);
+        this.legSegmentL1.addBox(-1.5F, 0.1F, -1.6F, 3.0F, 4.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legSegmentL1, 0.9261035498516674F, 0.0F, 0.0F);
         this.teethTop = new WRModelRenderer(this, 29, 40);
-        this.teethTop.setPivot(0.0F, -0.3F, -5.9F);
-        this.teethTop.addCuboid(-2.5F, 0.3F, -0.7F, 5.0F, 1.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.teethTop.setPos(0.0F, -0.3F, -5.9F);
+        this.teethTop.addBox(-2.5F, 0.3F, -0.7F, 5.0F, 1.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinPhalangeL2 = new WRModelRenderer(this, 80, 155);
-        this.topWingFinPhalangeL2.setPivot(13.1F, -0.1F, 0.2F);
-        this.topWingFinPhalangeL2.addCuboid(-0.1F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinPhalangeL2.setPos(13.1F, -0.1F, 0.2F);
+        this.topWingFinPhalangeL2.addBox(-0.1F, -1.1F, -0.9F, 14.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(topWingFinPhalangeL2, 0.0F, 0.0F, 0.22689280275926282F);
         this.neck1 = new WRModelRenderer(this, 62, 0);
-        this.neck1.setPivot(0.0F, -1.5F, -2.9F);
-        this.neck1.addCuboid(-4.0F, -4.1F, -7.1F, 8.0F, 10.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.neck1.setPos(0.0F, -1.5F, -2.9F);
+        this.neck1.addBox(-4.0F, -4.1F, -7.1F, 8.0F, 10.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinMembraneL1 = new WRModelRenderer(this, -10, 173);
-        this.topWingFinMembraneL1.setPivot(4.8F, -0.1F, -0.4F);
-        this.topWingFinMembraneL1.addCuboid(-5.7F, 0.0F, -10.3F, 14.0F, 0.0F, 12.0F, 0.0F, 0.0F, 0.0F);
+        this.topWingFinMembraneL1.setPos(4.8F, -0.1F, -0.4F);
+        this.topWingFinMembraneL1.addBox(-5.7F, 0.0F, -10.3F, 14.0F, 0.0F, 12.0F, 0.0F, 0.0F, 0.0F);
         this.teethBottom = new WRModelRenderer(this, 29, 55);
-        this.teethBottom.setPivot(0.0F, -1.6F, -5.9F);
-        this.teethBottom.addCuboid(-2.5F, -0.7F, -0.7F, 5.0F, 1.0F, 8.0F, 0.0F, 0.0F, 0.0F);
+        this.teethBottom.setPos(0.0F, -1.6F, -5.9F);
+        this.teethBottom.addBox(-2.5F, -0.7F, -0.7F, 5.0F, 1.0F, 8.0F, 0.0F, 0.0F, 0.0F);
         this.topWingFinPhalangeL2.addChild(this.topWingFinPhalangeL2_1);
         this.bottomWingFinPhalangeL1.addChild(this.bottomWingFinPhalangeL2);
         this.bottomWingFinPhalangeR2.addChild(this.bottomWingFinMembraneR3);
@@ -305,18 +305,18 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     }
 
     @Override
-    public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
         body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
     @Override
-    public void setAngles(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         if (!entity.beached)
         {
-            body1.pitch = headPitch * Mafs.PI / 180f;
+            body1.xRot = headPitch * Mafs.PI / 180f;
             headPitch = 0;
         }
 
@@ -324,7 +324,7 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     }
 
     @Override
-    public void animateModel(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float partialTick)
+    public void prepareMobModel(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float partialTick)
     {
         this.entity = entity;
         resetToDefaultPose();
@@ -332,18 +332,18 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
 
         if (entity.beached)
         {
-            bottomWingFinPhalangeL1.roll = -0.65f;
-            bottomWingFinPhalangeL2.roll = 0.65f;
-            bottomWingFinPhalangeR1.roll = 0.65f;
-            bottomWingFinPhalangeR2.roll = -0.65f;
+            bottomWingFinPhalangeL1.zRot = -0.65f;
+            bottomWingFinPhalangeL2.zRot = 0.65f;
+            bottomWingFinPhalangeR1.zRot = 0.65f;
+            bottomWingFinPhalangeR2.zRot = -0.65f;
         }
 
-        if (entity.isTouchingWater())
+        if (entity.isInWater())
         {
             chainSwing(headArray, globalSpeed - 0.1f, 0.15f, 3f, limbSwing, limbSwingAmount);
             chainSwing(ArrayUtils.addAll(tailArray, body2), globalSpeed - 0.1f, 0.2f, -3, limbSwing, limbSwingAmount);
 
-            if (entity.isSubmergedInWater())
+            if (entity.isUnderWater())
             {
                 flap(topWingFinPhalangeR1, globalSpeed - 0.1f, 0.75f, false, 0, -0.25f, limbSwing, limbSwingAmount);
                 walk(topWingFinPhalangeR1, globalSpeed - 0.1f, 0.35f, false, 0.75f, 0, limbSwing, limbSwingAmount);
@@ -394,13 +394,13 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         beach(entity.beachedTimer.get(partialTick));
         sit(entity.sitTimer.get(partialTick));
 
-        idle(entity.age + partialTick);
+        idle(entity.tickCount + partialTick);
     }
 
     @Override
     public void idle(float frame)
     {
-        if (entity.isTouchingWater())
+        if (entity.isInWater())
         {
             chainWave(headArray, globalSpeed - 0.45f, 0.05f, 2, frame, 0.5f);
             chainSwing(tailArray, globalSpeed - 0.44f, 0.1f, -2, frame, 0.5f);

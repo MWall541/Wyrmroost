@@ -43,11 +43,11 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
         BlockPos.Mutable mutable = pos.mutable().move(growthDirection);
         int i = 0;
         int amount = getBlocksToGrowWhenBonemealed(rand);
-        if (hasMaxHeight()) amount = Math.min(amount, maxGrowthHeight - getHeight(world, pos));
+        if (hasMaxHeight()) amount = Math.min(amount, maxGrowthHeight - getHeight(level, pos));
 
-        for (int k = 0; k < amount && canGrowInto(world.getBlockState(mutable)); k++)
+        for (int k = 0; k < amount && canGrowInto(level.getBlockState(mutable)); k++)
         {
-            world.setBlockAndUpdate(mutable, state.setValue(AGE, k == maxGrowthHeight - 1? 25 : (i = Math.min(i + 1, 25))));
+            level.setBlockAndUpdate(mutable, state.setValue(AGE, k == maxGrowthHeight - 1? 25 : (i = Math.min(i + 1, 25))));
             mutable.move(growthDirection);
         }
     }
@@ -75,7 +75,7 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
         {
             World world = context.getLevel();
             BlockPos pos = context.getClickedPos().relative(growthDirection.getOpposite());
-            if (getHeight(world, pos, true) + 1 >= maxGrowthHeight) return defaultBlockState().setValue(AGE, 25);
+            if (getHeight(level, pos, true) + 1 >= maxGrowthHeight) return defaultBlockState().setValue(AGE, 25);
         }
         return super.getStateForPlacement(context);
     }
@@ -99,17 +99,17 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
 
     public int getHeight(IWorldReader world, BlockPos pos)
     {
-        return getHeight(world, pos, true) + getHeight(world, pos, false) - 1;
+        return getHeight(level, pos, true) + getHeight(level, pos, false) - 1;
     }
 
     public int getHeight(IWorldReader world, BlockPos pos, boolean below)
     {
         Direction dir = below? growthDirection.getOpposite() : growthDirection;
         BlockPos.Mutable mutable = pos.mutable();
-        BlockState state = world.getBlockState(mutable);
+        BlockState state = level.getBlockState(mutable);
         int i = 0;
         for (; i < maxGrowthHeight + 1 && (state.is(getBodyBlock()) || state.is(this)); ++i)
-            state = world.getBlockState(mutable.move(dir));
+            state = level.getBlockState(mutable.move(dir));
         return i;
     }
 

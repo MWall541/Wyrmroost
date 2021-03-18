@@ -31,13 +31,13 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     public RoostStalkerRenderer(EntityRendererManager manager)
     {
         super(manager, new RoostStalkerModel(), 0.5f);
-        addFeature(new MouthItemLayer());
-        addFeature(new GlowLayer(this::getGlowTexture).addCondition(r -> !r.isSleeping()));
+        addLayer(new MouthItemLayer());
+        addLayer(new GlowLayer(this::getGlowTexture).addCondition(r -> !r.isSleeping()));
     }
 
     @Nullable
     @Override
-    public ResourceLocation getTexture(RoostStalkerEntity entity)
+    public ResourceLocation getTextureLocation(RoostStalkerEntity entity)
     {
         if (entity.getVariant() == -1) return SHINY;
         return WRConfig.deckTheHalls? CHRISTMAS : BODY;
@@ -68,32 +68,32 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
 
             if (!stack.isEmpty())
             {
-                ms.push();
+                ms.pushPose();
 
                 if (stalker.isSleeping())
                 {
                     // just set the item on the ground
                     ms.translate(-0.4, 1.47, 0.1);
-                    ms.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(135));
+                    ms.mulPose(Vector3f.YP.rotationDegrees(135));
                 }
                 else
                 {
                     ModelRenderer head = getModel().head;
-                    ms.translate(head.pivotX / 8, -(head.pivotY * 2.4), head.pivotZ / 8); // translate to heads rotation point (rough estimate) to allow for the same rotations while rotating; fixes connection issues
-                    ms.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(netHeadYaw)); // rotate to match head rotations
-                    ms.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(headPitch));
+                    ms.translate(head.x / 8, -(head.y * 2.4), head.z / 8); // translate to heads rotation point (rough estimate) to allow for the same rotations while rotating; fixes connection issues
+                    ms.mulPose(Vector3f.YP.rotationDegrees(netHeadYaw)); // rotate to match head rotations
+                    ms.mulPose(Vector3f.XP.rotationDegrees(headPitch));
                     ms.translate(0, stalker.isInSittingPose()? 0.11 : 0.03, -0.4); // offset
                     if (stack.getItem() instanceof TieredItem) // offsets for tools, looks way fucking better
                     {
                         ms.translate(0.1, 0, 0);
-                        ms.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(45));
+                        ms.mulPose(Vector3f.YP.rotationDegrees(45));
                     }
                 }
 
-                ms.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90)); // flip the item
+                ms.mulPose(Vector3f.XP.rotationDegrees(90)); // flip the item
 
-                Minecraft.getInstance().getHeldItemRenderer().renderItem(stalker, stack, ItemCameraTransforms.TransformType.GROUND, false, ms, bufferIn, packedLightIn);
-                ms.pop();
+                Minecraft.getInstance().getItemInHandRenderer().renderItem(stalker, stack, ItemCameraTransforms.TransformType.GROUND, false, ms, bufferIn, packedLightIn);
+                ms.popPose();
             }
         }
     }

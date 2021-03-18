@@ -35,84 +35,84 @@ public class CoinDragonModel extends WREntityModel<CoinDragonEntity>
 
     public CoinDragonModel()
     {
-        this.textureWidth = 50;
-        this.textureHeight = 15;
+        this.texWidth = 50;
+        this.texHeight = 15;
         this.body1 = new ModelRenderer(this, 0, 0);
-        this.body1.setPivot(0.0F, 19.1F, 0.0F);
-        this.body1.addCuboid(-1.0F, -1.0F, -1.5F, 2.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.body1.setPos(0.0F, 19.1F, 0.0F);
+        this.body1.addBox(-1.0F, -1.0F, -1.5F, 2.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(body1, -0.6981317007977318F, 0.0F, 0.0F);
         this.armR = new ModelRenderer(this, 11, 6);
         this.armR.mirror = true;
-        this.armR.setPivot(-1.0F, 0.0F, -0.8F);
-        this.armR.addCuboid(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.armR.setPos(-1.0F, 0.0F, -0.8F);
+        this.armR.addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(armR, -0.5235987755982988F, -0.6981317007977318F, 0.5235987755982988F);
         this.eyeL = new ModelRenderer(this, 31, 4);
-        this.eyeL.setPivot(0.7F, -0.4F, -0.7F);
-        this.eyeL.addCuboid(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.eyeL.setPos(0.7F, -0.4F, -0.7F);
+        this.eyeL.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(eyeL, 0.6829473549475088F, 0.3186971254089062F, 0.0F);
         this.legR = new ModelRenderer(this, 0, 6);
         this.legR.mirror = true;
-        this.legR.setPivot(-1.0F, -0.5F, 2.0F);
-        this.legR.addCuboid(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.legR.setPos(-1.0F, -0.5F, 2.0F);
+        this.legR.addBox(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legR, 1.5707963267948966F, 0.0F, 0.0F);
         this.armL = new ModelRenderer(this, 11, 6);
-        this.armL.setPivot(1.0F, 0.0F, -0.8F);
-        this.armL.addCuboid(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.armL.setPos(1.0F, 0.0F, -0.8F);
+        this.armL.addBox(-0.5F, 0.0F, -0.5F, 1.0F, 2.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(armL, -0.5235987755982988F, 0.6981317007977318F, -0.5235987755982988F);
         this.head = new ModelRenderer(this, 36, 0);
-        this.head.setPivot(0.0F, 0.0F, -1.7F);
-        this.head.addCuboid(-1.0F, -0.5F, -2.0F, 2.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.head.setPos(0.0F, 0.0F, -1.7F);
+        this.head.addBox(-1.0F, -0.5F, -2.0F, 2.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(head, 0.9773843811168246F, 0.0F, 0.0F);
         this.wingL = new ModelRenderer(this, 17, 1);
-        this.wingL.setPivot(0.7F, -0.7F, -0.8F);
-        this.wingL.addCuboid(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.wingL.setPos(0.7F, -0.7F, -0.8F);
+        this.wingL.addBox(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(wingL, 0.3186971254089062F, 0.0F, 0.956091342937205F);
         this.neck1 = new ModelRenderer(this, 30, 0);
-        this.neck1.setPivot(0.0F, -0.3F, -1.3F);
-        this.neck1.addCuboid(-0.5F, -0.5F, -2.0F, 1.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.neck1.setPos(0.0F, -0.3F, -1.3F);
+        this.neck1.addBox(-0.5F, -0.5F, -2.0F, 1.0F, 1.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(neck1, -0.17453292519943295F, 0.0F, 0.0F);
         this.tail3 = new ModelRenderer(this, 22, 0);
-        this.tail3.setPivot(0.01F, 0.01F, 2.5F);
-        this.tail3.addCuboid(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.tail3.setPos(0.01F, 0.01F, 2.5F);
+        this.tail3.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(tail3, 0.17453292519943295F, 0.0F, 0.0F);
         this.legL = new ModelRenderer(this, 0, 6);
-        this.legL.setPivot(1.0F, -0.5F, 2.0F);
-        this.legL.addCuboid(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.legL.setPos(1.0F, -0.5F, 2.0F);
+        this.legL.addBox(-0.5F, 0.0F, -2.0F, 1.0F, 2.0F, 2.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(legL, 1.5707963267948966F, 0.0F, 0.0F);
         this.footL = new ModelRenderer(this, 6, 6);
-        this.footL.setPivot(0.0F, 2.0F, -2.0F);
-        this.footL.addCuboid(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.footL.setPos(0.0F, 2.0F, -2.0F);
+        this.footL.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(footL, 0.3490658503988659F, 0.0F, 0.0F);
         this.body2 = new ModelRenderer(this, 11, 0);
-        this.body2.setPivot(0.0F, 0.0F, 0.0F);
-        this.body2.addCuboid(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 3.0F, 0.1F, 0.1F, 0.0F);
+        this.body2.setPos(0.0F, 0.0F, 0.0F);
+        this.body2.addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 3.0F, 0.1F, 0.1F, 0.0F);
         this.setRotateAngle(body2, -0.3490658503988659F, 0.0F, 0.0F);
         this.eyeR = new ModelRenderer(this, 31, 4);
         this.eyeR.mirror = true;
-        this.eyeR.setPivot(-0.7F, -0.4F, -0.7F);
-        this.eyeR.addCuboid(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.eyeR.setPos(-0.7F, -0.4F, -0.7F);
+        this.eyeR.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(eyeR, 0.6829473549475088F, -0.3186971254089062F, 0.0F);
         this.wingR = new ModelRenderer(this, 17, 1);
-        this.wingR.setPivot(-0.7F, -0.7F, -0.8F);
-        this.wingR.addCuboid(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.wingR.setPos(-0.7F, -0.7F, -0.8F);
+        this.wingR.addBox(0.0F, -3.0F, 0.0F, 0.0F, 3.0F, 5.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(wingR, 0.3186971254089062F, 0.0F, -0.956091342937205F);
         this.coin = new ModelRenderer(this, 30, 5);
         this.coin.mirror = true;
-        this.coin.setPivot(0.0F, 1.0F, -1.2F);
-        this.coin.addCuboid(-2.5F, 0.0F, 0.0F, 5.0F, 0.5F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.coin.setPos(0.0F, 1.0F, -1.2F);
+        this.coin.addBox(-2.5F, 0.0F, 0.0F, 5.0F, 0.5F, 5.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(coin, -0.8726646259971648F, 0.0F, 0.0F);
         this.footR = new ModelRenderer(this, 6, 6);
-        this.footR.setPivot(0.0F, 2.0F, -2.0F);
-        this.footR.addCuboid(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.footR.setPos(0.0F, 2.0F, -2.0F);
+        this.footR.addBox(-0.5F, 0.0F, -1.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(footR, 0.3490658503988659F, 0.0F, 0.0F);
         this.tail1 = new ModelRenderer(this, 22, 0);
-        this.tail1.setPivot(0.0F, -0.1F, 2.5F);
-        this.tail1.addCuboid(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.tail1.setPos(0.0F, -0.1F, 2.5F);
+        this.tail1.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(tail1, 0.8726646259971648F, 0.0F, 0.0F);
         this.tail2 = new ModelRenderer(this, 22, 0);
         this.tail2.mirror = true;
-        this.tail2.setPivot(0.01F, 0.01F, 2.51F);
-        this.tail2.addCuboid(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.tail2.setPos(0.01F, 0.01F, 2.51F);
+        this.tail2.addBox(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 3.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(tail2, 0.17453292519943295F, 0.0F, 0.0F);
         this.body1.addChild(this.armR);
         this.head.addChild(this.eyeL);
@@ -136,23 +136,23 @@ public class CoinDragonModel extends WREntityModel<CoinDragonEntity>
     }
 
     @Override
-    public void render(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
         body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
     @Override
-    public void setAngles(CoinDragonEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(CoinDragonEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         float flap = MathHelper.cos(ageInTicks * 3f) * 0.6f + 0.75f;
-        wingL.roll = flap;
-        wingR.roll = -flap;
+        wingL.zRot = flap;
+        wingR.zRot = -flap;
 
-        legR.pitch = legL.pitch = MathHelper.cos(ageInTicks * 0.15f + 1) * 0.05f + 1.75f;
+        legR.xRot = legL.xRot = MathHelper.cos(ageInTicks * 0.15f + 1) * 0.05f + 1.75f;
 
         for (int i = 1; i < tails.length + 1; i++) // move the tail a bit
-            tails[i - 1].pitch = MathHelper.cos(ageInTicks * 0.2f + 0.8f * -i) * 0.1f + 0.35f;
+            tails[i - 1].xRot = MathHelper.cos(ageInTicks * 0.2f + 0.8f * -i) * 0.1f + 0.35f;
 
-        coin.pitch = MathHelper.cos(ageInTicks * 0.15f) * 0.08f - 0.875f;
+        coin.xRot = MathHelper.cos(ageInTicks * 0.15f) * 0.08f - 0.875f;
     }
 }

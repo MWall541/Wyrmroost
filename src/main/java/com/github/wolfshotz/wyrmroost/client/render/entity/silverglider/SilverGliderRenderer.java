@@ -27,13 +27,13 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     {
         super(manager, new SilverGliderModel(), 1f);
 
-        addFeature(new GlowLayer(this::getGlowTexture));
-        addFeature(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
+        addLayer(new GlowLayer(this::getGlowTexture));
+        addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
     }
 
     @Nullable
     @Override
-    public ResourceLocation getTexture(SilverGliderEntity sg)
+    public ResourceLocation getTextureLocation(SilverGliderEntity sg)
     {
         if (sg.getVariant() == -1) return SPECIAL;
         if (WRConfig.deckTheHalls) return CHRISTMAS;

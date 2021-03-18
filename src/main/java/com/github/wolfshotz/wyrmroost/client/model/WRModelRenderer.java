@@ -22,69 +22,69 @@ public class WRModelRenderer extends ModelRenderer
     public WRModelRenderer(WREntityModel<?> model, int textureOffsetX, int textureOffsetY)
     {
         this(model);
-        setTextureOffset(textureOffsetX, textureOffsetY);
+        texOffs(textureOffsetX, textureOffsetY);
     }
 
     public WRModelRenderer(Model model, int textureOffsetX, int textureOffsetY)
     {
         super(model);
-        setTextureOffset(textureOffsetX, textureOffsetY);
+        texOffs(textureOffsetX, textureOffsetY);
     }
 
     public void addBox(float offX, float offY, float offZ, int width, int height, int depth, float scaleFactor)
     {
-        addCuboid(offX, offY, offZ, width, height, depth);
+        addBox(offX, offY, offZ, width, height, depth);
     }
 
     public void setDefaultPose()
     {
-        defaultRotationX = pitch;
-        defaultRotationY = yaw;
-        defaultRotationZ = roll;
-        defaultPositionX = pivotX;
-        defaultPositionY = pivotY;
-        defaultPositionZ = pivotZ;
+        defaultRotationX = xRot;
+        defaultRotationY = yRot;
+        defaultRotationZ = zRot;
+        defaultPositionX = x;
+        defaultPositionY = y;
+        defaultPositionZ = z;
     }
     
     public void resetToDefaultPose()
     {
-        pitch = defaultRotationX;
-        yaw = defaultRotationY;
-        roll = defaultRotationZ;
-        pivotX = defaultPositionX;
-        pivotY = defaultPositionY;
-        pivotZ = defaultPositionZ;
+        xRot = defaultRotationX;
+        yRot = defaultRotationY;
+        zRot = defaultRotationZ;
+        x = defaultPositionX;
+        y = defaultPositionY;
+        z = defaultPositionZ;
     }
 
     public void walk(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
     {
         float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
-        pitch += invert? -rotation : rotation;
+        xRot += invert? -rotation : rotation;
     }
 
     public void swing(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
     {
         float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
-        yaw += invert? -rotation : rotation;
+        yRot += invert? -rotation : rotation;
     }
 
     public void flap(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
     {
         float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
-        roll += invert? -rotation : rotation;
+        zRot += invert? -rotation : rotation;
     }
 
     public void bob(float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
     {
-        pivotY += bounce?
+        y += bounce?
                 -Math.abs(MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree) :
                 MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree - limbSwingAmount * degree;
     }
 
     public void copyRotationsTo(ModelRenderer box)
     {
-        box.pitch = pitch;
-        box.yaw = -yaw;
-        box.roll = -roll;
+        box.xRot = xRot;
+        box.yRot = -yRot;
+        box.zRot = -zRot;
     }
 }

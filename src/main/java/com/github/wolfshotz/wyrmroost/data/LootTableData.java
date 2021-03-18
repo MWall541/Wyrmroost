@@ -67,7 +67,7 @@ class LootTableData extends LootTableProvider
             registerOre(RED_GEODE_ORE.get(), WRItems.RED_GEODE.get());
             registerOre(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
 
-            addDrop(MULCH.get(), drops(MULCH.get(), Blocks.DIRT));
+            add(MULCH.get(), createSingleItemTableWithSilkTouch(MULCH.get(), Blocks.DIRT));
             registerLeaves(BLUE_OSERI_LEAVES.get(), BLUE_OSERI_SAPLING.get());
             registerLeaves(GOLD_OSERI_LEAVES.get(), GOLD_OSERI_SAPLING.get());
             registerLeaves(PINK_OSERI_LEAVES.get(), PINK_OSERI_SAPLING.get());
@@ -78,19 +78,19 @@ class LootTableData extends LootTableProvider
             {
                 if (block instanceof PetalsBlock || block instanceof VineBlock || block instanceof AbstractPlantBlock || (block instanceof BushBlock && !(block instanceof SaplingBlock)))
                 {
-                    addDrop(block, BlockLootTables::dropsWithShears);
+                    add(block, BlockLootTables::createShearsOnlyDrop);
                     continue;
                 }
                 if (block instanceof DoorBlock)
                 {
-                    addDrop(block, BlockLootTables::addDoorDrop);
+                    add(block, BlockLootTables::createDoorTable);
                     continue;
                 }
 
-                ResourceLocation lootTable = block.getLootTableId();
+                ResourceLocation lootTable = block.getLootTable();
                 boolean notInheriting = lootTable.getPath().replace("blocks/", "").equals(block.getRegistryName().getPath());
                 if (!lootTables.containsKey(block) && lootTable != LootTables.EMPTY && notInheriting)
-                    addDrop(block);
+                    dropSelf(block);
             }
         }
 
@@ -102,25 +102,25 @@ class LootTableData extends LootTableProvider
 
         private void registerLeaves(Block leaves, Block sapling)
         {
-            addDrop(leaves, oakLeavesDrop(leaves, sapling, 0.05f, 0.0625f, 0.083333336f, 0.1f));
+            add(leaves, createOakLeavesDrops(leaves, sapling, 0.05f, 0.0625f, 0.083333336f, 0.1f));
         }
 
         private void registerOre(Block ore, Item output)
         {
-            addDrop(ore, oreDrops(ore, output));
+            add(ore, createOreDrop(ore, output));
         }
 
         @Override
-        protected void addDrop(Block blockIn, LootTable.Builder table)
+        protected void add(Block blockIn, LootTable.Builder table)
         {
-            super.addDrop(blockIn, table);
+            super.add(blockIn, table);
             lootTables.put(blockIn, table);
         }
     }
 
     private static class Entities extends EntityLootTables
     {
-        private static final LootFunction.Builder<?> ON_FIRE_SMELT = Smelt.builder().conditionally(EntityHasProperty.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true).build())));
+        private static final LootFunction.Builder<?> ON_FIRE_SMELT = Smelt.smelted().when(EntityHasProperty.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity().flags(EntityFlagsPredicate.Builder.flags().setOnFire(true).build())));
 
         private final Map<EntityType<?>, LootTable.Builder> lootTables = new HashMap<>();
 
@@ -136,10 +136,10 @@ class LootTableData extends LootTableProvider
             {
                 if (!lootTables.containsKey(entity))
                 {
-                    if (entity.getSpawnGroup() == EntityClassification.MISC) continue;
+                    if (entity.getCategory() == EntityClassification.MISC) continue;
                     throw new IllegalArgumentException(String.format("Missing Loottable for entry: '%s'", entity.getRegistryName()));
                 }
-                consumer.accept(entity.getLootTableId(), lootTables.remove(entity));
+                consumer.accept(entity.getDefaultLootTable(), lootTables.remove(entity));
             }
         }
 
@@ -159,12 +159,12 @@ class LootTableData extends LootTableProvider
             for (EntityType<?> type : types)
             {
                 Wyrmroost.LOG.warn("Registering EMPTY Loottable for: '{}'", type.getRegistryName());
-                register(type, LootTable.builder());
+                add(type, LootTable.lootTable());
             }
         }
 
         @Override
-        protected void register(EntityType<?> type, LootTable.Builder table)
+        protected void add(EntityType<?> type, LootTable.Builder table)
         {
             lootTables.put(type, table);
         }
@@ -172,61 +172,61 @@ class LootTableData extends LootTableProvider
         @Override
         protected void addTables()
         {
-            register(WREntities.LESSER_DESERTWYRM.get(), LootTable.builder().pool(singleRollPool().with(item(WRItems.LDWYRM.get(), 1).apply(ON_FIRE_SMELT))));
+            add(WREntities.LESSER_DESERTWYRM.get(), LootTable.lootTable().withPool(singleRollPool().add(item(WRItems.LDWYRM.get(), 1).apply(ON_FIRE_SMELT))));
 
-            register(WREntities.OVERWORLD_DRAKE.get(), LootTable.builder()
-                    .pool(singleRollPool().with(item(Items.LEATHER, 5, 10).apply(looting(1, 4))))
-                    .pool(singleRollPool().with(meat(WRItems.RAW_COMMON_MEAT.get(), 1, 7, 2, 3)))
-                    .pool(singleRollPool().with(item(WRItems.DRAKE_BACKPLATE.get(), 1)).conditionally(KilledByPlayer.builder()).conditionally(RandomChance.builder(0.15f)).apply(looting(0, 1))));
+            add(WREntities.OVERWORLD_DRAKE.get(), LootTable.lootTable()
+                    .withPool(singleRollPool().add(item(Items.LEATHER, 5, 10).apply(looting(1, 4))))
+                    .withPool(singleRollPool().add(meat(WRItems.RAW_COMMON_MEAT.get(), 1, 7, 2, 3)))
+                    .withPool(singleRollPool().add(item(WRItems.DRAKE_BACKPLATE.get(), 1)).when(KilledByPlayer.killedByPlayer()).when(RandomChance.randomChance(0.15f)).apply(looting(0, 1))));
 
-            register(WREntities.ROOSTSTALKER.get(), LootTable.builder()
-                    .pool(singleRollPool().with(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 2, 1, 2)))
-                    .pool(singleRollPool().with(item(Items.GOLD_NUGGET, 0, 2))));
+            add(WREntities.ROOSTSTALKER.get(), LootTable.lootTable()
+                    .withPool(singleRollPool().add(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 2, 1, 2)))
+                    .withPool(singleRollPool().add(item(Items.GOLD_NUGGET, 0, 2))));
 
-            register(WREntities.DRAGON_FRUIT_DRAKE.get(), LootTable.builder().pool(singleRollPool().with(item(Items.APPLE, 0, 6))));
+            add(WREntities.DRAGON_FRUIT_DRAKE.get(), LootTable.lootTable().withPool(singleRollPool().add(item(Items.APPLE, 0, 6))));
 
-            register(WREntities.CANARI_WYVERN.get(), LootTable.builder()
-                    .pool(singleRollPool().with(meat(WRItems.RAW_COMMON_MEAT.get(), 0, 2, 1, 2)))
-                    .pool(singleRollPool().with(item(Items.FEATHER, 1, 4).apply(looting(2, 6)))));
+            add(WREntities.CANARI_WYVERN.get(), LootTable.lootTable()
+                    .withPool(singleRollPool().add(meat(WRItems.RAW_COMMON_MEAT.get(), 0, 2, 1, 2)))
+                    .withPool(singleRollPool().add(item(Items.FEATHER, 1, 4).apply(looting(2, 6)))));
 
-            register(WREntities.SILVER_GLIDER.get(), LootTable.builder()
-                    .pool(singleRollPool().with(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 3, 1, 3))));
+            add(WREntities.SILVER_GLIDER.get(), LootTable.lootTable()
+                    .withPool(singleRollPool().add(meat(WRItems.RAW_LOWTIER_MEAT.get(), 0, 3, 1, 3))));
 
-            register(WREntities.BUTTERFLY_LEVIATHAN.get(), LootTable.builder()
-                    .pool(singleRollPool().with(meat(WRItems.RAW_APEX_MEAT.get(), 6, 10, 2, 4)))
-                    .pool(LootPool.builder().rolls(RandomValueRange.between(1, 4)).with(item(Items.SEA_PICKLE, 0, 2).apply(looting(1, 2))).with(item(Items.SEAGRASS, 4, 14)).with(item(Items.KELP, 16, 24)))
-                    .pool(singleRollPool().with(item(Items.HEART_OF_THE_SEA, 1).conditionally(RandomChance.builder(0.1f))).with(item(Items.NAUTILUS_SHELL, 1).conditionally(RandomChance.builder(0.15f)))));
+            add(WREntities.BUTTERFLY_LEVIATHAN.get(), LootTable.lootTable()
+                    .withPool(singleRollPool().add(meat(WRItems.RAW_APEX_MEAT.get(), 6, 10, 2, 4)))
+                    .withPool(LootPool.lootPool().setRolls(RandomValueRange.between(1, 4)).add(item(Items.SEA_PICKLE, 0, 2).apply(looting(1, 2))).add(item(Items.SEAGRASS, 4, 14)).add(item(Items.KELP, 16, 24)))
+                    .withPool(singleRollPool().add(item(Items.HEART_OF_THE_SEA, 1).when(RandomChance.randomChance(0.1f))).add(item(Items.NAUTILUS_SHELL, 1).when(RandomChance.randomChance(0.15f)))));
 
-            register(WREntities.ROYAL_RED.get(), LootTable.builder()
-                    .pool(singleRollPool().with(meat(WRItems.RAW_APEX_MEAT.get(), 4, 8, 3, 5))));
+            add(WREntities.ROYAL_RED.get(), LootTable.lootTable()
+                    .withPool(singleRollPool().add(meat(WRItems.RAW_APEX_MEAT.get(), 4, 8, 3, 5))));
 
-            register(WREntities.COIN_DRAGON.get(), LootTable.builder().pool(singleRollPool()
-                    .with(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 1, 0, 1))
-                    .with(item(Items.GOLD_NUGGET, 4))));
+            add(WREntities.COIN_DRAGON.get(), LootTable.lootTable().withPool(singleRollPool()
+                    .add(meat(WRItems.RAW_LOWTIER_MEAT.get(), 1, 1, 0, 1))
+                    .add(item(Items.GOLD_NUGGET, 4))));
 
-            register(WREntities.ALPINE.get(), LootTable.builder()
-                    .pool(singleRollPool().with(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6)))
-                    .pool(singleRollPool().with(item(Items.FEATHER, 3, 10).apply(looting(3, 11)))));
+            add(WREntities.ALPINE.get(), LootTable.lootTable()
+                    .withPool(singleRollPool().add(meat(WRItems.RAW_COMMON_MEAT.get(), 3, 7, 2, 6)))
+                    .withPool(singleRollPool().add(item(Items.FEATHER, 3, 10).apply(looting(3, 11)))));
         }
 
         private static LootingEnchantBonus.Builder looting(float min, float max)
         {
-            return LootingEnchantBonus.builder(RandomValueRange.between(min, max));
+            return LootingEnchantBonus.lootingMultiplier(RandomValueRange.between(min, max));
         }
 
         private static ItemLootEntry.Builder<?> item(IItemProvider itemIn, float minIn, float maxIn)
         {
-            return ItemLootEntry.builder(itemIn).apply(SetCount.builder(RandomValueRange.between(minIn, maxIn)));
+            return ItemLootEntry.lootTableItem(itemIn).apply(SetCount.setCount(RandomValueRange.between(minIn, maxIn)));
         }
 
         private static ItemLootEntry.Builder<?> item(IItemProvider itemIn, int amount)
         {
-            return ItemLootEntry.builder(itemIn).apply(SetCount.builder(ConstantRange.create(amount)));
+            return ItemLootEntry.lootTableItem(itemIn).apply(SetCount.setCount(ConstantRange.exactly(amount)));
         }
 
         private static LootPool.Builder singleRollPool()
         {
-            return LootPool.builder().rolls(ConstantRange.create(1));
+            return LootPool.lootPool().setRolls(ConstantRange.exactly(1));
         }
 
         private static ItemLootEntry.Builder<?> meat(IItemProvider itemIn, int minAmount, int maxAmount, int lootingMin, int lootingMax)

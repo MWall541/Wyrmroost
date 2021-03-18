@@ -33,10 +33,10 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
 
     public GeodeTippedArrowEntity(FMLPlayMessages.SpawnEntity packet, World world)
     {
-        super(WREntities.GEODE_TIPPED_ARROW.get(), world);
+        super(WREntities.GEODE_TIPPED_ARROW.get(), level);
 
         PacketBuffer buf = packet.getAdditionalData();
-        Entity shooter = world.getEntityById(buf.readInt());
+        Entity shooter = level.getEntity(buf.readInt());
         if (shooter != null) setOwner(shooter);
         this.item = (GeodeTippedArrowItem) Item.byRawId(buf.readVarInt());
     }

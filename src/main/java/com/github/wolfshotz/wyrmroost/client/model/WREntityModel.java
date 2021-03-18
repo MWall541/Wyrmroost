@@ -37,9 +37,9 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
     public void setRotateAngle(ModelRenderer model, float x, float y, float z)
     {
-        model.pitch = x;
-        model.yaw = y;
-        model.roll = z;
+        model.xRot = x;
+        model.yRot = y;
+        model.zRot = z;
     }
 
     public void faceTarget(float yaw, float pitch, float rotationDivisor, ModelRenderer... boxes)
@@ -50,8 +50,8 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 
         for (ModelRenderer box : boxes)
         {
-            box.pitch += pitch;
-            box.yaw += yaw;
+            box.xRot += pitch;
+            box.yRot += yaw;
         }
     }
 
@@ -96,7 +96,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
-            boxes[index].pitch += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
+            boxes[index].xRot += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
-            boxes[index].yaw += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
+            boxes[index].yRot += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         float offset = calculateChainOffset(rootOffset, boxes);
         for (int index = 0; index < boxes.length; ++index)
-            boxes[index].roll += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
+            boxes[index].zRot += calculateChainRotation(speed, degree, swing, swingAmount, offset, index);
     }
 
     private float calculateChainRotation(float speed, float degree, float swing, float swingAmount, float offset, int boxIndex)
@@ -138,28 +138,28 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
             if (modelRenderer instanceof WRModelRenderer)
             {
                 WRModelRenderer box = (WRModelRenderer) modelRenderer;
-                box.pivotX = Mafs.linTerp(box.pivotX, box.defaultPositionX, time);
-                box.pivotY = Mafs.linTerp(box.pivotY, box.defaultPositionY, time);
-                box.pivotZ = Mafs.linTerp(box.pivotZ, box.defaultPositionZ, time);
-                box.pitch = Mafs.linTerp(box.pitch, box.defaultRotationX, time);
-                box.yaw = Mafs.linTerp(box.yaw, box.defaultRotationY, time);
-                box.roll = Mafs.linTerp(box.roll, box.defaultRotationZ, time);
+                box.x = Mafs.linTerp(box.x, box.defaultPositionX, time);
+                box.y = Mafs.linTerp(box.y, box.defaultPositionY, time);
+                box.z = Mafs.linTerp(box.z, box.defaultPositionZ, time);
+                box.xRot = Mafs.linTerp(box.xRot, box.defaultRotationX, time);
+                box.yRot = Mafs.linTerp(box.yRot, box.defaultRotationY, time);
+                box.zRot = Mafs.linTerp(box.zRot, box.defaultRotationZ, time);
             }
         }
     }
 
     public void move(ModelRenderer box, float x, float y, float z)
     {
-        box.pivotX += time * x;
-        box.pivotY += time * y;
-        box.pivotZ += time * z;
+        box.x += time * x;
+        box.y += time * y;
+        box.z += time * z;
     }
 
     public void rotate(ModelRenderer box, float x, float y, float z)
     {
-        box.pitch += time * x;
-        box.yaw += time * y;
-        box.roll += time * z;
+        box.xRot += time * x;
+        box.yRot += time * y;
+        box.zRot += time * z;
     }
 
     public void idle(float frame) {}

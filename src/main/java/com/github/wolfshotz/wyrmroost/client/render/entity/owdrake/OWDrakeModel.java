@@ -78,230 +78,230 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
 
     public OWDrakeModel()
     {
-        textureWidth = 200;
-        textureHeight = 200;
+        texWidth = 200;
+        texHeight = 200;
         claw12L = new WRModelRenderer(this, 129, 79);
-        claw12L.setPivot(-0.05F, -0.4F, -2.2F);
+        claw12L.setPos(-0.05F, -0.4F, -2.2F);
         claw12L.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw12L, 0.9105382707654417F, 0.0F, 0.0F);
         arm2L = new WRModelRenderer(this, 111, 76);
-        arm2L.setPivot(1.45F, 5.5F, 0.5F);
+        arm2L.setPos(1.45F, 5.5F, 0.5F);
         arm2L.addBox(-1.5F, 0.0F, -2.0F, 3, 7, 3, 0.0F);
         setRotateAngle(arm2L, -0.36425021489121656F, 0.0F, 0.0F);
         leg3R = new WRModelRenderer(this, 60, 94);
-        leg3R.setPivot(-0.05F, 4.0F, 1.8F);
+        leg3R.setPos(-0.05F, 4.0F, 1.8F);
         leg3R.addBox(-1.5F, 0.0F, -2.0F, 3, 6, 3, 0.0F);
         setRotateAngle(leg3R, -0.6829473363053812F, 0.0F, 0.0F);
         eyeR = new WRModelRenderer(this, 67, 40);
         eyeR.mirror = true;
-        eyeR.setPivot(-3.5F, -2.0F, -4.0F);
+        eyeR.setPos(-3.5F, -2.0F, -4.0F);
         eyeR.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         setRotateAngle(eyeR, 0.0F, 0.8651597102135892F, 0.0F);
         claw22R = new WRModelRenderer(this, 129, 79);
-        claw22R.setPivot(-0.05F, -0.4F, -2.2F);
+        claw22R.setPos(-0.05F, -0.4F, -2.2F);
         claw22R.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw22R, 0.9105382707654417F, 0.0F, 0.0F);
         arm1R = new WRModelRenderer(this, 111, 61);
         arm1R.mirror = true;
-        arm1R.setPivot(-2.0F, 1.3F, -2.0F);
+        arm1R.setPos(-2.0F, 1.3F, -2.0F);
         arm1R.addBox(-3.0F, -1.0F, -2.0F, 3, 8, 4, 0.0F);
         setRotateAngle(arm1R, -0.22759093446006054F, 0.31869712141416456F, 0.0F);
         tail2 = new WRModelRenderer(this, 0, 55);
-        tail2.setPivot(0.0F, 0.15F, 6.0F);
+        tail2.setPos(0.0F, 0.15F, 6.0F);
         tail2.addBox(-3.0F, -3.0F, 0.0F, 6, 5, 8, 0.0F);
         setRotateAngle(tail2, -0.22759093446006054F, 0.0F, 0.0F);
         tail4 = new WRModelRenderer(this, 0, 85);
-        tail4.setPivot(0.0F, -0.25F, 6.0F);
+        tail4.setPos(0.0F, -0.25F, 6.0F);
         tail4.addBox(-2.0F, -1.5F, 0.0F, 4, 3, 8, 0.0F);
         setRotateAngle(tail4, 0.18203784098300857F, 0.0F, 0.0F);
         toe1R_1 = new WRModelRenderer(this, 77, 85);
-        toe1R_1.setPivot(-1.4F, -0.5F, -2.5F);
+        toe1R_1.setPos(-1.4F, -0.5F, -2.5F);
         toe1R_1.addBox(-0.5F, -0.5F, -3.5F, 1, 2, 4, 0.0F);
         setRotateAngle(toe1R_1, -0.8726646259971648F, 0.31869712141416456F, 0.0F);
         horn12R = new WRModelRenderer(this, 95, 32);
-        horn12R.setPivot(0.0F, 0.0F, 3.5F);
+        horn12R.setPos(0.0F, 0.0F, 3.5F);
         horn12R.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 6, 0.0F);
         setRotateAngle(horn12R, -0.18203784098300857F, 0.22759093446006054F, 0.0F);
         toe2L = new WRModelRenderer(this, 77, 85);
-        toe2L.setPivot(0.0F, -0.5F, -2.5F);
+        toe2L.setPos(0.0F, -0.5F, -2.5F);
         toe2L.addBox(-0.5F, -0.5F, -3.5F, 1, 2, 4, 0.0F);
         setRotateAngle(toe2L, -0.8726646259971648F, 0.0F, 0.0F);
         toe1L_1 = new WRModelRenderer(this, 77, 85);
-        toe1L_1.setPivot(-1.4F, -0.5F, -2.5F);
+        toe1L_1.setPos(-1.4F, -0.5F, -2.5F);
         toe1L_1.addBox(-0.5F, -0.5F, -3.5F, 1, 2, 4, 0.0F);
         setRotateAngle(toe1L_1, -0.8726646259971648F, 0.31869712141416456F, 0.0F);
         footR = new WRModelRenderer(this, 60, 85);
-        footR.setPivot(-0.0F, 5.5F, -0.3F);
+        footR.setPos(-0.0F, 5.5F, -0.3F);
         footR.addBox(-2.0F, -1.0F, -3.0F, 4, 2, 4, 0.0F);
         setRotateAngle(footR, 0.8651597102135892F, 0.0F, 0.0F);
         claw12R = new WRModelRenderer(this, 129, 79);
-        claw12R.setPivot(-0.05F, -0.4F, -2.2F);
+        claw12R.setPos(-0.05F, -0.4F, -2.2F);
         claw12R.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw12R, 0.9105382707654417F, 0.0F, 0.0F);
         leg1L = new WRModelRenderer(this, 42, 79);
         leg1L.mirror = true;
-        leg1L.setPivot(3.0F, 1.8F, 6.0F);
+        leg1L.setPos(3.0F, 1.8F, 6.0F);
         leg1L.addBox(0.2F, -1.2F, -2.5F, 3, 7, 5, 0.0F);
         toe2R = new WRModelRenderer(this, 77, 85);
-        toe2R.setPivot(0.0F, -0.5F, -2.5F);
+        toe2R.setPos(0.0F, -0.5F, -2.5F);
         toe2R.addBox(-0.5F, -0.5F, -3.5F, 1, 2, 4, 0.0F);
         setRotateAngle(toe2R, -0.8726646259971648F, 0.0F, 0.0F);
         horn32R = new WRModelRenderer(this, 95, 24);
-        horn32R.setPivot(0.0F, 0.0F, 3.2F);
+        horn32R.setPos(0.0F, 0.0F, 3.2F);
         horn32R.addBox(-1.0F, -0.5F, 0.0F, 2, 1, 4, 0.0F);
         setRotateAngle(horn32R, 0.0F, -0.7740535232594852F, -0.18203784098300857F);
         horn52 = new WRModelRenderer(this, 97, 10);
-        horn52.setPivot(0.05F, -3.6F, -0.2F);
+        horn52.setPos(0.05F, -3.6F, -0.2F);
         horn52.addBox(-1.0F, -3.0F, -1.0F, 2, 3, 2, 0.0F);
         setRotateAngle(horn52, -0.4553564018453205F, 0.0F, 0.0F);
         palmR = new WRModelRenderer(this, 129, 61);
-        palmR.setPivot(-0.5F, 6.5F, 0.0F);
+        palmR.setPos(-0.5F, 6.5F, 0.0F);
         palmR.addBox(-1.5F, -1.0F, -3.0F, 4, 2, 4, 0.0F);
         setRotateAngle(palmR, 0.3490658503988659F, 0.0F, 0.0F);
         leg2L = new WRModelRenderer(this, 42, 94);
         leg2L.mirror = true;
-        leg2L.setPivot(1.65F, 4.5F, -1.3F);
+        leg2L.setPos(1.65F, 4.5F, -1.3F);
         leg2L.addBox(-1.5F, 0.0F, -1.5F, 3, 5, 4, 0.0F);
         setRotateAngle(leg2L, 0.6373942428283291F, 0.0F, 0.0F);
         claw21R = new WRModelRenderer(this, 129, 71);
-        claw21R.setPivot(-0.3F, 0.0F, -2.0F);
+        claw21R.setPos(-0.3F, 0.0F, -2.0F);
         claw21R.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw21R, -0.31869712141416456F, 0.27314402793711257F, 0.0F);
         horn11R = new WRModelRenderer(this, 79, 32);
-        horn11R.setPivot(-3.0F, -2.0F, -0.5F);
+        horn11R.setPos(-3.0F, -2.0F, -0.5F);
         horn11R.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 4, 0.0F);
         setRotateAngle(horn11R, 0.40980330836826856F, -0.27314402793711257F, -0.27314402793711257F);
         horn12L = new WRModelRenderer(this, 95, 32);
-        horn12L.setPivot(0.0F, 0.0F, 3.5F);
+        horn12L.setPos(0.0F, 0.0F, 3.5F);
         horn12L.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 6, 0.0F);
         setRotateAngle(horn12L, -0.18203784098300857F, -0.22759093446006054F, 0.0F);
         neck1 = new WRModelRenderer(this, 40, 0);
-        neck1.setPivot(0.0F, -0.5F, -3.0F);
+        neck1.setPos(0.0F, -0.5F, -3.0F);
         neck1.addBox(-3.5F, -3.0F, -5.0F, 7, 6, 5, 0.0F);
         setRotateAngle(neck1, -0.8196066167365371F, 0.0F, 0.0F);
         horn31L = new WRModelRenderer(this, 79, 22);
-        horn31L.setPivot(2.6F, 0.5F, -0.9F);
+        horn31L.setPos(2.6F, 0.5F, -0.9F);
         horn31L.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 4, 0.0F);
         setRotateAngle(horn31L, -0.36425021489121656F, 2.0032889154390916F, 0.091106186954104F);
         horn51 = new WRModelRenderer(this, 80, 7);
-        horn51.setPivot(0.0F, 0.0F, -2.6F);
+        horn51.setPos(0.0F, 0.0F, -2.6F);
         horn51.addBox(-1.0F, -4.0F, -1.5F, 2, 4, 3, 0.0F);
         setRotateAngle(horn51, 1.1383037381507017F, 0.0F, 0.0F);
         horn32L = new WRModelRenderer(this, 95, 24);
-        horn32L.setPivot(0.0F, 0.0F, 3.2F);
+        horn32L.setPos(0.0F, 0.0F, 3.2F);
         horn32L.addBox(-1.0F, -0.5F, 0.0F, 2, 1, 4, 0.0F);
         setRotateAngle(horn32L, 0.0F, 0.7740535232594852F, 0.18203784098300857F);
         claw22L = new WRModelRenderer(this, 129, 79);
-        claw22L.setPivot(-0.05F, -0.4F, -2.2F);
+        claw22L.setPos(-0.05F, -0.4F, -2.2F);
         claw22L.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw22L, 0.9105382707654417F, 0.0F, 0.0F);
         eyeL = new WRModelRenderer(this, 67, 40);
-        eyeL.setPivot(3.5F, -2.0F, -4.0F);
+        eyeL.setPos(3.5F, -2.0F, -4.0F);
         eyeL.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         setRotateAngle(eyeL, 0.0F, -0.8651597102135892F, 0.0F);
         body2 = new WRModelRenderer(this, 0, 20);
-        body2.setPivot(0.0F, -1.55F, 4.0F);
+        body2.setPos(0.0F, -1.55F, 4.0F);
         body2.addBox(-4.5F, -2.0F, 0.0F, 9, 7, 10, 0.0F);
         setRotateAngle(body2, -0.18203784098300857F, 0.0F, 0.0F);
         horn31R = new WRModelRenderer(this, 79, 22);
-        horn31R.setPivot(-2.6F, 0.5F, -0.9F);
+        horn31R.setPos(-2.6F, 0.5F, -0.9F);
         horn31R.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 4, 0.0F);
         setRotateAngle(horn31R, -0.36425021489121656F, -2.0032889154390916F, -0.091106186954104F);
         horn11L = new WRModelRenderer(this, 79, 32);
-        horn11L.setPivot(3.0F, -2.0F, -0.5F);
+        horn11L.setPos(3.0F, -2.0F, -0.5F);
         horn11L.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 4, 0.0F);
         setRotateAngle(horn11L, 0.40980330836826856F, 0.27314402793711257F, 0.27314402793711257F);
         tail5 = new WRModelRenderer(this, 0, 102);
-        tail5.setPivot(0.0F, -0.25F, 6.0F);
+        tail5.setPos(0.0F, -0.25F, 6.0F);
         tail5.addBox(-1.5F, -1.0F, 0.0F, 3, 2, 8, 0.0F);
         setRotateAngle(tail5, 0.27314402793711257F, 0.0F, 0.0F);
         jaw = new WRModelRenderer(this, 72, 46);
-        jaw.setPivot(0.0F, 1.35F, -4.0F);
+        jaw.setPos(0.0F, 1.35F, -4.0F);
         jaw.addBox(-3.0F, -1.0F, -5.0F, 6, 2, 6, 0.0F);
         setRotateAngle(jaw, 0.2F, 0.0F, 0.0F);
         head = new WRModelRenderer(this, 40, 29);
-        head.setPivot(-0.05F, 0.05F, -4.0F);
+        head.setPos(-0.05F, 0.05F, -4.0F);
         head.addBox(-4.0F, -3.0F, -4.0F, 8, 6, 4, 0.0F);
         setRotateAngle(head, 0.31869712141416456F, 0.0F, 0.0F);
         tail3 = new WRModelRenderer(this, 0, 70);
-        tail3.setPivot(0.0F, -0.85F, 6.0F);
+        tail3.setPos(0.0F, -0.85F, 6.0F);
         tail3.addBox(-2.5F, -2.0F, 0.0F, 5, 4, 8, 0.0F);
         setRotateAngle(tail3, -0.136659280431156F, 0.0F, 0.0F);
         leg1R = new WRModelRenderer(this, 42, 79);
-        leg1R.setPivot(-3.0F, 1.8F, 6.0F);
+        leg1R.setPos(-3.0F, 1.8F, 6.0F);
         leg1R.addBox(-3.2F, -1.2F, -2.5F, 3, 7, 5, 0.0F);
         arm2R = new WRModelRenderer(this, 111, 76);
         arm2R.mirror = true;
-        arm2R.setPivot(-1.45F, 5.5F, 0.5F);
+        arm2R.setPos(-1.45F, 5.5F, 0.5F);
         arm2R.addBox(-1.5F, 0.0F, -2.0F, 3, 7, 3, 0.0F);
         setRotateAngle(arm2R, -0.36425021489121656F, 0.0F, 0.0F);
         toe1L = new WRModelRenderer(this, 77, 85);
-        toe1L.setPivot(1.4F, -0.5F, -2.5F);
+        toe1L.setPos(1.4F, -0.5F, -2.5F);
         toe1L.addBox(-0.5F, -0.5F, -3.5F, 1, 2, 4, 0.0F);
         setRotateAngle(toe1L, -0.8726646259971648F, -0.31869712141416456F, 0.0F);
         claw21L = new WRModelRenderer(this, 129, 71);
-        claw21L.setPivot(-0.3F, 0.0F, -2.0F);
+        claw21L.setPos(-0.3F, 0.0F, -2.0F);
         claw21L.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw21L, -0.31869712141416456F, 0.27314402793711257F, 0.0F);
         horn33R = new WRModelRenderer(this, 105, 24);
         horn33R.mirror = true;
-        horn33R.setPivot(0.5F, 0.0F, 3.5F);
+        horn33R.setPos(0.5F, 0.0F, 3.5F);
         horn33R.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 3, 0.0F);
         setRotateAngle(horn33R, 0.0F, -0.7740535232594852F, 0.18203784098300857F);
         body1 = new WRModelRenderer(this, 0, 0);
-        body1.setPivot(0.0F, -2.2F, 0.0F);
+        body1.setPos(0.0F, -2.2F, 0.0F);
         body1.addBox(-4.0F, -3.5F, -5.0F, 8, 8, 10, 0.0F);
         setRotateAngle(body1, 0.22759093446006054F, 0.0F, 0.0F);
         footL = new WRModelRenderer(this, 60, 85);
-        footL.setPivot(-0.0F, 5.5F, -0.3F);
+        footL.setPos(-0.0F, 5.5F, -0.3F);
         footL.addBox(-2.0F, -1.0F, -3.0F, 4, 2, 4, 0.0F);
         setRotateAngle(footL, 0.8651597102135892F, 0.0F, 0.0F);
         leg3L = new WRModelRenderer(this, 60, 94);
-        leg3L.setPivot(0.05F, 4.0F, 1.8F);
+        leg3L.setPos(0.05F, 4.0F, 1.8F);
         leg3L.addBox(-1.5F, 0.0F, -2.0F, 3, 6, 3, 0.0F);
         setRotateAngle(leg3L, -0.6829473363053812F, 0.0F, 0.0F);
         toe1R = new WRModelRenderer(this, 77, 85);
-        toe1R.setPivot(1.4F, -0.5F, -2.5F);
+        toe1R.setPos(1.4F, -0.5F, -2.5F);
         toe1R.addBox(-0.5F, -0.5F, -3.5F, 1, 2, 4, 0.0F);
         setRotateAngle(toe1R, -0.8726646259971648F, -0.31869712141416456F, 0.0F);
         palmL = new WRModelRenderer(this, 129, 61);
-        palmL.setPivot(-0.5F, 6.5F, 0.0F);
+        palmL.setPos(-0.5F, 6.5F, 0.0F);
         palmL.addBox(-1.5F, -1.0F, -3.0F, 4, 2, 4, 0.0F);
         setRotateAngle(palmL, 0.3490658503988659F, 0.0F, 0.0F);
         horn33L = new WRModelRenderer(this, 105, 24);
-        horn33L.setPivot(-0.5F, 0.0F, 3.5F);
+        horn33L.setPos(-0.5F, 0.0F, 3.5F);
         horn33L.addBox(-0.5F, -0.5F, 0.0F, 1, 1, 3, 0.0F);
         setRotateAngle(horn33L, 0.0F, 0.7740535232594852F, -0.18203784098300857F);
         claw11R = new WRModelRenderer(this, 129, 71);
-        claw11R.setPivot(1.3F, 0.0F, -2.0F);
+        claw11R.setPos(1.3F, 0.0F, -2.0F);
         claw11R.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw11R, -0.31869712141416456F, -0.27314402793711257F, 0.0F);
         neck2 = new WRModelRenderer(this, 40, 15);
-        neck2.setPivot(0.05F, 0.05F, -4.0F);
+        neck2.setPos(0.05F, 0.05F, -4.0F);
         neck2.addBox(-3.5F, -3.0F, -5.0F, 7, 6, 5, 0.0F);
         setRotateAngle(neck2, 0.31869712141416456F, 0.0F, 0.0F);
         snout = new WRModelRenderer(this, 40, 44);
-        snout.setPivot(-0.05F, -1.05F, -4.0F);
+        snout.setPos(-0.05F, -1.05F, -4.0F);
         snout.addBox(-3.5F, -1.5F, -6.0F, 7, 3, 7, 0.0F);
         setRotateAngle(snout, 0.18203784098300857F, 0.0F, 0.0F);
         arm1L = new WRModelRenderer(this, 111, 61);
-        arm1L.setPivot(2.0F, 1.3F, -2.0F);
+        arm1L.setPos(2.0F, 1.3F, -2.0F);
         arm1L.addBox(0.0F, -1.0F, -2.0F, 3, 8, 4, 0.0F);
         setRotateAngle(arm1L, -0.22759093446006054F, -0.31869712141416456F, 0.0F);
         leg2R = new WRModelRenderer(this, 42, 94);
-        leg2R.setPivot(-1.65F, 4.5F, -1.3F);
+        leg2R.setPos(-1.65F, 4.5F, -1.3F);
         leg2R.addBox(-1.5F, 0.0F, -1.5F, 3, 5, 4, 0.0F);
         setRotateAngle(leg2R, 0.6373942428283291F, 0.0F, 0.0F);
         tail1 = new WRModelRenderer(this, 0, 39);
-        tail1.setPivot(0.0F, 1.2F, 8.0F);
+        tail1.setPos(0.0F, 1.2F, 8.0F);
         tail1.addBox(-3.5F, -3.0F, 0.0F, 7, 6, 8, 0.0F);
         setRotateAngle(tail1, -0.136659280431156F, 0.0F, 0.0F);
         horn53 = new WRModelRenderer(this, 107, 10);
-        horn53.setPivot(0.05F, -2.6F, -0.5F);
+        horn53.setPos(0.05F, -2.6F, -0.5F);
         horn53.addBox(-0.5F, -3.0F, -0.5F, 1, 3, 1, 0.0F);
         setRotateAngle(horn53, -0.6829473363053812F, 0.0F, 0.0F);
         claw11L = new WRModelRenderer(this, 129, 71);
-        claw11L.setPivot(1.3F, 0.0F, -2.0F);
+        claw11L.setPos(1.3F, 0.0F, -2.0F);
         claw11L.addBox(-0.5F, -1.0F, -3.0F, 1, 2, 3, 0.0F);
         setRotateAngle(claw11L, -0.31869712141416456F, -0.27314402793711257F, 0.0F);
         claw11L.addChild(claw12L);
@@ -371,16 +371,16 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
     private final float f = 0.5f;
 
     @Override
-    public void render(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        ms.push();
+        ms.pushPose();
         ms.scale(2f, 2f, 2f);
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        ms.pop();
+        ms.popPose();
     }
 
     @Override
-    public void setAngles(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
@@ -388,23 +388,23 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
     }
 
     @Override
-    public void animateModel(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
+    public void prepareMobModel(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
     {
         this.entity = drake;
-        float frame = drake.age + partialTick;
+        float frame = drake.tickCount + partialTick;
 
         resetToDefaultPose();
         animator.update(drake, partialTick);
-        
+
         if (!drake.isInSittingPose() && !drake.isSleeping())
         {
             // Body bob
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, limbSwingAmount);
-            
+
             // Left Arm
             arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
             palmL.walk(globalSpeed, f, true, 2.5f, 0, limbSwing, limbSwingAmount);
-            
+
             // Right Arm
             arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
             palmR.walk(globalSpeed, f, false, 2.5f, 0, limbSwing, limbSwingAmount);
@@ -437,8 +437,8 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
 
         if (drake.isSleeping())
         {
-            eyeL.yaw = 90;
-            eyeR.yaw = -90;
+            eyeL.yRot = 90;
+            eyeR.yRot = -90;
         }
 
         idle(frame);
@@ -566,7 +566,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
         
         if (animationTick >= 8 && animationTick <= 27)
         {
-            jaw.pitch -= (6 + Math.sin(frame / 2) * 0.25);
+            jaw.xRot -= (6 + Math.sin(frame / 2) * 0.25);
         }
     }
     

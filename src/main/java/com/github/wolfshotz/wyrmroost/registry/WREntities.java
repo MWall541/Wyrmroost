@@ -109,7 +109,7 @@ public class WREntities
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
             .spawnBiomes(CanariWyvernEntity::setSpawnBiomes)
             .spawnEgg(0x1D1F28, 0x492E0E)
-            .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.world.getBlockState(c.getBlockPos().down()).getBlock() == Blocks.JUNGLE_LEAVES))
+            .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.level.getBlockState(c.blockPosition().down()).getBlock() == Blocks.JUNGLE_LEAVES))
             .renderer(() -> CanariWyvernRenderer::new)
             .build(b -> b.setDimensions(0.65f, 0.85f));
 

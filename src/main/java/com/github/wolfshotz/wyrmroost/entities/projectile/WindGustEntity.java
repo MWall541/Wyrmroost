@@ -20,7 +20,7 @@ public class WindGustEntity extends DragonProjectileEntity
 {
     public WindGustEntity(EntityType<? extends DragonProjectileEntity> type, World world)
     {
-        super(type, world);
+        super(type, level);
     }
 
     public WindGustEntity(AbstractDragonEntity shooter, Vector3d position, Vector3d acceleration)
@@ -31,7 +31,7 @@ public class WindGustEntity extends DragonProjectileEntity
 
     public WindGustEntity(AbstractDragonEntity shooter)
     {
-        this(shooter, shooter.getRotationVector().add(shooter.getPos().add(0, -1.5, 0)), shooter.getRotationVector());
+        this(shooter, shooter.getRotationVector().add(shooter.position().add(0, -1.5, 0)), shooter.getRotationVector());
     }
 
     @Override
@@ -39,17 +39,17 @@ public class WindGustEntity extends DragonProjectileEntity
     {
         super.tick();
 
-        if (world.isClientSide)
+        if (level.isClientSide)
         {
-            double multiplier = Math.min(age / 5d, 4d);
-            Vector3d motion = getVelocity().negate().multiply(0.1, 0.1, 0.1);
+            double multiplier = Math.min(tickCount / 5d, 4d);
+            Vector3d motion = getDeltaMovement().negate().multiply(0.1, 0.1, 0.1);
             for (int i = 0; i < 30; i++)
             {
-                Vector3d vec3d = getPos().add(getVelocity()).add(Mafs.nextDouble(random) * multiplier, Mafs.nextDouble(random) * multiplier, Mafs.nextDouble(random) * multiplier);
+                Vector3d vec3d = position().add(getDeltaMovement()).add(Mafs.nextDouble(random) * multiplier, Mafs.nextDouble(random) * multiplier, Mafs.nextDouble(random) * multiplier);
                 double xMot = motion.x + Mafs.nextDouble(random) * 0.1;
                 double yMot = motion.y + Mafs.nextDouble(random) * 0.1;
                 double zMot = motion.z + Mafs.nextDouble(random) * 0.1;
-                world.addParticle(ParticleTypes.CLOUD, vec3d.x, vec3d.y, vec3d.z, xMot, yMot, zMot);
+                level.addParticle(ParticleTypes.CLOUD, vec3d.x, vec3d.y, vec3d.z, xMot, yMot, zMot);
             }
         }
     }
@@ -57,12 +57,12 @@ public class WindGustEntity extends DragonProjectileEntity
     @Override
     public void onEntityImpact(Entity entity)
     {
-        if (!world.isClientSide)
+        if (!level.isClientSide)
         {
             entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
             entity.damage(getDamageSource("windGust"), 3);
             if (entity instanceof ServerPlayerEntity)
-                ((ServerWorld) world).getChunkManager().sendToNearbyPlayers(entity, new SEntityVelocityPacket(entity));
+                ((ServerWorld) level).getChunkManager().sendToNearbyPlayers(entity, new SEntityVelocityPacket(entity));
         }
     }
 
@@ -70,9 +70,9 @@ public class WindGustEntity extends DragonProjectileEntity
     public void onBlockImpact(BlockPos pos, Direction direction)
     {
         final int PARTICLE_COUNT = 75;
-        BlockParticleData blockParticle = new BlockParticleData(ParticleTypes.BLOCK, world.getBlockState(pos));
+        BlockParticleData blockParticle = new BlockParticleData(ParticleTypes.BLOCK, level.getBlockState(pos));
         pos = pos.offset(direction);
-        if (world.isClientSide)
+        if (level.isClientSide)
         {
             for (int i = 0; i < PARTICLE_COUNT; i++)
             {
@@ -80,13 +80,13 @@ public class WindGustEntity extends DragonProjectileEntity
                 if (direction.getAxis().getType() == Direction.Plane.VERTICAL) motion = motion.rotateY(0.5f * Mafs.PI);
                 else motion = motion.rotateY(direction.asRotation() / 180f * Mafs.PI);
                 motion = motion.multiply(Mafs.nextDouble(random) * 0.8, Mafs.nextDouble(random) * 0.8, Mafs.nextDouble(random) * 0.8);
-                world.addParticle(ParticleTypes.CLOUD, pos.getX(), pos.getY(), pos.getZ(), motion.x, motion.y, motion.z);
-                world.addParticle(blockParticle, pos.getX(), pos.getY(), pos.getZ(), motion.x * 10, motion.y, motion.z * 10);
+                level.addParticle(ParticleTypes.CLOUD, pos.getX(), pos.getY(), pos.getZ(), motion.x, motion.y, motion.z);
+                level.addParticle(blockParticle, pos.getX(), pos.getY(), pos.getZ(), motion.x * 10, motion.y, motion.z * 10);
             }
         }
         else
         {
-            for (LivingEntity e : world.getEntitiesByClass(LivingEntity.class, getBoundingBox().expand(1), this::canImpactEntity))
+            for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(1), this::canImpactEntity))
             {
                 double angle = Mafs.getAngle(getX(), getZ(), e.getX(), e.getZ()) * Math.PI / 180;
                 e.addVelocity(2 * -Math.cos(angle), 0.5d, 2 * -Math.sin(angle));
