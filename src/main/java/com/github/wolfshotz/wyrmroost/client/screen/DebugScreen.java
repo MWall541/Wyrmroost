@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.screen;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -10,9 +10,9 @@ import net.minecraft.util.text.StringTextComponent;
 
 public class DebugScreen extends Screen
 {
-    public final AbstractDragonEntity dragon;
+    public final TameableDragonEntity dragon;
     
-    public DebugScreen(AbstractDragonEntity dragon)
+    public DebugScreen(TameableDragonEntity dragon)
     {
         super(new StringTextComponent("debug_screen"));
         
@@ -61,7 +61,7 @@ public class DebugScreen extends Screen
         return true;
     }
 
-    public static void open(AbstractDragonEntity dragon)
+    public static void open(TameableDragonEntity dragon)
     {
         Minecraft.getInstance().setScreen(new DebugScreen(dragon));
     }

@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.projectile.breath;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.block.AbstractFireBlock;
@@ -26,7 +26,7 @@ public class FireBreathEntity extends BreathWeaponEntity
         super(type, level);
     }
 
-    public FireBreathEntity(AbstractDragonEntity shooter)
+    public FireBreathEntity(TameableDragonEntity shooter)
     {
         super(WREntities.FIRE_BREATH.get(), shooter);
     }

@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.items.staff;
 
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
@@ -49,7 +49,7 @@ public class DragonStaffItem extends Item
             return ActionResult.success(stack);
         }
 
-        AbstractDragonEntity dragon = getBoundDragon(level, stack);
+        TameableDragonEntity dragon = getBoundDragon(level, stack);
         if (dragon != null && getAction(stack).rightClick(dragon, player, stack))
             return ActionResult.success(stack);
         return ActionResult.pass(stack);
@@ -61,9 +61,9 @@ public class DragonStaffItem extends Item
     @Override
     public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
     {
-        if (entity instanceof AbstractDragonEntity)
+        if (entity instanceof TameableDragonEntity)
         {
-            AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+            TameableDragonEntity dragon = (TameableDragonEntity) entity;
             if (dragon.isOwnedBy(player))
             {
                 bindDragon(dragon, stack);
@@ -80,9 +80,9 @@ public class DragonStaffItem extends Item
     @Override
     public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
     {
-        if (target instanceof AbstractDragonEntity)
+        if (target instanceof TameableDragonEntity)
         {
-            AbstractDragonEntity dragon = (AbstractDragonEntity) target;
+            TameableDragonEntity dragon = (TameableDragonEntity) target;
             if (dragon.isOwnedBy(playerIn))
             {
                 bindDragon(dragon, stack);
@@ -101,7 +101,7 @@ public class DragonStaffItem extends Item
     {
         if (context.getPlayer().isShiftKeyDown()) return ActionResultType.PASS;
         ItemStack stack = context.getItemInHand();
-        AbstractDragonEntity dragon = getBoundDragon(context.getLevel(), stack);
+        TameableDragonEntity dragon = getBoundDragon(context.getLevel(), stack);
         if (dragon != null && getAction(stack).clickBlock(dragon, context)) return ActionResultType.SUCCESS;
         return ActionResultType.PASS;
     }
@@ -112,7 +112,7 @@ public class DragonStaffItem extends Item
         tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.desc").withStyle(TextFormatting.GRAY));
         if (stack.hasTag())
         {
-            AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
+            TameableDragonEntity dragon = getBoundDragon(worldIn, stack);
             if (dragon != null)
             {
                 tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", ((IFormattableTextComponent) dragon.getName()).withStyle(TextFormatting.AQUA)));
@@ -166,7 +166,7 @@ public class DragonStaffItem extends Item
         return StaffAction.DEFAULT;
     }
 
-    public static void bindDragon(AbstractDragonEntity dragon, ItemStack stack)
+    public static void bindDragon(TameableDragonEntity dragon, ItemStack stack)
     {
         assertStaff(stack);
         CompoundNBT nbt = stack.getOrCreateTag();
@@ -174,7 +174,7 @@ public class DragonStaffItem extends Item
     }
 
     @Nullable
-    public static AbstractDragonEntity getBoundDragon(World level, ItemStack stack)
+    public static TameableDragonEntity getBoundDragon(World level, ItemStack stack)
     {
         assertStaff(stack);
         if (stack.hasTag())
@@ -183,7 +183,7 @@ public class DragonStaffItem extends Item
             if (tag.contains(DATA_DRAGON_ID))
             {
                 Entity entity = level.getEntity(tag.getInt(DATA_DRAGON_ID));
-                if (entity instanceof AbstractDragonEntity) return ((AbstractDragonEntity) entity);
+                if (entity instanceof TameableDragonEntity) return ((TameableDragonEntity) entity);
             }
         }
         return null;

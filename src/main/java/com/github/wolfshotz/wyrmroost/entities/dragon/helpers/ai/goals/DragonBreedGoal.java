@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -13,12 +13,12 @@ import java.util.EnumSet;
 
 public class DragonBreedGoal extends Goal
 {
-    protected final AbstractDragonEntity dragon;
+    protected final TameableDragonEntity dragon;
     protected final EntityPredicate predicate;
-    protected AbstractDragonEntity targetMate;
+    protected TameableDragonEntity targetMate;
     protected int spawnBabyDelay;
 
-    public DragonBreedGoal(AbstractDragonEntity dragon)
+    public DragonBreedGoal(TameableDragonEntity dragon)
     {
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         this.dragon = dragon;
@@ -79,7 +79,7 @@ public class DragonBreedGoal extends Goal
      * valid mate found.
      */
     @Nullable
-    protected AbstractDragonEntity getNearbyMate()
+    protected TameableDragonEntity getNearbyMate()
     {
         return dragon.level.getNearbyEntities(dragon.getClass(), predicate, dragon, dragon.getBoundingBox().inflate(dragon.getBbWidth() * 8))
                 .stream()

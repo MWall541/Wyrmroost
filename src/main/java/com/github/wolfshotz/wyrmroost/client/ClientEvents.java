@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.client;
 
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
@@ -12,7 +12,6 @@ import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -133,11 +132,11 @@ public class ClientEvents
     {
         Minecraft mc = getClient();
         Entity entity = mc.player.getVehicle();
-        if (!(entity instanceof AbstractDragonEntity)) return;
+        if (!(entity instanceof TameableDragonEntity)) return;
         PointOfView view = mc.options.getCameraType();
 
         if (view != PointOfView.FIRST_PERSON)
-            ((AbstractDragonEntity) entity).setMountCameraAngles(view == PointOfView.THIRD_PERSON_BACK, event);
+            ((TameableDragonEntity) entity).setMountCameraAngles(view == PointOfView.THIRD_PERSON_BACK, event);
     }
 
     public static void onClientWorldLoad(WorldEvent.Load event)

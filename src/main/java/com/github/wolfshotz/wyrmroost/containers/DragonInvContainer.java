@@ -1,8 +1,8 @@
 package com.github.wolfshotz.wyrmroost.containers;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -18,10 +18,10 @@ public class DragonInvContainer extends Container
 {
     public static final int MAX_PLAYER_SLOTS = 36;
 
-    public final DragonInvHandler inventory;
+    public final DragonInventory inventory;
     public final PlayerInventory playerInv;
 
-    public DragonInvContainer(DragonInvHandler inv, PlayerInventory playerInv, int windowID)
+    public DragonInvContainer(DragonInventory inv, PlayerInventory playerInv, int windowID)
     {
         super(WRIO.DRAGON_INVENTORY.get(), windowID);
         this.inventory = inv;
@@ -98,7 +98,7 @@ public class DragonInvContainer extends Container
         makeSlots(playerInv, 0, initialX, initialY + 58, 9, 1); // Hotbar
     }
 
-    public static INamedContainerProvider getProvider(AbstractDragonEntity dragon)
+    public static INamedContainerProvider getProvider(TameableDragonEntity dragon)
     {
         return new INamedContainerProvider()
         {

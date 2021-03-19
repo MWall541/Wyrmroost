@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.client.render.entity.ldwyrm;
 import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.LDWyrmEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.LesserDesertwyrmEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -11,7 +11,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
  * WR Lesser Desertwyrm - Ukan
  * Created using Tabula 7.0.1
  */
-public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
+public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
 {
     public WRModelRenderer body1;
     public WRModelRenderer body2;
@@ -120,7 +120,7 @@ public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
     }
 
     @Override
-    public void setupAnim(LDWyrmEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(LesserDesertwyrmEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
 
@@ -128,7 +128,7 @@ public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
     }
 
     @Override
-    public void prepareMobModel(LDWyrmEntity minutus, float limbSwing, float limbSwingAmount, float partialTick)
+    public void prepareMobModel(LesserDesertwyrmEntity minutus, float limbSwing, float limbSwingAmount, float partialTick)
     {
         float frame = minutus.tickCount;
 
@@ -147,7 +147,7 @@ public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
             bob(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
         }
 
-        if (minutus.getAnimation() != LDWyrmEntity.BITE_ANIMATION)
+        if (minutus.getAnimation() != LesserDesertwyrmEntity.BITE_ANIMATION)
         {
             walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
             walk(head, 0.45f - globalSpeed, 0.1f, true, 0, (minutus.isBurrowed()? 0f : 0.5f), frame, f);
@@ -157,12 +157,12 @@ public class LDWyrmModel extends WREntityModel<LDWyrmEntity>
         flap(leg1, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
         flap(leg1_1, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
 
-        if (minutus.getAnimation() == LDWyrmEntity.BITE_ANIMATION) bite();
+        if (minutus.getAnimation() == LesserDesertwyrmEntity.BITE_ANIMATION) bite();
     }
     
     private void bite()
     {
-        animator.setAnimation(LDWyrmEntity.BITE_ANIMATION);
+        animator.setAnimation(LesserDesertwyrmEntity.BITE_ANIMATION);
         
         animator.startKeyframe(4);
         animator.rotate(head, 1f, 0, 0);

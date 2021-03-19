@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.client.render.entity.silverglider;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragon.SilverGliderEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -28,7 +28,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         super(manager, new SilverGliderModel(), 1f);
 
         addLayer(new GlowLayer(this::getGlowTexture));
-        addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.entityCutoutNoCull(SLEEP)));
+        addLayer(new ConditionalLayer(TameableDragonEntity::isSleeping, d -> RenderType.entityCutoutNoCull(SLEEP)));
     }
 
     @Nullable

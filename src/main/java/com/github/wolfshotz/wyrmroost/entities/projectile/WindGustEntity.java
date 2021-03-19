@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.projectile;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.entity.Entity;
@@ -23,13 +23,13 @@ public class WindGustEntity extends DragonProjectileEntity
         super(type, level);
     }
 
-    public WindGustEntity(AbstractDragonEntity shooter, Vector3d position, Vector3d acceleration)
+    public WindGustEntity(TameableDragonEntity shooter, Vector3d position, Vector3d acceleration)
     {
         super(WREntities.WIND_GUST.get(), shooter, position, acceleration);
         life = 20;
     }
 
-    public WindGustEntity(AbstractDragonEntity shooter)
+    public WindGustEntity(TameableDragonEntity shooter)
     {
         this(shooter, shooter.getLookAngle().add(shooter.position().add(0, -1.5, 0)), shooter.getLookAngle());
     }

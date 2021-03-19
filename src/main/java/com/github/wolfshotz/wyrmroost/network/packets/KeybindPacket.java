@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.network.packets;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -54,9 +54,9 @@ public class KeybindPacket
             case MOUNT_KEY1:
             case MOUNT_KEY2:
                 Entity vehicle = player.getVehicle();
-                if (vehicle instanceof AbstractDragonEntity)
+                if (vehicle instanceof TameableDragonEntity)
                 {
-                    AbstractDragonEntity dragon = ((AbstractDragonEntity) vehicle);
+                    TameableDragonEntity dragon = ((TameableDragonEntity) vehicle);
                     if (dragon.isTame() && dragon.getControllingPlayer() == player)
                         dragon.recievePassengerKeybind(key, mods, pressed);
                 }

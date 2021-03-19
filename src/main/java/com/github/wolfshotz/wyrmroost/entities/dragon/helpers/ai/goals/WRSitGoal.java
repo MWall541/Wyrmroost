@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -13,9 +13,9 @@ import java.util.Random;
 
 public class WRSitGoal extends SitGoal
 {
-    private final AbstractDragonEntity dragon;
+    private final TameableDragonEntity dragon;
 
-    public WRSitGoal(AbstractDragonEntity dragon)
+    public WRSitGoal(TameableDragonEntity dragon)
     {
         super(dragon);
         this.dragon = dragon;

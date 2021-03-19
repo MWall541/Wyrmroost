@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.client.render.entity;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -18,7 +18,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public abstract class AbstractDragonRenderer<T extends AbstractDragonEntity, M extends WREntityModel<T>> extends MobRenderer<T, M>
+public abstract class AbstractDragonRenderer<T extends TameableDragonEntity, M extends WREntityModel<T>> extends MobRenderer<T, M>
 {
     public static final String BASE_PATH = "textures/entity/dragon/";
 

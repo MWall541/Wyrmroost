@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.projectile;
 
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.entity.*;
 import net.minecraft.entity.projectile.ProjectileHelper;
@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 public class DragonProjectileEntity extends Entity implements IEntityAdditionalSpawnData
 {
     @Nullable // Potentially if the dragon is unloaded, or is not synced yet.
-    public AbstractDragonEntity shooter;
+    public TameableDragonEntity shooter;
     public Vector3d acceleration;
     public float growthRate = 1f;
     public int life;
@@ -35,7 +35,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         super(type, level);
     }
 
-    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter, Vector3d position, Vector3d velocity)
+    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, TameableDragonEntity shooter, Vector3d position, Vector3d velocity)
     {
         super(type, shooter.level);
 
@@ -250,7 +250,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     @Override
     public void readSpawnData(PacketBuffer buf)
     {
-        this.shooter = (AbstractDragonEntity) level.getEntity(buf.readInt());
+        this.shooter = (TameableDragonEntity) level.getEntity(buf.readInt());
         this.growthRate = buf.readFloat();
     }
 

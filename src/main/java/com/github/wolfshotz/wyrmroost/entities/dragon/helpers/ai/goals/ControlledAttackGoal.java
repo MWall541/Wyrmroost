@@ -1,15 +1,15 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 
 public class ControlledAttackGoal extends MeleeAttackGoal
 {
-    private final AbstractDragonEntity dragon;
+    private final TameableDragonEntity dragon;
     private final Runnable attack;
 
-    public ControlledAttackGoal(AbstractDragonEntity dragon, double speed, boolean longMemory, Runnable attack)
+    public ControlledAttackGoal(TameableDragonEntity dragon, double speed, boolean longMemory, Runnable attack)
     {
         super(dragon, speed, longMemory);
         this.attack = attack;

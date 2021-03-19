@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.vector.Vector3d;
@@ -11,9 +11,9 @@ import java.util.EnumSet;
 public class MoveToHomeGoal extends Goal
 {
     private int time;
-    private final AbstractDragonEntity dragon;
+    private final TameableDragonEntity dragon;
 
-    public MoveToHomeGoal(AbstractDragonEntity creatureIn)
+    public MoveToHomeGoal(TameableDragonEntity creatureIn)
     {
         this.dragon = creatureIn;
         setFlags(EnumSet.of(Flag.MOVE));

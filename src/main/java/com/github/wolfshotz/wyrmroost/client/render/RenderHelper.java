@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.client.render;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
@@ -135,7 +135,7 @@ public class RenderHelper extends RenderType
         PlayerEntity player = mc.player;
         ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
         if (stack == null) return;
-        AbstractDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.level, stack);
+        TameableDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.level, stack);
         if (dragon == null) return;
 
         DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);

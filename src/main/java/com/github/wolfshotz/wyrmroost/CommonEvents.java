@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost;
 
 import com.github.wolfshotz.wyrmroost.client.screen.DebugScreen;
 import com.github.wolfshotz.wyrmroost.data.DataGatherer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
@@ -89,8 +89,8 @@ public class CommonEvents
         Entity entity = evt.getTarget();
         entity.refreshDimensions();
 
-        if (!(entity instanceof AbstractDragonEntity)) return;
-        AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
+        if (!(entity instanceof TameableDragonEntity)) return;
+        TameableDragonEntity dragon = (TameableDragonEntity) entity;
 
         if (player.isShiftKeyDown()) dragon.tame(true, player);
         else

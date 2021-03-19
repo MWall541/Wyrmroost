@@ -5,7 +5,7 @@ import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
@@ -47,12 +47,12 @@ import java.util.EnumSet;
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 
-public class RoyalRedEntity extends AbstractDragonEntity
+public class RoyalRedEntity extends TameableDragonEntity
 {
-    private static final EntitySerializer<RoyalRedEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
-            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
-            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
-            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping)
+    private static final EntitySerializer<RoyalRedEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", TameableDragonEntity::isMale, TameableDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping)
             .track(EntitySerializer.INT, "KnockOutTime", RoyalRedEntity::getKnockOutTime, RoyalRedEntity::setKnockoutTime));
 
     public static final int ARMOR_SLOT = 0;
@@ -72,7 +72,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     public final TickFloat knockOutTimer = new TickFloat().setLimit(0, 1);
     private int knockOutTime = 0;
 
-    public RoyalRedEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
+    public RoyalRedEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
         super(dragon, level);
         noCulling = WRConfig.disableFrustumCheck;
@@ -82,7 +82,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
     {
         return SERIALIZER;
     }
@@ -122,9 +122,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
     }
 
     @Override
-    public DragonInvHandler createInv()
+    public DragonInventory createInv()
     {
-        return new DragonInvHandler(this, 1);
+        return new DragonInventory(this, 1);
     }
 
     @Override
@@ -536,7 +536,7 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
             if (getNavigation().isDone() || age % 10 == 0)
             {
-                boolean isFlyingTarget = target instanceof AbstractDragonEntity && ((AbstractDragonEntity) target).isFlying();
+                boolean isFlyingTarget = target instanceof TameableDragonEntity && ((TameableDragonEntity) target).isFlying();
                 double y = target.getY() + (!isFlyingTarget && getRandom().nextDouble() > 0.1? 8 : 0);
                 getNavigation().moveTo(target.getX(), y, target.getZ(), !isFlying() && isBreathingFire? 0.8d : 1.3d);
             }

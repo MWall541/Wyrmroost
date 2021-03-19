@@ -42,12 +42,12 @@ import java.util.Random;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
-public class SilverGliderEntity extends AbstractDragonEntity
+public class SilverGliderEntity extends TameableDragonEntity
 {
-    private static final EntitySerializer<SilverGliderEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
-            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
-            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
-            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping));
+    private static final EntitySerializer<SilverGliderEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", TameableDragonEntity::isMale, TameableDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping));
 
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
@@ -55,9 +55,25 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public TemptGoal temptGoal;
     public boolean isGliding; // controlled by player-gliding.
 
-    public SilverGliderEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
+    public SilverGliderEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
         super(dragon, level);
+    }
+
+    @Override
+    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
+    protected void defineSynchedData()
+    {
+        super.defineSynchedData();
+        entityData.define(FLYING, false);
+        entityData.define(GENDER, false);
+        entityData.define(VARIANT, 0);
+        entityData.define(SLEEPING, false);
     }
 
     @Override
@@ -73,22 +89,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
         goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
         goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 7f));
         goalSelector.addGoal(10, new LookRandomlyGoal(this));
-    }
-
-    @Override
-    protected void defineSynchedData()
-    {
-        super.defineSynchedData();
-        entityData.define(FLYING, false);
-        entityData.define(GENDER, false);
-        entityData.define(VARIANT, 0);
-        entityData.define(SLEEPING, false);
-    }
-
-    @Override
-    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
-    {
-        return SERIALIZER;
     }
 
     @Override

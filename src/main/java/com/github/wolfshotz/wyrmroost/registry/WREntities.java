@@ -51,18 +51,18 @@ public class WREntities
 {
     public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<EntityType<LDWyrmEntity>> LESSER_DESERTWYRM = Builder.creature("lesser_desertwyrm", LDWyrmEntity::new)
-            .attributes(LDWyrmEntity::getAttributeMap)
-            .spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LDWyrmEntity::getSpawnPlacement)
-            .spawnBiomes(LDWyrmEntity::setSpawnBiomes)
+    public static final RegistryObject<EntityType<LesserDesertwyrmEntity>> LESSER_DESERTWYRM = Builder.creature("lesser_desertwyrm", LesserDesertwyrmEntity::new)
+            .attributes(LesserDesertwyrmEntity::getAttributeMap)
+            .spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LesserDesertwyrmEntity::getSpawnPlacement)
+            .spawnBiomes(LesserDesertwyrmEntity::setSpawnBiomes)
             .spawnEgg(0xD6BCBC, 0xDEB6C7)
             .renderer(() -> LDWyrmRenderer::new)
             .build(b -> b.sized(0.6f, 0.2f));
 
-    public static final RegistryObject<EntityType<OWDrakeEntity>> OVERWORLD_DRAKE = Builder.creature("overworld_drake", OWDrakeEntity::new)
-            .attributes(OWDrakeEntity::getAttributeMap)
+    public static final RegistryObject<EntityType<OverworldDrakeEntity>> OVERWORLD_DRAKE = Builder.creature("overworld_drake", OverworldDrakeEntity::new)
+            .attributes(OverworldDrakeEntity::getAttributeMap)
             .spawnPlacement()
-            .spawnBiomes(OWDrakeEntity::setSpawnBiomes)
+            .spawnBiomes(OverworldDrakeEntity::setSpawnBiomes)
             .spawnEgg(0x788716, 0x3E623E)
             .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
             .renderer(() -> OWDrakeRenderer::new)
@@ -106,7 +106,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = Builder.creature("canari_wyvern", CanariWyvernEntity::new)
             .attributes(CanariWyvernEntity::getAttributeMap)
-            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, TameableDragonEntity::canFlyerSpawn)
             .spawnBiomes(CanariWyvernEntity::setSpawnBiomes)
             .spawnEgg(0x1D1F28, 0x492E0E)
             .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.level.getBlockState(c.blockPosition().below()).getBlock() == Blocks.JUNGLE_LEAVES))
@@ -115,7 +115,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = Builder.creature("royal_red", RoyalRedEntity::new)
             .attributes(RoyalRedEntity::getAttributeMap)
-            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, TameableDragonEntity::canFlyerSpawn)
             .spawnBiomes(RoyalRedEntity::setSpawnBiomes)
             .spawnEgg(0x8a0900, 0x0)
             .dragonEgg(new DragonEggProperties(0.6f, 1f, 72000))
@@ -129,7 +129,7 @@ public class WREntities
 
     public static final RegistryObject<EntityType<AlpineEntity>> ALPINE = Builder.creature("alpine", AlpineEntity::new)
             .attributes(AlpineEntity::getAttributeMap)
-            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, AbstractDragonEntity::canFlyerSpawn)
+            .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, TameableDragonEntity::canFlyerSpawn)
             .spawnBiomes(AlpineEntity::setSpawnBiomes)
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
             .dragonEgg(new DragonEggProperties(1, 1, 12000))

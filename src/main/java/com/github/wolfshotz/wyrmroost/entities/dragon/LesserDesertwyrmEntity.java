@@ -49,17 +49,17 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
  * Seperated from AbstractDragonEntity:
  * This does not need/require much from that class and would instead create redundancies. do this instead.
  */
-public class LDWyrmEntity extends AnimalEntity implements IAnimatable
+public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
 {
     public static final String DATA_BURROWED = "Burrowed";
     public static final Animation BITE_ANIMATION = new Animation(10);
-    private static final DataParameter<Boolean> BURROWED = EntityDataManager.defineId(LDWyrmEntity.class, DataSerializers.BOOLEAN);
-    private static final Predicate<LivingEntity> AVOIDING = t -> EntityPredicates.ATTACK_ALLOWED.test(t) && !(t instanceof LDWyrmEntity);
+    private static final DataParameter<Boolean> BURROWED = EntityDataManager.defineId(LesserDesertwyrmEntity.class, DataSerializers.BOOLEAN);
+    private static final Predicate<LivingEntity> AVOIDING = t -> EntityPredicates.ATTACK_ALLOWED.test(t) && !(t instanceof LesserDesertwyrmEntity);
 
     public Animation animation = NO_ANIMATION;
     public int animationTick;
 
-    public LDWyrmEntity(EntityType<? extends LDWyrmEntity> minutus, World level)
+    public LesserDesertwyrmEntity(EntityType<? extends LesserDesertwyrmEntity> minutus, World level)
     {
         super(minutus, level);
     }
@@ -146,7 +146,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     {
         Predicate<Entity> predicateFilter = filter ->
         {
-            if (filter instanceof LDWyrmEntity) return false;
+            if (filter instanceof LesserDesertwyrmEntity) return false;
             return filter instanceof FishingBobberEntity || (filter instanceof LivingEntity && filter.getBbWidth() < 0.9f && filter.getBbHeight() < 0.9f);
         };
         AxisAlignedBB aabb = getBoundingBox().expandTowards(0, 2, 0).inflate(0.5, 0, 0.5);

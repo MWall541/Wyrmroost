@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemStackHandler;
@@ -9,11 +9,11 @@ import net.minecraftforge.items.ItemStackHandler;
 /**
  * todo: hold slots here and have the container work with them from here
  */
-public class DragonInvHandler extends ItemStackHandler
+public class DragonInventory extends ItemStackHandler
 {
-    public final AbstractDragonEntity dragon;
+    public final TameableDragonEntity dragon;
 
-    public DragonInvHandler(AbstractDragonEntity dragon, int size)
+    public DragonInventory(TameableDragonEntity dragon, int size)
     {
         super(size);
         this.dragon = dragon;

@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,9 +14,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 
 public class FlyerMoveController extends MovementController
 {
-    private final AbstractDragonEntity dragon;
+    private final TameableDragonEntity dragon;
 
-    public FlyerMoveController(AbstractDragonEntity dragon)
+    public FlyerMoveController(TameableDragonEntity dragon)
     {
         super(dragon);
         this.dragon = dragon;

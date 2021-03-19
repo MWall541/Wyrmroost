@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -20,10 +20,10 @@ public class DefendHomeGoal extends TargetGoal
 {
     private static final Predicate<LivingEntity> FILTER = e -> e instanceof IMob && !(e instanceof CreeperEntity) && !e.getName().getString().equalsIgnoreCase("Ignore Me");
 
-    private final AbstractDragonEntity defender;
+    private final TameableDragonEntity defender;
     private final EntityPredicate predicate;
 
-    public DefendHomeGoal(AbstractDragonEntity defender, Predicate<LivingEntity> additionalFilters)
+    public DefendHomeGoal(TameableDragonEntity defender, Predicate<LivingEntity> additionalFilters)
     {
         super(defender, false, false);
         this.defender = defender;
@@ -31,7 +31,7 @@ public class DefendHomeGoal extends TargetGoal
         setFlags(EnumSet.of(Flag.TARGET));
     }
 
-    public DefendHomeGoal(AbstractDragonEntity defender)
+    public DefendHomeGoal(TameableDragonEntity defender)
     {
         this(defender, e -> true);
     }

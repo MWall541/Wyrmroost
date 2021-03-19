@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.client.sound;
 
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
@@ -9,10 +9,10 @@ import net.minecraft.util.SoundEvents;
 
 public class FlyingSound extends TickableSound
 {
-    private final AbstractDragonEntity entity;
+    private final TameableDragonEntity entity;
     private int time;
 
-    public FlyingSound(AbstractDragonEntity entity)
+    public FlyingSound(TameableDragonEntity entity)
     {
         super(SoundEvents.ELYTRA_FLYING, SoundCategory.PLAYERS);
         this.entity = entity;
@@ -42,7 +42,7 @@ public class FlyingSound extends TickableSound
         else stop();
     }
 
-    public static void play(AbstractDragonEntity dragon)
+    public static void play(TameableDragonEntity dragon)
     {
         Minecraft.getInstance().getSoundManager().play(new FlyingSound(dragon));
     }

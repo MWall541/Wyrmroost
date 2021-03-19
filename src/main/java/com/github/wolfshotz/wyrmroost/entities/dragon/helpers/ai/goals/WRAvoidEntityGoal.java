@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 
 public class WRAvoidEntityGoal<T extends LivingEntity> extends Goal
 {
-    private final AbstractDragonEntity entity;
+    private final TameableDragonEntity entity;
     private final Class<T> classToAvoid;
     private final float avoidDistance;
     private final double farSpeed;
@@ -20,12 +20,12 @@ public class WRAvoidEntityGoal<T extends LivingEntity> extends Goal
     private final EntityPredicate builtTargetSelector;
     private T avoidTarget;
 
-    public WRAvoidEntityGoal(AbstractDragonEntity entity, Class<T> classToAvoid, float avoidDistance, double speed)
+    public WRAvoidEntityGoal(TameableDragonEntity entity, Class<T> classToAvoid, float avoidDistance, double speed)
     {
         this(entity, classToAvoid, e -> true, avoidDistance, speed, speed * 1.43);
     }
 
-    public WRAvoidEntityGoal(AbstractDragonEntity entityIn, Class<T> avoidClass, Predicate<LivingEntity> targetPredicate, float distance, double nearSpeedIn, double farSpeedIn) {
+    public WRAvoidEntityGoal(TameableDragonEntity entityIn, Class<T> avoidClass, Predicate<LivingEntity> targetPredicate, float distance, double nearSpeedIn, double farSpeedIn) {
         this.entity = entityIn;
         this.classToAvoid = avoidClass;
         this.avoidDistance = distance;

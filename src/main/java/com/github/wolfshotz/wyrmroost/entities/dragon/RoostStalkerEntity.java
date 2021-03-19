@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
@@ -50,11 +50,11 @@ import java.util.Random;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
-public class RoostStalkerEntity extends AbstractDragonEntity
+public class RoostStalkerEntity extends TameableDragonEntity
 {
-    public static final EntitySerializer<RoostStalkerEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
-            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping)
-            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant));
+    public static final EntitySerializer<RoostStalkerEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping)
+            .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
     public static final int ITEM_SLOT = 0;
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.defineId(RoostStalkerEntity.class, DataSerializers.ITEM_STACK);
@@ -67,7 +67,7 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
     {
         return SERIALIZER;
     }
@@ -330,9 +330,9 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     }
 
     @Override
-    public DragonInvHandler createInv()
+    public DragonInventory createInv()
     {
-        return new DragonInvHandler(this, 1);
+        return new DragonInventory(this, 1);
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)

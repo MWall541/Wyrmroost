@@ -34,11 +34,11 @@ import javax.annotation.Nullable;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
-public class AlpineEntity extends AbstractDragonEntity
+public class AlpineEntity extends TameableDragonEntity
 {
-    public static final EntitySerializer<AlpineEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
-            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping)
-            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant));
+    public static final EntitySerializer<AlpineEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping)
+            .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
     public static final Animation ROAR_ANIMATION = new Animation(84);
     public static final Animation WIND_GUST_ANIMATION = new Animation(25);
@@ -47,7 +47,7 @@ public class AlpineEntity extends AbstractDragonEntity
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
 
-    public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
+    public AlpineEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
         super(dragon, level);
     }
@@ -70,7 +70,7 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
     {
         return SERIALIZER;
     }

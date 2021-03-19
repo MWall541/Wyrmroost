@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragonegg;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
@@ -25,7 +25,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -38,7 +37,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public static final String DATA_DRAGON_TYPE = "DragonType";
     private static final int UPDATE_CONDITIONS_INTERVAL = 50; // in ticks, this is for performance reasons
 
-    public EntityType<AbstractDragonEntity> containedDragon;
+    public EntityType<TameableDragonEntity> containedDragon;
     public DragonEggProperties properties; // cache for speed
     public Direction wiggleDirection = Direction.NORTH;
     public TickFloat wiggleTime = new TickFloat().setLimit(0, 1);
@@ -51,7 +50,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
         super(type, level);
     }
 
-    public DragonEggEntity(EntityType<AbstractDragonEntity> type, int hatchTime, World level)
+    public DragonEggEntity(EntityType<TameableDragonEntity> type, int hatchTime, World level)
     {
         super(WREntities.DRAGON_EGG.get(), level);
         this.containedDragon = type;
@@ -201,7 +200,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         if (!level.isClientSide)
         {
-            AbstractDragonEntity newDragon = containedDragon.create(level);
+            TameableDragonEntity newDragon = containedDragon.create(level);
             if (newDragon == null)
             {
                 safeError();

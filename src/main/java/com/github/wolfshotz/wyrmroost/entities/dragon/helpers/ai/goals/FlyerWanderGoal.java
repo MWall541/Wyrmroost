@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
@@ -10,9 +10,9 @@ import java.util.EnumSet;
 
 public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
 {
-    private final AbstractDragonEntity dragon;
+    private final TameableDragonEntity dragon;
 
-    public FlyerWanderGoal(AbstractDragonEntity dragon, double speed, float probability)
+    public FlyerWanderGoal(TameableDragonEntity dragon, double speed, float probability)
     {
         super(dragon, speed, probability);
         setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
@@ -20,7 +20,7 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
         this.dragon = dragon;
     }
 
-    public FlyerWanderGoal(AbstractDragonEntity dragon, double speed)
+    public FlyerWanderGoal(TameableDragonEntity dragon, double speed)
     {
         this(dragon, speed, 0.001f);
     }
@@ -51,7 +51,7 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
 
         if (dragon.isFlying() || (!dragon.isLeashed() && dragon.getRandom().nextFloat() <= probability + 0.02))
         {
-            if ((dragon.hasDataParameter(AbstractDragonEntity.SLEEPING) && !dragon.level.isDay()) || dragon.getRandom().nextFloat() <= probability)
+            if ((dragon.hasDataParameter(TameableDragonEntity.SLEEPING) && !dragon.level.isDay()) || dragon.getRandom().nextFloat() <= probability)
                 position = RandomPositionGenerator.getLandPos(dragon, 20, 25);
             else
             {

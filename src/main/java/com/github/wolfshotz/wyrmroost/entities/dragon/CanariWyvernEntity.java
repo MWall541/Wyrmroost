@@ -31,12 +31,12 @@ import java.util.EnumSet;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
-public class CanariWyvernEntity extends AbstractDragonEntity
+public class CanariWyvernEntity extends TameableDragonEntity
 {
-    private static final EntitySerializer<CanariWyvernEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
-            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
-            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
-            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping));
+    private static final EntitySerializer<CanariWyvernEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", TameableDragonEntity::isMale, TameableDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping));
 
     public static final Animation FLAP_WINGS_ANIMATION = new Animation(22);
     public static final Animation PREEN_ANIMATION = new Animation(36);
@@ -45,7 +45,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
 
     public PlayerEntity pissedOffTarget;
 
-    public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
+    public CanariWyvernEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
         super(dragon, level);
     }
@@ -77,7 +77,7 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
     {
         return SERIALIZER;
     }

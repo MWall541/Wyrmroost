@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.client.screen;
 
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.NameFieldWidget;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.StaffActionButton;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -19,11 +19,11 @@ import java.util.List;
 
 public class StaffScreen extends Screen
 {
-    private final AbstractDragonEntity dragon;
+    private final TameableDragonEntity dragon;
     public final List<ITextComponent> toolTip = new ArrayList<>();
     public final List<StaffAction> actions = new ArrayList<>();
 
-    public StaffScreen(AbstractDragonEntity dragon)
+    public StaffScreen(TameableDragonEntity dragon)
     {
         super(new StringTextComponent("Staff Screen"));
         this.dragon = dragon;
@@ -91,7 +91,7 @@ public class StaffScreen extends Screen
         toolTip.add(text);
     }
 
-    public static void open(AbstractDragonEntity dragon, ItemStack stack)
+    public static void open(TameableDragonEntity dragon, ItemStack stack)
     {
         DragonStaffItem.bindDragon(dragon, stack);
         if (dragon.level.isClientSide) Minecraft.getInstance().setScreen(new StaffScreen(dragon));

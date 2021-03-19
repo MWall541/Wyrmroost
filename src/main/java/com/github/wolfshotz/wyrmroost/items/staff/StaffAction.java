@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -21,14 +21,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public enum StaffAction
 {
     DEFAULT
             {
                 @Override
-                public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+                public boolean rightClick(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     if (player.level.isClientSide) StaffScreen.open(dragon, stack);
                     return true;
@@ -38,7 +37,7 @@ public enum StaffAction
     INVENTORY
             {
                 @Override
-                public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+                public void onSelected(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     DragonStaffItem.setAction(DEFAULT, player, stack);
                     if (!player.level.isClientSide)
@@ -49,14 +48,14 @@ public enum StaffAction
     SIT
             {
                 @Override
-                public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+                public void onSelected(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     dragon.setOrderedToSit(!dragon.isInSittingPose());
                     DragonStaffItem.setAction(DEFAULT, player, stack);
                 }
 
                 @Override
-                public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
+                public String getTranslateKey(@Nullable TameableDragonEntity dragon)
                 {
                     if (dragon != null && dragon.isInSittingPose())
                         return "item.wyrmroost.dragon_staff.action.sit.come";
@@ -67,7 +66,7 @@ public enum StaffAction
     HOME
             {
                 @Override
-                public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+                public void onSelected(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     if (dragon.getHomePos().isPresent())
                     {
@@ -77,7 +76,7 @@ public enum StaffAction
                 }
 
                 @Override
-                public boolean clickBlock(AbstractDragonEntity dragon, ItemUseContext context)
+                public boolean clickBlock(TameableDragonEntity dragon, ItemUseContext context)
                 {
                     BlockPos pos = context.getClickedPos();
                     World level = context.getLevel();
@@ -99,7 +98,7 @@ public enum StaffAction
                 }
 
                 @Override
-                public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks)
+                public void render(TameableDragonEntity dragon, MatrixStack ms, float partialTicks)
                 {
                     RayTraceResult rtr = ClientEvents.getClient().hitResult;
                     if (rtr instanceof BlockRayTraceResult)
@@ -111,7 +110,7 @@ public enum StaffAction
                 }
 
                 @Override
-                public String getTranslateKey(@Nullable AbstractDragonEntity dragon)
+                public String getTranslateKey(@Nullable TameableDragonEntity dragon)
                 {
                     if (dragon != null && dragon.getHomePos().isPresent())
                         return TRANSLATE_PATH + "home.remove";
@@ -124,7 +123,7 @@ public enum StaffAction
                 private static final int TARGET_RANGE = 40;
 
                 @Override
-                public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+                public void onSelected(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     dragon.clearAI();
                     dragon.clearHome();
@@ -132,7 +131,7 @@ public enum StaffAction
                 }
 
                 @Override
-                public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+                public boolean rightClick(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
                     EntityRayTraceResult ertr = rayTrace(player, dragon);
                     if (ertr != null)
@@ -146,7 +145,7 @@ public enum StaffAction
                 }
 
                 @Override
-                public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks)
+                public void render(TameableDragonEntity dragon, MatrixStack ms, float partialTicks)
                 {
                     EntityRayTraceResult rtr = rayTrace(ClientEvents.getPlayer(), dragon);
                     if (rtr != null && rtr.getEntity() != dragon.getTarget())
@@ -154,7 +153,7 @@ public enum StaffAction
                 }
 
                 @Nullable
-                private EntityRayTraceResult rayTrace(PlayerEntity player, AbstractDragonEntity dragon)
+                private EntityRayTraceResult rayTrace(PlayerEntity player, TameableDragonEntity dragon)
                 {
                     return Mafs.rayTraceEntities(player,
                             TARGET_RANGE,
@@ -165,30 +164,30 @@ public enum StaffAction
     public static final StaffAction[] VALUES = values(); // cache
     private static final String TRANSLATE_PATH = "item.wyrmroost.dragon_staff.action.";
 
-    public boolean clickBlock(AbstractDragonEntity dragon, ItemUseContext context)
+    public boolean clickBlock(TameableDragonEntity dragon, ItemUseContext context)
     {
         return false;
     }
 
-    public boolean rightClick(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+    public boolean rightClick(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
     {
         return false;
     }
 
-    public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
+    public void onSelected(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
     {
     }
 
-    public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks)
+    public void render(TameableDragonEntity dragon, MatrixStack ms, float partialTicks)
     {
     }
 
-    protected String getTranslateKey(@Nullable AbstractDragonEntity dragon)
+    protected String getTranslateKey(@Nullable TameableDragonEntity dragon)
     {
         return TRANSLATE_PATH + name().toLowerCase();
     }
 
-    public TranslationTextComponent getTranslation(@Nullable AbstractDragonEntity dragon)
+    public TranslationTextComponent getTranslation(@Nullable TameableDragonEntity dragon)
     {
         return new TranslationTextComponent(getTranslateKey(dragon));
     }

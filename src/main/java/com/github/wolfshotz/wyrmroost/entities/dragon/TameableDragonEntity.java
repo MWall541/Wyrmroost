@@ -5,7 +5,7 @@ import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
+import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
@@ -78,23 +78,23 @@ import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
  * Created by com.github.WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class AbstractDragonEntity extends TameableEntity implements IAnimatable
+public abstract class TameableDragonEntity extends TameableEntity implements IAnimatable
 {
     public static final byte HEAL_PARTICLES_DATA_ID = 8;
 
-    public static final EntitySerializer<AbstractDragonEntity> SERIALIZER = EntitySerializer.builder(b -> b
-            .track(EntitySerializer.BLOCK_POS.optional(), "HomePos", AbstractDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
-            .track(EntitySerializer.INT, "BreedCount", AbstractDragonEntity::getBreedCount, AbstractDragonEntity::setBreedCount));
+    public static final EntitySerializer<TameableDragonEntity> SERIALIZER = EntitySerializer.builder(b -> b
+            .track(EntitySerializer.BLOCK_POS.optional(), "HomePos", TameableDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
+            .track(EntitySerializer.INT, "BreedCount", TameableDragonEntity::getBreedCount, TameableDragonEntity::setBreedCount));
 
     // Common Data Parameters
-    public static final DataParameter<Boolean> GENDER = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> FLYING = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SLEEPING = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.INT);
-    public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.ITEM_STACK);
-    public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS); // todo for 1.17: remove optional and make this nullable
+    public static final DataParameter<Boolean> GENDER = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> FLYING = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> SLEEPING = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.INT);
+    public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.ITEM_STACK);
+    public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS); // todo for 1.17: remove optional and make this nullable
 
-    public final LazyOptional<DragonInvHandler> invHandler;
+    public final LazyOptional<DragonInventory> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
     private int sleepCooldown;
     public boolean wingsDown;
@@ -102,13 +102,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     private Animation animation = NO_ANIMATION;
     private int animationTick;
 
-    public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
+    public TameableDragonEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
         super(dragon, level);
 
         maxUpStep = 1;
 
-        DragonInvHandler inv = createInv();
+        DragonInventory inv = createInv();
         invHandler = LazyOptional.of(inv == null? null : () -> inv);
         lookControl = new LessShitLookController(this);
         if (hasDataParameter(FLYING)) moveControl = new FlyerMoveController(this);
@@ -133,7 +133,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         goalSelector.addGoal(1, new WRSitGoal(this));
     }
 
-    public abstract EntitySerializer<? extends AbstractDragonEntity> getSerializer();
+    public abstract EntitySerializer<? extends TameableDragonEntity> getSerializer();
 
     @Override
     public void addAdditionalSaveData(CompoundNBT nbt)
@@ -266,12 +266,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (flag) clearAI();
     }
 
-    public DragonInvHandler getInvHandler()
+    public DragonInventory getInvHandler()
     {
         return invHandler.orElseThrow(() -> new NoSuchElementException("This boi doesn't have an inventory wtf are u doing"));
     }
 
-    public DragonInvHandler createInv()
+    public DragonInventory createInv()
     {
         return null;
     }
@@ -857,8 +857,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canMate(AnimalEntity mate)
     {
-        if (!(mate instanceof AbstractDragonEntity)) return false;
-        AbstractDragonEntity dragon = (AbstractDragonEntity) mate;
+        if (!(mate instanceof TameableDragonEntity)) return false;
+        TameableDragonEntity dragon = (TameableDragonEntity) mate;
         if (isInSittingPose() || dragon.isInSittingPose()) return false;
         if (hasDataParameter(GENDER) && isMale() == dragon.isMale()) return false;
         return super.canMate(mate);
@@ -899,7 +899,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         }
 
         breedCount++;
-        ((AbstractDragonEntity) mate).breedCount++;
+        ((TameableDragonEntity) mate).breedCount++;
 
         ServerPlayerEntity serverPlayer = getLoveCause();
 
@@ -1289,7 +1289,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @SuppressWarnings("unused")
-    public static boolean canFlyerSpawn(EntityType<? extends AbstractDragonEntity> type, IWorld level, SpawnReason reason, BlockPos pos, Random random)
+    public static boolean canFlyerSpawn(EntityType<? extends TameableDragonEntity> type, IWorld level, SpawnReason reason, BlockPos pos, Random random)
     {
         return level.getBlockState(pos.below()).getFluidState().isEmpty();
     }

@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.client.render.entity.owdrake;
 import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.OWDrakeEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.OverworldDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.math.MathHelper;
@@ -12,7 +12,7 @@ import net.minecraft.util.math.MathHelper;
  * WR Overworld Drake - Ukan
  * Created using Tabula 7.0.1
  */
-public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
+public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
 {
     public WRModelRenderer body1;
     public WRModelRenderer body2;
@@ -380,15 +380,15 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
     }
 
     @Override
-    public void setupAnim(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(OverworldDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (drake.getAnimation() != OWDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
+        if (drake.getAnimation() != OverworldDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
             faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
 
     @Override
-    public void prepareMobModel(OWDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
+    public void prepareMobModel(OverworldDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
     {
         this.entity = drake;
         float frame = drake.tickCount + partialTick;
@@ -421,15 +421,15 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
         sit(entity.sitTimer.get(partialTick));
         sleep(entity.sleepTimer.get(partialTick));
 
-        if (animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION)) grazeAnim(drake.getAnimationTick(), frame);
+        if (animator.setAnimation(OverworldDrakeEntity.GRAZE_ANIMATION)) grazeAnim(drake.getAnimationTick(), frame);
 
-        if (animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION))
+        if (animator.setAnimation(OverworldDrakeEntity.HORN_ATTACK_ANIMATION))
         {
             hornAttackAnim();
             return;
         }
 
-        if (animator.setAnimation(OWDrakeEntity.ROAR_ANIMATION))
+        if (animator.setAnimation(OverworldDrakeEntity.ROAR_ANIMATION))
         {
             roarAnim(drake, frame);
             return;
@@ -501,7 +501,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
      */
     private void hornAttackAnim()
     {
-        animator.setAnimation(OWDrakeEntity.HORN_ATTACK_ANIMATION);
+        animator.setAnimation(OverworldDrakeEntity.HORN_ATTACK_ANIMATION);
         
         animator.startKeyframe(5);
         animator.move(body1, 0, 2f, 1);
@@ -556,7 +556,7 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
      */
     private void grazeAnim(int animationTick, float frame)
     {
-        animator.setAnimation(OWDrakeEntity.GRAZE_ANIMATION);
+        animator.setAnimation(OverworldDrakeEntity.GRAZE_ANIMATION);
         
         animator.startKeyframe(12);
         animator.rotate(neck1, 1, 0, 0);
@@ -574,9 +574,9 @@ public class OWDrakeModel extends WREntityModel<OWDrakeEntity>
      * Roar Animation
      * played before dashing at the player to attack
      */
-    private void roarAnim(OWDrakeEntity entity, float frame)
+    private void roarAnim(OverworldDrakeEntity entity, float frame)
     {
-        animator.setAnimation(OWDrakeEntity.ROAR_ANIMATION);
+        animator.setAnimation(OverworldDrakeEntity.ROAR_ANIMATION);
         
         animator.startKeyframe(14);
         animator.move(body1, 0, 0.8f, 0);

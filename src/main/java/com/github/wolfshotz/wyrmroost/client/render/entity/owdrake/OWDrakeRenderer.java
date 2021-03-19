@@ -3,14 +3,14 @@ package com.github.wolfshotz.wyrmroost.client.render.entity.owdrake;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.OWDrakeEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.OverworldDrakeEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDrakeModel>
+public class OWDrakeRenderer extends AbstractDragonRenderer<OverworldDrakeEntity, OWDrakeModel>
 {
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[64]; // some indexes will be left unused
 
@@ -23,15 +23,15 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OWDrakeEntity, OWDra
     public OWDrakeRenderer(EntityRendererManager manager)
     {
         super(manager, new OWDrakeModel(), 1.6f);
-        addLayer(new ArmorLayer(OWDrakeEntity.ARMOR_SLOT));
-        addLayer(new ConditionalLayer(OWDrakeEntity::isSaddled, d -> RenderType.entityCutoutNoCull(SADDLE_LAYER)));
+        addLayer(new ArmorLayer(OverworldDrakeEntity.ARMOR_SLOT));
+        addLayer(new ConditionalLayer(OverworldDrakeEntity::isSaddled, d -> RenderType.entityCutoutNoCull(SADDLE_LAYER)));
     }
 
     public static ResourceLocation resource(String png) { return Wyrmroost.id(BASE_PATH + "overworld_drake/" + png); }
 
     @Nullable
     @Override
-    public ResourceLocation getTextureLocation(OWDrakeEntity drake)
+    public ResourceLocation getTextureLocation(OverworldDrakeEntity drake)
     {
         if (drake.hasCustomName())
         {

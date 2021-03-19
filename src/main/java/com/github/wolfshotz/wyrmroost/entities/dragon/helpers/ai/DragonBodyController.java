@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.ai.controller.BodyController;
 import net.minecraft.util.math.MathHelper;
 
@@ -11,9 +11,9 @@ import net.minecraft.util.math.MathHelper;
  */
 public class DragonBodyController extends BodyController
 {
-    public AbstractDragonEntity dragon;
+    public TameableDragonEntity dragon;
 
-    public DragonBodyController(AbstractDragonEntity dragon)
+    public DragonBodyController(TameableDragonEntity dragon)
     {
         super(dragon);
         this.dragon = dragon;

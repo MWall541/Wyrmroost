@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals;
 
-import com.github.wolfshotz.wyrmroost.entities.dragon.AbstractDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 
@@ -8,10 +8,10 @@ import java.util.EnumSet;
 
 public class WRFollowOwnerGoal extends Goal
 {
-    private final AbstractDragonEntity dragon;
+    private final TameableDragonEntity dragon;
     private int newPathTicks = 0;
 
-    public WRFollowOwnerGoal(AbstractDragonEntity tameableEntity)
+    public WRFollowOwnerGoal(TameableDragonEntity tameableEntity)
     {
         setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
         this.dragon = tameableEntity;
