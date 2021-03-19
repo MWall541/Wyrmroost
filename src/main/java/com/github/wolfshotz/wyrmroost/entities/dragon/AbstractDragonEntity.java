@@ -9,13 +9,14 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
@@ -67,9 +68,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static net.minecraft.entity.ai.attributes.Attributes.FLYING_SPEED;
 import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
@@ -83,15 +82,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 {
     public static final byte HEAL_PARTICLES_DATA_ID = 8;
 
+    public static final EntitySerializer<AbstractDragonEntity> SERIALIZER = EntitySerializer.builder(b -> b
+            .track(EntitySerializer.BLOCK_POS.optional(), "HomePos", AbstractDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
+            .track(EntitySerializer.INT, "BreedCount", AbstractDragonEntity::getBreedCount, AbstractDragonEntity::setBreedCount));
+
     // Common Data Parameters
     public static final DataParameter<Boolean> GENDER = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> FLYING = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SLEEPING = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.INT);
     public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.ITEM_STACK);
-    public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS);
+    public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS); // todo for 1.17: remove optional and make this nullable
 
-    private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
     public final LazyOptional<DragonInvHandler> invHandler;
     public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
     private int sleepCooldown;
@@ -110,10 +112,6 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         invHandler = LazyOptional.of(inv == null? null : () -> inv);
         lookControl = new LessShitLookController(this);
         if (hasDataParameter(FLYING)) moveControl = new FlyerMoveController(this);
-
-        registerDataEntry("HomePos", EntityDataEntry.BLOCK_POS.optional(), HOME_POS, Optional.empty());
-        registerDataEntry("BreedCount", EntityDataEntry.INTEGER, () -> breedCount, i -> breedCount = i);
-        invHandler.ifPresent(i -> registerDataEntry("Inv", EntityDataEntry.COMPOUND, i::serializeNBT, i::deserializeNBT));
     }
 
     @Override
@@ -135,30 +133,30 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         goalSelector.addGoal(1, new WRSitGoal(this));
     }
 
+    public abstract EntitySerializer<? extends AbstractDragonEntity> getSerializer();
+
     @Override
     public void addAdditionalSaveData(CompoundNBT nbt)
     {
         super.addAdditionalSaveData(nbt);
-        for (EntityDataEntry<?> entry : dataEntries) entry.write(nbt);
+        if (invHandler.isPresent()) nbt.put("Inv", invHandler.orElse(null).serializeNBT());
+        getSerializer().serialize(ModUtils.cast(this), nbt);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundNBT nbt)
     {
         super.readAdditionalSaveData(nbt);
-        for (EntityDataEntry<?> entry : dataEntries) entry.read(nbt);
+        if (invHandler.isPresent()) invHandler.orElse(null).deserializeNBT(nbt.getCompound("Inv"));
+        getSerializer().deserialize(ModUtils.cast(this), nbt);
         applyAttributes();
     }
 
-    public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, Supplier<T> write, Consumer<T> read)
+    @Override
+    protected void defineSynchedData()
     {
-        if (!level.isClientSide) dataEntries.add(new EntityDataEntry<>(key, type, write, read));
-    }
-
-    public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, DataParameter<T> param, T value)
-    {
-        entityData.define(param, value);
-        registerDataEntry(key, type, () -> entityData.get(param), v -> entityData.set(param, v));
+        super.defineSynchedData();
+        entityData.define(HOME_POS, Optional.empty());
     }
 
     public boolean hasDataParameter(DataParameter<?> param)
@@ -765,8 +763,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void setRotation(float yaw, float pitch)
     {
-        this.yRot = yRot % 360.0F;
-        this.xRot = xRot % 360.0F;
+        this.yRot = yaw % 360.0F;
+        this.xRot = pitch % 360.0F;
     }
 
     public double getAltitude()
@@ -921,6 +919,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         level.broadcastEntityEvent(this, (byte) 18);
         if (level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))
             level.addFreshEntity(new ExperienceOrbEntity(level, getX(), getY(), getZ(), getRandom().nextInt(7) + 1));
+    }
+
+    public int getBreedCount()
+    {
+        return breedCount;
+    }
+
+    public void setBreedCount(int i)
+    {
+        this.breedCount = i;
     }
 
     @Override

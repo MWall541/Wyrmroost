@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -33,6 +33,11 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class CanariWyvernEntity extends AbstractDragonEntity
 {
+    private static final EntitySerializer<CanariWyvernEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping));
+
     public static final Animation FLAP_WINGS_ANIMATION = new Animation(22);
     public static final Animation PREEN_ANIMATION = new Animation(36);
     public static final Animation THREAT_ANIMATION = new Animation(40);
@@ -43,10 +48,6 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     public CanariWyvernEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
     {
         super(dragon, level);
-
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
 
     @Override
@@ -76,10 +77,19 @@ public class CanariWyvernEntity extends AbstractDragonEntity
     }
 
     @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
     protected void defineSynchedData()
     {
         super.defineSynchedData();
         entityData.define(FLYING, false);
+        entityData.define(GENDER, false);
+        entityData.define(SLEEPING, false);
+        entityData.define(VARIANT, 0);
     }
 
     @Override

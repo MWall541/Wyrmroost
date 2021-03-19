@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBre
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRAvoidEntityGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.SGGlidePacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -44,6 +44,11 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class SilverGliderEntity extends AbstractDragonEntity
 {
+    private static final EntitySerializer<SilverGliderEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping));
+
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
 
@@ -53,10 +58,6 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public SilverGliderEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
     {
         super(dragon, level);
-
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRandom().nextBoolean());
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
     }
 
     @Override
@@ -79,6 +80,15 @@ public class SilverGliderEntity extends AbstractDragonEntity
     {
         super.defineSynchedData();
         entityData.define(FLYING, false);
+        entityData.define(GENDER, false);
+        entityData.define(VARIANT, 0);
+        entityData.define(SLEEPING, false);
+    }
+
+    @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
     }
 
     @Override

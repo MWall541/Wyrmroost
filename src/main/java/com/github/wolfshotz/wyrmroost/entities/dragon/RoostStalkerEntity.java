@@ -8,7 +8,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHom
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AddPassengerPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -52,6 +52,10 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class RoostStalkerEntity extends AbstractDragonEntity
 {
+    public static final EntitySerializer<RoostStalkerEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping)
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant));
+
     public static final int ITEM_SLOT = 0;
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.defineId(RoostStalkerEntity.class, DataSerializers.ITEM_STACK);
     private static final DataParameter<Boolean> SCAVENGING = EntityDataManager.defineId(RoostStalkerEntity.class, DataSerializers.BOOLEAN);
@@ -59,11 +63,23 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     public RoostStalkerEntity(EntityType<? extends RoostStalkerEntity> stalker, World level)
     {
         super(stalker, level);
-
         maxUpStep = 0;
+    }
 
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
+    @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
+    protected void defineSynchedData()
+    {
+        super.defineSynchedData();
+        entityData.define(SLEEPING, false);
+        entityData.define(VARIANT, 0);
+        entityData.define(ITEM, ItemStack.EMPTY);
+        entityData.define(SCAVENGING, false);
     }
 
     @Override
@@ -94,40 +110,6 @@ public class RoostStalkerEntity extends AbstractDragonEntity
         targetSelector.addGoal(3, new DefendHomeGoal(this));
         targetSelector.addGoal(4, new HurtByTargetGoal(this).setAlertOthers());
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, LivingEntity.class, true, target -> target instanceof ChickenEntity || target instanceof RabbitEntity || target instanceof TurtleEntity));
-    }
-
-    @Override
-    protected void defineSynchedData()
-    {
-        super.defineSynchedData();
-        entityData.define(ITEM, ItemStack.EMPTY);
-        entityData.define(SCAVENGING, false);
-    }
-
-    public ItemStack getItem()
-    {
-        return entityData.get(ITEM);
-    }
-
-    private boolean hasItem()
-    {
-        return getItem() != ItemStack.EMPTY;
-    }
-
-    public void setItem(ItemStack item)
-    {
-        entityData.set(ITEM, item);
-        if (!item.isEmpty()) playSound(SoundEvents.ARMOR_EQUIP_GENERIC, 0.5f, 1);
-    }
-
-    public boolean isScavenging()
-    {
-        return entityData.get(SCAVENGING);
-    }
-
-    public void setScavenging(boolean b)
-    {
-        entityData.set(SCAVENGING, b);
     }
 
     @Override
@@ -273,6 +255,32 @@ public class RoostStalkerEntity extends AbstractDragonEntity
     protected BodyController createBodyControl()
     {
         return new BodyController(this);
+    }
+
+    public ItemStack getItem()
+    {
+        return entityData.get(ITEM);
+    }
+
+    private boolean hasItem()
+    {
+        return getItem() != ItemStack.EMPTY;
+    }
+
+    public void setItem(ItemStack item)
+    {
+        entityData.set(ITEM, item);
+        if (!item.isEmpty()) playSound(SoundEvents.ARMOR_EQUIP_GENERIC, 0.5f, 1);
+    }
+
+    public boolean isScavenging()
+    {
+        return entityData.get(SCAVENGING);
+    }
+
+    public void setScavenging(boolean b)
+    {
+        entityData.set(SCAVENGING, b);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWand
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.projectile.WindGustEntity;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -36,6 +36,10 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class AlpineEntity extends AbstractDragonEntity
 {
+    public static final EntitySerializer<AlpineEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping)
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant));
+
     public static final Animation ROAR_ANIMATION = new Animation(84);
     public static final Animation WIND_GUST_ANIMATION = new Animation(25);
     public static final Animation BITE_ANIMATION = new Animation(10);
@@ -46,9 +50,6 @@ public class AlpineEntity extends AbstractDragonEntity
     public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
     {
         super(dragon, level);
-
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
 
     @Override
@@ -69,10 +70,18 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
     protected void defineSynchedData()
     {
         super.defineSynchedData();
         entityData.define(FLYING, false);
+        entityData.define(SLEEPING, false);
+        entityData.define(VARIANT, 0);
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
@@ -49,6 +49,12 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class RoyalRedEntity extends AbstractDragonEntity
 {
+    private static final EntitySerializer<RoyalRedEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping)
+            .track(EntitySerializer.INT, "KnockOutTime", RoyalRedEntity::getKnockOutTime, RoyalRedEntity::setKnockoutTime));
+
     public static final int ARMOR_SLOT = 0;
 
     public static final Animation ROAR_ANIMATION = new Animation(70);
@@ -73,11 +79,12 @@ public class RoyalRedEntity extends AbstractDragonEntity
 
         setPathfindingMalus(PathNodeType.DANGER_FIRE, 0);
         setPathfindingMalus(PathNodeType.DAMAGE_FIRE, 0);
+    }
 
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRandom().nextBoolean());
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
-        registerDataEntry("KnockOutTime", EntityDataEntry.INTEGER, () -> knockOutTime, this::setKnockoutTime);
+    @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
     }
 
     @Override
@@ -85,6 +92,9 @@ public class RoyalRedEntity extends AbstractDragonEntity
     {
         super.defineSynchedData();
 
+        entityData.define(GENDER, false);
+        entityData.define(SLEEPING, false);
+        entityData.define(VARIANT, 0);
         entityData.define(BREATHING_FIRE, false);
         entityData.define(KNOCKED_OUT, false);
         entityData.define(FLYING, false);
@@ -365,6 +375,11 @@ public class RoyalRedEntity extends AbstractDragonEntity
                 setFlying(false);
             }
         }
+    }
+
+    public int getKnockOutTime()
+    {
+        return knockOutTime;
     }
 
     public void setKnockoutTime(int i)

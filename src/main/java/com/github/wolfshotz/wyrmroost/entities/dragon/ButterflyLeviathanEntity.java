@@ -7,7 +7,7 @@ import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
@@ -58,6 +58,9 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class ButterflyLeviathanEntity extends AbstractDragonEntity
 {
+    public static final EntitySerializer<ButterflyLeviathanEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant));
+
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.defineId(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
     public static final Animation LIGHTNING_ANIMATION = new Animation(64);
     public static final Animation CONDUIT_ANIMATION = new Animation(59);
@@ -78,8 +81,6 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
         maxUpStep = 2;
 
         setPathfindingMalus(PathNodeType.WATER, 0);
-
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
     }
 
     @Override
@@ -108,10 +109,17 @@ public class ButterflyLeviathanEntity extends AbstractDragonEntity
     }
 
     @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
     protected void defineSynchedData()
     {
         super.defineSynchedData();
         entityData.define(HAS_CONDUIT, false);
+        entityData.define(VARIANT, 0);
     }
 
     @Override

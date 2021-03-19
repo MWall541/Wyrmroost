@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBre
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -17,7 +17,6 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
@@ -51,6 +50,12 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IForgeShearable
 {
+    private static final EntitySerializer<DragonFruitDrakeEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping)
+            .track(EntitySerializer.INT, "ShearTimer", DragonFruitDrakeEntity::getShearedCooldown, DragonFruitDrakeEntity::setShearedCooldown));
+
     private static final int CROP_GROWTH_RADIUS = 5;
     private static final int CROP_GROWTH_TIME = 1200; // 1 minute
     public static final Animation BITE_ANIMATION = new Animation(15);
@@ -62,11 +67,22 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
     public DragonFruitDrakeEntity(EntityType<? extends DragonFruitDrakeEntity> dragon, World level)
     {
         super(dragon, level);
+    }
 
-        registerDataEntry("ShearTimer", EntityDataEntry.INTEGER, () -> shearCooldownTime, v -> shearCooldownTime = v);
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, getRandom().nextBoolean());
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
+    @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
+    protected void defineSynchedData()
+    {
+        super.defineSynchedData();
+        entityData.define(FLYING, false);
+        entityData.define(GENDER, false);
+        entityData.define(SLEEPING, false);
+        entityData.define(VARIANT, 0);
     }
 
     @Override
@@ -324,6 +340,16 @@ public class DragonFruitDrakeEntity extends AbstractDragonEntity implements IFor
         }
 
         return super.finalizeSpawn(level, difficulty, reason, data, dataTag);
+    }
+
+    public int getShearedCooldown()
+    {
+        return shearCooldownTime;
+    }
+
+    public void setShearedCooldown(int shearCooldownTime)
+    {
+        this.shearCooldownTime = shearCooldownTime;
     }
 
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld level, SpawnReason spawnReason, BlockPos pos, Random random)

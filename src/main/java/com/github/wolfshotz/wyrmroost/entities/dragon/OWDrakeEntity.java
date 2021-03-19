@@ -6,7 +6,7 @@ import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInvHandler;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
-import com.github.wolfshotz.wyrmroost.entities.util.EntityDataEntry;
+import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
@@ -55,6 +55,11 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
  */
 public class OWDrakeEntity extends AbstractDragonEntity
 {
+    private static final EntitySerializer<OWDrakeEntity> SERIALIZER = AbstractDragonEntity.SERIALIZER.concat(b -> b
+            .track(EntitySerializer.BOOL, "Gender", AbstractDragonEntity::isMale, AbstractDragonEntity::setGender)
+            .track(EntitySerializer.INT, "Variant", AbstractDragonEntity::getVariant, AbstractDragonEntity::setVariant)
+            .track(EntitySerializer.BOOL, "Sleeping", AbstractDragonEntity::isSleeping, AbstractDragonEntity::setSleeping));
+
     // inventory slot constants
     public static final int SADDLE_SLOT = 0;
     public static final int ARMOR_SLOT = 1;
@@ -74,10 +79,29 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public OWDrakeEntity(EntityType<? extends OWDrakeEntity> drake, World level)
     {
         super(drake, level);
+    }
 
-        registerDataEntry("Sleeping", EntityDataEntry.BOOLEAN, SLEEPING, false);
-        registerDataEntry("Gender", EntityDataEntry.BOOLEAN, GENDER, true);
-        registerDataEntry("Variant", EntityDataEntry.INTEGER, VARIANT, 0);
+    @Override
+    public EntitySerializer<? extends AbstractDragonEntity> getSerializer()
+    {
+        return SERIALIZER;
+    }
+
+    @Override
+    protected void defineSynchedData()
+    {
+        super.defineSynchedData();
+        entityData.define(GENDER, false);
+        entityData.define(SLEEPING, false);
+        entityData.define(VARIANT, 0);
+        entityData.define(SADDLED, false);
+        entityData.define(ARMOR, ItemStack.EMPTY);
+    }
+
+    @Override
+    public DragonInvHandler createInv()
+    {
+        return new DragonInvHandler(this, 24);
     }
 
     @Override
@@ -99,44 +123,6 @@ public class OWDrakeEntity extends AbstractDragonEntity
         targetSelector.addGoal(4, new HurtByTargetGoal(this));
         targetSelector.addGoal(5, new NonTamedTargetGoal<>(this, PlayerEntity.class, true, EntityPredicates.ATTACK_ALLOWED::test));
     }
-
-    // ================================
-    //           Entity Data
-    // ================================
-
-    @Override
-    protected void defineSynchedData()
-    {
-        super.defineSynchedData();
-        entityData.define(SADDLED, false);
-        entityData.define(ARMOR, ItemStack.EMPTY);
-    }
-
-    public boolean hasChest()
-    {
-        return getStackInSlot(CHEST_SLOT) != ItemStack.EMPTY;
-    }
-
-    public boolean isSaddled()
-    {
-        return entityData.get(SADDLED);
-    }
-
-    @Override
-    public int determineVariant()
-    {
-        if (getRandom().nextDouble() < 0.008) return -1;
-        if (level.getBiome(blockPosition()).getBiomeCategory() == Biome.Category.SAVANNA) return 1;
-        return 0;
-    }
-
-    @Override
-    public DragonInvHandler createInv()
-    {
-        return new DragonInvHandler(this, 24);
-    }
-
-    // ================================
 
     @Override
     public void aiStep()
@@ -401,6 +387,24 @@ public class OWDrakeEntity extends AbstractDragonEntity
     public boolean isFoodItem(ItemStack stack)
     {
         return stack.getItem().is(Tags.Items.CROPS_WHEAT);
+    }
+
+    public boolean hasChest()
+    {
+        return getStackInSlot(CHEST_SLOT) != ItemStack.EMPTY;
+    }
+
+    public boolean isSaddled()
+    {
+        return entityData.get(SADDLED);
+    }
+
+    @Override
+    public int determineVariant()
+    {
+        if (getRandom().nextDouble() < 0.008) return -1;
+        if (level.getBiome(blockPosition()).getBiomeCategory() == Biome.Category.SAVANNA) return 1;
+        return 0;
     }
 
     @Override
