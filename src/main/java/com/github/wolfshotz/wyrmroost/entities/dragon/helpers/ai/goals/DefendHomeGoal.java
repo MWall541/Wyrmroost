@@ -50,20 +50,20 @@ public class DefendHomeGoal extends TargetGoal
         super.start();
 
         // alert others!
-        for (MobEntity mob : defender.level.getEntitiesOfClass(MobEntity.class, defender.getBoundingBox().inflate(WRConfig.homeRadius), defender::isTeammate))
+        for (MobEntity mob : defender.level.getEntitiesOfClass(MobEntity.class, defender.getBoundingBox().inflate(WRConfig.homeRadius), defender::isAlliedTo))
             mob.setTarget(targetMob);
     }
 
     @Override
     public boolean canContinueToUse()
     {
-        return defender.isInWalkTargetRange(targetMob.blockPosition()) && super.canContinueToUse();
+        return defender.isWithinRestriction(targetMob.blockPosition()) && super.canContinueToUse();
     }
 
     @Override
     protected double getFollowDistance()
     {
-        return defender.getPositionTargetRange();
+        return defender.getRestrictRadius();
     }
 
     public LivingEntity findPotentialTarget()
@@ -74,6 +74,6 @@ public class DefendHomeGoal extends TargetGoal
                 defender.getX(),
                 defender.getEyeY(),
                 defender.getZ(),
-                new AxisAlignedBB(defender.getPositionTarget()).inflate(WRConfig.homeRadius));
+                new AxisAlignedBB(defender.getRestrictCenter()).inflate(WRConfig.homeRadius));
     }
 }

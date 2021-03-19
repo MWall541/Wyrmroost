@@ -43,7 +43,7 @@ public class AlpineEntity extends AbstractDragonEntity
     public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
     public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
 
-    public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
+    public AlpineEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
     {
         super(dragon, level);
 
@@ -52,33 +52,33 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected void initGoals()
+    protected void registerGoals()
     {
-        super.initGoals();
+        super.registerGoals();
 
-        goalSelector.add(4, new MoveToHomeGoal(this));
-        goalSelector.add(5, new MeleeAttackGoal(this, 1.1d, true));
-        goalSelector.add(6, new WRFollowOwnerGoal(this));
-        goalSelector.add(7, new DragonBreedGoal(this));
-        goalSelector.add(8, new FlyerWanderGoal(this, 1, 0.01f));
-        goalSelector.add(9, new LookAtGoal(this, LivingEntity.class, 10));
-        goalSelector.add(10, new LookRandomlyGoal(this));
+        goalSelector.addGoal(4, new MoveToHomeGoal(this));
+        goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.1d, true));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
+        goalSelector.addGoal(7, new DragonBreedGoal(this));
+        goalSelector.addGoal(8, new FlyerWanderGoal(this, 1, 0.01f));
+        goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 10));
+        goalSelector.addGoal(10, new LookRandomlyGoal(this));
 
-        targetSelector.add(0, new HurtByTargetGoal(this));
-        targetSelector.add(1, new NonTamedTargetGoal<>(this, BeeEntity.class, false, e -> ((BeeEntity) e).hasNectar()));
+        targetSelector.addGoal(0, new HurtByTargetGoal(this));
+        targetSelector.addGoal(1, new NonTamedTargetGoal<>(this, BeeEntity.class, false, e -> ((BeeEntity) e).hasNectar()));
     }
 
     @Override
-    protected void initDataTracker()
+    protected void defineSynchedData()
     {
-        super.initDataTracker();
-        dataTracker.startTracking(FLYING, false);
+        super.defineSynchedData();
+        entityData.define(FLYING, false);
     }
 
     @Override
-    public void tickMovement()
+    public void aiStep()
     {
-        super.tickMovement();
+        super.aiStep();
 
         sitTimer.add(isInSittingPose() || isSleeping()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
@@ -105,27 +105,27 @@ public class AlpineEntity extends AbstractDragonEntity
         }
         else if (animation == WIND_GUST_ANIMATION)
         {
-            if (tick == 0) setVelocity(getDeltaMovement().add(0, -0.35, 0));
+            if (tick == 0) setDeltaMovement(getDeltaMovement().add(0, -0.35, 0));
             if (tick == 4)
             {
-                if (!level.isClientSide) level.spawnEntity(new WindGustEntity(this));
-                setVelocity(getDeltaMovement().add(getRotationVector().negate().multiply(1.5, 0, 1.5).add(0, 1, 0)));
+                if (!level.isClientSide) level.addFreshEntity(new WindGustEntity(this));
+                setDeltaMovement(getDeltaMovement().add(getLookAngle().reverse().multiply(1.5, 0, 1.5).add(0, 1, 0)));
                 playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
             }
         }
     }
 
     @Override
-    public boolean tryAttack(Entity enemy)
+    public boolean doHurtTarget(Entity enemy)
     {
-        boolean flag = super.tryAttack(enemy);
+        boolean flag = super.doHurtTarget(enemy);
 
         if (!isTame() && flag && !enemy.isAlive() && enemy.getType() == EntityType.BEE)
         {
             BeeEntity bee = (BeeEntity) enemy;
             if (bee.hasNectar() && bee.isLeashed())
             {
-                Entity holder = bee.getHoldingEntity();
+                Entity holder = bee.getLeashHolder();
                 if (holder instanceof PlayerEntity) tame(true, (PlayerEntity) holder);
             }
         }
@@ -135,7 +135,7 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
-        Entity attacker = source.getSource();
+        Entity attacker = source.getDirectEntity();
         if (attacker != null && attacker.getType() == EntityType.BEE)
         {
             setTarget((BeeEntity) attacker);
@@ -147,8 +147,8 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public EntitySize getDimensions(Pose poseIn)
     {
-        EntitySize size = getType().getDimensions().scaled(getScaleFactor());
-        return size.scaled(1, isInSittingPose() || isSleeping()? 0.7f : 1);
+        EntitySize size = getType().getDimensions().scale(getScale());
+        return size.scale(1, isInSittingPose() || isSleeping()? 0.7f : 1);
     }
 
     @Override
@@ -161,31 +161,31 @@ public class AlpineEntity extends AbstractDragonEntity
     @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) event.getInfo().moveBy(-5d, 0.75d, 0);
-        else event.getInfo().moveBy(-3, 0.3, 0);
+        if (backView) event.getInfo().move(-5d, 0.75d, 0);
+        else event.getInfo().move(-3, 0.3, 0);
     }
 
     @Override
-    protected void jump()
+    protected void jumpFromGround()
     {
-        super.jump();
+        super.jumpFromGround();
         if (!level.isClientSide)
-            level.spawnEntity(new WindGustEntity(this, position().add(0, 7, 0), getRotationVector(90, yRot)));
+            level.addFreshEntity(new WindGustEntity(this, position().add(0, 7, 0), calculateViewVector(90, yRot)));
     }
 
     @Override
-    protected float getJumpVelocity()
+    protected float getJumpPower()
     {
-        if (canFly()) return (getBbHeight() * getJumpVelocityMultiplier());
-        else return super.getJumpVelocity();
+        if (canFly()) return (getBbHeight() * getBlockJumpFactor());
+        else return super.getJumpPower();
     }
 
     @Override
-    public void swingHand(Hand hand)
+    public void swing(Hand hand)
     {
         setAnimation(BITE_ANIMATION);
-        playSound(SoundEvents.ENTITY_GENERIC_EAT, 1, 1, true);
-        super.swingHand(hand);
+        playSound(SoundEvents.GENERIC_EAT, 1, 1, true);
+        super.swing(hand);
     }
 
     @Override
@@ -195,9 +195,9 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected boolean canStartRiding(Entity entity)
+    protected boolean canRide(Entity entity)
     {
-        return !isBaby() && entity instanceof LivingEntity && isOwner((LivingEntity) entity);
+        return !isBaby() && entity instanceof LivingEntity && isOwnedBy((LivingEntity) entity);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class AlpineEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected float getActiveEyeHeight(Pose poseIn, EntitySize sizeIn)
+    protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
         return sizeIn.height * (isFlying()? 0.8f : 1.25f);
     }
@@ -242,17 +242,17 @@ public class AlpineEntity extends AbstractDragonEntity
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.EXTREME_HILLS)
-            event.getSpawns().spawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ALPINE.get(), 2, 1, 4));
+            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ALPINE.get(), 2, 1, 4));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
         return MobEntity.createMobAttributes()
-                .add(GENERIC_MAX_HEALTH, 40)
-                .add(GENERIC_MOVEMENT_SPEED, 0.22)
-                .add(GENERIC_KNOCKBACK_RESISTANCE, 1)
-                .add(GENERIC_ATTACK_DAMAGE, 3)
-                .add(GENERIC_FLYING_SPEED, 0.185f)
+                .add(MAX_HEALTH, 40)
+                .add(MOVEMENT_SPEED, 0.22)
+                .add(KNOCKBACK_RESISTANCE, 1)
+                .add(ATTACK_DAMAGE, 3)
+                .add(FLYING_SPEED, 0.185f)
                 .add(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 1);
     }
 }

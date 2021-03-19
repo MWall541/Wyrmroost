@@ -53,50 +53,50 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 {
     public static final String DATA_BURROWED = "Burrowed";
     public static final Animation BITE_ANIMATION = new Animation(10);
-    private static final DataParameter<Boolean> BURROWED = EntityDataManager.registerData(LDWyrmEntity.class, DataSerializers.BOOLEAN);
-    private static final Predicate<LivingEntity> AVOIDING = t -> EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(t) && !(t instanceof LDWyrmEntity);
+    private static final DataParameter<Boolean> BURROWED = EntityDataManager.defineId(LDWyrmEntity.class, DataSerializers.BOOLEAN);
+    private static final Predicate<LivingEntity> AVOIDING = t -> EntityPredicates.ATTACK_ALLOWED.test(t) && !(t instanceof LDWyrmEntity);
 
     public Animation animation = NO_ANIMATION;
     public int animationTick;
 
-    public LDWyrmEntity(EntityType<? extends LDWyrmEntity> minutus, World world)
+    public LDWyrmEntity(EntityType<? extends LDWyrmEntity> minutus, World level)
     {
         super(minutus, level);
     }
 
     @Override
-    protected void initGoals()
+    protected void registerGoals()
     {
-        goalSelector.add(1, new SwimGoal(this));
-        goalSelector.add(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6f, 0.8d, 1.2d, AVOIDING));
-        goalSelector.add(3, new BurrowGoal());
-        goalSelector.add(4, new WaterAvoidingRandomWalkingGoal(this, 1));
+        goalSelector.addGoal(1, new SwimGoal(this));
+        goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6f, 0.8d, 1.2d, AVOIDING));
+        goalSelector.addGoal(3, new BurrowGoal());
+        goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 1));
     }
 
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
-        return new ItemStack(SpawnEggItem.forEntity(getType()));
+        return new ItemStack(SpawnEggItem.byId(getType()));
     }
 
     @Override
-    protected void initDataTracker()
+    protected void defineSynchedData()
     {
-        super.initDataTracker();
-        dataTracker.startTracking(BURROWED, false);
+        super.defineSynchedData();
+        entityData.define(BURROWED, false);
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundNBT compound)
+    public void addAdditionalSaveData(CompoundNBT compound)
     {
-        super.writeCustomDataToTag(compound);
+        super.addAdditionalSaveData(compound);
         compound.putBoolean(DATA_BURROWED, isBurrowed());
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundNBT compound)
+    public void readAdditionalSaveData(CompoundNBT compound)
     {
-        super.readCustomDataFromTag(compound);
+        super.readAdditionalSaveData(compound);
         setBurrowed(compound.getBoolean(DATA_BURROWED));
     }
 
@@ -105,24 +105,24 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
      */
     public boolean isBurrowed()
     {
-        return dataTracker.get(BURROWED);
+        return entityData.get(BURROWED);
     }
 
     public void setBurrowed(boolean burrow)
     {
-        dataTracker.set(BURROWED, burrow);
+        entityData.set(BURROWED, burrow);
     }
 
     // ================================
 
     @Override
-    public void tickMovement()
+    public void aiStep()
     {
-        super.tickMovement();
+        super.aiStep();
 
         if (isBurrowed())
         {
-            if (level.getBlockState(blockPosition().down(1)).getMaterial() != Material.AGGREGATE) setBurrowed(false);
+            if (level.getBlockState(blockPosition().below(1)).getMaterial() != Material.SAND) setBurrowed(false);
             attackAbove();
         }
     }
@@ -149,8 +149,8 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
             if (filter instanceof LDWyrmEntity) return false;
             return filter instanceof FishingBobberEntity || (filter instanceof LivingEntity && filter.getBbWidth() < 0.9f && filter.getBbHeight() < 0.9f);
         };
-        AxisAlignedBB aabb = getBoundingBox().inflate(0, 2, 0).expand(0.5, 0, 0.5);
-        List<Entity> entities = level.getOtherEntities(this, aabb, predicateFilter);
+        AxisAlignedBB aabb = getBoundingBox().expandTowards(0, 2, 0).inflate(0.5, 0, 0.5);
+        List<Entity> entities = level.getEntities(this, aabb, predicateFilter);
         if (entities.isEmpty()) return;
 
         Optional<Entity> closest = entities.stream().min(Comparator.comparingDouble(entity -> entity.distanceTo(this)));
@@ -158,20 +158,20 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
         if (entity instanceof FishingBobberEntity)
         {
             entity.remove();
-            setVelocity(0, 0.8, 0);
+            setDeltaMovement(0, 0.8, 0);
             setBurrowed(false);
         }
         else
         {
             if (getAnimation() != BITE_ANIMATION) setAnimation(BITE_ANIMATION);
-            tryAttack(entity);
+            doHurtTarget(entity);
         }
     }
 
     @Override
-    public ActionResultType interactMob(PlayerEntity player, Hand hand)
+    public ActionResultType mobInteract(PlayerEntity player, Hand hand)
     {
-        if (player.getStackInHand(hand).isEmpty())
+        if (player.getItemInHand(hand).isEmpty())
         {
             if (!level.isClientSide)
             {
@@ -179,26 +179,26 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
                 CompoundNBT tag = new CompoundNBT();
                 CompoundNBT subTag = serializeNBT();
                 tag.put(LDWyrmItem.DATA_CONTENTS, subTag);
-                if (hasCustomName()) stack.setCustomName(getCustomName());
+                if (hasCustomName()) stack.setHoverName(getCustomName());
                 stack.setTag(tag);
-                InventoryHelper.spawn(level, getX(), getY(), getZ(), stack);
+                InventoryHelper.dropItemStack(level, getX(), getY(), getZ(), stack);
                 remove();
             }
-            return ActionResultType.success(level.isClientSide);
+            return ActionResultType.sidedSuccess(level.isClientSide);
         }
 
-        return super.interactMob(player, hand);
+        return super.mobInteract(player, hand);
     }
 
     @Override
-    public float getPathfindingFavor(BlockPos pos, IWorldReader world) // Attracted to sand
+    public float getWalkTargetValue(BlockPos pos, IWorldReader world) // Attracted to sand
     {
-        if (level.getBlockState(pos).getMaterial() == Material.AGGREGATE) return 10f;
-        return super.getPathfindingFavor(pos, level);
+        if (level.getBlockState(pos).getMaterial() == Material.SAND) return 10f;
+        return super.getWalkTargetValue(pos, level);
     }
 
     @Override
-    public boolean canImmediatelyDespawn(double distanceToClosestPlayer)
+    public boolean removeWhenFarAway(double distanceToClosestPlayer)
     {
         return true;
     }
@@ -206,16 +206,16 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     @Override
     public void checkDespawn()
     {
-        if (isPersistent())
+        if (isPersistenceRequired())
         {
-            despawnCounter = 0;
+            noActionTime = 0;
             return;
         }
 
         switch (ForgeEventFactory.canEntityDespawn(this))
         {
             case DENY:
-                despawnCounter = 0;
+                noActionTime = 0;
                 return;
             case ALLOW:
                 remove();
@@ -224,14 +224,14 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
                 break;
         }
 
-        Entity player = level.getClosestPlayer(this, 32);
+        Entity player = level.getNearestPlayer(this, 32);
         if (player == null && (getRandom().nextDouble() < 0.0075 || !level.isDay())) remove();
-        else despawnCounter = 0;
+        else noActionTime = 0;
     }
 
     @Nullable
     @Override
-    public AgeableEntity createChild(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+    public AgeableEntity getBreedOffspring(ServerWorld level, AgeableEntity p_241840_2_)
     {
         return null;
     }
@@ -269,15 +269,15 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
     }
 
     @Override
-    public boolean collides()
+    public boolean isPickable()
     {
         return !isBurrowed();
     }
 
     @Override
-    protected void pushAway(Entity entityIn)
+    protected void doPush(Entity entityIn)
     {
-        if (!isBurrowed()) super.pushAway(entityIn);
+        if (!isBurrowed()) super.doPush(entityIn);
     }
 
     @Override
@@ -317,25 +317,25 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
         setAnimationTick(0);
     }
 
-    public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld world, SpawnReason reason, BlockPos pos, Random random)
+    public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld level, SpawnReason reason, BlockPos pos, Random random)
     {
         if (reason == SpawnReason.SPAWNER) return true;
         Block block = level.getBlockState(pos.below()).getBlock();
-        return block == Blocks.SAND && level.getBaseLightLevel(pos, 0) > 8;
+        return block == Blocks.SAND && level.getRawBrightness(pos, 0) > 8;
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.DESERT)
-            event.getSpawns().spawn(EntityClassification.AMBIENT, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 11, 1, 3));
+            event.getSpawns().addSpawn(EntityClassification.AMBIENT, new MobSpawnInfo.Spawners(WREntities.LESSER_DESERTWYRM.get(), 11, 1, 3));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
         return MobEntity.createMobAttributes()
-                .add(GENERIC_MAX_HEALTH, 4)
-                .add(GENERIC_MOVEMENT_SPEED, 0.4)
-                .add(GENERIC_ATTACK_DAMAGE, 4);
+                .add(MAX_HEALTH, 4)
+                .add(MOVEMENT_SPEED, 0.4)
+                .add(ATTACK_DAMAGE, 4);
     }
 
     class BurrowGoal extends Goal
@@ -374,7 +374,7 @@ public class LDWyrmEntity extends AnimalEntity implements IAnimatable
 
         private boolean belowIsSand()
         {
-            return level.getBlockState(getBlockPos().down(1)).getMaterial() == Material.AGGREGATE;
+            return level.getBlockState(blockPosition().below(1)).getMaterial() == Material.SAND;
         }
     }
 }

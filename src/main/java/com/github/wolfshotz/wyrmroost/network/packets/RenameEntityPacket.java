@@ -15,25 +15,25 @@ public class RenameEntityPacket
 
     public RenameEntityPacket(Entity entity, ITextComponent text)
     {
-        this.entity = entity.getUuid();
+        this.entity = entity.getUUID();
         this.text = text;
     }
 
     public RenameEntityPacket(PacketBuffer buf)
     {
-        this.entity = buf.readUuid();
-        this.text = buf.readText();
+        this.entity = buf.readUUID();
+        this.text = buf.readComponent();
     }
     
     public void encode(PacketBuffer buf)
     {
-        buf.writeUuid(entity);
-        buf.writeText(text);
+        buf.writeUUID(entity);
+        buf.writeComponent(text);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> context)
     {
-        context.get().getSender().getServerWorld().getEntity(entity).setCustomName(text);
+        context.get().getSender().getLevel().getEntity(entity).setCustomName(text);
         return true;
     }
 }

@@ -49,7 +49,7 @@ public class LazySpawnEggItem extends SpawnEggItem
         {
             CompoundNBT childTag = tag.getCompound("EntityTag");
             if (childTag.contains("id", 8))
-                return EntityType.get(childTag.getString("id")).orElse(type.get());
+                return EntityType.byString(childTag.getString("id")).orElse(type.get());
         }
 
         return type.get();

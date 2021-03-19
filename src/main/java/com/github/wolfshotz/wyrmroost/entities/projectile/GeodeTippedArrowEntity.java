@@ -19,26 +19,26 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
 {
     private final GeodeTippedArrowItem item;
 
-    public GeodeTippedArrowEntity(EntityType<? extends AbstractArrowEntity> type, World worldIn)
+    public GeodeTippedArrowEntity(EntityType<? extends AbstractArrowEntity> type, World level)
     {
-        super(type, worldIn);
+        super(type, level);
         this.item = (GeodeTippedArrowItem) WRItems.BLUE_GEODE_ARROW.get();
     }
 
-    public GeodeTippedArrowEntity(World worldIn, Item item)
+    public GeodeTippedArrowEntity(World level, Item item)
     {
-        super(WREntities.GEODE_TIPPED_ARROW.get(), worldIn);
+        super(WREntities.GEODE_TIPPED_ARROW.get(), level);
         this.item = (GeodeTippedArrowItem) item;
     }
 
-    public GeodeTippedArrowEntity(FMLPlayMessages.SpawnEntity packet, World world)
+    public GeodeTippedArrowEntity(FMLPlayMessages.SpawnEntity packet, World level)
     {
         super(WREntities.GEODE_TIPPED_ARROW.get(), level);
 
         PacketBuffer buf = packet.getAdditionalData();
         Entity shooter = level.getEntity(buf.readInt());
         if (shooter != null) setOwner(shooter);
-        this.item = (GeodeTippedArrowItem) Item.byRawId(buf.readVarInt());
+        this.item = (GeodeTippedArrowItem) Item.byId(buf.readVarInt());
     }
 
     public GeodeTippedArrowItem getItem()
@@ -47,13 +47,13 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
     }
 
     @Override
-    protected ItemStack asItemStack()
+    protected ItemStack getPickupItem()
     {
         return new ItemStack(item);
     }
 
     @Override
-    public IPacket<?> createSpawnPacket()
+    public IPacket<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
@@ -62,8 +62,8 @@ public class GeodeTippedArrowEntity extends AbstractArrowEntity implements IEnti
     public void writeSpawnData(PacketBuffer buf)
     {
         Entity shooter = getOwner();
-        buf.writeInt(shooter == null? 0 : shooter.getEntityId());
-        buf.writeVarInt(Item.getRawId(item));
+        buf.writeInt(shooter == null? 0 : shooter.getId());
+        buf.writeVarInt(Item.getId(item));
     }
 
     @Override

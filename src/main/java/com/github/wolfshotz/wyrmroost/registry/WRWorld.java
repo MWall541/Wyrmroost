@@ -24,7 +24,7 @@ public class WRWorld
 {
     public static List<Consumer<BiomeLoadingEvent>> BIOME_LISTENERS = new ArrayList<>();
 
-    public static final RegistryKey<Dimension> THE_WYRMROOST = RegistryKey.of(Registry.DIMENSION_OPTIONS, Wyrmroost.id("the_wyrmroost"));
+    public static final RegistryKey<Dimension> THE_WYRMROOST = RegistryKey.create(Registry.LEVEL_STEM_REGISTRY, Wyrmroost.id("the_wyrmroost"));
 
     public static final RegistryKey<Biome> TINCTURE_WEALD = biomeKey("tincture_weald");
 
@@ -37,20 +37,20 @@ public class WRWorld
         switch (evt.getCategory())
         {
             case NETHER:
-                generator.feature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.RED_GEODE_FEATURE);
+                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.RED_GEODE_FEATURE);
                 break;
             case THEEND:
-                generator.feature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PURPLE_GEODE_FEATURE);
+                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PURPLE_GEODE_FEATURE);
                 break;
             default:
-                generator.feature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PLATINUM_ORE_FEATURE);
-                generator.feature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.BLUE_GEODE_FEATURE);
+                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PLATINUM_ORE_FEATURE);
+                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.BLUE_GEODE_FEATURE);
         }
     }
 
     static RegistryKey<Biome> biomeKey(String name)
     {
-        return RegistryKey.of(Registry.BIOME_KEY, Wyrmroost.id(name));
+        return RegistryKey.create(Registry.BIOME_REGISTRY, Wyrmroost.id(name));
     }
 
     public static class Features
@@ -69,10 +69,10 @@ public class WRWorld
          */
         public static void init()
         {
-            RED_GEODE_FEATURE = configure("ore_red_geode", Feature.ORE.configure(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().getDefaultState(), 4)).rangeOf(128).spreadHorizontally().repeat(8));
-            PURPLE_GEODE_FEATURE = configure("ore_purple_geode", NO_EXPOSE_REPLACE.get().configure(new ReplaceBlockConfig(Blocks.END_STONE.getDefaultState(), WRBlocks.PURPLE_GEODE_ORE.get().getDefaultState())).rangeOf(80).spreadHorizontally().repeat(45));
-            BLUE_GEODE_FEATURE = configure("ore_blue_geode", Feature.ORE.configure(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.BASE_STONE_OVERWORLD, WRBlocks.BLUE_GEODE_ORE.get().getDefaultState(), 10)).rangeOf(16).spreadHorizontally());
-            PLATINUM_ORE_FEATURE = configure("ore_platinum", Feature.ORE.configure(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.BASE_STONE_OVERWORLD, WRBlocks.PLATINUM_ORE.get().getDefaultState(), 9)).rangeOf(64).spreadHorizontally().repeat(20));
+            RED_GEODE_FEATURE = configure("ore_red_geode", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().defaultBlockState(), 4)).range(128).squared().count(8));
+            PURPLE_GEODE_FEATURE = configure("ore_purple_geode", NO_EXPOSE_REPLACE.get().configured(new ReplaceBlockConfig(Blocks.END_STONE.defaultBlockState(), WRBlocks.PURPLE_GEODE_ORE.get().defaultBlockState())).range(80).squared().count(45));
+            BLUE_GEODE_FEATURE = configure("ore_blue_geode", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().defaultBlockState(), 10)).range(16).squared());
+            PLATINUM_ORE_FEATURE = configure("ore_platinum", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().defaultBlockState(), 9)).range(64).squared().count(20));
         }
 
         private static <FC extends IFeatureConfig> ConfiguredFeature<FC, ?> configure(String id, ConfiguredFeature<FC, ?> cf)

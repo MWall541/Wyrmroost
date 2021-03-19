@@ -32,27 +32,27 @@ public class LDWyrmItem extends Item
     }
 
     @Override
-    public ActionResultType useOnBlock(ItemUseContext context)
+    public ActionResultType useOn(ItemUseContext context)
     {
-        ItemStack stack = context.getStack();
+        ItemStack stack = context.getItemInHand();
         if (stack.hasTag())
         {
             CompoundNBT tag = stack.getTag();
             if (tag.contains(DATA_CONTENTS))
             {
-                World world = context.getWorld();
+                World level = context.getLevel();
                 if (!level.isClientSide)
                 {
-                    BlockPos pos = context.getBlockPos().offset(context.getSide());
+                    BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
                     CompoundNBT contents = tag.getCompound(DATA_CONTENTS);
                     LDWyrmEntity entity = WREntities.LESSER_DESERTWYRM.get().create(level);
 
                     entity.deserializeNBT(contents);
-                    if (stack.hasCustomName())
-                        entity.setCustomName(stack.getName()); // Item name takes priority
-                    entity.updatePosition(pos.getX(), pos.getY(), pos.getZ());
-                    level.spawnEntity(entity);
-                    stack.decrement(1);
+                    if (stack.hasCustomHoverName())
+                        entity.setCustomName(stack.getHoverName()); // Item name takes priority
+                    entity.absMoveTo(pos.getX(), pos.getY(), pos.getZ());
+                    level.addFreshEntity(entity);
+                    stack.shrink(1);
                 }
                 return ActionResultType.SUCCESS;
             }

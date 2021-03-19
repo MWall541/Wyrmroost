@@ -19,7 +19,7 @@ public class OseriTree extends Tree
 
     @Nullable
     @Override
-    protected ConfiguredFeature<BaseTreeFeatureConfig, ?> createTreeFeature(Random p_225546_1_, boolean p_225546_2_)
+    protected ConfiguredFeature<BaseTreeFeatureConfig, ?> getConfiguredFeature(Random p_225546_1_, boolean p_225546_2_)
     {
         return null;
     }

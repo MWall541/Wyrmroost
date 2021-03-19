@@ -17,13 +17,13 @@ public class DragonArmorItem extends Item
 
     public DragonArmorItem(int dmgReduction, int enchantability)
     {
-        super(WRItems.builder().maxCount(1));
+        super(WRItems.builder().stacksTo(1));
         this.dmgReduction = dmgReduction;
         this.enchantability = enchantability;
     }
 
     @Override
-    public int getEnchantability()
+    public int getEnchantmentValue()
     {
         return enchantability;
     }
@@ -31,7 +31,7 @@ public class DragonArmorItem extends Item
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
     {
-        return enchantment == Enchantments.PROTECTION;
+        return enchantment == Enchantments.ALL_DAMAGE_PROTECTION;
     }
 
     @Override
@@ -51,6 +51,6 @@ public class DragonArmorItem extends Item
         if (!(item instanceof DragonArmorItem))
             throw new AssertionError("uhh this isn't a an armor: " + item.getRegistryName().toString());
 
-        return ((DragonArmorItem) item).getDmgReduction() + EnchantmentHelper.get(stack).getOrDefault(Enchantments.PROTECTION, 0);
+        return ((DragonArmorItem) item).getDmgReduction() + EnchantmentHelper.getEnchantments(stack).getOrDefault(Enchantments.ALL_DAMAGE_PROTECTION, 0);
     }
 }

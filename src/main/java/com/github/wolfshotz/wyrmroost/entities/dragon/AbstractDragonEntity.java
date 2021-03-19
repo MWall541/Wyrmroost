@@ -71,8 +71,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static net.minecraft.entity.ai.attributes.Attributes.GENERIC_FLYING_SPEED;
-import static net.minecraft.entity.ai.attributes.Attributes.GENERIC_MOVEMENT_SPEED;
+import static net.minecraft.entity.ai.attributes.Attributes.FLYING_SPEED;
+import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
 
 
 /**
@@ -84,12 +84,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public static final byte HEAL_PARTICLES_DATA_ID = 8;
 
     // Common Data Parameters
-    public static final DataParameter<Boolean> GENDER = EntityDataManager.registerData(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> FLYING = EntityDataManager.registerData(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> SLEEPING = EntityDataManager.registerData(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Integer> VARIANT = EntityDataManager.registerData(AbstractDragonEntity.class, DataSerializers.INTEGER);
-    public static final DataParameter<ItemStack> ARMOR = EntityDataManager.registerData(AbstractDragonEntity.class, DataSerializers.ITEM_STACK);
-    public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.registerData(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS);
+    public static final DataParameter<Boolean> GENDER = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> FLYING = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> SLEEPING = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.INT);
+    public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.ITEM_STACK);
+    public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(AbstractDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS);
 
     private final Set<EntityDataEntry<?>> dataEntries = new HashSet<>();
     public final LazyOptional<DragonInvHandler> invHandler;
@@ -100,11 +100,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     private Animation animation = NO_ANIMATION;
     private int animationTick;
 
-    public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
+    public AbstractDragonEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
     {
         super(dragon, level);
 
-        stepHeight = 1;
+        maxUpStep = 1;
 
         DragonInvHandler inv = createInv();
         invHandler = LazyOptional.of(inv == null? null : () -> inv);
@@ -117,7 +117,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    protected PathNavigator createNavigation(World worldIn)
+    protected PathNavigator createNavigation(World levelIn)
     {
         return new BetterPathNavigator(this);
     }
@@ -129,23 +129,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    protected void initGoals()
+    protected void registerGoals()
     {
-        goalSelector.add(0, new SwimGoal(this));
-        goalSelector.add(1, new WRSitGoal(this));
+        goalSelector.addGoal(0, new SwimGoal(this));
+        goalSelector.addGoal(1, new WRSitGoal(this));
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundNBT nbt)
+    public void addAdditionalSaveData(CompoundNBT nbt)
     {
-        super.writeCustomDataToTag(nbt);
+        super.addAdditionalSaveData(nbt);
         for (EntityDataEntry<?> entry : dataEntries) entry.write(nbt);
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundNBT nbt)
+    public void readAdditionalSaveData(CompoundNBT nbt)
     {
-        super.readCustomDataFromTag(nbt);
+        super.readAdditionalSaveData(nbt);
         for (EntityDataEntry<?> entry : dataEntries) entry.read(nbt);
         applyAttributes();
     }
@@ -157,23 +157,23 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public <T> void registerDataEntry(String key, EntityDataEntry.SerializerType<T> type, DataParameter<T> param, T value)
     {
-        dataTracker.startTracking(param, value);
-        registerDataEntry(key, type, () -> dataTracker.get(param), v -> dataTracker.set(param, v));
+        entityData.define(param, value);
+        registerDataEntry(key, type, () -> entityData.get(param), v -> entityData.set(param, v));
     }
 
     public boolean hasDataParameter(DataParameter<?> param)
     {
-        return dataTracker.entries.containsKey(param.getId());
+        return entityData.itemsById.containsKey(param.getId());
     }
 
     public int getVariant()
     {
-        return hasDataParameter(VARIANT)? dataTracker.get(VARIANT) : 0;
+        return hasDataParameter(VARIANT)? entityData.get(VARIANT) : 0;
     }
 
     public void setVariant(int variant)
     {
-        dataTracker.set(VARIANT, variant);
+        entityData.set(VARIANT, variant);
     }
 
     /**
@@ -181,24 +181,24 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public boolean isMale()
     {
-        return hasDataParameter(GENDER)? dataTracker.get(GENDER) : true;
+        return hasDataParameter(GENDER)? entityData.get(GENDER) : true;
     }
 
     public void setGender(boolean sex)
     {
-        dataTracker.set(GENDER, sex);
+        entityData.set(GENDER, sex);
     }
 
     public boolean isSleeping()
     {
-        return hasDataParameter(SLEEPING)? dataTracker.get(SLEEPING) : false;
+        return hasDataParameter(SLEEPING)? entityData.get(SLEEPING) : false;
     }
 
     public void setSleeping(boolean sleep)
     {
         if (isSleeping() == sleep) return;
 
-        dataTracker.set(SLEEPING, sleep);
+        entityData.set(SLEEPING, sleep);
         if (!level.isClientSide)
         {
             if (sleep) clearAI();
@@ -230,13 +230,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean isFlying()
     {
-        return hasDataParameter(FLYING)? dataTracker.get(FLYING) : false;
+        return hasDataParameter(FLYING)? entityData.get(FLYING) : false;
     }
 
     public void setFlying(boolean fly)
     {
         if (isFlying() == fly) return;
-        dataTracker.set(FLYING, fly);
+        entityData.set(FLYING, fly);
         if (fly)
         {
             // make sure NOT to switch the navigator if liftoff fails
@@ -247,18 +247,18 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean hasArmor()
     {
-        return hasDataParameter(ARMOR) && dataTracker.get(ARMOR).getItem() instanceof DragonArmorItem;
+        return hasDataParameter(ARMOR) && entityData.get(ARMOR).getItem() instanceof DragonArmorItem;
     }
 
     public ItemStack getArmorStack()
     {
-        return hasDataParameter(ARMOR)? dataTracker.get(ARMOR) : ItemStack.EMPTY;
+        return hasDataParameter(ARMOR)? entityData.get(ARMOR) : ItemStack.EMPTY;
     }
 
     public void setArmor(@Nullable ItemStack stack)
     {
         if (stack == null || !(stack.getItem() instanceof DragonArmorItem)) stack = ItemStack.EMPTY;
-        dataTracker.set(ARMOR, stack);
+        entityData.set(ARMOR, stack);
     }
 
     @Override
@@ -286,11 +286,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public void tickMovement()
+    public void aiStep()
     {
-        super.tickMovement();
+        super.aiStep();
 
-        if (canMoveVoluntarily())
+        if (isEffectiveAi())
         {
             // uhh so were falling, we should probably start flying
             boolean flying = shouldFly();
@@ -314,7 +314,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
             // todo figure out a better target system?
             LivingEntity target = getTarget();
-            if (target != null && (!target.isAlive() || !canTarget(target) || !canAttackWithOwner(target, getOwner())))
+            if (target != null && (!target.isAlive() || !canAttack(target) || !wantsToAttack(target, getOwner())))
                 setTarget(null);
         }
         else
@@ -324,9 +324,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public void tickRiding()
+    public void rideTick()
     {
-        super.tickRiding();
+        super.rideTick();
 
         Entity entity = getVehicle();
 
@@ -336,7 +336,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             return;
         }
 
-        setVelocity(Vector3d.ZERO);
+        setDeltaMovement(Vector3d.ZERO);
         clearAI();
 
         if (entity instanceof PlayerEntity)
@@ -344,16 +344,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             PlayerEntity player = (PlayerEntity) entity;
 
             int index = player.getPassengers().indexOf(this);
-            if ((player.isSneaking() && !player.abilities.flying) || isInWater() || index > 2)
+            if ((player.isShiftKeyDown() && !player.abilities.flying) || isInWater() || index > 2)
             {
                 stopRiding();
-                setSitting(false);
+                setOrderedToSit(false);
                 return;
             }
 
-            pitch = player.pitch / 2;
-            headYaw = bodyYaw = prevYaw = yRot = player.yRot;
-            setRotation(player.headYaw, player.pitch);
+            xRot = player.xRot / 2;
+            yHeadRot = yBodyRot = yRotO = yRot = player.yRot;
+            setRotation(player.yHeadRot, player.xRot);
 
             Vector3d vec3d = getRidingPosOffset(index);
             if (player.isFallFlying())
@@ -364,10 +364,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                     return;
                 }
 
-                vec3d = vec3d.multiply(1.5);
+                vec3d = vec3d.scale(1.5);
                 setFlying(true);
             }
-            Vector3d pos = Mafs.getYawVec(player.bodyYaw, vec3d.x, vec3d.z).add(player.getX(), player.getY() + vec3d.y, player.getZ());
+            Vector3d pos = Mafs.getYawVec(player.yBodyRot, vec3d.x, vec3d.z).add(player.getX(), player.getY() + vec3d.y, player.getZ());
             setPos(pos.x, pos.y, pos.z);
         }
     }
@@ -389,16 +389,16 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public void updatePassengerPosition(Entity passenger)
+    public void positionRider(Entity passenger)
     {
         Vector3d offset = getPassengerPosOffset(passenger, getPassengers().indexOf(passenger));
-        Vector3d pos = Mafs.getYawVec(bodyYaw, offset.x, offset.z).add(getX(), getY() + offset.y + passenger.getHeightOffset(), getZ());
-        passenger.updatePosition(pos.x, pos.y, pos.z);
+        Vector3d pos = Mafs.getYawVec(yBodyRot, offset.x, offset.z).add(getX(), getY() + offset.y + passenger.getMyRidingOffset(), getZ());
+        passenger.absMoveTo(pos.x, pos.y, pos.z);
     }
 
     public Vector3d getPassengerPosOffset(Entity entity, int index)
     {
-        return new Vector3d(0, getMountedHeightOffset(), 0);
+        return new Vector3d(0, getPassengersRidingOffset(), 0);
     }
 
     // Ok so some basic notes here:
@@ -407,17 +407,17 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     // essentially, returning SUCCESS on server will send a swing arm packet to notify the client to animate the arm swing
     // client tho, it will just animate it.
     // so if we aren't careful, both will happen. So its important to do the following for common execution:
-    // ActionResultType.success(World::isClient)
+    // ActionResultType.sidedSuccess(level.isClientSide);
     // essentially, if the provided boolean is true, it will return SUCCESS, else CONSUME.
-    // so since the world is client, it will be SUCCESS on client and CONSUME on server.
+    // so since the level is client, it will be SUCCESS on client and CONSUME on server.
     // That way, the server never sends the arm swing packet.
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        final ActionResultType SUCCESS = ActionResultType.success(level.isClientSide);
+        final ActionResultType SUCCESS = ActionResultType.sidedSuccess(level.isClientSide);
 
-        if (isOwner(player) && player.isSneaking() && !isFlying())
+        if (isOwnedBy(player) && player.isShiftKeyDown() && !isFlying())
         {
-            setSitting(!isInSittingPose());
+            setOrderedToSit(!isOrderedToSit());
             return SUCCESS;
         }
 
@@ -428,7 +428,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 boolean flag = getHealth() < getMaxHealth();
                 if (isBaby())
                 {
-                    if (!level.isClientSide) growUp((int) ((-getBreedingAge() / 20) * 0.1F), true);
+                    if (!level.isClientSide) ageUp((int) ((-getAge() / 20) * 0.1F), true);
                     flag = true;
                 }
 
@@ -439,19 +439,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 }
             }
 
-            if (isBreedingItem(stack) && getBreedingAge() == 0)
+            if (isFood(stack) && getAge() == 0)
             {
                 if (!level.isClientSide && !isInLove())
                 {
                     eat(stack);
-                    lovePlayer(player);
+                    setInLove(player);
                     return ActionResultType.SUCCESS;
                 }
                 return ActionResultType.CONSUME;
             }
         }
 
-        if (canStartRiding(player) && !player.isSneaking())
+        if (canRide(player) && !player.isShiftKeyDown())
         {
             if (!level.isClientSide) player.startRiding(this);
             return SUCCESS;
@@ -461,12 +461,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public ActionResultType interactMob(PlayerEntity player, Hand hand)
+    public ActionResultType mobInteract(PlayerEntity player, Hand hand)
     {
-        ItemStack stack = player.getStackInHand(hand);
-        ActionResultType result = stack.useOnEntity(player, this, hand);
-        if (!result.isAccepted()) result = playerInteraction(player, hand, stack);
-        if (result.isAccepted()) setSleeping(false);
+        ItemStack stack = player.getItemInHand(hand);
+        ActionResultType result = stack.interactLivingEntity(player, this, hand);
+        if (!result.consumesAction()) result = playerInteraction(player, hand, stack);
+        if (result.consumesAction()) setSleeping(false);
         return result;
     }
 
@@ -478,22 +478,22 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
         if (canBeControlledByRider()) // Were being controlled; override ai movement
         {
-            LivingEntity entity = (LivingEntity) getPrimaryPassenger();
+            LivingEntity entity = (LivingEntity) getControllingPassenger();
             double moveY = vec3d.y;
-            double moveX = entity.sidewaysSpeed * 0.5;
-            double moveZ = entity.forwardSpeed;
+            double moveX = entity.xxa * 0.5;
+            double moveZ = entity.zza;
 
             // rotate head to match driver. yaw is handled relative to this.
-            headYaw = entity.headYaw;
-            pitch = entity.pitch * 0.5f;
+            yHeadRot = entity.yHeadRot;
+            xRot = entity.xRot * 0.5f;
 
             if (isFlying())
             {
-                if (entity.forwardSpeed != 0) moveY = entity.pitch * speed * 18;
+                if (moveZ != 0) moveY = entity.xRot * speed * 18;
                 moveX = vec3d.x;
 
                 if (entity instanceof ServerPlayerEntity)
-                    ((ServerPlayerEntity) entity).networkHandler.floating = false;
+                    ((ServerPlayerEntity) entity).connection.clientIsFloating = false;
             }
             else
             {
@@ -501,33 +501,33 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 if (entity.jumping && canFly()) setFlying(true);
             }
 
-            setMovementSpeed(speed);
+            setSpeed(speed);
             vec3d = new Vector3d(moveX, moveY, moveZ);
         }
 
         if (isFlying())
         {
             // Move relative to yaw - handled in the move controller or by the passenger
-            updateVelocity(speed, vec3d);
+            moveRelative(speed, vec3d);
             move(MoverType.SELF, getDeltaMovement());
-            setVelocity(getDeltaMovement().multiply(0.88f));
+            setDeltaMovement(getDeltaMovement().scale(0.88f));
 
             // hover in place
             Vector3d motion = getDeltaMovement();
-            if (motion.length() < 0.04f) setVelocity(motion.add(0, Math.cos(tickCount * 0.1f) * 0.02f, 0));
+            if (motion.length() < 0.04f) setDeltaMovement(motion.add(0, Math.cos(tickCount * 0.1f) * 0.02f, 0));
 
             // limb swinging animations
             float limbSpeed = 0.4f;
             float amount = 1f;
-            if (getY() - lastRenderY < -0.1f)
+            if (getY() - yOld < -0.1f)
             {
                 amount = 0f;
                 limbSpeed = 0.2f;
             }
 
-            lastLimbDistance = limbDistance;
-            limbDistance += (amount - limbDistance) * limbSpeed;
-            limbAngle += limbDistance;
+            animationSpeedOld = animationSpeed;
+            animationSpeed += (amount - animationSpeed) * limbSpeed;
+            animationPosition += animationSpeed;
 
             return;
         }
@@ -538,8 +538,8 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public float getTravelSpeed()
     {
         //@formatter:off
-        return isFlying()? (float) getAttributeValue(GENERIC_FLYING_SPEED)
-                         : (float) getAttributeValue(GENERIC_MOVEMENT_SPEED);
+        return isFlying()? (float) getAttributeValue(FLYING_SPEED)
+                         : (float) getAttributeValue(MOVEMENT_SPEED);
         //@formatter:on
     }
 
@@ -550,33 +550,33 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public void onTrackedDataSet(DataParameter<?> key)
+    public void onSyncedDataUpdated(DataParameter<?> key)
     {
-        if (key.equals(SLEEPING) || key.equals(FLYING) || key.equals(TAMEABLE_FLAGS))
+        if (key.equals(SLEEPING) || key.equals(FLYING) || key.equals(TameableEntity.DATA_FLAGS_ID))
         {
-            calculateDimensions();
+            refreshDimensions();
             if (level.isClientSide && key == FLYING && isFlying() && canBeControlledByRider()) FlyingSound.play(this);
         }
         else if (key == ARMOR)
         {
             if (!level.isClientSide)
             {
-                ModifiableAttributeInstance attribute = getAttributeInstance(Attributes.GENERIC_ARMOR);
+                ModifiableAttributeInstance attribute = getAttribute(Attributes.ARMOR);
                 if (attribute.getModifier(DragonArmorItem.ARMOR_UUID) != null)
                     attribute.removeModifier(DragonArmorItem.ARMOR_UUID);
                 if (hasArmor())
                 {
-                    attribute.addTemporaryModifier(new AttributeModifier(DragonArmorItem.ARMOR_UUID, "Armor Modifier", DragonArmorItem.getDmgReduction(getArmorStack()), AttributeModifier.Operation.ADDITION));
-                    playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 1, 1, true);
+                    attribute.addTransientModifier(new AttributeModifier(DragonArmorItem.ARMOR_UUID, "Armor Modifier", DragonArmorItem.getDmgReduction(getArmorStack()), AttributeModifier.Operation.ADDITION));
+                    playSound(SoundEvents.ARMOR_EQUIP_DIAMOND, 1, 1, true);
                 }
             }
         }
-        else super.onTrackedDataSet(key);
+        else super.onSyncedDataUpdated(key);
 
     }
 
     @Override
-    public void handleStatus(byte id)
+    public void handleEntityEvent(byte id)
     {
         if (id == HEAL_PARTICLES_DATA_ID)
         {
@@ -588,7 +588,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
                 level.addParticle(ParticleTypes.HAPPY_VILLAGER, x, y, z, 0, 0, 0);
             }
         }
-        else super.handleStatus(id);
+        else super.handleEntityEvent(id);
     }
 
     public ItemStack getStackInSlot(int slot)
@@ -599,7 +599,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     /**
      * It is VERY important to be careful when using this.
      * It is VERY sidedness sensitive. If not done correctly, it can result in the loss of items! <P>
-     * {@code if (!world.isClient) setStackInSlot(...)}
+     * {@code if (!level.isClient) setStackInSlot(...)}
      */
     public void setStackInSlot(int slot, ItemStack stack)
     {
@@ -613,19 +613,19 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public void attackInBox(AxisAlignedBB box, int disabledShieldTime)
     {
-        List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box, entity -> entity != this && !hasPassenger(entity) && canAttackWithOwner(entity, getOwner()));
+        List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box, entity -> entity != this && !hasPassenger(entity) && wantsToAttack(entity, getOwner()));
         if (WRConfig.debugMode && level.isClientSide) RenderHelper.DebugBox.INSTANCE.queue(box);
         for (LivingEntity attacking : attackables)
         {
-            tryAttack(attacking);
+            doHurtTarget(attacking);
             if (disabledShieldTime > 0 && attacking instanceof PlayerEntity)
             {
                 PlayerEntity player = ((PlayerEntity) attacking);
-                if (player.isUsingItem() && player.getActiveItem().isShield(player))
+                if (player.isUsingItem() && player.getUseItem().isShield(player))
                 {
-                    player.getItemCooldownManager().set(Items.SHIELD, disabledShieldTime);
+                    player.getCooldowns().addCooldown(Items.SHIELD, disabledShieldTime);
                     player.stopUsingItem();
-                    level.sendEntityStatus(player, (byte) 9);
+                    level.broadcastEntityEvent(player, (byte) 9);
                 }
             }
         }
@@ -633,40 +633,40 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public AxisAlignedBB getOffsetBox(float offset)
     {
-        return getBoundingBox().offset(Vector3d.fromPolar(0, bodyYaw).multiply(offset));
+        return getBoundingBox().move(Vector3d.directionFromRotation(0, yBodyRot).scale(offset));
     }
 
     @Override // Dont damage owners other pets!
-    public boolean tryAttack(Entity entity)
+    public boolean doHurtTarget(Entity entity)
     {
-        return !isTeammate(entity) && super.tryAttack(entity);
+        return !isAlliedTo(entity) && super.doHurtTarget(entity);
     }
 
     @Override // We shouldnt be targetting pets...
-    public boolean canAttackWithOwner(LivingEntity target, @Nullable LivingEntity owner)
+    public boolean wantsToAttack(LivingEntity target, @Nullable LivingEntity owner)
     {
-        return !isTeammate(target);
+        return !isAlliedTo(target);
     }
 
     @Override
-    public boolean canTarget(LivingEntity target)
+    public boolean canAttack(LivingEntity target)
     {
-        return !isBaby() && super.canTarget(target);
+        return !isBaby() && super.canAttack(target);
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount)
+    public boolean hurt(DamageSource source, float amount)
     {
-        if (isImmuneToArrows() && source.getSource() != null)
+        if (isImmuneToArrows() && source.getDirectEntity() != null)
         {
-            EntityType<?> attackSource = source.getSource().getType();
+            EntityType<?> attackSource = source.getDirectEntity().getType();
             if (attackSource == EntityType.ARROW) return false;
             else if (attackSource == WREntities.GEODE_TIPPED_ARROW.get()) amount *= 0.5f;
         }
 
         setSleeping(false);
-        setSitting(false);
-        return super.damage(source, amount);
+        setOrderedToSit(false);
+        return super.hurt(source, amount);
     }
 
     public void doSpecialEffects()
@@ -692,28 +692,28 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     public boolean trySafeTeleport(BlockPos pos)
     {
-        if (level.isSpaceEmpty(this, getBoundingBox().offset(pos.subtract(blockPosition()))))
+        if (level.noCollision(this, getBoundingBox().move(pos.subtract(blockPosition()))))
         {
-            refreshPositionAndAngles(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, yRot, pitch);
+            moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, yRot, xRot);
             return true;
         }
         return false;
     }
 
     @Override
-    public BlockPos getPositionTarget()
+    public BlockPos getRestrictCenter()
     {
-        return getHomePos().orElse(BlockPos.ORIGIN);
+        return getHomePos().orElse(BlockPos.ZERO);
     }
 
     public Optional<BlockPos> getHomePos()
     {
-        return dataTracker.get(HOME_POS);
+        return entityData.get(HOME_POS);
     }
 
     public void setHomePos(@Nullable BlockPos pos)
     {
-        dataTracker.set(HOME_POS, Optional.ofNullable(pos));
+        entityData.set(HOME_POS, Optional.ofNullable(pos));
     }
 
     public void clearHome()
@@ -722,58 +722,58 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean hasPositionTarget()
+    public boolean hasRestriction()
     {
         return getHomePos().isPresent();
     }
 
     @Override
-    public float getPositionTargetRange()
+    public float getRestrictRadius()
     {
         return WRConfig.homeRadius * WRConfig.homeRadius;
     }
 
     @Override
-    public void setPositionTarget(BlockPos pos, int distance)
+    public void restrictTo(BlockPos pos, int distance)
     {
         setHomePos(pos);
     }
 
     @Override
-    public boolean isInWalkTargetRange()
+    public boolean isWithinRestriction()
     {
-        return isInWalkTargetRange(blockPosition());
+        return isWithinRestriction(blockPosition());
     }
 
     @Override
-    public boolean isInWalkTargetRange(BlockPos pos)
+    public boolean isWithinRestriction(BlockPos pos)
     {
         Optional<BlockPos> home = getHomePos();
-        return home.map(h -> h.getSquaredDistance(pos) <= getPositionTargetRange()).orElse(true);
+        return home.map(h -> h.distSqr(pos) <= getRestrictRadius()).orElse(true);
     }
 
     public boolean isAtHome()
     {
-        return hasPositionTarget() && isInWalkTargetRange();
+        return hasRestriction() && isWithinRestriction();
     }
 
     @Override
-    protected void dropInventory()
+    protected void dropEquipment()
     {
-        invHandler.ifPresent(i -> i.getStacks().forEach(this::dropStack));
+        invHandler.ifPresent(i -> i.getContents().forEach(this::spawnAtLocation));
     }
 
     public void setRotation(float yaw, float pitch)
     {
         this.yRot = yRot % 360.0F;
-        this.pitch = pitch % 360.0F;
+        this.xRot = xRot % 360.0F;
     }
 
     public double getAltitude()
     {
         BlockPos.Mutable pos = blockPosition().mutable();
 
-        // cap to the world void (y = 0)
+        // cap to the level void (y = 0)
         while (pos.getY() > 0 && !level.getBlockState(pos.below()).getMaterial().isSolid()) pos.move(0, -1, 0);
         return getY() - pos.getY();
     }
@@ -781,12 +781,12 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     // overload because... WHY IS `World` A PARAMETER WTF THE FIELD IS LITERALLY PUBLIC
     public void eat(ItemStack stack)
     {
-        eatFood(level, stack);
+        eat(level, stack);
     }
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public ItemStack eatFood(World world, ItemStack stack)
+    public ItemStack eat(World level, ItemStack stack)
     {
         Vector3d mouth = getApproximateMouthPos();
 
@@ -796,11 +796,11 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             for (int i = 0; i < Math.max(width * width * 2, 12); ++i)
             {
                 Vector3d vec3d1 = new Vector3d(((double) getRandom().nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, ((double) getRandom().nextFloat() - 0.5D) * 0.1D);
-                vec3d1 = vec3d1.rotateZ(-pitch * (Mafs.PI / 180f));
-                vec3d1 = vec3d1.rotateY(-yRot * (Mafs.PI / 180f));
+                vec3d1 = vec3d1.zRot(-xRot * (Mafs.PI / 180f));
+                vec3d1 = vec3d1.yRot(-yRot * (Mafs.PI / 180f));
                 level.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), mouth.x + Mafs.nextDouble(getRandom()) * (width * 0.2), mouth.y, mouth.z + Mafs.nextDouble(getRandom()) * (width * 0.2), vec3d1.x, vec3d1.y, vec3d1.z);
             }
-            level.playSound(null, getX(), getY(), getZ(), getEatSound(stack), SoundCategory.NEUTRAL, 1f, 1f + (getRandom().nextFloat() - getRandom().nextFloat()) * 0.4f);
+            level.playSound(null, getX(), getY(), getZ(), getEatingSound(stack), SoundCategory.NEUTRAL, 1f, 1f + (getRandom().nextFloat() - getRandom().nextFloat()) * 0.4f);
         }
         else
         {
@@ -808,15 +808,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
             if (getHealth() < max) heal(Math.max((int) max / 5, 4)); // Base healing on max health, minumum 2 hearts.
 
             Item item = stack.getItem();
-            if (item.isFood())
+            if (item.isEdible())
             {
-                for (Pair<EffectInstance, Float> pair : item.getFoodComponent().getStatusEffects())
+                for (Pair<EffectInstance, Float> pair : item.getFoodProperties().getEffects())
                     if (!level.isClientSide && pair.getFirst() != null && getRandom().nextFloat() < pair.getSecond())
-                        addStatusEffect(new EffectInstance(pair.getFirst()));
+                        addEffect(new EffectInstance(pair.getFirst()));
             }
             if (item.hasContainerItem(stack))
-                dropStack(item.getContainerItem(stack), (float) (mouth.y - getY()));
-            stack.decrement(1);
+                spawnAtLocation(item.getContainerItem(stack), (float) (mouth.y - getY()));
+            stack.shrink(1);
         }
 
         return stack;
@@ -828,13 +828,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (level.isClientSide) return false;
         if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer))
         {
-            setOwner(tamer);
+            tame(tamer);
             setHealth(getMaxHealth());
             clearAI();
-            level.sendEntityStatus(this, (byte) 7); // heart particles
+            level.broadcastEntityEvent(this, (byte) 7); // heart particles
             return true;
         }
-        else level.sendEntityStatus(this, (byte) 6); // black particles
+        else level.broadcastEntityEvent(this, (byte) 6); // black particles
 
         return false;
     }
@@ -843,7 +843,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     public void heal(float healAmount)
     {
         super.heal(healAmount);
-        level.sendEntityStatus(this, HEAL_PARTICLES_DATA_ID);
+        level.broadcastEntityEvent(this, HEAL_PARTICLES_DATA_ID);
     }
 
     public int getYawRotationSpeed()
@@ -857,30 +857,30 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean canBreedWith(AnimalEntity mate)
+    public boolean canMate(AnimalEntity mate)
     {
         if (!(mate instanceof AbstractDragonEntity)) return false;
         AbstractDragonEntity dragon = (AbstractDragonEntity) mate;
         if (isInSittingPose() || dragon.isInSittingPose()) return false;
         if (hasDataParameter(GENDER) && isMale() == dragon.isMale()) return false;
-        return super.canBreedWith(mate);
+        return super.canMate(mate);
     }
 
     @Override
     public void setBaby(boolean baby)
     {
-        setBreedingAge(baby? DragonEggProperties.get(getType()).getGrowthTime() : 0);
+        setAge(baby? DragonEggProperties.get(getType()).getGrowthTime() : 0);
     }
 
     @Nullable
     @Override
-    public AgeableEntity createChild(ServerWorld serverWorld, AgeableEntity mate)
+    public AgeableEntity getBreedOffspring(ServerWorld level, AgeableEntity mate)
     {
         return (AgeableEntity) getType().create(level);
     }
 
     @Override
-    public void breed(ServerWorld world, AnimalEntity mate)
+    public void spawnChildFromBreeding(ServerWorld level, AnimalEntity mate)
     {
         final BabyEntitySpawnEvent event = new BabyEntitySpawnEvent(this, mate, null);
         if (MinecraftForge.EVENT_BUS.post(event)) return; // cancelled
@@ -890,49 +890,49 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         {
             ItemStack eggStack = DragonEggItem.getStack(getType());
             ItemEntity eggItem = new ItemEntity(level, getX(), getY(), getZ(), eggStack);
-            eggItem.setVelocity(0, getBbHeight() / 3, 0);
-            level.spawnEntity(eggItem);
+            eggItem.setDeltaMovement(0, getBbHeight() / 3, 0);
+            level.addFreshEntity(eggItem);
         }
         else
         {
             child.setBaby(true);
-            child.refreshPositionAndAngles(getX(), getY(), getZ(), 0, 0);
-            level.spawnEntityAndPassengers(child);
+            child.moveTo(getX(), getY(), getZ(), 0, 0);
+            level.addFreshEntityWithPassengers(child);
         }
 
         breedCount++;
         ((AbstractDragonEntity) mate).breedCount++;
 
-        ServerPlayerEntity serverPlayer = getLovingPlayer();
+        ServerPlayerEntity serverPlayer = getLoveCause();
 
-        if (serverPlayer == null && mate.getLovingPlayer() != null)
-            serverPlayer = mate.getLovingPlayer();
+        if (serverPlayer == null && mate.getLoveCause() != null)
+            serverPlayer = mate.getLoveCause();
 
         if (serverPlayer != null)
         {
-            serverPlayer.incrementStat(Stats.ANIMALS_BRED);
+            serverPlayer.awardStat(Stats.ANIMALS_BRED);
             CriteriaTriggers.BRED_ANIMALS.trigger(serverPlayer, this, mate, child);
         }
 
-        setBreedingAge(6000);
-        mate.setBreedingAge(6000);
-        resetLoveTicks();
-        mate.resetLoveTicks();
-        level.sendEntityStatus(this, (byte) 18);
-        if (level.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))
-            level.spawnEntity(new ExperienceOrbEntity(level, getX(), getY(), getZ(), getRandom().nextInt(7) + 1));
+        setAge(6000);
+        mate.setAge(6000);
+        resetLove();
+        mate.resetLove();
+        level.broadcastEntityEvent(this, (byte) 18);
+        if (level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))
+            level.addFreshEntity(new ExperienceOrbEntity(level, getX(), getY(), getZ(), getRandom().nextInt(7) + 1));
     }
 
     @Override
     protected void addPassenger(Entity passenger)
     {
         super.addPassenger(passenger);
-        if (getPrimaryPassenger() == passenger && isOwner((LivingEntity) passenger))
+        if (getControllingPassenger() == passenger && isOwnedBy((LivingEntity) passenger))
         {
             clearAI();
-            setSitting(false);
+            setOrderedToSit(false);
             clearHome();
-            if (isLeashed()) detachLeash(true, true);
+            if (isLeashed()) dropLeash(true, true);
         }
     }
 
@@ -943,7 +943,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Nullable
     public PlayerEntity getControllingPlayer()
     {
-        Entity passenger = getPrimaryPassenger();
+        Entity passenger = getControllingPassenger();
         return passenger instanceof PlayerEntity? (PlayerEntity) passenger : null;
     }
 
@@ -952,13 +952,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         jumping = false;
         navigation.stop();
         setTarget(null);
-        setMovementSpeed(0);
-        setUpwardSpeed(0);
+        setSpeed(0);
+        setYya(0);
     }
 
     public boolean isIdling()
     {
-        return getNavigation().isDone() && getTarget() == null && !isVehicle() && !isInsideWaterOrBubbleColumn() && !isFlying();
+        return getNavigation().isDone() && getTarget() == null && !isVehicle() && !isInWaterOrBubble() && !isFlying();
     }
 
     /**
@@ -970,15 +970,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      */
     public Vector3d getApproximateMouthPos()
     {
-        Vector3d position = getCameraPosVec(1).subtract(0, 0.75d, 0);
+        Vector3d position = getEyePosition(1).subtract(0, 0.75d, 0);
         double dist = (getBbWidth() / 2) + 0.75d;
-        return position.add(getRotationVector(pitch, headYaw).multiply(dist));
+        return position.add(calculateViewVector(xRot, yHeadRot).scale(dist));
     }
 
     @Override
     public ItemStack getPickedResult(RayTraceResult target)
     {
-        return new ItemStack(SpawnEggItem.forEntity(getType()));
+        return new ItemStack(SpawnEggItem.byId(getType()));
     }
 
     public List<LivingEntity> getEntitiesNearby(double radius, Predicate<LivingEntity> filter)
@@ -988,13 +988,13 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public boolean isTeammate(Entity entity)
+    public boolean isAlliedTo(Entity entity)
     {
         if (entity == this) return true;
-        if (entity instanceof LivingEntity && isOwner(((LivingEntity) entity))) return true;
+        if (entity instanceof LivingEntity && isOwnedBy(((LivingEntity) entity))) return true;
         if (entity instanceof TameableEntity && getOwner() != null && getOwner().equals(((TameableEntity) entity).getOwner()))
             return true;
-        return entity.isTeamPlayer(getScoreboardTeam());
+        return entity.isAlliedTo(getTeam());
     }
 
     @Override
@@ -1008,10 +1008,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (isSilent()) return;
 
         volume *= getSoundVolume();
-        pitch *= getSoundPitch();
+        pitch *= getVoicePitch();
 
-        if (local) level.playSound(getX(), getY(), getZ(), sound, getSoundCategory(), volume, pitch, false);
-        else level.playSound(null, getX(), getY(), getZ(), sound, getSoundCategory(), volume, pitch);
+        if (local) level.playLocalSound(getX(), getY(), getZ(), sound, getSoundSource(), volume, pitch, false);
+        else level.playSound(null, getX(), getY(), getZ(), sound, getSoundSource(), volume, pitch);
     }
 
     @Override
@@ -1034,7 +1034,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public ILivingEntityData initialize(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData data, @Nullable CompoundNBT dataTag)
+    public ILivingEntityData finalizeSpawn(IServerWorld level, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData data, @Nullable CompoundNBT dataTag)
     {
         if (hasDataParameter(GENDER)) setGender(getRandom().nextBoolean());
         if (hasDataParameter(VARIANT)) setVariant(determineVariant());
@@ -1042,7 +1042,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         applyAttributes();
         setHealth(getMaxHealth());
 
-        return super.initialize(level, difficulty, reason, data, dataTag);
+        return super.finalizeSpawn(level, difficulty, reason, data, dataTag);
     }
 
     /**
@@ -1059,39 +1059,39 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean collides()
+    public boolean isPickable()
     {
-        return super.collides() && !isRiding();
+        return super.isPickable() && !isRiding();
     }
 
     @Override
     public boolean canBeControlledByRider() // Only OWNERS can control their pets
     {
-        Entity entity = getPrimaryPassenger();
+        Entity entity = getControllingPassenger();
         if (entity instanceof PlayerEntity)
         {
             PlayerEntity player = (PlayerEntity) entity;
-            return isOwner(player) && (!level.isClientSide || player.isMainPlayer()); // fix vehicle-desync
+            return isOwnedBy(player) && (!level.isClientSide || player.isLocalPlayer()); // fix vehicle-desync
         }
         return false;
     }
 
     @Nullable
     @Override
-    public Entity getPrimaryPassenger()
+    public Entity getControllingPassenger()
     {
         List<Entity> passengers = getPassengers();
         return passengers.isEmpty()? null : passengers.get(0);
     }
 
     @Override
-    protected boolean canStartRiding(Entity entityIn)
+    protected boolean canRide(Entity entityIn)
     {
         return false;
     }
 
     @Override
-    public boolean isHoldingOntoLadder()
+    public boolean isSuppressingSlidingDownLadder()
     {
         return false;
     }
@@ -1119,7 +1119,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     /**
-     * Sort of misleading name. if this is true, then {@link MobEntity#tickNewAi()} is not ticked:
+     * Sort of misleading name. if this is true, then {@link MobEntity#serverAiStep()} ()} is not ticked:
      * which tl;dr does not update any AI including Goal Selectors, Pathfinding, Moving, etc.
      * Do not perform any AI actions while: Not Sleeping; not being controlled, etc.
      */
@@ -1138,10 +1138,10 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
      * Get the motion this entity performs when jumping
      */
     @Override
-    protected float getJumpVelocity()
+    protected float getJumpPower()
     {
-        if (canFly()) return (getBbHeight() * getJumpVelocityMultiplier()) * 0.6f;
-        else return super.getJumpVelocity();
+        if (canFly()) return (getBbHeight() * getBlockJumpFactor()) * 0.6f;
+        else return super.getJumpPower();
     }
 
     public boolean liftOff()
@@ -1149,21 +1149,21 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         if (!canFly()) return false;
         if (!onGround) return true; // We can't lift off the ground in the air...
 
-        int heightDiff = level.getTopY(Heightmap.Type.MOTION_BLOCKING, (int) getX(), (int) getZ()) - (int) getY();
+        int heightDiff = level.getHeight(Heightmap.Type.MOTION_BLOCKING, (int) getX(), (int) getZ()) - (int) getY();
         if (heightDiff > 0 && heightDiff <= getFlightThreshold())
             return false; // position has too low of a ceiling, can't fly here.
 
-        setSitting(false);
+        setOrderedToSit(false);
         setSleeping(false);
-        jump();
+        jumpFromGround();
         return true;
     }
 
     @Override // Disable fall calculations if we can fly (fall damage etc.)
-    public boolean handleFallDamage(float distance, float damageMultiplier)
+    public boolean causeFallDamage(float distance, float damageMultiplier)
     {
         if (canFly()) return false;
-        return super.handleFallDamage(distance - (int) (getBbHeight() * 0.8), damageMultiplier);
+        return super.causeFallDamage(distance - (int) (getBbHeight() * 0.8), damageMultiplier);
     }
 
     public int getFlightThreshold()
@@ -1176,9 +1176,9 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public void detachLeash(boolean sendPacket, boolean dropLead)
+    public void dropLeash(boolean sendPacket, boolean dropLead)
     {
-        super.detachLeash(sendPacket, dropLead);
+        super.dropLeash(sendPacket, dropLead);
         clearHome();
     }
 
@@ -1193,13 +1193,14 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
         screen.addAction(StaffAction.SIT);
 
         screen.addTooltip(new StringTextComponent(Character.toString('\u2764'))
-                .formatted(TextFormatting.RED)
-                .append(new StringTextComponent(String.format(" %s / %s", (int) (getHealth() / 2), (int) getMaxHealth() / 2)).formatted(TextFormatting.WHITE)));
+                .withStyle(TextFormatting.RED)
+                .append(new StringTextComponent(String.format(" %s / %s", (int) (getHealth() / 2), (int) getMaxHealth() / 2))
+                        .withStyle(TextFormatting.WHITE)));
         if (hasDataParameter(GENDER))
         {
             boolean isMale = isMale();
             screen.addTooltip(new TranslationTextComponent("entity.wyrmroost.dragons.gender." + (isMale? "male" : "female"))
-                    .formatted(isMale? TextFormatting.DARK_AQUA : TextFormatting.RED));
+                    .withStyle(isMale? TextFormatting.DARK_AQUA : TextFormatting.RED));
         }
     }
 
@@ -1215,15 +1216,15 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     @Override
     public EntitySize getDimensions(Pose poseIn)
     {
-        EntitySize size = getType().getDimensions().scaled(getScaleFactor());
-        if (isInSittingPose() || isSleeping()) size = size.scaled(1, 0.5f);
+        EntitySize size = getType().getDimensions().scale(getScale());
+        if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.5f);
         return size;
     }
 
     @Override
-    protected int getCurrentExperience(PlayerEntity player)
+    protected int getExperienceReward(PlayerEntity player)
     {
-        return Math.max((int) ((getBbWidth() * getBbHeight()) * 0.25) + getRandom().nextInt(3), super.getCurrentExperience(player));
+        return Math.max((int) ((getBbWidth() * getBbHeight()) * 0.25) + getRandom().nextInt(3), super.getExperienceReward(player));
     }
 
     @Override
@@ -1235,7 +1236,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
         return isFoodItem(stack);
     }
@@ -1280,7 +1281,7 @@ public abstract class AbstractDragonEntity extends TameableEntity implements IAn
     }
 
     @SuppressWarnings("unused")
-    public static boolean canFlyerSpawn(EntityType<? extends AbstractDragonEntity> type, IWorld world, SpawnReason reason, BlockPos pos, Random random)
+    public static boolean canFlyerSpawn(EntityType<? extends AbstractDragonEntity> type, IWorld level, SpawnReason reason, BlockPos pos, Random random)
     {
         return level.getBlockState(pos.below()).getFluidState().isEmpty();
     }

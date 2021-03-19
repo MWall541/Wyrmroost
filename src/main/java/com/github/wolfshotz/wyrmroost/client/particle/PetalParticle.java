@@ -8,7 +8,7 @@ import net.minecraft.particles.RedstoneParticleData;
 
 public class PetalParticle extends SpriteTexturedParticle
 {
-    public PetalParticle(RedstoneParticleData data, ClientWorld world, IAnimatedSprite sprite, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
+    public PetalParticle(RedstoneParticleData data, ClientWorld level, IAnimatedSprite sprite, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed)
     {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
     }

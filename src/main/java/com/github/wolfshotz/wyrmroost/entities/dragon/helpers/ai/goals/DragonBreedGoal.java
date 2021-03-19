@@ -71,7 +71,7 @@ public class DragonBreedGoal extends Goal
         dragon.getLookControl().setLookAt(targetMate, 10f, dragon.getYawRotationSpeed());
         dragon.getNavigation().moveTo(targetMate, 1);
         if (++spawnBabyDelay >= 60 && dragon.distanceTo(targetMate) < dragon.getBbWidth() * 2)
-            dragon.breed((ServerWorld) dragon.level, targetMate);
+            dragon.spawnChildFromBreeding((ServerWorld) dragon.level, targetMate);
     }
 
     /**

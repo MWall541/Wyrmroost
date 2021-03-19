@@ -47,7 +47,7 @@ public class AnimationPacket
         {
             entity.setAnimation(animation);
             Wyrmroost.NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity),
-                    new AnimationPacket(entity.getEntityId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+                    new AnimationPacket(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
         }
     }
 }

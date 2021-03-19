@@ -30,31 +30,31 @@ public enum ToolMaterials implements IItemTier
     }
 
     @Override
-    public int getDurability()
+    public int getUses()
     {
         return durability;
     }
 
     @Override
-    public float getMiningSpeedMultiplier()
+    public float getSpeed()
     {
         return efficiency;
     }
 
     @Override
-    public float getAttackDamage()
+    public float getAttackDamageBonus()
     {
         return attackDamage;
     }
 
     @Override
-    public int getMiningLevel()
+    public int getLevel()
     {
         return harvestLevel;
     }
 
     @Override
-    public int getEnchantability()
+    public int getEnchantmentValue()
     {
         return enchantibility;
     }

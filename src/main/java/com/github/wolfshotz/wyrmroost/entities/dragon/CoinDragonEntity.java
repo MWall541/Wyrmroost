@@ -32,7 +32,7 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
  */
 public class CoinDragonEntity extends MobEntity
 {
-    public static final DataParameter<Integer> VARIANT = EntityDataManager.registerData(CoinDragonEntity.class, DataSerializers.INTEGER);
+    public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(CoinDragonEntity.class, DataSerializers.INT);
     public static String DATA_VARIANT = "Variant";
 
     public CoinDragonEntity(EntityType<? extends CoinDragonEntity> type, World worldIn)
@@ -41,47 +41,47 @@ public class CoinDragonEntity extends MobEntity
     }
 
     @Override
-    protected void initGoals()
+    protected void registerGoals()
     {
-        goalSelector.add(0, new LookAtGoal(this, PlayerEntity.class, 4));
+        goalSelector.addGoal(0, new LookAtGoal(this, PlayerEntity.class, 4));
     }
 
     @Override
-    protected void initDataTracker()
+    protected void defineSynchedData()
     {
-        super.initDataTracker();
-        dataTracker.startTracking(VARIANT, getRandom().nextInt(5));
+        super.defineSynchedData();
+        entityData.define(VARIANT, getRandom().nextInt(5));
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundNBT compound)
+    public void addAdditionalSaveData(CompoundNBT compound)
     {
-        super.writeCustomDataToTag(compound);
+        super.addAdditionalSaveData(compound);
         compound.putInt(DATA_VARIANT, getVariant());
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundNBT compound)
+    public void readAdditionalSaveData(CompoundNBT compound)
     {
-        super.readCustomDataFromTag(compound);
+        super.readAdditionalSaveData(compound);
         setVariant(compound.getInt(DATA_VARIANT));
     }
 
     public int getVariant()
     {
-        return dataTracker.get(VARIANT);
+        return entityData.get(VARIANT);
     }
 
     public void setVariant(int variant)
     {
-        dataTracker.set(VARIANT, variant);
+        entityData.set(VARIANT, variant);
     }
 
     // move up if too low, move down if too high, else, just bob up and down
     @Override
     public void travel(Vector3d positionIn)
     {
-        if (isAiDisabled()) return;
+        if (isNoAi()) return;
         double moveSpeed = 0.02;
         double yMot;
         double altitiude = getAltitude();
@@ -89,29 +89,29 @@ public class CoinDragonEntity extends MobEntity
         else if (altitiude > 3) yMot = -moveSpeed;
         else yMot = Math.sin(tickCount * 0.1) * 0.0035;
 
-        setVelocity(getDeltaMovement().add(0, yMot, 0));
+        setDeltaMovement(getDeltaMovement().add(0, yMot, 0));
         move(MoverType.SELF, getDeltaMovement());
-        setVelocity(getDeltaMovement().multiply(0.91));
+        setDeltaMovement(getDeltaMovement().scale(0.91));
     }
 
     @Override
-    protected ActionResultType interactMob(PlayerEntity player, Hand hand)
+    protected ActionResultType mobInteract(PlayerEntity player, Hand hand)
     {
-        ActionResultType stackResult = player.getStackInHand(hand).useOnEntity(player, this, hand);
-        if (stackResult.isAccepted()) return stackResult;
+        ActionResultType stackResult = player.getItemInHand(hand).interactLivingEntity(player, this, hand);
+        if (stackResult.consumesAction()) return stackResult;
 
         ItemEntity itemEntity = new ItemEntity(level, getX(), getY(), getZ(), getItemStack());
         double x = player.getX() - getX();
         double y = player.getY() - getY();
         double z = player.getZ() - getZ();
-        itemEntity.setVelocity(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
-        level.spawnEntity(itemEntity);
+        itemEntity.setDeltaMovement(x * 0.1, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
+        level.addFreshEntity(itemEntity);
         remove();
-        return ActionResultType.success(level.isClientSide);
+        return ActionResultType.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    protected float getActiveEyeHeight(Pose pose, EntitySize size)
+    protected float getStandingEyeHeight(Pose pose, EntitySize size)
     {
         return size.height * 0.8645f;
     }
@@ -123,25 +123,25 @@ public class CoinDragonEntity extends MobEntity
     }
 
     @Override
-    public boolean cannotDespawn()
+    public boolean requiresCustomPersistence()
     {
         return true;
     }
 
     @Override
-    public boolean isHoldingOntoLadder()
+    public boolean isSuppressingSlidingDownLadder()
     {
         return false;
     }
 
     @Override
-    public boolean handleFallDamage(float distance, float damageMultiplier)
+    public boolean causeFallDamage(float distance, float damageMultiplier)
     {
         return false;
     }
 
     @Override
-    protected void fall(double y, boolean onGroundIn, BlockState state, BlockPos pos)
+    protected void checkFallDamage(double y, boolean onGroundIn, BlockState state, BlockPos pos)
     {
     }
 
@@ -169,7 +169,7 @@ public class CoinDragonEntity extends MobEntity
     public double getAltitude()
     {
         BlockPos.Mutable pos = blockPosition().mutable().move(0, -1, 0);
-        while (pos.getY() > 0 && !level.getBlockState(pos).isOpaque()) pos.setY(pos.getY() - 1);
+        while (pos.getY() > 0 && !level.getBlockState(pos).canOcclude()) pos.setY(pos.getY() - 1);
         return getY() - pos.getY();
     }
 
@@ -177,14 +177,14 @@ public class CoinDragonEntity extends MobEntity
     {
         ItemStack stack = new ItemStack(WRItems.COIN_DRAGON.get());
         stack.getOrCreateTag().put(CoinDragonItem.DATA_ENTITY, serializeNBT());
-        if (hasCustomName()) stack.setCustomName(getCustomName());
+        if (hasCustomName()) stack.setHoverName(getCustomName());
         return stack;
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
         return MobEntity.createMobAttributes()
-                .add(GENERIC_MAX_HEALTH, 4)
-                .add(GENERIC_MOVEMENT_SPEED, 0.02);
+                .add(MAX_HEALTH, 4)
+                .add(MOVEMENT_SPEED, 0.02);
     }
 }

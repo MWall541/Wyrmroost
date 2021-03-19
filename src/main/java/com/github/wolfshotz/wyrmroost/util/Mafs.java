@@ -40,7 +40,7 @@ public final class Mafs
      */
     public static Vector3d getYawVec(float yaw, double xOffset, double zOffset)
     {
-        return new Vector3d(xOffset, 0, zOffset).rotateY(-yaw * (PI / 180f));
+        return new Vector3d(xOffset, 0, zOffset).yRot(-yaw * (PI / 180f));
     }
 
     /**
@@ -71,17 +71,17 @@ public final class Mafs
     @Nullable
     public static EntityRayTraceResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter)
     {
-        Vector3d eyes = shooter.getCameraPosVec(1f);
-        Vector3d end = eyes.add(shooter.getRotationVector().multiply(range, range, range));
+        Vector3d eyes = shooter.getEyePosition(1f);
+        Vector3d end = eyes.add(shooter.getLookAngle().multiply(range, range, range));
 
         Entity result = null;
         double distance = range * range;
-        for (Entity entity : shooter.level.getOtherEntities(shooter, shooter.getBoundingBox().inflate(range), filter))
+        for (Entity entity : shooter.level.getEntities(shooter, shooter.getBoundingBox().inflate(range), filter))
         {
-            Optional<Vector3d> opt = entity.getBoundingBox().inflate(0.3).raycast(eyes, end);
+            Optional<Vector3d> opt = entity.getBoundingBox().inflate(0.3).clip(eyes, end);
             if (opt.isPresent())
             {
-                double dist = eyes.squaredDistanceTo(opt.get());
+                double dist = eyes.distanceToSqr(opt.get());
                 if (dist < distance)
                 {
                     result = entity;

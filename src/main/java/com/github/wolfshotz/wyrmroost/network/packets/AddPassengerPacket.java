@@ -19,8 +19,8 @@ public class AddPassengerPacket
 
     AddPassengerPacket(Entity passenger, Entity vehicle)
     {
-        this.passengerID = passenger.getEntityId();
-        this.vehicleID = vehicle.getEntityId();
+        this.passengerID = passenger.getId();
+        this.vehicleID = vehicle.getId();
     }
 
     public AddPassengerPacket(PacketBuffer buf)
@@ -44,7 +44,7 @@ public class AddPassengerPacket
     @OnlyIn(Dist.CLIENT)
     public void handleClient()
     {
-        World world = ClientEvents.getWorld();
+        World level = ClientEvents.getWorld();
         Entity passenger = level.getEntity(passengerID);
         Entity vehicle = level.getEntity(vehicleID);
         if (passenger == null || vehicle == null || !passenger.startRiding(vehicle, true))

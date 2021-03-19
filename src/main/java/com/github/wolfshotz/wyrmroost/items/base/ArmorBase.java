@@ -33,19 +33,19 @@ public class ArmorBase extends ArmorItem
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type)
     {
         int layer = slot == EquipmentSlotType.LEGS? 2 : 1;
-        return Wyrmroost.MOD_ID + ":textures/models/armor/" + this.type.getName() + "_layer_" + layer + ".png";
+        return Wyrmroost.MOD_ID + ":textures/models/armor/" + this.material.getName() + "_layer_" + layer + ".png";
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<ITextComponent> lines, ITooltipFlag flags)
+    public void appendHoverText(ItemStack stack, @Nullable World level, List<ITextComponent> lines, ITooltipFlag flags)
     {
-        super.appendTooltip(stack, level, lines, flags);
-        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + type.getName()).formatted(((ArmorMaterials) type).getRarity().formatting)));
+        super.appendHoverText(stack, level, lines, flags);
+        lines.add(new TranslationTextComponent("item.wyrmroost.armors.set", new TranslationTextComponent("item.wyrmroost.armors." + material.getName()).withStyle(((ArmorMaterials) material).getRarity().color)));
 
         if (hasDescription())
         {
             lines.add(new StringTextComponent(""));
-            lines.add(new TranslationTextComponent(String.format("item.wyrmroost.armors.%s.desc", type.getName().toLowerCase())));
+            lines.add(new TranslationTextComponent(String.format("item.wyrmroost.armors.%s.desc", material.getName().toLowerCase())));
         }
     }
 
@@ -61,7 +61,7 @@ public class ArmorBase extends ArmorItem
     public static boolean hasFullSet(LivingEntity entity)
     {
         IArmorMaterial prev = null;
-        for (ItemStack stack : entity.getArmorItems())
+        for (ItemStack stack : entity.getArmorSlots())
         {
             if (stack.getItem() instanceof ArmorItem)
             {

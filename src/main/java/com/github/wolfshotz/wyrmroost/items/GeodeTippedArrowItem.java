@@ -19,11 +19,11 @@ public class GeodeTippedArrowItem extends ArrowItem
     }
 
     @Override
-    public AbstractArrowEntity createArrow(World world, ItemStack stack, LivingEntity shooter)
+    public AbstractArrowEntity createArrow(World level, ItemStack stack, LivingEntity shooter)
     {
         GeodeTippedArrowEntity arrow = new GeodeTippedArrowEntity(level, this);
-        arrow.updatePosition(shooter.getX(), shooter.getEyeY() - 0.1d, shooter.getZ());
-        arrow.setDamage(damage);
+        arrow.absMoveTo(shooter.getX(), shooter.getEyeY() - 0.1d, shooter.getZ());
+        arrow.setBaseDamage(damage);
         return arrow;
     }
 }

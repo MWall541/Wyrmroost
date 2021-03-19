@@ -41,7 +41,7 @@ public enum StaffAction
                 {
                     DragonStaffItem.setAction(DEFAULT, player, stack);
                     if (!player.level.isClientSide)
-                        NetworkHooks.openGui((ServerPlayerEntity) player, DragonInvContainer.getProvider(dragon), b -> b.writeInt(dragon.getEntityId()));
+                        NetworkHooks.openGui((ServerPlayerEntity) player, DragonInvContainer.getProvider(dragon), b -> b.writeInt(dragon.getId()));
                 }
             },
 
@@ -50,7 +50,7 @@ public enum StaffAction
                 @Override
                 public void onSelected(AbstractDragonEntity dragon, PlayerEntity player, ItemStack stack)
                 {
-                    dragon.setSitting(!dragon.isInSittingPose());
+                    dragon.setOrderedToSit(!dragon.isInSittingPose());
                     DragonStaffItem.setAction(DEFAULT, player, stack);
                 }
 
@@ -78,18 +78,18 @@ public enum StaffAction
                 @Override
                 public boolean clickBlock(AbstractDragonEntity dragon, ItemUseContext context)
                 {
-                    BlockPos pos = context.getBlockPos();
-                    World world = context.getWorld();
-                    ItemStack stack = context.getStack();
+                    BlockPos pos = context.getClickedPos();
+                    World level = context.getLevel();
+                    ItemStack stack = context.getItemInHand();
                     DragonStaffItem.setAction(DEFAULT, context.getPlayer(), stack);
                     if (level.getBlockState(pos).getMaterial().isSolid())
                     {
                         dragon.setHomePos(pos);
-                        ModUtils.playLocalSound(level, pos, SoundEvents.BLOCK_BEEHIVE_ENTER, 1, 1);
+                        ModUtils.playLocalSound(level, pos, SoundEvents.BEEHIVE_ENTER, 1, 1);
                     }
                     else
                     {
-                        ModUtils.playLocalSound(level, pos, SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, 1, 1);
+                        ModUtils.playLocalSound(level, pos, SoundEvents.REDSTONE_TORCH_BURNOUT, 1, 1);
                         for (int i = 0; i < 10; i++)
                             level.addParticle(ParticleTypes.SMOKE, pos.getX() + 0.5d, pos.getY() + 1, pos.getZ() + 0.5d, 0, i * 0.025, 0);
                     }
@@ -100,7 +100,7 @@ public enum StaffAction
                 @Override
                 public void render(AbstractDragonEntity dragon, MatrixStack ms, float partialTicks)
                 {
-                    RayTraceResult rtr = ClientEvents.getClient().crosshairTarget;
+                    RayTraceResult rtr = ClientEvents.getClient().hitResult;
                     if (rtr instanceof BlockRayTraceResult)
                         RenderHelper.drawBlockPos(ms,
                                 ((BlockRayTraceResult) rtr).getBlockPos(),
@@ -127,7 +127,7 @@ public enum StaffAction
                 {
                     dragon.clearAI();
                     dragon.clearHome();
-                    dragon.setSitting(false);
+                    dragon.setOrderedToSit(false);
                 }
 
                 @Override
@@ -138,7 +138,7 @@ public enum StaffAction
                     {
                         dragon.setTarget((LivingEntity) ertr.getEntity());
                         if (player.level.isClientSide)
-                            ModUtils.playLocalSound(player.level, player.blockPosition(), SoundEvents.ENTITY_BLAZE_SHOOT, 1, 0.5f);
+                            ModUtils.playLocalSound(player.level, player.blockPosition(), SoundEvents.BLAZE_SHOOT, 1, 0.5f);
                         return true;
                     }
                     return false;
@@ -157,7 +157,7 @@ public enum StaffAction
                 {
                     return Mafs.rayTraceEntities(player,
                             TARGET_RANGE,
-                            e -> e instanceof LivingEntity && dragon.canAttackWithOwner((LivingEntity) e, dragon.getOwner()));
+                            e -> e instanceof LivingEntity && dragon.wantsToAttack((LivingEntity) e, dragon.getOwner()));
                 }
             };
 

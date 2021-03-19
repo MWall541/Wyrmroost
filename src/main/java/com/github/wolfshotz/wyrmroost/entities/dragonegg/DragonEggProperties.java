@@ -73,7 +73,7 @@ public class DragonEggProperties
     {
         DragonEggProperties props = MAP.get(type);
         if (props == null)
-            throw new NullPointerException(String.format("Missing Egg Properties for key: %s, Wolf did a hickup go scream at him", type.getName().asString()));
+            throw new NullPointerException(String.format("Missing Egg Properties for key: %s, Wolf did a hickup go scream at him", type.getDescription().getString()));
         return props;
     }
 }

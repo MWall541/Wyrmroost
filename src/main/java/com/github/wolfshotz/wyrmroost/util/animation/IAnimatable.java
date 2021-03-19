@@ -22,7 +22,10 @@ public interface IAnimatable
 
     Animation[] getAnimations();
 
-    default boolean noActiveAnimation() { return getAnimation() == NO_ANIMATION; }
+    default boolean noActiveAnimation()
+    {
+        return getAnimation() == NO_ANIMATION;
+    }
 
     default void updateAnimations()
     {
@@ -46,10 +49,15 @@ public interface IAnimatable
             // There is no data needed to be stored.
             @Nullable
             @Override
-            public INBT writeNBT(Capability<IAnimatable> capability, IAnimatable instance, Direction side) { return null; }
+            public INBT writeNBT(Capability<IAnimatable> capability, IAnimatable instance, Direction side)
+            {
+                return null;
+            }
 
             @Override
-            public void readNBT(Capability<IAnimatable> capability, IAnimatable instance, Direction side, INBT nbt) {}
+            public void readNBT(Capability<IAnimatable> capability, IAnimatable instance, Direction side, INBT nbt)
+            {
+            }
         }, CapImpl::new);
     }
 

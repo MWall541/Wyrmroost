@@ -14,7 +14,7 @@ public class EntityDataEntry<T>
     public static final SerializerType<Boolean> BOOLEAN = new SerializerType<>((key, nbt, value) -> nbt.putBoolean(key, value), (key, nbt) -> nbt.getBoolean(key));
     public static final SerializerType<Integer> INTEGER = new SerializerType<>((key, nbt, value) -> nbt.putInt(key, value), (key, nbt) -> nbt.getInt(key));
     public static final SerializerType<CompoundNBT> COMPOUND = new SerializerType<>((key, nbt, value) -> nbt.put(key, value), (key, nbt) -> nbt.getCompound(key));
-    public static final SerializerType<BlockPos> BLOCK_POS = new SerializerType<>((key, nbt, value) -> nbt.putLong(key, value.asLong()), (key, nbt) -> BlockPos.fromLong(nbt.getLong(key)));
+    public static final SerializerType<BlockPos> BLOCK_POS = new SerializerType<>((key, nbt, value) -> nbt.putLong(key, value.asLong()), (key, nbt) -> BlockPos.of(nbt.getLong(key)));
 
     private final String key;
     private final SerializerType<T> serializer;
@@ -43,6 +43,7 @@ public class EntityDataEntry<T>
     {
         public final TriConsumer<String, CompoundNBT, T> write;
         public final BiFunction<String, CompoundNBT, T> read;
+        public SerializerType<Optional<T>> optional;
 
         private SerializerType(TriConsumer<String, CompoundNBT, T> write, BiFunction<String, CompoundNBT, T> read)
         {
@@ -52,8 +53,12 @@ public class EntityDataEntry<T>
 
         public SerializerType<Optional<T>> optional()
         {
-            return new SerializerType<>((key, nbt, value) -> value.ifPresent(j -> write.accept(key, nbt, j)),
-                    (key, nbt) -> nbt.contains(key)? Optional.of(read.apply(key, nbt)) : Optional.empty());
+            if (optional == null) // may not always be needed, so initalize lazily.
+            {
+                return optional = new SerializerType<>((key, nbt, value) -> value.ifPresent(j -> write.accept(key, nbt, j)),
+                        (key, nbt) -> nbt.contains(key)? Optional.of(read.apply(key, nbt)) : Optional.empty());
+            }
+            return optional;
         }
     }
 }

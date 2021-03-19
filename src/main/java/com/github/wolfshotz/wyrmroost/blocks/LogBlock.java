@@ -25,7 +25,7 @@ public class LogBlock extends RotatedPillarBlock
 
     @Nullable
     @Override
-    public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
+    public BlockState getToolModifiedState(BlockState state, World level, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
         return toolType == ToolType.AXE?
                 stripped.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)) :

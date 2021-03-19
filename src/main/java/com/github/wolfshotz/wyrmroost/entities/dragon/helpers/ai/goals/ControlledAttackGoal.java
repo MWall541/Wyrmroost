@@ -27,7 +27,7 @@ public class ControlledAttackGoal extends MeleeAttackGoal
     {
         LivingEntity target = dragon.getTarget();
         if (target == null) return false;
-        return !dragon.isVehicle() && dragon.canAttackWithOwner(target, dragon.getOwner()) && super.canContinueToUse();
+        return !dragon.isVehicle() && dragon.wantsToAttack(target, dragon.getOwner()) && super.canContinueToUse();
     }
 
     @Override

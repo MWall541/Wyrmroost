@@ -21,14 +21,14 @@ public class WRKeybind extends KeyBinding
 
     public WRKeybind(String name, int keyCode, byte packetKeyID)
     {
-        super(name, KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM.createFromCode(keyCode), "keyCategory.wyrmroost");
+        super(name, KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM.getOrCreate(keyCode), "keyCategory.wyrmroost");
         this.id = packetKeyID;
     }
 
     @Override
-    public void setPressed(boolean pressed)
+    public void setDown(boolean pressed)
     {
-        super.setPressed(pressed);
+        super.setDown(pressed);
 
         if (ClientEvents.getPlayer() != null && prevIsPressed != pressed)
         {

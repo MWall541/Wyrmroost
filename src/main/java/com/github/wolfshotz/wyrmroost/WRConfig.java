@@ -34,9 +34,9 @@ public class WRConfig
     private static boolean dragonGriefing;
     public static Map<String, Integer> breedLimits;
 
-    public static boolean canGrief(World world)
+    public static boolean canGrief(World level)
     {
-        return respectMobGriefing? level.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING) : dragonGriefing;
+        return respectMobGriefing? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : dragonGriefing;
     }
 
     public static void configLoad(ModConfig.ModConfigEvent evt)

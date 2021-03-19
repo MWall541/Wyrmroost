@@ -61,7 +61,7 @@ public class VillagerHelper
 
         @Nullable
         @Override
-        public MerchantOffer create(Entity p_221182_1_, Random p_221182_2_)
+        public MerchantOffer getOffer(Entity p_221182_1_, Random p_221182_2_)
         {
             return new MerchantOffer(buying1, buying2, selling, maxUses, xp, priceMultiplier);
         }

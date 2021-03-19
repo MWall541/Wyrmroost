@@ -40,7 +40,7 @@ public class WRParticles
         }
 
         @Override
-        public Codec<T> getCodec()
+        public Codec<T> codec()
         {
             return codec;
         }

@@ -50,7 +50,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public TemptGoal temptGoal;
     public boolean isGliding; // controlled by player-gliding.
 
-    public SilverGliderEntity(EntityType<? extends AbstractDragonEntity> dragon, World world)
+    public SilverGliderEntity(EntityType<? extends AbstractDragonEntity> dragon, World level)
     {
         super(dragon, level);
 
@@ -60,31 +60,31 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    protected void initGoals()
+    protected void registerGoals()
     {
-        super.initGoals();
+        super.registerGoals();
 
-        goalSelector.add(3, temptGoal = new TemptGoal(this, 0.8d, true, Ingredient.fromTag(ItemTags.FISHES)));
-        goalSelector.add(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
-        goalSelector.add(5, new DragonBreedGoal(this));
-        goalSelector.add(6, new WRFollowOwnerGoal(this));
-        goalSelector.add(7, new SwoopGoal());
-        goalSelector.add(8, new FlyerWanderGoal(this, 1));
-        goalSelector.add(9, new LookAtGoal(this, LivingEntity.class, 7f));
-        goalSelector.add(10, new LookRandomlyGoal(this));
+        goalSelector.addGoal(3, temptGoal = new TemptGoal(this, 0.8d, true, Ingredient.of(ItemTags.FISHES)));
+        goalSelector.addGoal(4, new WRAvoidEntityGoal<>(this, PlayerEntity.class, 10f, 0.8));
+        goalSelector.addGoal(5, new DragonBreedGoal(this));
+        goalSelector.addGoal(6, new WRFollowOwnerGoal(this));
+        goalSelector.addGoal(7, new SwoopGoal());
+        goalSelector.addGoal(8, new FlyerWanderGoal(this, 1));
+        goalSelector.addGoal(9, new LookAtGoal(this, LivingEntity.class, 7f));
+        goalSelector.addGoal(10, new LookRandomlyGoal(this));
     }
 
     @Override
-    protected void initDataTracker()
+    protected void defineSynchedData()
     {
-        super.initDataTracker();
-        dataTracker.startTracking(FLYING, false);
+        super.defineSynchedData();
+        entityData.define(FLYING, false);
     }
 
     @Override
-    public void tickMovement()
+    public void aiStep()
     {
-        super.tickMovement();
+        super.aiStep();
 
         if (isGliding && !isRiding()) isGliding = false;
 
@@ -94,9 +94,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public void tickRiding()
+    public void rideTick()
     {
-        super.tickRiding();
+        super.rideTick();
 
         if (!(getVehicle() instanceof PlayerEntity)) return;
         PlayerEntity player = (PlayerEntity) getVehicle();
@@ -110,9 +110,9 @@ public class SilverGliderEntity extends AbstractDragonEntity
 
         if (isGliding)
         {
-            Vector3d vec3d = player.getRotationVector().multiply(0.3);
-            player.setVelocity(player.getDeltaMovement().multiply(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
-            if (!level.isClientSide) ((ServerPlayerEntity) player).networkHandler.floating = false;
+            Vector3d vec3d = player.getLookAngle().scale(0.3);
+            player.setDeltaMovement(player.getDeltaMovement().scale(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
+            if (!level.isClientSide) ((ServerPlayerEntity) player).connection.clientIsFloating = false;
             player.fallDistance = 0;
         }
     }
@@ -120,8 +120,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public void travel(Vector3d vec3d)
     {
-        Vector3d look = getRotationVector();
-        if (isFlying() && look.y < 0) setVelocity(getDeltaMovement().add(0, look.y * 0.25, 0));
+        Vector3d look = getLookAngle();
+        if (isFlying() && look.y < 0) setDeltaMovement(getDeltaMovement().add(0, look.y * 0.25, 0));
 
         super.travel(vec3d);
     }
@@ -130,11 +130,11 @@ public class SilverGliderEntity extends AbstractDragonEntity
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
         ActionResultType result = super.playerInteraction(player, hand, stack);
-        if (result.isAccepted()) return result;
+        if (result.consumesAction()) return result;
 
-        if (!isTame() && isBreedingItem(stack))
+        if (!isTame() && isFood(stack))
         {
-            if (!level.isClientSide && (temptGoal.isActive() || player.isCreative()))
+            if (!level.isClientSide && (temptGoal.isRunning() || player.isCreative()))
             {
                 tame(getRandom().nextDouble() < 0.333, player);
                 eat(stack);
@@ -143,12 +143,12 @@ public class SilverGliderEntity extends AbstractDragonEntity
             return ActionResultType.CONSUME;
         }
 
-        if (isOwner(player) && player.getPassengers().isEmpty() && !player.isSneaking() && !isBreedingItem(stack) && !isLeashed())
+        if (isOwnedBy(player) && player.getPassengers().isEmpty() && !player.isShiftKeyDown() && !isFood(stack) && !isLeashed())
         {
             startRiding(player, true);
-            setSitting(false);
+            setOrderedToSit(false);
             clearAI();
-            return ActionResultType.success(level.isClientSide);
+            return ActionResultType.sidedSuccess(level.isClientSide);
         }
 
         return ActionResultType.PASS;
@@ -181,8 +181,8 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public EntitySize getDimensions(Pose poseIn)
     {
-        EntitySize size = getType().getDimensions().scaled(getScaleFactor());
-        if (isInSittingPose() || isSleeping()) size = size.scaled(1, 0.87f);
+        EntitySize size = getType().getDimensions().scale(getScale());
+        if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.87f);
         return size;
     }
 
@@ -227,7 +227,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
     }
 
     @Override
-    public int getLookYawSpeed()
+    public int getHeadRotSpeed()
     {
         return 30;
     }
@@ -246,29 +246,29 @@ public class SilverGliderEntity extends AbstractDragonEntity
     @Override
     public boolean isFoodItem(ItemStack stack)
     {
-        return stack.getItem().isIn(ItemTags.FISHES);
+        return stack.getItem().is(ItemTags.FISHES);
     }
 
-    public static boolean getSpawnPlacement(EntityType<SilverGliderEntity> fEntityType, IServerWorld world, SpawnReason spawnReason, BlockPos blockPos, Random random)
+    public static boolean getSpawnPlacement(EntityType<SilverGliderEntity> fEntityType, IServerWorld level, SpawnReason spawnReason, BlockPos blockPos, Random random)
     {
         if (spawnReason == SpawnReason.SPAWNER) return true;
         Block block = level.getBlockState(blockPos.below()).getBlock();
-        return block == Blocks.AIR || block == Blocks.SAND && level.getBaseLightLevel(blockPos, 0) > 8;
+        return block == Blocks.AIR || block == Blocks.SAND && level.getRawBrightness(blockPos, 0) > 8;
     }
 
     @Nullable
     public static void setSpawnBiomes(BiomeLoadingEvent event)
     {
         if (event.getCategory() == Biome.Category.OCEAN || event.getCategory() == Biome.Category.BEACH)
-            event.getSpawns().spawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
+            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
         return MobEntity.createMobAttributes()
-                .add(GENERIC_MAX_HEALTH, 20)
-                .add(GENERIC_MOVEMENT_SPEED, 0.23)
-                .add(GENERIC_FLYING_SPEED, 0.12);
+                .add(MAX_HEALTH, 20)
+                .add(MOVEMENT_SPEED, 0.23)
+                .add(FLYING_SPEED, 0.12);
     }
 
     public class SwoopGoal extends Goal
@@ -286,7 +286,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
             if (!isFlying()) return false;
             if (isRiding()) return false;
             if (getRandom().nextDouble() > 0.001) return false;
-            if (level.getFluidState(this.pos = level.getTopPosition(Heightmap.Type.WORLD_SURFACE, getBlockPos()).down()).isEmpty())
+            if (level.getFluidState(this.pos = level.getHeightmapPos(Heightmap.Type.WORLD_SURFACE, blockPosition()).below()).isEmpty())
                 return false;
             return getY() - pos.getY() > 8;
         }
@@ -294,7 +294,7 @@ public class SilverGliderEntity extends AbstractDragonEntity
         @Override
         public boolean canContinueToUse()
         {
-            return getBlockPos().getSquaredDistance(pos) > 8;
+            return blockPosition().distSqr(pos) > 8;
         }
 
         @Override

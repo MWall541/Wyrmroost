@@ -22,7 +22,7 @@ public class MoveToHomeGoal extends Goal
     @Override
     public boolean canUse()
     {
-        return !dragon.isInWalkTargetRange();
+        return !dragon.isWithinRestriction();
     }
 
     @Override
@@ -41,12 +41,12 @@ public class MoveToHomeGoal extends Goal
     public void tick()
     {
         int sq = WRConfig.homeRadius * WRConfig.homeRadius;
-        Vector3d home = Vector3d.atLowerCornerOf(dragon.getPositionTarget());
+        Vector3d home = Vector3d.atLowerCornerOf(dragon.getRestrictCenter());
         final int TIME_UNTIL_TELEPORT = 600; // 30 seconds
 
         time++;
         if (dragon.distanceToSqr(home) > sq + 35 || time >= TIME_UNTIL_TELEPORT)
-            dragon.trySafeTeleport(dragon.getPositionTarget().above());
+            dragon.trySafeTeleport(dragon.getRestrictCenter().above());
         else
         {
             Vector3d movePos;

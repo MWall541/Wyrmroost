@@ -56,8 +56,8 @@ public class FlyerWanderGoal extends WaterAvoidingRandomWalkingGoal
             else
             {
                 Vector3d vec3d = dragon.getLookAngle();
-                if (!dragon.isInWalkTargetRange())
-                    vec3d = Vector3d.atLowerCornerOf(dragon.getPositionTarget()).subtract(dragon.position()).normalize();
+                if (!dragon.isWithinRestriction())
+                    vec3d = Vector3d.atLowerCornerOf(dragon.getRestrictCenter()).subtract(dragon.position()).normalize();
 
                 int yOffset = dragon.getAltitude() > 40? 10 : 0;
                 position = RandomPositionGenerator.getAboveLandPos(dragon, 50, 30, vec3d, Mafs.PI / 2, 10, yOffset);

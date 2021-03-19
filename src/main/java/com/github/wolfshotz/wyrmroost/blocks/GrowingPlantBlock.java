@@ -38,7 +38,7 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     }
 
     @Override
-    public void performBonemeal(ServerWorld world, Random rand, BlockPos pos, BlockState state)
+    public void performBonemeal(ServerWorld level, Random rand, BlockPos pos, BlockState state)
     {
         BlockPos.Mutable mutable = pos.mutable().move(growthDirection);
         int i = 0;
@@ -73,7 +73,7 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     {
         if (hasMaxHeight())
         {
-            World world = context.getLevel();
+            World level = context.getLevel();
             BlockPos pos = context.getClickedPos().relative(growthDirection.getOpposite());
             if (getHeight(level, pos, true) + 1 >= maxGrowthHeight) return defaultBlockState().setValue(AGE, 25);
         }
@@ -97,12 +97,12 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
         return maxGrowthHeight != 0;
     }
 
-    public int getHeight(IWorldReader world, BlockPos pos)
+    public int getHeight(IWorldReader level, BlockPos pos)
     {
         return getHeight(level, pos, true) + getHeight(level, pos, false) - 1;
     }
 
-    public int getHeight(IWorldReader world, BlockPos pos, boolean below)
+    public int getHeight(IWorldReader level, BlockPos pos, boolean below)
     {
         Direction dir = below? growthDirection.getOpposite() : growthDirection;
         BlockPos.Mutable mutable = pos.mutable();

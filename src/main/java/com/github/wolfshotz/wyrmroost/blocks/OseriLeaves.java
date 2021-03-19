@@ -16,7 +16,7 @@ public class OseriLeaves extends LeavesBlock
     }
 
     @Override
-    public void animateTick(BlockState state, World world, BlockPos pos, Random random)
+    public void animateTick(BlockState state, World level, BlockPos pos, Random random)
     {
         if (random.nextDouble() < 0.1 && level.getBlockState(pos = pos.below()).isAir())
         {

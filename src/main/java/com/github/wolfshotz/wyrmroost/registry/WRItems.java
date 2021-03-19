@@ -26,17 +26,17 @@ public class WRItems
     static final ItemGroup MAIN_ITEM_GROUP = new ItemGroup("wyrmroost")
     {
         @Override
-        public ItemStack createIcon()
+        public ItemStack makeIcon()
         {
             return new ItemStack(COIN_DRAGON.get());
         }
 
         @Override
-        public void appendStacks(NonNullList<ItemStack> items)
+        public void fillItemList(NonNullList<ItemStack> items)
         {
-            super.appendStacks(items);
+            super.fillItemList(items);
             if (WRConfig.debugMode)
-                items.add(new ItemStack(Items.STICK).setCustomName(new StringTextComponent("Debug Stick")));
+                items.add(new ItemStack(Items.STICK).setHoverName(new StringTextComponent("Debug Stick")));
         }
     };
 
@@ -116,13 +116,13 @@ public class WRItems
     public static final RegistryObject<Item> COOKED_MINUTUS = register("cooked_desertwyrm", () -> new Item(builder().food(Foods.COOKED_DESERTWYRM)));
     public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", () -> new Item(builder().food(Foods.JEWELLED_APPLE)));
 
-    public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragon_armor", () -> new DragonArmorItem(4, ArmorMaterial.IRON.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterial.GOLD.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND = register("diamond_dragon_armor", () -> new DragonArmorItem(8, ArmorMaterial.DIAMOND.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragon_armor", () -> new DragonArmorItem(7, ArmorMaterials.PLATINUM.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("blue_geode_dragon_armor", () -> new DragonArmorItem(10, ArmorMaterials.BLUE_GEODE.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(13, ArmorMaterials.RED_GEODE.getEnchantability()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterials.PURPLE_GEODE.getEnchantability()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragon_armor", () -> new DragonArmorItem(4, ArmorMaterial.IRON.getEnchantmentValue()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterial.GOLD.getEnchantmentValue()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND = register("diamond_dragon_armor", () -> new DragonArmorItem(8, ArmorMaterial.DIAMOND.getEnchantmentValue()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragon_armor", () -> new DragonArmorItem(7, ArmorMaterials.PLATINUM.getEnchantmentValue()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("blue_geode_dragon_armor", () -> new DragonArmorItem(10, ArmorMaterials.BLUE_GEODE.getEnchantmentValue()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(13, ArmorMaterials.RED_GEODE.getEnchantmentValue()));
+    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterials.PURPLE_GEODE.getEnchantmentValue()));
 
     static RegistryObject<Item> register(String name, Supplier<Item> item)
     {
@@ -136,24 +136,24 @@ public class WRItems
 
     public static Item.Properties builder()
     {
-        return new Item.Properties().group(MAIN_ITEM_GROUP);
+        return new Item.Properties().tab(MAIN_ITEM_GROUP);
     }
 
     private static class Foods
     {
-        static final Food RAW_LOWTIER_MEAT = new Food.Builder().hunger(1).saturationModifier(0.1f).meat().build();
-        static final Food RAW_COMMON_MEAT = new Food.Builder().hunger(3).saturationModifier(0.3f).meat().build();
-        static final Food RAW_APEX_MEAT = new Food.Builder().hunger(5).saturationModifier(0.45f).meat().build();
-        static final Food RAW_BEHEMOTH_MEAT = new Food.Builder().hunger(7).saturationModifier(0.7f).meat().build();
-        static final Food COOKED_LOWTIER_MEAT = new Food.Builder().hunger(3).saturationModifier(0.7f).meat().build();
-        static final Food COOKED_COMMON_MEAT = new Food.Builder().hunger(8).saturationModifier(0.8f).meat().build();
-        static final Food COOKED_APEX_MEAT = new Food.Builder().hunger(16).saturationModifier(1f).meat().build();
-        static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().hunger(20).saturationModifier(2f).meat().build();
-        static final Food COOKED_DESERTWYRM = new Food.Builder().hunger(10).saturationModifier(1f).meat().build();
-        static final Food JEWELLED_APPLE = new Food.Builder().hunger(8).saturationModifier(0.9f).alwaysEdible()
+        static final Food RAW_LOWTIER_MEAT = new Food.Builder().nutrition(1).saturationMod(0.1f).meat().build();
+        static final Food RAW_COMMON_MEAT = new Food.Builder().nutrition(3).saturationMod(0.3f).meat().build();
+        static final Food RAW_APEX_MEAT = new Food.Builder().nutrition(5).saturationMod(0.45f).meat().build();
+        static final Food RAW_BEHEMOTH_MEAT = new Food.Builder().nutrition(7).saturationMod(0.7f).meat().build();
+        static final Food COOKED_LOWTIER_MEAT = new Food.Builder().nutrition(3).saturationMod(0.7f).meat().build();
+        static final Food COOKED_COMMON_MEAT = new Food.Builder().nutrition(8).saturationMod(0.8f).meat().build();
+        static final Food COOKED_APEX_MEAT = new Food.Builder().nutrition(16).saturationMod(1f).meat().build();
+        static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().nutrition(20).saturationMod(2f).meat().build();
+        static final Food COOKED_DESERTWYRM = new Food.Builder().nutrition(10).saturationMod(1f).meat().build();
+        static final Food JEWELLED_APPLE = new Food.Builder().nutrition(8).saturationMod(0.9f).alwaysEat()
                 .effect(() -> new EffectInstance(Effects.GLOWING, 800), 1f)
                 .effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1f)
-                .effect(() -> new EffectInstance(Effects.RESISTANCE, 800), 1f)
+                .effect(() -> new EffectInstance(Effects.DAMAGE_RESISTANCE, 800), 1f)
                 .effect(() -> new EffectInstance(Effects.ABSORPTION, 6000, 2), 1f)
                 .effect(() -> new EffectInstance(Effects.NIGHT_VISION, 800), 1f)
                 .build();
@@ -167,12 +167,12 @@ public class WRItems
 
         private static INamedTag<Item> tag(String path)
         {
-            return ItemTags.register(Wyrmroost.MOD_ID + ":" + path);
+            return ItemTags.bind(Wyrmroost.MOD_ID + ":" + path);
         }
 
         private static INamedTag<Item> forge(String path)
         {
-            return ItemTags.register("forge:" + path);
+            return ItemTags.bind("forge:" + path);
         }
     }
 }

@@ -28,7 +28,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
         super(manager, new SilverGliderModel(), 1f);
 
         addLayer(new GlowLayer(this::getGlowTexture));
-        addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.getEntityCutoutNoCull(SLEEP)));
+        addLayer(new ConditionalLayer(AbstractDragonEntity::isSleeping, d -> RenderType.entityCutoutNoCull(SLEEP)));
     }
 
     @Nullable

@@ -32,20 +32,20 @@ public class DragonStaffItem extends Item
 
     public DragonStaffItem()
     {
-        super(WRItems.builder().maxCount(1));
+        super(WRItems.builder().stacksTo(1));
     }
 
     /**
      * Triggered when right clicked on air
      */
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand)
+    public ActionResult<ItemStack> use(World level, PlayerEntity player, Hand hand)
     {
-        ItemStack stack = player.getStackInHand(hand);
-        if (player.isSneaking() && stack.hasTag() && stack.getTag().contains(DATA_DRAGON_ID))
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.isShiftKeyDown() && stack.hasTag() && stack.getTag().contains(DATA_DRAGON_ID))
         {
             reset(stack.getTag());
-            ModUtils.playLocalSound(level, player.blockPosition(), SoundEvents.BLOCK_SCAFFOLDING_STEP, 1, 1);
+            ModUtils.playLocalSound(level, player.blockPosition(), SoundEvents.SCAFFOLDING_STEP, 1, 1);
             return ActionResult.success(stack);
         }
 
@@ -64,10 +64,10 @@ public class DragonStaffItem extends Item
         if (entity instanceof AbstractDragonEntity)
         {
             AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
-            if (dragon.isOwner(player))
+            if (dragon.isOwnedBy(player))
             {
                 bindDragon(dragon, stack);
-                ModUtils.playLocalSound(player.level, player.blockPosition(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1, 1);
+                ModUtils.playLocalSound(player.level, player.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, 1, 1);
                 return true;
             }
         }
@@ -78,16 +78,16 @@ public class DragonStaffItem extends Item
      * Triggered when Right clicking an entity
      */
     @Override
-    public ActionResultType useOnEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
+    public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
     {
         if (target instanceof AbstractDragonEntity)
         {
             AbstractDragonEntity dragon = (AbstractDragonEntity) target;
-            if (dragon.isOwner(playerIn))
+            if (dragon.isOwnedBy(playerIn))
             {
                 bindDragon(dragon, stack);
                 if (playerIn.level.isClientSide) StaffScreen.open(dragon, stack);
-                return ActionResultType.success(playerIn.level.isClientSide);
+                return ActionResultType.sidedSuccess(playerIn.level.isClientSide);
             }
         }
         return ActionResultType.PASS;
@@ -97,26 +97,26 @@ public class DragonStaffItem extends Item
      * Triggered when right clicked on a block
      */
     @Override
-    public ActionResultType useOnBlock(ItemUseContext context)
+    public ActionResultType useOn(ItemUseContext context)
     {
-        if (context.getPlayer().isSneaking()) return ActionResultType.PASS;
-        ItemStack stack = context.getStack();
-        AbstractDragonEntity dragon = getBoundDragon(context.getWorld(), stack);
+        if (context.getPlayer().isShiftKeyDown()) return ActionResultType.PASS;
+        ItemStack stack = context.getItemInHand();
+        AbstractDragonEntity dragon = getBoundDragon(context.getLevel(), stack);
         if (dragon != null && getAction(stack).clickBlock(dragon, context)) return ActionResultType.SUCCESS;
         return ActionResultType.PASS;
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
     {
-        tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.desc").formatted(TextFormatting.GRAY));
+        tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.desc").withStyle(TextFormatting.GRAY));
         if (stack.hasTag())
         {
             AbstractDragonEntity dragon = getBoundDragon(worldIn, stack);
             if (dragon != null)
             {
-                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", ((IFormattableTextComponent) dragon.getName()).formatted(TextFormatting.AQUA)));
-                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", getAction(stack).getTranslation(dragon)).formatted(TextFormatting.AQUA));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.bound", ((IFormattableTextComponent) dragon.getName()).withStyle(TextFormatting.AQUA)));
+                tooltip.add(new TranslationTextComponent("item.wyrmroost.dragon_staff.action", getAction(stack).getTranslation(dragon)).withStyle(TextFormatting.AQUA));
             }
         }
     }
@@ -128,14 +128,14 @@ public class DragonStaffItem extends Item
      * The solution is to just remove everything.
      */
     @Override
-    public boolean postProcessTag(CompoundNBT nbt)
+    public boolean verifyTagAfterLoad(CompoundNBT nbt)
     {
         reset(nbt);
         return false;
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack)
+    public boolean isFoil(ItemStack stack)
     {
         return getAction(stack) != StaffAction.DEFAULT;
     }
@@ -170,11 +170,11 @@ public class DragonStaffItem extends Item
     {
         assertStaff(stack);
         CompoundNBT nbt = stack.getOrCreateTag();
-        nbt.putInt(DATA_DRAGON_ID, dragon.getEntityId());
+        nbt.putInt(DATA_DRAGON_ID, dragon.getId());
     }
 
     @Nullable
-    public static AbstractDragonEntity getBoundDragon(World world, ItemStack stack)
+    public static AbstractDragonEntity getBoundDragon(World level, ItemStack stack)
     {
         assertStaff(stack);
         if (stack.hasTag())

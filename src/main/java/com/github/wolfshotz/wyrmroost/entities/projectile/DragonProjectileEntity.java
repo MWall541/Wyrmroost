@@ -30,7 +30,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     public int life;
     public boolean hasCollided;
 
-    protected DragonProjectileEntity(EntityType<?> type, World world)
+    protected DragonProjectileEntity(EntityType<?> type, World level)
     {
         super(type, level);
     }
@@ -46,7 +46,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         this.shooter = shooter;
         this.life = 50;
 
-        setVelocity(getDeltaMovement().add(acceleration));
+        setDeltaMovement(getDeltaMovement().add(acceleration));
         position = position.add(getDeltaMovement());
 
         Vector3d motion = getDeltaMovement();
@@ -57,26 +57,26 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         float yaw = (float) MathHelper.atan2(z, x) * 180f / Mafs.PI - 90f;
         float pitch = (float) -(MathHelper.atan2(y, planeSqrt) * 180f / Mafs.PI);
 
-        refreshPositionAndAngles(position.x, position.y, position.z, yRot, pitch);
+        moveTo(position.x, position.y, position.z, yRot, xRot);
     }
 
     @Override
     public void tick()
     {
-        if ((!level.isClientSide && (!shooter.isAlive() || tickCount > life || tickCount > getMaxLife())) || !level.isChunkLoaded(blockPosition()))
+        if ((!level.isClientSide && (!shooter.isAlive() || tickCount > life || tickCount > getMaxLife())) || !level.hasChunkAt(blockPosition()))
         {
             remove();
             return;
         }
 
         super.tick();
-        if (growthRate != 1) calculateDimensions();
+        if (growthRate != 1) refreshDimensions();
 
         switch (getEffectType())
         {
             case RAYTRACE:
             {
-                RayTraceResult rayTrace = ProjectileHelper.getCollision(this, this::canImpactEntity);
+                RayTraceResult rayTrace = ProjectileHelper.getHitResult(this, this::canImpactEntity);
                 if (rayTrace.getType() != RayTraceResult.Type.MISS && !ForgeEventFactory.onProjectileImpact(this, rayTrace))
                     hit(rayTrace);
                 break;
@@ -84,31 +84,31 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
             case COLLIDING:
             {
                 AxisAlignedBB box = getBoundingBox().inflate(0.05);
-                for (Entity entity : level.getOtherEntities(this, box, this::canImpactEntity))
+                for (Entity entity : level.getEntities(this, box, this::canImpactEntity))
                     onEntityImpact(entity);
 
                 Vector3d position = position();
                 Vector3d end = position.add(getDeltaMovement());
-                BlockRayTraceResult rtr = level.raycast(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
-                if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getBlockPos(), rtr.getSide());
+                BlockRayTraceResult rtr = level.clip(new RayTraceContext(position, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
+                if (rtr.getType() != RayTraceResult.Type.MISS) onBlockImpact(rtr.getBlockPos(), rtr.getDirection());
             }
             default:
                 break;
         }
 
         Vector3d motion = getDeltaMovement();
-        if (!hasNoGravity()) setVelocity(motion = motion.add(0, -0.05, 0));
+        if (!isNoGravity()) setDeltaMovement(motion = motion.add(0, -0.05, 0));
         double x = getX() + motion.x;
         double y = getY() + motion.y;
         double z = getZ() + motion.z;
 
         if (isInWater())
         {
-            setVelocity(motion.multiply(0.95f));
+            setDeltaMovement(motion.scale(0.95f));
             for (int i = 0; i < 4; ++i)
                 level.addParticle(ParticleTypes.BUBBLE, getX() * 0.25d, getY() * 0.25d, getZ() * 0.25D, motion.x, motion.y, motion.z);
         }
-        updatePosition(x, y, z);
+        absMoveTo(x, y, z);
     }
 
     public boolean canImpactEntity(Entity entity)
@@ -117,8 +117,8 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         if (!entity.isAlive()) return false;
         if (!(entity instanceof LivingEntity)) return false;
         if (entity.getRootVehicle() == shooter) return false;
-        if (entity.isSpectator() || !entity.collides() || entity.noClip) return false;
-        return shooter != null && !entity.isTeammate(shooter);
+        if (entity.isSpectator() || !entity.isPickable() || entity.noPhysics) return false;
+        return shooter != null && !entity.isAlliedTo(shooter);
     }
 
     public void hit(RayTraceResult result)
@@ -127,7 +127,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         if (type == RayTraceResult.Type.BLOCK)
         {
             final BlockRayTraceResult brtr = (BlockRayTraceResult) result;
-            onBlockImpact(brtr.getBlockPos(), brtr.getSide());
+            onBlockImpact(brtr.getBlockPos(), brtr.getDirection());
         }
         else if (type == RayTraceResult.Type.ENTITY) onEntityImpact(((EntityRayTraceResult) result).getEntity());
     }
@@ -141,10 +141,10 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     }
 
     @Override
-    public void setVelocity(Vector3d motionIn)
+    public void setDeltaMovement(Vector3d motionIn)
     {
-        super.setVelocity(motionIn);
-        ProjectileHelper.method_7484(this, 1);
+        super.setDeltaMovement(motionIn);
+        ProjectileHelper.rotateTowardsMovement(this, 1);
     }
 
     @Override
@@ -152,13 +152,13 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     {
         if (growthRate == 1) return getType().getDimensions();
         float size = Math.min(getBbWidth() * growthRate, 2.25f);
-        return EntitySize.changing(size, size);
+        return EntitySize.scalable(size, size);
     }
 
     @Override
-    public boolean shouldRender(double distance)
+    public boolean shouldRenderAtSqrDistance(double distance)
     {
-        double d0 = getBoundingBox().getAverageSideLength() * 4;
+        double d0 = getBoundingBox().getSize() * 4;
         if (Double.isNaN(d0)) d0 = 4;
         d0 *= 64;
         return distance < d0 * d0;
@@ -166,7 +166,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
 
     public DamageSource getDamageSource(String name)
     {
-        return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setScaledWithDifficulty();
+        return new IndirectEntityDamageSource(name, this, shooter).setProjectile().setScalesWithDifficulty();
     }
 
     protected EffectType getEffectType()
@@ -190,52 +190,52 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     }
 
     @Override
-    public boolean hasNoGravity()
+    public boolean isNoGravity()
     {
         return true;
     }
 
     @Override
-    protected boolean canClimb()
+    protected boolean isMovementNoisy()
     {
         return false;
     }
 
     @Override
-    public float getBrightnessAtEyes()
+    public float getBrightness()
     {
         return 1f;
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount)
+    public boolean hurt(DamageSource source, float amount)
     {
         return false;
     }
 
     @Override
-    public float getTargetingMargin()
+    public float getPickRadius()
     {
         return getBbWidth();
     }
 
     @Override
-    protected void initDataTracker()
+    protected void defineSynchedData()
     {
     }
 
     @Override // Does not Serialize
-    protected void readCustomDataFromTag(CompoundNBT compound)
+    protected void readAdditionalSaveData(CompoundNBT compound)
     {
     }
 
     @Override // Does not Serialize
-    protected void writeCustomDataToTag(CompoundNBT compound)
+    protected void addAdditionalSaveData(CompoundNBT compound)
     {
     }
 
     @Override
-    public IPacket<?> createSpawnPacket()
+    public IPacket<?> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
@@ -243,7 +243,7 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
     @Override
     public void writeSpawnData(PacketBuffer buf)
     {
-        buf.writeInt(shooter.getEntityId());
+        buf.writeInt(shooter.getId());
         buf.writeFloat(growthRate);
     }
 

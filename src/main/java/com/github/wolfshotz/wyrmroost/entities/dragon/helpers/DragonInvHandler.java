@@ -51,5 +51,8 @@ public class DragonInvHandler extends ItemStackHandler
         return true;
     }
 
-    public NonNullList<ItemStack> getStacks() { return stacks; }
+    public NonNullList<ItemStack> getContents()
+    {
+        return stacks;
+    }
 }

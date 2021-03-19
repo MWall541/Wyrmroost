@@ -59,8 +59,8 @@ public final class ModUtils
     @Nullable
     public static ItemStack getHeldStack(PlayerEntity player, Item item)
     {
-        ItemStack main = player.getMainHandStack();
-        ItemStack off = player.getOffHandStack();
+        ItemStack main = player.getMainHandItem();
+        ItemStack off = player.getOffhandItem();
         return item == main.getItem()? main : item == off.getItem()? off : null;
     }
 
@@ -71,21 +71,21 @@ public final class ModUtils
     @SuppressWarnings("unchecked")
     public static <T extends Entity> EntityType<T> getEntityTypeByKey(@Nonnull String key)
     {
-        return (EntityType<T>) EntityType.get(key).orElse(null);
+        return (EntityType<T>) EntityType.byString(key).orElse(null);
     }
 
     /**
      * Play a sound on the local client.
      *
-     * @param world  :thinking:
+     * @param level  :thinking:
      * @param pos    the pos to play it at (I haven't seen this change anything tho...)
      * @param sound  again, :thinking:
      * @param volume so help me god
      * @param pitch  the pitch of the sound. lower values = sulfur hexafloride, higher values = dying chipmunk
      */
-    public static void playLocalSound(World world, BlockPos pos, SoundEvent sound, float volume, float pitch)
+    public static void playLocalSound(World level, BlockPos pos, SoundEvent sound, float volume, float pitch)
     {
-        level.playSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
+        level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
     }
 
     /**
@@ -97,7 +97,7 @@ public final class ModUtils
      */
     public static Iterable<BlockPos> iterateThrough(AxisAlignedBB aabb)
     {
-        return BlockPos.iterate(
+        return BlockPos.betweenClosed(
                 MathHelper.floor(aabb.minX),
                 MathHelper.floor(aabb.minY),
                 MathHelper.floor(aabb.minZ),

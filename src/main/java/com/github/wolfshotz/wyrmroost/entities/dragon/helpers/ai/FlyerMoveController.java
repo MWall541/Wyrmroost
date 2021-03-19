@@ -26,19 +26,19 @@ public class FlyerMoveController extends MovementController
     {
         if (dragon.canBeControlledByRider())
         {
-            state = Action.WAIT;
+            operation = Action.WAIT;
             return;
         }
 
-        if (state == Action.MOVE_TO)
+        if (operation == Action.MOVE_TO)
         {
-            double x = targetX - dragon.getX();
-            double y = targetY - dragon.getY();
-            double z = targetZ - dragon.getZ();
+            double x = wantedX - dragon.getX();
+            double y = wantedY - dragon.getY();
+            double z = wantedZ - dragon.getZ();
             double distSq = x * x + y * y + z * z;
             if (distSq < 2.5000003E-7)
             {
-                dragon.setForwardSpeed(0f);
+                dragon.setZza(0f);
                 return;
             }
             if (y > dragon.getFlightThreshold() + 1) dragon.setFlying(true);
@@ -47,35 +47,35 @@ public class FlyerMoveController extends MovementController
 
             if (dragon.isFlying())
             {
-                if (!dragon.getLookControl().isActive())
-                    dragon.getLookControl().setLookAt(targetX, targetY, targetZ, dragon.getLookYawSpeed(), 75);
+                if (!dragon.getLookControl().isHasWanted())
+                    dragon.getLookControl().setLookAt(wantedX, wantedY, wantedZ, dragon.getHeadRotSpeed(), 75);
 
-                speed = (float) (dragon.getAttributeValue(Attributes.GENERIC_FLYING_SPEED) * this.speed) / 0.225f;
-                if (y != 0) dragon.setUpwardSpeed(y > 0? speed : -speed);
+                speed = (float) (dragon.getAttributeValue(Attributes.FLYING_SPEED) * speedModifier) / 0.225f;
+                if (y != 0) dragon.setYya(y > 0? speed : -speed);
             }
             else
             {
-                speed = (float) (this.speed * dragon.getAttributeValue(Attributes.GENERIC_MOVEMENT_SPEED));
+                speed = (float) (speedModifier * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED));
                 BlockPos blockpos = dragon.blockPosition();
-                BlockState blockstate = dragon.level.getBlockState(blockpos);
-                Block block = blockstate.getBlock();
-                VoxelShape voxelshape = blockstate.getCollisionShape(dragon.level, blockpos);
-                if (y > (double) dragon.stepHeight && x * x + z * z < (double) Math.max(1.0F, dragon.getBbWidth()) || !voxelshape.isEmpty() && dragon.getY() < voxelshape.getMax(Direction.Axis.Y) + (double) blockpos.getY() && !block.isIn(BlockTags.DOORS) && !block.isIn(BlockTags.FENCES))
+                BlockState blockoperation = dragon.level.getBlockState(blockpos);
+                Block block = blockoperation.getBlock();
+                VoxelShape voxelshape = blockoperation.getCollisionShape(dragon.level, blockpos);
+                if (y > (double) dragon.maxUpStep && x * x + z * z < (double) Math.max(1.0F, dragon.getBbWidth()) || !voxelshape.isEmpty() && dragon.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !block.is(BlockTags.DOORS) && !block.is(BlockTags.FENCES))
                 {
-                    dragon.getJumpControl().setActive();
-                    state = MovementController.Action.JUMPING;
+                    dragon.getJumpControl().jump();
+                    operation = MovementController.Action.JUMPING;
                 }
             }
-            dragon.yRot = changeAngle(dragon.yRot, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getYawRotationSpeed());
-            dragon.setMovementSpeed(speed);
-            state = Action.WAIT;
+            dragon.yRot = rotlerp(dragon.yRot, (float) (MathHelper.atan2(z, x) * (180f / Mafs.PI)) - 90f, dragon.getYawRotationSpeed());
+            dragon.setSpeed(speed);
+            operation = Action.WAIT;
         }
         else
         {
-            dragon.setMovementSpeed(0);
-            dragon.setSidewaysSpeed(0);
-            dragon.setUpwardSpeed(0);
-            dragon.setForwardSpeed(0);
+            dragon.setSpeed(0);
+            dragon.setXxa(0);
+            dragon.setYya(0);
+            dragon.setZza(0);
         }
     }
 }

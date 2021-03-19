@@ -27,7 +27,7 @@ public class WRBlocks
     static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroost_dimension")
     {
         @Override
-        public ItemStack createIcon()
+        public ItemStack makeIcon()
         {
             return new ItemStack(PURPLE_GEODE_BLOCK.get());
         }
@@ -46,41 +46,41 @@ public class WRBlocks
     public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 4, 7f, SoundType.METAL)));
 
     // tincture weald
-    public static final RegistryObject<Block> MULCH = register("mulch", () -> new SnowyDirtBlock(properties(Material.SOIL, SoundType.GRAVEL).strength(0.5f).harvestTool(ToolType.SHOVEL)));
-    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(plant().ticksRandomly(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY));
+    public static final RegistryObject<Block> MULCH = register("mulch", () -> new SnowyDirtBlock(properties(Material.DIRT, SoundType.GRAVEL).strength(0.5f).harvestTool(ToolType.SHOVEL)));
+    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY));
     public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null);
     public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new);
-    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.REPLACEABLE_PLANT, SoundType.VINE).ticksRandomly().noCollision().strength(0.2f)));
-    public static final RegistryObject<Block> BLUE_OSERI_SAPLING = register("blue_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.BLUE), plant().ticksRandomly()));
+    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.REPLACEABLE_PLANT, SoundType.VINE).randomTicks().noCollission().strength(0.2f)));
+    public static final RegistryObject<Block> BLUE_OSERI_SAPLING = register("blue_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.BLUE), plant().randomTicks()));
     public static final RegistryObject<Block> BLUE_OSERI_LEAVES = register("blue_oseri_leaves", () -> new OseriLeaves(leaves()));
-    public static final RegistryObject<Block> BLUE_OSERI_VINES = register("blue_oseri_vines", () -> new GrowingPlantBlock(plant().ticksRandomly(), Direction.DOWN, 0, WRBlocks.BLUE_OSERI_VINES_BODY));
+    public static final RegistryObject<Block> BLUE_OSERI_VINES = register("blue_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.BLUE_OSERI_VINES_BODY));
     public static final RegistryObject<Block> BLUE_OSERI_VINES_BODY = register("blue_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.BLUE_OSERI_VINES), null);
     public static final RegistryObject<Block> BLUE_OSERI_PETALS = register("blue_oseri_petals", () -> new PetalsBlock(plant()));
-    public static final RegistryObject<Block> GOLD_OSERI_SAPLING = register("gold_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.GOLD), plant().ticksRandomly()));
+    public static final RegistryObject<Block> GOLD_OSERI_SAPLING = register("gold_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.GOLD), plant().randomTicks()));
     public static final RegistryObject<Block> GOLD_OSERI_LEAVES = register("gold_oseri_leaves", () -> new OseriLeaves(leaves()));
-    public static final RegistryObject<Block> GOLD_OSERI_VINES = register("gold_oseri_vines", () -> new GrowingPlantBlock(plant().ticksRandomly(), Direction.DOWN, 0, WRBlocks.GOLD_OSERI_VINES_BODY));
+    public static final RegistryObject<Block> GOLD_OSERI_VINES = register("gold_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.GOLD_OSERI_VINES_BODY));
     public static final RegistryObject<Block> GOLD_OSERI_VINES_BODY = register("gold_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.GOLD_OSERI_VINES), null);
     public static final RegistryObject<Block> GOLD_OSERI_PETALS = register("gold_oseri_petals", () -> new PetalsBlock(plant()));
-    public static final RegistryObject<Block> PINK_OSERI_SAPLING = register("pink_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PINK), plant().ticksRandomly()));
+    public static final RegistryObject<Block> PINK_OSERI_SAPLING = register("pink_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PINK), plant().randomTicks()));
     public static final RegistryObject<Block> PINK_OSERI_LEAVES = register("pink_oseri_leaves", () -> new OseriLeaves(leaves()));
-    public static final RegistryObject<Block> PINK_OSERI_VINES = register("pink_oseri_vines", () -> new GrowingPlantBlock(plant().ticksRandomly(), Direction.DOWN, 0, WRBlocks.PINK_OSERI_VINES_BODY));
+    public static final RegistryObject<Block> PINK_OSERI_VINES = register("pink_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PINK_OSERI_VINES_BODY));
     public static final RegistryObject<Block> PINK_OSERI_VINES_BODY = register("pink_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PINK_OSERI_VINES), null);
     public static final RegistryObject<Block> PINK_OSERI_PETALS = register("pink_oseri_petals", () -> new PetalsBlock(plant()));
-    public static final RegistryObject<Block> PURPLE_OSERI_SAPLING = register("purple_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PURPLE), plant().ticksRandomly()));
+    public static final RegistryObject<Block> PURPLE_OSERI_SAPLING = register("purple_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PURPLE), plant().randomTicks()));
     public static final RegistryObject<Block> PURPLE_OSERI_LEAVES = register("purple_oseri_leaves", () -> new OseriLeaves(leaves()));
-    public static final RegistryObject<Block> PURPLE_OSERI_VINES = register("purple_oseri_vines", () -> new GrowingPlantBlock(plant().ticksRandomly(), Direction.DOWN, 0, WRBlocks.PURPLE_OSERI_VINES_BODY));
+    public static final RegistryObject<Block> PURPLE_OSERI_VINES = register("purple_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PURPLE_OSERI_VINES_BODY));
     public static final RegistryObject<Block> PURPLE_OSERI_VINES_BODY = register("purple_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PURPLE_OSERI_VINES), null);
     public static final RegistryObject<Block> PURPLE_OSERI_PETALS = register("purple_oseri_petals", () -> new PetalsBlock(plant()));
-    public static final RegistryObject<Block> WHITE_OSERI_SAPLING = register("white_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.WHITE), plant().ticksRandomly()));
+    public static final RegistryObject<Block> WHITE_OSERI_SAPLING = register("white_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.WHITE), plant().randomTicks()));
     public static final RegistryObject<Block> WHITE_OSERI_LEAVES = register("white_oseri_leaves", () -> new OseriLeaves(leaves()));
-    public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new GrowingPlantBlock(plant().ticksRandomly(), Direction.DOWN, 0, WRBlocks.WHITE_OSERI_VINES_BODY));
+    public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.WHITE_OSERI_VINES_BODY));
     public static final RegistryObject<Block> WHITE_OSERI_VINES_BODY = register("white_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.WHITE_OSERI_VINES), null);
     public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()));
     public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
-        return register(name, block, b -> new BlockItem(b, new Item.Properties().group(BLOCKS_ITEM_GROUP)));
+        return register(name, block, b -> new BlockItem(b, new Item.Properties().tab(BLOCKS_ITEM_GROUP)));
     }
 
     static RegistryObject<Block> register(String name, Supplier<Block> block, @Nullable Function<Block, BlockItem> blockItem)
@@ -94,23 +94,23 @@ public class WRBlocks
     {
         return AbstractBlock.Properties
                 .of(material)
-                .sounds(sound);
+                .sound(sound);
     }
 
     public static AbstractBlock.Properties plant()
     {
-        return properties(Material.LEAVES, SoundType.GRASS).noCollision();
+        return properties(Material.LEAVES, SoundType.GRASS).noCollission();
     }
 
     public static AbstractBlock.Properties leaves()
     {
         return properties(Material.LEAVES, SoundType.GRASS)
                 .strength(0.2f)
-                .ticksRandomly()
-                .nonOpaque()
-                .allowsSpawning((s, r, p, e) -> false)
-                .suffocates((s, r, p) -> false)
-                .blockVision((s, r, p) -> false);
+                .randomTicks()
+                .noOcclusion()
+                .isValidSpawn((s, r, p, e) -> false)
+                .isSuffocating((s, r, p) -> false)
+                .isViewBlocking((s, r, p) -> false);
     }
 
     public static AbstractBlock.Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardnessResistance, SoundType sound)
@@ -119,9 +119,9 @@ public class WRBlocks
                 .of(material)
                 .harvestTool(harvestTool)
                 .harvestLevel(harvestLevel)
-                .requiresTool()
+                .requiresCorrectToolForDrops()
                 .strength(hardnessResistance)
-                .sounds(sound);
+                .sound(sound);
     }
 
     public static class Tags
@@ -147,8 +147,8 @@ public class WRBlocks
 
         public static INamedTag<Block> getFor(String path)
         {
-            INamedTag<Block> tag = BlockTags.register(path);
-            ITEM_BLOCK_TAGS.put(tag, ItemTags.register(path));
+            INamedTag<Block> tag = BlockTags.bind(path);
+            ITEM_BLOCK_TAGS.put(tag, ItemTags.bind(path));
             return tag;
         }
 
@@ -187,15 +187,15 @@ public class WRBlocks
             this.wood = WRBlocks.register(name + "_wood", () -> new LogBlock(logColor, logColor, self().strippedWood));
             this.strippedWood = WRBlocks.register("stripped_" + name + "_wood", () -> new RotatedPillarBlock(LogBlock.properties(color, color)));
             this.slab = WRBlocks.register(name + "_slab", () -> new SlabBlock(props(color)));
-            this.pressurePlate = WRBlocks.register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).noCollision().strength(0.5f)));
+            this.pressurePlate = WRBlocks.register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).noCollission().strength(0.5f)));
             this.fence = WRBlocks.register(name + "_fence", () -> new FenceBlock(props(color)));
             this.fenceGate = WRBlocks.register(name + "_fence_gate", () -> new FenceGateBlock(props(color)));
-            this.trapDoor = WRBlocks.register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).strength(3f).nonOpaque().allowsSpawning((s, r, p, e) -> false)));
-            this.stairs = WRBlocks.register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().getDefaultState(), props(color)));
-            this.button = WRBlocks.register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.of(Material.SUPPORTED).noCollision().harvestTool(ToolType.AXE).strength(0.5f).sounds(SoundType.WOOD)));
-            this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).strength(3f).nonOpaque()));
-            this.wallSign = WRBlocks.register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).noCollision().strength(1f).lootFrom(self().sign), this), null);
-            this.sign = WRBlocks.register(name + "_sign", () -> new WRSignBlock(props(color).noCollision().strength(1f), this), b -> new SignItem(new Item.Properties().maxCount(16).group(BLOCKS_ITEM_GROUP), b, getWallSign()));
+            this.trapDoor = WRBlocks.register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).strength(3f).noOcclusion().isValidSpawn((s, r, p, e) -> false)));
+            this.stairs = WRBlocks.register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().defaultBlockState(), props(color)));
+            this.button = WRBlocks.register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.of(Material.DECORATION).noCollission().harvestTool(ToolType.AXE).strength(0.5f).sound(SoundType.WOOD)));
+            this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).strength(3f).noOcclusion()));
+            this.wallSign = WRBlocks.register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).noCollission().strength(1f).lootFrom(self().sign), this), null);
+            this.sign = WRBlocks.register(name + "_sign", () -> new WRSignBlock(props(color).noCollission().strength(1f), this), b -> new SignItem(new Item.Properties().stacksTo(16).tab(BLOCKS_ITEM_GROUP), b, getWallSign()));
         }
 
         public Block getPlanks()
@@ -284,7 +284,7 @@ public class WRBlocks
                     .of(Material.WOOD, color)
                     .strength(2f, 3f)
                     .harvestTool(ToolType.AXE)
-                    .sounds(SoundType.WOOD);
+                    .sound(SoundType.WOOD);
         }
     }
 }

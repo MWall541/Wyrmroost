@@ -79,24 +79,24 @@ public class CommonEvents
     {
         if (!WRConfig.debugMode) return;
         PlayerEntity player = evt.getPlayer();
-        ItemStack stack = player.getStackInHand(evt.getHand());
-        if (stack.getItem() != Items.STICK || !stack.getName().getString().equals("Debug Stick"))
+        ItemStack stack = player.getItemInHand(evt.getHand());
+        if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick"))
             return;
 
         evt.setCanceled(true);
         evt.setCancellationResult(ActionResultType.SUCCESS);
 
         Entity entity = evt.getTarget();
-        entity.calculateDimensions();
+        entity.refreshDimensions();
 
         if (!(entity instanceof AbstractDragonEntity)) return;
         AbstractDragonEntity dragon = (AbstractDragonEntity) entity;
 
-        if (player.isSneaking()) dragon.tame(true, player);
+        if (player.isShiftKeyDown()) dragon.tame(true, player);
         else
         {
             if (dragon.level.isClientSide) DebugScreen.open(dragon);
-            else Wyrmroost.LOG.info(dragon.getNavigation().getCurrentPath() == null? "null" : dragon.getNavigation().getCurrentPath().getTarget().toString());
+            else Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null? "null" : dragon.getNavigation().getPath().getTarget().toString());
         }
     }
 
@@ -113,10 +113,10 @@ public class CommonEvents
 
     public static void loadLoot(LootTableLoadEvent evt)
     {
-        if (evt.getName().equals(LootTables.ABANDONED_MINESHAFT_CHEST))
-            evt.getTable().addPool(LootPool.builder()
+        if (evt.getName().equals(LootTables.ABANDONED_MINESHAFT))
+            evt.getTable().addPool(LootPool.lootPool()
                     .name("coin_dragon_inject")
-                    .with(CoinDragonItem.getLootEntry())
+                    .add(CoinDragonItem.getLootEntry())
                     .build());
     }
 }

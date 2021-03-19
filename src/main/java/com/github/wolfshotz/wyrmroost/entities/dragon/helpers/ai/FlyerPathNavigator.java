@@ -19,23 +19,23 @@ public class FlyerPathNavigator extends FlyingPathNavigator
     @SuppressWarnings("ConstantConditions") // IT CAN BE NULL DAMNIT
     public void tick()
     {
-        if (!isDone() && isAtValidPosition())
+        if (!isDone() && canUpdatePath())
         {
-            AbstractDragonEntity dragon = ((AbstractDragonEntity) entity);
+            AbstractDragonEntity dragon = ((AbstractDragonEntity) mob);
             BlockPos target = getTargetPos();
             if (target != null)
             {
-                entity.getMoveControl().moveTo(target.getX(), target.getY(), target.getZ(), speed);
-                nodeReachProximity = entity.getWidth() * entity.getWidth() * dragon.getYawRotationSpeed() * dragon.getYawRotationSpeed();
-                Vector3d entityPos = getPos();
-                if (target.getSquaredDistance(entityPos.x, entityPos.y, entityPos.z, true) <= nodeReachProximity)
-                    currentPath = null;
+                mob.getMoveControl().setWantedPosition(target.getX(), target.getY(), target.getZ(), speedModifier);
+                maxDistanceToWaypoint = mob.getBbWidth() * mob.getBbWidth() * dragon.getYawRotationSpeed() * dragon.getYawRotationSpeed();
+                Vector3d entityPos = getTempMobPos();
+                if (target.distSqr(entityPos.x, entityPos.y, entityPos.z, true) <= maxDistanceToWaypoint)
+                    path = null;
             }
         }
     }
 
     @Override
-    public boolean isValidPosition(BlockPos pos)
+    public boolean isStableDestination(BlockPos pos)
     {
         return true;
     }

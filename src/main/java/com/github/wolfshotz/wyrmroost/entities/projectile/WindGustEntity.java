@@ -18,7 +18,7 @@ import net.minecraft.world.server.ServerWorld;
 
 public class WindGustEntity extends DragonProjectileEntity
 {
-    public WindGustEntity(EntityType<? extends DragonProjectileEntity> type, World world)
+    public WindGustEntity(EntityType<? extends DragonProjectileEntity> type, World level)
     {
         super(type, level);
     }
@@ -31,7 +31,7 @@ public class WindGustEntity extends DragonProjectileEntity
 
     public WindGustEntity(AbstractDragonEntity shooter)
     {
-        this(shooter, shooter.getRotationVector().add(shooter.position().add(0, -1.5, 0)), shooter.getRotationVector());
+        this(shooter, shooter.getLookAngle().add(shooter.position().add(0, -1.5, 0)), shooter.getLookAngle());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class WindGustEntity extends DragonProjectileEntity
         if (level.isClientSide)
         {
             double multiplier = Math.min(tickCount / 5d, 4d);
-            Vector3d motion = getDeltaMovement().negate().multiply(0.1, 0.1, 0.1);
+            Vector3d motion = getDeltaMovement().reverse().multiply(0.1, 0.1, 0.1);
             for (int i = 0; i < 30; i++)
             {
                 Vector3d vec3d = position().add(getDeltaMovement()).add(Mafs.nextDouble(random) * multiplier, Mafs.nextDouble(random) * multiplier, Mafs.nextDouble(random) * multiplier);
@@ -59,10 +59,10 @@ public class WindGustEntity extends DragonProjectileEntity
     {
         if (!level.isClientSide)
         {
-            entity.addVelocity(acceleration.getX() * 5, 1 + acceleration.getY() * 3, acceleration.getZ() * 5);
-            entity.damage(getDamageSource("windGust"), 3);
+            entity.push(acceleration.x() * 5, 1 + acceleration.y() * 3, acceleration.z() * 5);
+            entity.hurt(getDamageSource("windGust"), 3);
             if (entity instanceof ServerPlayerEntity)
-                ((ServerWorld) level).getChunkManager().sendToNearbyPlayers(entity, new SEntityVelocityPacket(entity));
+                ((ServerWorld) level).getChunkSource().broadcastAndSend(entity, new SEntityVelocityPacket(entity));
         }
     }
 
@@ -71,14 +71,14 @@ public class WindGustEntity extends DragonProjectileEntity
     {
         final int PARTICLE_COUNT = 75;
         BlockParticleData blockParticle = new BlockParticleData(ParticleTypes.BLOCK, level.getBlockState(pos));
-        pos = pos.offset(direction);
+        pos = pos.relative(direction);
         if (level.isClientSide)
         {
             for (int i = 0; i < PARTICLE_COUNT; i++)
             {
                 Vector3d motion = new Vector3d(1, 1, 0);
-                if (direction.getAxis().getType() == Direction.Plane.VERTICAL) motion = motion.rotateY(0.5f * Mafs.PI);
-                else motion = motion.rotateY(direction.asRotation() / 180f * Mafs.PI);
+                if (direction.getAxis().getPlane() == Direction.Plane.VERTICAL) motion = motion.yRot(0.5f * Mafs.PI);
+                else motion = motion.yRot(direction.toYRot() / 180f * Mafs.PI);
                 motion = motion.multiply(Mafs.nextDouble(random) * 0.8, Mafs.nextDouble(random) * 0.8, Mafs.nextDouble(random) * 0.8);
                 level.addParticle(ParticleTypes.CLOUD, pos.getX(), pos.getY(), pos.getZ(), motion.x, motion.y, motion.z);
                 level.addParticle(blockParticle, pos.getX(), pos.getY(), pos.getZ(), motion.x * 10, motion.y, motion.z * 10);
@@ -89,7 +89,7 @@ public class WindGustEntity extends DragonProjectileEntity
             for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(1), this::canImpactEntity))
             {
                 double angle = Mafs.getAngle(getX(), getZ(), e.getX(), e.getZ()) * Math.PI / 180;
-                e.addVelocity(2 * -Math.cos(angle), 0.5d, 2 * -Math.sin(angle));
+                e.push(2 * -Math.cos(angle), 0.5d, 2 * -Math.sin(angle));
             }
         }
 

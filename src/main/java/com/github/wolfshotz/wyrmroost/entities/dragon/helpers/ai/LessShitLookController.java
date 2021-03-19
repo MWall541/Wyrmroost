@@ -19,8 +19,8 @@ public class LessShitLookController extends LookController
         if (restore)
         {
             this.restore = false;
-            entity.headYaw = changeAngle(entity.headYaw, entity.bodyYaw, entity.getLookPitchSpeed());
-            entity.pitch = changeAngle(entity.pitch, 0, entity.getLookYawSpeed());
+            mob.yHeadRot = rotateTowards(mob.yHeadRot, mob.yBodyRot, mob.getMaxHeadXRot());
+            mob.xRot = rotateTowards(mob.xRot, 0, mob.getHeadRotSpeed());
             return;
         }
 
@@ -30,31 +30,34 @@ public class LessShitLookController extends LookController
             return;
         }
 
-        entity.pitch = 0;
-        if (active)
+        mob.xRot = 0;
+        if (hasWanted)
         {
-            this.active = false;
-            entity.headYaw = changeAngle(entity.headYaw, getTargetYaw(), yawSpeed);
-            entity.pitch = changeAngle(entity.pitch, getTargetPitch(), pitchSpeed);
+            this.hasWanted = false;
+            mob.yHeadRot = rotateTowards(mob.yHeadRot, getYRotD(), yMaxRotSpeed);
+            mob.xRot = rotateTowards(mob.xRot, getXRotD(), xMaxRotAngle);
         }
-        else entity.headYaw = changeAngle(entity.headYaw, entity.bodyYaw, yawSpeed);
+        else mob.yHeadRot = rotateTowards(mob.yHeadRot, mob.yBodyRot, yMaxRotSpeed);
 
-        if (!entity.getNavigation().isDone())
-            entity.headYaw = MathHelper.stepAngleTowards(entity.headYaw, entity.bodyYaw, yawSpeed);
+        if (!mob.getNavigation().isDone())
+            mob.yHeadRot = MathHelper.rotateIfNecessary(mob.yHeadRot, mob.yBodyRot, yMaxRotSpeed);
     }
 
-    protected boolean func_220680_b() { return !frozen; }
+    protected boolean func_220680_b()
+    {
+        return !frozen;
+    }
 
     public void freeze()
     {
         this.frozen = true;
-        this.active = false;
+        this.hasWanted = false;
     }
 
     public void restore()
     {
         this.restore = true;
         this.frozen = true;
-        this.active = false;
+        this.hasWanted = false;
     }
 }

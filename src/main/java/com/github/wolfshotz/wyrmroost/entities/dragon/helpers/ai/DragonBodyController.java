@@ -20,7 +20,7 @@ public class DragonBodyController extends BodyController
     }
 
     @Override
-    public void tick()
+    public void clientTick()
     {
         // No body rotations while sitting or sleeping
         if (dragon.isSleeping()) return;
@@ -36,15 +36,15 @@ public class DragonBodyController extends BodyController
         if (dragon.canBeControlledByRider() || dragon.isFlying())
         {
             clampHeadRotation(120f);
-            dragon.bodyYaw = dragon.yRot = MathHelper.wrapDegrees(MathHelper.stepAngleTowards(dragon.headYaw, dragon.bodyYaw, dragon.getYawRotationSpeed()));
+            dragon.yBodyRot = dragon.yRot = MathHelper.wrapDegrees(MathHelper.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getYawRotationSpeed()));
             return;
         }
 
-        super.tick();
+        super.clientTick();
     }
 
     public void clampHeadRotation(float clampDeg)
     {
-        dragon.headYaw = MathHelper.stepAngleTowards(dragon.headYaw, dragon.bodyYaw, clampDeg);
+        dragon.yHeadRot = MathHelper.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, clampDeg);
     }
 }

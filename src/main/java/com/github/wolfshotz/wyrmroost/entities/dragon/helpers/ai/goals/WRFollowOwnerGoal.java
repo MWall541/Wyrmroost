@@ -22,7 +22,7 @@ public class WRFollowOwnerGoal extends Goal
     {
         final double MINIMUM_FOLLOW_DIST = dragon.getBbWidth() * dragon.getBbWidth() + 100;
 
-        if (dragon.isInSittingPose() || dragon.isLeashed() || dragon.hasPositionTarget()) return false;
+        if (dragon.isInSittingPose() || dragon.isLeashed() || dragon.hasRestriction()) return false;
         LivingEntity owner = dragon.getOwner();
         if (owner == null || owner.isSpectator()) return false;
         return dragon.distanceToSqr(owner) > MINIMUM_FOLLOW_DIST;

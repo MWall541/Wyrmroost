@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 
 public class FireBreathEntity extends BreathWeaponEntity
 {
-    public FireBreathEntity(EntityType<?> type, World world)
+    public FireBreathEntity(EntityType<?> type, World level)
     {
         super(type, level);
     }
@@ -38,7 +38,7 @@ public class FireBreathEntity extends BreathWeaponEntity
 
         if (isInWater())
         {
-            if (random.nextDouble() <= 0.25d) playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 1);
+            if (random.nextDouble() <= 0.25d) playSound(SoundEvents.FIRE_EXTINGUISH, 1, 1);
             for (int i = 0; i < 15; i++)
                 level.addParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), Mafs.nextDouble(random) * 0.2f, random.nextDouble() * 0.08f, Mafs.nextDouble(random) * 0.2f);
             remove();
@@ -59,19 +59,19 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (level.isClientSide) return;
 
         BlockState state = level.getBlockState(pos);
-        if (CampfireBlock.method_30035(state))
+        if (CampfireBlock.canLight(state))
         {
-            level.setBlockState(pos, state.with(BlockStateProperties.LIT, true), 11);
+            level.setBlock(pos, state.setValue(BlockStateProperties.LIT, true), 11);
             return;
         }
 
         double flammability = WRConfig.fireBreathFlammability;
-        if (level.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) && WRConfig.canGrief(level) && flammability != 0) // respect game rules
+        if (level.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK) && WRConfig.canGrief(level) && flammability != 0) // respect game rules
         {
-            BlockPos offset = pos.offset(direction);
+            BlockPos offset = pos.relative(direction);
 
             if (level.getBlockState(offset).isAir(level, offset) && (flammability == 1 || random.nextDouble() <= flammability))
-                level.setBlockState(offset, AbstractFireBlock.getState(level, offset), 11);
+                level.setBlock(offset, AbstractFireBlock.getState(level, offset), 11);
         }
     }
 
@@ -81,22 +81,22 @@ public class FireBreathEntity extends BreathWeaponEntity
         if (level.isClientSide) return;
 
         float damage = (float) shooter.getAttributeValue(WREntities.Attributes.PROJECTILE_DAMAGE.get());
-        if (level.hasRain(entity.blockPosition())) damage *= 0.75f;
+        if (level.isRainingAt(entity.blockPosition())) damage *= 0.75f;
 
-        if (entity.isFireImmune()) damage *= 0.25; // impact damage
-        else entity.setOnFireFor(8);
+        if (entity.fireImmune()) damage *= 0.25; // impact damage
+        else entity.setSecondsOnFire(8);
 
-        entity.damage(getDamageSource(random.nextDouble() > 0.2? "fireBreath0" : "fireBreath1"), damage);
+        entity.hurt(getDamageSource(random.nextDouble() > 0.2? "fireBreath0" : "fireBreath1"), damage);
     }
 
     @Override
     public DamageSource getDamageSource(String name)
     {
-        return super.getDamageSource(name).setFire();
+        return super.getDamageSource(name).setIsFire();
     }
 
     @Override // Because we do it better.
-    public boolean doesRenderOnFire()
+    public boolean displayFireAnimation()
     {
         return false;
     }

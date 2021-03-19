@@ -23,9 +23,9 @@ public class DrakeArmorItem extends ArmorBase
     @Override
     public void applyFullSetBonus(LivingEntity entity, boolean hasFullSet)
     {
-        ModifiableAttributeInstance attribute = entity.getAttributeInstance(Attributes.GENERIC_KNOCKBACK_RESISTANCE);
+        ModifiableAttributeInstance attribute = entity.getAttribute(Attributes.KNOCKBACK_RESISTANCE);
         if (attribute.hasModifier(KB_RESISTANCE)) attribute.removeModifier(KB_RESISTANCE);
-        if (hasFullSet) attribute.addTemporaryModifier(KB_RESISTANCE);
+        if (hasFullSet) attribute.addTransientModifier(KB_RESISTANCE);
     }
 
     @Override

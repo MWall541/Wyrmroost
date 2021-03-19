@@ -11,14 +11,14 @@ import net.minecraft.world.World;
 
 public class BreathWeaponEntity extends DragonProjectileEntity
 {
-    public BreathWeaponEntity(EntityType<?> type, World world)
+    public BreathWeaponEntity(EntityType<?> type, World level)
     {
         super(type, level);
     }
 
     public BreathWeaponEntity(EntityType<? extends DragonProjectileEntity> type, AbstractDragonEntity shooter)
     {
-        super(type, shooter, shooter.getApproximateMouthPos(), Vector3d.fromPolar(shooter.pitch, shooter.headYaw));
+        super(type, shooter, shooter.getApproximateMouthPos(), Vector3d.directionFromRotation(shooter.xRot, shooter.yHeadRot));
         this.growthRate = 1.025f;
     }
 
@@ -28,9 +28,9 @@ public class BreathWeaponEntity extends DragonProjectileEntity
 //        BlockState state = world.getBlockState(pos);
 //        state.onProjectileCollision(world, state, result, this); todo.. somehow
 
-        if (!level.isClientSide && !noClip && !level.getBlockState(pos).getCollisionShape(level, pos).equals(VoxelShapes.empty()))
+        if (!level.isClientSide && !noPhysics && !level.getBlockState(pos).getCollisionShape(level, pos).equals(VoxelShapes.empty()))
         {
-            setVelocity(acceleration.multiply(-Math.abs(direction.getOffsetX()) + 1, -Math.abs(direction.getOffsetY()) + 1, -Math.abs(direction.getOffsetZ()) + 1));
+            setDeltaMovement(acceleration.multiply(-Math.abs(direction.getStepX()) + 1, -Math.abs(direction.getStepY()) + 1, -Math.abs(direction.getStepZ()) + 1));
 
             if (!hasCollided)
             {
