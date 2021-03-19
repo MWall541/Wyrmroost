@@ -83,7 +83,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public static final byte HEAL_PARTICLES_DATA_ID = 8;
 
     public static final EntitySerializer<TameableDragonEntity> SERIALIZER = EntitySerializer.builder(b -> b
-            .track(EntitySerializer.BLOCK_POS.optional(), "HomePos", TameableDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
+            .track(EntitySerializer.POS.optional(), "HomePos", TameableDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
             .track(EntitySerializer.INT, "BreedCount", TameableDragonEntity::getBreedCount, TameableDragonEntity::setBreedCount));
 
     // Common Data Parameters

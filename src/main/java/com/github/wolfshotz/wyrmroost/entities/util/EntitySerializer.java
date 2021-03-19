@@ -17,7 +17,7 @@ public class EntitySerializer<T extends Entity>
     public static final NBTBridge<Boolean> BOOL = bridge((key, nbt, value) -> nbt.putBoolean(key, value), (key, nbt) -> nbt.getBoolean(key));
     public static final NBTBridge<Integer> INT = bridge((key, nbt, value) -> nbt.putInt(key, value), (key, nbt) -> nbt.getInt(key));
     public static final NBTBridge<CompoundNBT> NBT = bridge((key, nbt, value) -> nbt.put(key, value), (key, nbt) -> nbt.getCompound(key));
-    public static final NBTBridge<BlockPos> BLOCK_POS = bridge((key, nbt, value) -> nbt.putLong(key, value.asLong()), (key, nbt) -> BlockPos.of(nbt.getLong(key)));
+    public static final NBTBridge<BlockPos> POS = bridge((key, nbt, value) -> nbt.putLong(key, value.asLong()), (key, nbt) -> BlockPos.of(nbt.getLong(key)));
 
     final Instance<?, ?>[] entries;
 
@@ -76,12 +76,12 @@ public class EntitySerializer<T extends Entity>
             this.read = read;
         }
 
-        public void serialize(E entity, CompoundNBT nbt)
+        private void serialize(E entity, CompoundNBT nbt)
         {
             bridge.setter.accept(key, nbt, write.apply(entity));
         }
 
-        public void deserialize(E entity, CompoundNBT nbt)
+        private void deserialize(E entity, CompoundNBT nbt)
         {
             read.accept(entity, bridge.getter.apply(key, nbt));
         }
@@ -120,7 +120,7 @@ public class EntitySerializer<T extends Entity>
             return this;
         }
 
-        public Instance<?, ?>[] build()
+        private Instance<?, ?>[] build()
         {
             return entries.toArray(new Instance[0]);
         }
