@@ -1,7 +1,7 @@
 {
   "surface_builder": "wyrmroost:mulch",
-  "depth": 0.2,
-  "scale": 0.12,
+  "depth": 0.2215,
+  "scale": 0.065,
   "temperature": 0.7,
   "downfall": 0.8,
   "precipitation": "rain",
@@ -10,16 +10,24 @@
   "effects": {
     "sky_color": 10469887,
     "fog_color": 12638463,
-    "water_color": 2551967,
-    "water_fog_color": 732455,
+    "water_color": 1559551,
+    "water_fog_color": 12864,
     "mood_sound": {
       "sound": "minecraft:ambient.cave",
       "tick_delay": 6000,
       "block_search_extent": 8,
       "offset": 2
+    },
+    "music": {
+      "sound": "music.wyrmroost.tincture_weald",
+      "min_delay": 12000,
+      "max_delay": 24000,
+      "replace_current_music": false
     }
   },
-  "starts": [],
+  "starts": [
+    "minecraft:stronghold"
+  ],
   "spawners": {},
   "spawn_costs": {},
   "carvers": {
@@ -37,7 +45,6 @@
     [
       "minecraft:forest_rock"
     ],
-    [],
     [],
     [],
     [
@@ -58,6 +65,8 @@
     ],
     [],
     [
+      "minecraft:flower_forest",
+      "minecraft:forest_flower_vegetation_common",
       "minecraft:patch_large_fern",
       "minecraft:brown_mushroom_normal",
       "minecraft:red_mushroom_normal",

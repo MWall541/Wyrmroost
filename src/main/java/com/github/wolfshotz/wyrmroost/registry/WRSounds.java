@@ -55,8 +55,8 @@ public class WRSounds
 
     public static final RegistryObject<SoundEvent> WEATHER_SANDSTORM = register("weather.sandstorm");
 
-    public static final RegistryObject<SoundEvent> MUSIC_ASHEN_DESERT = register("music.ashen_desert");
-    public static final RegistryObject<SoundEvent> MUSIC_TINCTURE_WEALD = register("music.tincture_weald");
+    public static final RegistryObject<SoundEvent> MUSIC_ASHEN_DESERT = register("music.wyrmroost.ashen_desert");
+    public static final RegistryObject<SoundEvent> MUSIC_TINCTURE_WEALD = register("music.wyrmroost.tincture_weald");
 
     public static RegistryObject<SoundEvent> register(String name)
     {
