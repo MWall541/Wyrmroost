@@ -34,7 +34,7 @@ public class WRIO
         return IForgeContainerType.create(((windowId, inv, data) ->
         {
             TameableDragonEntity dragon = (TameableDragonEntity) ClientEvents.getWorld().getEntity(data.readInt());
-            return new DragonInvContainer(dragon.getInvHandler(), inv, windowId);
+            return new DragonInvContainer(dragon.getInventory(), inv, windowId);
         }));
     }
 }

@@ -111,7 +111,7 @@ public class DragonInvContainer extends Container
             @Override
             public Container createMenu(int id, PlayerInventory playersInv, PlayerEntity player)
             {
-                return new DragonInvContainer(dragon.getInvHandler(), playersInv, id);
+                return new DragonInvContainer(dragon.getInventory(), playersInv, id);
             }
         };
     }

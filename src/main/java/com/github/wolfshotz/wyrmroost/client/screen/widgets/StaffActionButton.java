@@ -5,8 +5,8 @@ import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.StaffActionPacket;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
@@ -20,7 +20,7 @@ import net.minecraft.util.text.ITextComponent;
 public class StaffActionButton extends AbstractButton
 {
     public final StaffAction action;
-    public final TickFloat focusTime = new TickFloat().setLimit(0, 1);
+    public final LerpedFloat focusTime = new LerpedFloat().clamp(0, 1);
     public boolean wasHovered = false;
 
     public StaffActionButton(int xIn, int yIn, ITextComponent msg, StaffAction action)

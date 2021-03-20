@@ -10,7 +10,10 @@ import org.apache.logging.log4j.util.TriConsumer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class EntitySerializer<T extends Entity>
 {
@@ -42,18 +45,18 @@ public class EntitySerializer<T extends Entity>
         }
     }
 
-    public static <E extends Entity> EntitySerializer<E> builder(Consumer<Builder<E>> consumer)
-    {
-        Builder<E> builder = new Builder<>();
-        consumer.accept(builder);
-        return new EntitySerializer<>(builder.build());
-    }
-
     public <E extends Entity> EntitySerializer<E> concat(Consumer<Builder<E>> consumer)
     {
         Builder<E> builder = new Builder<>();
         consumer.accept(builder);
         return new EntitySerializer<>(ArrayUtils.addAll(entries, builder.build()));
+    }
+
+    public static <E extends Entity> EntitySerializer<E> builder(Consumer<Builder<E>> consumer)
+    {
+        Builder<E> builder = new Builder<>();
+        consumer.accept(builder);
+        return new EntitySerializer<>(builder.build());
     }
 
     private static <T> NBTBridge<T> bridge(TriConsumer<String, CompoundNBT, T> setter, BiFunction<String, CompoundNBT, T> getter)

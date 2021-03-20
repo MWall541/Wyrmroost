@@ -4,9 +4,9 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import net.minecraft.entity.*;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -40,7 +40,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public EntityType<TameableDragonEntity> containedDragon;
     public DragonEggProperties properties; // cache for speed
     public Direction wiggleDirection = Direction.NORTH;
-    public TickFloat wiggleTime = new TickFloat().setLimit(0, 1);
+    public LerpedFloat wiggleTime = new LerpedFloat().clamp(0, 1);
     public boolean correctConditions = false;
     public boolean wiggling = false;
     public int hatchTime;

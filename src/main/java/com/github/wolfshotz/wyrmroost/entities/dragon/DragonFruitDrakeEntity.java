@@ -8,9 +8,9 @@ import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.block.*;
 import net.minecraft.entity.*;
@@ -60,7 +60,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     private static final int CROP_GROWTH_TIME = 1200; // 1 minute
     public static final Animation BITE_ANIMATION = new Animation(15);
 
-    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public final LerpedFloat sitTimer = LerpedFloat.unit();
     private int shearCooldownTime, napTime, growCropsTime;
     private TemptGoal temptGoal;
 

@@ -8,7 +8,7 @@ import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.SGGlidePacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -49,8 +49,8 @@ public class SilverGliderEntity extends TameableDragonEntity
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant)
             .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping));
 
-    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
+    public final LerpedFloat sitTimer = LerpedFloat.unit();
+    public final LerpedFloat flightTimer = LerpedFloat.unit();
 
     public TemptGoal temptGoal;
     public boolean isGliding; // controlled by player-gliding.

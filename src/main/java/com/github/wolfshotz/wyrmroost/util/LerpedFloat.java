@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.util;
 
 import net.minecraft.util.math.MathHelper;
 
-public class TickFloat
+public class LerpedFloat
 {
     private float min;
     private float max;
@@ -10,17 +10,17 @@ public class TickFloat
     private float previous;
     private boolean clamp = false;
 
-    public TickFloat()
+    public LerpedFloat()
     {
         current = previous = 0;
     }
 
-    public TickFloat(float value)
+    public LerpedFloat(float start)
     {
-        current = previous = value;
+        current = previous = start;
     }
 
-    public TickFloat setLimit(float min, float max)
+    public LerpedFloat clamp(float min, float max)
     {
         clamp = true;
         this.min = min;
@@ -80,5 +80,10 @@ public class TickFloat
     public void setMax(float max)
     {
         this.max = max;
+    }
+
+    public static LerpedFloat unit()
+    {
+        return new LerpedFloat().clamp(0, 1);
     }
 }

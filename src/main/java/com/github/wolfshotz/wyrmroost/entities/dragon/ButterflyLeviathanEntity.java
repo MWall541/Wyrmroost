@@ -13,9 +13,9 @@ import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -67,9 +67,9 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     public static final Animation BITE_ANIMATION = new Animation(17);
     public static final int CONDUIT_SLOT = 0;
 
-    public final TickFloat beachedTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat swimTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public final LerpedFloat beachedTimer = LerpedFloat.unit();
+    public final LerpedFloat swimTimer = LerpedFloat.unit();
+    public final LerpedFloat sitTimer = LerpedFloat.unit();
     public int lightningCooldown = 0;
     public boolean beached = true;
 
@@ -382,7 +382,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     public void addContainerInfo(DragonInvContainer container)
     {
         super.addContainerInfo(container);
-        container.addSlot(new SlotBuilder(getInvHandler(), CONDUIT_SLOT).only(Items.CONDUIT).limit(1));
+        container.addSlot(new SlotBuilder(getInventory(), CONDUIT_SLOT).only(Items.CONDUIT).limit(1));
     }
 
     @Override

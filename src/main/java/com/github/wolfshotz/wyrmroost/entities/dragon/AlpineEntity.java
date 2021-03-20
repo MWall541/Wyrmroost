@@ -10,8 +10,8 @@ import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -44,8 +44,8 @@ public class AlpineEntity extends TameableDragonEntity
     public static final Animation WIND_GUST_ANIMATION = new Animation(25);
     public static final Animation BITE_ANIMATION = new Animation(10);
 
-    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
+    public final LerpedFloat sitTimer = LerpedFloat.unit();
+    public final LerpedFloat flightTimer = LerpedFloat.unit();
 
     public AlpineEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {

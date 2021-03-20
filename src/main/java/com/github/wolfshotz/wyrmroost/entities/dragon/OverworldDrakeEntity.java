@@ -13,9 +13,9 @@ import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -73,7 +73,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     public static final Animation HORN_ATTACK_ANIMATION = new Animation(15);
     public static final Animation ROAR_ANIMATION = new Animation(86);
 
-    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
+    public final LerpedFloat sitTimer = LerpedFloat.unit();
     public LivingEntity thrownPassenger;
 
     public OverworldDrakeEntity(EntityType<? extends OverworldDrakeEntity> drake, World level)
@@ -203,7 +203,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
         {
             if (!level.isClientSide)
             {
-                getInvHandler().insertItem(SADDLE_SLOT, stack.copy(), false);
+                getInventory().insertItem(SADDLE_SLOT, stack.copy(), false);
                 stack.shrink(1);
             }
             return ActionResultType.sidedSuccess(level.isClientSide);

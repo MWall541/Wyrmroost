@@ -15,9 +15,9 @@ import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.mojang.datafixers.util.Pair;
@@ -67,7 +67,10 @@ import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import static net.minecraft.entity.ai.attributes.Attributes.FLYING_SPEED;
@@ -80,11 +83,11 @@ import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
  */
 public abstract class TameableDragonEntity extends TameableEntity implements IAnimatable
 {
-    public static final byte HEAL_PARTICLES_DATA_ID = 8;
-
     public static final EntitySerializer<TameableDragonEntity> SERIALIZER = EntitySerializer.builder(b -> b
             .track(EntitySerializer.POS.optional(), "HomePos", TameableDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
             .track(EntitySerializer.INT, "BreedCount", TameableDragonEntity::getBreedCount, TameableDragonEntity::setBreedCount));
+
+    public static final byte HEAL_PARTICLES_EVENT_ID = 8;
 
     // Common Data Parameters
     public static final DataParameter<Boolean> GENDER = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
@@ -94,8 +97,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.ITEM_STACK);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS); // todo for 1.17: remove optional and make this nullable
 
-    public final LazyOptional<DragonInventory> invHandler;
-    public final TickFloat sleepTimer = new TickFloat().setLimit(0, 1);
+    public final LazyOptional<DragonInventory> inventory;
+    public final LerpedFloat sleepTimer = LerpedFloat.unit();
     private int sleepCooldown;
     public boolean wingsDown;
     public int breedCount;
@@ -109,7 +112,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         maxUpStep = 1;
 
         DragonInventory inv = createInv();
-        invHandler = LazyOptional.of(inv == null? null : () -> inv);
+        inventory = LazyOptional.of(inv == null? null : () -> inv);
         lookControl = new LessShitLookController(this);
         if (hasDataParameter(FLYING)) moveControl = new FlyerMoveController(this);
     }
@@ -139,7 +142,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void addAdditionalSaveData(CompoundNBT nbt)
     {
         super.addAdditionalSaveData(nbt);
-        if (invHandler.isPresent()) nbt.put("Inv", invHandler.orElse(null).serializeNBT());
+        if (inventory.isPresent()) nbt.put("Inv", inventory.orElse(null).serializeNBT());
         getSerializer().serialize(ModUtils.cast(this), nbt);
     }
 
@@ -147,7 +150,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void readAdditionalSaveData(CompoundNBT nbt)
     {
         super.readAdditionalSaveData(nbt);
-        if (invHandler.isPresent()) invHandler.orElse(null).deserializeNBT(nbt.getCompound("Inv"));
+        if (inventory.isPresent()) inventory.orElse(null).deserializeNBT(nbt.getCompound("Inv"));
         getSerializer().deserialize(ModUtils.cast(this), nbt);
         applyAttributes();
     }
@@ -266,9 +269,9 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         if (flag) clearAI();
     }
 
-    public DragonInventory getInvHandler()
+    public DragonInventory getInventory()
     {
-        return invHandler.orElseThrow(() -> new NoSuchElementException("This boi doesn't have an inventory wtf are u doing"));
+        return inventory.orElseThrow(() -> new NoSuchElementException("This boi doesn't have an inventory wtf are u doing"));
     }
 
     public DragonInventory createInv()
@@ -576,7 +579,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public void handleEntityEvent(byte id)
     {
-        if (id == HEAL_PARTICLES_DATA_ID)
+        if (id == HEAL_PARTICLES_EVENT_ID)
         {
             for (int i = 0; i < getBbWidth() * getBbHeight(); ++i)
             {
@@ -591,7 +594,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public ItemStack getStackInSlot(int slot)
     {
-        return invHandler.map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
+        return inventory.map(i -> i.getStackInSlot(slot)).orElse(ItemStack.EMPTY);
     }
 
     /**
@@ -601,7 +604,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
      */
     public void setStackInSlot(int slot, ItemStack stack)
     {
-        invHandler.ifPresent(i -> i.setStackInSlot(slot, stack));
+        inventory.ifPresent(i -> i.setStackInSlot(slot, stack));
     }
 
     public void attackInBox(AxisAlignedBB box)
@@ -758,7 +761,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     protected void dropEquipment()
     {
-        invHandler.ifPresent(i -> i.getContents().forEach(this::spawnAtLocation));
+        inventory.ifPresent(i -> i.getContents().forEach(this::spawnAtLocation));
     }
 
     public void setRotation(float yaw, float pitch)
@@ -841,7 +844,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void heal(float healAmount)
     {
         super.heal(healAmount);
-        level.broadcastEntityEvent(this, HEAL_PARTICLES_DATA_ID);
+        level.broadcastEntityEvent(this, HEAL_PARTICLES_EVENT_ID);
     }
 
     public int getYawRotationSpeed()
@@ -1238,8 +1241,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
     {
-        if (isAlive() && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && invHandler.isPresent())
-            return invHandler.cast();
+        if (isAlive() && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && inventory.isPresent())
+            return inventory.cast();
         return super.getCapability(capability, facing);
     }
 

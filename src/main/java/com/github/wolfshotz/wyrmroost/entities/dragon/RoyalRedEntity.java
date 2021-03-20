@@ -16,8 +16,8 @@ import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
-import com.github.wolfshotz.wyrmroost.util.TickFloat;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -66,10 +66,10 @@ public class RoyalRedEntity extends TameableDragonEntity
 
     private static final int MAX_KNOCKOUT_TIME = 3600; // 3 minutes
 
-    public final TickFloat flightTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat sitTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat breathTimer = new TickFloat().setLimit(0, 1);
-    public final TickFloat knockOutTimer = new TickFloat().setLimit(0, 1);
+    public final LerpedFloat flightTimer = LerpedFloat.unit();
+    public final LerpedFloat sitTimer = LerpedFloat.unit();
+    public final LerpedFloat breathTimer = LerpedFloat.unit();
+    public final LerpedFloat knockOutTimer = LerpedFloat.unit();
     private int knockOutTime = 0;
 
     public RoyalRedEntity(EntityType<? extends TameableDragonEntity> dragon, World level)

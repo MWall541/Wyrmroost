@@ -223,7 +223,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     public void addContainerInfo(DragonInvContainer container)
     {
         super.addContainerInfo(container);
-        container.addSlot(new SlotBuilder(getInvHandler(), ITEM_SLOT));
+        container.addSlot(new SlotBuilder(getInventory(), ITEM_SLOT));
     }
 
     @Override
@@ -396,7 +396,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
                     if (!stack.isEmpty())
                     {
                         stack = chest.removeItemNoUpdate(index);
-                        getInvHandler().insertItem(ITEM_SLOT, stack, false);
+                        getInventory().insertItem(ITEM_SLOT, stack, false);
                     }
                 }
             }
