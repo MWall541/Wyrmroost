@@ -7,8 +7,10 @@ import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
+import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
+import net.minecraft.block.WoodType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,7 +41,7 @@ public class CommonEvents
 {
     public static final List<Runnable> CALLBACKS = new ArrayList<>();
 
-    public static void load()
+    public static void init()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
@@ -66,6 +68,7 @@ public class CommonEvents
             CALLBACKS.forEach(Runnable::run);
             CALLBACKS.clear();
             LazySpawnEggItem.addEggsToMap();
+            WoodType.register(WRBlocks.OSERI_WOOD);
         });
         IAnimatable.registerCapability();
         WRWorld.Features.init();

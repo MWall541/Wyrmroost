@@ -46,7 +46,7 @@ public class PetalsBlock extends Block
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context)
     {
-        return defaultBlockState().setValue(AXIS, context.getNearestLookingDirection().getAxis());
+        return defaultBlockState().setValue(AXIS, context.getHorizontalDirection().getAxis());
     }
 
     @Override

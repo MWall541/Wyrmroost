@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client;
 
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
@@ -10,8 +11,9 @@ import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
 import com.github.wolfshotz.wyrmroost.registry.WRParticles;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
-import net.minecraft.block.*;
+import net.minecraft.block.WoodType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -23,6 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -35,9 +38,12 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * EventBus listeners on CLIENT distribution
@@ -53,7 +59,7 @@ public class ClientEvents
 
     public static final List<Runnable> CALLBACKS = new ArrayList<>();
 
-    public static void load()
+    public static void init()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
@@ -76,22 +82,18 @@ public class ClientEvents
     {
         CALLBACKS.forEach(Runnable::run);
         CALLBACKS.clear();
-
         WRKeybind.registerKeys();
-        WRIO.screenSetup();
-
-        // todo: better render layer setting
-        for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
+        event.enqueueWork(() ->
         {
-            if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock)
+            for (Map.Entry<ResourceLocation, Supplier<RenderType>> entry : WRBlocks.RENDER_LOOKUP.entrySet())
             {
-                RenderTypeLookup.setRenderLayer(block, RenderType.cutout());
+                RenderTypeLookup.setRenderLayer(ForgeRegistries.BLOCKS.getValue(entry.getKey()), entry.getValue().get());
             }
-            else if (block instanceof LeavesBlock)
-            {
-                RenderTypeLookup.setRenderLayer(block, RenderType.cutoutMipped());
-            }
-        }
+            WRBlocks.RENDER_LOOKUP.clear();
+
+            WRIO.screenSetup();
+            WoodType.values().filter(w -> w.name().contains(Wyrmroost.MOD_ID)).forEach(Atlases::addWoodType);
+        });
     }
 
     public static void consumeParticles(ParticleFactoryRegisterEvent event)
