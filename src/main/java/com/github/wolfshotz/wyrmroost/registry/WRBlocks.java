@@ -37,7 +37,7 @@ public class WRBlocks
 
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
 
-    public static final Map<ResourceLocation, Supplier<RenderType>> RENDER_LOOKUP = new HashMap<>();
+    public static final Map<ResourceLocation, Supplier<Supplier<RenderType>>> RENDER_LOOKUP = new HashMap<>();
 
     public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 1, 3f, SoundType.STONE)));
     public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 1, 5f, SoundType.METAL)));
@@ -51,35 +51,35 @@ public class WRBlocks
 
     // tincture weald
     public static final RegistryObject<Block> MULCH = register("mulch", () -> new SnowyDirtBlock(properties(Material.DIRT, SoundType.GRAVEL).strength(0.5f).harvestTool(ToolType.SHOVEL)));
-    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY), RenderType::cutout);
-    public static final RegistryObject<Block> SILVER_MOSS_BODY = withItem("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null, RenderType::cutout);
-    public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new, RenderType::cutout);
-    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.REPLACEABLE_PLANT, SoundType.VINE).randomTicks().noCollission().strength(0.2f)), RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_SAPLING = register("blue_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.BLUE), plant().randomTicks()), RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_LEAVES = register("blue_oseri_leaves", () -> new OseriLeaves(leaves()), RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_VINES = register("blue_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.BLUE_OSERI_VINES_BODY), RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_VINES_BODY = withItem("blue_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.BLUE_OSERI_VINES), null, RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_PETALS = register("blue_oseri_petals", () -> new PetalsBlock(plant()), RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_SAPLING = register("gold_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.GOLD), plant().randomTicks()), RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_LEAVES = register("gold_oseri_leaves", () -> new OseriLeaves(leaves()), RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_VINES = register("gold_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.GOLD_OSERI_VINES_BODY), RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_VINES_BODY = withItem("gold_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.GOLD_OSERI_VINES), null, RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_PETALS = register("gold_oseri_petals", () -> new PetalsBlock(plant()), RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_SAPLING = register("pink_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PINK), plant().randomTicks()), RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_LEAVES = register("pink_oseri_leaves", () -> new OseriLeaves(leaves()), RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_VINES = register("pink_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PINK_OSERI_VINES_BODY), RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_VINES_BODY = withItem("pink_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PINK_OSERI_VINES), null, RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_PETALS = register("pink_oseri_petals", () -> new PetalsBlock(plant()), RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_SAPLING = register("purple_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PURPLE), plant().randomTicks()), RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_LEAVES = register("purple_oseri_leaves", () -> new OseriLeaves(leaves()), RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_VINES = register("purple_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PURPLE_OSERI_VINES_BODY), RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_VINES_BODY = withItem("purple_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PURPLE_OSERI_VINES), null, RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_PETALS = register("purple_oseri_petals", () -> new PetalsBlock(plant()), RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_SAPLING = register("white_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.WHITE), plant().randomTicks()), RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_LEAVES = register("white_oseri_leaves", () -> new OseriLeaves(leaves()), RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.WHITE_OSERI_VINES_BODY), RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_VINES_BODY = withItem("white_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.WHITE_OSERI_VINES), null, RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()), RenderType::cutout);
+    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY), () -> RenderType::cutout);
+    public static final RegistryObject<Block> SILVER_MOSS_BODY = withItem("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null, () -> RenderType::cutout);
+    public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new, () -> RenderType::cutout);
+    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.REPLACEABLE_PLANT, SoundType.VINE).randomTicks().noCollission().strength(0.2f)), () -> RenderType::cutout);
+    public static final RegistryObject<Block> BLUE_OSERI_SAPLING = register("blue_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.BLUE), plant().randomTicks()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> BLUE_OSERI_LEAVES = register("blue_oseri_leaves", () -> new OseriLeaves(leaves()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> BLUE_OSERI_VINES = register("blue_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.BLUE_OSERI_VINES_BODY), () -> RenderType::cutout);
+    public static final RegistryObject<Block> BLUE_OSERI_VINES_BODY = withItem("blue_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.BLUE_OSERI_VINES), null, () -> RenderType::cutout);
+    public static final RegistryObject<Block> BLUE_OSERI_PETALS = register("blue_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> GOLD_OSERI_SAPLING = register("gold_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.GOLD), plant().randomTicks()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> GOLD_OSERI_LEAVES = register("gold_oseri_leaves", () -> new OseriLeaves(leaves()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> GOLD_OSERI_VINES = register("gold_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.GOLD_OSERI_VINES_BODY), () -> RenderType::cutout);
+    public static final RegistryObject<Block> GOLD_OSERI_VINES_BODY = withItem("gold_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.GOLD_OSERI_VINES), null, () -> RenderType::cutout);
+    public static final RegistryObject<Block> GOLD_OSERI_PETALS = register("gold_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PINK_OSERI_SAPLING = register("pink_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PINK), plant().randomTicks()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PINK_OSERI_LEAVES = register("pink_oseri_leaves", () -> new OseriLeaves(leaves()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PINK_OSERI_VINES = register("pink_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PINK_OSERI_VINES_BODY), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PINK_OSERI_VINES_BODY = withItem("pink_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PINK_OSERI_VINES), null, () -> RenderType::cutout);
+    public static final RegistryObject<Block> PINK_OSERI_PETALS = register("pink_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PURPLE_OSERI_SAPLING = register("purple_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PURPLE), plant().randomTicks()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PURPLE_OSERI_LEAVES = register("purple_oseri_leaves", () -> new OseriLeaves(leaves()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PURPLE_OSERI_VINES = register("purple_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PURPLE_OSERI_VINES_BODY), () -> RenderType::cutout);
+    public static final RegistryObject<Block> PURPLE_OSERI_VINES_BODY = withItem("purple_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PURPLE_OSERI_VINES), null, () -> RenderType::cutout);
+    public static final RegistryObject<Block> PURPLE_OSERI_PETALS = register("purple_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> WHITE_OSERI_SAPLING = register("white_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.WHITE), plant().randomTicks()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> WHITE_OSERI_LEAVES = register("white_oseri_leaves", () -> new OseriLeaves(leaves()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.WHITE_OSERI_VINES_BODY), () -> RenderType::cutout);
+    public static final RegistryObject<Block> WHITE_OSERI_VINES_BODY = withItem("white_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.WHITE_OSERI_VINES), null, () -> RenderType::cutout);
+    public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
     public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
@@ -94,14 +94,14 @@ public class WRBlocks
         return reg;
     }
 
-    static RegistryObject<Block> register(String name, Supplier<Block> block, Supplier<RenderType> renderType)
+    static RegistryObject<Block> register(String name, Supplier<Block> block, Supplier<Supplier<RenderType>> renderType)
     {
         RegistryObject<Block> delegate = register(name, block);
         RENDER_LOOKUP.put(delegate.getId(), renderType);
         return delegate;
     }
 
-    static RegistryObject<Block> withItem(String name, Supplier<Block> block, @Nullable Function<Block, BlockItem> blockItem, Supplier<RenderType> renderType)
+    static RegistryObject<Block> withItem(String name, Supplier<Block> block, @Nullable Function<Block, BlockItem> blockItem, Supplier<Supplier<RenderType>> renderType)
     {
         RegistryObject<Block> delegate = withItem(name, block, blockItem);
         RENDER_LOOKUP.put(delegate.getId(), renderType);

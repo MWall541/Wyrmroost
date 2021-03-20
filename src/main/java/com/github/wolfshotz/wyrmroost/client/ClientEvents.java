@@ -85,9 +85,9 @@ public class ClientEvents
         WRKeybind.registerKeys();
         event.enqueueWork(() ->
         {
-            for (Map.Entry<ResourceLocation, Supplier<RenderType>> entry : WRBlocks.RENDER_LOOKUP.entrySet())
+            for (Map.Entry<ResourceLocation, Supplier<Supplier<RenderType>>> entry : WRBlocks.RENDER_LOOKUP.entrySet())
             {
-                RenderTypeLookup.setRenderLayer(ForgeRegistries.BLOCKS.getValue(entry.getKey()), entry.getValue().get());
+                RenderTypeLookup.setRenderLayer(ForgeRegistries.BLOCKS.getValue(entry.getKey()), entry.getValue().get().get());
             }
             WRBlocks.RENDER_LOOKUP.clear();
 
