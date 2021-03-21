@@ -27,11 +27,13 @@ public class WRWorld
     public static void onBiomeLoad(BiomeLoadingEvent event)
     {
         for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
+        {
             if (entry instanceof WREntities.Type)
             {
                 WREntities.Type<?> type = (WREntities.Type<?>) entry;
                 if (type.spawnBiomes != null) type.spawnBiomes.accept(event);
             }
+        }
 
         BiomeGenerationSettingsBuilder generator = event.getGeneration();
         switch (event.getCategory())

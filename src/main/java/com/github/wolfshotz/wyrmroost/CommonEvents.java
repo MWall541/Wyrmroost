@@ -3,12 +3,10 @@ package com.github.wolfshotz.wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.screen.DebugScreen;
 import com.github.wolfshotz.wyrmroost.data.DataGatherer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
-import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
-import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
@@ -69,7 +67,7 @@ public class CommonEvents
         event.enqueueWork(() ->
         {
             LazySpawnEggItem.addEggsToMap();
-            WoodType.register(WRBlocks.OSERI_WOOD);
+            WoodType.values().filter(w -> w.name().contains(Wyrmroost.MOD_ID)).forEach(WoodType::register);
 
             for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
             {
@@ -80,8 +78,6 @@ public class CommonEvents
                         GlobalEntityTypeAttributes.put(custom, custom.attributes.build());
                     if (custom.spawnPlacement != null)
                         EntitySpawnPlacementRegistry.register(custom, custom.spawnPlacement.a, custom.spawnPlacement.b, cast(custom.spawnPlacement.c));
-                    if (custom.eggProperties != null)
-                        DragonEggProperties.MAP.put(custom, custom.eggProperties);
                 }
             }
         });

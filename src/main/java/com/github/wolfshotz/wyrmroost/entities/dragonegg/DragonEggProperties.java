@@ -1,16 +1,13 @@
 package com.github.wolfshotz.wyrmroost.entities.dragonegg;
 
+import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class DragonEggProperties
 {
-    public static final Map<EntityType<?>, DragonEggProperties> MAP = new HashMap<>();
-
     private final EntitySize size;
     private final int hatchTime;
     private Predicate<DragonEggEntity> conditions = e -> true;
@@ -69,11 +66,17 @@ public class DragonEggProperties
         return this;
     }
 
+    /**
+     * Helper method to retrieve the egg properties from the appropriate EntityType.
+     * Helps to alleviate needing to cast or null check multiple times.
+     */
     public static DragonEggProperties get(EntityType<?> type)
     {
-        DragonEggProperties props = MAP.get(type);
+        if (!(type instanceof WREntities.Type))
+            throw new IllegalArgumentException(String.format("This thing (%s) couldn't possibly shit out eggs. How did this happen?", type.getRegistryName()));
+        DragonEggProperties props = ((WREntities.Type<?>) type).eggProperties;
         if (props == null)
-            throw new NullPointerException(String.format("Missing Egg Properties for key: %s, Wolf did a hickup go scream at him", type.getDescription().getString()));
+            throw new NullPointerException(String.format("Missing Egg Properties for entity: %s, Wolf did a hickup go scream at him", type.getRegistryName()));
         return props;
     }
 }

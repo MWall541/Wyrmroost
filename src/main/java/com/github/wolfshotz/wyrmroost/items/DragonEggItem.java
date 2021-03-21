@@ -44,7 +44,7 @@ public class DragonEggItem extends Item
 
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString(DragonEggEntity.DATA_DRAGON_TYPE, EntityType.getKey(entity.getType()).toString());
-        nbt.putInt(DragonEggEntity.DATA_HATCH_TIME, DragonEggProperties.MAP.get(entity.getType()).getHatchTime());
+        nbt.putInt(DragonEggEntity.DATA_HATCH_TIME, DragonEggProperties.get(entity.getType()).getHatchTime());
         stack.setTag(nbt);
 
         player.displayClientMessage(getName(stack), true);
@@ -106,7 +106,7 @@ public class DragonEggItem extends Item
 
     public static ItemStack getStack(EntityType<?> type)
     {
-        return getStack(type, DragonEggProperties.MAP.get(type).getHatchTime());
+        return getStack(type, DragonEggProperties.get(type).getHatchTime());
     }
 
     public static ItemStack getStack(EntityType<?> type, int hatchTime)
