@@ -1,7 +1,7 @@
 {
   "surface_builder": "wyrmroost:mulch",
-  "depth": 0.2215,
-  "scale": 0.065,
+  "depth": 0.235,
+  "scale": 0.05,
   "temperature": 0.7,
   "downfall": 0.8,
   "precipitation": "rain",
@@ -19,7 +19,7 @@
       "offset": 2
     },
     "music": {
-      "sound": "music.wyrmroost.tincture_weald",
+      "sound": "wyrmroost:music.wyrmroost.tincture_weald",
       "min_delay": 12000,
       "max_delay": 24000,
       "replace_current_music": false
@@ -65,7 +65,7 @@
     ],
     [],
     [
-      "minecraft:flower_forest",
+      "wyrmroost:tincture_flowers",
       "minecraft:forest_flower_vegetation_common",
       "minecraft:patch_large_fern",
       "minecraft:brown_mushroom_normal",
