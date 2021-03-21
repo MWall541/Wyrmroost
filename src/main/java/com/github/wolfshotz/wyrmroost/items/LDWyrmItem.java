@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.items;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.entities.dragon.LesserDesertwyrmEntity;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
@@ -24,11 +23,11 @@ public class LDWyrmItem extends Item
     {
         super(WRItems.builder());
 
-        DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> ClientEvents.CALLBACKS.add(() -> ItemModelsProperties.register(this, Wyrmroost.id("is_alive"), (stack, world, player) ->
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ItemModelsProperties.register(this, Wyrmroost.id("is_alive"), (stack, world, player) ->
         {
             if (stack.hasTag() && stack.getTag().contains(DATA_CONTENTS)) return 1f;
             return 0f;
-        })));
+        }));
     }
 
     @Override

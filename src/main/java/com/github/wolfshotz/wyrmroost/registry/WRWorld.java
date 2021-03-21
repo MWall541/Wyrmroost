@@ -1,8 +1,10 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.world.features.NoExposureReplacementFeature;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
@@ -16,25 +18,23 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 public class WRWorld
 {
-    public static List<Consumer<BiomeLoadingEvent>> BIOME_LISTENERS = new ArrayList<>();
-
     public static final RegistryKey<Dimension> THE_WYRMROOST = RegistryKey.create(Registry.LEVEL_STEM_REGISTRY, Wyrmroost.id("the_wyrmroost"));
 
     public static final RegistryKey<Biome> TINCTURE_WEALD = biomeKey("tincture_weald");
 
-    public static void onBiomeLoad(BiomeLoadingEvent evt)
+    public static void onBiomeLoad(BiomeLoadingEvent event)
     {
-        for (Consumer<BiomeLoadingEvent> e : BIOME_LISTENERS) e.accept(evt);
+        for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
+            if (entry instanceof WREntities.Type)
+            {
+                WREntities.Type<?> type = (WREntities.Type<?>) entry;
+                if (type.spawnBiomes != null) type.spawnBiomes.accept(event);
+            }
 
-        BiomeGenerationSettingsBuilder generator = evt.getGeneration();
-
-        switch (evt.getCategory())
+        BiomeGenerationSettingsBuilder generator = event.getGeneration();
+        switch (event.getCategory())
         {
             case NETHER:
                 generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.RED_GEODE_FEATURE);

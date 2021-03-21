@@ -5,16 +5,12 @@ import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
-import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
-import com.github.wolfshotz.wyrmroost.registry.WRIO;
-import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
-import com.github.wolfshotz.wyrmroost.registry.WRParticles;
+import com.github.wolfshotz.wyrmroost.registry.*;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.WoodType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Atlases;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -22,10 +18,10 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -35,15 +31,14 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
+import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
 /**
  * EventBus listeners on CLIENT distribution
@@ -56,8 +51,6 @@ public class ClientEvents
     {
         WRDimensionRenderInfo.init();
     }
-
-    public static final List<Runnable> CALLBACKS = new ArrayList<>();
 
     public static void init()
     {
@@ -80,19 +73,26 @@ public class ClientEvents
 
     public static void clientSetup(final FMLClientSetupEvent event)
     {
-        CALLBACKS.forEach(Runnable::run);
-        CALLBACKS.clear();
         WRKeybind.registerKeys();
+
+        for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
+        {
+            if (entry instanceof WREntities.Type)
+            {
+                WREntities.Type<? super Entity> custom = cast(entry);
+                RenderingRegistry.registerEntityRenderingHandler(custom, custom.renderer.get());
+            }
+        }
+
         event.enqueueWork(() ->
         {
-            for (Map.Entry<ResourceLocation, Supplier<Supplier<RenderType>>> entry : WRBlocks.RENDER_LOOKUP.entrySet())
-            {
-                RenderTypeLookup.setRenderLayer(ForgeRegistries.BLOCKS.getValue(entry.getKey()), entry.getValue().get().get());
-            }
-            WRBlocks.RENDER_LOOKUP.clear();
-
             WRIO.screenSetup();
+
             WoodType.values().filter(w -> w.name().contains(Wyrmroost.MOD_ID)).forEach(Atlases::addWoodType);
+            WRBlocks.RENDER_LOOKUP.forEach((id, type) -> RenderTypeLookup.setRenderLayer(ForgeRegistries.BLOCKS.getValue(id), type.get().get()));
+            WRBlocks.RENDER_LOOKUP.clear();
+            WRBlockEntities.RENDER_LOOKUP.forEach((id, renderer) -> ClientRegistry.bindTileEntityRenderer(ForgeRegistries.TILE_ENTITIES.getValue(id), renderer.get()));
+            WRBlockEntities.RENDER_LOOKUP.clear();
         });
     }
 
@@ -106,7 +106,7 @@ public class ClientEvents
             if (entry instanceof WRParticles.WRParticleType<?>)
             {
                 WRParticles.WRParticleType<?> type = (WRParticles.WRParticleType<?>) entry;
-                getClient().particleEngine.register(type, sprite -> ((t, w, x, y, z, xS, yS, zS) -> type.getFactory().create(ModUtils.cast(t), w, sprite, x, y, z, xS, yS, zS)));
+                getClient().particleEngine.register(type, sprite -> ((t, w, x, y, z, xS, yS, zS) -> type.getFactory().create(cast(t), w, sprite, x, y, z, xS, yS, zS)));
             }
         }
     }

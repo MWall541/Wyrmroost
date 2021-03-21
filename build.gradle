@@ -17,13 +17,7 @@ version = "$project.mc_version-$project.mod_version"
 group = 'com.github.wolfShotz.wyrmroost'
 archivesBaseName = "$project.archiveBaseName"
 
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
-
-sourceSets {
-    main.resources.srcDirs += 'src/main/generated_resources'
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 dependencies {
     minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
@@ -66,6 +60,10 @@ minecraft {
             }
         }
     }
+}
+
+sourceSets {
+    main.resources.srcDirs += 'src/main/generated_resources'
 }
 
 jar {

@@ -3,16 +3,19 @@ package com.github.wolfshotz.wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.screen.DebugScreen;
 import com.github.wolfshotz.wyrmroost.data.DataGatherer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
+import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.WoodType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -28,8 +31,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
 /**
  * Reflection is shit and we shouldn't use it
@@ -39,8 +41,6 @@ import java.util.List;
  */
 public class CommonEvents
 {
-    public static final List<Runnable> CALLBACKS = new ArrayList<>();
-
     public static void init()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -63,15 +63,28 @@ public class CommonEvents
 
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() ->
-        {
-            CALLBACKS.forEach(Runnable::run);
-            CALLBACKS.clear();
-            LazySpawnEggItem.addEggsToMap();
-            WoodType.register(WRBlocks.OSERI_WOOD);
-        });
         IAnimatable.registerCapability();
         WRWorld.Features.init();
+
+        event.enqueueWork(() ->
+        {
+            LazySpawnEggItem.addEggsToMap();
+            WoodType.register(WRBlocks.OSERI_WOOD);
+
+            for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
+            {
+                if (entry instanceof WREntities.Type)
+                {
+                    WREntities.Type<? extends MobEntity> custom = cast(entry);
+                    if (custom.attributes != null)
+                        GlobalEntityTypeAttributes.put(custom, custom.attributes.build());
+                    if (custom.spawnPlacement != null)
+                        EntitySpawnPlacementRegistry.register(custom, custom.spawnPlacement.a, custom.spawnPlacement.b, cast(custom.spawnPlacement.c));
+                    if (custom.eggProperties != null)
+                        DragonEggProperties.MAP.put(custom, custom.eggProperties);
+                }
+            }
+        });
     }
 
     // =====================
@@ -99,7 +112,8 @@ public class CommonEvents
         else
         {
             if (dragon.level.isClientSide) DebugScreen.open(dragon);
-            else Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null? "null" : dragon.getNavigation().getPath().getTarget().toString());
+            else
+                Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null? "null" : dragon.getNavigation().getPath().getTarget().toString());
         }
     }
 

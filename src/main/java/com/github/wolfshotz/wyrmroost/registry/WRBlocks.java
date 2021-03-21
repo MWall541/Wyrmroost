@@ -36,7 +36,6 @@ public class WRBlocks
     };
 
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
-
     public static final Map<ResourceLocation, Supplier<Supplier<RenderType>>> RENDER_LOOKUP = new HashMap<>();
 
     public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 1, 3f, SoundType.STONE)));
