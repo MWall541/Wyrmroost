@@ -3,6 +3,7 @@ package com.github.wolfshotz.wyrmroost.registry;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.world.features.NoExposureReplacementFeature;
+import com.github.wolfshotz.wyrmroost.world.features.SurfaceAwareLakeFeature;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
@@ -59,7 +60,8 @@ public class WRWorld
     {
         public static final DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.FEATURES, Wyrmroost.MOD_ID);
 
-        public static final RegistryObject<Feature<ReplaceBlockConfig>> NO_EXPOSE_REPLACE = REGISTRY.register("no_expose_replace", () -> new NoExposureReplacementFeature(ReplaceBlockConfig.CODEC));
+        public static final RegistryObject<Feature<ReplaceBlockConfig>> NO_EXPOSE_REPLACE = REGISTRY.register("no_expose_replace", NoExposureReplacementFeature::new);
+        public static final RegistryObject<Feature<BlockStateFeatureConfig>> BETTER_LAKE = REGISTRY.register("better_lake", SurfaceAwareLakeFeature::new);
 
         public static ConfiguredFeature<?, ?> RED_GEODE_FEATURE;
         public static ConfiguredFeature<?, ?> PURPLE_GEODE_FEATURE;

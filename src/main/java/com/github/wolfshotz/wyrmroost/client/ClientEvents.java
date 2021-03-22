@@ -21,7 +21,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleType;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -29,13 +28,11 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
@@ -60,11 +57,11 @@ public class ClientEvents
         bus.addListener(ClientEvents::clientSetup);
         bus.addListener(ClientEvents::stitchTextures);
         bus.addListener(ClientEvents::itemColors);
+        bus.addListener(ClientEvents::bakeParticles);
 
         forgeBus.addListener(RenderHelper::renderWorld);
         forgeBus.addListener(RenderHelper::renderEntities);
         forgeBus.addListener(ClientEvents::cameraPerspective);
-        forgeBus.addListener(ClientEvents::consumeParticles);
     }
 
     // ====================
@@ -96,17 +93,14 @@ public class ClientEvents
         });
     }
 
-    public static void consumeParticles(ParticleFactoryRegisterEvent event)
+    public static void bakeParticles(ParticleFactoryRegisterEvent event)
     {
-        boolean yarnIsClient = getWorld().isClientSide;
-        MinecraftServer forgeHook = ServerLifecycleHooks.getCurrentServer();
-
         for (ParticleType<?> entry : ModUtils.getRegistryEntries(WRParticles.REGISTRY))
         {
-            if (entry instanceof WRParticles.WRParticleType<?>)
+            if (entry instanceof WRParticles.Type<?>)
             {
-                WRParticles.WRParticleType<?> type = (WRParticles.WRParticleType<?>) entry;
-                getClient().particleEngine.register(type, sprite -> ((t, w, x, y, z, xS, yS, zS) -> type.getFactory().create(cast(t), w, sprite, x, y, z, xS, yS, zS)));
+                WRParticles.Type<?> type = (WRParticles.Type<?>) entry;
+                getClient().particleEngine.register(type, sprite -> ((d, w, x, y, z, xS, yS, zS) -> type.getFactory().create(cast(d), w, sprite, x, y, z, xS, yS, zS)));
             }
         }
     }
@@ -114,9 +108,7 @@ public class ClientEvents
     public static void stitchTextures(TextureStitchEvent.Pre evt)
     {
         if (evt.getMap().location() == AtlasTexture.LOCATION_BLOCKS)
-        {
             evt.addSprite(BreathWeaponRenderer.BLUE_FIRE);
-        }
     }
 
     public static void itemColors(ColorHandlerEvent.Item evt)
@@ -139,11 +131,6 @@ public class ClientEvents
 
         if (view != PointOfView.FIRST_PERSON)
             ((TameableDragonEntity) entity).setMountCameraAngles(view == PointOfView.THIRD_PERSON_BACK, event);
-    }
-
-    public static void onClientWorldLoad(WorldEvent.Load event)
-    {
-//        event.getWorld()
     }
 
     // =====================

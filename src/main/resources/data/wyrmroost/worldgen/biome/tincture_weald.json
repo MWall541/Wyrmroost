@@ -39,7 +39,7 @@
   "features": [
     [],
     [
-      "minecraft:lake_water",
+      "wyrmroost:better_water_lake",
       "minecraft:lake_lava"
     ],
     [

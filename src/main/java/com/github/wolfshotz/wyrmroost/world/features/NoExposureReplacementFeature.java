@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.world.features;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -15,9 +14,9 @@ public class NoExposureReplacementFeature extends Feature<ReplaceBlockConfig>
 {
     private static final Direction[] DIRECTIONS = Direction.values(); // needed because god forbid vanilla would do it
 
-    public NoExposureReplacementFeature(Codec<ReplaceBlockConfig> p_i231953_1_)
+    public NoExposureReplacementFeature()
     {
-        super(p_i231953_1_);
+        super(ReplaceBlockConfig.CODEC);
     }
 
     @Override

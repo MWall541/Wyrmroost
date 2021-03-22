@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:decorated",
+  "config": {
+    "decorator": {
+      "type": "minecraft:water_lake",
+      "config": {
+        "chance": 4
+      }
+    },
+    "feature": {
+      "type": "wyrmroost:better_lake",
+      "config": {
+        "state": {
+          "Name": "minecraft:water",
+          "Properties": {
+            "level": "0"
+          }
+        }
+      }
+    }
+  }
+}
