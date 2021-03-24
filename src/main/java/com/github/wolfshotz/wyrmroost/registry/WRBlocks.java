@@ -18,7 +18,6 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,7 +35,7 @@ public class WRBlocks
     };
 
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
-    public static final Map<ResourceLocation, Supplier<Supplier<RenderType>>> RENDER_LOOKUP = new HashMap<>();
+    public static final Map<ResourceLocation, BlockExtension> EXTENSIONS = new HashMap<>();
 
     public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 1, 3f, SoundType.STONE)));
     public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 1, 5f, SoundType.METAL)));
@@ -50,60 +49,47 @@ public class WRBlocks
 
     // tincture weald
     public static final RegistryObject<Block> MULCH = register("mulch", MulchBlock::new);
-    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY), () -> RenderType::cutout);
-    public static final RegistryObject<Block> SILVER_MOSS_BODY = withItem("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), null, () -> RenderType::cutout);
-    public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new, () -> RenderType::cutout);
-    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.REPLACEABLE_PLANT, SoundType.VINE).randomTicks().noCollission().strength(0.2f)), () -> RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_SAPLING = register("blue_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.BLUE), plant().randomTicks()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_LEAVES = register("blue_oseri_leaves", () -> new OseriLeaves(0x6E8AC9, leaves()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_VINES = register("blue_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.BLUE_OSERI_VINES_BODY), () -> RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_VINES_BODY = withItem("blue_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.BLUE_OSERI_VINES), null, () -> RenderType::cutout);
-    public static final RegistryObject<Block> BLUE_OSERI_PETALS = register("blue_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_SAPLING = register("gold_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.GOLD), plant().randomTicks()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_LEAVES = register("gold_oseri_leaves", () -> new OseriLeaves(0xE7CC35, leaves()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_VINES = register("gold_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.GOLD_OSERI_VINES_BODY), () -> RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_VINES_BODY = withItem("gold_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.GOLD_OSERI_VINES), null, () -> RenderType::cutout);
-    public static final RegistryObject<Block> GOLD_OSERI_PETALS = register("gold_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_SAPLING = register("pink_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PINK), plant().randomTicks()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_LEAVES = register("pink_oseri_leaves", () -> new OseriLeaves(0xE4B8CF, leaves()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_VINES = register("pink_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PINK_OSERI_VINES_BODY), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_VINES_BODY = withItem("pink_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PINK_OSERI_VINES), null, () -> RenderType::cutout);
-    public static final RegistryObject<Block> PINK_OSERI_PETALS = register("pink_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_SAPLING = register("purple_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PURPLE), plant().randomTicks()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_LEAVES = register("purple_oseri_leaves", () -> new OseriLeaves(0x8D7FC6, leaves()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_VINES = register("purple_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PURPLE_OSERI_VINES_BODY), () -> RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_VINES_BODY = withItem("purple_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PURPLE_OSERI_VINES), null, () -> RenderType::cutout);
-    public static final RegistryObject<Block> PURPLE_OSERI_PETALS = register("purple_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_SAPLING = register("white_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.WHITE), plant().randomTicks()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_LEAVES = register("white_oseri_leaves", () -> new OseriLeaves(0xFBFEF5, leaves()), () -> RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.WHITE_OSERI_VINES_BODY), () -> RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_VINES_BODY = withItem("white_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.WHITE_OSERI_VINES), null, () -> RenderType::cutout);
-    public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()), () -> RenderType::cutout);
+    public static final RegistryObject<Block> SILVER_MOSS = register("silver_moss", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 2, WRBlocks.SILVER_MOSS_BODY), extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> SILVER_MOSS_BODY = register("silver_moss_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.SILVER_MOSS), extend().render(() -> RenderType::cutout).noItem().flammability(30, 60));
+    public static final RegistryObject<Block> GILLA = register("gilla", GillaBushBlock::new, extend().render(() -> RenderType::cutout).flammability(60, 100));
+    public static final RegistryObject<Block> MOSS_VINE = register("moss_vine", () -> new VineBlock(properties(Material.REPLACEABLE_PLANT, SoundType.VINE).randomTicks().noCollission().strength(0.2f)), extend().render(() -> RenderType::cutout).flammability(15, 100));
+    public static final RegistryObject<Block> BLUE_OSERI_SAPLING = register("blue_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.BLUE), plant().randomTicks()), extend().render(() -> RenderType::cutout));
+    public static final RegistryObject<Block> BLUE_OSERI_LEAVES = register("blue_oseri_leaves", () -> new OseriLeaves(0x6E8AC9, leaves()), extend().render(() -> RenderType::cutout).flammability(30, 60));
+    public static final RegistryObject<Block> BLUE_OSERI_VINES = register("blue_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.BLUE_OSERI_VINES_BODY), extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> BLUE_OSERI_VINES_BODY = register("blue_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.BLUE_OSERI_VINES), extend().render(() -> RenderType::cutout).noItem().flammability(30, 80));
+    public static final RegistryObject<Block> BLUE_OSERI_PETALS = register("blue_oseri_petals", () -> new PetalsBlock(plant()), extend().render(() -> RenderType::cutout).flammability(60, 30));
+    public static final RegistryObject<Block> GOLD_OSERI_SAPLING = register("gold_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.GOLD), plant().randomTicks()), extend().render(() -> RenderType::cutout));
+    public static final RegistryObject<Block> GOLD_OSERI_LEAVES = register("gold_oseri_leaves", () -> new OseriLeaves(0xE7CC35, leaves()), extend().render(() -> RenderType::cutout).flammability(30, 60));
+    public static final RegistryObject<Block> GOLD_OSERI_VINES = register("gold_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.GOLD_OSERI_VINES_BODY), extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> GOLD_OSERI_VINES_BODY = register("gold_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.GOLD_OSERI_VINES), extend().render(() -> RenderType::cutout).noItem().flammability(30, 80));
+    public static final RegistryObject<Block> GOLD_OSERI_PETALS = register("gold_oseri_petals", () -> new PetalsBlock(plant()), extend().render(() -> RenderType::cutout).flammability(60, 30));
+    public static final RegistryObject<Block> PINK_OSERI_SAPLING = register("pink_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PINK), plant().randomTicks()), extend().render(() -> RenderType::cutout));
+    public static final RegistryObject<Block> PINK_OSERI_LEAVES = register("pink_oseri_leaves", () -> new OseriLeaves(0xE4B8CF, leaves()), extend().render(() -> RenderType::cutout).flammability(30, 60));
+    public static final RegistryObject<Block> PINK_OSERI_VINES = register("pink_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PINK_OSERI_VINES_BODY), extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> PINK_OSERI_VINES_BODY = register("pink_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PINK_OSERI_VINES), extend().render(() -> RenderType::cutout).noItem().flammability(30, 80));
+    public static final RegistryObject<Block> PINK_OSERI_PETALS = register("pink_oseri_petals", () -> new PetalsBlock(plant()), extend().render(() -> RenderType::cutout).flammability(60, 30));
+    public static final RegistryObject<Block> PURPLE_OSERI_SAPLING = register("purple_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.PURPLE), plant().randomTicks()), extend().render(() -> RenderType::cutout));
+    public static final RegistryObject<Block> PURPLE_OSERI_LEAVES = register("purple_oseri_leaves", () -> new OseriLeaves(0x8D7FC6, leaves()), extend().render(() -> RenderType::cutout).flammability(30, 60));
+    public static final RegistryObject<Block> PURPLE_OSERI_VINES = register("purple_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.PURPLE_OSERI_VINES_BODY), extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> PURPLE_OSERI_VINES_BODY = register("purple_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.PURPLE_OSERI_VINES), extend().render(() -> RenderType::cutout).noItem().flammability(30, 80));
+    public static final RegistryObject<Block> PURPLE_OSERI_PETALS = register("purple_oseri_petals", () -> new PetalsBlock(plant()), extend().render(() -> RenderType::cutout).flammability(60, 30));
+    public static final RegistryObject<Block> WHITE_OSERI_SAPLING = register("white_oseri_sapling", () -> new SaplingBlock(new OseriTree(OseriTree.Type.WHITE), plant().randomTicks()), extend().render(() -> RenderType::cutout));
+    public static final RegistryObject<Block> WHITE_OSERI_LEAVES = register("white_oseri_leaves", () -> new OseriLeaves(0xFBFEF5, leaves()), extend().render(() -> RenderType::cutout).flammability(30, 60));
+    public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new GrowingPlantBlock(plant().randomTicks(), Direction.DOWN, 0, WRBlocks.WHITE_OSERI_VINES_BODY), extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> WHITE_OSERI_VINES_BODY = register("white_oseri_vines_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.WHITE_OSERI_VINES), extend().render(() -> RenderType::cutout).noItem().flammability(30, 80));
+    public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()), extend().render(() -> RenderType::cutout).flammability(60, 30));
     public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
-        return withItem(name, block, b -> new BlockItem(b, new Item.Properties().tab(BLOCKS_ITEM_GROUP)));
+        return register(name, block, extend());
     }
 
-    static RegistryObject<Block> withItem(String name, Supplier<Block> block, @Nullable Function<Block, BlockItem> blockItem)
+    static RegistryObject<Block> register(String name, Supplier<Block> block, BlockExtension extension)
     {
-        RegistryObject<Block> reg = REGISTRY.register(name, block);
-        if (blockItem != null) WRItems.register(name, () -> blockItem.apply(reg.get()));
-        return reg;
-    }
-
-    static RegistryObject<Block> register(String name, Supplier<Block> block, Supplier<Supplier<RenderType>> renderType)
-    {
-        RegistryObject<Block> delegate = register(name, block);
-        RENDER_LOOKUP.put(delegate.getId(), renderType);
-        return delegate;
-    }
-
-    static RegistryObject<Block> withItem(String name, Supplier<Block> block, @Nullable Function<Block, BlockItem> blockItem, Supplier<Supplier<RenderType>> renderType)
-    {
-        RegistryObject<Block> delegate = withItem(name, block, blockItem);
-        RENDER_LOOKUP.put(delegate.getId(), renderType);
+        RegistryObject<Block> delegate = REGISTRY.register(name, block);
+        if (extension.itemFactory != null) WRItems.register(name, () -> extension.itemFactory.apply(delegate.get()));
+        if (extension.requiresSetup()) EXTENSIONS.put(delegate.getId(), extension);
         return delegate;
     }
 
@@ -197,21 +183,21 @@ public class WRBlocks
         {
             super(name);
 
-            this.planks = WRBlocks.register(name + "_planks", () -> new Block(props(color)));
-            this.log = WRBlocks.register(name + "_log", () -> new LogBlock(color, logColor, self().strippedLog));
-            this.strippedLog = WRBlocks.register("stripped_" + name + "_log", () -> new RotatedPillarBlock(LogBlock.properties(color, logColor)));
-            this.wood = WRBlocks.register(name + "_wood", () -> new LogBlock(logColor, logColor, self().strippedWood));
-            this.strippedWood = WRBlocks.register("stripped_" + name + "_wood", () -> new RotatedPillarBlock(LogBlock.properties(color, color)));
-            this.slab = WRBlocks.register(name + "_slab", () -> new SlabBlock(props(color)));
+            this.planks = WRBlocks.register(name + "_planks", () -> new Block(props(color)), extend().flammability(5, 20));
+            this.log = WRBlocks.register(name + "_log", () -> new LogBlock(color, logColor, self().strippedLog), extend().flammability(5, 5));
+            this.strippedLog = WRBlocks.register("stripped_" + name + "_log", () -> new RotatedPillarBlock(LogBlock.properties(color, logColor)), extend().flammability(5, 5));
+            this.wood = WRBlocks.register(name + "_wood", () -> new LogBlock(logColor, logColor, self().strippedWood), extend().flammability(5, 5));
+            this.strippedWood = WRBlocks.register("stripped_" + name + "_wood", () -> new RotatedPillarBlock(LogBlock.properties(color, color)), extend().flammability(5, 5));
+            this.slab = WRBlocks.register(name + "_slab", () -> new SlabBlock(props(color)), extend().flammability(5, 20));
             this.pressurePlate = WRBlocks.register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).noCollission().strength(0.5f)));
-            this.fence = WRBlocks.register(name + "_fence", () -> new FenceBlock(props(color)));
-            this.fenceGate = WRBlocks.register(name + "_fence_gate", () -> new FenceGateBlock(props(color)));
+            this.fence = WRBlocks.register(name + "_fence", () -> new FenceBlock(props(color)), extend().flammability(5, 20));
+            this.fenceGate = WRBlocks.register(name + "_fence_gate", () -> new FenceGateBlock(props(color)), extend().flammability(5, 20));
             this.trapDoor = WRBlocks.register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).strength(3f).noOcclusion().isValidSpawn((s, r, p, e) -> false)));
-            this.stairs = WRBlocks.register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().defaultBlockState(), props(color)));
+            this.stairs = WRBlocks.register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().defaultBlockState(), props(color)), extend().flammability(5, 20));
             this.button = WRBlocks.register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.of(Material.DECORATION).noCollission().harvestTool(ToolType.AXE).strength(0.5f).sound(SoundType.WOOD)));
             this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).strength(3f).noOcclusion()));
-            this.wallSign = WRBlocks.withItem(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).noCollission().strength(1f).lootFrom(self().sign), this), null);
-            this.sign = WRBlocks.withItem(name + "_sign", () -> new WRSignBlock(props(color).noCollission().strength(1f), this), b -> new SignItem(new Item.Properties().stacksTo(16).tab(BLOCKS_ITEM_GROUP), b, getWallSign()));
+            this.wallSign = WRBlocks.register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).noCollission().strength(1f).lootFrom(self().sign), this), extend().noItem());
+            this.sign = WRBlocks.register(name + "_sign", () -> new WRSignBlock(props(color).noCollission().strength(1f), this), extend().item(b -> new SignItem(new Item.Properties().stacksTo(16).tab(BLOCKS_ITEM_GROUP), b, getWallSign())));
         }
 
         public Block getPlanks()
@@ -307,6 +293,46 @@ public class WRBlocks
                     .strength(2f, 3f)
                     .harvestTool(ToolType.AXE)
                     .sound(SoundType.WOOD);
+        }
+    }
+
+    public static BlockExtension extend()
+    {
+        return new BlockExtension();
+    }
+
+    public static class BlockExtension
+    {
+        Function<Block, BlockItem> itemFactory = b -> new BlockItem(b, new Item.Properties().tab(BLOCKS_ITEM_GROUP));
+        public Supplier<Supplier<RenderType>> renderType;
+        public int[] flammability;
+
+        public BlockExtension item(Function<Block, BlockItem> factory)
+        {
+            this.itemFactory = factory;
+            return this;
+        }
+
+        public BlockExtension noItem()
+        {
+            return item(null);
+        }
+
+        public BlockExtension render(Supplier<Supplier<RenderType>> renderSupplier)
+        {
+            this.renderType = renderSupplier;
+            return this;
+        }
+
+        public BlockExtension flammability(int spread, int destroyRate)
+        {
+            this.flammability = new int[]{spread, destroyRate};
+            return this;
+        }
+
+        private boolean requiresSetup()
+        {
+            return renderType != null || flammability != null;
         }
     }
 }

@@ -7,11 +7,16 @@ import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
+import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
 import net.minecraft.block.WoodType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,14 +25,20 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.Map;
 
 import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
@@ -80,6 +91,16 @@ public class CommonEvents
                         EntitySpawnPlacementRegistry.register(custom, custom.spawnPlacement.a, custom.spawnPlacement.b, cast(custom.spawnPlacement.c));
                 }
             }
+
+            for (Map.Entry<ResourceLocation, WRBlocks.BlockExtension> entry : WRBlocks.EXTENSIONS.entrySet())
+            {
+                Block block = ForgeRegistries.BLOCKS.getValue(entry.getKey());
+                WRBlocks.BlockExtension extension = entry.getValue();
+                if (extension.renderType != null)
+                    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderTypeLookup.setRenderLayer(block, extension.renderType.get().get()));
+                if (extension.flammability != null)
+                    ((FireBlock) Blocks.FIRE).setFlammable(block, extension.flammability[0], extension.flammability[1]);
+            }
         });
     }
 
@@ -105,11 +126,10 @@ public class CommonEvents
         TameableDragonEntity dragon = (TameableDragonEntity) entity;
 
         if (player.isShiftKeyDown()) dragon.tame(true, player);
-        else
-        {
+        else {
             if (dragon.level.isClientSide) DebugScreen.open(dragon);
             else
-                Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null? "null" : dragon.getNavigation().getPath().getTarget().toString());
+                Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null ? "null" : dragon.getNavigation().getPath().getTarget().toString());
         }
     }
 

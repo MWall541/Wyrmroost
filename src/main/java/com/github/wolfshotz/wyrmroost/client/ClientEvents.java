@@ -11,7 +11,6 @@ import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.WoodType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Atlases;
-import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.AtlasTexture;
@@ -86,10 +85,8 @@ public class ClientEvents
             WRIO.screenSetup();
 
             WoodType.values().filter(w -> w.name().contains(Wyrmroost.MOD_ID)).forEach(Atlases::addWoodType);
-            WRBlocks.RENDER_LOOKUP.forEach((id, type) -> RenderTypeLookup.setRenderLayer(ForgeRegistries.BLOCKS.getValue(id), type.get().get()));
-            WRBlocks.RENDER_LOOKUP.clear();
-            WRBlockEntities.RENDER_LOOKUP.forEach((id, renderer) -> ClientRegistry.bindTileEntityRenderer(ForgeRegistries.TILE_ENTITIES.getValue(id), renderer.get()));
-            WRBlockEntities.RENDER_LOOKUP.clear();
+            WRBlockEntities.RENDERERS.forEach((id, renderer) -> ClientRegistry.bindTileEntityRenderer(ForgeRegistries.TILE_ENTITIES.getValue(id), renderer.get()));
+            WRBlockEntities.RENDERERS.clear();
         });
     }
 

@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 public class WRBlockEntities
 {
     public static final DeferredRegister<TileEntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, Wyrmroost.MOD_ID);
-    public static final Map<ResourceLocation, Supplier<Function<TileEntityRendererDispatcher, TileEntityRenderer<? super TileEntity>>>> RENDER_LOOKUP = new HashMap<>();
+    public static final Map<ResourceLocation, Supplier<Function<TileEntityRendererDispatcher, TileEntityRenderer<? super TileEntity>>>> RENDERERS = new HashMap<>();
 
     public static final RegistryObject<TileEntityType<SignTileEntity>> CUSTOM_SIGN = register("sign", WRSignBlockEntity::new, () -> SignTileEntityRenderer::new, () -> setOf(WRBlocks.OSERI_WOOD.getSign(), WRBlocks.OSERI_WOOD.getWallSign()));
 
@@ -38,7 +38,7 @@ public class WRBlockEntities
     public static <T extends TileEntity> RegistryObject<TileEntityType<T>> register(String name, Supplier<T> factory, @Nullable Supplier<Function<TileEntityRendererDispatcher, TileEntityRenderer<? super T>>> renderer, Supplier<Set<Block>> blocks)
     {
         RegistryObject<TileEntityType<T>> reg = REGISTRY.register(name, () -> new TileEntityType<>(factory, blocks.get(), null));
-        if (renderer != null) RENDER_LOOKUP.put(reg.getId(), ModUtils.cast(renderer));
+        if (renderer != null) RENDERERS.put(reg.getId(), ModUtils.cast(renderer));
         return reg;
     }
 

@@ -188,7 +188,7 @@ public class WRConfig
             WRConfig.fireBreathFlammability = INSTANCE.breathFlammability.get();
             WRConfig.respectMobGriefing = INSTANCE.respectMobGriefing.get();
             WRConfig.dragonGriefing = INSTANCE.dragonGriefing.get();
-            WRConfig.breedLimits = INSTANCE.breedLimits.get().stream().collect(Collectors.toMap(s -> s.split(":")[0], s -> Integers.parseInt(s.split(":")[1])));
+            WRConfig.breedLimits = INSTANCE.breedLimits.get().stream().map(s -> s.split(":")).collect(Collectors.toMap(s -> s[0], s -> Integers.parseInt(s[1])));
         }
     }
 }

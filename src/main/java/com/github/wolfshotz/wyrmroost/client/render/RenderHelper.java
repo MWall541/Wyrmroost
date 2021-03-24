@@ -11,7 +11,10 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.OutlineLayerBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -36,7 +39,10 @@ public class RenderHelper extends RenderType
     // == [Render Types] ==
 
     @SuppressWarnings("ConstantConditions")
-    private RenderHelper() { super(null, null, 0, 0, false, false, null, null); } // dummy
+    private RenderHelper()
+    {
+        super(null, null, 0, 0, false, false, null, null); // dummy
+    }
 
     public static RenderType getAdditiveGlow(ResourceLocation locationIn)
     {
@@ -60,10 +66,10 @@ public class RenderHelper extends RenderType
     public static RenderType getThiccLines(double thickness)
     {
         return create("thickened_lines", DefaultVertexFormats.POSITION_COLOR, 1, 256, State.builder()
-                        .setLineState(new LineState(OptionalDouble.of(thickness)))
-                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                        .setWriteMaskState(COLOR_WRITE)
-                        .createCompositeState(false));
+                .setLineState(new LineState(OptionalDouble.of(thickness)))
+                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                .setWriteMaskState(COLOR_WRITE)
+                .createCompositeState(false));
     }
 
     // == [Rendering] ==
@@ -218,8 +224,8 @@ public class RenderHelper extends RenderType
             double z = view.z;
 
             IRenderTypeBuffer.Impl type = Minecraft.getInstance().renderBuffers().bufferSource();
-            WorldRenderer.renderLineBox(
-                    ms, type.getBuffer(RenderType.lines()),
+            WorldRenderer.renderLineBox(ms,
+                    type.getBuffer(RenderType.lines()),
                     aabb.minX - x,
                     aabb.minY - y,
                     aabb.minZ - z,
