@@ -25,7 +25,6 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
@@ -34,9 +33,9 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
@@ -92,9 +91,9 @@ public class CommonEvents
                 }
             }
 
-            for (Map.Entry<ResourceLocation, WRBlocks.BlockExtension> entry : WRBlocks.EXTENSIONS.entrySet())
+            for (Map.Entry<RegistryObject<Block>, WRBlocks.BlockExtension> entry : WRBlocks.EXTENSIONS.entrySet())
             {
-                Block block = ForgeRegistries.BLOCKS.getValue(entry.getKey());
+                Block block = entry.getKey().get();
                 WRBlocks.BlockExtension extension = entry.getValue();
                 if (extension.renderType != null)
                     DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderTypeLookup.setRenderLayer(block, extension.renderType.get().get()));

@@ -32,7 +32,6 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
@@ -85,7 +84,8 @@ public class ClientEvents
             WRIO.screenSetup();
 
             WoodType.values().filter(w -> w.name().contains(Wyrmroost.MOD_ID)).forEach(Atlases::addWoodType);
-            WRBlockEntities.RENDERERS.forEach((id, renderer) -> ClientRegistry.bindTileEntityRenderer(ForgeRegistries.TILE_ENTITIES.getValue(id), renderer.get()));
+
+            WRBlockEntities.RENDERERS.forEach((del, render) -> ClientRegistry.bindTileEntityRenderer(del.get(), render.get()));
             WRBlockEntities.RENDERERS.clear();
         });
     }

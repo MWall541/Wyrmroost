@@ -12,7 +12,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -35,7 +34,7 @@ public class WRBlocks
     };
 
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
-    public static final Map<ResourceLocation, BlockExtension> EXTENSIONS = new HashMap<>();
+    public static final Map<RegistryObject<Block>, BlockExtension> EXTENSIONS = new HashMap<>();
 
     public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 1, 3f, SoundType.STONE)));
     public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 1, 5f, SoundType.METAL)));
@@ -89,7 +88,7 @@ public class WRBlocks
     {
         RegistryObject<Block> delegate = REGISTRY.register(name, block);
         if (extension.itemFactory != null) WRItems.register(name, () -> extension.itemFactory.apply(delegate.get()));
-        if (extension.requiresSetup()) EXTENSIONS.put(delegate.getId(), extension);
+        if (extension.requiresSetup()) EXTENSIONS.put(delegate, extension);
         return delegate;
     }
 
