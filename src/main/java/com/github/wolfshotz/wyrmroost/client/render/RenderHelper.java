@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
+import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -80,7 +81,7 @@ public class RenderHelper extends RenderType
         float partialTicks = evt.getPartialTicks();
 
         renderDragonStaff(ms, partialTicks);
-        DebugBox.INSTANCE.render(ms);
+        if (WRConfig.debugMode) DebugRendering.render(ms, partialTicks);
     }
 
     private static final Object2IntMap<Entity> ENTITY_OUTLINE_MAP = new Object2IntOpenHashMap<>(1);
@@ -112,29 +113,6 @@ public class RenderHelper extends RenderType
         }
     }
 
-//    public static void fogColors(EntityViewRenderEvent.FogColors evt)
-//    {
-//        EffectInstance effect = ClientEvents.getPlayer().getActivePotionEffect(WREffects.SILK.get());
-//        if (effect != null)
-//        {
-//            evt.setBlue(evt.getRed() + 0.875f);
-//            evt.setGreen(evt.getGreen() + 0.875f);
-//            evt.setRed(evt.getBlue() + 0.875f);
-//        }
-//    }
-//
-//    public static void renderFog(EntityViewRenderEvent.RenderFogEvent evt)
-//    {
-//        EffectInstance effect = ClientEvents.getPlayer().getActivePotionEffect(WREffects.SILK.get());
-//        if (effect != null)
-//        {
-//            float duration = (float) effect.getDuration();
-//            float lerp = MathHelper.lerp(Math.min(1f, duration / 10f), evt.getFarPlaneDistance(), 5f);
-//            RenderSystem.fogStart(lerp * 0.25f);
-//            RenderSystem.fogEnd(lerp);
-//        }
-//    }
-
     private static void renderDragonStaff(MatrixStack ms, float partialTicks)
     {
         Minecraft mc = Minecraft.getInstance();
@@ -151,7 +129,7 @@ public class RenderHelper extends RenderType
             LivingEntity target = dragon.getTarget();
             if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
         }
-        dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, dragon.level, 4, 0xff0000ff));
+        dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBoxAt(ms, pos, dragon.level, 4, 0xff0000ff));
     }
 
     public static void drawShape(MatrixStack ms, IVertexBuilder buffer, VoxelShape shapeIn, double xIn, double yIn, double zIn, float red, float green, float blue, float alpha)
@@ -164,7 +142,7 @@ public class RenderHelper extends RenderType
         });
     }
 
-    public static void drawBlockPos(MatrixStack ms, BlockPos pos, World world, double lineThickness, int argb)
+    public static void drawBoxAt(MatrixStack ms, BlockPos pos, World world, double lineThickness, int argb)
     {
         Vector3d view = ClientEvents.getProjectedView();
         double x = pos.getX() - view.x;
@@ -181,64 +159,14 @@ public class RenderHelper extends RenderType
         impl.endBatch();
     }
 
-    public enum DebugBox
+    public static void drawAABB(MatrixStack ms, AxisAlignedBB aabb, int argb)
     {
-        INSTANCE;
-
-        private int time = 0;
-        private AxisAlignedBB aabb = null;
-        private int color = 0xff0000ff;
-
-        public DebugBox queue(AxisAlignedBB aabb)
-        {
-            return queue(aabb, Integer.MAX_VALUE);
-        }
-
-        public DebugBox queue(AxisAlignedBB aabb, int time)
-        {
-            this.aabb = aabb;
-            this.time = time;
-            return this;
-        }
-
-        public void setColor(int color)
-        {
-            this.color = color;
-        }
-
-        public void reset()
-        {
-            this.aabb = null;
-            this.time = 0;
-            this.color = 0xff0000ff;
-        }
-
-        public void render(MatrixStack ms)
-        {
-            if (!WRConfig.debugMode) return;
-            if (aabb == null) return;
-
-            Vector3d view = ClientEvents.getProjectedView();
-            double x = view.x;
-            double y = view.y;
-            double z = view.z;
-
-            IRenderTypeBuffer.Impl type = Minecraft.getInstance().renderBuffers().bufferSource();
-            WorldRenderer.renderLineBox(ms,
-                    type.getBuffer(RenderType.lines()),
-                    aabb.minX - x,
-                    aabb.minY - y,
-                    aabb.minZ - z,
-                    aabb.maxX - x,
-                    aabb.maxY - y,
-                    aabb.maxZ - z,
-                    (color & 0xff) / 255f,
-                    ((color >> 8) & 0xff) / 255f,
-                    ((color >> 16) & 0xff) / 255f,
-                    ((color >> 24) & 0xff) / 255f);
-            type.endBatch();
-
-            if (--time <= 0) aabb = null;
-        }
+        WorldRenderer.renderLineBox(ms,
+                Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(lines()),
+                aabb,
+                ((argb >> 16) & 0xFF) / 255f,
+                ((argb >> 8) & 0xFF) / 255f,
+                (argb & 0xFF) / 255f,
+                ((argb >> 24) & 0xFF) / 255f);
     }
 }

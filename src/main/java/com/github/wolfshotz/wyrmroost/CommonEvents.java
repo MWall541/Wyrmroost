@@ -12,10 +12,7 @@ import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FireBlock;
-import net.minecraft.block.WoodType;
+import net.minecraft.block.*;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
@@ -25,6 +22,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
@@ -59,6 +57,7 @@ public class CommonEvents
         bus.addListener(DataGatherer::gather);
 
         forgeBus.addListener(CommonEvents::debugStick);
+        forgeBus.addListener(CommonEvents::debugStickButItsForBlocksWoah);
         forgeBus.addListener(CommonEvents::onChangeEquipment);
         forgeBus.addListener(CommonEvents::loadLoot);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
@@ -107,46 +106,63 @@ public class CommonEvents
     //      Forge Bus
     // =====================
 
-    public static void debugStick(PlayerInteractEvent.EntityInteract evt)
+    public static void debugStick(PlayerInteractEvent.EntityInteract event)
     {
         if (!WRConfig.debugMode) return;
-        PlayerEntity player = evt.getPlayer();
-        ItemStack stack = player.getItemInHand(evt.getHand());
+        PlayerEntity player = event.getPlayer();
+        ItemStack stack = player.getItemInHand(event.getHand());
         if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick"))
             return;
 
-        evt.setCanceled(true);
-        evt.setCancellationResult(ActionResultType.SUCCESS);
+        event.setCanceled(true);
+        event.setCancellationResult(ActionResultType.SUCCESS);
 
-        Entity entity = evt.getTarget();
+        Entity entity = event.getTarget();
         entity.refreshDimensions();
 
         if (!(entity instanceof TameableDragonEntity)) return;
         TameableDragonEntity dragon = (TameableDragonEntity) entity;
 
         if (player.isShiftKeyDown()) dragon.tame(true, player);
-        else {
+        else
+        {
             if (dragon.level.isClientSide) DebugScreen.open(dragon);
             else
                 Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null ? "null" : dragon.getNavigation().getPath().getTarget().toString());
         }
     }
 
-    public static void onChangeEquipment(LivingEquipmentChangeEvent evt)
+    public static void debugStickButItsForBlocksWoah(PlayerInteractEvent.RightClickBlock event)
+    {
+        if (!WRConfig.debugMode) return;
+        if (event.getItemStack().getItem() != Items.STICK || !event.getItemStack().getHoverName().getString().equals("Debug Stick"))
+            return;
+
+        BlockPos pos = event.getHitVec().getBlockPos();
+        Block block = event.getWorld().getBlockState(pos).getBlock();
+        if (!(block instanceof SaplingBlock) || block.getRegistryName().getPath().contains("oseri")) return;
+
+        event.setCanceled(true);
+        event.setCancellationResult(ActionResultType.SUCCESS);
+
+
+    }
+
+    public static void onChangeEquipment(LivingEquipmentChangeEvent event)
     {
         ArmorBase initial;
-        if (evt.getTo().getItem() instanceof ArmorBase) initial = (ArmorBase) evt.getTo().getItem();
-        else if (evt.getFrom().getItem() instanceof ArmorBase) initial = (ArmorBase) evt.getFrom().getItem();
+        if (event.getTo().getItem() instanceof ArmorBase) initial = (ArmorBase) event.getTo().getItem();
+        else if (event.getFrom().getItem() instanceof ArmorBase) initial = (ArmorBase) event.getFrom().getItem();
         else return;
 
-        LivingEntity entity = evt.getEntityLiving();
+        LivingEntity entity = event.getEntityLiving();
         initial.applyFullSetBonus(entity, ArmorBase.hasFullSet(entity));
     }
 
-    public static void loadLoot(LootTableLoadEvent evt)
+    public static void loadLoot(LootTableLoadEvent event)
     {
-        if (evt.getName().equals(LootTables.ABANDONED_MINESHAFT))
-            evt.getTable().addPool(LootPool.lootPool()
+        if (event.getName().equals(LootTables.ABANDONED_MINESHAFT))
+            event.getTable().addPool(LootPool.lootPool()
                     .name("coin_dragon_inject")
                     .add(CoinDragonItem.getLootEntry())
                     .build());

@@ -102,7 +102,7 @@ public enum StaffAction
                 {
                     RayTraceResult rtr = ClientEvents.getClient().hitResult;
                     if (rtr instanceof BlockRayTraceResult)
-                        RenderHelper.drawBlockPos(ms,
+                        RenderHelper.drawBoxAt(ms,
                                 ((BlockRayTraceResult) rtr).getBlockPos(),
                                 dragon.level,
                                 Math.cos((dragon.tickCount + partialTicks) * 0.2) * 4.5 + 4.5,
