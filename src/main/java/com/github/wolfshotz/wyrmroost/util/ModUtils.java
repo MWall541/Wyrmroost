@@ -37,6 +37,24 @@ public final class ModUtils
     }
 
     /**
+     * A dumb hack I keep over-using because generics are stupid
+     *
+     * @return the object u just passed in, except now it's wearing terrible face paint it bought at a carnival
+     */
+    @SuppressWarnings("unchecked")
+    public static <F, T> F cast(T obj)
+    {
+        return (F) obj;
+    }
+
+    @SafeVarargs
+    public static <T> boolean equalsAny(T comparator, T... comparing)
+    {
+        for (T t : comparing) if (comparator.equals(t)) return true;
+        return false;
+    }
+
+    /**
      * @param registry the DeferredRegistry instance holding the objects
      * @param <T>      the type of registry
      * @return An Immutable Set that contains all entries of the provided DeferredRegister
@@ -104,18 +122,5 @@ public final class ModUtils
                 MathHelper.ceil(aabb.maxX),
                 MathHelper.ceil(aabb.maxY),
                 MathHelper.ceil(aabb.maxZ));
-    }
-
-    @SafeVarargs
-    public static <T> boolean equalsAny(T comparator, T... comparing)
-    {
-        for (T t : comparing) if (comparator.equals(t)) return true;
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <F,T> F cast(T obj)
-    {
-        return (F) obj;
     }
 }

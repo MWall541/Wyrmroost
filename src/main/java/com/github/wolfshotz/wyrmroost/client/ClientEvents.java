@@ -138,7 +138,7 @@ public class ClientEvents
         return Minecraft.getInstance();
     }
 
-    public static ClientWorld getWorld()
+    public static ClientWorld getLevel()
     {
         return getClient().level;
     }
@@ -160,7 +160,7 @@ public class ClientEvents
 
     public static boolean handleAnimationPacket(int entityID, int animationIndex)
     {
-        World world = ClientEvents.getWorld();
+        World world = ClientEvents.getLevel();
         IAnimatable entity = (IAnimatable) world.getEntity(entityID);
 
         if (animationIndex < 0) entity.setAnimation(IAnimatable.NO_ANIMATION);

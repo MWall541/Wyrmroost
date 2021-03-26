@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
@@ -15,6 +14,7 @@ import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
 import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
+import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
@@ -615,7 +615,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void attackInBox(AxisAlignedBB box, int disabledShieldTime)
     {
         List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box, entity -> entity != this && !hasPassenger(entity) && wantsToAttack(entity, getOwner()));
-        if (WRConfig.debugMode && level.isClientSide) RenderHelper.DebugBox.INSTANCE.queue(box);
+        if (WRConfig.debugMode && level.isClientSide) DebugRendering.box(box, 0xffff0000, 100);
         for (LivingEntity attacking : attackables)
         {
             doHurtTarget(attacking);

@@ -104,9 +104,9 @@ public enum StaffAction
                     if (rtr instanceof BlockRayTraceResult)
                         RenderHelper.drawBlockPos(ms,
                                 ((BlockRayTraceResult) rtr).getBlockPos(),
-                                dragon.level,
                                 Math.cos((dragon.tickCount + partialTicks) * 0.2) * 4.5 + 4.5,
-                                0x4d0000ff);
+                                0x4d0000ff,
+                                true);
                 }
 
                 @Override

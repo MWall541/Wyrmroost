@@ -44,7 +44,7 @@ public class AddPassengerPacket
     @OnlyIn(Dist.CLIENT)
     public void handleClient()
     {
-        World level = ClientEvents.getWorld();
+        World level = ClientEvents.getLevel();
         Entity passenger = level.getEntity(passengerID);
         Entity vehicle = level.getEntity(vehicleID);
         if (passenger == null || vehicle == null || !passenger.startRiding(vehicle, true))
