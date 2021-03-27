@@ -67,6 +67,14 @@ sourceSets {
 }
 
 jar {
+    sourceSets {
+        main {
+            java {
+                exclude "com/github/wolfshotz/wyrmroost/data/**"
+            }
+        }
+    }
+
     manifest {
         attributes([
                 "Specification-Title"     : "Wyrmroost",

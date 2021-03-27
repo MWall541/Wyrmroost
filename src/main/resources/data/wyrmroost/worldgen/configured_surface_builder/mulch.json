@@ -1,11 +1,10 @@
 {
-  "type": "minecraft:default",
   "config": {
     "top_material": {
-      "Name": "wyrmroost:mulch",
       "Properties": {
         "snowy": "false"
-      }
+      },
+      "Name": "wyrmroost:mulch"
     },
     "under_material": {
       "Name": "minecraft:dirt"
@@ -13,5 +12,6 @@
     "underwater_material": {
       "Name": "minecraft:gravel"
     }
-  }
+  },
+  "type": "minecraft:default"
 }
