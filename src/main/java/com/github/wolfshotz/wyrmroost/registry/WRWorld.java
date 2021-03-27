@@ -3,8 +3,8 @@ package com.github.wolfshotz.wyrmroost.registry;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.world.features.NoExposureReplacementFeature;
+import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
 import com.github.wolfshotz.wyrmroost.world.features.SurfaceAwareLakeFeature;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
@@ -12,7 +12,10 @@ import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.Dimension;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.*;
+import net.minecraft.world.gen.feature.BlockStateFeatureConfig;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.ReplaceBlockConfig;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.fml.RegistryObject;
@@ -36,18 +39,23 @@ public class WRWorld
             }
         }
 
-        BiomeGenerationSettingsBuilder generator = event.getGeneration();
+        BiomeGenerationSettingsBuilder settings = event.getGeneration();
+        ConfiguredFeature<?, ?>[] features = new ConfiguredFeature[] {
+                getConfiguredFeature(Features.CONFIGURED_RED_GEODE),
+                getConfiguredFeature(Features.CONFIGURED_PURPLE_GEODE),
+                getConfiguredFeature(Features.CONFIGURED_BLUE_GEODE),
+                getConfiguredFeature(Features.CONFIGURED_PLATINUM_ORE)};
         switch (event.getCategory())
         {
             case NETHER:
-                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.RED_GEODE_FEATURE);
+                if (features[0] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[0]);
                 break;
             case THEEND:
-                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PURPLE_GEODE_FEATURE);
+                if (features[1] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[1]);
                 break;
             default:
-                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.PLATINUM_ORE_FEATURE);
-                generator.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.BLUE_GEODE_FEATURE);
+                if (features[2] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[2]);
+                if (features[3] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[3]);
         }
     }
 
@@ -56,32 +64,32 @@ public class WRWorld
         return RegistryKey.create(Registry.BIOME_REGISTRY, Wyrmroost.id(name));
     }
 
+    public static ConfiguredFeature<?, ?> getConfiguredFeature(RegistryKey<ConfiguredFeature<?, ?>> key)
+    {
+        return WorldGenRegistries.CONFIGURED_FEATURE.get(key);
+    }
+
     public static class Features
     {
         public static final DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.FEATURES, Wyrmroost.MOD_ID);
 
         public static final RegistryObject<Feature<ReplaceBlockConfig>> NO_EXPOSE_REPLACE = REGISTRY.register("no_expose_replace", NoExposureReplacementFeature::new);
         public static final RegistryObject<Feature<BlockStateFeatureConfig>> BETTER_LAKE = REGISTRY.register("better_lake", SurfaceAwareLakeFeature::new);
+        public static final RegistryObject<Feature<OseriTreeFeature.Config>> OSERI_TREE = REGISTRY.register("oseri_tree", OseriTreeFeature::new);
 
-        public static ConfiguredFeature<?, ?> RED_GEODE_FEATURE;
-        public static ConfiguredFeature<?, ?> PURPLE_GEODE_FEATURE;
-        public static ConfiguredFeature<?, ?> BLUE_GEODE_FEATURE;
-        public static ConfiguredFeature<?, ?> PLATINUM_ORE_FEATURE;
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_PLATINUM_ORE = configured("ore_platinum");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_BLUE_GEODE = configured("ore_blue_geode");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_RED_GEODE = configured("ore_red_geode");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_PURPLE_GEODE = configured("ore_purple_geode");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_BLUE_OSERI_TREE = configured("blue_oseri_tree");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_GOLD_OSERI_TREE = configured("gold_oseri_tree");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_PINK_OSERI_TREE = configured("pink_oseri_tree");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_PURPLE_OSERI_TREE = configured("purple_oseri_tree");
+        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_WHITE_OSERI_TREE = configured("white_oseri_tree");
 
-        /**
-         * Needed because block registry entries don't exist at static. Must defer initalization.
-         */
-        public static void init()
+        private static RegistryKey<ConfiguredFeature<?, ?>> configured(String id)
         {
-            RED_GEODE_FEATURE = configure("ore_red_geode", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().defaultBlockState(), 4)).range(128).squared().count(8));
-            PURPLE_GEODE_FEATURE = configure("ore_purple_geode", NO_EXPOSE_REPLACE.get().configured(new ReplaceBlockConfig(Blocks.END_STONE.defaultBlockState(), WRBlocks.PURPLE_GEODE_ORE.get().defaultBlockState())).range(80).squared().count(45));
-            BLUE_GEODE_FEATURE = configure("ore_blue_geode", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().defaultBlockState(), 10)).range(16).squared());
-            PLATINUM_ORE_FEATURE = configure("ore_platinum", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().defaultBlockState(), 9)).range(64).squared().count(20));
-        }
-
-        private static <FC extends IFeatureConfig> ConfiguredFeature<FC, ?> configure(String id, ConfiguredFeature<FC, ?> cf)
-        {
-            return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, id, cf);
+            return RegistryKey.create(Registry.CONFIGURED_FEATURE_REGISTRY, Wyrmroost.id(id));
         }
     }
 }

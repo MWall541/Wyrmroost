@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost;
 
 import com.github.wolfshotz.wyrmroost.client.screen.DebugScreen;
-import com.github.wolfshotz.wyrmroost.data.DataGatherer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
@@ -56,7 +55,6 @@ public class CommonEvents
 
         bus.addListener(CommonEvents::commonSetup);
         bus.addListener(WRConfig::configLoad);
-        bus.addListener(DataGatherer::gather);
 
         forgeBus.addListener(CommonEvents::debugStick);
         forgeBus.addListener(CommonEvents::debugStickButItsForBlocksWoah);
@@ -73,7 +71,6 @@ public class CommonEvents
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
         IAnimatable.registerCapability();
-        WRWorld.Features.init();
 
         event.enqueueWork(() ->
         {
@@ -126,7 +123,8 @@ public class CommonEvents
         TameableDragonEntity dragon = (TameableDragonEntity) entity;
 
         if (player.isShiftKeyDown()) dragon.tame(true, player);
-        else {
+        else
+        {
             if (dragon.level.isClientSide) DebugScreen.open(dragon);
             else
                 Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null ? "null" : dragon.getNavigation().getPath().getTarget().toString());
