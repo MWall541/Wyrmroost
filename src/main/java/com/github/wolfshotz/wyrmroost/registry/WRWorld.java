@@ -40,22 +40,22 @@ public class WRWorld
         }
 
         BiomeGenerationSettingsBuilder settings = event.getGeneration();
-        ConfiguredFeature<?, ?>[] features = new ConfiguredFeature[] {
-                getConfiguredFeature(Features.CONFIGURED_RED_GEODE),
-                getConfiguredFeature(Features.CONFIGURED_PURPLE_GEODE),
-                getConfiguredFeature(Features.CONFIGURED_BLUE_GEODE),
-                getConfiguredFeature(Features.CONFIGURED_PLATINUM_ORE)};
+        ConfiguredFeature<?, ?> redGeode = getConfiguredFeature(Features.CONFIGURED_RED_GEODE);
+        ConfiguredFeature<?, ?> purpleGeode = getConfiguredFeature(Features.CONFIGURED_PURPLE_GEODE);
+        ConfiguredFeature<?, ?> blueGeode = getConfiguredFeature(Features.CONFIGURED_BLUE_GEODE);
+        ConfiguredFeature<?, ?> platinum = getConfiguredFeature(Features.CONFIGURED_PLATINUM_ORE);
+
         switch (event.getCategory())
         {
             case NETHER:
-                if (features[0] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[0]);
+                if (redGeode != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, redGeode);
                 break;
             case THEEND:
-                if (features[1] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[1]);
+                if (purpleGeode != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, purpleGeode);
                 break;
             default:
-                if (features[2] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[2]);
-                if (features[3] != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, features[3]);
+                if (blueGeode != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, blueGeode);
+                if (platinum != null) settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, platinum);
         }
     }
 
