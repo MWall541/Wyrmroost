@@ -23,6 +23,7 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -36,7 +37,10 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
@@ -139,16 +143,31 @@ public class CommonEvents
         if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick")) return;
 
         World level = event.getWorld();
-        BlockPos pos = event.getPos();
-        Block block = level.getBlockState(pos).getBlock();
+        BlockPos basePos = event.getPos();
+        Block block = level.getBlockState(basePos).getBlock();
 
         if (!(block instanceof SaplingBlock) || !block.getRegistryName().getPath().contains("oseri")) return;
 
         event.setCanceled(true);
         event.setCancellationResult(ActionResultType.SUCCESS);
 
-        if (level.isClientSide)
-            DebugRendering.conjoined(0xfffdff87, Integer.MAX_VALUE, pos, pos.north(), pos.south(), pos.above(), pos.above(2), pos.above(3), pos.above(4));
+        if (!level.isClientSide) return;
+
+        Set<BlockPos> positions = new HashSet<>(); // no duplicates
+        Random random = player.getRandom();
+        int trunkHeight = random.nextInt(5) + 11;
+        double xDiff = random.nextDouble();
+        double zDiff = 1 - xDiff;
+        int xInverse = random.nextBoolean()? 1 : -1;
+
+        for (int i = 0; i < trunkHeight; i++)
+        {
+            int x = (int) ((MathHelper.sin(i * 0.35f) * 3) * xDiff) * xInverse;
+            int z = (int) ((MathHelper.sin(i * 0.35f) * 3) * zDiff) * -xInverse;
+            positions.add(basePos.offset(x, i, z));
+        }
+
+        DebugRendering.conjoined(0xF0FF0000, Integer.MAX_VALUE, positions.toArray(new BlockPos[0]));
     }
 
     public static void onChangeEquipment(LivingEquipmentChangeEvent event)

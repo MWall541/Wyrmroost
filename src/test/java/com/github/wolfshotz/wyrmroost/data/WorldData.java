@@ -3,6 +3,7 @@ package com.github.wolfshotz.wyrmroost.data;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
+import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -100,6 +101,7 @@ public abstract class WorldData<T> implements IDataProvider
             add("better_water_lake", WRWorld.Features.BETTER_LAKE.get().configured(new BlockStateFeatureConfig(Blocks.WATER.defaultBlockState())).decorated(Placement.WATER_LAKE.configured(new ChanceConfig(4))));
             add("patch_gilla_bush", Feature.RANDOM_PATCH.configured(new BlockClusterFeatureConfig.Builder(new SimpleBlockStateProvider(WRBlocks.GILLA.get().defaultBlockState()), SimpleBlockPlacer.INSTANCE).noProjection().build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(7));
             add("tincture_flowers", Feature.FLOWER.configured(new BlockClusterFeatureConfig.Builder(ForestFlowerBlockStateProvider.INSTANCE, SimpleBlockPlacer.INSTANCE).build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(10));
+            add("blue_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.BLUE))); //todo: needs placements!
         }
     }
 
@@ -113,12 +115,12 @@ public abstract class WorldData<T> implements IDataProvider
         @Override
         protected void begin()
         {
-            add("mulch", SurfaceBuilder.DEFAULT.configured(config(WRBlocks.MULCH.get(), Blocks.DIRT, Blocks.GRAVEL)));
+            add("mulch", defaulted(WRBlocks.MULCH.get(), Blocks.DIRT, Blocks.GRAVEL));
         }
 
-        static SurfaceBuilderConfig config(Block topSoil, Block underSoil, Block underWaterMaterial)
+        static ConfiguredSurfaceBuilder<?> defaulted(Block topSoil, Block underSoil, Block underWaterMaterial)
         {
-            return new SurfaceBuilderConfig(topSoil.defaultBlockState(), underSoil.defaultBlockState(), underWaterMaterial.defaultBlockState());
+            return SurfaceBuilder.DEFAULT.configured(new SurfaceBuilderConfig(topSoil.defaultBlockState(), underSoil.defaultBlockState(), underWaterMaterial.defaultBlockState()));
         }
     }
 }

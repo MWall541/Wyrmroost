@@ -14,8 +14,12 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 /**
- * Just an extension for tree to allow use of vanilla sapling blocks.
- * todo
+ * Just an extension of {@link Tree} to allow use of vanilla sapling blocks.
+ *
+ * This makes the configred feature using abstract away from using the vanilla {@link BaseTreeFeatureConfig}
+ * in favor of using just a normal feature.
+ * In fact, it also allows more than just tree features. If for whatever reason a datapack replaces the tree configured
+ * features, then the saplings growing will grow that replaced feature.
  */
 public class TreeGen extends Tree
 {
@@ -29,9 +33,7 @@ public class TreeGen extends Tree
     @Override
     public boolean growTree(ServerWorld level, ChunkGenerator generator, BlockPos pos, BlockState state, Random random)
     {
-        ConfiguredFeature<?, ?> feature = WRWorld.getConfiguredFeature(treeFeature);
-
-        return false;
+        return WRWorld.getConfiguredFeature(treeFeature).place(level, generator, random, pos);
     }
 
     @Nullable
