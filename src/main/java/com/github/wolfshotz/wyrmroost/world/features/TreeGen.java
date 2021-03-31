@@ -33,7 +33,7 @@ public class TreeGen extends Tree
     @Override
     public boolean growTree(ServerWorld level, ChunkGenerator generator, BlockPos pos, BlockState state, Random random)
     {
-        return WRWorld.getConfiguredFeature(treeFeature).place(level, generator, random, pos);
+        return WRWorld.getConfiguredFeature(level, treeFeature).place(level, generator, random, pos);
     }
 
     @Nullable

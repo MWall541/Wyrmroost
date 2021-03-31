@@ -94,10 +94,6 @@ public abstract class WorldData<T> implements IDataProvider
         @Override
         protected void begin()
         {
-            add("ore_red_geode", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().defaultBlockState(), 4)).range(128).squared().count(8));
-            add("ore_purple_geode", WRWorld.Features.NO_EXPOSE_REPLACE.get().configured(new ReplaceBlockConfig(Blocks.END_STONE.defaultBlockState(), WRBlocks.PURPLE_GEODE_ORE.get().defaultBlockState())).range(80).squared().count(45));
-            add("ore_blue_geode", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().defaultBlockState(), 10)).range(16).squared());
-            add("ore_platinum", Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().defaultBlockState(), 9)).range(64).squared().count(20));
             add("better_water_lake", WRWorld.Features.BETTER_LAKE.get().configured(new BlockStateFeatureConfig(Blocks.WATER.defaultBlockState())).decorated(Placement.WATER_LAKE.configured(new ChanceConfig(4))));
             add("patch_gilla_bush", Feature.RANDOM_PATCH.configured(new BlockClusterFeatureConfig.Builder(new SimpleBlockStateProvider(WRBlocks.GILLA.get().defaultBlockState()), SimpleBlockPlacer.INSTANCE).noProjection().build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(7));
             add("tincture_flowers", Feature.FLOWER.configured(new BlockClusterFeatureConfig.Builder(ForestFlowerBlockStateProvider.INSTANCE, SimpleBlockPlacer.INSTANCE).build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(10));
