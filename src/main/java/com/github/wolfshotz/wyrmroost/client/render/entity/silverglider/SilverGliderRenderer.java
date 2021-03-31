@@ -3,8 +3,8 @@ package com.github.wolfshotz.wyrmroost.client.render.entity.silverglider;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.entity.AbstractDragonRenderer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragon.SilverGliderEntity;
+import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
@@ -36,7 +36,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     public ResourceLocation getTextureLocation(SilverGliderEntity sg)
     {
         if (sg.getVariant() == -1) return SPECIAL;
-        if (WRConfig.deckTheHalls) return CHRISTMAS;
+        if (WRConfig.DECK_THE_HALLS.get()) return CHRISTMAS;
         if (!sg.isMale()) return FEMALE;
         int index = sg.getVariant();
         if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = resource("male_" + index + ".png");
@@ -46,7 +46,7 @@ public class SilverGliderRenderer extends AbstractDragonRenderer<SilverGliderEnt
     private ResourceLocation getGlowTexture(SilverGliderEntity sg)
     {
         if (sg.getVariant() == -1) return SPECIAL_GLOW;
-        if (WRConfig.deckTheHalls) return sg.isMale()? CHRISTMAS_MALE_LAYER : null;
+        if (WRConfig.DECK_THE_HALLS.get()) return sg.isMale()? CHRISTMAS_MALE_LAYER : null;
         if (!sg.isMale()) return FEMALE_GLOW;
         int index = sg.getVariant() + 3;
         if (MALE_TEXTURES[index] == null)

@@ -40,7 +40,7 @@ public class MoveToHomeGoal extends Goal
     @Override
     public void tick()
     {
-        int sq = WRConfig.homeRadius * WRConfig.homeRadius;
+        int sq = WRConfig.HOME_RADIUS.get() * WRConfig.HOME_RADIUS.get();
         Vector3d home = Vector3d.atLowerCornerOf(dragon.getRestrictCenter());
         final int TIME_UNTIL_TELEPORT = 600; // 30 seconds
 
@@ -50,7 +50,7 @@ public class MoveToHomeGoal extends Goal
         else
         {
             Vector3d movePos;
-            if (dragon.getNavigation().isDone() && (movePos = RandomPositionGenerator.getPosTowards(dragon, WRConfig.homeRadius, 10, home)) != null)
+            if (dragon.getNavigation().isDone() && (movePos = RandomPositionGenerator.getPosTowards(dragon, WRConfig.HOME_RADIUS.get(), 10, home)) != null)
                 dragon.getNavigation().moveTo(movePos.x, movePos.y, movePos.y, 1.1);
         }
     }

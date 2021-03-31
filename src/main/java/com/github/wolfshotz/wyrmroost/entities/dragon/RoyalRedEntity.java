@@ -75,7 +75,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     public RoyalRedEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
         super(dragon, level);
-        noCulling = WRConfig.disableFrustumCheck;
+        noCulling = WRConfig.NO_CULLING.get();
 
         setPathfindingMalus(PathNodeType.DANGER_FIRE, 0);
         setPathfindingMalus(PathNodeType.DAMAGE_FIRE, 0);

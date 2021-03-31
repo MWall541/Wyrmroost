@@ -25,7 +25,7 @@ public class RoyalRedRenderer extends AbstractDragonRenderer<RoyalRedEntity, Roy
     {
         boolean shiny = entity.getVariant() == -1;
 
-        if (WRConfig.deckTheHalls && !shiny) return entity.isMale()? CHRISTMAS_MALE : CHRISTMAS_FEMALE;
+        if (WRConfig.DECK_THE_HALLS.get() && !shiny) return entity.isMale()? CHRISTMAS_MALE : CHRISTMAS_FEMALE;
 
         if (entity.isBaby()) return CHILD;
         int index = (entity.isMale()? 0 : 1) + (shiny? 2 : 0);

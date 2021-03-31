@@ -1,194 +1,136 @@
 package com.github.wolfshotz.wyrmroost;
 
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.entity.EntityType;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.core.util.Integers;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Configuration stuff for Wyrmroost
- * Try to keep "chance" values like so: Higher values, higher chances.
- */
 public class WRConfig
 {
-    // Common
-    public static boolean debugMode = false;
+    public static final ForgeConfigSpec COMMON;
+    public static final ForgeConfigSpec.BooleanValue DEBUG_MODE;
 
-    // Client
-    public static boolean disableFrustumCheck = true;
-    public static boolean deckTheHalls = true;
-    public static boolean renderEntityOutlines = true;
+    public static final ForgeConfigSpec SERVER;
+    public static final ForgeConfigSpec.DoubleValue BREATH_FIRE_SPREAD;
+    public static final ForgeConfigSpec.IntValue HOME_RADIUS;
+    private static final ForgeConfigSpec.BooleanValue RESPECT_MOB_GRIEFING;
+    private static final ForgeConfigSpec.BooleanValue DRAGON_GRIEFING;
+    private static final List<String> BREED_LIMIT_DEFAULTS = ImmutableList.of("butterfly_leviathan:1", "royal_red:2");
+    private static final ForgeConfigSpec.ConfigValue<List<? extends String>> BREED_LIMITS;
+    private static final Object2IntMap<String> BREED_LIMITS_CACHE = parseEntries(BREED_LIMIT_DEFAULTS);
 
-    // Server
-    public static double fireBreathFlammability = 0.8d;
-    public static int homeRadius = 16;
-    private static boolean respectMobGriefing;
-    private static boolean dragonGriefing;
-    public static Map<String, Integer> breedLimits;
+    public static final ForgeConfigSpec CLIENT;
+    public static final ForgeConfigSpec.BooleanValue NO_CULLING;
+    public static final ForgeConfigSpec.BooleanValue DECK_THE_HALLS;
+    public static final ForgeConfigSpec.BooleanValue RENDER_OUTLINES;
 
     public static boolean canGrief(World level)
     {
-        return respectMobGriefing? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : dragonGriefing;
+        return RESPECT_MOB_GRIEFING.get()? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : DRAGON_GRIEFING.get();
     }
 
-    public static void configLoad(ModConfig.ModConfigEvent evt)
+    public static int getBreedLimitFor(EntityType<?> dragon)
     {
-        try
-        {
-            ForgeConfigSpec spec = evt.getConfig().getSpec();
-            if (spec == Common.SPEC) Common.reload();
-            else if (spec == Client.SPEC) Client.reload();
-            else if (spec == Server.SPEC) Server.reload();
-        }
-        catch (Throwable e)
-        {
-            Wyrmroost.LOG.error("Something went wrong updating Wyrmroost configs, using previous or default values! {}", e.toString());
-        }
+        return BREED_LIMITS_CACHE.getOrDefault(dragon.getRegistryName().getPath(), 0);
     }
 
-    /**
-     * Config Spec on COMMON Dist
-     */
-    public static class Common
+    public static void reloadConfigs(ModConfig.Reloading event)
     {
-        public static final Common INSTANCE;
-        public static final ForgeConfigSpec SPEC;
-
-        static
+        ForgeConfigSpec spec = event.getConfig().getSpec();
+        if (spec == SERVER)
         {
-            Pair<Common, ForgeConfigSpec> pair = new ForgeConfigSpec.Builder().configure(Common::new);
-            INSTANCE = pair.getLeft();
-            SPEC = pair.getRight();
-        }
-
-        public final ForgeConfigSpec.BooleanValue debugMode;
-
-        Common(ForgeConfigSpec.Builder builder)
-        {
-            builder.comment("Wyrmroost General Options").push("general");
-            debugMode = builder.comment("Do not enable this unless you are told to!")
-                    .translation("config.wyrmroost.debug")
-                    .define("debugMode", false);
-
-            builder.pop();
-        }
-
-        public static void reload()
-        {
-            WRConfig.debugMode = INSTANCE.debugMode.get();
+            try
+            {
+                BREED_LIMITS_CACHE.clear();
+                BREED_LIMITS_CACHE.putAll(parseEntries(BREED_LIMITS.get()));
+            }
+            catch (Exception e)
+            {
+                Wyrmroost.LOG.error("Unable to parse config entries. Did you forget something? Using previous values.", e);
+            }
         }
     }
 
-    public static class Client
+    private static Object2IntMap<String> parseEntries(List<? extends String> list)
     {
-        public static final Client INSTANCE;
-        public static final ForgeConfigSpec SPEC;
-
-        static
-        {
-            Pair<Client, ForgeConfigSpec> pair = new ForgeConfigSpec.Builder().configure(Client::new);
-            INSTANCE = pair.getLeft();
-            SPEC = pair.getRight();
-        }
-
-        public final ForgeConfigSpec.BooleanValue disableFrustumCheck;
-        public final ForgeConfigSpec.BooleanValue renderEntityOutlines;
-        public final ForgeConfigSpec.BooleanValue deckTheHalls;
-
-        Client(ForgeConfigSpec.Builder builder)
-        {
-            builder.comment("Wyrmroost Client Options").push("General");
-            disableFrustumCheck = builder.comment("Disables Frustum check when rendering (Dragons parts dont go poof when looking too far) - Only applies to bigger bois")
-                    .translation("config.wyrmroost.disableFrustumCheck")
-                    .define("disableFrustumCheck", true);
-            renderEntityOutlines = builder.comment("Toggles Rendering of the Dragon Staff's Entity Color shaders", "Disable this if you're having issues with shaders")
-                    .translation("config.wyrmroost.renderEntityOutlines")
-                    .define("renderEntityOutlines", true);
-            deckTheHalls = builder.comment("Only when the time comes...")
-                    .translation("config.wyrmroost.deckTheHalls")
-                    .define("deckTheHalls", true);
-
-            builder.pop();
-        }
-
-        public static void reload()
-        {
-            WRConfig.disableFrustumCheck = INSTANCE.disableFrustumCheck.get();
-            WRConfig.deckTheHalls = INSTANCE.deckTheHalls.get() && ModUtils.DECK_THE_HALLS;
-            WRConfig.renderEntityOutlines = INSTANCE.renderEntityOutlines.get();
-        }
+        return list.stream().map(s -> s.split(":")).collect(Collectors.toMap(
+                s -> s[0],
+                s -> Integer.parseInt(s[1]),
+                (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },
+                Object2IntOpenHashMap::new));
     }
 
-    public static class Server
+    static
     {
-        public static final Server INSTANCE;
-        public static final ForgeConfigSpec SPEC;
+        ForgeConfigSpec.Builder common = new ForgeConfigSpec.Builder();
+        common.comment("If your looking for more options, check `wyrmroost-client.toml` or, in `{World Name}/serverconfig/wyrmroost-server.toml`",
+                "Wyrmroost General Options")
+                .push("general");
+        DEBUG_MODE = common.comment("Do not enable this unless you are told to!")
+                .translation("config.wyrmroost.debug")
+                .define("debug_mode", false);
 
-        static
-        {
-            Pair<Server, ForgeConfigSpec> pair = new ForgeConfigSpec.Builder().configure(Server::new);
-            INSTANCE = pair.getLeft();
-            SPEC = pair.getRight();
-        }
+        common.pop();
+        COMMON = common.build();
 
-        public final ForgeConfigSpec.IntValue homeRadius;
-        public final ForgeConfigSpec.DoubleValue breathFlammability;
-        public final ForgeConfigSpec.BooleanValue respectMobGriefing;
-        public final ForgeConfigSpec.BooleanValue dragonGriefing;
-        private static final List<String> BREED_LIMIT_DEFAULTS = ImmutableList.of("butterfly_leviathan:1", "royal_red:2");
-        public final ForgeConfigSpec.ConfigValue<List<? extends String>> breedLimits;
 
-        Server(ForgeConfigSpec.Builder builder)
-        {
-            builder.comment("Wyrmroost Dragon Options").push("dragons");
-            homeRadius = builder
-                    .comment("How far dragons can travel from their home points")
-                    .translation("config.wyrmroost.homeradius")
-                    .defineInRange("home_radius", 16, 6, 1024);
+        ForgeConfigSpec.Builder server = new ForgeConfigSpec.Builder();
+        server.comment("Wyrmroost Server Options",
+                "For Singleplayer, These options are \"per-world.\" Meaning that there will be a different version of",
+                "this config for each world you create.",
+                "If you want this config to apply globally, place the file in the `defaultconfigs` folder in your game instance.",
+                "Wyrmroost General Options")
+                .push("general");
 
-            breathFlammability = builder
-                    .comment("Base Flammability for Dragon Fire Breath.",
-                            "A value of 0 will disable fire block damage completely.")
-                    .translation("config.wyrmroost.breathFlammability")
-                    .defineInRange("breath_lammability", 0.8, 0, 1);
+        server.pop().comment("Wyrmroost Dragon Options").push("dragons");
 
-            breedLimits = builder
-                    .comment("Breed Limit for each dragon. This determines how many times a certain dragon can breed.",
-                            "Leaving this blank will disable the functionality.")
-                    .translation("config.wyrmroost.breedlimits")
-                    .defineList("breed_limits", () -> BREED_LIMIT_DEFAULTS, o -> o instanceof String);
+        BREATH_FIRE_SPREAD = server.comment("Base Flammability or spread of fire from Dragon Fire Breath",
+                "A value of 0 completely disables fire block damage completely.")
+                .translation("config.wyrmroost.breath_fire_spread")
+                .defineInRange("breath_fire_spread", 0.8, 0, 1);
+        HOME_RADIUS = server.comment("The radius (not diameter!) of how far dragons can travel from their home points")
+                .translation("config.wyrmroost.home_radius")
+                .defineInRange("home_radius", 16, 6, 1024);
+        BREED_LIMITS = server.comment("Breed limit for each dragon. This determines how mant times a certain dragon can breed.",
+                "Leaving this blank ( `[]` ) will disable the functionality.")
+                .translation("config.wyrmroost.breed_limits")
+                .defineList("breed_limits", () -> BREED_LIMIT_DEFAULTS, e -> e instanceof String);
 
-            builder.push("griefing");
+        server.push("griefing");
 
-            respectMobGriefing = builder
-                    .comment("If True, Dragons will respect the Minecraft MobGriefing Gamerule. Else, follow \"dragonGriefing\" option")
-                    .translation("config.wyrmroost.respectMobGriefing")
-                    .define("respect_mob_griefing", true);
+        RESPECT_MOB_GRIEFING = server.comment("If true, dragons will respect the Minecraft Mob Griefing Gamerule.",
+                "Otherwise, they will follow the `dragon_griefing` config rule")
+                .translation("config.wyrmroost.respect_mob_griefing")
+                .define("respect_mob_griefing", true);
+        DRAGON_GRIEFING = server.comment("If true and not respecting mob griefing rules (`respect_mob_griefing`),",
+                "Allow dragons to destroy blocks.",
+                "Note: not all dragons destroy blocks and not all are as destructive as the next.")
+                .define("dragon_griefing", true);
 
-            dragonGriefing = builder
-                    .comment("If true and not respecting MobGriefing rules, allow dragons to grief")
-                    .translation("config.wyrmroost.dragonGriefing")
-                    .define("dragon_griefing", true);
+        server.pop(2);
+        SERVER = server.build();
 
-            builder.pop();
-            builder.pop();
-        }
 
-        public static void reload()
-        {
-            WRConfig.homeRadius = INSTANCE.homeRadius.get();
-            WRConfig.fireBreathFlammability = INSTANCE.breathFlammability.get();
-            WRConfig.respectMobGriefing = INSTANCE.respectMobGriefing.get();
-            WRConfig.dragonGriefing = INSTANCE.dragonGriefing.get();
-            WRConfig.breedLimits = INSTANCE.breedLimits.get().stream().map(s -> s.split(":")).collect(Collectors.toMap(s -> s[0], s -> Integers.parseInt(s[1])));
-        }
+        ForgeConfigSpec.Builder client = new ForgeConfigSpec.Builder();
+        client.comment("Wyrmroost Client Options").push("general");
+        NO_CULLING = client.comment("Disables culling for rendering bigger dragons (dragons don't go poof in corner of eye)")
+                .translation("config.wyrmroost.check_frustum")
+                .define("disable_frustum_check", true);
+        RENDER_OUTLINES = client.comment("Toggles the rendering of the Dragon Staff's entity color shaders.",
+                "Disable this if you are having issues with this while using shaders.")
+                .translation("config.wyrmroost.entity_outlines")
+                .define("entity_outlines", true);
+        DECK_THE_HALLS = client.comment("Only when the time comes...")
+                .translation("config.wyrmroost.deck_the_halls")
+                .define("deck_the_halls", true);
+        client.pop();
+        CLIENT = client.build();
     }
 }

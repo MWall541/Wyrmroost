@@ -58,7 +58,7 @@ public class CommonEvents
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         bus.addListener(CommonEvents::commonSetup);
-        bus.addListener(WRConfig::configLoad);
+        bus.addListener(WRConfig::reloadConfigs);
 
         forgeBus.addListener(CommonEvents::debugStick);
         forgeBus.addListener(CommonEvents::debugStickButItsForBlocksWoah);
@@ -111,7 +111,7 @@ public class CommonEvents
 
     public static void debugStick(PlayerInteractEvent.EntityInteract event)
     {
-        if (!WRConfig.debugMode) return;
+        if (!WRConfig.DEBUG_MODE.get()) return;
         PlayerEntity player = event.getPlayer();
         ItemStack stack = player.getItemInHand(event.getHand());
         if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick"))
@@ -137,7 +137,7 @@ public class CommonEvents
 
     public static void debugStickButItsForBlocksWoah(PlayerInteractEvent.RightClickBlock event)
     {
-        if (!WRConfig.debugMode) return;
+        if (!WRConfig.DEBUG_MODE.get()) return;
         PlayerEntity player = event.getPlayer();
         ItemStack stack = player.getItemInHand(event.getHand());
         if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick")) return;

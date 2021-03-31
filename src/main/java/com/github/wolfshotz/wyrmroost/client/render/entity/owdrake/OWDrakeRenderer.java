@@ -51,7 +51,7 @@ public class OWDrakeRenderer extends AbstractDragonRenderer<OverworldDrakeEntity
             String path = (index & 1) != 0? "child" : (index & 2) != 0? "female" : "male";
             if ((index & 4) != 0) path += "_spe";
             else if ((index & 8) != 0) path += "_sav";
-            if (WRConfig.deckTheHalls) path += "_christmas";
+            if (WRConfig.DECK_THE_HALLS.get()) path += "_christmas";
             return TEXTURES[index] = resource(path + ".png");
         }
         return TEXTURES[index];

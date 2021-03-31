@@ -35,7 +35,7 @@ public class WRItems
         public void fillItemList(NonNullList<ItemStack> items)
         {
             super.fillItemList(items);
-            if (WRConfig.debugMode)
+            if (WRConfig.DEBUG_MODE.get())
                 items.add(new ItemStack(Items.STICK).setHoverName(new StringTextComponent("Debug Stick")));
         }
     };

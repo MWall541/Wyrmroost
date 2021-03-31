@@ -65,7 +65,7 @@ public class FireBreathEntity extends BreathWeaponEntity
             return;
         }
 
-        double flammability = WRConfig.fireBreathFlammability;
+        double flammability = WRConfig.BREATH_FIRE_SPREAD.get();
         if (level.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK) && WRConfig.canGrief(level) && flammability != 0) // respect game rules
         {
             BlockPos offset = pos.relative(direction);

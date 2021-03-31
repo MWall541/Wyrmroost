@@ -11,7 +11,10 @@ public class AlpineRenderer extends AbstractDragonRenderer<AlpineEntity, AlpineM
 {
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
 
-    public AlpineRenderer(EntityRendererManager manager) { super(manager, new AlpineModel(), 2f); }
+    public AlpineRenderer(EntityRendererManager manager)
+    {
+        super(manager, new AlpineModel(), 2f);
+    }
 
     @Override
     public ResourceLocation getTextureLocation(AlpineEntity entity)
@@ -20,7 +23,7 @@ public class AlpineRenderer extends AbstractDragonRenderer<AlpineEntity, AlpineM
         if (TEXTURES[variant] == null)
         {
             String path = BASE_PATH + "alpine/body_" + variant;
-            if (WRConfig.deckTheHalls) path += "_christmas";
+            if (WRConfig.DECK_THE_HALLS.get()) path += "_christmas";
             return TEXTURES[variant] = Wyrmroost.id(path + ".png");
         }
         return TEXTURES[variant];

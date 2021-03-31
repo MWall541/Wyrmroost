@@ -97,6 +97,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.ITEM_STACK);
     public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS); // todo for 1.17: remove optional and make this nullable
 
+    @Deprecated // https://github.com/MinecraftForge/MinecraftForge/issues/7622
     public final LazyOptional<DragonInventory> inventory;
     public final LerpedFloat sleepTimer = LerpedFloat.unit();
     private int sleepCooldown;
@@ -615,7 +616,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void attackInBox(AxisAlignedBB box, int disabledShieldTime)
     {
         List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box, entity -> entity != this && !hasPassenger(entity) && wantsToAttack(entity, getOwner()));
-        if (WRConfig.debugMode && level.isClientSide) DebugRendering.box(box, 0xffff0000, 100);
+        if (WRConfig.DEBUG_MODE.get() && level.isClientSide) DebugRendering.box(box, 0xffff0000, 100);
         for (LivingEntity attacking : attackables)
         {
             doHurtTarget(attacking);
@@ -731,7 +732,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public float getRestrictRadius()
     {
-        return WRConfig.homeRadius * WRConfig.homeRadius;
+        return WRConfig.HOME_RADIUS.get() * WRConfig.HOME_RADIUS.get();
     }
 
     @Override

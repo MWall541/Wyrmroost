@@ -76,7 +76,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     public ButterflyLeviathanEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
         super(dragon, level);
-        noCulling = WRConfig.disableFrustumCheck;
+        noCulling = WRConfig.NO_CULLING.get();
         moveControl = new MoveController();
         maxUpStep = 2;
 

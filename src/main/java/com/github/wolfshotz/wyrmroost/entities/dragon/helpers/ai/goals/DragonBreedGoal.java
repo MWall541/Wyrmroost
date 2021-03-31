@@ -37,7 +37,7 @@ public class DragonBreedGoal extends Goal
     public boolean canUse()
     {
         if (!dragon.isInLove()) return false;
-        final int breedLimit = WRConfig.breedLimits.getOrDefault(dragon.getType().getRegistryName().getPath(), 0);
+        int breedLimit = WRConfig.getBreedLimitFor(dragon.getType());
         if (breedLimit > 0 && dragon.breedCount >= breedLimit)
         {
             dragon.resetLove();

@@ -24,6 +24,6 @@ public class LDWyrmRenderer extends MobRenderer<LesserDesertwyrmEntity, EntityMo
     @Override
     public ResourceLocation getTextureLocation(LesserDesertwyrmEntity entity)
     {
-        return WRConfig.deckTheHalls? CHRISTMAS : TEXTURE;
+        return WRConfig.DECK_THE_HALLS.get()? CHRISTMAS : TEXTURE;
     }
 }

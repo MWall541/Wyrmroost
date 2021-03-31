@@ -88,7 +88,7 @@ public class RenderHelper extends RenderType
 
         ms.pushPose();
 
-        if (WRConfig.debugMode) DebugRendering.render(ms, partialTicks);
+        if (WRConfig.DEBUG_MODE.get()) DebugRendering.render(ms, partialTicks);
         renderDragonStaff(ms, partialTicks);
 
         ms.popPose();
@@ -221,7 +221,7 @@ public class RenderHelper extends RenderType
         if (dragon == null) return;
 
         DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
-        if (WRConfig.renderEntityOutlines)
+        if (WRConfig.RENDER_OUTLINES.get())
         {
             renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.tickCount + partialTicks) * 0.2f) * 35 + 45));
             LivingEntity target = dragon.getTarget();

@@ -41,9 +41,9 @@ public class Wyrmroost
         WRWorld.Features.REGISTRY.register(bus);
         WRParticles.REGISTRY.register(bus);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.Common.SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.Client.SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, WRConfig.Server.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.COMMON);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.CLIENT);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, WRConfig.SERVER);
     }
 
     private static SimpleChannel buildChannel()

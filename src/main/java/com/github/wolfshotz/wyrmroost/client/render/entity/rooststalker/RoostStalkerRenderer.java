@@ -40,13 +40,13 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
     public ResourceLocation getTextureLocation(RoostStalkerEntity entity)
     {
         if (entity.getVariant() == -1) return SHINY;
-        return WRConfig.deckTheHalls? CHRISTMAS : BODY;
+        return WRConfig.DECK_THE_HALLS.get()? CHRISTMAS : BODY;
     }
 
     public ResourceLocation getGlowTexture(RoostStalkerEntity entity)
     {
         if (entity.getVariant() == -1) return SHINY_EYES;
-        return WRConfig.deckTheHalls? CHRISTMAS_EYES : EYES;
+        return WRConfig.DECK_THE_HALLS.get()? CHRISTMAS_EYES : EYES;
     }
 
     public static ResourceLocation resource(String png)
