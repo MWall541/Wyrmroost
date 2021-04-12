@@ -19,14 +19,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class LazySpawnEggItem extends SpawnEggItem
+public class LazySpawnEggItem<T extends Entity> extends SpawnEggItem
 {
-    public static final Set<LazySpawnEggItem> SPAWN_EGGS = new HashSet<>();
+    public static final Set<LazySpawnEggItem<?>> SPAWN_EGGS = new HashSet<>();
 
-    public final Lazy<EntityType<?>> type;
+    public final Lazy<EntityType<T>> type;
 
     @SuppressWarnings("ConstantConditions")
-    public LazySpawnEggItem(Supplier<EntityType<? extends Entity>> type, int primaryColor, int secondaryColor)
+    public LazySpawnEggItem(Supplier<EntityType<T>> type, int primaryColor, int secondaryColor)
     {
         super(null, primaryColor, secondaryColor, WRItems.builder());
 
@@ -60,7 +60,7 @@ public class LazySpawnEggItem extends SpawnEggItem
         try
         {
             Map<EntityType<?>, SpawnEggItem> eggMap = ObfuscationReflectionHelper.getPrivateValue(SpawnEggItem.class, null, "field_195987_b");
-            for (LazySpawnEggItem item : SPAWN_EGGS) eggMap.put(item.type.get(), item);
+            for (LazySpawnEggItem<?> item : SPAWN_EGGS) eggMap.put(item.type.get(), item);
         }
         catch (Exception e)
         {

@@ -291,7 +291,7 @@ public class WREntities
 
         private Builder<T> spawnEgg(int primColor, int secColor)
         {
-            WRItems.register(name + "_spawn_egg", () -> new LazySpawnEggItem(registered::get, primColor, secColor));
+            WRItems.register(name + "_spawn_egg", () -> new LazySpawnEggItem<>(registered, primColor, secColor));
             return this;
         }
 
