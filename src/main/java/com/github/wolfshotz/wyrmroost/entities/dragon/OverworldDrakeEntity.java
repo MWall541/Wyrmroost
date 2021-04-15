@@ -330,7 +330,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    protected boolean canRide(Entity entity)
+    protected boolean canAddPassenger(Entity entity)
     {
         return isSaddled() && !isBaby() && (isOwnedBy((LivingEntity) entity) || (!isTame() && boardingCooldown <= 0));
     }

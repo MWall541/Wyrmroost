@@ -494,16 +494,10 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
         return getType().getDimensions().scale(getScale());
     }
 
-    @Override
-    protected boolean canRide(Entity entityIn)
-    {
-        return isTame() && !isBaby();
-    }
-
     @Override // 2 passengers
     protected boolean canAddPassenger(Entity passenger)
     {
-        return getPassengers().size() < 2;
+        return isTame() && !isBaby() && getPassengers().size() < 2;
     }
 
     @Override

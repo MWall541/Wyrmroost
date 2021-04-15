@@ -60,7 +60,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
     {
         int variant = entity.getVariant();
 
-        if (WRConfig.DECK_THE_HALLS.get())
+        if (WRConfig.deckTheHalls())
         {
             return variant == -1? CHRISTMAS_SPECIAL : CHRISTMAS;
         }
@@ -93,7 +93,7 @@ public class ButterflyLeviathanRenderer extends AbstractDragonRenderer<Butterfly
         public void render(MatrixStack ms, IRenderTypeBuffer buffer, int packedLight, ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch)
         {
             float alpha = MathHelper.clamp(entity.lightningCooldown, 1, 255);
-            IVertexBuilder builder = buffer.getBuffer(RenderHelper.getTranslucentGlow(WRConfig.DECK_THE_HALLS.get()? CHRISTMAS_GLOW : GLOW));
+            IVertexBuilder builder = buffer.getBuffer(RenderHelper.getTranslucentGlow(WRConfig.deckTheHalls()? CHRISTMAS_GLOW : GLOW));
             getModel().renderToBuffer(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1, 1, 1, alpha);
         }
     }

@@ -292,9 +292,9 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     }
 
     @Override
-    protected boolean canRide(Entity passenger)
+    protected boolean canAddPassenger(Entity entityIn)
     {
-        return !isBaby() && passenger instanceof LivingEntity && isOwnedBy((LivingEntity) passenger);
+        return isTame() && !isBaby();
     }
 
     @Nullable

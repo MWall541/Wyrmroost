@@ -232,7 +232,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public boolean isFlying()
     {
-        return hasDataParameter(FLYING)? entityData.get(FLYING) : false;
+        return hasDataParameter(FLYING) && entityData.get(FLYING);
     }
 
     public void setFlying(boolean fly)
@@ -453,7 +453,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             }
         }
 
-        if (canRide(player) && !player.isShiftKeyDown())
+        if (canAddPassenger(player) && !player.isShiftKeyDown())
         {
             if (!level.isClientSide) player.startRiding(this);
             return SUCCESS;
@@ -493,6 +493,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             {
                 if (moveZ != 0) moveY = entity.xRot * speed * 18;
                 moveX = vec3d.x;
+                moveZ = Math.max(0, moveZ);
 
                 if (entity instanceof ServerPlayerEntity)
                     ((ServerPlayerEntity) entity).connection.clientIsFloating = false;
@@ -503,8 +504,11 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
                 if (entity.jumping && canFly()) setFlying(true);
             }
 
-            setSpeed(speed);
-            vec3d = new Vector3d(moveX, moveY, moveZ);
+//            if (isControlledByLocalInstance())
+//            {
+                vec3d = new Vector3d(moveX, moveY, moveZ);
+                setSpeed(speed);
+//            }
         }
 
         if (isFlying())
@@ -1080,12 +1084,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public boolean canBeControlledByRider() // Only OWNERS can control their pets
     {
         Entity entity = getControllingPassenger();
-        if (entity instanceof PlayerEntity)
-        {
-            PlayerEntity player = (PlayerEntity) entity;
-            return isOwnedBy(player) && (!level.isClientSide || player.isLocalPlayer()); // fix vehicle-desync
-        }
-        return false;
+        return entity instanceof PlayerEntity && isOwnedBy(((PlayerEntity) entity));
     }
 
     @Nullable
@@ -1097,7 +1096,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    protected boolean canRide(Entity entityIn)
+    protected boolean canAddPassenger(Entity entityIn)
     {
         return false;
     }

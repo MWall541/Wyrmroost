@@ -318,15 +318,9 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    protected boolean canRide(Entity entity)
-    {
-        return !isBaby() && !isKnockedOut() && isTame();
-    }
-
-    @Override
     protected boolean canAddPassenger(Entity passenger)
     {
-        return getPassengers().size() < 3;
+        return isTame() && !isBaby() && !isKnockedOut() && getPassengers().size() < 3;
     }
 
     @Override

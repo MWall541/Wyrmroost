@@ -204,7 +204,7 @@ public class AlpineEntity extends TameableDragonEntity
     }
 
     @Override
-    protected boolean canRide(Entity entity)
+    protected boolean canAddPassenger(Entity entity)
     {
         return !isBaby() && entity instanceof LivingEntity && isOwnedBy((LivingEntity) entity);
     }

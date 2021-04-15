@@ -39,7 +39,7 @@ public class DebugRendering
     {
         VoxelShape shape = VoxelShapes.block();
         BlockPos initial = cubes[0];
-        for (int i = 1; i < cubes.length; i++)
+        for (int i = 1; i < cubes.length; ++i)
         {
             BlockPos cube = cubes[i];
             Vector3i offset = cube.subtract(initial);
