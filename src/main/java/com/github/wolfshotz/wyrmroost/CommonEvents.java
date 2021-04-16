@@ -58,7 +58,7 @@ public class CommonEvents
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         bus.addListener(CommonEvents::commonSetup);
-        bus.addListener(WRConfig::reloadConfigs);
+        bus.addListener(WRConfig::loadConfig);
 
         forgeBus.addListener(CommonEvents::debugStick);
         forgeBus.addListener(CommonEvents::debugStickButItsForBlocksWoah);

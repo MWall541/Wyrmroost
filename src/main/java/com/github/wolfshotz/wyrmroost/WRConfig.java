@@ -47,7 +47,7 @@ public class WRConfig
         return ModUtils.DECK_THE_HALLS && WRConfig.deckTheHalls();
     }
 
-    public static void reloadConfigs(ModConfig.ModConfigEvent event)
+    public static void loadConfig(ModConfig.ModConfigEvent event)
     {
         ForgeConfigSpec spec = event.getConfig().getSpec();
         if (spec == SERVER)
@@ -89,13 +89,12 @@ public class WRConfig
 
         ForgeConfigSpec.Builder server = new ForgeConfigSpec.Builder();
         server.comment("Wyrmroost Server Options",
-                "For Singleplayer, These options are \"per-world.\" Meaning that there will be a different version of",
-                "this config for each world you create.",
+                "For Singleplayer, These options are \"per-world.\" Meaning that there will be a different version of this config for each world you create.",
                 "If you want this config to apply globally, place the file in the `defaultconfigs` folder in your game instance.",
                 "Wyrmroost General Options")
                 .push("general");
 
-        server.pop().comment("Wyrmroost Dragon Options").push("dragons");
+        server.comment("Wyrmroost Dragon Options").push("dragons");
 
         BREATH_FIRE_SPREAD = server.comment("Base Flammability or spread of fire from Dragon Fire Breath",
                 "A value of 0 completely disables fire block damage completely.")
@@ -104,7 +103,7 @@ public class WRConfig
         HOME_RADIUS = server.comment("The radius (not diameter!) of how far dragons can travel from their home points")
                 .translation("config.wyrmroost.home_radius")
                 .defineInRange("home_radius", 16, 6, 1024);
-        BREED_LIMITS = server.comment("Breed limit for each dragon. This determines how mant times a certain dragon can breed.",
+        BREED_LIMITS = server.comment("Breed limit for each dragon. This determines how many times a certain dragon can breed.",
                 "Leaving this blank ( `[]` ) will disable the functionality.")
                 .translation("config.wyrmroost.breed_limits")
                 .defineList("breed_limits", () -> BREED_LIMIT_DEFAULTS, e -> e instanceof String);
