@@ -395,7 +395,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     {
         Vector3d offset = getPassengerPosOffset(passenger, getPassengers().indexOf(passenger));
         Vector3d pos = Mafs.getYawVec(yBodyRot, offset.x, offset.z).add(getX(), getY() + offset.y + passenger.getMyRidingOffset(), getZ());
-        passenger.absMoveTo(pos.x, pos.y, pos.z);
+        passenger.setPos(pos.x, pos.y, pos.z);
     }
 
     public Vector3d getPassengerPosOffset(Entity entity, int index)
@@ -473,7 +473,6 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     public void travel(Vector3d vec3d)
     {
         float speed = getTravelSpeed();
@@ -491,9 +490,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
             if (isFlying())
             {
-                if (moveZ != 0) moveY = entity.xRot * speed * 18;
+                if (moveZ != 0) moveY = entity.getLookAngle().y * speed * 18;
                 moveX = vec3d.x;
-                moveZ = Math.max(0, moveZ);
 
                 if (entity instanceof ServerPlayerEntity)
                     ((ServerPlayerEntity) entity).connection.clientIsFloating = false;
@@ -504,11 +502,11 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
                 if (entity.jumping && canFly()) setFlying(true);
             }
 
-//            if (isControlledByLocalInstance())
-//            {
+            if (isControlledByLocalInstance())
+            {
                 vec3d = new Vector3d(moveX, moveY, moveZ);
                 setSpeed(speed);
-//            }
+            }
         }
 
         if (isFlying())
