@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.world.features;
 
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -12,8 +13,6 @@ import java.util.Random;
 
 public class NoExposureReplacementFeature extends Feature<ReplaceBlockConfig>
 {
-    private static final Direction[] DIRECTIONS = Direction.values(); // needed because god forbid vanilla would do it
-
     public NoExposureReplacementFeature()
     {
         super(ReplaceBlockConfig.CODEC);
@@ -31,7 +30,7 @@ public class NoExposureReplacementFeature extends Feature<ReplaceBlockConfig>
     private static boolean checkExposure(ISeedReader level, BlockPos initialPos)
     {
         BlockPos.Mutable pos = new BlockPos.Mutable();
-        for (Direction direction : DIRECTIONS)
+        for (Direction direction : ModUtils.DIRECTIONS)
         {
             BlockState state = level.getBlockState(pos.setWithOffset(initialPos, direction));
             if (state.isAir(level, pos)) return false;

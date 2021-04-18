@@ -156,7 +156,7 @@ public class CommonEvents
         Set<BlockPos> positions = new HashSet<>(); // no duplicates
         Random random = player.getRandom();
         int trunkHeight = random.nextInt(5) + 11;
-        double xDiff = random.nextDouble();
+        double xDiff = MathHelper.clamp(random.nextDouble(), 0.35, 0.75);
         double zDiff = 1 - xDiff;
         int xInverse = random.nextBoolean()? 1 : -1;
 

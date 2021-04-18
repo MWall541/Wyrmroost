@@ -1,16 +1,22 @@
 package com.github.wolfshotz.wyrmroost.world.features;
 
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
+import com.github.wolfshotz.wyrmroost.util.DebugRendering;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
@@ -25,23 +31,64 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
     {
         if (noMulchBelow(level, basePos)) return false;
 
-        BlockPos trunkTip = placeTrunk(level, basePos, random);
+        int trunkHeight = random.nextInt(5) + 11;
+
+        BlockPos trunkTip = placeTrunk(level, basePos, trunkHeight, random);
         if (trunkTip == null) return false;
 
-        return placeRoots(level, basePos, random) && placeFooliage(level, trunkTip, random);
+        placeRoots(level, basePos, random);
+        placeFooliage(level, trunkTip, random);
+
+        return true;
     }
 
     /**
      * @return the tip of the trunk that was just placed.
      */
-    private BlockPos placeTrunk(ISeedReader level, BlockPos basePos, Random random)
+    private BlockPos placeTrunk(ISeedReader level, BlockPos basePos, int trunkHeight, Random random)
     {
-        return null;
+        BlockPos pointer = null;
+        double xDiff = MathHelper.clamp(random.nextDouble(), 0.35, 0.75);
+        double zDiff = 1 - xDiff;
+        int xInverse = random.nextBoolean()? 1 : -1;
+
+        for (int i = 0; i < trunkHeight; i++)
+        {
+            int x = (int) ((MathHelper.sin(i * 0.35f) * 4) * xDiff) * xInverse;
+            int z = (int) ((MathHelper.sin(i * 0.35f) * 4) * zDiff) * -xInverse;
+            pointer = basePos.offset(x, i, z);
+            for (int j = 0; j < 3; j++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+//                    if ((j == 1 && k == 1) || random.nextDouble() < 0.85)
+                        placeLog(level, pointer.offset(j - 1, 0, k - 1));
+                }
+            }
+        }
+
+        return pointer;
     }
+
+    private static final Direction[] HORIZONTALS = new Direction[] {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
     private boolean placeRoots(ISeedReader level, BlockPos pos, Random random)
     {
-        return false;
+        int rootCount = random.nextInt(3) + 3; // max 5
+        for (int i = 0; i < rootCount; i++)
+        {
+            BlockPos pointer = null;
+            int rootLength = random.nextInt(4) + 3;
+            int index = random.nextInt(HORIZONTALS.length);
+            Direction rootDir = HORIZONTALS[index];
+
+            for (int j = 0; j < rootLength; j++)
+            {
+                if (j > 1) rootDir = HORIZONTALS[index];
+            }
+        }
+
+        return true;
     }
 
     private boolean placeFooliage(ISeedReader level, BlockPos trunkTip, Random random)
@@ -51,9 +98,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
 
     private void placeLog(ISeedReader level, BlockPos pos)
     {
-        BlockPos pointer;
-        boolean closed = level.getBlockState(pointer = pos.above()).isSolidRender(level, pointer) && level.getBlockState(pointer = pos.below()).isSolidRender(level, pointer);
-        level.setBlock(pos, (closed? WRBlocks.OSERI_WOOD.getWood() : WRBlocks.OSERI_WOOD.getLog()).defaultBlockState(), 2);
+        level.setBlock(pos, WRBlocks.OSERI_WOOD.getLog().defaultBlockState(), 2);
     }
 
     // must place on mulch only!

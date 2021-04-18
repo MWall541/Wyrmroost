@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -28,6 +29,7 @@ public final class ModUtils
 {
     private ModUtils() {} // NU CONSTRUCTOR
 
+    public static final Direction[] DIRECTIONS = Direction.values(); // cached directions cus vanilla didn't do it
     public static final boolean DECK_THE_HALLS;
 
     static
@@ -42,9 +44,9 @@ public final class ModUtils
      * @return the object u just passed in, except now it's wearing terrible face paint it bought at a carnival
      */
     @SuppressWarnings("unchecked")
-    public static <F, T> F cast(T obj)
+    public static <F, T> T cast(F obj)
     {
-        return (F) obj;
+        return (T) obj;
     }
 
     @SafeVarargs
