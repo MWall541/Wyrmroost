@@ -2,6 +2,7 @@ package com.github.wolfshotz.wyrmroost.world.features;
 
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.trees.Tree;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -33,7 +34,10 @@ public class TreeGen extends Tree
     @Override
     public boolean growTree(ServerWorld level, ChunkGenerator generator, BlockPos pos, BlockState state, Random random)
     {
-        return WRWorld.getConfiguredFeature(level, treeFeature).place(level, generator, random, pos);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 4);
+        boolean placed = WRWorld.getConfiguredFeature(level, treeFeature).place(level, generator, random, pos);
+        if (!placed) level.setBlock(pos, state, 4);
+        return placed;
     }
 
     @Nullable

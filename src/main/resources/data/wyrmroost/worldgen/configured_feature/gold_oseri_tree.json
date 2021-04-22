@@ -1,7 +1,7 @@
 {
   "config": {
     "feature": {
-      "config": "blue",
+      "config": "gold",
       "type": "wyrmroost:oseri_tree"
     },
     "decorator": {

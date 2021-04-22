@@ -1,8 +1,6 @@
 package com.github.wolfshotz.wyrmroost.world.features;
 
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
-import com.github.wolfshotz.wyrmroost.util.DebugRendering;
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -11,12 +9,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
@@ -29,13 +26,11 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
     @Override
     public boolean place(ISeedReader level, ChunkGenerator generator, Random random, BlockPos basePos, Config config)
     {
-        if (noMulchBelow(level, basePos)) return false;
+        if (level.getBlockState(basePos.below()).getBlock() != WRBlocks.MULCH.get()) return false;
 
         int trunkHeight = random.nextInt(5) + 11;
 
         BlockPos trunkTip = placeTrunk(level, basePos, trunkHeight, random);
-        if (trunkTip == null) return false;
-
         placeRoots(level, basePos, random);
         placeFooliage(level, trunkTip, random);
 
@@ -47,44 +42,88 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
      */
     private BlockPos placeTrunk(ISeedReader level, BlockPos basePos, int trunkHeight, Random random)
     {
-        BlockPos pointer = null;
-        double xDiff = MathHelper.clamp(random.nextDouble(), 0.35, 0.75);
+        BlockPos.Mutable pointer = basePos.mutable();
+        double xDiff = MathHelper.clamp(random.nextDouble(), 0.35, 0.65);
         double zDiff = 1 - xDiff;
         int xInverse = random.nextBoolean()? 1 : -1;
 
         for (int i = 0; i < trunkHeight; i++)
         {
-            int x = (int) ((MathHelper.sin(i * 0.35f) * 4) * xDiff) * xInverse;
-            int z = (int) ((MathHelper.sin(i * 0.35f) * 4) * zDiff) * -xInverse;
-            pointer = basePos.offset(x, i, z);
+            float path = MathHelper.sin(i * 0.35f) * 4;
+            int x = (int) (path * xDiff) * xInverse;
+            int z = (int) (path * zDiff) * -xInverse;
             for (int j = 0; j < 3; j++)
             {
                 for (int k = 0; k < 3; k++)
                 {
-//                    if ((j == 1 && k == 1) || random.nextDouble() < 0.85)
-                        placeLog(level, pointer.offset(j - 1, 0, k - 1));
+                    pointer.setWithOffset(basePos, x + (j - 1), i, z + (k - 1));
+
+                    if (i == 0)
+                    {
+                        //fill possible gaps under trunk with varied logs
+                        BlockPos.Mutable correction = pointer.mutable();
+                        for (int l = 0; l < random.nextInt(3) + 1; l++)
+                        {
+                            if (noCollision(level, correction.move(Direction.DOWN))) placeLog(level, correction);
+                            else break;
+                        }
+                    }
+
+                    placeLog(level, pointer);
                 }
             }
         }
 
-        return pointer;
+        return pointer.immutable();
     }
 
     private static final Direction[] HORIZONTALS = new Direction[] {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
     private boolean placeRoots(ISeedReader level, BlockPos pos, Random random)
     {
-        int rootCount = random.nextInt(3) + 3; // max 5
+        int rootCount = random.nextInt(2) + 3; //max 4
+        int index = random.nextInt(HORIZONTALS.length);
         for (int i = 0; i < rootCount; i++)
         {
-            BlockPos pointer = null;
-            int rootLength = random.nextInt(4) + 3;
-            int index = random.nextInt(HORIZONTALS.length);
-            Direction rootDir = HORIZONTALS[index];
+            Direction rootDir = HORIZONTALS[index++];
+            index %= HORIZONTALS.length; // cycle through
+            BlockPos.Mutable pointer = pos.mutable().move(rootDir, 2);
+            Direction offsetDir = random.nextBoolean()? rootDir.getClockWise() : rootDir.getCounterClockWise();
+            if (random.nextBoolean()) pointer.move(offsetDir);
+            int rootLength = random.nextInt(3) + 4; //max 6
+            boolean left = random.nextBoolean();
+            double dirChance = 0;
+
+            int diff = pointer.getY() - level.getHeight(Heightmap.Type.WORLD_SURFACE, pointer.getX(), pointer.getY());
+            if (diff > 2)
+                continue; //pick a different side...
+
+            //add base thickness (or have trunk noise handle it?)
+            placeLog(level, pointer.relative(offsetDir.getOpposite(), 1));
 
             for (int j = 0; j < rootLength; j++)
             {
-                if (j > 1) rootDir = HORIZONTALS[index];
+                boolean last = j == rootLength - 1;
+                placeLog(level, pointer);
+                pointer.move(rootDir);
+
+                if (j != 0 && random.nextDouble() < dirChance * (last? 3 : 1))
+                {
+                    rootDir = left? rootDir.getClockWise() : rootDir.getCounterClockWise();
+                    left = !left;
+                    pointer.move(rootDir);
+                    dirChance -= 0.5;
+                }
+
+                if (!noCollision(level, pointer) && noCollision(level, pointer.above()))
+                    pointer.move(Direction.UP);
+                else if (noCollision(level, pointer.below()))
+                {
+                    if (last) placeLog(level, pointer.below());
+                    else pointer.move(Direction.DOWN);
+                }
+
+                dirChance += 0.25;
             }
         }
 
@@ -98,13 +137,13 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
 
     private void placeLog(ISeedReader level, BlockPos pos)
     {
-        level.setBlock(pos, WRBlocks.OSERI_WOOD.getLog().defaultBlockState(), 2);
+        if (noCollision(level, pos))
+            level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
     }
 
-    // must place on mulch only!
-    private static boolean noMulchBelow(ISeedReader level, BlockPos pos)
+    private static boolean noCollision(ISeedReader level, BlockPos pos)
     {
-        return level.getBlockState(pos.below()).getBlock() != WRBlocks.MULCH.get();
+        return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty();
     }
 
     public enum Type

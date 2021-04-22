@@ -223,6 +223,7 @@ class RecipeData extends RecipeProvider
         shaped(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get()).define('X', WRItems.PURPLE_GEODE.get()).define('#', WRBlocks.PURPLE_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_purple_geode", has(WRItems.PURPLE_GEODE.get())).save(consumer);
 
         woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.OSERI_LOGS));
+        shaped(WRBlocks.OSERI_WOOD.getLog(), 4).define('#', WRBlocks.OSERI_WOOD.getWood()).pattern("##").pattern("##").unlockedBy("has_wood", has(WRBlocks.OSERI_WOOD.getLog())); // here because normal logs are unobtainable
     }
 
     private static void exempt(IItemProvider... exempts)

@@ -74,7 +74,8 @@
       "minecraft:patch_pumpkin",
       "minecraft:spring_water",
       "minecraft:spring_lava",
-      "wyrmroost:patch_gilla_bush"
+      "wyrmroost:patch_gilla_bush",
+      "wyrmroost:blue_oseri_tree"
     ],
     [
       "minecraft:freeze_top_layer"

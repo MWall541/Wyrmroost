@@ -29,16 +29,16 @@ public class DataGatherer
 
         if (event.includeServer())
         {
-            TagData.provide(gen, fileHelper);
-            gen.addProvider(new RecipeData(gen));
-            gen.addProvider(new LootTableData(gen));
+//            TagData.provide(gen, fileHelper);
+//            gen.addProvider(new RecipeData(gen));
+//            gen.addProvider(new LootTableData(gen));
             WorldData.provide(gen);
         }
         if (event.includeClient())
         {
-            gen.addProvider(new BlockModelData(gen, fileHelper));
-            gen.addProvider(new ItemModelData(gen, fileHelper));
-            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
+//            gen.addProvider(new BlockModelData(gen, fileHelper));
+//            gen.addProvider(new ItemModelData(gen, fileHelper));
+//            gen.addProvider(new SoundData(gen, event.getExistingFileHelper()));
         }
     }
 }

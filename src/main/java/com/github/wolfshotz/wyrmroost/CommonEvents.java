@@ -79,7 +79,6 @@ public class CommonEvents
         event.enqueueWork(() ->
         {
             LazySpawnEggItem.addEggsToMap();
-            WoodType.values().filter(w -> w.name().contains(Wyrmroost.MOD_ID)).forEach(WoodType::register);
 
             for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
             {
