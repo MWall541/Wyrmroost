@@ -9,10 +9,11 @@ import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
-import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
@@ -22,9 +23,6 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
@@ -37,10 +35,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
@@ -61,7 +56,6 @@ public class CommonEvents
         bus.addListener(WRConfig::loadConfig);
 
         forgeBus.addListener(CommonEvents::debugStick);
-        forgeBus.addListener(CommonEvents::debugStickButItsForBlocksWoah);
         forgeBus.addListener(CommonEvents::onChangeEquipment);
         forgeBus.addListener(CommonEvents::loadLoot);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
@@ -132,41 +126,6 @@ public class CommonEvents
             else
                 Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null ? "null" : dragon.getNavigation().getPath().getTarget().toString());
         }
-    }
-
-    public static void debugStickButItsForBlocksWoah(PlayerInteractEvent.RightClickBlock event)
-    {
-        if (!WRConfig.DEBUG_MODE.get()) return;
-        PlayerEntity player = event.getPlayer();
-        ItemStack stack = player.getItemInHand(event.getHand());
-        if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick")) return;
-
-        World level = event.getWorld();
-        BlockPos basePos = event.getPos();
-        Block block = level.getBlockState(basePos).getBlock();
-
-        if (!(block instanceof SaplingBlock) || !block.getRegistryName().getPath().contains("oseri")) return;
-
-        event.setCanceled(true);
-        event.setCancellationResult(ActionResultType.SUCCESS);
-
-        if (!level.isClientSide) return;
-
-        Set<BlockPos> positions = new HashSet<>(); // no duplicates
-        Random random = player.getRandom();
-        int trunkHeight = random.nextInt(5) + 11;
-        double xDiff = MathHelper.clamp(random.nextDouble(), 0.35, 0.75);
-        double zDiff = 1 - xDiff;
-        int xInverse = random.nextBoolean()? 1 : -1;
-
-        for (int i = 0; i < trunkHeight; i++)
-        {
-            int x = (int) ((MathHelper.sin(i * 0.35f) * 3) * xDiff) * xInverse;
-            int z = (int) ((MathHelper.sin(i * 0.35f) * 3) * zDiff) * -xInverse;
-            positions.add(basePos.offset(x, i, z));
-        }
-
-        DebugRendering.conjoined(0xF0FF0000, Integer.MAX_VALUE, positions.toArray(new BlockPos[0]));
     }
 
     public static void onChangeEquipment(LivingEquipmentChangeEvent event)
