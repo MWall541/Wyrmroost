@@ -1,10 +1,7 @@
 package com.github.wolfshotz.wyrmroost.world.features;
 
-import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.trees.Tree;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.feature.BaseTreeFeatureConfig;
@@ -13,6 +10,7 @@ import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
 import java.util.Random;
+import java.util.function.Supplier;
 
 /**
  * Just an extension of {@link Tree} to allow use of vanilla sapling blocks.
@@ -21,12 +19,13 @@ import java.util.Random;
  * in favor of using just a normal feature.
  * In fact, it also allows more than just tree features. If for whatever reason a datapack replaces the tree configured
  * features, then the saplings growing will grow that replaced feature.
+ *
  */
 public class TreeGen extends Tree
 {
-    private final RegistryKey<ConfiguredFeature<?, ?>> treeFeature;
+    private final Supplier<ConfiguredFeature<?, ?>> treeFeature;
 
-    public TreeGen(RegistryKey<ConfiguredFeature<?, ?>> treeFeature)
+    public TreeGen(Supplier<ConfiguredFeature<?, ?>> treeFeature)
     {
         this.treeFeature = treeFeature;
     }
@@ -34,10 +33,7 @@ public class TreeGen extends Tree
     @Override
     public boolean growTree(ServerWorld level, ChunkGenerator generator, BlockPos pos, BlockState state, Random random)
     {
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 4);
-        boolean placed = WRWorld.getConfiguredFeature(level, treeFeature).place(level, generator, random, pos);
-        if (!placed) level.setBlock(pos, state, 4);
-        return placed;
+        return treeFeature.get().place(level, generator, random, pos);
     }
 
     @Nullable

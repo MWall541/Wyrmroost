@@ -97,11 +97,11 @@ public abstract class WorldData<T> implements IDataProvider
             add("better_water_lake", WRWorld.Features.BETTER_LAKE.get().configured(new BlockStateFeatureConfig(Blocks.WATER.defaultBlockState())).decorated(Placement.WATER_LAKE.configured(new ChanceConfig(4))));
             add("patch_gilla_bush", Feature.RANDOM_PATCH.configured(new BlockClusterFeatureConfig.Builder(new SimpleBlockStateProvider(WRBlocks.GILLA.get().defaultBlockState()), SimpleBlockPlacer.INSTANCE).noProjection().build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(7));
             add("tincture_flowers", Feature.FLOWER.configured(new BlockClusterFeatureConfig.Builder(ForestFlowerBlockStateProvider.INSTANCE, SimpleBlockPlacer.INSTANCE).build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(10));
-            add("blue_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.BLUE)).decorated(Features.Placements.HEIGHTMAP));
-            add("gold_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.GOLD)).decorated(Features.Placements.HEIGHTMAP));
-            add("pink_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PINK)).decorated(Features.Placements.HEIGHTMAP));
-            add("purple_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PURPLE)).decorated(Features.Placements.HEIGHTMAP));
-            add("white_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.WHITE)).decorated(Features.Placements.HEIGHTMAP));
+            add("blue_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.BLUE)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("gold_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.GOLD)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("pink_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PINK)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("purple_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PURPLE)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("white_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.WHITE)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
         }
     }
 

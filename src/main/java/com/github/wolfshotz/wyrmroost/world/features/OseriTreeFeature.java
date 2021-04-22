@@ -9,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 
@@ -79,10 +78,11 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
 
     private static final Direction[] HORIZONTALS = new Direction[] {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
-    private boolean placeRoots(ISeedReader level, BlockPos pos, Random random)
+    private void placeRoots(ISeedReader level, BlockPos pos, Random random)
     {
         int rootCount = random.nextInt(2) + 3; //max 4
         int index = random.nextInt(HORIZONTALS.length);
+        roots:
         for (int i = 0; i < rootCount; i++)
         {
             Direction rootDir = HORIZONTALS[index++];
@@ -94,9 +94,11 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
             boolean left = random.nextBoolean();
             double dirChance = 0;
 
-            int diff = pointer.getY() - level.getHeight(Heightmap.Type.WORLD_SURFACE, pointer.getX(), pointer.getY());
-            if (diff > 2)
-                continue; //pick a different side...
+            BlockPos.Mutable gap = pointer.mutable();
+            for (int j = 0; j < 3 && noCollision(level, gap.move(Direction.DOWN)); j++)
+            {
+                if (j == 2) continue roots;
+            }
 
             //add base thickness (or have trunk noise handle it?)
             placeLog(level, pointer.relative(offsetDir.getOpposite(), 1));
@@ -107,14 +109,6 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
                 placeLog(level, pointer);
                 pointer.move(rootDir);
 
-                if (j != 0 && random.nextDouble() < dirChance * (last? 3 : 1))
-                {
-                    rootDir = left? rootDir.getClockWise() : rootDir.getCounterClockWise();
-                    left = !left;
-                    pointer.move(rootDir);
-                    dirChance -= 0.5;
-                }
-
                 if (!noCollision(level, pointer) && noCollision(level, pointer.above()))
                     pointer.move(Direction.UP);
                 else if (noCollision(level, pointer.below()))
@@ -123,22 +117,25 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Config>
                     else pointer.move(Direction.DOWN);
                 }
 
+                if (j != 0 && random.nextDouble() < dirChance * (last? 3 : 1))
+                {
+                    rootDir = left? rootDir.getClockWise() : rootDir.getCounterClockWise();
+                    left = !left;
+                    pointer.move(rootDir);
+                    dirChance -= 0.5;
+                }
                 dirChance += 0.25;
             }
         }
-
-        return true;
     }
 
-    private boolean placeFooliage(ISeedReader level, BlockPos trunkTip, Random random)
+    private void placeFooliage(ISeedReader level, BlockPos trunkTip, Random random)
     {
-        return false;
     }
 
     private void placeLog(ISeedReader level, BlockPos pos)
     {
-        if (noCollision(level, pos))
-            level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
+        if (noCollision(level, pos)) level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
     }
 
     private static boolean noCollision(ISeedReader level, BlockPos pos)

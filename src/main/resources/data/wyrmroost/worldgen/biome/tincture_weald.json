@@ -65,6 +65,7 @@
     ],
     [],
     [
+      "wyrmroost:blue_oseri_tree",
       "wyrmroost:tincture_flowers",
       "minecraft:forest_flower_vegetation_common",
       "minecraft:patch_large_fern",
@@ -74,8 +75,7 @@
       "minecraft:patch_pumpkin",
       "minecraft:spring_water",
       "minecraft:spring_lava",
-      "wyrmroost:patch_gilla_bush",
-      "wyrmroost:blue_oseri_tree"
+      "wyrmroost:patch_gilla_bush"
     ],
     [
       "minecraft:freeze_top_layer"

@@ -14,7 +14,6 @@ import net.minecraft.world.Dimension;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -62,11 +61,6 @@ public class WRWorld
         return RegistryKey.create(Registry.BIOME_REGISTRY, Wyrmroost.id(name));
     }
 
-    public static ConfiguredFeature<?, ?> getConfiguredFeature(ServerWorld level, RegistryKey<ConfiguredFeature<?, ?>> key)
-    {
-        return level.registryAccess().registry(Registry.CONFIGURED_FEATURE_REGISTRY).get().get(key);
-    }
-
     public static class Features
     {
         public static final DeferredRegister<Feature<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.FEATURES, Wyrmroost.MOD_ID);
@@ -79,11 +73,11 @@ public class WRWorld
         public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_BLUE_GEODE = configured("ore_blue_geode", () -> Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().defaultBlockState(), 10)).range(16).squared());
         public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_RED_GEODE = configured("ore_red_geode", () -> Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().defaultBlockState(), 4)).range(128).squared().count(8));
         public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_PURPLE_GEODE = configured("ore_purple_geode", () -> WRWorld.Features.NO_EXPOSE_REPLACE.get().configured(new ReplaceBlockConfig(Blocks.END_STONE.defaultBlockState(), WRBlocks.PURPLE_GEODE_ORE.get().defaultBlockState())).range(80).squared().count(45));
-        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_BLUE_OSERI_TREE = configured("blue_oseri_tree");
-        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_GOLD_OSERI_TREE = configured("gold_oseri_tree");
-        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_PINK_OSERI_TREE = configured("pink_oseri_tree");
-        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_PURPLE_OSERI_TREE = configured("purple_oseri_tree");
-        public static final RegistryKey<ConfiguredFeature<?, ?>> CONFIGURED_WHITE_OSERI_TREE = configured("white_oseri_tree");
+        public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_BLUE_OSERI = configured("blue_oseri", () -> OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.BLUE)));
+        public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_GOLD_OSERI = configured("gold_oseri", () -> OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.GOLD)));
+        public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_PINK_OSERI = configured("pink_oseri", () -> OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PINK)));
+        public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_PURPLE_OSERI = configured("purple_oseri", () -> OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PURPLE)));
+        public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_WHITE_OSERI = configured("white_oseri", () -> OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.WHITE)));
 
         private static RegistryKey<ConfiguredFeature<?, ?>> configured(String id)
         {
