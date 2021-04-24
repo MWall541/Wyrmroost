@@ -30,6 +30,7 @@ public final class ModUtils
     private ModUtils() {} // NU CONSTRUCTOR
 
     public static final Direction[] DIRECTIONS = Direction.values(); // cached directions cus vanilla didn't do it
+    public static final Direction[] HORIZONTALS = new Direction[] {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
     public static final boolean DECK_THE_HALLS;
 
     static
