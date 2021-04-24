@@ -6,7 +6,6 @@ import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.block.Block;
@@ -25,18 +24,16 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilderConfig;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class WorldData<T> implements IDataProvider
 {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     private static DataGenerator generator;
 
-    private final Map<String, JsonElement> built = new HashMap<>();
     private final String name;
     private final String path;
     private final Codec<T> codec;
+    private DirectoryCache cache;
 
     public WorldData(String name, String path, Codec<T> codec)
     {
@@ -49,25 +46,21 @@ public abstract class WorldData<T> implements IDataProvider
 
     protected void add(String name, T obj)
     {
-        built.put(name, codec.encodeStart(JsonOps.INSTANCE, obj).getOrThrow(false, Wyrmroost.LOG::error));
+        try
+        {
+            IDataProvider.save(GSON, cache, codec.encodeStart(JsonOps.INSTANCE, obj).getOrThrow(false, Wyrmroost.LOG::error), generator.getOutputFolder().resolve("data/wyrmroost/worldgen/" + path + "/" + name + ".json"));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void run(DirectoryCache cache)
     {
+        this.cache = cache;
         begin();
-        built.forEach((name, json) ->
-        {
-            try
-            {
-                IDataProvider.save(GSON, cache, json, generator.getOutputFolder().resolve("data/wyrmroost/worldgen/" + path + "/" + name + ".json"));
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
-            }
-        });
-
     }
 
     @Override
@@ -97,11 +90,11 @@ public abstract class WorldData<T> implements IDataProvider
             add("better_water_lake", WRWorld.Features.BETTER_LAKE.get().configured(new BlockStateFeatureConfig(Blocks.WATER.defaultBlockState())).decorated(Placement.WATER_LAKE.configured(new ChanceConfig(4))));
             add("patch_gilla_bush", Feature.RANDOM_PATCH.configured(new BlockClusterFeatureConfig.Builder(new SimpleBlockStateProvider(WRBlocks.GILLA.get().defaultBlockState()), SimpleBlockPlacer.INSTANCE).noProjection().build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(7));
             add("tincture_flowers", Feature.FLOWER.configured(new BlockClusterFeatureConfig.Builder(ForestFlowerBlockStateProvider.INSTANCE, SimpleBlockPlacer.INSTANCE).build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(10));
-            add("blue_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.BLUE)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
-            add("gold_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.GOLD)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
-            add("pink_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PINK)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
-            add("purple_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.PURPLE)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
-            add("white_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(new OseriTreeFeature.Config(OseriTreeFeature.Type.WHITE)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("blue_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.BLUE).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("gold_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.GOLD).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("pink_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.PINK).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("purple_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.PURPLE).decorated(Features.Placements.HEIGHTMAP_SQUARE));
+            add("white_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.WHITE).decorated(Features.Placements.HEIGHTMAP_SQUARE));
         }
     }
 
