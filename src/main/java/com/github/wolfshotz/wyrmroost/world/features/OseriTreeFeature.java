@@ -13,6 +13,7 @@ import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 
+import java.util.Locale;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -34,7 +35,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
         BlockPos trunkTip = placeTrunk(level, basePos, trunkHeight, random);
         placeRoots(level, basePos, random);
-        placeBranchesAndFooliage(level, trunkTip, random);
+        placeBranchesAndFooliage(config, level, trunkTip, random);
 
         return true;
     }
@@ -51,7 +52,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
         for (int i = 0; i < trunkHeight; i++)
         {
-            float path = MathHelper.sin(i * 0.45f) * 4;
+            float path = MathHelper.sin(i * 0.35f) * 4;
             int x = (int) (path * xDiff) * xInverse;
             int z = (int) (path * zDiff) * -xInverse;
 
@@ -60,7 +61,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             for (Direction direction : ModUtils.DIRECTIONS)
             {
                 placeLog(level, shape.setWithOffset(pointer, direction));
-                if (direction.getAxis().isHorizontal() && random.nextInt(trunkHeight / 2) >= i)
+                if (direction.getAxis().isHorizontal() && random.nextInt((int) (trunkHeight * 0.75)) >= i)
                     // decrease thickness based on height (higher up = less thick)
                     placeLog(level, shape.move(direction.getClockWise()));
             }
@@ -79,7 +80,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         {
             Direction rootDir = HORIZONTALS[index++];
             index %= HORIZONTALS.length; // cycle through
-            BlockPos.Mutable pointer = pos.mutable().move(rootDir);
+            BlockPos.Mutable pointer = pos.mutable().move(rootDir, 2);
             Direction offsetDir = random.nextBoolean()? rootDir.getClockWise() : rootDir.getCounterClockWise();
             if (random.nextBoolean()) pointer.move(offsetDir);
             int rootLength = random.nextInt(3) + 3; //max 5
@@ -87,11 +88,14 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             double dirChance = 0;
 
             BlockPos.Mutable gap = pointer.mutable();
-            for (int j = 0; j < 3 && noCollision(level, pos); j++)
+            for (int j = 0; j < 3 && noCollision(level, gap.move(Direction.DOWN)); j++)
             {
                 //if the gap is too big to grow roots...
                 if (j == 2) continue roots;
             }
+
+            //add base thickness to root
+            placeLog(level, pointer.relative(offsetDir.getOpposite()));
 
             for (int j = 0; j < rootLength; j++)
             {
@@ -119,9 +123,9 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         }
     }
 
-    private void placeBranchesAndFooliage(ISeedReader level, BlockPos trunkTip, Random random)
+    private void placeBranchesAndFooliage(Type config, ISeedReader level, BlockPos trunkTip, Random random)
     {
-
+        setBlock(level, trunkTip.above(), config.leaves());
     }
 
     private static void placeLog(ISeedReader level, BlockPos pos)
@@ -143,7 +147,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         PURPLE(0x8D7FC6, WRBlocks.PURPLE_OSERI_LEAVES, WRBlocks.PURPLE_OSERI_VINES),
         WHITE(0xFBFEF5, WRBlocks.WHITE_OSERI_LEAVES, WRBlocks.WHITE_OSERI_VINES);
 
-        public static final Codec<Type> CODEC = Codec.STRING.xmap(Type::byName, c -> c.name().toLowerCase()).orElse(BLUE);
+        public static final Codec<Type> CODEC = Codec.STRING.xmap(Type::byName, c -> c.name().toLowerCase()).orElse(WHITE);
         public static final Type[] VALUES = values();
 
         public final int color;
@@ -159,16 +163,16 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
         public static Type byName(String name)
         {
-            for (Type value : VALUES) if (value.name().equals(name)) return value;
-            return BLUE;
+            for (Type value : VALUES) if (value.name().toLowerCase(Locale.ROOT).equals(name)) return value;
+            return WHITE;
         }
 
-        public BlockState getLeavesState()
+        public BlockState leaves()
         {
             return leaves.get().defaultBlockState();
         }
 
-        public BlockState getVinesState()
+        public BlockState vines()
         {
             return vines.get().defaultBlockState();
         }
