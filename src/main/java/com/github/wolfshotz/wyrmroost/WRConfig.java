@@ -25,7 +25,7 @@ public class WRConfig
     private static final ForgeConfigSpec.BooleanValue DRAGON_GRIEFING;
     private static final List<String> BREED_LIMIT_DEFAULTS = ImmutableList.of("butterfly_leviathan:1", "royal_red:2");
     private static final ForgeConfigSpec.ConfigValue<List<? extends String>> BREED_LIMITS;
-    private static final Object2IntMap<String> BREED_LIMITS_CACHE = new Object2IntOpenHashMap<>(); // get's cleared on first load anyway
+    private static final Object2IntMap<String> BREED_LIMITS_CACHE = new Object2IntOpenHashMap<>(); // gets cleared on first load anyway
 
     public static final ForgeConfigSpec CLIENT;
     public static final ForgeConfigSpec.BooleanValue NO_CULLING;
@@ -44,7 +44,7 @@ public class WRConfig
 
     public static boolean deckTheHalls()
     {
-        return ModUtils.DECK_THE_HALLS && WRConfig.deckTheHalls();
+        return ModUtils.DECK_THE_HALLS && DECK_THE_HALLS.get();
     }
 
     public static void loadConfig(ModConfig.ModConfigEvent event)
