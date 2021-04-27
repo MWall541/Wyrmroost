@@ -66,6 +66,10 @@
     [],
     [
       "wyrmroost:blue_oseri_tree",
+      "wyrmroost:gold_oseri_tree",
+      "wyrmroost:pink_oseri_tree",
+      "wyrmroost:purple_oseri_tree",
+      "wyrmroost:white_oseri_tree",
       "wyrmroost:tincture_flowers",
       "minecraft:forest_flower_vegetation_common",
       "minecraft:patch_large_fern",
