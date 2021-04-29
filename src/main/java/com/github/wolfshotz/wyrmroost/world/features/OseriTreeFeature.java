@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -130,7 +131,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
     private static void placeLog(ISeedReader level, BlockPos pos)
     {
-        if (noCollision(level, pos))
+        if (noCollision(level, pos) || level.getBlockState(pos).is(BlockTags.LEAVES))
             level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
     }
 
