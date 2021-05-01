@@ -5,7 +5,10 @@ import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
-import com.github.wolfshotz.wyrmroost.registry.*;
+import com.github.wolfshotz.wyrmroost.registry.WRBlockEntities;
+import com.github.wolfshotz.wyrmroost.registry.WRIO;
+import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
+import com.github.wolfshotz.wyrmroost.registry.WRParticles;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.WoodType;
@@ -17,9 +20,10 @@ import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -28,12 +32,8 @@ import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
 /**
  * EventBus listeners on CLIENT distribution
@@ -66,19 +66,9 @@ public class ClientEvents
     //       Mod Bus
     // ====================
 
-    @SuppressWarnings("unchecked")
     public static void clientSetup(final FMLClientSetupEvent event)
     {
         WRKeybind.registerKeys();
-
-        for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
-        {
-            if (entry instanceof WREntities.Type)
-            {
-                WREntities.Type<? super Entity> custom = ((WREntities.Type<Entity>) entry);
-                RenderingRegistry.registerEntityRenderingHandler(custom, custom.renderer.get());
-            }
-        }
 
         event.enqueueWork(() ->
         {
@@ -86,8 +76,8 @@ public class ClientEvents
 
             WoodType.values().filter(w -> w.name().contains(Wyrmroost.MOD_ID)).forEach(Atlases::addWoodType);
 
-            WRBlockEntities.RENDERERS.forEach((del, render) -> ClientRegistry.bindTileEntityRenderer(del.get(), render.get()));
-            WRBlockEntities.RENDERERS.clear();
+            for (TileEntityType<?> entry : ModUtils.getRegistryEntries(WRBlockEntities.REGISTRY))
+                if (entry instanceof WRBlockEntities<?>) ((WRBlockEntities<?>) entry).callBack();
         });
     }
 
@@ -95,10 +85,12 @@ public class ClientEvents
     {
         for (ParticleType<?> entry : ModUtils.getRegistryEntries(WRParticles.REGISTRY))
         {
-            if (entry instanceof WRParticles.Type<?>)
+            if (entry instanceof WRParticles<?>)
             {
-                WRParticles.Type<?> type = (WRParticles.Type<?>) entry;
-                getClient().particleEngine.register(type, sprite -> ((d, w, x, y, z, xS, yS, zS) -> type.getFactory().create(cast(d), w, sprite, x, y, z, xS, yS, zS)));
+                @SuppressWarnings("unchecked")
+                WRParticles<? super IParticleData> type = (WRParticles<? super IParticleData>) entry;
+                getClient().particleEngine.register(type, sprite -> ((d, w, x, y, z, xS, yS, zS) ->
+                        type.getFactory().create(d, w, sprite, x, y, z, xS, yS, zS)));
             }
         }
     }

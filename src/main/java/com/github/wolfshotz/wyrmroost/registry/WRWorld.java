@@ -33,9 +33,9 @@ public class WRWorld
     {
         for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
         {
-            if (entry instanceof WREntities.Type)
+            if (entry instanceof WREntities)
             {
-                WREntities.Type<?> type = (WREntities.Type<?>) entry;
+                WREntities<?> type = (WREntities<?>) entry;
                 if (type.spawnBiomes != null) type.spawnBiomes.accept(event);
             }
         }

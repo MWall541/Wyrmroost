@@ -72,9 +72,9 @@ public class DragonEggProperties
      */
     public static DragonEggProperties get(EntityType<?> type)
     {
-        if (!(type instanceof WREntities.Type))
+        if (!(type instanceof WREntities))
             throw new IllegalArgumentException(String.format("This thing (%s) couldn't possibly shit out eggs. How did this happen?", type.getRegistryName()));
-        DragonEggProperties props = ((WREntities.Type<?>) type).eggProperties;
+        DragonEggProperties props = ((WREntities<?>) type).eggProperties;
         if (props == null)
             throw new NullPointerException(String.format("Missing Egg Properties for entity: %s, Wolf did a hickup go scream at him", type.getRegistryName()));
         return props;

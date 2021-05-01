@@ -28,24 +28,31 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.antlr.v4.runtime.misc.Triple;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.*;
 
+import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS;
 import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.ON_GROUND;
 
-public class WREntities
+public class WREntities<E extends Entity> extends EntityType<E>
 {
     public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
 
@@ -166,10 +173,38 @@ public class WREntities
 
     public static final RegistryObject<EntityType<WindGustEntity>> WIND_GUST = WREntities.<WindGustEntity>ofGroup("wind_gust", WindGustEntity::new, EntityClassification.MISC)
             .size(4, 4)
-            .renderer(() -> EmptyRenderer::new)
             .noSave()
             .noSummon()
             .build();
+
+    @Nonnull public final Supplier<IRenderFactory<E>> renderer;
+    @Nullable public final AttributeModifierMap.MutableAttribute attributes;
+    @Nullable public final Triple<EntitySpawnPlacementRegistry.PlacementType, Heightmap.Type, EntitySpawnPlacementRegistry.IPlacementPredicate<?>> spawnPlacement;
+    @Nullable public final Consumer<BiomeLoadingEvent> spawnBiomes;
+    @Nullable public final DragonEggProperties eggProperties;
+
+    public WREntities(EntityType.IFactory<E> factory, EntityClassification group, boolean serialize, boolean summon, boolean fireImmune, boolean spawnsFarFromPlayer, ImmutableSet<Block> immuneTo, EntitySize size, int trackingRange, int tickRate, Predicate<EntityType<?>> velocityUpdateSupplier, ToIntFunction<EntityType<?>> trackingRangeSupplier, ToIntFunction<EntityType<?>> updateIntervalSupplier, BiFunction<FMLPlayMessages.SpawnEntity, World, E> customClientFactory, Supplier<IRenderFactory<E>> renderFactory, AttributeModifierMap.MutableAttribute attributes, Triple<EntitySpawnPlacementRegistry.PlacementType, Heightmap.Type, EntitySpawnPlacementRegistry.IPlacementPredicate<?>> spawnPlacement, Consumer<BiomeLoadingEvent> spawnBiomes, DragonEggProperties props)
+    {
+        super(factory, group, serialize, summon, fireImmune, spawnsFarFromPlayer, immuneTo, size, trackingRange, tickRate, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
+        this.renderer = renderFactory;
+        this.attributes = attributes;
+        this.spawnPlacement = spawnPlacement;
+        this.spawnBiomes = spawnBiomes;
+        this.eggProperties = props;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void callBack()
+    {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderingRegistry.registerEntityRenderingHandler(this, renderer.get()));
+        if (attributes != null)
+            GlobalEntityTypeAttributes.put((EntityType<? extends LivingEntity>) this, attributes.build());
+        if (spawnPlacement != null)
+        {
+            WREntities<? extends MobEntity> mob = (WREntities<? extends MobEntity>) this;
+            EntitySpawnPlacementRegistry.register(mob, spawnPlacement.a, spawnPlacement.b, cast(spawnPlacement.c));
+        }
+    }
 
     private static <T extends Entity> Builder<T> creature(String name, EntityType.IFactory<T> factory)
     {
@@ -213,7 +248,7 @@ public class WREntities
         private boolean updatesVelocity = true;
         private EntitySize size = EntitySize.scalable(0.6f, 1.8f);
         private DragonEggProperties dragonEggProperties;
-        private Supplier<IRenderFactory<T>> renderer;
+        private Supplier<IRenderFactory<T>> renderer = () -> EmptyRenderer::new;
         private Supplier<AttributeModifierMap.MutableAttribute> attributes = () -> null;
         private Triple<EntitySpawnPlacementRegistry.PlacementType, Heightmap.Type, EntitySpawnPlacementRegistry.IPlacementPredicate<?>> spawnPlacement;
         private Consumer<BiomeLoadingEvent> spawnBiomes;
@@ -333,26 +368,7 @@ public class WREntities
 
         private RegistryObject<EntityType<T>> build()
         {
-            return registered = REGISTRY.register(name, () -> new Type<>(factory, category, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, size, trackingRange, tickRate, t -> updatesVelocity, t -> trackingRange, t -> tickRate, customClientFactory, renderer, attributes.get(), spawnPlacement, spawnBiomes, dragonEggProperties));
-        }
-    }
-
-    public static class Type<T extends Entity> extends EntityType<T>
-    {
-        public final Supplier<IRenderFactory<T>> renderer;
-        public final AttributeModifierMap.MutableAttribute attributes;
-        public final Triple<EntitySpawnPlacementRegistry.PlacementType, Heightmap.Type, EntitySpawnPlacementRegistry.IPlacementPredicate<?>> spawnPlacement;
-        public final Consumer<BiomeLoadingEvent> spawnBiomes;
-        public final DragonEggProperties eggProperties;
-
-        public Type(IFactory<T> factory, EntityClassification group, boolean serialize, boolean summon, boolean fireImmune, boolean spawnsFarFromPlayer, ImmutableSet<Block> immuneTo, EntitySize size, int trackingRange, int tickRate, Predicate<EntityType<?>> velocityUpdateSupplier, ToIntFunction<EntityType<?>> trackingRangeSupplier, ToIntFunction<EntityType<?>> updateIntervalSupplier, BiFunction<FMLPlayMessages.SpawnEntity, World, T> customClientFactory, Supplier<IRenderFactory<T>> renderFactory, AttributeModifierMap.MutableAttribute attributes, Triple<EntitySpawnPlacementRegistry.PlacementType, Heightmap.Type, EntitySpawnPlacementRegistry.IPlacementPredicate<?>> spawnPlacement, Consumer<BiomeLoadingEvent> spawnBiomes, DragonEggProperties props)
-        {
-            super(factory, group, serialize, summon, fireImmune, spawnsFarFromPlayer, immuneTo, size, trackingRange, tickRate, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
-            this.renderer = renderFactory;
-            this.attributes = attributes;
-            this.spawnPlacement = spawnPlacement;
-            this.spawnBiomes = spawnBiomes;
-            this.eggProperties = props;
+            return registered = REGISTRY.register(name, () -> new WREntities<>(factory, category, serialize, summon, fireImmune, canSpawnFarFromPlayer, immuneTo, size, trackingRange, tickRate, t -> updatesVelocity, t -> trackingRange, t -> tickRate, customClientFactory, renderer, attributes.get(), spawnPlacement, spawnBiomes, dragonEggProperties));
         }
     }
 }

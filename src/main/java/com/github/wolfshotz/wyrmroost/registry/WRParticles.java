@@ -21,49 +21,46 @@ import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WRParticles
+public class WRParticles<T extends IParticleData> extends ParticleType<T>
 {
     public static final DeferredRegister<ParticleType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<Type<ColoredParticleData>> PETAL = register("petal", false, ColoredParticleData::codec, ColoredParticleData::read, () -> PetalParticle::new);
+    public static final RegistryObject<ParticleType<ColoredParticleData>> PETAL = register("petal", false, ColoredParticleData::codec, ColoredParticleData::read, () -> PetalParticle::new);
 
-    public static RegistryObject<Type<BasicParticleType>> basic(String name, boolean alwaysShow, Supplier<BetterParticleFactory<BasicParticleType>> factory)
+    private final Codec<T> codec;
+    private final Supplier<BetterParticleFactory<T>> factory;
+
+    public WRParticles(boolean alwaysShow, Function<ParticleType<T>, Codec<T>> codec, IParticleData.IDeserializer<T> deserializer, Supplier<BetterParticleFactory<T>> factory)
     {
-        return REGISTRY.register(name, () -> new Type<>(alwaysShow, new BasicParticleType(false), factory));
+        super(alwaysShow, deserializer);
+        this.codec = codec.apply(this);
+        this.factory = factory;
     }
 
-    public static <T extends IParticleData> RegistryObject<Type<T>> register(String name, boolean alwaysShow, Function<ParticleType<T>, Codec<T>> codec, IReader<T> reader, Supplier<BetterParticleFactory<T>> factory)
+    public WRParticles(boolean alwaysShow, ParticleType<T> wrapped, Supplier<BetterParticleFactory<T>> factory)
     {
-        return REGISTRY.register(name, () -> new Type<>(alwaysShow, codec, reader, factory));
+        this(alwaysShow, t -> wrapped.codec(), wrapped.getDeserializer(), factory);
     }
 
-    public static class Type<T extends IParticleData> extends ParticleType<T>
+    @Override
+    public Codec<T> codec()
     {
-        private final Codec<T> codec;
-        private final Supplier<BetterParticleFactory<T>> factory;
+        return codec;
+    }
 
-        public Type(boolean alwaysShow, Function<ParticleType<T>, Codec<T>> codec, IParticleData.IDeserializer<T> deserializer, Supplier<BetterParticleFactory<T>> factory)
-        {
-            super(alwaysShow, deserializer);
-            this.codec = codec.apply(this);
-            this.factory = factory;
-        }
+    public BetterParticleFactory<T> getFactory()
+    {
+        return factory.get();
+    }
 
-        public Type(boolean alwaysShow, ParticleType<T> wrapped, Supplier<BetterParticleFactory<T>> factory)
-        {
-            this(alwaysShow, t -> wrapped.codec(), wrapped.getDeserializer(), factory);
-        }
+    public static RegistryObject<ParticleType<BasicParticleType>> basic(String name, boolean alwaysShow, Supplier<BetterParticleFactory<BasicParticleType>> factory)
+    {
+        return REGISTRY.register(name, () -> new WRParticles<>(alwaysShow, new BasicParticleType(false), factory));
+    }
 
-        @Override
-        public Codec<T> codec()
-        {
-            return codec;
-        }
-
-        public BetterParticleFactory<T> getFactory()
-        {
-            return factory.get();
-        }
+    public static <T extends IParticleData> RegistryObject<ParticleType<T>> register(String name, boolean alwaysShow, Function<ParticleType<T>, Codec<T>> codec, IReader<T> reader, Supplier<BetterParticleFactory<T>> factory)
+    {
+        return REGISTRY.register(name, () -> new WRParticles<>(alwaysShow, codec, reader, factory));
     }
 
     public interface BetterParticleFactory<T extends IParticleData>

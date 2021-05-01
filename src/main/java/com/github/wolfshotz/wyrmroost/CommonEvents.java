@@ -11,33 +11,23 @@ import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FireBlock;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import java.util.Map;
-
-import static com.github.wolfshotz.wyrmroost.util.ModUtils.cast;
 
 /**
  * Reflection is shit and we shouldn't use it
@@ -66,7 +56,6 @@ public class CommonEvents
     //       Mod Bus
     // ====================
 
-    @SuppressWarnings("unchecked")
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
         IAnimatable.registerCapability();
@@ -76,26 +65,9 @@ public class CommonEvents
             LazySpawnEggItem.addEggsToMap();
 
             for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
-            {
-                if (entry instanceof WREntities.Type)
-                {
-                    WREntities.Type<? extends MobEntity> custom = (WREntities.Type<? extends MobEntity>) entry;
-                    if (custom.attributes != null)
-                        GlobalEntityTypeAttributes.put(custom, custom.attributes.build());
-                    if (custom.spawnPlacement != null)
-                        EntitySpawnPlacementRegistry.register(custom, custom.spawnPlacement.a, custom.spawnPlacement.b, cast(custom.spawnPlacement.c));
-                }
-            }
+                if (entry instanceof WREntities) ((WREntities<?>) entry).callBack();
 
-            for (Map.Entry<RegistryObject<Block>, WRBlocks.BlockExtension> entry : WRBlocks.EXTENSIONS.entrySet())
-            {
-                Block block = entry.getKey().get();
-                WRBlocks.BlockExtension extension = entry.getValue();
-                if (extension.renderType != null)
-                    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderTypeLookup.setRenderLayer(block, extension.renderType.get().get()));
-                if (extension.flammability != null)
-                    ((FireBlock) Blocks.FIRE).setFlammable(block, extension.flammability[0], extension.flammability[1]);
-            }
+            for (WRBlocks.BlockExtension extension : WRBlocks.EXTENSIONS) extension.callBack();
         });
     }
 

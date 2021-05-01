@@ -8,17 +8,22 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.item.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -35,7 +40,7 @@ public class WRBlocks
     };
 
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, Wyrmroost.MOD_ID);
-    public static final Map<RegistryObject<Block>, BlockExtension> EXTENSIONS = new HashMap<>();
+    public static final List<BlockExtension> EXTENSIONS = new ArrayList<>();
 
     public static final RegistryObject<Block> PLATINUM_ORE = register("platinum_ore", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 1, 3f, SoundType.STONE)));
     public static final RegistryObject<Block> PLATINUM_BLOCK = register("platinum_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 1, 5f, SoundType.METAL)));
@@ -89,7 +94,11 @@ public class WRBlocks
     {
         RegistryObject<Block> delegate = REGISTRY.register(name, block);
         if (extension.itemFactory != null) WRItems.register(name, () -> extension.itemFactory.apply(delegate.get()));
-        if (extension.requiresSetup()) EXTENSIONS.put(delegate, extension);
+        if (extension.requiresSetup())
+        {
+            extension.block = delegate;
+            EXTENSIONS.add(extension);
+        }
         return delegate;
     }
 
@@ -305,9 +314,10 @@ public class WRBlocks
 
     public static class BlockExtension
     {
+        RegistryObject<Block> block;
         Function<Block, BlockItem> itemFactory = b -> new BlockItem(b, new Item.Properties().tab(BLOCKS_ITEM_GROUP));
-        public Supplier<Supplier<RenderType>> renderType;
-        public int[] flammability;
+        Supplier<Supplier<RenderType>> renderType;
+        int[] flammability;
 
         public BlockExtension item(Function<Block, BlockItem> factory)
         {
@@ -335,6 +345,14 @@ public class WRBlocks
         private boolean requiresSetup()
         {
             return renderType != null || flammability != null;
+        }
+
+        public void callBack()
+        {
+            if (renderType != null)
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderTypeLookup.setRenderLayer(block.get(), renderType.get().get()));
+            if (flammability != null)
+                ((FireBlock) Blocks.FIRE).setFlammable(block.get(), flammability[0], flammability[1]);
         }
     }
 }
