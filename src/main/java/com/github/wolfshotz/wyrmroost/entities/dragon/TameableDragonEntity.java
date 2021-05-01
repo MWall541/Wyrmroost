@@ -17,7 +17,6 @@ import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.mojang.datafixers.util.Pair;
@@ -140,19 +139,21 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public abstract EntitySerializer<? extends TameableDragonEntity> getSerializer();
 
     @Override
+    @SuppressWarnings("unchecked")
     public void addAdditionalSaveData(CompoundNBT nbt)
     {
         super.addAdditionalSaveData(nbt);
         if (inventory.isPresent()) nbt.put("Inv", inventory.orElse(null).serializeNBT());
-        getSerializer().serialize(ModUtils.cast(this), nbt);
+        ((EntitySerializer<TameableDragonEntity>) getSerializer()).serialize(this, nbt);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void readAdditionalSaveData(CompoundNBT nbt)
     {
         super.readAdditionalSaveData(nbt);
         if (inventory.isPresent()) inventory.orElse(null).deserializeNBT(nbt.getCompound("Inv"));
-        getSerializer().deserialize(ModUtils.cast(this), nbt);
+        ((EntitySerializer<TameableDragonEntity>) getSerializer()).deserialize(this, nbt);
         applyAttributes();
     }
 

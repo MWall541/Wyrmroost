@@ -109,7 +109,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
+    public EntitySerializer<ButterflyLeviathanEntity> getSerializer()
     {
         return SERIALIZER;
     }

@@ -70,7 +70,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     }
 
     @Override
-    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
+    public EntitySerializer<DragonFruitDrakeEntity> getSerializer()
     {
         return SERIALIZER;
     }

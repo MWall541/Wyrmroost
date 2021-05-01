@@ -77,7 +77,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
+    public EntitySerializer<CanariWyvernEntity> getSerializer()
     {
         return SERIALIZER;
     }

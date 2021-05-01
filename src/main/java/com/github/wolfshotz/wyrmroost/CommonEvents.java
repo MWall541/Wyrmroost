@@ -66,6 +66,7 @@ public class CommonEvents
     //       Mod Bus
     // ====================
 
+    @SuppressWarnings("unchecked")
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
         IAnimatable.registerCapability();
@@ -78,7 +79,7 @@ public class CommonEvents
             {
                 if (entry instanceof WREntities.Type)
                 {
-                    WREntities.Type<? extends MobEntity> custom = cast(entry);
+                    WREntities.Type<? extends MobEntity> custom = (WREntities.Type<? extends MobEntity>) entry;
                     if (custom.attributes != null)
                         GlobalEntityTypeAttributes.put(custom, custom.attributes.build());
                     if (custom.spawnPlacement != null)

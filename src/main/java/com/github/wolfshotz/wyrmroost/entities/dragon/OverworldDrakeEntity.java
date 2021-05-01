@@ -82,7 +82,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
+    public EntitySerializer<OverworldDrakeEntity> getSerializer()
     {
         return SERIALIZER;
     }

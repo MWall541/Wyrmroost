@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
@@ -9,6 +8,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.FlowersFeature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 
@@ -35,6 +35,7 @@ public class MulchBlock extends SnowyDirtBlock implements IGrowable
     }
 
     //taken from GrassBlock todo: optimize?
+    @SuppressWarnings("unchecked")
     public void performBonemeal(ServerWorld level, Random random, BlockPos pos, BlockState state)
     {
         BlockPos blockpos = pos.above();
@@ -65,8 +66,8 @@ public class MulchBlock extends SnowyDirtBlock implements IGrowable
                     if (list.isEmpty()) continue;
 
                     ConfiguredFeature<?, ?> feature = list.get(0);
-                    FlowersFeature<?> flowers = (FlowersFeature<?>) feature.feature;
-                    blockstate1 = flowers.getRandomFlower(random, blockpos1, ModUtils.cast(feature.config()));
+                    FlowersFeature<IFeatureConfig> flowers = (FlowersFeature<IFeatureConfig>) feature.feature;
+                    blockstate1 = flowers.getRandomFlower(random, blockpos1, feature.config());
                 }
                 else blockstate1 = blockstate;
 

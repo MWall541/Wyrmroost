@@ -66,6 +66,7 @@ public class ClientEvents
     //       Mod Bus
     // ====================
 
+    @SuppressWarnings("unchecked")
     public static void clientSetup(final FMLClientSetupEvent event)
     {
         WRKeybind.registerKeys();
@@ -74,7 +75,7 @@ public class ClientEvents
         {
             if (entry instanceof WREntities.Type)
             {
-                WREntities.Type<? super Entity> custom = cast(entry);
+                WREntities.Type<? super Entity> custom = ((WREntities.Type<Entity>) entry);
                 RenderingRegistry.registerEntityRenderingHandler(custom, custom.renderer.get());
             }
         }
@@ -111,8 +112,8 @@ public class ClientEvents
     public static void itemColors(ColorHandlerEvent.Item evt)
     {
         ItemColors handler = evt.getItemColors();
-        IItemColor func = (stack, tintIndex) -> ((LazySpawnEggItem) stack.getItem()).getColor(tintIndex);
-        for (LazySpawnEggItem e : LazySpawnEggItem.SPAWN_EGGS) handler.register(func, e);
+        IItemColor func = (stack, tintIndex) -> ((LazySpawnEggItem<?>) stack.getItem()).getColor(tintIndex);
+        for (LazySpawnEggItem<?> e : LazySpawnEggItem.SPAWN_EGGS) handler.register(func, e);
     }
 
     // =====================

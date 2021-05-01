@@ -61,7 +61,7 @@ public class SilverGliderEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
+    public EntitySerializer<SilverGliderEntity> getSerializer()
     {
         return SERIALIZER;
     }

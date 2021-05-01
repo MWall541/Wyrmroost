@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.entities.util;
 
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -15,41 +14,36 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class EntitySerializer<T extends Entity>
+public class EntitySerializer<E extends Entity>
 {
     public static final NBTBridge<Boolean> BOOL = bridge((key, nbt, value) -> nbt.putBoolean(key, value), (key, nbt) -> nbt.getBoolean(key));
     public static final NBTBridge<Integer> INT = bridge((key, nbt, value) -> nbt.putInt(key, value), (key, nbt) -> nbt.getInt(key));
     public static final NBTBridge<CompoundNBT> NBT = bridge((key, nbt, value) -> nbt.put(key, value), (key, nbt) -> nbt.getCompound(key));
     public static final NBTBridge<BlockPos> POS = bridge((key, nbt, value) -> nbt.putLong(key, value.asLong()), (key, nbt) -> BlockPos.of(nbt.getLong(key)));
 
-    final Instance<?, ?>[] entries;
+    final Entry<?, E>[] entries;
 
-    private EntitySerializer(Instance<?, ?>... entries)
+    private EntitySerializer(Entry<?, E>[] entries)
     {
         this.entries = entries;
     }
 
-    public void serialize(T entity, CompoundNBT nbt)
+    public void serialize(E entity, CompoundNBT nbt)
     {
-        for (Instance<?, ?> entry : entries)
-        {
-            entry.serialize(ModUtils.cast(entity), nbt);
-        }
+        for (Entry<?, E> entry : entries) entry.serialize(entity, nbt);
     }
 
-    public void deserialize(T entity, CompoundNBT tag)
+    public void deserialize(E entity, CompoundNBT tag)
     {
-        for (Instance<?, ?> entry : entries)
-        {
-            entry.deserialize(ModUtils.cast(entity), tag);
-        }
+        for (Entry<?, E> entry : entries) entry.deserialize(entity, tag);
     }
 
-    public <E extends Entity> EntitySerializer<E> concat(Consumer<Builder<E>> consumer)
+    @SuppressWarnings("unchecked")
+    public <T extends E> EntitySerializer<T> concat(Consumer<Builder<T>> consumer)
     {
-        Builder<E> builder = new Builder<>();
+        Builder<T> builder = new Builder<>();
         consumer.accept(builder);
-        return new EntitySerializer<>(ArrayUtils.addAll(entries, builder.build()));
+        return new EntitySerializer<>(ArrayUtils.addAll((Entry<?, T>[]) entries, builder.build()));
     }
 
     public static <E extends Entity> EntitySerializer<E> builder(Consumer<Builder<E>> consumer)
@@ -64,14 +58,14 @@ public class EntitySerializer<T extends Entity>
         return new NBTBridge<>(setter, getter);
     }
 
-    public static class Instance<T, E extends Entity>
+    public static class Entry<T, E extends Entity>
     {
         private final NBTBridge<T> bridge;
         private final String key;
         private final Function<E, T> write;
         private final BiConsumer<E, T> read;
 
-        public Instance(NBTBridge<T> type, String key, Function<E, T> write, BiConsumer<E, T> read)
+        public Entry(NBTBridge<T> type, String key, Function<E, T> write, BiConsumer<E, T> read)
         {
             this.bridge = type;
             this.key = key;
@@ -115,17 +109,18 @@ public class EntitySerializer<T extends Entity>
 
     public static class Builder<E extends Entity>
     {
-        private final List<Instance<?, ?>> entries = new ArrayList<>();
+        private final List<Entry<?, E>> entries = new ArrayList<>();
 
         public <T> Builder<E> track(NBTBridge<T> bridge, String key, Function<E, T> write, BiConsumer<E, T> read)
         {
-            entries.add(new Instance<>(bridge, key, write, read));
+            entries.add(new Entry<>(bridge, key, write, read));
             return this;
         }
 
-        private Instance<?, ?>[] build()
+        @SuppressWarnings("unchecked")
+        private Entry<?, E>[] build()
         {
-            return entries.toArray(new Instance[0]);
+            return entries.toArray(new Entry[0]);
         }
     }
 }

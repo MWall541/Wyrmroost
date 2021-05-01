@@ -67,7 +67,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySerializer<? extends TameableDragonEntity> getSerializer()
+    public EntitySerializer<RoostStalkerEntity> getSerializer()
     {
         return SERIALIZER;
     }
