@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.particle.PetalParticle;
 import com.github.wolfshotz.wyrmroost.client.particle.data.ColoredParticleData;
 import com.mojang.brigadier.StringReader;
@@ -13,6 +14,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -51,6 +54,13 @@ public class WRParticles<T extends IParticleData> extends ParticleType<T>
     public BetterParticleFactory<T> getFactory()
     {
         return factory.get();
+    }
+
+    public void bake()
+    {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+                ClientEvents.getClient().particleEngine.register(this, sprite -> ((d, w, x, y, z, xS, yS, zS) ->
+                        getFactory().create(d, w, sprite, x, y, z, xS, yS, zS))));
     }
 
     public static RegistryObject<ParticleType<BasicParticleType>> basic(String name, boolean alwaysShow, Supplier<BetterParticleFactory<BasicParticleType>> factory)

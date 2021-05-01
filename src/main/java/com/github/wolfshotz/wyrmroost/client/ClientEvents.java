@@ -21,7 +21,6 @@ import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.vector.Vector3d;
@@ -84,15 +83,7 @@ public class ClientEvents
     public static void bakeParticles(ParticleFactoryRegisterEvent event)
     {
         for (ParticleType<?> entry : ModUtils.getRegistryEntries(WRParticles.REGISTRY))
-        {
-            if (entry instanceof WRParticles<?>)
-            {
-                @SuppressWarnings("unchecked")
-                WRParticles<? super IParticleData> type = (WRParticles<? super IParticleData>) entry;
-                getClient().particleEngine.register(type, sprite -> ((d, w, x, y, z, xS, yS, zS) ->
-                        type.getFactory().create(d, w, sprite, x, y, z, xS, yS, zS)));
-            }
-        }
+            if (entry instanceof WRParticles<?>) ((WRParticles<?>) entry).bake();
     }
 
     public static void stitchTextures(TextureStitchEvent.Pre evt)
