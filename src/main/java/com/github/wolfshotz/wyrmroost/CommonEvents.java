@@ -97,7 +97,7 @@ public class CommonEvents
         {
             if (dragon.level.isClientSide) DebugScreen.open(dragon);
             else
-                Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null ? "null" : dragon.getNavigation().getPath().getTarget().toString());
+                Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null? "null" : dragon.getNavigation().getPath().getTarget().toString());
         }
     }
 
