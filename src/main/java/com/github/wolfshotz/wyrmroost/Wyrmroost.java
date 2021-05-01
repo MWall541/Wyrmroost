@@ -11,6 +11,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -29,7 +30,7 @@ public class Wyrmroost
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         CommonEvents.init();
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEvents::init);
+        if (FMLEnvironment.dist == Dist.CLIENT) DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEvents::init); //wear protection kids
 
         WREntities.REGISTRY.register(bus);
         WREntities.Attributes.REGISTRY.register(bus);

@@ -10,7 +10,6 @@ import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
 import com.github.wolfshotz.wyrmroost.registry.WRParticles;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.block.WoodType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Atlases;
@@ -24,7 +23,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -41,11 +39,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @SuppressWarnings("unused")
 public class ClientEvents
 {
-    static
-    {
-        WRDimensionRenderInfo.init();
-    }
-
     public static void init()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -59,6 +52,8 @@ public class ClientEvents
         forgeBus.addListener(RenderHelper::renderWorld);
         forgeBus.addListener(RenderHelper::renderEntities);
         forgeBus.addListener(ClientEvents::cameraPerspective);
+
+        WRDimensionRenderInfo.init();
     }
 
     // ====================
@@ -140,15 +135,5 @@ public class ClientEvents
     public static float getFrameDelta()
     {
         return getClient().getDeltaFrameTime();
-    }
-
-    public static boolean handleAnimationPacket(int entityID, int animationIndex)
-    {
-        World world = ClientEvents.getLevel();
-        IAnimatable entity = (IAnimatable) world.getEntity(entityID);
-
-        if (animationIndex < 0) entity.setAnimation(IAnimatable.NO_ANIMATION);
-        else entity.setAnimation(entity.getAnimations()[animationIndex]);
-        return true;
     }
 }
