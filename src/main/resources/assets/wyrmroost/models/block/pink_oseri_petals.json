@@ -1,6 +1,0 @@
-{
-  "parent": "wyrmroost:block/petals",
-  "textures": {
-    "particle": "wyrmroost:block/pink_oseri_petals"
-  }
-}

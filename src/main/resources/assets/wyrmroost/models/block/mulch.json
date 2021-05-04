@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "side": "wyrmroost:block/mulch_side",
-    "bottom": "minecraft:block/dirt",
-    "top": "wyrmroost:block/mulch_top"
-  }
-}

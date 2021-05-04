@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column_horizontal",
-  "textures": {
-    "side": "wyrmroost:block/oseri_log",
-    "end": "wyrmroost:block/oseri_log_top"
-  }
-}

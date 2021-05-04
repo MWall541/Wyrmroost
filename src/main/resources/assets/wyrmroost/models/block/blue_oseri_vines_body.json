@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cross",
-  "textures": {
-    "cross": "wyrmroost:block/blue_oseri_vines_body"
-  }
-}

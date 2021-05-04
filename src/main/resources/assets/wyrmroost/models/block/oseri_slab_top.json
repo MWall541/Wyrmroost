@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "side": "wyrmroost:block/oseri_planks",
-    "bottom": "wyrmroost:block/oseri_planks",
-    "top": "wyrmroost:block/oseri_planks"
-  }
-}

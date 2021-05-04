@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "wyrmroost:item/red_geode_tipped_arrow"
-  }
-}
