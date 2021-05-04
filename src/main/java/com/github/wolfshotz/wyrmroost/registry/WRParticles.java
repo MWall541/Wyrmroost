@@ -14,8 +14,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.BasicParticleType;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -51,16 +49,10 @@ public class WRParticles<T extends IParticleData> extends ParticleType<T>
         return codec;
     }
 
-    public BetterParticleFactory<T> getFactory()
-    {
-        return factory.get();
-    }
-
     public void bake()
     {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-                ClientEvents.getClient().particleEngine.register(this, sprite -> ((d, w, x, y, z, xS, yS, zS) ->
-                        getFactory().create(d, w, sprite, x, y, z, xS, yS, zS))));
+        ClientEvents.getClient().particleEngine.register(this, sprite -> ((d, w, x, y, z, xS, yS, zS) ->
+                factory.get().create(d, w, sprite, x, y, z, xS, yS, zS)));
     }
 
     public static RegistryObject<ParticleType<BasicParticleType>> basic(String name, boolean alwaysShow, Supplier<BetterParticleFactory<BasicParticleType>> factory)
@@ -86,8 +78,14 @@ public class WRParticles<T extends IParticleData> extends ParticleType<T>
         @Override
         default T fromNetwork(ParticleType<T> type, PacketBuffer buffer)
         {
-            try { return buffer.readWithCodec(type.codec()); }
-            catch (IOException e) { throw new RuntimeException("Unable to read particle data from buffer: " + e); }
+            try
+            {
+                return buffer.readWithCodec(type.codec());
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException("Unable to read particle data from buffer: " + e);
+            }
         }
     }
 }

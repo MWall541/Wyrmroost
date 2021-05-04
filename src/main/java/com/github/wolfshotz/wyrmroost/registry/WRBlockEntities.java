@@ -28,6 +28,7 @@ public class WRBlockEntities<T extends TileEntity> extends TileEntityType<T>
     public static final RegistryObject<TileEntityType<?>> CUSTOM_SIGN = register("sign", WRSignBlockEntity::new, () -> SignTileEntityRenderer::new, () -> setOf(WRBlocks.OSERI_WOOD.getSign(), WRBlocks.OSERI_WOOD.getWallSign()));
 
     @Nullable private final Supplier<Function<TileEntityRendererDispatcher, TileEntityRenderer<T>>> renderer;
+
     public WRBlockEntities(Supplier<? extends T> factory, Set<Block> blocks, Supplier<Function<TileEntityRendererDispatcher, TileEntityRenderer<T>>> renderer)
     {
         super(factory, blocks, null);

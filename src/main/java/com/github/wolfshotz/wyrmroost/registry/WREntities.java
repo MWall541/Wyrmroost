@@ -173,6 +173,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
 
     public static final RegistryObject<EntityType<WindGustEntity>> WIND_GUST = WREntities.<WindGustEntity>ofGroup("wind_gust", WindGustEntity::new, EntityClassification.MISC)
             .size(4, 4)
+            .renderer(() -> EmptyRenderer::new)
             .noSave()
             .noSummon()
             .build();
@@ -248,7 +249,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
         private boolean updatesVelocity = true;
         private EntitySize size = EntitySize.scalable(0.6f, 1.8f);
         private DragonEggProperties dragonEggProperties;
-        private Supplier<IRenderFactory<T>> renderer = () -> EmptyRenderer::new;
+        private Supplier<IRenderFactory<T>> renderer;
         private Supplier<AttributeModifierMap.MutableAttribute> attributes = () -> null;
         private Triple<EntitySpawnPlacementRegistry.PlacementType, Heightmap.Type, EntitySpawnPlacementRegistry.IPlacementPredicate<?>> spawnPlacement;
         private Consumer<BiomeLoadingEvent> spawnBiomes;
