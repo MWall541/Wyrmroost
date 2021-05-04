@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -37,6 +38,20 @@ public final class ModUtils
     {
         Calendar calendar = Calendar.getInstance();
         DECK_THE_HALLS = calendar.get(Calendar.MONTH) == Calendar.DECEMBER && calendar.get(Calendar.DAY_OF_MONTH) >= 19;
+    }
+
+    /**
+     * This method is purely just to help prevent sided-loading problems.
+     * Wrapping any client-only code in a double lambda helps to prevent class-loading from trying to crash the game
+     * due to non-existant code by @OnlyIn usages.
+     * Now this could be avoided using {@link net.minecraftforge.fml.DistExecutor} BUT, I tried that.
+     * It turns out the method will still be called on the server side, and in some very certain situations, will still crash.
+     * So to prevent that, Ill just manually put my own `if` statement and have this run if on client/server, simple.
+     * I mean I hate it but, I'll take it.
+     */
+    public static void run(Supplier<Runnable> run)
+    {
+        run.get().run();
     }
 
     /**

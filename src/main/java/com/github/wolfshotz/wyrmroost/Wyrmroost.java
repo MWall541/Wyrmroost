@@ -3,10 +3,10 @@ package com.github.wolfshotz.wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.network.packets.*;
 import com.github.wolfshotz.wyrmroost.registry.*;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -30,7 +30,7 @@ public class Wyrmroost
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         CommonEvents.init();
-        if (FMLEnvironment.dist == Dist.CLIENT) DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientEvents::init); //wear protection kids
+        if (FMLEnvironment.dist == Dist.CLIENT) ModUtils.run(() -> ClientEvents::init); //wear protection kids
 
         WREntities.REGISTRY.register(bus);
         WREntities.Attributes.REGISTRY.register(bus);
@@ -68,14 +68,6 @@ public class Wyrmroost
         return network;
     }
 
-    /**
-     * Register a new Wyrmroost Specific Resource Location. <P>
-     * Don't bash me for the method name it makes total sense ffs: <P>
-     * <b><i>r</i></b>esource <P>
-     * <b><i>l</i></b>ocation <P>
-     *
-     * @return somethin related to a resource idk
-     */
     public static ResourceLocation id(String path)
     {
         return new ResourceLocation(MOD_ID, path);
