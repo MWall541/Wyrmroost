@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "wyrmroost:blue_oseri_leaves",
+    "wyrmroost:gold_oseri_leaves",
+    "wyrmroost:pink_oseri_leaves",
+    "wyrmroost:purple_oseri_leaves"
+  ]
+}

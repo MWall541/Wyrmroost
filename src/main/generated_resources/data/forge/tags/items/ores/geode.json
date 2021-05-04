@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "wyrmroost:blue_geode_ore",
+    "wyrmroost:red_geode_ore",
+    "wyrmroost:purple_geode_ore"
+  ]
+}

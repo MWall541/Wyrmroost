@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "wyrmroost:block/blue_oseri_petals",
+      "y": 90
+    },
+    "axis=z": {
+      "model": "wyrmroost:block/blue_oseri_petals"
+    }
+  }
+}

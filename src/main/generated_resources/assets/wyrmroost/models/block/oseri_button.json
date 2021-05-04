@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button",
+  "textures": {
+    "texture": "wyrmroost:block/oseri_planks"
+  }
+}

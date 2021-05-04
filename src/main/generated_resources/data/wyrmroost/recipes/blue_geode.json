@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:blue_geode_block"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:blue_geode",
+    "count": 9
+  }
+}

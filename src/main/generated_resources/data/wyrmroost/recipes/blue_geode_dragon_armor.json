@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X# ",
+    "X #",
+    " X "
+  ],
+  "key": {
+    "X": {
+      "item": "wyrmroost:blue_geode"
+    },
+    "#": {
+      "item": "wyrmroost:blue_geode_block"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:blue_geode_dragon_armor"
+  }
+}

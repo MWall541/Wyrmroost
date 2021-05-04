@@ -25,8 +25,8 @@ run
 # Files from Forge MDK
 forge*changelog.txt
 
-# Generated Resources. newp
-/src/main/generated_resources
+# Generated Resources cache
+/src/main/generated_resources/.cache
 
 # Other Shit
 extra_assets

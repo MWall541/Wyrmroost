@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X X",
+    "X X"
+  ],
+  "key": {
+    "X": {
+      "item": "wyrmroost:blue_geode"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:blue_geode_boots"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "wyrmroost:blue_geode"
+    ]
+  },
+  "criteria": {
+    "has_blue_geode_block": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "wyrmroost:blue_geode_block"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "wyrmroost:blue_geode"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_blue_geode_block",
+      "has_the_recipe"
+    ]
+  ]
+}

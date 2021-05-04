@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X X",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "wyrmroost:purple_geode"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:purple_geode_chestplate"
+  }
+}

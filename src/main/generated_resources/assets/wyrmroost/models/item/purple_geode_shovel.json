@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "wyrmroost:item/purple_geode_shovel"
+  }
+}

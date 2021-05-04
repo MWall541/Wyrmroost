@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XX",
+    " |",
+    " |"
+  ],
+  "key": {
+    "X": {
+      "tag": "forge:ingots/platinum"
+    },
+    "|": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:platinum_hoe"
+  }
+}

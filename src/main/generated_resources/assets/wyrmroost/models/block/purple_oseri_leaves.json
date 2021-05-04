@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "wyrmroost:block/purple_oseri_leaves"
+  }
+}

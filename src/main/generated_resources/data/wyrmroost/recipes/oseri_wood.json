@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:oseri_log"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:oseri_wood",
+    "count": 3
+  }
+}

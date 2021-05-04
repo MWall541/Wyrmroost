@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "wyrmroost:oseri_logs"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:oseri_planks",
+    "count": 4
+  }
+}

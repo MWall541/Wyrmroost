@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X# ",
+    "X #",
+    " X "
+  ],
+  "key": {
+    "X": {
+      "item": "wyrmroost:platinum_ingot"
+    },
+    "#": {
+      "item": "wyrmroost:platinum_block"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:platinum_dragon_armor"
+  }
+}
