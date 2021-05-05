@@ -34,8 +34,9 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
         int trunkHeight = random.nextInt(5) + 11;
 
-        BlockPos trunkTip = placeTrunk(level, basePos, trunkHeight, random);
+        BlockPos trunkTip = placeTrunk(level, basePos, trunkHeight, config, random);
         placeRoots(level, basePos, random);
+        placeFallenPetals(level, basePos, config, random);
         placeBranchesAndFooliage(config, level, trunkTip, random);
 
         return true;
@@ -44,7 +45,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
     /**
      * @return the tip of the trunk that was just placed.
      */
-    private BlockPos placeTrunk(ISeedReader level, BlockPos basePos, int trunkHeight, Random random)
+    private BlockPos placeTrunk(ISeedReader level, BlockPos basePos, int trunkHeight, Type config, Random random)
     {
         BlockPos.Mutable pointer = basePos.mutable();
         double xDiff = MathHelper.clamp(random.nextDouble(), 0.35, 0.65);
@@ -61,10 +62,10 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             BlockPos.Mutable shape = pointer.mutable();
             for (Direction direction : ModUtils.DIRECTIONS)
             {
-                placeLog(level, shape.setWithOffset(pointer, direction));
+                placeLog(level, shape.setWithOffset(pointer, direction), config, random);
                 if (direction.getAxis().isHorizontal() && random.nextInt((int) (trunkHeight * 0.75)) >= i)
                     // decrease thickness based on height (higher up = less thick)
-                    placeLog(level, shape.move(direction.getClockWise()));
+                    placeLog(level, shape.move(direction.getClockWise()), config, random);
             }
         }
 
@@ -124,15 +125,75 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         }
     }
 
+    private void placeFallenPetals(ISeedReader level, BlockPos basePos, Type config, Random random)
+    {
+        BlockPos.Mutable mutable = basePos.mutable();
+        final int radius = random.nextInt(5) + 8;
+
+        final double invRadius = 1d / radius;
+        final int ceilRadius = (int) Math.ceil(radius);
+
+        double nextXn = 0;
+        forX:
+        for (int x = 0; x <= ceilRadius; ++x)
+        {
+            final double xn = nextXn;
+            nextXn = (x + 1) * invRadius;
+            double nextZn = 0;
+            for (int z = 0; z <= ceilRadius; ++z)
+            {
+                final double zn = nextZn;
+                nextZn = (z + 1) * invRadius;
+
+                double distanceSq = (xn * xn) + (zn * zn);
+                if (distanceSq > 0.8 + random.nextDouble())
+                {
+                    if (z == 0) break forX;
+                    break;
+                }
+
+                placePetal(level, mutable.setWithOffset(basePos, x, 0, z), config.getPetals(), random);
+                placePetal(level, mutable.setWithOffset(basePos, -x, 0, z), config.getPetals(), random);
+                placePetal(level, mutable.setWithOffset(basePos, x, 0, -z), config.getPetals(), random);
+                placePetal(level, mutable.setWithOffset(basePos, -x, 0, -z), config.getPetals(), random);
+            }
+        }
+    }
+
     private void placeBranchesAndFooliage(Type config, ISeedReader level, BlockPos trunkTip, Random random)
     {
-        setBlock(level, trunkTip.above(), config.leaves());
+        setBlock(level, trunkTip.above(), config.getLeaves());
     }
 
     private static void placeLog(ISeedReader level, BlockPos pos)
     {
+        placeLog(level, pos, null, null);
+    }
+
+    private static void placeLog(ISeedReader level, BlockPos pos, Type config, Random random)
+    {
         if (noCollision(level, pos) || level.getBlockState(pos).is(BlockTags.LEAVES))
             level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
+        if (config != null && random.nextBoolean())
+        {
+            pos = pos.above();
+            if (noCollision(level, pos)) level.setBlock(pos, config.getPetals(), 2);
+        }
+    }
+
+    private static void placePetal(ISeedReader level, BlockPos base, BlockState state, Random random)
+    {
+        if (random.nextDouble() > 0.3) return;
+        BlockPos.Mutable mutable = base.mutable();
+        for (int i = -3; i <= 2; i++)
+        {
+            mutable.setY(base.getY() + i);
+            if (Block.isFaceFull(level.getBlockState(mutable).getCollisionShape(level, mutable), Direction.UP) && level.getBlockState(mutable.move(Direction.UP)).isAir())
+            {
+                level.setBlock(mutable, state, 2);
+                break;
+            }
+        }
     }
 
     public static boolean noCollision(ISeedReader level, BlockPos pos)
@@ -142,11 +203,11 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
     public enum Type implements IFeatureConfig
     {
-        BLUE(0x6E8AC9, WRBlocks.BLUE_OSERI_LEAVES, WRBlocks.BLUE_OSERI_VINES),
-        GOLD(0xE7CC35, WRBlocks.GOLD_OSERI_LEAVES, WRBlocks.GOLD_OSERI_VINES),
-        PINK(0xE4B8CF, WRBlocks.PINK_OSERI_LEAVES, WRBlocks.PINK_OSERI_VINES),
-        PURPLE(0x8D7FC6, WRBlocks.PURPLE_OSERI_LEAVES, WRBlocks.PURPLE_OSERI_VINES),
-        WHITE(0xFBFEF5, WRBlocks.WHITE_OSERI_LEAVES, WRBlocks.WHITE_OSERI_VINES);
+        BLUE(0x6E8AC9, WRBlocks.BLUE_OSERI_LEAVES, WRBlocks.BLUE_OSERI_VINES, WRBlocks.BLUE_OSERI_PETALS),
+        GOLD(0xE7CC35, WRBlocks.GOLD_OSERI_LEAVES, WRBlocks.GOLD_OSERI_VINES, WRBlocks.GOLD_OSERI_PETALS),
+        PINK(0xE4B8CF, WRBlocks.PINK_OSERI_LEAVES, WRBlocks.PINK_OSERI_VINES, WRBlocks.PINK_OSERI_PETALS),
+        PURPLE(0x8D7FC6, WRBlocks.PURPLE_OSERI_LEAVES, WRBlocks.PURPLE_OSERI_VINES, WRBlocks.PURPLE_OSERI_PETALS),
+        WHITE(0xFBFEF5, WRBlocks.WHITE_OSERI_LEAVES, WRBlocks.WHITE_OSERI_VINES, WRBlocks.WHITE_OSERI_PETALS);
 
         public static final Codec<Type> CODEC = Codec.STRING.xmap(Type::byName, c -> c.name().toLowerCase()).orElse(WHITE);
         public static final Type[] VALUES = values();
@@ -154,12 +215,14 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         public final int color;
         public final Supplier<Block> leaves;
         public final Supplier<Block> vines;
+        public final Supplier<Block> petals;
 
-        Type(int rgb, Supplier<Block> leaves, Supplier<Block> vines)
+        Type(int rgb, Supplier<Block> leaves, Supplier<Block> vines, Supplier<Block> petals)
         {
             this.color = rgb;
             this.leaves = leaves;
             this.vines = vines;
+            this.petals = petals;
         }
 
         public static Type byName(String name)
@@ -168,14 +231,19 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             return WHITE;
         }
 
-        public BlockState leaves()
+        public BlockState getLeaves()
         {
             return leaves.get().defaultBlockState();
         }
 
-        public BlockState vines()
+        public BlockState getVines()
         {
             return vines.get().defaultBlockState();
+        }
+
+        public BlockState getPetals()
+        {
+            return petals.get().defaultBlockState();
         }
     }
 }

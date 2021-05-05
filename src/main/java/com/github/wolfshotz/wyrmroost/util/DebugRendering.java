@@ -37,6 +37,8 @@ public class DebugRendering
 
     public static void conjoined(int color, int ticks, BlockPos... cubes)
     {
+        if (cubes.length == 0) return;
+
         VoxelShape shape = VoxelShapes.block();
         BlockPos initial = cubes[0];
         for (int i = 1; i < cubes.length; ++i)
