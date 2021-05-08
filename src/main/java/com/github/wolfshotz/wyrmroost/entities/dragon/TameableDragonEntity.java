@@ -11,7 +11,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
-import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.DebugRendering;
@@ -1199,8 +1199,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public void addScreenInfo(StaffScreen screen)
     {
-        screen.addAction(StaffAction.HOME);
-        screen.addAction(StaffAction.SIT);
+        screen.addAction(StaffActions.HOME);
+        screen.addAction(StaffActions.SIT);
 
         screen.addTooltip(new StringTextComponent(Character.toString('\u2764'))
                 .withStyle(TextFormatting.RED)

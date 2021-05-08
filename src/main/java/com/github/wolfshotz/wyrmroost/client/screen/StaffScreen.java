@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.client.screen.widgets.NameFieldWidget;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.StaffActionButton;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
-import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;

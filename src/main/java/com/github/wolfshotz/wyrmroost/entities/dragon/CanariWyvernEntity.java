@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
-import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -173,7 +173,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
     public void addScreenInfo(StaffScreen screen)
     {
         super.addScreenInfo(screen);
-        screen.addAction(StaffAction.TARGET);
+        screen.addAction(StaffActions.TARGET);
     }
 
     @Override

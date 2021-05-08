@@ -1,7 +1,8 @@
 package com.github.wolfshotz.wyrmroost.network.packets;
 
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
-import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -15,11 +16,20 @@ public class StaffActionPacket
 {
     public final StaffAction action;
 
-    public StaffActionPacket(StaffAction action) { this.action = action; }
+    public StaffActionPacket(StaffAction action)
+    {
+        this.action = action;
+    }
 
-    public StaffActionPacket(PacketBuffer buf) { action = StaffAction.VALUES[buf.readInt()]; }
+    public StaffActionPacket(PacketBuffer buf)
+    {
+        action = StaffActions.ACTIONS.get(buf.readInt());
+    }
 
-    public void encode(PacketBuffer buf) { buf.writeInt(action.ordinal()); }
+    public void encode(PacketBuffer buf)
+    {
+        buf.writeInt(StaffActions.ACTIONS.indexOf(action));
+    }
 
     public boolean handle(Supplier<NetworkEvent.Context> context)
     {

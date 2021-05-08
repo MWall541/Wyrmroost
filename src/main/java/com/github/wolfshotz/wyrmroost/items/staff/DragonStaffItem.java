@@ -2,6 +2,8 @@ package com.github.wolfshotz.wyrmroost.items.staff;
 
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.client.util.ITooltipFlag;
@@ -137,7 +139,7 @@ public class DragonStaffItem extends Item
     @Override
     public boolean isFoil(ItemStack stack)
     {
-        return getAction(stack) != StaffAction.DEFAULT;
+        return getAction(stack) != StaffActions.DEFAULT;
     }
 
     public static void reset(@Nullable CompoundNBT tag)
@@ -151,19 +153,17 @@ public class DragonStaffItem extends Item
     {
         assertStaff(stack);
         CompoundNBT tag = stack.getOrCreateTag();
-        tag.putInt(DATA_ACTION, action.ordinal());
-        getAction(stack).onSelected(getBoundDragon(player.level, stack), player, stack);
+        tag.putInt(DATA_ACTION, StaffActions.ACTIONS.indexOf(action));
+        action.onSelected(getBoundDragon(player.level, stack), player, stack);
     }
 
     public static StaffAction getAction(ItemStack stack)
     {
         assertStaff(stack);
-        if (stack.hasTag())
-        {
-            CompoundNBT tag = stack.getTag();
-            if (tag.contains(DATA_ACTION)) return StaffAction.VALUES[tag.getInt(DATA_ACTION)];
-        }
-        return StaffAction.DEFAULT;
+        CompoundNBT tag = stack.getTag();
+
+        if (tag != null && tag.contains(DATA_ACTION)) return StaffActions.ACTIONS.get(tag.getInt(DATA_ACTION));
+        return StaffActions.DEFAULT;
     }
 
     public static void bindDragon(TameableDragonEntity dragon, ItemStack stack)
@@ -177,14 +177,11 @@ public class DragonStaffItem extends Item
     public static TameableDragonEntity getBoundDragon(World level, ItemStack stack)
     {
         assertStaff(stack);
-        if (stack.hasTag())
+        CompoundNBT tag = stack.getTag();
+        if (tag != null && tag.contains(DATA_DRAGON_ID))
         {
-            CompoundNBT tag = stack.getTag();
-            if (tag.contains(DATA_DRAGON_ID))
-            {
-                Entity entity = level.getEntity(tag.getInt(DATA_DRAGON_ID));
-                if (entity instanceof TameableDragonEntity) return ((TameableDragonEntity) entity);
-            }
+            Entity entity = level.getEntity(tag.getInt(DATA_DRAGON_ID));
+            if (entity instanceof TameableDragonEntity) return (TameableDragonEntity) entity;
         }
         return null;
     }

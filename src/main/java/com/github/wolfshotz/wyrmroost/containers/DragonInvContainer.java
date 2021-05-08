@@ -1,18 +1,14 @@
 package com.github.wolfshotz.wyrmroost.containers;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 
 public class DragonInvContainer extends Container
 {
@@ -96,24 +92,6 @@ public class DragonInvContainer extends Container
     {
         makeSlots(playerInv, 9, initialX, initialY, 9, 3); // Player inv
         makeSlots(playerInv, 0, initialX, initialY + 58, 9, 1); // Hotbar
-    }
-
-    public static INamedContainerProvider getProvider(TameableDragonEntity dragon)
-    {
-        return new INamedContainerProvider()
-        {
-            @Override
-            public ITextComponent getDisplayName()
-            {
-                return new StringTextComponent("Dragon Inventory");
-            }
-
-            @Override
-            public Container createMenu(int id, PlayerInventory playersInv, PlayerEntity player)
-            {
-                return new DragonInvContainer(dragon.getInventory(), playersInv, id);
-            }
-        };
     }
 
     public interface ISlotArea

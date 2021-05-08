@@ -9,7 +9,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBre
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
-import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AddPassengerPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -214,8 +214,8 @@ public class RoostStalkerEntity extends TameableDragonEntity
     @Override
     public void addScreenInfo(StaffScreen screen)
     {
-        screen.addAction(StaffAction.INVENTORY);
-        screen.addAction(StaffAction.TARGET);
+        screen.addAction(StaffActions.INVENTORY);
+        screen.addAction(StaffActions.TARGET);
         super.addScreenInfo(screen);
     }
 

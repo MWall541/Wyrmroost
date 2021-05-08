@@ -8,7 +8,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
-import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -373,8 +373,8 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override
     public void addScreenInfo(StaffScreen screen)
     {
-        screen.addAction(StaffAction.INVENTORY);
-        screen.addAction(StaffAction.TARGET);
+        screen.addAction(StaffActions.INVENTORY);
+        screen.addAction(StaffActions.TARGET);
         super.addScreenInfo(screen);
     }
 

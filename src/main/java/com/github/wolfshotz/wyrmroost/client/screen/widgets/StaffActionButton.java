@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.client.screen.widgets;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
-import com.github.wolfshotz.wyrmroost.items.staff.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.StaffActionPacket;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
