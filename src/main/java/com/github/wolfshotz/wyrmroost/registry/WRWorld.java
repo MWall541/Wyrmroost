@@ -69,6 +69,7 @@ public class WRWorld
         public static final RegistryObject<Feature<BlockStateFeatureConfig>> BETTER_LAKE = REGISTRY.register("better_lake", SurfaceAwareLakeFeature::new);
         public static final RegistryObject<Feature<OseriTreeFeature.Type>> OSERI_TREE = REGISTRY.register("oseri_tree", OseriTreeFeature::new);
 
+        //these are for use mainly in code, for cases where it's impossible to use jsons (for overworld adding, trees for saplings, etc.)
         public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_PLATINUM_ORE = configured("ore_platinum", () -> Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().defaultBlockState(), 9)).range(64).squared().count(10));
         public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_BLUE_GEODE = configured("ore_blue_geode", () -> Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.BLUE_GEODE_ORE.get().defaultBlockState(), 10)).range(16).squared());
         public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_RED_GEODE = configured("ore_red_geode", () -> Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NETHERRACK, WRBlocks.RED_GEODE_ORE.get().defaultBlockState(), 4)).range(128).squared().count(8));

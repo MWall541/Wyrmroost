@@ -183,7 +183,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
     private static void placePetal(ISeedReader level, BlockPos base, BlockState state, Random random)
     {
-        if (random.nextDouble() > 0.3) return;
+        if (random.nextDouble() > 0.25) return;
         BlockPos.Mutable mutable = base.mutable();
         for (int i = -3; i <= 2; i++)
         {
