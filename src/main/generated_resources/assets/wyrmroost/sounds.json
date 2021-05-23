@@ -226,6 +226,31 @@
     ],
     "subtitle": "subtitles.entity.coin_dragon.idle"
   },
+  "block.mulch.soft": {
+    "sounds": [
+      "wyrmroost:block/mulch/soft1",
+      "wyrmroost:block/mulch/soft2",
+      "wyrmroost:block/mulch/soft3"
+    ],
+    "subtitle": "subtitles.block.mulch.soft"
+  },
+  "block.mulch.hard": {
+    "sounds": [
+      {
+        "name": "wyrmroost:block/mulch/hard1",
+        "pitch": 1.5
+      },
+      {
+        "name": "wyrmroost:block/mulch/hard2",
+        "pitch": 1.5
+      },
+      {
+        "name": "wyrmroost:block/mulch/hard3",
+        "pitch": 1.5
+      }
+    ],
+    "subtitle": "subtitles.block.mulch.hard"
+  },
   "weather.sandstorm": {
     "sounds": [
       "wyrmroost:weather/sandstorm/sandstorm1",
@@ -237,22 +262,22 @@
     ],
     "subtitle": "subtitles.weather.sandstorm"
   },
-  "music.game.wyrmroost.ashen_desert": {
+  "music.wyrmroost.ashen_desert": {
     "sounds": [
       {
         "name": "wyrmroost:music/game/wyrmroost/ashen_desert",
         "stream": true
       }
     ],
-    "subtitle": "subtitles.music.game.wyrmroost.ashen_desert"
+    "subtitle": "subtitles.music.wyrmroost.ashen_desert"
   },
-  "music.game.wyrmroost.tincture_weald": {
+  "music.wyrmroost.tincture_weald": {
     "sounds": [
       {
         "name": "wyrmroost:music/game/wyrmroost/tincture_weald",
         "stream": true
       }
     ],
-    "subtitle": "subtitles.music.game.wyrmroost.tincture_weald"
+    "subtitle": "subtitles.music.wyrmroost.tincture_weald"
   }
 }

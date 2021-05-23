@@ -1,10 +1,14 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import net.minecraft.block.SoundType;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.util.ForgeSoundType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.function.Supplier;
 
 public class WRSounds
 {
@@ -53,10 +57,13 @@ public class WRSounds
 
     public static final RegistryObject<SoundEvent> ENTITY_COINDRAGON_IDLE = entity("coin_dragon.idle");
 
+    public static final RegistryObject<SoundEvent> MULCH_SOFT = register("block.mulch.soft");
+    public static final RegistryObject<SoundEvent> MULCH_HARD = register("block.mulch.hard");
+
     public static final RegistryObject<SoundEvent> WEATHER_SANDSTORM = register("weather.sandstorm");
 
-    public static final RegistryObject<SoundEvent> MUSIC_ASHEN_DESERT = register("music.game.wyrmroost.ashen_desert");
-    public static final RegistryObject<SoundEvent> MUSIC_TINCTURE_WEALD = register("music.game.wyrmroost.tincture_weald");
+    public static final RegistryObject<SoundEvent> MUSIC_ASHEN_DESERT = register("music.wyrmroost.ashen_desert");
+    public static final RegistryObject<SoundEvent> MUSIC_TINCTURE_WEALD = register("music.wyrmroost.tincture_weald");
 
     public static RegistryObject<SoundEvent> register(String name)
     {
@@ -66,5 +73,15 @@ public class WRSounds
     public static RegistryObject<SoundEvent> entity(String name)
     {
         return register("entity." + name);
+    }
+
+    public static class Types
+    {
+        public static final SoundType MULCH = blockSound(1, 1, MULCH_SOFT, MULCH_HARD);
+
+        private static SoundType blockSound(float volume, float pitch, Supplier<SoundEvent> soft, Supplier<SoundEvent> hard)
+        {
+            return new ForgeSoundType(volume, pitch, soft, hard, soft, hard, hard);
+        }
     }
 }

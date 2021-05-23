@@ -19,6 +19,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class SoundData implements IDataProvider
 {
@@ -27,74 +28,78 @@ public class SoundData implements IDataProvider
     final Set<SoundEvent> registered = new HashSet<>(ModUtils.getRegistryEntries(WRSounds.REGISTRY));
     final DataGenerator gen;
     final ExistingFileHelper fileHelper;
+    final JsonObject file;
 
     public SoundData(DataGenerator gen, ExistingFileHelper fileHelper)
     {
         this.gen = gen;
         this.fileHelper = fileHelper;
+        this.file = new JsonObject();
     }
 
     @Override
     public void run(DirectoryCache cache) throws IOException
     {
-        JsonObject obj = new JsonObject();
-        registerSounds(obj);
+        registerSounds();
         if (!registered.isEmpty()) throw new IOException("Unregistered Sounds Events: " + registered);
-        IDataProvider.save(GSON, cache, obj, gen.getOutputFolder().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
+        IDataProvider.save(GSON, cache, file, gen.getOutputFolder().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
     }
 
-    private void registerSounds(JsonObject file)
+    private void registerSounds()
     {
-        add(WRSounds.WING_FLAP.get(), array("wyrmroost:entity/wings/%s", "flap1", "flap2", "flap3"), file);
-        add(WRSounds.FIRE_BREATH.get(), file);
+        add(WRSounds.WING_FLAP.get(), array("wyrmroost:entity/wings/%s", "flap1", "flap2", "flap3"));
+        add(WRSounds.FIRE_BREATH.get());
 
-        add(WRSounds.ENTITY_LDWYRM_IDLE.get(), array("wyrmroost:entity/lesser_desertwyrm/%s", "idle1", "idle2"), file);
+        add(WRSounds.ENTITY_LDWYRM_IDLE.get(), array("wyrmroost:entity/lesser_desertwyrm/%s", "idle1", "idle2"));
 
-        add(WRSounds.ENTITY_SILVERGLIDER_IDLE.get(), array("wyrmroost:entity/silver_glider/%s", "idle1", "idle2", "idle3", "idle4"), file);
-        add(WRSounds.ENTITY_SILVERGLIDER_HURT.get(), file);
-        add(WRSounds.ENTITY_SILVERGLIDER_DEATH.get(), file);
+        add(WRSounds.ENTITY_SILVERGLIDER_IDLE.get(), array("wyrmroost:entity/silver_glider/%s", "idle1", "idle2", "idle3", "idle4"));
+        add(WRSounds.ENTITY_SILVERGLIDER_HURT.get());
+        add(WRSounds.ENTITY_SILVERGLIDER_DEATH.get());
 
-        add(WRSounds.ENTITY_OWDRAKE_IDLE.get(), array("wyrmroost:entity/overworld_drake/%s", "idle1", "idle2", "idle3"), file);
-        add(WRSounds.ENTITY_OWDRAKE_HURT.get(), array("wyrmroost:entity/overworld_drake/%s", "hurt1", "hurt2"), file);
-        add(WRSounds.ENTITY_OWDRAKE_DEATH.get(), file);
-        add(WRSounds.ENTITY_OWDRAKE_ROAR.get(), file);
+        add(WRSounds.ENTITY_OWDRAKE_IDLE.get(), array("wyrmroost:entity/overworld_drake/%s", "idle1", "idle2", "idle3"));
+        add(WRSounds.ENTITY_OWDRAKE_HURT.get(), array("wyrmroost:entity/overworld_drake/%s", "hurt1", "hurt2"));
+        add(WRSounds.ENTITY_OWDRAKE_DEATH.get());
+        add(WRSounds.ENTITY_OWDRAKE_ROAR.get());
 
-        add(WRSounds.ENTITY_STALKER_IDLE.get(), array("wyrmroost:entity/roost_stalker/%s", "idle1", "idle2", "idle3"), file);
-        add(WRSounds.ENTITY_STALKER_HURT.get(), file);
-        add(WRSounds.ENTITY_STALKER_DEATH.get(), file);
+        add(WRSounds.ENTITY_STALKER_IDLE.get(), array("wyrmroost:entity/roost_stalker/%s", "idle1", "idle2", "idle3"));
+        add(WRSounds.ENTITY_STALKER_HURT.get());
+        add(WRSounds.ENTITY_STALKER_DEATH.get());
 
-        add(WRSounds.ENTITY_BFLY_IDLE.get(), array("wyrmroost:entity/butterfly_leviathan/%s", "idle1", "idle2", "idle3"), file);
-        add(WRSounds.ENTITY_BFLY_HURT.get(), array("wyrmroost:entity/butterfly_leviathan/%s", "hurt1", "hurt2"), file);
-        add(WRSounds.ENTITY_BFLY_ROAR.get(), file);
-        add(WRSounds.ENTITY_BFLY_DEATH.get(), file);
+        add(WRSounds.ENTITY_BFLY_IDLE.get(), array("wyrmroost:entity/butterfly_leviathan/%s", "idle1", "idle2", "idle3"));
+        add(WRSounds.ENTITY_BFLY_HURT.get(), array("wyrmroost:entity/butterfly_leviathan/%s", "hurt1", "hurt2"));
+        add(WRSounds.ENTITY_BFLY_ROAR.get());
+        add(WRSounds.ENTITY_BFLY_DEATH.get());
 
-        add(WRSounds.ENTITY_CANARI_IDLE.get(), array("wyrmroost:entity/canari_wyvern/%s", "idle1", "idle2", "idle3", "idle4"), file);
-        add(WRSounds.ENTITY_CANARI_HURT.get(), array("wyrmroost:entity/canari_wyvern/%s", "hurt1", "hurt2", "hurt3"), file);
-        add(WRSounds.ENTITY_CANARI_DEATH.get(), file);
+        add(WRSounds.ENTITY_CANARI_IDLE.get(), array("wyrmroost:entity/canari_wyvern/%s", "idle1", "idle2", "idle3", "idle4"));
+        add(WRSounds.ENTITY_CANARI_HURT.get(), array("wyrmroost:entity/canari_wyvern/%s", "hurt1", "hurt2", "hurt3"));
+        add(WRSounds.ENTITY_CANARI_DEATH.get());
 
-        add(WRSounds.ENTITY_DFD_IDLE.get(), array("wyrmroost:entity/dragonfruit_drake/%s", "idle1", "idle2", "idle3", "idle4"), file);
-        add(WRSounds.ENTITY_DFD_HURT.get(), array("wyrmroost:entity/dragonfruit_drake/%s", "hurt1", "hurt2", "hurt3", "hurt4"), file);
-        add(WRSounds.ENTITY_DFD_DEATH.get(), file);
+        add(WRSounds.ENTITY_DFD_IDLE.get(), array("wyrmroost:entity/dragonfruit_drake/%s", "idle1", "idle2", "idle3", "idle4"));
+        add(WRSounds.ENTITY_DFD_HURT.get(), array("wyrmroost:entity/dragonfruit_drake/%s", "hurt1", "hurt2", "hurt3", "hurt4"));
+        add(WRSounds.ENTITY_DFD_DEATH.get());
 
-        add(WRSounds.ENTITY_ROYALRED_IDLE.get(), array("wyrmroost:entity/royal_red/%s", "idle1", "idle2"), file);
-        add(WRSounds.ENTITY_ROYALRED_HURT.get(), array("wyrmroost:entity/royal_red/%s", "hurt1", "hurt2", "hurt3"), file);
-        add(WRSounds.ENTITY_ROYALRED_DEATH.get(), file);
-        add(WRSounds.ENTITY_ROYALRED_ROAR.get(), file);
+        add(WRSounds.ENTITY_ROYALRED_IDLE.get(), array("wyrmroost:entity/royal_red/%s", "idle1", "idle2"));
+        add(WRSounds.ENTITY_ROYALRED_HURT.get(), array("wyrmroost:entity/royal_red/%s", "hurt1", "hurt2", "hurt3"));
+        add(WRSounds.ENTITY_ROYALRED_DEATH.get());
+        add(WRSounds.ENTITY_ROYALRED_ROAR.get());
 
-        add(WRSounds.ENTITY_ALPINE_IDLE.get(), array("wyrmroost:entity/alpine/%s", "idle1", "idle2"), file);
-        add(WRSounds.ENTITY_ALPINE_HURT.get(), array("wyrmroost:entity/alpine/%s", "hurt1", "hurt2", "hurt3"), file);
-        add(WRSounds.ENTITY_ALPINE_ROAR.get(), array("wyrmroost:entity/alpine/%s", "roar", "roar1", "roar2"), file);
-        add(WRSounds.ENTITY_ALPINE_DEATH.get(), file);
+        add(WRSounds.ENTITY_ALPINE_IDLE.get(), array("wyrmroost:entity/alpine/%s", "idle1", "idle2"));
+        add(WRSounds.ENTITY_ALPINE_HURT.get(), array("wyrmroost:entity/alpine/%s", "hurt1", "hurt2", "hurt3"));
+        add(WRSounds.ENTITY_ALPINE_ROAR.get(), array("wyrmroost:entity/alpine/%s", "roar", "roar1", "roar2"));
+        add(WRSounds.ENTITY_ALPINE_DEATH.get());
 
-        add(WRSounds.ENTITY_COINDRAGON_IDLE.get(), array("wyrmroost:entity/coin_dragon/%s", "idle1", "idle2", "idle3"), file);
+        add(WRSounds.ENTITY_COINDRAGON_IDLE.get(), array("wyrmroost:entity/coin_dragon/%s", "idle1", "idle2", "idle3"));
 
-        add(WRSounds.WEATHER_SANDSTORM.get(), array("wyrmroost:weather/sandstorm/%s", "sandstorm1", "sandstorm2", "sandstorm3", "sandstorm4", "sandstorm5", "sandstorm6"), file);
+        add(WRSounds.MULCH_SOFT.get(), array("wyrmroost:block/mulch/%s", "soft1", "soft2", "soft3"));
+        add(WRSounds.MULCH_HARD.get(), array("wyrmroost:block/mulch/%s", b -> b.volumePitch(1, 1.5f), "hard1", "hard2", "hard3"));
 
-        add(WRSounds.MUSIC_ASHEN_DESERT.get(), array(builder(Wyrmroost.id("music/game/wyrmroost/ashen_desert")).stream().build()), file);
-        add(WRSounds.MUSIC_TINCTURE_WEALD.get(), array(builder(Wyrmroost.id("music/game/wyrmroost/tincture_weald")).stream().build()), file);
+        add(WRSounds.WEATHER_SANDSTORM.get(), array("wyrmroost:weather/sandstorm/%s", "sandstorm1", "sandstorm2", "sandstorm3", "sandstorm4", "sandstorm5", "sandstorm6"));
+
+        add(WRSounds.MUSIC_ASHEN_DESERT.get(), array(builder(Wyrmroost.id("music/game/wyrmroost/ashen_desert")).stream().build()));
+        add(WRSounds.MUSIC_TINCTURE_WEALD.get(), array(builder(Wyrmroost.id("music/game/wyrmroost/tincture_weald")).stream().build()));
     }
 
-    private void add(SoundEvent event, JsonArray sounds, JsonObject file)
+    private void add(SoundEvent event, JsonArray sounds)
     {
         String path = event.getLocation().getPath();
         JsonObject obj = new JsonObject();
@@ -105,19 +110,31 @@ public class SoundData implements IDataProvider
         file.add(path, obj);
     }
 
-    private void add(SoundEvent event, JsonObject file)
+    private void add(SoundEvent event)
     {
         JsonArray arr = new JsonArray();
         String path = event.getLocation().toString().replace(".", "/");
         validate(new ResourceLocation(path));
         arr.add(path);
-        add(event, arr, file);
+        add(event, arr);
     }
 
     private JsonArray array(String pattern, String... paths)
     {
         JsonArray arr = new JsonArray();
         for (String path : paths) arr.add(validate(new ResourceLocation(String.format(pattern, path))).toString());
+        return arr;
+    }
+
+    private JsonArray array(String pattern, Consumer<SoundBuilder> consumer, String... paths)
+    {
+        JsonArray arr = new JsonArray();
+        for (String path : paths)
+        {
+            SoundBuilder builder = builder(new ResourceLocation(String.format(pattern, path)));
+            consumer.accept(builder);
+            arr.add(builder.build());
+        }
         return arr;
     }
 

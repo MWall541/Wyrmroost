@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
+import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +20,10 @@ public class MulchBlock extends SnowyDirtBlock implements IGrowable
 {
     public MulchBlock()
     {
-        super(WRBlocks.properties(Material.DIRT, SoundType.GRAVEL).strength(0.5f).harvestTool(ToolType.SHOVEL));
+        super(WRBlocks.properties(Material.DIRT, SoundType.GRAVEL)
+                .strength(0.5f)
+                .harvestTool(ToolType.SHOVEL)
+                .sound(WRSounds.Types.MULCH));
     }
 
     @Override

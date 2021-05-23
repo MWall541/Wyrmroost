@@ -105,16 +105,16 @@ public class WRItems
     public static final RegistryObject<Item> DRAKE_LEGGINGS = register("drake_leggings", () -> new DrakeArmorItem(EquipmentSlotType.LEGS));
     public static final RegistryObject<Item> DRAKE_BOOTS = register("drake_boots", () -> new DrakeArmorItem(EquipmentSlotType.FEET));
 
-    public static final RegistryObject<Item> RAW_LOWTIER_MEAT = register("raw_lowtier_meat", () -> new Item(builder().food(Foods.RAW_LOWTIER_MEAT)));
-    public static final RegistryObject<Item> RAW_COMMON_MEAT = register("raw_common_meat", () -> new Item(builder().food(Foods.RAW_COMMON_MEAT)));
-    public static final RegistryObject<Item> RAW_APEX_MEAT = register("raw_apex_meat", () -> new Item(builder().food(Foods.RAW_APEX_MEAT)));
-    public static final RegistryObject<Item> RAW_BEHEMOTH_MEAT = register("raw_behemoth_meat", () -> new Item(builder().food(Foods.RAW_BEHEMOTH_MEAT)));
-    public static final RegistryObject<Item> COOKED_LOWTIER_MEAT = register("cooked_lowtier_meat", () -> new Item(builder().food(Foods.COOKED_LOWTIER_MEAT)));
-    public static final RegistryObject<Item> COOKED_COMMON_MEAT = register("cooked_common_meat", () -> new Item(builder().food(Foods.COOKED_COMMON_MEAT)));
-    public static final RegistryObject<Item> COOKED_APEX_MEAT = register("cooked_apex_meat", () -> new Item(builder().food(Foods.COOKED_APEX_MEAT)));
-    public static final RegistryObject<Item> COOKED_BEHEMOTH_MEAT = register("cooked_behemoth_meat", () -> new Item(builder().food(Foods.COOKED_BEHEMOTH_MEAT)));
-    public static final RegistryObject<Item> COOKED_MINUTUS = register("cooked_desertwyrm", () -> new Item(builder().food(Foods.COOKED_DESERTWYRM)));
-    public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", () -> new Item(builder().food(Foods.JEWELLED_APPLE)));
+    public static final RegistryObject<Item> RAW_LOWTIER_MEAT = register("raw_lowtier_meat", food(1, 0.1f).meat());
+    public static final RegistryObject<Item> RAW_COMMON_MEAT = register("raw_common_meat", food(3, 0.3f).meat());
+    public static final RegistryObject<Item> RAW_APEX_MEAT = register("raw_apex_meat", food(5, 0.45f).meat());
+    public static final RegistryObject<Item> RAW_BEHEMOTH_MEAT = register("raw_behemoth_meat", food(7, 0.7f).meat());
+    public static final RegistryObject<Item> COOKED_LOWTIER_MEAT = register("cooked_lowtier_meat", food(3, 0.7f).meat());
+    public static final RegistryObject<Item> COOKED_COMMON_MEAT = register("cooked_common_meat", food(8, 0.8f).meat());
+    public static final RegistryObject<Item> COOKED_APEX_MEAT = register("cooked_apex_meat", food(16, 1f).meat());
+    public static final RegistryObject<Item> COOKED_BEHEMOTH_MEAT = register("cooked_behemoth_meat", food(20, 2f).meat());
+    public static final RegistryObject<Item> COOKED_MINUTUS = register("cooked_desertwyrm", food(10, 1f).meat());
+    public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", food(8, 0.9f).alwaysEat().effect(() -> new EffectInstance(Effects.GLOWING, 800), 1f).effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1f).effect(() -> new EffectInstance(Effects.DAMAGE_RESISTANCE, 800), 1f).effect(() -> new EffectInstance(Effects.ABSORPTION, 6000, 2), 1f).effect(() -> new EffectInstance(Effects.NIGHT_VISION, 800), 1f));
 
     public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragon_armor", () -> new DragonArmorItem(4, ArmorMaterial.IRON.getEnchantmentValue()));
     public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterial.GOLD.getEnchantmentValue()));
@@ -129,34 +129,25 @@ public class WRItems
         return REGISTRY.register(name, item);
     }
 
+    static RegistryObject<Item> register(String name, Food.Builder food)
+    {
+        return register(name, () -> new Item(builder().food(food.build())));
+    }
+
     static RegistryObject<Item> register(String name)
     {
         return REGISTRY.register(name, () -> new Item(builder()));
     }
+
 
     public static Item.Properties builder()
     {
         return new Item.Properties().tab(MAIN_ITEM_GROUP);
     }
 
-    private static class Foods
+    static Food.Builder food(int nutrition, float saturation)
     {
-        static final Food RAW_LOWTIER_MEAT = new Food.Builder().nutrition(1).saturationMod(0.1f).meat().build();
-        static final Food RAW_COMMON_MEAT = new Food.Builder().nutrition(3).saturationMod(0.3f).meat().build();
-        static final Food RAW_APEX_MEAT = new Food.Builder().nutrition(5).saturationMod(0.45f).meat().build();
-        static final Food RAW_BEHEMOTH_MEAT = new Food.Builder().nutrition(7).saturationMod(0.7f).meat().build();
-        static final Food COOKED_LOWTIER_MEAT = new Food.Builder().nutrition(3).saturationMod(0.7f).meat().build();
-        static final Food COOKED_COMMON_MEAT = new Food.Builder().nutrition(8).saturationMod(0.8f).meat().build();
-        static final Food COOKED_APEX_MEAT = new Food.Builder().nutrition(16).saturationMod(1f).meat().build();
-        static final Food COOKED_BEHEMOTH_MEAT = new Food.Builder().nutrition(20).saturationMod(2f).meat().build();
-        static final Food COOKED_DESERTWYRM = new Food.Builder().nutrition(10).saturationMod(1f).meat().build();
-        static final Food JEWELLED_APPLE = new Food.Builder().nutrition(8).saturationMod(0.9f).alwaysEat()
-                .effect(() -> new EffectInstance(Effects.GLOWING, 800), 1f)
-                .effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1f)
-                .effect(() -> new EffectInstance(Effects.DAMAGE_RESISTANCE, 800), 1f)
-                .effect(() -> new EffectInstance(Effects.ABSORPTION, 6000, 2), 1f)
-                .effect(() -> new EffectInstance(Effects.NIGHT_VISION, 800), 1f)
-                .build();
+        return new Food.Builder().nutrition(nutrition).saturationMod(saturation);
     }
 
     public static class Tags

@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.world.features;
 
+import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.serialization.Codec;
@@ -190,7 +191,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             mutable.setY(base.getY() + i);
             if (Block.isFaceFull(level.getBlockState(mutable).getCollisionShape(level, mutable), Direction.UP) && level.getBlockState(mutable.move(Direction.UP)).isAir())
             {
-                level.setBlock(mutable, state, 2);
+                level.setBlock(mutable, state.setValue(PetalsBlock.AXIS, random.nextBoolean()? Direction.Axis.X : Direction.Axis.Z), 2);
                 break;
             }
         }
