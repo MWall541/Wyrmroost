@@ -171,7 +171,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
                 playSound(SoundEvents.IRON_GOLEM_ATTACK, 1, 0.5f, true);
                 AxisAlignedBB box = getOffsetBox(getBbWidth()).inflate(-0.075);
                 attackInBox(box);
-                for (BlockPos pos : ModUtils.iterateThrough(box))
+                for (BlockPos pos : ModUtils.eachPositionIn(box))
                 {
                     if (level.getBlockState(pos).is(BlockTags.LEAVES))
                         level.destroyBlock(pos, false, this);

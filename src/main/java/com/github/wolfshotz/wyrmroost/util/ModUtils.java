@@ -55,16 +55,8 @@ public final class ModUtils
     }
 
     /**
-     * A dumb hack I keep over-using because generics are stupid
-     *
-     * @return the object u just passed in, except now it's wearing terrible face paint it bought at a carnival
+     * Majorly self-explanatory
      */
-    @SuppressWarnings("unchecked")
-    public static <F, T> T cast(F obj)
-    {
-        return (T) obj;
-    }
-
     @SafeVarargs
     public static <T> boolean equalsAny(T comparator, T... comparing)
     {
@@ -85,7 +77,7 @@ public final class ModUtils
     }
 
     /**
-     * Checks both hands of the passed player for an item that is instance of itemClass.
+     * Checks both hands of the passed player for an item.
      * If one hand has one, return that ItemStack, else return the main hands stack.
      *
      * @param player the player
@@ -131,7 +123,7 @@ public final class ModUtils
      *
      * @param aabb please tell me your not asking what this is for
      */
-    public static Iterable<BlockPos> iterateThrough(AxisAlignedBB aabb)
+    public static Iterable<BlockPos> eachPositionIn(AxisAlignedBB aabb)
     {
         return BlockPos.betweenClosed(
                 MathHelper.floor(aabb.minX),

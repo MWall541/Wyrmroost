@@ -204,7 +204,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
         {
             attackInBox(getOffsetBox(getBbWidth()));
             AxisAlignedBB aabb = getBoundingBox().inflate(2).move(Mafs.getYawVec(yHeadRot, 0, 2));
-            for (BlockPos pos : ModUtils.iterateThrough(aabb))
+            for (BlockPos pos : ModUtils.eachPositionIn(aabb))
             {
                 if (level.getBlockState(pos).getBlock() instanceof BushBlock)
                     level.destroyBlock(pos, true, this);
