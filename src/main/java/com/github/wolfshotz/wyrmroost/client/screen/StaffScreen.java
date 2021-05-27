@@ -17,6 +17,7 @@ import net.minecraft.util.text.StringTextComponent;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class StaffScreen extends Screen
 {
     private final TameableDragonEntity dragon;

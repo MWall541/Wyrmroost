@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.items.staff;
 
-import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
@@ -10,6 +9,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -23,6 +23,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -80,16 +81,17 @@ public class DragonStaffItem extends Item
      * Triggered when Right clicking an entity
      */
     @Override
-    public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity target, Hand hand)
+    public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
     {
         if (target instanceof TameableDragonEntity)
         {
             TameableDragonEntity dragon = (TameableDragonEntity) target;
-            if (dragon.isOwnedBy(playerIn))
+            if (dragon.isOwnedBy(player))
             {
                 bindDragon(dragon, stack);
-                if (playerIn.level.isClientSide) StaffScreen.open(dragon, stack);
-                return ActionResultType.sidedSuccess(playerIn.level.isClientSide);
+                if (!player.level.isClientSide)
+                    NetworkHooks.openGui((ServerPlayerEntity) player, dragon, b -> b.writeInt(dragon.getId()));
+                return ActionResultType.sidedSuccess(player.level.isClientSide);
             }
         }
         return ActionResultType.PASS;

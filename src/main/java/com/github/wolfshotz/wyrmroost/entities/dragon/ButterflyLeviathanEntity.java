@@ -373,7 +373,6 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override
     public void addScreenInfo(StaffScreen screen)
     {
-        screen.addAction(StaffActions.INVENTORY);
         screen.addAction(StaffActions.TARGET);
         super.addScreenInfo(screen);
     }

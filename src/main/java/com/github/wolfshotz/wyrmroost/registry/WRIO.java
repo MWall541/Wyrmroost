@@ -1,15 +1,14 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonInvScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
-import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.network.IContainerFactory;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -17,24 +16,15 @@ public class WRIO
 {
     public static final DeferredRegister<ContainerType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<ContainerType<DragonInvContainer>> DRAGON_INVENTORY = register("dragon_inventory", getDragonInvContainer());
+    public static final RegistryObject<ContainerType<DragonStaffContainer>> DRAGON_STAFF = register("dragon_staff", DragonStaffContainer::factory);
 
-    public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, ContainerType<T> type)
+    public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, IContainerFactory<T> factory)
     {
-        return REGISTRY.register(name, () -> type);
+        return REGISTRY.register(name, () -> IForgeContainerType.create(factory));
     }
 
     public static void screenSetup()
     {
-        ScreenManager.register(DRAGON_INVENTORY.get(), DragonInvScreen::new);
-    }
-
-    private static ContainerType<DragonInvContainer> getDragonInvContainer()
-    {
-        return IForgeContainerType.create(((windowId, inv, data) ->
-        {
-            TameableDragonEntity dragon = (TameableDragonEntity) ClientEvents.getLevel().getEntity(data.readInt());
-            return new DragonInvContainer(dragon.getInventory(), inv, windowId);
-        }));
+        ScreenManager.register(DRAGON_STAFF.get(), DragonStaffScreen::new);
     }
 }

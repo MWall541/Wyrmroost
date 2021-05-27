@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
@@ -17,6 +18,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.mojang.datafixers.util.Pair;
@@ -32,7 +34,10 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -51,6 +56,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -80,7 +86,7 @@ import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
  * Created by com.github.WolfShotz 7/10/19 - 21:36
  * This is where the magic happens. Here be our Dragons!
  */
-public abstract class TameableDragonEntity extends TameableEntity implements IAnimatable
+public abstract class TameableDragonEntity extends TameableEntity implements IAnimatable, INamedContainerProvider
 {
     public static final EntitySerializer<TameableDragonEntity> SERIALIZER = EntitySerializer.builder(b -> b
             .track(EntitySerializer.POS.optional(), "HomePos", TameableDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
@@ -1216,7 +1222,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public void addContainerInfo(DragonInvContainer container)
     {
-        container.makePlayerSlots(container.playerInv, 17, 136);
+        ModUtils.createPlayerContainerSlots(container.playerInv, 17, 136, container::addSlot);
     }
 
     public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
@@ -1294,5 +1300,22 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public static boolean canFlyerSpawn(EntityType<? extends TameableDragonEntity> type, IWorld level, SpawnReason reason, BlockPos pos, Random random)
     {
         return level.getBlockState(pos.below()).getFluidState().isEmpty();
+    }
+
+    public void applyStaffInfo(DragonStaffContainer container)
+    {
+        container.addStaffActions(StaffActions.HOME, StaffActions.SIT);
+    }
+
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return new StringTextComponent("container.inventory.dragon");
+    }
+
+    @Override
+    public Container createMenu(int id, PlayerInventory playersInv, PlayerEntity player)
+    {
+        return new DragonStaffContainer(id, playersInv, this);
     }
 }

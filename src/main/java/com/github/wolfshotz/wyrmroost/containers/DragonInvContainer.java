@@ -2,14 +2,13 @@ package com.github.wolfshotz.wyrmroost.containers;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
-import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
+@Deprecated
 public class DragonInvContainer extends Container
 {
     public static final int MAX_PLAYER_SLOTS = 36;
@@ -19,7 +18,7 @@ public class DragonInvContainer extends Container
 
     public DragonInvContainer(DragonInventory inv, PlayerInventory playerInv, int windowID)
     {
-        super(WRIO.DRAGON_INVENTORY.get(), windowID);
+        super(null, windowID);
         this.inventory = inv;
         this.playerInv = playerInv;
         inv.dragon.addContainerInfo(this);
@@ -70,28 +69,6 @@ public class DragonInvContainer extends Container
                 addSlot(slot.get(firstIndex++, firstX + x * 18, firstY + y * 18));
             }
         }
-    }
-
-    public void makeSlots(IInventory inventory, int index, int initialX, int initialY, int length, int height)
-    {
-        for (int y = 0; y < height; ++y)
-        {
-            for (int x = 0; x < length; ++x)
-            {
-                if (inventory.getContainerSize() <= index)
-                {
-                    Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST!");
-                    return;
-                }
-                addSlot(new Slot(inventory, index++, initialX + x * 18, initialY + y * 18));
-            }
-        }
-    }
-
-    public void makePlayerSlots(PlayerInventory playerInv, int initialX, int initialY)
-    {
-        makeSlots(playerInv, 9, initialX, initialY, 9, 3); // Player inv
-        makeSlots(playerInv, 0, initialX, initialY + 58, 9, 1); // Hotbar
     }
 
     public interface ISlotArea

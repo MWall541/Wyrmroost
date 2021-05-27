@@ -214,7 +214,6 @@ public class RoostStalkerEntity extends TameableDragonEntity
     @Override
     public void addScreenInfo(StaffScreen screen)
     {
-        screen.addAction(StaffActions.INVENTORY);
         screen.addAction(StaffActions.TARGET);
         super.addScreenInfo(screen);
     }

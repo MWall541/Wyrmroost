@@ -1,9 +1,13 @@
 package com.github.wolfshotz.wyrmroost.util;
 
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -21,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -132,5 +137,44 @@ public final class ModUtils
                 MathHelper.ceil(aabb.maxX),
                 MathHelper.ceil(aabb.maxY),
                 MathHelper.ceil(aabb.maxZ));
+    }
+
+    /**
+     * Convenience method for creating container slots adjacent to eachother in perfect seperations
+     * @param inventory the inventory. duh.
+     * @param index The initial slot index. This number is increased by 1 per slot
+     * @param initialX The x position to start the slots
+     * @param initialY The y position to start the slots
+     * @param length The amount of slots, in length
+     * @param height The amount of slots, in height
+     * @param slotConsumer the thing do to the thing.
+     */
+    public static void createContainerSlots(IInventory inventory, int index, int initialX, int initialY, int length, int height, Consumer<Slot> slotConsumer)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            for (int x = 0; x < length; ++x)
+            {
+                if (inventory.getContainerSize() <= index)
+                {
+                    Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST!");
+                    return;
+                }
+                slotConsumer.accept(new Slot(inventory, index++, initialX + x * 18, initialY + y * 18));
+            }
+        }
+    }
+
+    /**
+     * Convenience method for creating an entire player inventory slot array.
+     * @param playerInv the inventory. duh.
+     * @param initialX the x starting position of the inventory
+     * @param initialY the y starting position of the inventory
+     * @param slotConsumer the thing to do the thing.
+     */
+    public static void createPlayerContainerSlots(PlayerInventory playerInv, int initialX, int initialY, Consumer<Slot> slotConsumer)
+    {
+        createContainerSlots(playerInv, 9, initialX, initialY, 9, 3, slotConsumer); // Player inv
+        createContainerSlots(playerInv, 0, initialX, initialY + 58, 9, 1, slotConsumer); // Hotbar
     }
 }

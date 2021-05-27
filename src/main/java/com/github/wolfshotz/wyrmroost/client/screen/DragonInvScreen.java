@@ -12,7 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 
 public class DragonInvScreen extends ContainerScreen<DragonInvContainer>
 {
-    public static final ResourceLocation TEXTURE = Wyrmroost.id("textures/io/dragon_inv_screen.png");
+    public static final ResourceLocation TEXTURE = Wyrmroost.id("textures/io/dragon_inventory.png");
 
     public DragonInvScreen(DragonInvContainer screenContainer, PlayerInventory inv, ITextComponent titleIn)
     {
