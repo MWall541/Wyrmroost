@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.client.screen.widgets;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.network.packets.StaffActionPacket;
@@ -19,13 +20,15 @@ import net.minecraft.util.text.ITextComponent;
 
 public class StaffActionButton extends AbstractButton
 {
+    public final DragonStaffScreen screen;
     public final StaffAction action;
     public final LerpedFloat focusTime = new LerpedFloat().clamp(0, 1);
     public boolean wasHovered = false;
 
-    public StaffActionButton(int xIn, int yIn, ITextComponent msg, StaffAction action)
+    public StaffActionButton(DragonStaffScreen screen,  StaffAction action, int xIn, int yIn, ITextComponent msg)
     {
         super(xIn, yIn, 100, 20, msg);
+        this.screen = screen;
         this.action = action;
     }
 
@@ -40,6 +43,13 @@ public class StaffActionButton extends AbstractButton
             Wyrmroost.NETWORK.sendToServer(new StaffActionPacket(action));
         }
         Minecraft.getInstance().setScreen(null);
+    }
+
+    @Override
+    public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
+    {
+        if (!screen.focusedInventory() || y < screen.height - 110)
+            super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
     }
 
     @Override

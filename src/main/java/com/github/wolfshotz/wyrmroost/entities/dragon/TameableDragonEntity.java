@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.util.StaffUISlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
@@ -38,6 +39,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -1222,7 +1224,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public void addContainerInfo(DragonInvContainer container)
     {
-        ModUtils.createPlayerContainerSlots(container.playerInv, 17, 136, container::addSlot);
+        ModUtils.createPlayerContainerSlots(container.playerInv, 17, 136, Slot::new, container::addSlot);
     }
 
     public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
@@ -1304,7 +1306,18 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public void applyStaffInfo(DragonStaffContainer container)
     {
-        container.addStaffActions(StaffActions.HOME, StaffActions.SIT);
+        container.addStaffActions(StaffActions.HOME)
+                .addTooltip(new StringTextComponent(Character.toString('\u2764'))
+                        .withStyle(TextFormatting.RED)
+                        .append(new StringTextComponent(String.format(" %s / %s", (int) (getHealth() / 2), (int) getMaxHealth() / 2))
+                                .withStyle(TextFormatting.WHITE)))
+                .addSlot(new StaffUISlot(getInventory(), 0, 8, 0));
+        if (hasDataParameter(GENDER))
+        {
+            boolean isMale = isMale();
+            container.addTooltip(new TranslationTextComponent("entity.wyrmroost.dragons.gender." + (isMale? "male" : "female"))
+                    .withStyle(isMale? TextFormatting.DARK_AQUA : TextFormatting.RED));
+        }
     }
 
     @Override

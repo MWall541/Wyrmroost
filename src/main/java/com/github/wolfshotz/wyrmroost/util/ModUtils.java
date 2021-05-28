@@ -147,9 +147,9 @@ public final class ModUtils
      * @param initialY The y position to start the slots
      * @param length The amount of slots, in length
      * @param height The amount of slots, in height
-     * @param slotConsumer the thing do to the thing.
+     * @param slotFactory the thing do to the thing.
      */
-    public static void createContainerSlots(IInventory inventory, int index, int initialX, int initialY, int length, int height, Consumer<Slot> slotConsumer)
+    public static void createContainerSlots(IInventory inventory, int index, int initialX, int initialY, int length, int height, ISlotFactory slotFactory, Consumer<Slot> consumer)
     {
         for (int y = 0; y < height; ++y)
         {
@@ -160,7 +160,7 @@ public final class ModUtils
                     Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST!");
                     return;
                 }
-                slotConsumer.accept(new Slot(inventory, index++, initialX + x * 18, initialY + y * 18));
+                consumer.accept(slotFactory.create(inventory, index++, initialX + x * 18, initialY + y * 18));
             }
         }
     }
@@ -170,11 +170,17 @@ public final class ModUtils
      * @param playerInv the inventory. duh.
      * @param initialX the x starting position of the inventory
      * @param initialY the y starting position of the inventory
-     * @param slotConsumer the thing to do the thing.
+     * @param slotFactory the thing to do the thing.
      */
-    public static void createPlayerContainerSlots(PlayerInventory playerInv, int initialX, int initialY, Consumer<Slot> slotConsumer)
+    public static void createPlayerContainerSlots(PlayerInventory playerInv, int initialX, int initialY, ISlotFactory slotFactory, Consumer<Slot> consumer)
     {
-        createContainerSlots(playerInv, 9, initialX, initialY, 9, 3, slotConsumer); // Player inv
-        createContainerSlots(playerInv, 0, initialX, initialY + 58, 9, 1, slotConsumer); // Hotbar
+        createContainerSlots(playerInv, 9, initialX, initialY, 9, 3, slotFactory, consumer); // Player inv
+        createContainerSlots(playerInv, 0, initialX, initialY + 58, 9, 1, slotFactory, consumer); // Hotbar
+    }
+
+    @FunctionalInterface
+    public interface ISlotFactory
+    {
+        Slot create(IInventory inv, int index, int posX, int posY);
     }
 }

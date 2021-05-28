@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.screen;
 
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.NameFieldWidget;
-import com.github.wolfshotz.wyrmroost.client.screen.widgets.StaffActionButton;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
@@ -38,26 +37,7 @@ public class StaffScreen extends Screen
         dragon.addScreenInfo(this);
 
         addButton(new NameFieldWidget(font, (width / 2) - 63, (height / 2) + 25, 120, 12, dragon));
-
-        initActions();
-    }
-
-    public void initActions()
-    {
-        int size = actions.size();
-        int radius = Math.max(size * 20, 100);
-        for (int i = 0; i < size; i++)
-        {
-            StaffAction action = actions.get(i);
-            ITextComponent name = action.getTranslation(dragon);
-            double deg = 2 * Math.PI * i / size - Math.toRadians(90);
-            int x = (int) (radius * Math.cos(deg));
-            int y = (int) (radius * Math.sin(deg));
-            x += (width / 2) - 50;
-            y += (height / 2) - 10;
-            addButton(new StaffActionButton(x, y, name, action));
-        }
-    }
+     }
 
     @Override
     public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
