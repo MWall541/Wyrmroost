@@ -1,9 +1,9 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
@@ -371,17 +371,12 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     }
 
     @Override
-    public void addScreenInfo(StaffScreen screen)
+    public void applyStaffInfo(DragonStaffContainer container)
     {
-        screen.addAction(StaffActions.TARGET);
-        super.addScreenInfo(screen);
-    }
+        super.applyStaffInfo(container);
 
-    @Override
-    public void addContainerInfo(DragonInvContainer container)
-    {
-        super.addContainerInfo(container);
-        container.addSlot(new SlotBuilder(getInventory(), CONDUIT_SLOT).only(Items.CONDUIT).limit(1));
+        container.slot(new AccessorySlot(getInventory(), CONDUIT_SLOT, 0, 0, 0, DragonStaffScreen.CONDUIT_UV).only(Items.CONDUIT).limit(1))
+                .addStaffActions(StaffActions.TARGET);
     }
 
     @Override

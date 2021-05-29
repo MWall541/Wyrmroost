@@ -1,8 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
@@ -212,17 +211,14 @@ public class RoostStalkerEntity extends TameableDragonEntity
     }
 
     @Override
-    public void addScreenInfo(StaffScreen screen)
+    public void applyStaffInfo(DragonStaffContainer container)
     {
-        screen.addAction(StaffActions.TARGET);
-        super.addScreenInfo(screen);
-    }
+        super.applyStaffInfo(container);
 
-    @Override
-    public void addContainerInfo(DragonInvContainer container)
-    {
-        super.addContainerInfo(container);
-        container.addSlot(new SlotBuilder(getInventory(), ITEM_SLOT));
+        container.slot(new AccessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15))
+                .addStaffActions(StaffActions.TARGET);
+
+        //todo held item tooltips?
     }
 
     @Override

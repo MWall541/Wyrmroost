@@ -145,15 +145,15 @@ public final class ModUtils
      * @param index The initial slot index. This number is increased by 1 per slot
      * @param initialX The x position to start the slots
      * @param initialY The y position to start the slots
-     * @param length The amount of slots, in length
-     * @param height The amount of slots, in height
+     * @param columns The amount of slots, in columns
+     * @param rows The amount of slots, in rows
      * @param slotFactory the thing do to the thing.
      */
-    public static void createContainerSlots(IInventory inventory, int index, int initialX, int initialY, int length, int height, ISlotFactory slotFactory, Consumer<Slot> consumer)
+    public static void createContainerSlots(IInventory inventory, int index, int initialX, int initialY, int columns, int rows, ISlotFactory slotFactory, Consumer<Slot> consumer)
     {
-        for (int y = 0; y < height; ++y)
+        for (int y = 0; y < rows; ++y)
         {
-            for (int x = 0; x < length; ++x)
+            for (int x = 0; x < columns; ++x)
             {
                 if (inventory.getContainerSize() <= index)
                 {

@@ -1,9 +1,9 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
@@ -275,23 +275,19 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    public void addScreenInfo(StaffScreen screen)
+    public void applyStaffInfo(DragonStaffContainer container)
     {
-        screen.addAction(StaffActions.TARGET);
-        super.addScreenInfo(screen);
-    }
+        super.applyStaffInfo(container);
 
-    @Override
-    public void addContainerInfo(DragonInvContainer container)
-    {
-        super.addContainerInfo(container);
+        DragonInventory i = getInventory();
 
-        DragonInventory inv = container.inventory;
+        container.slot(new AccessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
+                .slot(new AccessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonStaffScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
+                .slot(new AccessorySlot(i, SADDLE_SLOT, 0, -15, -7, DragonStaffScreen.SADDLE_UV).only(Items.SADDLE))
+                .addStaffActions(StaffActions.TARGET);
 
-        container.addSlot(new SlotBuilder(inv, SADDLE_SLOT, 17, 45).only(Items.SADDLE));
-        container.addSlot(new SlotBuilder(inv, ARMOR_SLOT, 17, 63).only(DragonArmorItem.class));
-        container.addSlot(new SlotBuilder(inv, CHEST_SLOT, 17, 81).only(ChestBlock.class).limit(1).canTake(p -> inv.isEmptyAfter(CHEST_SLOT)));
-        container.makeSlots(3, 51, 45, 7, 3, (i, x, z) -> new SlotBuilder(inv, i, x, z).condition(this::hasChest));
+        //todo: chest slots?
+//        ModUtils.createContainerSlots(i, 3, );
     }
 
     @Override

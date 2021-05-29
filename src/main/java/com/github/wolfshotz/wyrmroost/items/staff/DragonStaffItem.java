@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.items.staff;
 
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
@@ -23,7 +24,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -89,8 +89,7 @@ public class DragonStaffItem extends Item
             if (dragon.isOwnedBy(player))
             {
                 bindDragon(dragon, stack);
-                if (!player.level.isClientSide)
-                    NetworkHooks.openGui((ServerPlayerEntity) player, dragon, b -> b.writeInt(dragon.getId()));
+                if (!player.level.isClientSide) DragonStaffContainer.open((ServerPlayerEntity) player, dragon);
                 return ActionResultType.sidedSuccess(player.level.isClientSide);
             }
         }

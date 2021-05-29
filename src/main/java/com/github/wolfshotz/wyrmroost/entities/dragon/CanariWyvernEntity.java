@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
@@ -170,10 +170,10 @@ public class CanariWyvernEntity extends TameableDragonEntity
     }
 
     @Override
-    public void addScreenInfo(StaffScreen screen)
+    public void applyStaffInfo(DragonStaffContainer container)
     {
-        super.addScreenInfo(screen);
-        screen.addAction(StaffActions.TARGET);
+        super.applyStaffInfo(container);
+        container.addStaffActions(StaffActions.TARGET);
     }
 
     @Override

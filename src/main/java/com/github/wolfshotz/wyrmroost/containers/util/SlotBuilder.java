@@ -16,9 +16,6 @@ import java.util.function.Predicate;
 
 public class SlotBuilder extends SlotItemHandler
 {
-    public static final int CENTER_X = 89;
-    public static final int CENTER_Y = 60;
-
     private int limit = super.getMaxStackSize();
     private BooleanSupplier isEnabled = () -> true;
     private Predicate<ItemStack> isItemValid = super::mayPlace;
@@ -30,11 +27,6 @@ public class SlotBuilder extends SlotItemHandler
     public SlotBuilder(IItemHandler handler, int index, int posX, int posY)
     {
         super(handler, index, posX, posY);
-    }
-
-    public SlotBuilder(IItemHandler handler, int index)
-    {
-        this(handler, index, CENTER_X, CENTER_Y);
     }
 
     public SlotBuilder condition(BooleanSupplier isEnabled)

@@ -1,10 +1,10 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.client.screen.StaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
-import com.github.wolfshotz.wyrmroost.containers.DragonInvContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.SlotBuilder;
+import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
@@ -235,13 +235,6 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    public void addContainerInfo(DragonInvContainer container)
-    {
-        super.addContainerInfo(container);
-        container.addSlot(new SlotBuilder(container.inventory, ARMOR_SLOT).only(DragonArmorItem.class));
-    }
-
-    @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
         if (!noActiveAnimation()) return;
@@ -279,10 +272,12 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    public void addScreenInfo(StaffScreen screen)
+    public void applyStaffInfo(DragonStaffContainer container)
     {
-        screen.addAction(StaffActions.TARGET);
-        super.addScreenInfo(screen);
+        super.applyStaffInfo(container);
+
+        container.slot(new AccessorySlot(getInventory(), ARMOR_SLOT, 0, -15, -15, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
+                .addStaffActions(StaffActions.TARGET);
     }
 
     @Override

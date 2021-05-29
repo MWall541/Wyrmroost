@@ -1,17 +1,19 @@
 package com.github.wolfshotz.wyrmroost.containers;
 
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.containers.util.StaffUISlot;
+import com.github.wolfshotz.wyrmroost.containers.util.DynamicSlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +32,7 @@ public class DragonStaffContainer extends Container
         this.dragon = dragon;
         this.playerInv = playerInv;
 
-        ModUtils.createPlayerContainerSlots(playerInv, 17, 12, StaffUISlot::new, this::addSlot);
+        ModUtils.createPlayerContainerSlots(playerInv, 17, 12, DynamicSlot::new, this::addSlot);
 
         dragon.applyStaffInfo(this);
     }
@@ -48,6 +50,12 @@ public class DragonStaffContainer extends Container
         return super.addSlot(slot);
     }
 
+    public DragonStaffContainer slot(Slot slot)
+    {
+        addSlot(slot);
+        return this;
+    }
+
     public DragonStaffContainer addStaffActions(StaffAction... actions)
     {
         Collections.addAll(this.actions, actions);
@@ -56,7 +64,7 @@ public class DragonStaffContainer extends Container
 
     public DragonStaffContainer addTooltip(ITextComponent text)
     {
-        toolTips.add(text);
+        if (dragon.level.isClientSide) toolTips.add(text);
         return this;
     }
 
@@ -64,5 +72,10 @@ public class DragonStaffContainer extends Container
     public static DragonStaffContainer factory(int id, PlayerInventory playerInv, PacketBuffer buf)
     {
         return new DragonStaffContainer(id, playerInv, (TameableDragonEntity) ClientEvents.getLevel().getEntity(buf.readInt()));
+    }
+
+    public static void open(ServerPlayerEntity player, TameableDragonEntity dragon)
+    {
+        NetworkHooks.openGui(player, dragon, b -> b.writeInt(dragon.getId()));
     }
 }
