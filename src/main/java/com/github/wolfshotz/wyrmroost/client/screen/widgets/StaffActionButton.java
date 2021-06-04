@@ -48,7 +48,7 @@ public class StaffActionButton extends AbstractButton
     @Override
     public void render(MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_)
     {
-        if (visible = screen.collapsedTime.get() == 0 || y < screen.height - 110)
+        if (visible = !screen.showAccessories())
             super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
     }
 

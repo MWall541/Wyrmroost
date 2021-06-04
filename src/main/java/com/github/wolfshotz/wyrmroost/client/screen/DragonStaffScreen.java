@@ -8,6 +8,7 @@ import com.github.wolfshotz.wyrmroost.containers.util.DynamicSlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
+import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.sun.javafx.geom.Vec2d;
@@ -92,8 +93,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
 
         renderBackground(ms);
         renderEntity(ms, mouseX, mouseY);
-        if (showAccessories)
-            fill(ms, 0, 0, width, height, 0xd0101010);
+        if (showAccessories) fill(ms, 0, 0, width, height, 0xd0101010);
         super.render(ms, mouseX, mouseY, partialTicks);
         renderTooltip(ms, mouseX, mouseY);
         if (!showAccessories && withinBoundary(mouseX, mouseY, centerX, centerY, scale, scale) && minecraft.player.inventory.getCarried().isEmpty() && hoveredSlot == null)
@@ -114,30 +114,26 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
         getMinecraft().getTextureManager().bind(SPRITES);
         blit(ms, leftPos, y, 0, 0, imageWidth, imageHeight);
 
+        double scale = this.scale / 22f;
+        float xRot = (dragX + 270f) / 180f * Mafs.PI;
+        float yRot = (dragY + 270f) / 180f * Mafs.PI;
         for (Slot slot : menu.slots)
         {
             if (!slot.isActive()) continue;
             if (slot instanceof DynamicSlot)
             {
                 DynamicSlot dyn = (DynamicSlot) slot;
-                if (dyn.isPlayerSlot && slot.isActive()) slot.y = dyn.sY + y - topPos;
+                if (dyn.isPlayerSlot) dyn.move(0, y - topPos);
                 else if (showAccessories() && dyn instanceof AccessorySlot)
                 {
                     AccessorySlot uiSlot = (AccessorySlot) dyn;
-                    Vector3d vector = new Vector3d(uiSlot.sY, uiSlot.sZ, uiSlot.sX)
-                            .scale(scale / 22f)
-                            .xRot((float) Math.toRadians(dragX + 270f))
-                            .yRot((float) Math.toRadians(dragY + 270f));
+                    Vector3d vector = new Vector3d(uiSlot.anchorY, uiSlot.anchorZ, uiSlot.anchorX)
+                            .scale(scale)
+                            .xRot(xRot)
+                            .yRot(yRot);
 
-                    slot.x = (imageWidth / 2) + (int) vector.y - 8;
-                    slot.y = (int) vector.z - 8;
-
-                    if (!slot.hasItem() && uiSlot.uv != null)
-                    {
-                        int u = (int) uiSlot.uv.x;
-                        int v = (int) uiSlot.uv.y;
-                        blit(ms, centerX + (int) vector.y - 8, centerY + (int) vector.z - 8, u, v, 16, 16);
-                    }
+                    uiSlot.setPos((imageWidth / 2) + (int) vector.y - 8, (int) vector.z - 8);
+                    uiSlot.blitShadowIcon(this, ms, centerX + (int) vector.y - 8, centerY + (int) vector.z - 8);
                 }
             }
         }
@@ -146,6 +142,15 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     @Override
     protected void renderLabels(MatrixStack ms, int mouseX, int mouseY)
     {
+    }
+
+    @Override
+    public boolean isHovering(Slot slot, double x, double y)
+    {
+        if (slot instanceof AccessorySlot && hoveredSlot instanceof AccessorySlot && ((AccessorySlot) hoveredSlot).anchorZ > ((AccessorySlot) slot).anchorZ)
+            return false;
+
+        return super.isHovering(slot, x, y);
     }
 
     @Override

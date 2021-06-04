@@ -301,7 +301,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
         setSprinting(flag);
 
         if (flag && prev != target && target.getType() == EntityType.PLAYER && !isTame() && noActiveAnimation())
-            AnimationPacket.send(OverworldDrakeEntity.this, OverworldDrakeEntity.ROAR_ANIMATION);
+            AnimationPacket.send(this, OverworldDrakeEntity.ROAR_ANIMATION);
     }
 
     @Override

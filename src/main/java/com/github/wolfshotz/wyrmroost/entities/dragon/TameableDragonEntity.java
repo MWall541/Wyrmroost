@@ -142,7 +142,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public abstract EntitySerializer<? extends TameableDragonEntity> getSerializer();
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     public void addAdditionalSaveData(CompoundNBT nbt)
     {
         super.addAdditionalSaveData(nbt);
@@ -151,7 +151,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     public void readAdditionalSaveData(CompoundNBT nbt)
     {
         super.readAdditionalSaveData(nbt);
@@ -1228,28 +1228,6 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         return new DragonStaffContainer(id, playersInv, this);
     }
 
-//    public void addScreenInfo(StaffScreen screen)
-//    {
-//        screen.addAction(StaffActions.HOME);
-//        screen.addAction(StaffActions.SIT);
-//
-//        screen.addTooltip(new StringTextComponent(Character.toString('\u2764'))
-//                .withStyle(TextFormatting.RED)
-//                .append(new StringTextComponent(String.format(" %s / %s", (int) (getHealth() / 2), (int) getMaxHealth() / 2))
-//                        .withStyle(TextFormatting.WHITE)));
-//        if (hasDataParameter(GENDER))
-//        {
-//            boolean isMale = isMale();
-//            screen.addTooltip(new TranslationTextComponent("entity.wyrmroost.dragons.gender." + (isMale? "male" : "female"))
-//                    .withStyle(isMale? TextFormatting.DARK_AQUA : TextFormatting.RED));
-//        }
-//    }
-//
-//    public void addContainerInfo(DragonInvContainer container)
-//    {
-//        ModUtils.createPlayerContainerSlots(container.playerInv, 17, 136, Slot::new, container::addSlot);
-//    }
-
     public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
     {
     }
@@ -1321,7 +1299,6 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         return new Animation[0];
     }
 
-    @SuppressWarnings("unused")
     public static boolean canFlyerSpawn(EntityType<? extends TameableDragonEntity> type, IWorld level, SpawnReason reason, BlockPos pos, Random random)
     {
         return level.getBlockState(pos.below()).getFluidState().isEmpty();

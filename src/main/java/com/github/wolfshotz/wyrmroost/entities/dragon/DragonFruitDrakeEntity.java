@@ -335,8 +335,9 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     {
         if (data == null)
         {
+            // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
             data = new AgeableData(true);
-            if (reason == SpawnReason.NATURAL) setAge(DragonEggProperties.get(getType()).getGrowthTime()); // set the first spawning dfd as a baby. the rest of the group will spawn as an adult.
+            if (reason == SpawnReason.NATURAL) setAge(DragonEggProperties.get(getType()).getGrowthTime());
         }
 
         return super.finalizeSpawn(level, difficulty, reason, data, dataTag);
