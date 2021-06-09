@@ -63,9 +63,7 @@ public class SoulCrystalEntity extends ProjectileItemEntity
         if (!(thrower instanceof PlayerEntity) || !releaseDragon(level, (PlayerEntity) thrower, null, stack, new BlockPos(result.getLocation()), thrower.getDirection()).consumesAction())
             super.onHit(result);
         else if (stack.getDamageValue() >= stack.getMaxDamage())
-        {
             level.broadcastEntityEvent(this, BREAK_EVENT);
-        }
     }
 
     @Override
@@ -263,6 +261,10 @@ public class SoulCrystalEntity extends ProjectileItemEntity
             entity.setDeltaMovement(x * 0.1D, y * 0.1 + Math.sqrt(Math.sqrt(x * x + y * y + z * z)) * 0.08, z * 0.1);
             level.addFreshEntity(entity);
         }
-        else player.setItemInHand(hand, stack);
+        else
+        {
+            if (player instanceof PlayerEntity && player.getItemInHand(hand).getCount() != 1)
+                ((PlayerEntity) player).inventory.add(stack);
+        }
     }
 }

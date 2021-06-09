@@ -103,12 +103,6 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     {
         double scale = this.scale * 2;
         boolean showAccessories = showAccessories();
-        float time = collapsedTime.get(partialTicks);
-        float speed = 0.35f * partialTicks;
-        boolean flag = pin.pinned() || (pin.isHovered() && collapsedTime.get() == 1) || hoveringWidget();
-
-        collapsedTime.add(flag? speed : -speed);
-        pin.y = (int) (height - (time * 28));
 
         renderBackground(ms);
         renderEntity(ms, mouseX, mouseY);
@@ -123,11 +117,18 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     @Override
     protected void renderBg(MatrixStack ms, float partialTicks, int mouseX, int mouseY)
     {
+        float time = collapsedTime.get(partialTicks);
+        float speed = 0.35f * partialTicks;
+        boolean flag = pin.pinned() || (pin.isHovered() && collapsedTime.get() == 1) || hoveringWidget();
+
+        collapsedTime.add(flag? speed : -speed);
+        pin.y = (int) (height - (time * 28));
+
         for (CollapsibleWidget w : collapsibles)
         {
             if (w.visible())
             {
-                w.move(1 - collapsedTime.get(partialTicks), width, height);
+                w.move(1 - time, width, height);
                 w.render(ms, mouseX, mouseY, partialTicks);
             }
         }

@@ -3,6 +3,8 @@ package com.github.wolfshotz.wyrmroost.items;
 import com.github.wolfshotz.wyrmroost.entities.projectile.SoulCrystalEntity;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,13 +30,13 @@ public class SoulCrystalItem extends Item
 {
     public SoulCrystalItem()
     {
-        super(WRItems.builder().stacksTo(1).durability(10));
+        super(WRItems.builder().durability(10));
     }
 
     @Override
     public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
     {
-        return captureDragon(player, player.level, stack, target, hand);
+        return captureDragon(player, player.level, stack.split(1), target, hand);
     }
 
     @Override
@@ -50,10 +52,9 @@ public class SoulCrystalItem extends Item
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5f, 0.4f / (random.nextFloat() * 0.4f + 0.8f));
         if (!level.isClientSide)
         {
-            SoulCrystalEntity entity = new SoulCrystalEntity(stack, player, level);
+            SoulCrystalEntity entity = new SoulCrystalEntity(stack.split(1), player, level);
             entity.shootFromRotation(player, player.xRot, player.yRot, 0, 1.5f, 1f);
             level.addFreshEntity(entity);
-            player.setItemInHand(hand, ItemStack.EMPTY);
         }
         return new ActionResult<>(ActionResultType.sidedSuccess(level.isClientSide), stack);
     }
@@ -62,7 +63,7 @@ public class SoulCrystalItem extends Item
     public ITextComponent getName(ItemStack stack)
     {
         TranslationTextComponent name = (TranslationTextComponent) super.getName(stack);
-        if (containsDragon(stack)) name.withStyle(TextFormatting.AQUA, TextFormatting.ITALIC);
+        if (containsDragon(stack)) name.withStyle(TextFormatting.LIGHT_PURPLE, TextFormatting.ITALIC);
         return name;
     }
 
@@ -91,6 +92,30 @@ public class SoulCrystalItem extends Item
     @Override
     public boolean isFoil(ItemStack stack)
     {
-        return containsDragon(stack);
+        return super.isFoil(stack) || containsDragon(stack);
+    }
+
+    @Override
+    public int getItemStackLimit(ItemStack stack)
+    {
+        return 16;
+    }
+
+    @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
+    {
+        return enchantment == Enchantments.UNBREAKING;
+    }
+
+    @Override
+    public boolean isEnchantable(ItemStack stack)
+    {
+        return stack.getCount() == 1;
+    }
+
+    @Override
+    public int getEnchantmentValue()
+    {
+        return 1;
     }
 }
