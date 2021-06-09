@@ -4,7 +4,6 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
@@ -276,7 +275,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     {
         super.applyStaffInfo(container);
 
-        container.slot(new AccessorySlot(getInventory(), ARMOR_SLOT, 0, -15, -15, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
+        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ARMOR_SLOT, 0, -15, -15, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
                 .addStaffActions(StaffActions.TARGET);
     }
 

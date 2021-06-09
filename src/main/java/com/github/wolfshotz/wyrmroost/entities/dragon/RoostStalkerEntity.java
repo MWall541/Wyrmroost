@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
@@ -215,7 +215,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     {
         super.applyStaffInfo(container);
 
-        container.slot(new AccessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15))
+        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15, DragonStaffScreen.SADDLE_UV))
                 .addStaffActions(StaffActions.TARGET);
 
         //todo held item tooltips?

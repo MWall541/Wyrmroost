@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,6 +17,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -149,13 +150,13 @@ public final class ModUtils
      * @param rows The amount of slots, in rows
      * @param slotFactory the thing do to the thing.
      */
-    public static void createContainerSlots(IInventory inventory, int index, int initialX, int initialY, int columns, int rows, ISlotFactory slotFactory, Consumer<Slot> consumer)
+    public static <T extends Slot> void createContainerSlots(IItemHandler inventory, int index, int initialX, int initialY, int columns, int rows, ISlotFactory<T> slotFactory, Consumer<T> consumer)
     {
         for (int y = 0; y < rows; ++y)
         {
             for (int x = 0; x < columns; ++x)
             {
-                if (inventory.getContainerSize() <= index)
+                if (inventory.getSlots() <= index)
                 {
                     Wyrmroost.LOG.error("TOO MANY SLOTS! ABORTING THE REST!");
                     return;
@@ -172,15 +173,16 @@ public final class ModUtils
      * @param initialY the y starting position of the inventory
      * @param slotFactory the thing to do the thing.
      */
-    public static void createPlayerContainerSlots(PlayerInventory playerInv, int initialX, int initialY, ISlotFactory slotFactory, Consumer<Slot> consumer)
+    public static <T extends Slot> void createPlayerContainerSlots(PlayerInventory playerInv, int initialX, int initialY, ISlotFactory<T> slotFactory, Consumer<T> consumer)
     {
-        createContainerSlots(playerInv, 9, initialX, initialY, 9, 3, slotFactory, consumer); // Player inv
-        createContainerSlots(playerInv, 0, initialX, initialY + 58, 9, 1, slotFactory, consumer); // Hotbar
+        PlayerInvWrapper inv = new PlayerInvWrapper(playerInv);
+        createContainerSlots(inv, 9, initialX, initialY, 9, 3, slotFactory, consumer); // Player inv
+        createContainerSlots(inv, 0, initialX, initialY + 58, 9, 1, slotFactory, consumer); // Hotbar
     }
 
     @FunctionalInterface
-    public interface ISlotFactory
+    public interface ISlotFactory<T extends Slot>
     {
-        Slot create(IInventory inv, int index, int posX, int posY);
+        T create(IItemHandler inv, int index, int posX, int posY);
     }
 }

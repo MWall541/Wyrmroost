@@ -1,10 +1,11 @@
 package com.github.wolfshotz.wyrmroost.client.screen;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
+import com.github.wolfshotz.wyrmroost.client.screen.widgets.PinButton;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.StaffActionButton;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
-import com.github.wolfshotz.wyrmroost.containers.util.DynamicSlot;
+import com.github.wolfshotz.wyrmroost.containers.util.Slot3D;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
@@ -12,9 +13,8 @@ import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.sun.javafx.geom.Vec2d;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.LockIconButton;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.player.PlayerInventory;
@@ -27,17 +27,20 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
 {
+    public static final ResourceLocation SPRITES = Wyrmroost.id("textures/gui/container/dragon_inventory.png");
     public static final Vec2d SADDLE_UV = new Vec2d(194, 18);
     public static final Vec2d ARMOR_UV = new Vec2d(194, 34);
     public static final Vec2d CHEST_UV = new Vec2d(194, 50);
     public static final Vec2d CONDUIT_UV = new Vec2d(194, 66);
 
-    private static final ResourceLocation SPRITES = Wyrmroost.id("textures/gui/container/dragon_inventory.png");
-
     public final LerpedFloat collapsedTime = LerpedFloat.unit();
-    public final LockIconButton lock = new LockIconButton(0, 0, i -> this.lock.setLocked(!this.lock.isLocked()));
+    public final List<CollapsibleWidget> collapsibles = new ArrayList<>();
+    public final PinButton pin = new PinButton(107, 0);
     public int centerX;
     public int centerY;
     public float dragX;
@@ -59,17 +62,20 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
         super.init();
         this.centerX = width / 2;
         this.centerY = height / 2;
-        this.leftPos = (width - imageWidth) / 2;
+        this.leftPos = centerX;
         this.topPos = centerY;
         this.scale = topPos / 7f;
+
+        pin.x = centerX - 107;
+
+        menu.widgets.forEach(this::addWidget);
 
         initButtons();
     }
 
     protected void initButtons()
     {
-        lock.x = centerX - 107;
-        addButton(lock);
+        addButton(pin);
 
         int size = menu.actions.size();
         int xRadius = width / 3;
@@ -83,6 +89,13 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
             int y = ((int) (yRadius * Math.sin(deg))) + centerY - 10;
             addButton(new StaffActionButton(this, action, x, y, name));
         }
+    }
+
+    @Override
+    protected <T extends IGuiEventListener> T addWidget(T widget)
+    {
+        if (widget instanceof CollapsibleWidget) collapsibles.add((CollapsibleWidget) widget);
+        return super.addWidget(widget);
     }
 
     @Override
@@ -105,38 +118,24 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     {
         float time = collapsedTime.get(partialTicks);
         float speed = 0.35f * partialTicks;
-        boolean flag = lock.isLocked() || mouseX > leftPos && mouseX < leftPos + imageWidth && mouseY > height - (30 + (70 * time)) || (lock.isHovered() && collapsedTime.get() == 1);
-        int y = height - (20 + (int) (75 * time));
-
-        lock.y = y + 10;
+        boolean flag = pin.pinned() || (pin.isHovered() && collapsedTime.get() == 1) || hoveringWidget();
         collapsedTime.add(flag? speed : -speed);
+        pin.y = (int) (height - (time * 28));
 
-        getMinecraft().getTextureManager().bind(SPRITES);
-        blit(ms, leftPos, y, 0, 0, imageWidth, imageHeight);
-
-        double scale = this.scale / 22f;
-        float xRot = (dragX + 270f) / 180f * Mafs.PI;
-        float yRot = (dragY + 270f) / 180f * Mafs.PI;
-        for (Slot slot : menu.slots)
+        for (CollapsibleWidget w : collapsibles)
         {
-            if (!slot.isActive()) continue;
-            if (slot instanceof DynamicSlot)
+            if (w.visible())
             {
-                DynamicSlot dyn = (DynamicSlot) slot;
-                if (dyn.isPlayerSlot) dyn.move(0, y - topPos);
-                else if (showAccessories() && dyn instanceof AccessorySlot)
-                {
-                    AccessorySlot uiSlot = (AccessorySlot) dyn;
-                    Vector3d vector = new Vector3d(uiSlot.anchorY, uiSlot.anchorZ, uiSlot.anchorX)
-                            .scale(scale)
-                            .xRot(xRot)
-                            .yRot(yRot);
-
-                    uiSlot.setPos((imageWidth / 2) + (int) vector.y - 8, (int) vector.z - 8);
-                    uiSlot.blitShadowIcon(this, ms, centerX + (int) vector.y - 8, centerY + (int) vector.z - 8);
-                }
+                w.move(1 - time, width, height);
+                w.render(ms, mouseX, mouseY, partialTicks);
             }
         }
+    }
+
+    private boolean hoveringWidget()
+    {
+        for (CollapsibleWidget collapsible : collapsibles) if (collapsible.collapses()) return true;
+        return false;
     }
 
     @Override
@@ -145,18 +144,47 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     }
 
     @Override
-    public boolean isHovering(Slot slot, double x, double y)
+    public void renderSlot(MatrixStack ms, Slot slot)
     {
-        if (slot instanceof AccessorySlot && hoveredSlot instanceof AccessorySlot && ((AccessorySlot) hoveredSlot).anchorZ > ((AccessorySlot) slot).anchorZ)
-            return false;
+        boolean flag = false;
+        if (slot instanceof Slot3D)
+        {
+            Slot3D uiSlot = (Slot3D) slot;
+            double scale = this.scale / 22f;
+            float xRot = (dragX + 270f) / 180f * Mafs.PI;
+            float yRot = (dragY + 270f) / 180f * Mafs.PI;
+            Vector3d vector = new Vector3d(uiSlot.anchorY, uiSlot.anchorZ, uiSlot.anchorX)
+                    .scale(scale)
+                    .xRot(xRot)
+                    .yRot(yRot);
+            float colZ = (float) Math.max(-vector.x * 0.15f, 0.4f);
 
-        return super.isHovering(slot, x, y);
+            flag = true;
+            RenderSystem.pushMatrix();
+            RenderSystem.translated(0, 0, -vector.x);
+            uiSlot.setPos((int) vector.y - 8, (int) vector.z - 8);
+            if (!slot.hasItem() && uiSlot.iconUV != null)
+            {
+                RenderSystem.color3f(colZ, colZ, colZ);
+                setBlitOffset(250);
+                getMinecraft().getTextureManager().bind(SPRITES);
+                uiSlot.blitBackgroundIcon(this, ms, uiSlot.x, uiSlot.y);
+            }
+        }
+
+        super.renderSlot(ms, slot);
+        if (flag) RenderSystem.popMatrix();
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_2) lock.setLocked(!lock.isLocked());
+        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && (hoveredSlot == null || !hoveredSlot.hasItem()))
+        {
+            pin.onPress();
+            pin.playDownSound(minecraft.getSoundManager());
+            return true;
+        }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -167,7 +195,6 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
         this.dragY = MathHelper.wrapDegrees(this.dragY + (float) dragY);
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
-
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta)
@@ -185,7 +212,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
 
     public boolean showAccessories()
     {
-        return collapsedTime.get() == 1 || !minecraft.player.inventory.getCarried().isEmpty();
+        return collapsedTime.get() > 0 || !minecraft.player.inventory.getCarried().isEmpty();
     }
 
     public void renderEntity(MatrixStack ms, int mouseX, int mouseY)
@@ -216,11 +243,11 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
         dragon.xRot = -pitch * 20f;
         dragon.yHeadRot = 180f + yaw * 40f;
         dragon.yHeadRotO = dragon.yHeadRot;
-        EntityRendererManager renderer = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRendererManager renderer = minecraft.getEntityRenderDispatcher();
         quaternion1.conj();
         renderer.overrideCameraOrientation(quaternion1);
         renderer.setRenderShadow(false);
-        IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        IRenderTypeBuffer.Impl buffer = minecraft.renderBuffers().bufferSource();
         ms.translate(0, -1, 0);
         RenderSystem.runAsFancy(() -> renderer.render(dragon, 0, 0, 0, 0, 1f, ms, buffer, 15728880));
         buffer.endBatch();

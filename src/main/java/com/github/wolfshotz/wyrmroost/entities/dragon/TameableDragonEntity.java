@@ -1203,6 +1203,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void applyStaffInfo(DragonStaffContainer container)
     {
         container.addStaffActions(StaffActions.HOME)
+                .addTooltip(getName())
                 .addTooltip(new StringTextComponent(Character.toString('\u2764'))
                         .withStyle(TextFormatting.RED)
                         .append(new StringTextComponent(String.format(" %s / %s", (int) (getHealth() / 2), (int) getMaxHealth() / 2))

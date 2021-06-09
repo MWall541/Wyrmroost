@@ -2,8 +2,9 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
-import com.github.wolfshotz.wyrmroost.containers.util.AccessorySlot;
+import com.github.wolfshotz.wyrmroost.containers.util.DynamicSlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
@@ -101,7 +102,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     @Override
     public DragonInventory createInv()
     {
-        return new DragonInventory(this, 24);
+        return new DragonInventory(this, 18);
     }
 
     @Override
@@ -247,13 +248,21 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     @Override
     public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)
     {
-        if (slot == SADDLE_SLOT)
+        boolean playSound = !stack.isEmpty() && !onLoad;
+        switch (slot)
         {
-            entityData.set(SADDLED, !stack.isEmpty());
-            if (!stack.isEmpty() && !onLoad) playSound(SoundEvents.HORSE_SADDLE, 1, 1);
+            case SADDLE_SLOT:
+                entityData.set(SADDLED, !stack.isEmpty());
+                if (playSound) playSound(SoundEvents.HORSE_SADDLE, 1f, 1f);
+                break;
+            case ARMOR_SLOT:
+                setArmor(stack);
+                if (playSound) playSound(SoundEvents.ARMOR_EQUIP_DIAMOND, 1f, 1f);
+                break;
+            case CHEST_SLOT:
+                if (playSound) playSound(SoundEvents.ARMOR_EQUIP_GENERIC, 1f, 1f);
+                break;
         }
-
-        if (slot == ARMOR_SLOT) setArmor(stack);
     }
 
     @Override
@@ -280,14 +289,22 @@ public class OverworldDrakeEntity extends TameableDragonEntity
         super.applyStaffInfo(container);
 
         DragonInventory i = getInventory();
+        CollapsibleWidget chestWidget = DragonStaffContainer.collapsibleWidget( 0, 98, 121, 75, CollapsibleWidget.TOP)
+                .condition(this::hasChest);
+        ModUtils.createContainerSlots(i,
+                3,
+                17,
+                12,
+                5,
+                3,
+                (inv, in, x, y) -> (DynamicSlot) new DynamicSlot(i, in, x, y).noShulkers(),
+                chestWidget::addSlot);
 
-        container.slot(new AccessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
-                .slot(new AccessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonStaffScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
-                .slot(new AccessorySlot(i, SADDLE_SLOT, 0, -15, -7, DragonStaffScreen.SADDLE_UV).only(Items.SADDLE))
-                .addStaffActions(StaffActions.TARGET);
-
-        //todo: chest slots?
-//        ModUtils.createContainerSlots(i, 3, );
+        container.slot(DragonStaffContainer.accessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
+                .slot(DragonStaffContainer.accessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonStaffScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
+                .slot(DragonStaffContainer.accessorySlot(i, SADDLE_SLOT, 0, -15, -7, DragonStaffScreen.SADDLE_UV).only(Items.SADDLE))
+                .addStaffActions(StaffActions.TARGET)
+                .addCollapsible(chestWidget);
     }
 
     @Override
@@ -386,7 +403,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
 
     public boolean hasChest()
     {
-        return getStackInSlot(CHEST_SLOT) != ItemStack.EMPTY;
+        return !getStackInSlot(CHEST_SLOT).isEmpty();
     }
 
     public boolean isSaddled()
