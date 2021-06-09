@@ -175,8 +175,8 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
         if (!stalker.isSleeping())
         {
-            head.xRot = headPitch * ((float) Math.PI / 180F);
-            head.yRot = netHeadYaw * ((float) Math.PI / 180F);
+            head.xRot += headPitch * ((float) Math.PI / 180F);
+            head.yRot += netHeadYaw * ((float) Math.PI / 180F);
         }
     }
     
@@ -211,7 +211,11 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
 
         if (!flag)
         {
-            if (stalker.getItem().getItem() instanceof BlockItem) jaw.xRot = 0.3f;
+            if (stalker.getItem().getItem() instanceof BlockItem)
+            {
+                head.xRot = -0.25f;
+                jaw.xRot = 0.6f;
+            }
             else jaw.xRot = 0.15f;
         }
     }

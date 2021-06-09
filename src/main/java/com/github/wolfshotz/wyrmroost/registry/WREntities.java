@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.render.entity.EmptyRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.alpine.AlpineRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRenderer;
@@ -19,12 +20,14 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.*;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.projectile.GeodeTippedArrowEntity;
+import com.github.wolfshotz.wyrmroost.entities.projectile.SoulCrystalEntity;
 import com.github.wolfshotz.wyrmroost.entities.projectile.WindGustEntity;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -174,6 +177,12 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .renderer(() -> EmptyRenderer::new)
             .noSave()
             .noSummon()
+            .build();
+    public static final RegistryObject<EntityType<SoulCrystalEntity>> SOUL_CRYSTAL = WREntities.<SoulCrystalEntity>ofGroup("soul_crystal", SoulCrystalEntity::new, EntityClassification.MISC)
+            .size(0.25f, 0.25f)
+            .renderer(() -> m -> new SpriteRenderer<>(m, ClientEvents.getClient().getItemRenderer()))
+            .trackingRange(4)
+            .tickRate(10)
             .build();
 
     @Nonnull public final Supplier<IRenderFactory<E>> renderer;

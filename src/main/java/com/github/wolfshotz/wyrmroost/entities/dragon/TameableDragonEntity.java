@@ -732,7 +732,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean hasRestriction()
     {
-        return getHomePos().isPresent();
+        return getHomePos().filter(i -> i != BlockPos.ZERO).isPresent();
     }
 
     @Override
@@ -1202,7 +1202,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public void applyStaffInfo(DragonStaffContainer container)
     {
-        container.addStaffActions(StaffActions.HOME)
+        container.addStaffActions(StaffActions.HOME, StaffActions.SIT)
                 .addTooltip(getName())
                 .addTooltip(new StringTextComponent(Character.toString('\u2764'))
                         .withStyle(TextFormatting.RED)

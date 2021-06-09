@@ -103,11 +103,18 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     {
         double scale = this.scale * 2;
         boolean showAccessories = showAccessories();
+        float time = collapsedTime.get(partialTicks);
+        float speed = 0.35f * partialTicks;
+        boolean flag = pin.pinned() || (pin.isHovered() && collapsedTime.get() == 1) || hoveringWidget();
+
+        collapsedTime.add(flag? speed : -speed);
+        pin.y = (int) (height - (time * 28));
 
         renderBackground(ms);
         renderEntity(ms, mouseX, mouseY);
         if (showAccessories) fill(ms, 0, 0, width, height, 0xd0101010);
         super.render(ms, mouseX, mouseY, partialTicks);
+
         renderTooltip(ms, mouseX, mouseY);
         if (!showAccessories && withinBoundary(mouseX, mouseY, centerX, centerY, scale, scale) && minecraft.player.inventory.getCarried().isEmpty() && hoveredSlot == null)
             renderComponentTooltip(ms, menu.toolTips, mouseX, mouseY);
@@ -116,17 +123,11 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     @Override
     protected void renderBg(MatrixStack ms, float partialTicks, int mouseX, int mouseY)
     {
-        float time = collapsedTime.get(partialTicks);
-        float speed = 0.35f * partialTicks;
-        boolean flag = pin.pinned() || (pin.isHovered() && collapsedTime.get() == 1) || hoveringWidget();
-        collapsedTime.add(flag? speed : -speed);
-        pin.y = (int) (height - (time * 28));
-
         for (CollapsibleWidget w : collapsibles)
         {
             if (w.visible())
             {
-                w.move(1 - time, width, height);
+                w.move(1 - collapsedTime.get(partialTicks), width, height);
                 w.render(ms, mouseX, mouseY, partialTicks);
             }
         }
@@ -179,7 +180,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && (hoveredSlot == null || !hoveredSlot.hasItem()))
+        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && hoveredSlot == null)
         {
             pin.onPress();
             pin.playDownSound(minecraft.getSoundManager());

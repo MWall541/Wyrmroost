@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TieredItem;
 import net.minecraft.util.ResourceLocation;
@@ -83,10 +85,17 @@ public class RoostStalkerRenderer extends AbstractDragonRenderer<RoostStalkerEnt
                     ms.mulPose(Vector3f.YP.rotationDegrees(netHeadYaw)); // rotate to match head rotations
                     ms.mulPose(Vector3f.XP.rotationDegrees(headPitch));
                     ms.translate(0, stalker.isInSittingPose()? 0.11 : 0.03, -0.4); // offset
-                    if (stack.getItem() instanceof TieredItem) // offsets for tools, looks way fucking better
+                    Item item = stack.getItem();
+                    if (item instanceof TieredItem) // offsets for tools, looks way fucking better
                     {
                         ms.translate(0.1, 0, 0);
                         ms.mulPose(Vector3f.YP.rotationDegrees(45));
+                    }
+                    else if (item instanceof BlockItem)
+                    {
+                        ms.scale(0.8f, 0.8f, 0.8f);
+                        ms.mulPose(Vector3f.XP.rotationDegrees(90f));
+                        ms.translate(0, 0.075f, -0.175f);
                     }
                 }
 
