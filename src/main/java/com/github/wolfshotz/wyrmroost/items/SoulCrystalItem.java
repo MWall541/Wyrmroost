@@ -36,13 +36,17 @@ public class SoulCrystalItem extends Item
     @Override
     public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand)
     {
-        return captureDragon(player, player.level, stack.split(1), target, hand);
+        boolean more = stack.getCount() > 1;
+        ItemStack split = (more? stack.split(1) : stack);
+        ActionResultType result = captureDragon(player, player.level, split, target);
+        if (more && !player.inventory.add(split)) player.drop(split, true);
+        return result;
     }
 
     @Override
     public ActionResultType useOn(ItemUseContext context)
     {
-        return releaseDragon(context.getLevel(), context.getPlayer(), context.getHand(), context.getItemInHand(), context.getClickedPos(), context.getClickedFace());
+        return releaseDragon(context.getLevel(), context.getPlayer(), context.getItemInHand(), context.getClickedPos(), context.getClickedFace());
     }
 
     @Override

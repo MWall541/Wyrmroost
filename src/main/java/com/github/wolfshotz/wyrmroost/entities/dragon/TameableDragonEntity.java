@@ -771,6 +771,10 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         inventory.ifPresent(i -> i.getContents().forEach(this::spawnAtLocation));
     }
 
+    public void dropStorage()
+    {
+    }
+
     public void setRotation(float yaw, float pitch)
     {
         this.yRot = yaw % 360.0F;
@@ -1250,7 +1254,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing)
     {
-        if (isAlive() && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && inventory.isPresent())
+        if (isAlive() && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && inventory.isPresent() && !getInventory().isEmpty())
             return inventory.cast();
         return super.getCapability(capability, facing);
     }

@@ -374,7 +374,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     {
         super.applyStaffInfo(container);
 
-        container.slot(DragonStaffContainer.accessorySlot(getInventory(), CONDUIT_SLOT, 0, 0, 0, DragonStaffScreen.CONDUIT_UV).only(Items.CONDUIT).limit(1))
+        container.slot(DragonStaffContainer.accessorySlot(getInventory(), CONDUIT_SLOT, 0, -65, -75, DragonStaffScreen.CONDUIT_UV).only(Items.CONDUIT).limit(1))
                 .addStaffActions(StaffActions.TARGET);
     }
 

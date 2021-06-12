@@ -131,7 +131,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
         ms.pushPose();
         ms.translate(0, 0, 400);
 
-        // multiple for loops to avoid binding textures many more times than needed
+        // multiple for loops to avoid binding textures many more times than needed. annoying af but w/e
         minecraft.getTextureManager().bind(SPRITES);
 
         // backgrounds and labels
@@ -251,8 +251,11 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY)
     {
-        this.dragX = MathHelper.wrapDegrees(this.dragX + (float) dragX);
-        this.dragY = MathHelper.wrapDegrees(this.dragY + (float) dragY);
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1)
+        {
+            this.dragX = MathHelper.wrapDegrees(this.dragX + (float) dragX);
+            this.dragY = MathHelper.wrapDegrees(this.dragY + (float) dragY);
+        }
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 

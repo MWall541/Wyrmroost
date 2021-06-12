@@ -291,14 +291,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
         DragonInventory i = getInventory();
         CollapsibleWidget chestWidget = DragonStaffContainer.collapsibleWidget( 0, 174, 121, 75, CollapsibleWidget.TOP)
                 .condition(this::hasChest);
-        ModUtils.createContainerSlots(i,
-                3,
-                17,
-                12,
-                5,
-                3,
-                (inv, in, x, y) -> (DynamicSlot) new DynamicSlot(i, in, x, y).noShulkers(),
-                chestWidget::addSlot);
+        ModUtils.createContainerSlots(i, 3, 17, 12, 5, 3, DynamicSlot::new, chestWidget::addSlot);
 
         container.slot(DragonStaffContainer.accessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
                 .slot(DragonStaffContainer.accessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonStaffScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
@@ -409,6 +402,14 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     public boolean isSaddled()
     {
         return entityData.get(SADDLED);
+    }
+
+    @Override
+    public void dropStorage()
+    {
+        DragonInventory inv = getInventory();
+        for (int i = CHEST_SLOT + 1; i < inv.getSlots(); i++)
+            spawnAtLocation(inv.getStackInSlot(i), getBbHeight() / 2f);
     }
 
     @Override

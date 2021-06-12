@@ -41,6 +41,7 @@ public class Wyrmroost
         WRSounds.REGISTRY.register(bus);
         WRWorld.Features.REGISTRY.register(bus);
         WRParticles.REGISTRY.register(bus);
+        WREffects.REGISTRY.register(bus);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.COMMON);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.CLIENT);
