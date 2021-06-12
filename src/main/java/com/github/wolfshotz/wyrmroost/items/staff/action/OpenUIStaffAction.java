@@ -13,7 +13,7 @@ public class OpenUIStaffAction implements StaffAction
     @Override
     public boolean rightClick(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
     {
-        if (!player.level.isClientSide) DragonStaffContainer.open((ServerPlayerEntity) player, dragon );
+        if (!player.level.isClientSide) DragonStaffContainer.open((ServerPlayerEntity) player, dragon);
         return true;
     }
 

@@ -289,7 +289,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
         super.applyStaffInfo(container);
 
         DragonInventory i = getInventory();
-        CollapsibleWidget chestWidget = DragonStaffContainer.collapsibleWidget( 0, 98, 121, 75, CollapsibleWidget.TOP)
+        CollapsibleWidget chestWidget = DragonStaffContainer.collapsibleWidget( 0, 174, 121, 75, CollapsibleWidget.TOP)
                 .condition(this::hasChest);
         ModUtils.createContainerSlots(i,
                 3,

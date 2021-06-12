@@ -17,8 +17,14 @@ import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.texture.PotionSpriteUploader;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.EffectUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
@@ -29,6 +35,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
 {
@@ -111,7 +118,58 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
 
         renderTooltip(ms, mouseX, mouseY);
         if (!showAccessories && withinBoundary(mouseX, mouseY, centerX, centerY, scale, scale) && minecraft.player.inventory.getCarried().isEmpty() && hoveredSlot == null)
+        {
             renderComponentTooltip(ms, menu.toolTips, mouseX, mouseY);
+            renderEffects(ms, menu.dragon.getActiveEffects().stream().filter(e -> e.shouldRender() && e.getDuration() > 0).collect(Collectors.toList()), mouseX - 124, mouseY - 16);
+        }
+    }
+
+    private void renderEffects(MatrixStack ms, List<EffectInstance> effects, int x, int y)
+    {
+        if (effects.isEmpty()) return;
+
+        ms.pushPose();
+        ms.translate(0, 0, 400);
+
+        // multiple for loops to avoid binding textures many more times than needed
+        minecraft.getTextureManager().bind(SPRITES);
+
+        // backgrounds and labels
+        for (int i = 0; i < effects.size(); i++)
+        {
+            RenderSystem.color4f(1f, 1f, 1f, 1f);
+            int yOff = y + (i * 33);
+            blit(ms, x, yOff, 122, 174, 120, 32);
+        }
+
+        for (int i = 0; i < effects.size(); i++)
+        {
+            EffectInstance instance = effects.get(i);
+            if (instance.shouldRenderInvText())
+            {
+                String s = I18n.get(instance.getEffect().getDescriptionId());
+                int amp = instance.getAmplifier();
+                int yOff = y + (i * 33);
+                if (amp >= 1 && amp <= 9) s += ' ' + I18n.get("enchantment.level." + (amp + 1));
+
+                font.drawShadow(ms, s, x + 10 + 18, yOff + 6, 16777215);
+                String duration = EffectUtils.formatDuration(instance, 1.0F);
+                font.drawShadow(ms, duration, x + 10 + 18, yOff + 6 + 10, 8355711);
+            }
+        }
+
+        PotionSpriteUploader sheet = minecraft.getMobEffectTextures();
+
+        // icons
+        for (int i = 0; i < effects.size(); i++)
+        {
+            Effect effect = effects.get(i).getEffect();
+            TextureAtlasSprite atlas = sheet.get(effect);
+            int yOff = y + (i * 32);
+            minecraft.getTextureManager().bind(atlas.atlas().location());
+            blit(ms, x + 6, yOff + 7, getBlitOffset(), 18, 18, atlas);
+        }
+        ms.popPose();
     }
 
     @Override
@@ -119,7 +177,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     {
         float time = collapsedTime.get(partialTicks);
         float speed = 0.35f * partialTicks;
-        boolean flag = pin.pinned() || (pin.isHovered() && collapsedTime.get() == 1) || hoveringWidget();
+        boolean flag = pin.pinned() || pin.isHovered() || hoveringWidget();
 
         collapsedTime.add(flag? speed : -speed);
         pin.y = (int) (height - (time * 28));
@@ -181,7 +239,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
     {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && hoveredSlot == null)
+        if (button == GLFW.GLFW_MOUSE_BUTTON_2 && (hoveredSlot == null || !hoveredSlot.hasItem()) && minecraft.player.inventory.getCarried().isEmpty())
         {
             pin.onPress();
             pin.playDownSound(minecraft.getSoundManager());

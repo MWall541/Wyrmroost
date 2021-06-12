@@ -18,11 +18,14 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -92,17 +95,6 @@ public class DragonStaffContainer extends Container
         return addWidget(widget);
     }
 
-    @SuppressWarnings("ConstantConditions")
-    public static DragonStaffContainer factory(int id, PlayerInventory playerInv, PacketBuffer buf)
-    {
-        return new DragonStaffContainer(id, playerInv, (TameableDragonEntity) ClientEvents.getLevel().getEntity(buf.readInt()));
-    }
-
-    public static void open(ServerPlayerEntity player, TameableDragonEntity dragon)
-    {
-        NetworkHooks.openGui(player, dragon, b -> b.writeInt(dragon.getId()));
-    }
-
     public static Slot3D accessorySlot(DragonInventory i, int index, int x, int y, int z, @Nonnull Vec2d iconUV)
     {
         return (Slot3D) new Slot3D(i, index, x, y, z)
@@ -113,5 +105,60 @@ public class DragonStaffContainer extends Container
     public static CollapsibleWidget collapsibleWidget(int u0, int v0, int width, int height, byte direction)
     {
         return new CollapsibleWidget(u0, v0, width, height, direction, DragonStaffScreen.SPRITES);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static DragonStaffContainer factory(int id, PlayerInventory playerInv, PacketBuffer buf)
+    {
+        return new DragonStaffContainer(id, playerInv, fromBytes(buf));
+    }
+
+    public static void open(ServerPlayerEntity player, TameableDragonEntity dragon)
+    {
+        NetworkHooks.openGui(player, dragon, b -> toBytes(dragon, b));
+    }
+
+    private static void toBytes(TameableDragonEntity entity, PacketBuffer buffer)
+    {
+        buffer.writeVarInt(entity.getId());
+
+        Collection<EffectInstance> effects = entity.getActiveEffects();
+        buffer.writeVarInt(effects.size());
+
+        for (EffectInstance instance : effects)
+        {
+            buffer.writeByte(Effect.getId(instance.getEffect()) & 255);
+            buffer.writeVarInt(Math.min(instance.getDuration(), 32767));
+            buffer.writeByte(instance.getAmplifier() & 255);
+
+            byte flags = 0;
+            if (instance.isAmbient()) flags |= 1;
+            if (instance.isVisible()) flags |= 2;
+            if (instance.showIcon()) flags |= 4;
+
+            buffer.writeByte(flags);
+        }
+    }
+
+    private static TameableDragonEntity fromBytes(PacketBuffer buf)
+    {
+        TameableDragonEntity dragon = (TameableDragonEntity) ClientEvents.getLevel().getEntity(buf.readVarInt());
+        dragon.getActiveEffectsMap().clear();
+
+        int series = buf.readVarInt();
+        for (int i = 0; i < series; i++)
+        {
+            byte flags;
+            EffectInstance instance = new EffectInstance(Effect.byId(buf.readByte() & 0xFF),
+                    buf.readVarInt(),
+                    buf.readByte(),
+                    ((flags = buf.readByte()) & 1) == 1,
+                    (flags & 2) == 2,
+                    (flags & 4) == 4);
+            instance.setNoCounter(instance.getDuration() == 32767);
+            dragon.forceAddEffect(instance);
+        }
+
+        return dragon;
     }
 }

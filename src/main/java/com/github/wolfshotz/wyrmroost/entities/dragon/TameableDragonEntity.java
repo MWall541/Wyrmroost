@@ -1220,7 +1220,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public ITextComponent getDisplayName()
     {
-        return new StringTextComponent("container.inventory.dragon");
+        return super.getDisplayName();
     }
 
     @Override
