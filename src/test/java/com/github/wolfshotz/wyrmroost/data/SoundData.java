@@ -15,11 +15,13 @@ import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class SoundData implements IDataProvider
 {
@@ -41,7 +43,8 @@ public class SoundData implements IDataProvider
     public void run(DirectoryCache cache) throws IOException
     {
         registerSounds();
-        if (!registered.isEmpty()) throw new IOException("Unregistered Sounds Events: " + registered);
+        if (!registered.isEmpty())
+            throw new IOException("Unregistered Sounds Events: " + registered.stream().map(ForgeRegistryEntry::getRegistryName).collect(Collectors.toList()));
         IDataProvider.save(GSON, cache, file, gen.getOutputFolder().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
     }
 
@@ -92,6 +95,8 @@ public class SoundData implements IDataProvider
 
         add(WRSounds.MULCH_SOFT.get(), array("wyrmroost:block/mulch/%s", "soft1", "soft2", "soft3"));
         add(WRSounds.MULCH_HARD.get(), array("wyrmroost:block/mulch/%s", b -> b.volumePitch(1, 1.5f), "hard1", "hard2", "hard3"));
+        add(WRSounds.FROSTED_GRASS_SOFT.get(), array("wyrmroost:block/frosted_grass/%s", "soft1", "soft2", "soft3"));
+        add(WRSounds.FROSTED_GRASS_HARD.get(), array("wyrmroost:block/frosted_grass/%s", "hard1", "hard2", "hard3"));
 
         add(WRSounds.WEATHER_SANDSTORM.get(), array("wyrmroost:weather/sandstorm/%s", "sandstorm1", "sandstorm2", "sandstorm3", "sandstorm4", "sandstorm5", "sandstorm6"));
 

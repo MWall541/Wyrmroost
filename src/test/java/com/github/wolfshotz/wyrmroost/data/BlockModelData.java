@@ -8,6 +8,7 @@ import net.minecraft.block.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.state.properties.AttachFace;
+import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
@@ -33,7 +34,9 @@ class BlockModelData extends BlockStateProvider
     {
         vine(WRBlocks.MOSS_VINE.get());
         snowy(WRBlocks.MULCH.get());
+        snowy(WRBlocks.FROSTED_GRASS.get());
         woodGroup(WRBlocks.OSERI_WOOD);
+//        woodGroup(WRBlocks.SAL_WOOD);
     }
 
     @Override
@@ -48,10 +51,9 @@ class BlockModelData extends BlockStateProvider
             if (ignored.contains(block)) continue;
             if (block instanceof FlowingFluidBlock) continue;
 
-            ResourceLocation name = block.getRegistryName();
-            if (!models().existingFileHelper.exists(new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+            if (block instanceof TallFlowerBlock)
             {
-                MISSING_TEXTURES.add(name.getPath().replace("block/", ""));
+                tallFlower(block);
                 continue;
             }
 
@@ -68,6 +70,10 @@ class BlockModelData extends BlockStateProvider
             }
 
             simpleBlock(block);
+
+            ResourceLocation name = block.getRegistryName();
+            if (!models().existingFileHelper.exists(new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
+                MISSING_TEXTURES.add(name.getPath().replace("block/", ""));
         }
 
         if (!MISSING_TEXTURES.isEmpty())
@@ -95,6 +101,16 @@ class BlockModelData extends BlockStateProvider
         doorBlock((DoorBlock) group.getDoor(), modLoc("block/" + door + "_bottom"), modLoc("block/" + door + "_top"));
         sign((StandingSignBlock) group.getSign(), planks);
         sign((WallSignBlock) group.getWallSign(), planks);
+    }
+
+    void tallFlower(Block block)
+    {
+        String path = "block/" + block.getRegistryName().getPath();
+        getVariantBuilder(block).forAllStates(state ->
+        {
+            String half = path + (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER? "_bottom" : "");
+            return ConfiguredModel.builder().modelFile(models().cross(half, modLoc(half))).build();
+        });
     }
 
     void sign(AbstractSignBlock block, ResourceLocation texture)

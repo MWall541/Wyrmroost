@@ -44,9 +44,7 @@ public class GillaBushBlock extends BushBlock
             entity.makeStuckInBlock(state, new Vector3d(0.5d, 0.6d, 0.5d));
             if (!worldIn.isClientSide && (entity.xOld != entity.getX() || entity.zOld != entity.getZ()))
             {
-                double x = Math.abs(entity.getX() - entity.xOld);
-                double z = Math.abs(entity.getZ() - entity.zOld);
-                if (x >= 0.003 || z >= 0.003)
+                if (Math.abs(entity.getX() - entity.xOld) >= 0.003 || Math.abs(entity.getZ() - entity.zOld) >= 0.003)
                     entity.hurt(DamageSource.SWEET_BERRY_BUSH, 1f);
             }
         }

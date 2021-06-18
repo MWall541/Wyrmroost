@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "wyrmroost:mulch",
     "wyrmroost:frosted_grass"
   ]
 }

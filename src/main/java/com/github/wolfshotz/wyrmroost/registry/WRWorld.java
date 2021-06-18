@@ -28,6 +28,7 @@ public class WRWorld
     public static final RegistryKey<Dimension> THE_WYRMROOST = RegistryKey.create(Registry.LEVEL_STEM_REGISTRY, Wyrmroost.id("the_wyrmroost"));
 
     public static final RegistryKey<Biome> TINCTURE_WEALD = biomeKey("tincture_weald");
+    public static final RegistryKey<Biome> FROST_CREVASSE = biomeKey("frost_crevasse");
 
     public static void onBiomeLoad(BiomeLoadingEvent event)
     {

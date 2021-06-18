@@ -59,6 +59,8 @@ public class WRSounds
 
     public static final RegistryObject<SoundEvent> MULCH_SOFT = register("block.mulch.soft");
     public static final RegistryObject<SoundEvent> MULCH_HARD = register("block.mulch.hard");
+    public static final RegistryObject<SoundEvent> FROSTED_GRASS_SOFT = register("block.frosted_grass.soft");
+    public static final RegistryObject<SoundEvent> FROSTED_GRASS_HARD = register("block.frosted_grass.hard");
 
     public static final RegistryObject<SoundEvent> WEATHER_SANDSTORM = register("weather.sandstorm");
 
@@ -78,6 +80,7 @@ public class WRSounds
     public static class Types
     {
         public static final SoundType MULCH = blockSound(1, 1, MULCH_SOFT, MULCH_HARD);
+        public static final SoundType FROSTED_GRASS = blockSound(1, 1, FROSTED_GRASS_SOFT, FROSTED_GRASS_HARD);
 
         private static SoundType blockSound(float volume, float pitch, Supplier<SoundEvent> soft, Supplier<SoundEvent> hard)
         {

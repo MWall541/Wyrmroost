@@ -85,6 +85,12 @@ public class WRBlocks
     public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()), extend().render(() -> RenderType::cutout).flammability(60, 30));
     public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
+    // frost crevasse
+    public static final RegistryObject<Block> FROSTED_GRASS = register("frosted_grass", () -> new GrassBlock(properties(Material.DIRT, WRSounds.Types.FROSTED_GRASS).strength(0.55f)));
+    public static final RegistryObject<Block> CREVASSE_COTTON = register("crevasse_cotton", CrevasseCottonBlock::new, extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> FROST_GOWN = register("frost_gown", () -> new TallFlowerBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission()), extend().render(() -> RenderType::cutout).flammability(30, 80));
+//    public static final WoodGroup SAL_WOOD = new WoodGroup("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
+
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
         return register(name, block, extend());
@@ -136,6 +142,17 @@ public class WRBlocks
                 .sound(sound);
     }
 
+    public static AbstractBlock.Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardness, float resistance, SoundType sound)
+    {
+        return AbstractBlock.Properties
+                .of(material)
+                .harvestTool(harvestTool)
+                .harvestLevel(harvestLevel)
+                .requiresCorrectToolForDrops()
+                .strength(hardness, resistance)
+                .sound(sound);
+    }
+
     public static class Tags
     {
         public static final Map<INamedTag<Block>, INamedTag<Item>> ITEM_BLOCK_TAGS = new HashMap<>();
@@ -146,6 +163,7 @@ public class WRBlocks
         public static final INamedTag<Block> STORAGE_BLOCKS_GEODE = forge("storage_blocks/geode");
         public static final INamedTag<Block> STORAGE_BLOCKS_PLATINUM = forge("storage_blocks/platinum");
         public static final INamedTag<Block> OSERI_LOGS = tag("oseri_logs");
+        public static final INamedTag<Block> SAL_LOGS = tag("sal_logs");
 
         static INamedTag<Block> forge(String path)
         {

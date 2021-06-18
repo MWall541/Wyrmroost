@@ -68,6 +68,8 @@ class LootTableData extends LootTableProvider
             registerOre(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
 
             add(MULCH.get(), createSingleItemTableWithSilkTouch(MULCH.get(), Blocks.DIRT));
+            add(FROSTED_GRASS.get(), createSingleItemTableWithSilkTouch(FROSTED_GRASS.get(), Blocks.DIRT));
+//            add(FORAH_STONE.get(), createSingleItemTableWithSilkTouch(FORAH_STONE.get(), FORAH_COBBLESTONE.get()));
             registerLeaves(BLUE_OSERI_LEAVES.get(), BLUE_OSERI_SAPLING.get());
             registerLeaves(GOLD_OSERI_LEAVES.get(), GOLD_OSERI_SAPLING.get());
             registerLeaves(PINK_OSERI_LEAVES.get(), PINK_OSERI_SAPLING.get());

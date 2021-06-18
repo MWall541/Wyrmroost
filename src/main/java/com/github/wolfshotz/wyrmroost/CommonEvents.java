@@ -20,10 +20,15 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.LightType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -49,6 +54,7 @@ public class CommonEvents
         forgeBus.addListener(CommonEvents::onChangeEquipment);
         forgeBus.addListener(CommonEvents::loadLoot);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
+        forgeBus.addListener(CommonEvents::beforeCropGrowth);
         forgeBus.addListener(EventPriority.HIGH, WRWorld::onBiomeLoad);
     }
 
@@ -119,5 +125,13 @@ public class CommonEvents
                     .name("coin_dragon_inject")
                     .add(CoinDragonItem.getLootEntry())
                     .build());
+    }
+
+    public static void beforeCropGrowth(BlockEvent.CropGrowEvent.Pre event)
+    {
+        IWorld level = event.getWorld();
+        BlockPos pos = event.getPos();
+        if (level.getBiomeName(pos).get() == WRWorld.FROST_CREVASSE && level.getBrightness(LightType.BLOCK, pos) <= 11)
+            event.setResult(Event.Result.DENY);
     }
 }

@@ -251,6 +251,22 @@
     ],
     "subtitle": "subtitles.block.mulch.hard"
   },
+  "block.frosted_grass.soft": {
+    "sounds": [
+      "wyrmroost:block/frosted_grass/soft1",
+      "wyrmroost:block/frosted_grass/soft2",
+      "wyrmroost:block/frosted_grass/soft3"
+    ],
+    "subtitle": "subtitles.block.frosted_grass.soft"
+  },
+  "block.frosted_grass.hard": {
+    "sounds": [
+      "wyrmroost:block/frosted_grass/hard1",
+      "wyrmroost:block/frosted_grass/hard2",
+      "wyrmroost:block/frosted_grass/hard3"
+    ],
+    "subtitle": "subtitles.block.frosted_grass.hard"
+  },
   "weather.sandstorm": {
     "sounds": [
       "wyrmroost:weather/sandstorm/sandstorm1",
