@@ -27,7 +27,6 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -180,7 +179,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .build();
     public static final RegistryObject<EntityType<SoulCrystalEntity>> SOUL_CRYSTAL = WREntities.<SoulCrystalEntity>ofGroup("soul_crystal", SoulCrystalEntity::new, EntityClassification.MISC)
             .size(0.25f, 0.25f)
-            .renderer(() -> m -> new SpriteRenderer<>(m, ClientEvents.getClient().getItemRenderer()))
+            .renderer(() -> ClientEvents::spriteRenderer)
             .trackingRange(4)
             .tickRate(10)
             .build();

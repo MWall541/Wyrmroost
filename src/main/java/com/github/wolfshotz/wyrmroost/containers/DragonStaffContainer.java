@@ -11,7 +11,6 @@ import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.sun.javafx.geom.Vec2d;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -37,7 +36,7 @@ public class DragonStaffContainer extends Container
     public final PlayerInventory playerInv;
     public final List<StaffAction> actions = new ArrayList<>();
     public final List<ITextComponent> toolTips = new ArrayList<>();
-    public final List<Widget> widgets = new ArrayList<>();
+    public final List<CollapsibleWidget> collapsibles = new ArrayList<>();
 
     public DragonStaffContainer(int id, PlayerInventory playerInv, TameableDragonEntity dragon)
     {
@@ -83,16 +82,11 @@ public class DragonStaffContainer extends Container
         return this;
     }
 
-    public DragonStaffContainer addWidget(Widget widget)
-    {
-        if (dragon.level.isClientSide) widgets.add(widget);
-        return this;
-    }
-
     public DragonStaffContainer addCollapsible(CollapsibleWidget widget)
     {
         widget.slots.forEach(this::addSlot);
-        return addWidget(widget);
+        collapsibles.add(widget);
+        return this;
     }
 
     public static Slot3D accessorySlot(DragonInventory i, int index, int x, int y, int z, @Nonnull Vec2d iconUV)

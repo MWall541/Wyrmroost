@@ -1,20 +1,27 @@
 package com.github.wolfshotz.wyrmroost.world.features;
 
+import com.github.wolfshotz.wyrmroost.blocks.GrowingPlantBlock;
 import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
+import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.TreeFeature;
+import net.minecraftforge.common.Tags;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -31,20 +38,22 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
     @Override
     public boolean place(ISeedReader level, ChunkGenerator generator, Random random, BlockPos basePos, Type config)
     {
-        if (level.getBlockState(basePos.below()).getBlock() != WRBlocks.MULCH.get()) return false;
+        if (!level.getBlockState(basePos.below()).is(Tags.Blocks.DIRT)) return false;
 
         int trunkHeight = random.nextInt(5) + 11;
 
-        BlockPos trunkTip = placeTrunk(level, basePos, trunkHeight, config, random);
+        for (BlockPos pos : ModUtils.eachPositionIn(new AxisAlignedBB(basePos).move(0, trunkHeight, 0).inflate(9, 7, 9)))
+            if (!TreeFeature.isFree(level, pos)) return false;
+
+        BlockPos tip = placeTrunk(level, basePos, trunkHeight, config, random);
         placeRoots(level, basePos, random);
-        placeFallenPetals(level, basePos, config, random);
-        placeBranchesAndFooliage(config, level, trunkTip, random);
+        for (Direction baseDir : HORIZONTALS) placeBranchWithFooliage(random.nextInt(5) + 5, trunkHeight, config, level, tip, baseDir, random);
 
         return true;
     }
 
     /**
-     * @return the tip of the trunk that was just placed.
+     * @return the very top of the trunk
      */
     private BlockPos placeTrunk(ISeedReader level, BlockPos basePos, int trunkHeight, Type config, Random random)
     {
@@ -70,13 +79,13 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             }
         }
 
-        return pointer.immutable();
+        return pointer;
     }
 
 
     private void placeRoots(ISeedReader level, BlockPos pos, Random random)
     {
-        int rootCount = random.nextInt(2) + 3; //max 4
+        int rootCount = random.nextInt(2) + 3; // max 4
         int index = random.nextInt(HORIZONTALS.length);
         roots:
         for (int i = 0; i < rootCount; i++)
@@ -93,11 +102,11 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             BlockPos.Mutable gap = pointer.mutable();
             for (int j = 0; j < 3 && noCollision(level, gap.move(Direction.DOWN)); j++)
             {
-                //if the gap is too big to grow roots...
+                // if the gap is too big to grow roots...
                 if (j == 2) continue roots;
             }
 
-            //add base thickness to root
+            // add base thickness to root
             placeLog(level, pointer.relative(offsetDir.getOpposite()));
 
             for (int j = 0; j < rootLength; j++)
@@ -126,10 +135,122 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         }
     }
 
-    private void placeFallenPetals(ISeedReader level, BlockPos basePos, Type config, Random random)
+    private void placeBranchWithFooliage(int baseLength, int heightFromGround, Type fooliageProvider, ISeedReader level, BlockPos base, Direction direction, Random random)
+    {
+        if (baseLength < 2) return;
+        BlockPos.Mutable mutable = base.mutable().move(direction);
+        int horizPath = 0;
+        int vertPath;
+        int branchOff = 2;
+        baseLength += random.nextInt(baseLength) * 0.25;
+        for (int pointer = 0; pointer <= baseLength; pointer++)
+        {
+            BlockPos.Mutable shapePointer = mutable.mutable();
+            if (noCollision(level, shapePointer) || level.getBlockState(mutable).is(BlockTags.LEAVES))
+                placeLog(level, shapePointer);
+            for (Direction dir : ModUtils.DIRECTIONS)
+            {
+                if (random.nextInt(baseLength) != 0 && (noCollision(level, shapePointer.setWithOffset(mutable, dir)) || level.getBlockState(mutable).is(BlockTags.LEAVES)))
+                    placeLog(level, shapePointer);
+            }
+
+            // fooliage
+            if (pointer == baseLength)
+            {
+                int radius = (int) (baseLength * 0.8);
+                int height = radius / 2;
+                placeFooliage(radius, height, heightFromGround, fooliageProvider, level, mutable.move(Direction.DOWN, (height / 2) - 1), random);
+                break; // reached the end of the branch, no need to continue
+            }
+
+            // branch off
+            if (branchOff-- <= 0 && pointer > baseLength * 0.1 && random.nextInt(baseLength) < pointer * 2)
+            {
+                Direction branchOffTowards = random.nextBoolean()? direction.getClockWise() : direction.getCounterClockWise();
+                int branchOffLength = (int) ((baseLength - pointer) * (Mafs.nextDouble(random) + 0.5));
+                branchOff = 2;
+                placeBranchWithFooliage(branchOffLength, heightFromGround, fooliageProvider, level, mutable, branchOffTowards, random); // dirty fucking recursion smh
+            }
+
+            vertPath = MathHelper.clamp(horizPath + (random.nextDouble() < 0.9? 1 : -1), -5, 5);
+            int absV = Math.abs(vertPath);
+            if (absV > 1)
+            {
+                boolean flag = vertPath >= 0;
+                mutable.move(flag? Direction.UP : Direction.DOWN);
+                heightFromGround += (flag? 1 : -1);
+            }
+
+            int prevH = horizPath;
+            horizPath = MathHelper.clamp(horizPath + (random.nextBoolean()? 1 : 0), 0, 5);
+            int absH = Math.abs(horizPath);
+            Direction dirH = horizPath > 0? direction.getClockWise() : direction.getCounterClockWise();
+            if (absH == 5 && prevH != horizPath) direction = dirH;
+            else if (absH > 1) mutable.move(dirH);
+
+            mutable.move(direction);
+        }
+    }
+
+
+    private void placeFooliage(int radius, int height, int heightFromGround, Type fooliageProvider, ISeedReader level, BlockPos center, Random random)
+    {
+        BlockState leaves = fooliageProvider.getLeaves().setValue(LeavesBlock.PERSISTENT, true);
+        BlockState vines = fooliageProvider.getVines();
+        BlockPos.Mutable pointer = new BlockPos.Mutable();
+
+        double invRadius = 1d / radius;
+        double invHeight = 1d / height;
+
+        double nextXn = 0;
+        forX:
+        for (int x = 0; x <= radius; ++x)
+        {
+            final double xn = nextXn;
+            nextXn = (x + 1) * invRadius;
+            double nextYn = 0;
+            forY:
+            for (int y = 0; y <= height; ++y)
+            {
+                final double yn = nextYn;
+                nextYn = (y + 1) * invHeight;
+                double nextZn = 0;
+                for (int z = 0; z <= radius; ++z)
+                {
+                    final double zn = nextZn;
+                    nextZn = (z + 1) * invRadius;
+
+                    double distanceSq = xn * xn + yn * yn + zn * zn;
+                    if (distanceSq >= 1)
+                    {
+                        if (z == 0)
+                        {
+                            if (y == 0) break forX;
+                            break forY;
+                        }
+                        break;
+                    }
+
+                    // calculations for each position are only done on one quarter of the sphere.
+                    // more efficient to negate values than to make 3x more for-loops
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, y, z), leaves, null, random);
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, y, z), leaves, null, random);
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, -y, z), leaves, vines, random);
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, y, -z), leaves, null, random);
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, -y, z), leaves, vines, random);
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, -y, -z), leaves, vines, random);
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, y, -z), leaves, null, random);
+                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, -y, -z), leaves, vines, random);
+                }
+            }
+        }
+
+        placeFallenPetals(level, pointer.setWithOffset(center, 0, -heightFromGround, 0), radius + 2, fooliageProvider, random);
+    }
+
+    private void placeFallenPetals(ISeedReader level, BlockPos basePos, int radius, Type config, Random random)
     {
         BlockPos.Mutable mutable = basePos.mutable();
-        final int radius = random.nextInt(5) + 8;
 
         final double invRadius = 1d / radius;
         final int ceilRadius = (int) Math.ceil(radius);
@@ -161,11 +282,6 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         }
     }
 
-    private void placeBranchesAndFooliage(Type config, ISeedReader level, BlockPos trunkTip, Random random)
-    {
-        setBlock(level, trunkTip.above(), config.getLeaves());
-    }
-
     private static void placeLog(ISeedReader level, BlockPos pos)
     {
         placeLog(level, pos, null, null);
@@ -175,11 +291,8 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
     {
         if (noCollision(level, pos) || level.getBlockState(pos).is(BlockTags.LEAVES))
             level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
-        if (config != null && random.nextBoolean())
-        {
-            pos = pos.above();
-            if (noCollision(level, pos)) level.setBlock(pos, config.getPetals(), 2);
-        }
+        if (config != null && random.nextBoolean() && noCollision(level, pos = pos.above()))
+            level.setBlock(pos, config.getPetals(), 2);
     }
 
     private static void placePetal(ISeedReader level, BlockPos base, BlockState state, Random random)
@@ -194,6 +307,19 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
                 level.setBlock(mutable, state.setValue(PetalsBlock.AXIS, random.nextBoolean()? Direction.Axis.X : Direction.Axis.Z), 2);
                 break;
             }
+        }
+    }
+
+    private static void placeLeavesAndVines(ISeedReader level, BlockPos pos, BlockState leaves, @Nullable BlockState vines, Random random)
+    {
+        if (noCollision(level, pos)) level.setBlock(pos, leaves, 19);
+        if (vines != null && random.nextDouble() < 0.25)
+        {
+            GrowingPlantBlock block = (GrowingPlantBlock) vines.getBlock();
+            BlockPos.Mutable under = pos.mutable();
+            int vineHeight = random.nextInt(9);
+            for (int i = 0; i <= vineHeight && noCollision(level, under.move(Direction.DOWN)); i++)
+                level.setBlock(under, i == vineHeight? block.getStateForPlacement(level) : block.getBodyBlock().defaultBlockState(), 19);
         }
     }
 

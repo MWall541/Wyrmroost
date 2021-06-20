@@ -20,7 +20,7 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
 
     public GrowingPlantBlock(Properties properties, Direction dir, int maxGrowthHeight, Supplier<Block> body)
     {
-        super(properties, dir, WeepingVinesBlock.SHAPE, false, 0.1);
+        super(properties, dir, WeepingVinesBlock.SHAPE, false, 0.045);
         this.body = body;
         this.maxGrowthHeight = maxGrowthHeight;
     }
@@ -87,7 +87,7 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     }
 
     @Override
-    protected Block getBodyBlock()
+    public Block getBodyBlock()
     {
         return body.get();
     }

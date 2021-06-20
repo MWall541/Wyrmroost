@@ -3,7 +3,6 @@ package com.github.wolfshotz.wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.network.packets.*;
 import com.github.wolfshotz.wyrmroost.registry.*;
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -30,7 +29,7 @@ public class Wyrmroost
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         CommonEvents.init();
-        if (FMLEnvironment.dist == Dist.CLIENT) ModUtils.run(() -> ClientEvents::init); //wear protection kids
+        if (FMLEnvironment.dist == Dist.CLIENT) ClientEvents.init();
 
         WREntities.REGISTRY.register(bus);
         WREntities.Attributes.REGISTRY.register(bus);
