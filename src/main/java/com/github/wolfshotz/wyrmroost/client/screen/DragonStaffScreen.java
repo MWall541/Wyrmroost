@@ -75,7 +75,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
 
         pin.x = centerX - 107;
 
-        menu.widgets.forEach(this::addWidget);
+        menu.collapsibles.forEach(this::addWidget);
 
         initButtons();
     }
