@@ -94,7 +94,7 @@ public class SoundData implements IDataProvider
         add(WRSounds.ENTITY_COINDRAGON_IDLE.get(), array("wyrmroost:entity/coin_dragon/%s", "idle1", "idle2", "idle3"));
 
         add(WRSounds.MULCH_SOFT.get(), array("wyrmroost:block/mulch/%s", "soft1", "soft2", "soft3"));
-        add(WRSounds.MULCH_HARD.get(), array("wyrmroost:block/mulch/%s", b -> b.volumePitch(1, 1.5f), "hard1", "hard2", "hard3"));
+        add(WRSounds.MULCH_HARD.get(), array("wyrmroost:block/mulch/%s", "hard1", "hard2", "hard3"));
         add(WRSounds.FROSTED_GRASS_SOFT.get(), array("wyrmroost:block/frosted_grass/%s", "soft1", "soft2", "soft3"));
         add(WRSounds.FROSTED_GRASS_HARD.get(), array("wyrmroost:block/frosted_grass/%s", "hard1", "hard2", "hard3"));
 
@@ -188,6 +188,18 @@ public class SoundData implements IDataProvider
         public SoundBuilder volumePitch(float volume, float pitch)
         {
             this.volume = volume;
+            this.pitch = pitch;
+            return this;
+        }
+
+        public SoundBuilder volume(float volume)
+        {
+            this.volume = volume;
+            return this;
+        }
+
+        public SoundBuilder pitch(float pitch)
+        {
             this.pitch = pitch;
             return this;
         }

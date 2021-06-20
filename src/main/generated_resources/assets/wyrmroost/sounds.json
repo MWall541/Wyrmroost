@@ -236,18 +236,9 @@
   },
   "block.mulch.hard": {
     "sounds": [
-      {
-        "name": "wyrmroost:block/mulch/hard1",
-        "pitch": 1.5
-      },
-      {
-        "name": "wyrmroost:block/mulch/hard2",
-        "pitch": 1.5
-      },
-      {
-        "name": "wyrmroost:block/mulch/hard3",
-        "pitch": 1.5
-      }
+      "wyrmroost:block/mulch/hard1",
+      "wyrmroost:block/mulch/hard2",
+      "wyrmroost:block/mulch/hard3"
     ],
     "subtitle": "subtitles.block.mulch.hard"
   },
