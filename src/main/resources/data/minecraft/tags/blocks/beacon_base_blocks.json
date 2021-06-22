@@ -1,7 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#forge:storage_blocks/geode",
-    "#forge:storage_blocks/platinum"
-  ]
-}

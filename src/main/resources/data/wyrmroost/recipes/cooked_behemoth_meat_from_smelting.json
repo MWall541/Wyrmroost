@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "wyrmroost:raw_behemoth_meat"
-  },
-  "result": "wyrmroost:cooked_behemoth_meat",
-  "experience": 0.5,
-  "cookingtime": 250
-}

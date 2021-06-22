@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:campfire_cooking",
-  "ingredient": {
-    "item": "wyrmroost:raw_apex_meat"
-  },
-  "result": "wyrmroost:cooked_apex_meat",
-  "experience": 0.35,
-  "cookingtime": 700
-}
