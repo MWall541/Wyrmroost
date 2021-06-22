@@ -91,9 +91,11 @@ public class TagData
             cloneToItem(BlockTags.LEAVES, ItemTags.LEAVES).add(WRBlocks.BLUE_OSERI_LEAVES.get(), WRBlocks.GOLD_OSERI_LEAVES.get(), WRBlocks.PINK_OSERI_LEAVES.get(), WRBlocks.PURPLE_OSERI_LEAVES.get());
             cloneToItem(BlockTags.SAPLINGS, ItemTags.SAPLINGS).add(WRBlocks.BLUE_OSERI_SAPLING.get(), WRBlocks.GOLD_OSERI_SAPLING.get(), WRBlocks.PINK_OSERI_SAPLING.get(), WRBlocks.PURPLE_OSERI_SAPLING.get());
             cloneToItem(BlockTags.SMALL_FLOWERS, ItemTags.SMALL_FLOWERS).add(WRBlocks.CREVASSE_COTTON.get());
+            tag(BlockTags.CLIMBABLE).add(WRBlocks.MOSS_VINE.get());
             tag(BlockTags.ENDERMAN_HOLDABLE).add(WRBlocks.FROSTED_GRASS.get());
             tag(BlockTags.BAMBOO_PLANTABLE_ON).add(WRBlocks.FROSTED_GRASS.get());
             tag(BlockTags.VALID_SPAWN).add(WRBlocks.FROSTED_GRASS.get());
+
             tagWoodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS, true);
 //            tagWoodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.SAL_LOGS, true);
         }

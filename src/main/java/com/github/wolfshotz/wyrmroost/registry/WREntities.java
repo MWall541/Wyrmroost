@@ -30,17 +30,16 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -52,6 +51,7 @@ import java.util.function.*;
 import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS;
 import static net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType.ON_GROUND;
 
+@SuppressWarnings("unchecked")
 public class WREntities<E extends Entity> extends EntityType<E>
 {
     public static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, Wyrmroost.MOD_ID);
@@ -190,7 +190,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
     @Nullable public final Consumer<BiomeLoadingEvent> spawnBiomes;
     @Nullable public final DragonEggProperties eggProperties;
 
-    public WREntities(EntityType.IFactory<E> factory, EntityClassification group, boolean serialize, boolean summon, boolean fireImmune, boolean spawnsFarFromPlayer, ImmutableSet<Block> immuneTo, EntitySize size, int trackingRange, int tickRate, Predicate<EntityType<?>> velocityUpdateSupplier, ToIntFunction<EntityType<?>> trackingRangeSupplier, ToIntFunction<EntityType<?>> updateIntervalSupplier, BiFunction<FMLPlayMessages.SpawnEntity, World, E> customClientFactory, Supplier<IRenderFactory<E>> renderFactory, AttributeModifierMap.MutableAttribute attributes, SpawnPlacementEntry spawnPlacement, Consumer<BiomeLoadingEvent> spawnBiomes, DragonEggProperties props)
+    public WREntities(EntityType.IFactory<E> factory, EntityClassification group, boolean serialize, boolean summon, boolean fireImmune, boolean spawnsFarFromPlayer, ImmutableSet<Block> immuneTo, EntitySize size, int trackingRange, int tickRate, Predicate<EntityType<?>> velocityUpdateSupplier, ToIntFunction<EntityType<?>> trackingRangeSupplier, ToIntFunction<EntityType<?>> updateIntervalSupplier, BiFunction<FMLPlayMessages.SpawnEntity, World, E> customClientFactory, Supplier<IRenderFactory<E>> renderFactory, AttributeModifierMap.MutableAttribute attributes, SpawnPlacementEntry<E> spawnPlacement, Consumer<BiomeLoadingEvent> spawnBiomes, DragonEggProperties props)
     {
         super(factory, group, serialize, summon, fireImmune, spawnsFarFromPlayer, immuneTo, size, trackingRange, tickRate, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
         this.renderer = renderFactory;
@@ -203,9 +203,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
     @SuppressWarnings("unchecked")
     public void callBack()
     {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderingRegistry.registerEntityRenderingHandler(this, renderer.get()));
-        if (attributes != null)
-            GlobalEntityTypeAttributes.put((EntityType<? extends LivingEntity>) this, attributes.build());
+        if (FMLEnvironment.dist == Dist.CLIENT) RenderingRegistry.registerEntityRenderingHandler(this, renderer.get());
         if (spawnPlacement != null)
         {
             SpawnPlacementEntry<MobEntity> entry = (SpawnPlacementEntry<MobEntity>) spawnPlacement;
@@ -271,9 +269,9 @@ public class WREntities<E extends Entity> extends EntityType<E>
             this.canSpawnFarFromPlayer = group == EntityClassification.CREATURE || group == EntityClassification.MISC;
         }
 
-        private Builder<T> size(float p_220321_1_, float p_220321_2_)
+        private Builder<T> size(float width, float height)
         {
-            this.size = EntitySize.scalable(p_220321_1_, p_220321_2_);
+            this.size = EntitySize.scalable(width, height);
             return this;
         }
 
@@ -295,9 +293,9 @@ public class WREntities<E extends Entity> extends EntityType<E>
             return this;
         }
 
-        private Builder<T> immuneTo(Block... p_233607_1_)
+        private Builder<T> immuneTo(Block... blocks)
         {
-            this.immuneTo = ImmutableSet.copyOf(p_233607_1_);
+            this.immuneTo = ImmutableSet.copyOf(blocks);
             return this;
         }
 
@@ -352,7 +350,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
 
         private <F extends MobEntity> Builder<T> spawnPlacement(EntitySpawnPlacementRegistry.PlacementType type, Heightmap.Type height, EntitySpawnPlacementRegistry.IPlacementPredicate<F> predicate)
         {
-            this.spawnPlacement = new SpawnPlacementEntry(height, type, predicate);
+            this.spawnPlacement = new SpawnPlacementEntry<>(height, type, ((EntitySpawnPlacementRegistry.IPlacementPredicate<T>) predicate));
             return this;
         }
 

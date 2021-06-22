@@ -25,6 +25,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -48,6 +49,7 @@ public class CommonEvents
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
 
         bus.addListener(CommonEvents::commonSetup);
+        bus.addListener(CommonEvents::bindEntityAttributes);
         bus.addListener(WRConfig::loadConfig);
 
         forgeBus.addListener(CommonEvents::debugStick);
@@ -75,6 +77,20 @@ public class CommonEvents
 
             for (WRBlocks.BlockExtension extension : WRBlocks.EXTENSIONS) extension.callBack();
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void bindEntityAttributes(EntityAttributeCreationEvent event)
+    {
+        for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
+        {
+            if (entry instanceof WREntities)
+            {
+                WREntities<?> e = (WREntities<?>) entry;
+                if (e.attributes != null) event.put(((WREntities<LivingEntity>) e), e.attributes.build());
+            }
+        }
+
     }
 
     // =====================

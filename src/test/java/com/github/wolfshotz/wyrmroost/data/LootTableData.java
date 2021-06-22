@@ -63,17 +63,17 @@ class LootTableData extends LootTableProvider
         @Override
         protected void addTables()
         {
-            registerOre(BLUE_GEODE_ORE.get(), WRItems.BLUE_GEODE.get());
-            registerOre(RED_GEODE_ORE.get(), WRItems.RED_GEODE.get());
-            registerOre(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
+            ore(BLUE_GEODE_ORE.get(), WRItems.BLUE_GEODE.get());
+            ore(RED_GEODE_ORE.get(), WRItems.RED_GEODE.get());
+            ore(PURPLE_GEODE_ORE.get(), WRItems.PURPLE_GEODE.get());
 
-            add(MULCH.get(), createSingleItemTableWithSilkTouch(MULCH.get(), Blocks.DIRT));
-            add(FROSTED_GRASS.get(), createSingleItemTableWithSilkTouch(FROSTED_GRASS.get(), Blocks.DIRT));
-//            add(FORAH_STONE.get(), createSingleItemTableWithSilkTouch(FORAH_STONE.get(), FORAH_COBBLESTONE.get()));
-            registerLeaves(BLUE_OSERI_LEAVES.get(), BLUE_OSERI_SAPLING.get());
-            registerLeaves(GOLD_OSERI_LEAVES.get(), GOLD_OSERI_SAPLING.get());
-            registerLeaves(PINK_OSERI_LEAVES.get(), PINK_OSERI_SAPLING.get());
-            registerLeaves(PURPLE_OSERI_LEAVES.get(), PURPLE_OSERI_SAPLING.get());
+            silkTouch(MULCH.get(), Blocks.DIRT);
+            silkTouch(FROSTED_GRASS.get(), Blocks.DIRT);
+            leaves(BLUE_OSERI_LEAVES.get(), BLUE_OSERI_SAPLING.get());
+            leaves(GOLD_OSERI_LEAVES.get(), GOLD_OSERI_SAPLING.get());
+            leaves(PINK_OSERI_LEAVES.get(), PINK_OSERI_SAPLING.get());
+            leaves(PURPLE_OSERI_LEAVES.get(), PURPLE_OSERI_SAPLING.get());
+            leaves(WHITE_OSERI_LEAVES.get(), WHITE_OSERI_SAPLING.get());
 
             // All blocks that have not been given special treatment above, drop themselves!
             for (Block block : getKnownBlocks())
@@ -102,14 +102,19 @@ class LootTableData extends LootTableProvider
             return ModUtils.getRegistryEntries(REGISTRY);
         }
 
-        private void registerLeaves(Block leaves, Block sapling)
+        private void leaves(Block leaves, Block sapling)
         {
             add(leaves, createOakLeavesDrops(leaves, sapling, 0.05f, 0.0625f, 0.083333336f, 0.1f));
         }
 
-        private void registerOre(Block ore, Item output)
+        private void ore(Block ore, Item output)
         {
             add(ore, createOreDrop(ore, output));
+        }
+
+        private void silkTouch(Block block, IItemProvider orElse)
+        {
+            add(block, createSingleItemTableWithSilkTouch(block, orElse));
         }
 
         @Override

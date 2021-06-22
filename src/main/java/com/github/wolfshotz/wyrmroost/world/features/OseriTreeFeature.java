@@ -8,7 +8,6 @@ import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.serialization.Codec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -26,6 +25,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import static com.github.wolfshotz.wyrmroost.util.ModUtils.DIRECTIONS;
 import static com.github.wolfshotz.wyrmroost.util.ModUtils.HORIZONTALS;
 
 public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
@@ -72,10 +72,10 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             BlockPos.Mutable shape = pointer.mutable();
             for (Direction direction : ModUtils.DIRECTIONS)
             {
-                placeLog(level, shape.setWithOffset(pointer, direction), config, random);
+                placeLog(level, shape.setWithOffset(pointer, direction));
                 if (direction.getAxis().isHorizontal() && random.nextInt((int) (trunkHeight * 0.75)) >= i)
                     // decrease thickness based on height (higher up = less thick)
-                    placeLog(level, shape.move(direction.getClockWise()), config, random);
+                    placeLog(level, shape.move(direction.getClockWise()));
             }
         }
 
@@ -146,11 +146,11 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         for (int pointer = 0; pointer <= baseLength; pointer++)
         {
             BlockPos.Mutable shapePointer = mutable.mutable();
-            if (noCollision(level, shapePointer) || level.getBlockState(mutable).is(BlockTags.LEAVES))
+            if (replaceable(level, shapePointer))
                 placeLog(level, shapePointer);
             for (Direction dir : ModUtils.DIRECTIONS)
             {
-                if (random.nextInt(baseLength) != 0 && (noCollision(level, shapePointer.setWithOffset(mutable, dir)) || level.getBlockState(mutable).is(BlockTags.LEAVES)))
+                if (random.nextInt(baseLength) != 0 && replaceable(level, shapePointer.setWithOffset(mutable, dir)))
                     placeLog(level, shapePointer);
             }
 
@@ -158,7 +158,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             if (pointer == baseLength)
             {
                 int radius = (int) (baseLength * 0.8);
-                int height = radius / 2;
+                int height = radius / 2 + 1;
                 placeFooliage(radius, height, heightFromGround, fooliageProvider, level, mutable.move(Direction.DOWN, (height / 2) - 1), random);
                 break; // reached the end of the branch, no need to continue
             }
@@ -182,7 +182,7 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
             }
 
             int prevH = horizPath;
-            horizPath = MathHelper.clamp(horizPath + (random.nextBoolean()? 1 : 0), 0, 5);
+            horizPath = MathHelper.clamp(horizPath + (random.nextBoolean()? 1 : 0), -5, 5);
             int absH = Math.abs(horizPath);
             Direction dirH = horizPath > 0? direction.getClockWise() : direction.getCounterClockWise();
             if (absH == 5 && prevH != horizPath) direction = dirH;
@@ -195,9 +195,17 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
     private void placeFooliage(int radius, int height, int heightFromGround, Type fooliageProvider, ISeedReader level, BlockPos center, Random random)
     {
-        BlockState leaves = fooliageProvider.getLeaves().setValue(LeavesBlock.PERSISTENT, true);
+        BlockState leaves = fooliageProvider.getLeaves();
         BlockState vines = fooliageProvider.getVines();
         BlockPos.Mutable pointer = new BlockPos.Mutable();
+
+        // add tiny branches in every direction to reduce loss of leaves
+        for (Direction direction : DIRECTIONS)
+        {
+            pointer.set(center);
+            int distance = (direction.getAxis().isHorizontal()? radius : height) / 2;
+            for (int i = 0; i < distance; i++) placeLog(level, pointer.move(direction));
+        }
 
         double invRadius = 1d / radius;
         double invHeight = 1d / height;
@@ -233,24 +241,40 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
 
                     // calculations for each position are only done on one quarter of the sphere.
                     // more efficient to negate values than to make 3x more for-loops
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, y, z), leaves, null, random);
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, y, z), leaves, null, random);
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, -y, z), leaves, vines, random);
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, y, -z), leaves, null, random);
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, -y, z), leaves, vines, random);
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, x, -y, -z), leaves, vines, random);
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, y, -z), leaves, null, random);
-                    placeLeavesAndVines(level, pointer.setWithOffset(center, -x, -y, -z), leaves, vines, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, x, y, z), leaves, null, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, -x, y, z), leaves, null, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, x, -y, z), leaves, vines, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, x, y, -z), leaves, null, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, -x, -y, z), leaves, vines, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, x, -y, -z), leaves, vines, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, -x, y, -z), leaves, null, random);
+                    placeLeavesAndVines(level, distanceSq, pointer.setWithOffset(center, -x, -y, -z), leaves, vines, random);
                 }
             }
         }
 
-        placeFallenPetals(level, pointer.setWithOffset(center, 0, -heightFromGround, 0), radius + 2, fooliageProvider, random);
+        placeFallenPetals(level, center, heightFromGround, radius + 2, fooliageProvider, random);
     }
 
-    private void placeFallenPetals(ISeedReader level, BlockPos basePos, int radius, Type config, Random random)
+    private static void placeLeavesAndVines(ISeedReader level, double distanceSq, BlockPos offset, BlockState leaves, @Nullable BlockState vines, Random random)
+    {
+        if (distanceSq >= 0.85 && random.nextDouble() > 0.4) return;
+
+        if (noCollision(level, offset)) level.setBlock(offset, leaves, 19);
+        if (vines != null && random.nextDouble() < 0.25)
+        {
+            BlockPos.Mutable under = offset.mutable();
+            GrowingPlantBlock block = (GrowingPlantBlock) vines.getBlock();
+            int vineHeight = random.nextInt(9);
+            for (int i = 0; i <= vineHeight && noCollision(level, under.move(Direction.DOWN)); i++)
+                level.setBlock(under, i == vineHeight? block.getStateForPlacement(level) : block.getBodyBlock().defaultBlockState(), 19);
+        }
+    }
+
+    private void placeFallenPetals(ISeedReader level, BlockPos basePos, int maxHeight, int radius, Type config, Random random)
     {
         BlockPos.Mutable mutable = basePos.mutable();
+        BlockState petals = config.getPetals();
 
         final double invRadius = 1d / radius;
         final int ceilRadius = (int) Math.ceil(radius);
@@ -274,34 +298,22 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
                     break;
                 }
 
-                placePetal(level, mutable.setWithOffset(basePos, x, 0, z), config.getPetals(), random);
-                placePetal(level, mutable.setWithOffset(basePos, -x, 0, z), config.getPetals(), random);
-                placePetal(level, mutable.setWithOffset(basePos, x, 0, -z), config.getPetals(), random);
-                placePetal(level, mutable.setWithOffset(basePos, -x, 0, -z), config.getPetals(), random);
+                placePetal(level, mutable.setWithOffset(basePos, x, 0, z), petals, maxHeight, random);
+                placePetal(level, mutable.setWithOffset(basePos, -x, 0, z), petals, maxHeight, random);
+                placePetal(level, mutable.setWithOffset(basePos, x, 0, -z), petals, maxHeight, random);
+                placePetal(level, mutable.setWithOffset(basePos, -x, 0, -z), petals, maxHeight, random);
             }
         }
     }
 
-    private static void placeLog(ISeedReader level, BlockPos pos)
-    {
-        placeLog(level, pos, null, null);
-    }
-
-    private static void placeLog(ISeedReader level, BlockPos pos, Type config, Random random)
-    {
-        if (noCollision(level, pos) || level.getBlockState(pos).is(BlockTags.LEAVES))
-            level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
-        if (config != null && random.nextBoolean() && noCollision(level, pos = pos.above()))
-            level.setBlock(pos, config.getPetals(), 2);
-    }
-
-    private static void placePetal(ISeedReader level, BlockPos base, BlockState state, Random random)
+    private static void placePetal(ISeedReader level, BlockPos base, BlockState state, int maxHeight, Random random)
     {
         if (random.nextDouble() > 0.25) return;
+        maxHeight += 2;
         BlockPos.Mutable mutable = base.mutable();
-        for (int i = -3; i <= 2; i++)
+        for (int i = 0; i <= maxHeight; i++)
         {
-            mutable.setY(base.getY() + i);
+            mutable.setY(base.getY() - i);
             if (Block.isFaceFull(level.getBlockState(mutable).getCollisionShape(level, mutable), Direction.UP) && level.getBlockState(mutable.move(Direction.UP)).isAir())
             {
                 level.setBlock(mutable, state.setValue(PetalsBlock.AXIS, random.nextBoolean()? Direction.Axis.X : Direction.Axis.Z), 2);
@@ -310,22 +322,21 @@ public class OseriTreeFeature extends Feature<OseriTreeFeature.Type>
         }
     }
 
-    private static void placeLeavesAndVines(ISeedReader level, BlockPos pos, BlockState leaves, @Nullable BlockState vines, Random random)
+
+    private static void placeLog(ISeedReader level, BlockPos pos)
     {
-        if (noCollision(level, pos)) level.setBlock(pos, leaves, 19);
-        if (vines != null && random.nextDouble() < 0.25)
-        {
-            GrowingPlantBlock block = (GrowingPlantBlock) vines.getBlock();
-            BlockPos.Mutable under = pos.mutable();
-            int vineHeight = random.nextInt(9);
-            for (int i = 0; i <= vineHeight && noCollision(level, under.move(Direction.DOWN)); i++)
-                level.setBlock(under, i == vineHeight? block.getStateForPlacement(level) : block.getBodyBlock().defaultBlockState(), 19);
-        }
+        if (replaceable(level, pos)) level.setBlock(pos, WRBlocks.OSERI_WOOD.getWood().defaultBlockState(), 2);
     }
 
     public static boolean noCollision(ISeedReader level, BlockPos pos)
     {
         return level.getBlockState(pos).getCollisionShape(level, pos).isEmpty();
+    }
+
+    public static boolean replaceable(ISeedReader level, BlockPos pos)
+    {
+        BlockState state = level.getBlockState(pos);
+        return state.getCollisionShape(level, pos).isEmpty() || state.is(BlockTags.LEAVES);
     }
 
     public enum Type implements IFeatureConfig

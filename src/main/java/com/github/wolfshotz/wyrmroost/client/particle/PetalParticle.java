@@ -2,11 +2,16 @@ package com.github.wolfshotz.wyrmroost.client.particle;
 
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.particle.data.ColoredParticleData;
+import com.github.wolfshotz.wyrmroost.registry.WRParticles;
 import net.minecraft.client.particle.IAnimatedSprite;
 import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.SpriteTexturedParticle;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+
+import java.util.Random;
 
 public class PetalParticle extends SpriteTexturedParticle
 {
@@ -32,6 +37,20 @@ public class PetalParticle extends SpriteTexturedParticle
         quadSize = 0.15f * (random.nextFloat() * 0.5f + 0.5f) * 2.0f;
 
         pickSprite(sprite);
+    }
+
+    public static void play(World level, BlockPos pos, Random random, int color)
+    {
+        if (!level.getBlockState(pos = pos.below()).isCollisionShapeFullBlock(level, pos))
+        {
+            level.addParticle(new ColoredParticleData(WRParticles.PETAL.get(), color),
+                    pos.getX() + random.nextDouble(),
+                    pos.getY() + 0.75,
+                    pos.getZ() + random.nextDouble(),
+                    0,
+                    0,
+                    0);
+        }
     }
 
     @Override

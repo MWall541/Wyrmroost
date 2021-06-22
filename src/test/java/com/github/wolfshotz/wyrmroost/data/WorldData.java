@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
+import com.github.wolfshotz.wyrmroost.world.features.RoofHangingFeature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.serialization.Codec;
@@ -90,11 +91,13 @@ public abstract class WorldData<T> implements IDataProvider
             add("better_water_lake", WRWorld.Features.BETTER_LAKE.get().configured(new BlockStateFeatureConfig(Blocks.WATER.defaultBlockState())).decorated(Placement.WATER_LAKE.configured(new ChanceConfig(4))));
             add("patch_gilla_bush", Feature.RANDOM_PATCH.configured(new BlockClusterFeatureConfig.Builder(new SimpleBlockStateProvider(WRBlocks.GILLA.get().defaultBlockState()), SimpleBlockPlacer.INSTANCE).noProjection().build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(7));
             add("tincture_flowers", Feature.FLOWER.configured(new BlockClusterFeatureConfig.Builder(ForestFlowerBlockStateProvider.INSTANCE, SimpleBlockPlacer.INSTANCE).build()).decorated(Features.Placements.ADD_32).decorated(Features.Placements.HEIGHTMAP_SQUARE).count(10));
-            add("blue_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.BLUE).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(20));
+            add("blue_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.BLUE).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(17));
             add("gold_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.GOLD).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(6));
-            add("pink_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.PINK).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(5));
-            add("purple_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.PURPLE).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(5));
-            add("white_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.WHITE).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(3));
+            add("pink_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.PINK).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(4).count(2));
+            add("purple_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.PURPLE).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(4).count(2));
+            add("white_oseri_tree", WRWorld.Features.OSERI_TREE.get().configured(OseriTreeFeature.Type.WHITE).decorated(Features.Placements.HEIGHTMAP_SQUARE).chance(2).count(2));
+            add("moss_vines", WRWorld.Features.MOSS_VINES.get().configured(NoFeatureConfig.INSTANCE).squared().count(35));
+            add("silver_moss", WRWorld.Features.ROOF_HANGING.get().configured(new RoofHangingFeature.Config(WRBlocks.SILVER_MOSS.get(), 63)).squared().count(30));
         }
     }
 

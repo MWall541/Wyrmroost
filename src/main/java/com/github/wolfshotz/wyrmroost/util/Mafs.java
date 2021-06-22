@@ -36,6 +36,16 @@ public final class Mafs
     }
 
     /**
+     * Returns a new pseudo random inteeger value constrained to the values of the negation of {@code bounds}
+     * and postive {@code bounds}
+     */
+    public static int nextInt(Random rand, int bounds)
+    {
+        bounds = bounds * 2 - 1;
+        return rand.nextInt(bounds) - (bounds / 2);
+    }
+
+    /**
      * A good way to get a position offset by the direction of a yaw angle.
      */
     public static Vector3d getYawVec(float yaw, double xOffset, double zOffset)

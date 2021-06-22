@@ -18,9 +18,9 @@ public class GrowingPlantBlock extends AbstractTopPlantBlock
     private final Supplier<Block> body;
     private final int maxGrowthHeight;
 
-    public GrowingPlantBlock(Properties properties, Direction dir, int maxGrowthHeight, Supplier<Block> body)
+    public GrowingPlantBlock(Properties properties, Direction dir, int maxGrowthHeight, double growthChance, Supplier<Block> body)
     {
-        super(properties, dir, WeepingVinesBlock.SHAPE, false, 0.045);
+        super(properties, dir, WeepingVinesBlock.SHAPE, false, growthChance);
         this.body = body;
         this.maxGrowthHeight = maxGrowthHeight;
     }

@@ -1,0 +1,24 @@
+{
+  "config": {
+    "feature": {
+      "config": {
+        "feature": {
+          "config": {},
+          "type": "wyrmroost:moss_vines"
+        },
+        "decorator": {
+          "config": {},
+          "type": "minecraft:square"
+        }
+      },
+      "type": "minecraft:decorated"
+    },
+    "decorator": {
+      "config": {
+        "count": 35
+      },
+      "type": "minecraft:count"
+    }
+  },
+  "type": "minecraft:decorated"
+}

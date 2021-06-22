@@ -79,7 +79,9 @@
       "minecraft:patch_pumpkin",
       "minecraft:spring_water",
       "minecraft:spring_lava",
-      "wyrmroost:patch_gilla_bush"
+      "wyrmroost:patch_gilla_bush",
+      "wyrmroost:moss_vines",
+      "wyrmroost:silver_moss"
     ],
     [
       "minecraft:freeze_top_layer"

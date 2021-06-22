@@ -2,8 +2,10 @@ package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
+import com.github.wolfshotz.wyrmroost.world.MossVinesFeature;
 import com.github.wolfshotz.wyrmroost.world.features.NoExposureReplacementFeature;
 import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
+import com.github.wolfshotz.wyrmroost.world.features.RoofHangingFeature;
 import com.github.wolfshotz.wyrmroost.world.features.SurfaceAwareLakeFeature;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -69,6 +71,8 @@ public class WRWorld
         public static final RegistryObject<Feature<ReplaceBlockConfig>> NO_EXPOSE_REPLACE = REGISTRY.register("no_expose_replace", NoExposureReplacementFeature::new);
         public static final RegistryObject<Feature<BlockStateFeatureConfig>> BETTER_LAKE = REGISTRY.register("better_lake", SurfaceAwareLakeFeature::new);
         public static final RegistryObject<Feature<OseriTreeFeature.Type>> OSERI_TREE = REGISTRY.register("oseri_tree", OseriTreeFeature::new);
+        public static final RegistryObject<Feature<NoFeatureConfig>> MOSS_VINES = REGISTRY.register("moss_vines", MossVinesFeature::new);
+        public static final RegistryObject<Feature<RoofHangingFeature.Config>> ROOF_HANGING = REGISTRY.register("roof_hanging", RoofHangingFeature::new);
 
         //these are for use mainly in code, for cases where it's impossible to use jsons (for overworld adding, trees for saplings, etc.)
         public static final Lazy<ConfiguredFeature<?, ?>> CONFIGURED_PLATINUM_ORE = configured("ore_platinum", () -> Feature.ORE.configured(new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, WRBlocks.PLATINUM_ORE.get().defaultBlockState(), 9)).range(64).squared().count(10));

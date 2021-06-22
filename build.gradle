@@ -19,6 +19,10 @@ archivesBaseName = "$project.archiveBaseName"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
+sourceSets {
+    main.resources.srcDirs += 'src/main/generated_resources'
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
 }
@@ -60,10 +64,6 @@ minecraft {
             }
         }
     }
-}
-
-sourceSets {
-    main.resources.srcDirs += 'src/main/generated_resources'
 }
 
 jar {

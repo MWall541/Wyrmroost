@@ -3,30 +3,41 @@
     "feature": {
       "config": {
         "feature": {
-          "config": "purple",
-          "type": "wyrmroost:oseri_tree"
-        },
-        "decorator": {
           "config": {
-            "outer": {
-              "config": {},
-              "type": "minecraft:square"
+            "feature": {
+              "config": "purple",
+              "type": "wyrmroost:oseri_tree"
             },
-            "inner": {
-              "config": {},
-              "type": "minecraft:heightmap"
+            "decorator": {
+              "config": {
+                "outer": {
+                  "config": {},
+                  "type": "minecraft:square"
+                },
+                "inner": {
+                  "config": {},
+                  "type": "minecraft:heightmap"
+                }
+              },
+              "type": "minecraft:decorated"
             }
           },
           "type": "minecraft:decorated"
+        },
+        "decorator": {
+          "config": {
+            "chance": 4
+          },
+          "type": "minecraft:chance"
         }
       },
       "type": "minecraft:decorated"
     },
     "decorator": {
       "config": {
-        "chance": 5
+        "count": 2
       },
-      "type": "minecraft:chance"
+      "type": "minecraft:count"
     }
   },
   "type": "minecraft:decorated"
