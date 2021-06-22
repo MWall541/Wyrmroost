@@ -2,11 +2,7 @@ package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
-import com.github.wolfshotz.wyrmroost.world.MossVinesFeature;
-import com.github.wolfshotz.wyrmroost.world.features.NoExposureReplacementFeature;
-import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
-import com.github.wolfshotz.wyrmroost.world.features.RoofHangingFeature;
-import com.github.wolfshotz.wyrmroost.world.features.SurfaceAwareLakeFeature;
+import com.github.wolfshotz.wyrmroost.world.features.*;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
