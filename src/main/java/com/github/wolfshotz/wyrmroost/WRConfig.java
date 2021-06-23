@@ -17,6 +17,9 @@ public class WRConfig
 {
     public static final ForgeConfigSpec COMMON;
     public static final ForgeConfigSpec.BooleanValue DEBUG_MODE;
+    public static final ForgeConfigSpec.IntValue PLATINUM_ORE_CHANCE;
+    public static final ForgeConfigSpec.IntValue PLATINUM_ORE_SIZE;
+    public static final ForgeConfigSpec.IntValue PLATINUM_ORE_MAX_HEIGHT;
 
     public static final ForgeConfigSpec SERVER;
     public static final ForgeConfigSpec.DoubleValue BREATH_FIRE_SPREAD;
@@ -77,15 +80,23 @@ public class WRConfig
     {
         ForgeConfigSpec.Builder common = new ForgeConfigSpec.Builder();
         common.comment("If your looking for more options, check `wyrmroost-client.toml` or, in `{World Name}/serverconfig/wyrmroost-server.toml`",
-                "Wyrmroost General Options")
-                .push("general");
+                "Wyrmroost General Options");
+
+        common.push("general");
+
         DEBUG_MODE = common.comment("Do not enable this unless you are told to!")
                 .translation("config.wyrmroost.debug")
                 .define("debug_mode", false);
 
         common.pop();
-        COMMON = common.build();
 
+        common.push("ores");
+
+        PLATINUM_ORE_SIZE = common.comment("Size of Platinum Ore pockets [0-100, default: 9]").defineInRange("platinumOreSize", 9, 0, 100);
+        PLATINUM_ORE_CHANCE = common.comment("Chances of Platinum Ore pocket being generated [0-100, default: 10]").defineInRange("platinumOreChance", 10, 0, 100);
+        PLATINUM_ORE_MAX_HEIGHT = common.comment("Maximal height for Platinum Ore pocket generation [0-255, default: 64]").defineInRange("platinumOreMaxHeight", 64, 0, 255);
+
+        COMMON = common.build();
 
         ForgeConfigSpec.Builder server = new ForgeConfigSpec.Builder();
         server.comment("Wyrmroost Server Options",
