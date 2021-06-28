@@ -10,7 +10,7 @@
       "tag": "forge:ingots/platinum"
     },
     "|": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {

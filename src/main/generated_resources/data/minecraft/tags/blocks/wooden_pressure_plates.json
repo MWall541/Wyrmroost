@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "wyrmroost:oseri_pressure_plate"
+    "wyrmroost:oseri_pressure_plate",
+    "wyrmroost:sal_pressure_plate"
   ]
 }

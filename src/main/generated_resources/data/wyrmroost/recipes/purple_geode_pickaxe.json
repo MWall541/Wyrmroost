@@ -10,7 +10,7 @@
       "item": "wyrmroost:purple_geode"
     },
     "|": {
-      "item": "minecraft:stick"
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {

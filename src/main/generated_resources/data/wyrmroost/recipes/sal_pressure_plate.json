@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:sal_planks"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:sal_pressure_plate"
+  }
+}

@@ -41,8 +41,9 @@ class ItemModelData extends ItemModelProvider
         final ModelFile bucket = uncheckedModel("forge:item/bucket");
 
         item(WRItems.DRAGON_STAFF.get()).parent(uncheckedModel("item/handheld"));
-        customInventoryItem(WRBlocks.OSERI_WOOD.getFence(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "fence");
-        customInventoryItem(WRBlocks.OSERI_WOOD.getButton(), fromBlockTexture(WRBlocks.OSERI_WOOD.getPlanks()), "button");
+
+        fenceAndButton(WRBlocks.OSERI_WOOD);
+        fenceAndButton(WRBlocks.SAL_WOOD);
 
         getBuilder("desert_wyrm_alive").parent(itemGenerated).texture("layer0", resource("desert_wyrm_alive"));
         item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.id("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
@@ -95,15 +96,23 @@ class ItemModelData extends ItemModelProvider
                 String path = registry.getPath();
 
                 if (block instanceof TrapDoorBlock) path += "_bottom";
-                else if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock)
+                if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock || block instanceof LadderBlock)
                 {
                     item(item, Wyrmroost.id("block/" + block.getRegistryName().getPath()));
                     continue;
                 }
-                else if (block instanceof DoorBlock || block instanceof StandingSignBlock)
+                if (block instanceof DoorBlock || block instanceof StandingSignBlock)
                 {
                     item(block);
                     continue;
+                }
+                if (block instanceof FenceBlock)
+                {
+                    continue;
+                }
+                if (block instanceof AbstractButtonBlock)
+                {
+                    customInventoryItem(item, fromBlockTexture(block), "button");
                 }
 
                 getBuilderFor(item).parent(uncheckedModel(registry.getNamespace() + ":block/" + path));
@@ -112,6 +121,13 @@ class ItemModelData extends ItemModelProvider
 
             item(item);
         }
+    }
+
+    private void fenceAndButton(WRBlocks.WoodGroup wg)
+    {
+        ResourceLocation texture = fromBlockTexture(wg.getPlanks());
+        customInventoryItem(wg.getFence(), texture, "fence");
+        customInventoryItem(wg.getButton(), texture, "button");
     }
 
     @Override

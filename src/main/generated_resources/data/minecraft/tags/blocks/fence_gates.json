@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "wyrmroost:oseri_fence_gate"
+    "wyrmroost:oseri_fence_gate",
+    "wyrmroost:sal_fence_gate"
   ]
 }

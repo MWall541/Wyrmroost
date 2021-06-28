@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "wyrmroost:oseri_button"
+    "wyrmroost:oseri_button",
+    "wyrmroost:sal_button"
   ]
 }

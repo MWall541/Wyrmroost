@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:stripped_sal_log"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:stripped_sal_wood",
+    "count": 3
+  }
+}

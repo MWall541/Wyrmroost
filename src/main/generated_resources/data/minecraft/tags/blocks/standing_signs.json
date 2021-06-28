@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "wyrmroost:oseri_sign"
+    "wyrmroost:oseri_sign",
+    "wyrmroost:sal_sign"
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:sal_planks"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:sal_button"
+  }
+}

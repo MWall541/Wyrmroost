@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/ladder",
+  "textures": {
+    "particle": "wyrmroost:block/sal_ladder",
+    "texture": "wyrmroost:block/sal_ladder"
+  }
+}

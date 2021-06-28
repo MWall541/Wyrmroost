@@ -13,6 +13,7 @@ import net.minecraft.item.crafting.CookingRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.IItemProvider;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -97,38 +98,42 @@ class RecipeData extends RecipeProvider
 
     private void toolSet(IItemProvider material, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
     {
-        shaped(sword).define('X', material).define('|', Items.STICK).pattern("X").pattern("X").pattern("|").unlockedBy("has_material", has(material)).save(consumer);
-        shaped(pick).define('X', material).define('|', Items.STICK).pattern("XXX").pattern(" | ").pattern(" | ").unlockedBy("has_material", has(material)).save(consumer);
-        shaped(axe).define('X', material).define('|', Items.STICK).pattern("XX").pattern("X|").pattern(" |").unlockedBy("has_material", has(material)).save(consumer);
-        shaped(shovel).define('X', material).define('|', Items.STICK).pattern("X").pattern("|").pattern("|").unlockedBy("has_material", has(material)).save(consumer);
-        shaped(hoe).define('X', material).define('|', Items.STICK).pattern("XX").pattern(" |").pattern(" |").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(sword).define('X', material).define('|', Tags.Items.RODS_WOODEN).pattern("X").pattern("X").pattern("|").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(pick).define('X', material).define('|', Tags.Items.RODS_WOODEN).pattern("XXX").pattern(" | ").pattern(" | ").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(axe).define('X', material).define('|', Tags.Items.RODS_WOODEN).pattern("XX").pattern("X|").pattern(" |").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(shovel).define('X', material).define('|', Tags.Items.RODS_WOODEN).pattern("X").pattern("|").pattern("|").unlockedBy("has_material", has(material)).save(consumer);
+        shaped(hoe).define('X', material).define('|', Tags.Items.RODS_WOODEN).pattern("XX").pattern(" |").pattern(" |").unlockedBy("has_material", has(material)).save(consumer);
     }
 
     private void toolSet(ITag<Item> materials, IItemProvider sword, IItemProvider pick, IItemProvider axe, IItemProvider shovel, IItemProvider hoe)
     {
-        shaped(sword).define('X', materials).define('|', Items.STICK).pattern("X").pattern("X").pattern("|").unlockedBy("has_material", has(materials)).save(consumer);
-        shaped(pick).define('X', materials).define('|', Items.STICK).pattern("XXX").pattern(" | ").pattern(" | ").unlockedBy("has_material", has(materials)).save(consumer);
-        shaped(axe).define('X', materials).define('|', Items.STICK).pattern("XX").pattern("X|").pattern(" |").unlockedBy("has_material", has(materials)).save(consumer);
-        shaped(shovel).define('X', materials).define('|', Items.STICK).pattern("X").pattern("|").pattern("|").unlockedBy("has_material", has(materials)).save(consumer);
-        shaped(hoe).define('X', materials).define('|', Items.STICK).pattern("XX").pattern(" |").pattern(" |").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(sword).define('X', materials).define('|', Tags.Items.RODS_WOODEN).pattern("X").pattern("X").pattern("|").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(pick).define('X', materials).define('|', Tags.Items.RODS_WOODEN).pattern("XXX").pattern(" | ").pattern(" | ").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(axe).define('X', materials).define('|', Tags.Items.RODS_WOODEN).pattern("XX").pattern("X|").pattern(" |").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(shovel).define('X', materials).define('|', Tags.Items.RODS_WOODEN).pattern("X").pattern("|").pattern("|").unlockedBy("has_material", has(materials)).save(consumer);
+        shaped(hoe).define('X', materials).define('|', Tags.Items.RODS_WOODEN).pattern("XX").pattern(" |").pattern(" |").unlockedBy("has_material", has(materials)).save(consumer);
     }
 
     private void woodGroup(WRBlocks.WoodGroup group, ITag<Item> logTag)
     {
         InventoryChangeTrigger.Instance hasPlanks = has(group.getPlanks());
 
+        exempt(group.getLog(), group.getStrippedLog());
+
         shapeless(group.getPlanks(), 4).requires(logTag).unlockedBy("has_wood", has(logTag)).save(consumer);
         shaped(group.getWood(), 3).pattern("##").pattern("##").define('#', group.getLog()).unlockedBy("has_log", has(group.getLog())).save(consumer);
         shaped(group.getStrippedWood(), 3).pattern("##").pattern("##").define('#', group.getStrippedLog()).unlockedBy("has_log", has(group.getStrippedLog())).save(consumer);
         shaped(group.getSlab(), 6).pattern("###").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
         shaped(group.getPressurePlate()).pattern("##").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
-        shaped(group.getFence(), 3).pattern("W#W").pattern("W#W").define('W', group.getPlanks()).define('#', Items.STICK).unlockedBy("has_planks", hasPlanks).save(consumer);
-        shaped(group.getFenceGate()).pattern("#W#").pattern("#W#").define('W', group.getPlanks()).define('#', Items.STICK).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getFence(), 3).pattern("W#W").pattern("W#W").define('W', group.getPlanks()).define('#', Tags.Items.RODS_WOODEN).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getFenceGate()).pattern("#W#").pattern("#W#").define('W', group.getPlanks()).define('#', Tags.Items.RODS_WOODEN).unlockedBy("has_planks", hasPlanks).save(consumer);
         shaped(group.getTrapDoor(), 2).pattern("###").pattern("###").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
         shaped(group.getStairs(), 4).pattern("#  ").pattern("## ").pattern("###").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
         shapeless(group.getButton()).requires(group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
         shaped(group.getDoor(), 3).pattern("##").pattern("##").pattern("##").define('#', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
-        shaped(group.getSign(), 3).pattern("###").pattern("###").pattern(" X ").define('#', group.getPlanks()).define('X', Items.STICK).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getSign(), 3).pattern("###").pattern("###").pattern(" X ").define('#', group.getPlanks()).define('X', Tags.Items.RODS_WOODEN).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getLadder(), 3).pattern("# #").pattern("#X#").pattern("# #").define('#', Tags.Items.RODS_WOODEN).define('X', group.getPlanks()).unlockedBy("has_planks", hasPlanks).save(consumer);
+        shaped(group.getBookshelf()).pattern("###").pattern("XXX").pattern("###").define('#', group.getPlanks()).define('X', Items.BOOK).unlockedBy("has_planks", hasPlanks).save(consumer);
     }
 
     private void storageBlock(IItemProvider material, IItemProvider block)
@@ -173,9 +178,9 @@ class RecipeData extends RecipeProvider
         shaped(WRItems.SOUL_CRYSTAL.get()).define('X', WRItems.BLUE_GEODE.get()).define('#', Items.ENDER_EYE).pattern(" X ").pattern("X#X").pattern(" X ").unlockedBy("has_eye", has(Items.ENDER_EYE)).save(consumer);
         shaped(WRItems.DRAGON_STAFF.get()).define('X', WRItems.RED_GEODE.get()).define('|', Items.BLAZE_ROD).pattern("X").pattern("|").unlockedBy("has_geode", has(WRItems.RED_GEODE.get())).save(consumer);
 
-        shaped(WRItems.BLUE_GEODE_ARROW.get(), 8).define('G', WRItems.BLUE_GEODE.get()).define('|', Items.STICK).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
-        shaped(WRItems.RED_GEODE_ARROW.get(), 8).define('G', WRItems.RED_GEODE.get()).define('|', Items.STICK).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.RED_GEODE.get())).save(consumer);
-        shaped(WRItems.PURPLE_GEODE_ARROW.get(), 8).define('G', WRItems.PURPLE_GEODE.get()).define('|', Items.STICK).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.PURPLE_GEODE.get())).save(consumer);
+        shaped(WRItems.BLUE_GEODE_ARROW.get(), 8).define('G', WRItems.BLUE_GEODE.get()).define('|', Tags.Items.RODS_WOODEN).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
+        shaped(WRItems.RED_GEODE_ARROW.get(), 8).define('G', WRItems.RED_GEODE.get()).define('|', Tags.Items.RODS_WOODEN).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.RED_GEODE.get())).save(consumer);
+        shaped(WRItems.PURPLE_GEODE_ARROW.get(), 8).define('G', WRItems.PURPLE_GEODE.get()).define('|', Tags.Items.RODS_WOODEN).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.PURPLE_GEODE.get())).save(consumer);
 
         // Materials
         storageBlock(WRItems.BLUE_GEODE.get(), WRBlocks.BLUE_GEODE_BLOCK.get());
@@ -234,9 +239,8 @@ class RecipeData extends RecipeProvider
 
     private static void exempt(Class<? extends IItemProvider> exemptClass)
     {
-        Set<IItemProvider> set = new HashSet<>();
-        for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY)) if (exemptClass.isInstance(item)) set.add(item);
-        REGISTERED.addAll(set);
+        for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY))
+            if (exemptClass.isInstance(item)) REGISTERED.add(item);
     }
 
     private static class ShapelessPair

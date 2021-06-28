@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "wyrmroost:moss_vine"
+    "wyrmroost:moss_vine",
+    "wyrmroost:oseri_ladder",
+    "wyrmroost:sal_ladder"
   ]
 }

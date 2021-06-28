@@ -47,7 +47,7 @@ public class TagData
         protected void addTags()
         {
             WRBlocks.Tags.ITEM_BLOCK_TAGS.forEach(this::copy);
-            blockProvider.tags.forEach(this::copy);
+            blockProvider.itemClones.forEach(this::copy);
 
             tag(Tags.Items.EGGS).add(WRItems.DRAGON_EGG.get());
 
@@ -69,7 +69,7 @@ public class TagData
 
     private static class BlockData extends BlockTagsProvider
     {
-        final Map<ITag.INamedTag<Block>, ITag.INamedTag<Item>> tags = new HashMap<>();
+        final Map<ITag.INamedTag<Block>, ITag.INamedTag<Item>> itemClones = new HashMap<>();
 
         public BlockData(DataGenerator generatorIn, @Nullable ExistingFileHelper existingFileHelper)
         {
@@ -109,17 +109,23 @@ public class TagData
                     tag(BlockTags.CLIMBABLE).add(block);
                     continue;
                 }
+                if (block instanceof TallFlowerBlock)
+                {
+                    cloneToItem(BlockTags.TALL_FLOWERS, ItemTags.TALL_FLOWERS).add(block);
+                }
             }
 
-            ore(WRBlocks.Tags.ORES_GEODE, WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
-            ore(WRBlocks.Tags.ORES_PLATINUM, WRBlocks.PLATINUM_ORE.get());
-            storageBlocks(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
-            storageBlocks(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM, WRBlocks.PLATINUM_BLOCK.get());
             tag(BlockTags.DRAGON_IMMUNE).add(WRBlocks.PURPLE_GEODE_ORE.get());
             cloneToItem(BlockTags.SMALL_FLOWERS, ItemTags.SMALL_FLOWERS).add(WRBlocks.CREVASSE_COTTON.get());
 
-            tagWoodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS, true);
-            tagWoodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.SAL_LOGS, true);
+            ore(WRBlocks.Tags.ORES_GEODE, WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
+            ore(WRBlocks.Tags.ORES_PLATINUM, WRBlocks.PLATINUM_ORE.get());
+
+            storageBlocks(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
+            storageBlocks(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM, WRBlocks.PLATINUM_BLOCK.get());
+
+            woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS, true);
+            woodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.SAL_LOGS, true);
         }
 
         private void ore(ITag.INamedTag<Block> oreTag, Block... ores)
@@ -135,7 +141,7 @@ public class TagData
             tag(BlockTags.BEACON_BASE_BLOCKS).addTag(tag);
         }
 
-        private void tagWoodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag, boolean flammable)
+        private void woodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag, boolean flammable)
         {
             tag(logTag).add(group.getLog(), group.getStrippedLog(), group.getWood(), group.getStrippedWood());
 
@@ -152,7 +158,21 @@ public class TagData
             tag(BlockTags.WALL_SIGNS).add(group.getWallSign());
 
             if (flammable) tag(BlockTags.LOGS_THAT_BURN).addTag(logTag);
-            else tag(BlockTags.NON_FLAMMABLE_WOOD).addTag(logTag).add(group.getPlanks(), group.getButton(), group.getDoor(), group.getStairs(), group.getSlab(), group.getFence(), group.getFenceGate(), group.getPressurePlate(), group.getTrapDoor(), group.getSign(), group.getWallSign());
+            else
+            {
+                tag(BlockTags.NON_FLAMMABLE_WOOD).addTag(logTag)
+                        .add(group.getPlanks(),
+                                group.getButton(),
+                                group.getDoor(),
+                                group.getStairs(),
+                                group.getSlab(),
+                                group.getFence(),
+                                group.getFenceGate(),
+                                group.getPressurePlate(),
+                                group.getTrapDoor(),
+                                group.getSign(),
+                                group.getWallSign());
+            }
         }
 
         /**
@@ -160,7 +180,7 @@ public class TagData
          */
         private Builder<Block> cloneToItem(ITag.INamedTag<Block> blockTag, ITag.INamedTag<Item> itemTag)
         {
-            tags.put(blockTag, itemTag);
+            itemClones.put(blockTag, itemTag);
             return tag(blockTag);
         }
     }

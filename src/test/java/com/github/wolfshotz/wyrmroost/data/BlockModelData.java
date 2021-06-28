@@ -101,6 +101,14 @@ class BlockModelData extends BlockStateProvider
         doorBlock((DoorBlock) group.getDoor(), modLoc("block/" + door + "_bottom"), modLoc("block/" + door + "_top"));
         sign((StandingSignBlock) group.getSign(), planks);
         sign((WallSignBlock) group.getWallSign(), planks);
+        ladder((LadderBlock) group.getLadder());
+        bookshelf(group.getBookshelf(), planks);
+    }
+
+    void bookshelf(Block block, ResourceLocation topPlanks)
+    {
+        String name = block.getRegistryName().getPath();
+        simpleBlock(block, models().cubeColumn(name, modLoc("block/" + name), topPlanks));
     }
 
     void tallFlower(Block block)
@@ -111,6 +119,15 @@ class BlockModelData extends BlockStateProvider
             String half = path + (state.getValue(DoublePlantBlock.HALF) == DoubleBlockHalf.LOWER? "_bottom" : "");
             return ConfiguredModel.builder().modelFile(models().cross(half, modLoc(half))).build();
         });
+    }
+
+    void ladder(LadderBlock ladder)
+    {
+        String name = ladder.getRegistryName().getPath();
+        ResourceLocation texture = modLoc("block/" + name);
+        horizontalBlock(ladder, models().withExistingParent(name, mcLoc("ladder"))
+                .texture("particle", texture)
+                .texture("texture", texture));
     }
 
     void sign(AbstractSignBlock block, ResourceLocation texture)

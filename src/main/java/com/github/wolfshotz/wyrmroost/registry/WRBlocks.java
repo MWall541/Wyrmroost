@@ -205,6 +205,8 @@ public class WRBlocks
         final RegistryObject<Block> door;
         final RegistryObject<Block> sign;
         final RegistryObject<Block> wallSign;
+        final RegistryObject<Block> ladder;
+        final RegistryObject<Block> bookshelf;
 
         public WoodGroup(String name, MaterialColor color, MaterialColor logColor)
         {
@@ -225,6 +227,8 @@ public class WRBlocks
             this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).strength(3f).noOcclusion()));
             this.wallSign = WRBlocks.register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).noCollission().strength(1f).lootFrom(self().sign), this), extend().noItem());
             this.sign = WRBlocks.register(name + "_sign", () -> new WRSignBlock(props(color).noCollission().strength(1f), this), extend().item(b -> new SignItem(new Item.Properties().stacksTo(16).tab(BLOCKS_ITEM_GROUP), b, getWallSign())));
+            this.ladder = WRBlocks.register(name + "_ladder", () -> new LadderBlock(properties(Material.DECORATION, SoundType.LADDER).strength(0.4f).noOcclusion()), extend().render(() -> RenderType::cutout));
+            this.bookshelf = WRBlocks.register(name + "_bookshelf", BookshelfBlock::new, extend().flammability(30, 20));
 
             WoodType.register(this);
         }
@@ -302,6 +306,16 @@ public class WRBlocks
         public Block getWallSign()
         {
             return wallSign.get();
+        }
+
+        public Block getLadder()
+        {
+            return ladder.get();
+        }
+
+        public Block getBookshelf()
+        {
+            return bookshelf.get();
         }
 
         private WoodGroup self()

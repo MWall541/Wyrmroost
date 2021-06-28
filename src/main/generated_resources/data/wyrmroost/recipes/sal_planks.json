@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "wyrmroost:sal_logs"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:sal_planks",
+    "count": 4
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "# #",
+    "#X#",
+    "# #"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:rods/wooden"
+    },
+    "X": {
+      "item": "wyrmroost:sal_planks"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:sal_ladder",
+    "count": 3
+  }
+}
