@@ -4,7 +4,8 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
-import net.minecraft.block.Block;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
+import net.minecraft.block.*;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.EntityTypeTagsProvider;
@@ -79,25 +80,59 @@ public class TagData
         @SuppressWarnings("unchecked")
         protected void addTags()
         {
-            tag(Tags.Blocks.DIRT).add(WRBlocks.MULCH.get(), WRBlocks.FROSTED_GRASS.get());
-            tag(BlockTags.BEACON_BASE_BLOCKS).addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
-            cloneToItem(Tags.Blocks.ORES, Tags.Items.ORES).addTags(WRBlocks.Tags.ORES_GEODE, WRBlocks.Tags.ORES_PLATINUM);
-            tag(WRBlocks.Tags.ORES_GEODE).add(WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
-            tag(WRBlocks.Tags.ORES_PLATINUM).add(WRBlocks.PLATINUM_ORE.get());
-            cloneToItem(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS).addTags(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM);
-            tag(WRBlocks.Tags.STORAGE_BLOCKS_GEODE).add(WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
-            tag(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM).add(WRBlocks.PLATINUM_BLOCK.get());
+            for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
+            {
+                if (block instanceof SnowyDirtBlock)
+                {
+                    tag(Tags.Blocks.DIRT).add(block);
+
+                    if (block instanceof GrassBlock)
+                    {
+                        tag(BlockTags.ENDERMAN_HOLDABLE).add(block);
+                        tag(BlockTags.BAMBOO_PLANTABLE_ON).add(block);
+                        tag(BlockTags.VALID_SPAWN).add(block);
+                    }
+                    continue;
+                }
+                if (block instanceof LeavesBlock)
+                {
+                    cloneToItem(BlockTags.LEAVES, ItemTags.LEAVES).add(block);
+                    continue;
+                }
+                if (block instanceof SaplingBlock)
+                {
+                    cloneToItem(BlockTags.SAPLINGS, ItemTags.SAPLINGS).add(block);
+                    continue;
+                }
+                if (block instanceof VineBlock || block instanceof LadderBlock)
+                {
+                    tag(BlockTags.CLIMBABLE).add(block);
+                    continue;
+                }
+            }
+
+            ore(WRBlocks.Tags.ORES_GEODE, WRBlocks.BLUE_GEODE_ORE.get(), WRBlocks.RED_GEODE_ORE.get(), WRBlocks.PURPLE_GEODE_ORE.get());
+            ore(WRBlocks.Tags.ORES_PLATINUM, WRBlocks.PLATINUM_ORE.get());
+            storageBlocks(WRBlocks.Tags.STORAGE_BLOCKS_GEODE, WRBlocks.BLUE_GEODE_BLOCK.get(), WRBlocks.RED_GEODE_BLOCK.get(), WRBlocks.PURPLE_GEODE_BLOCK.get());
+            storageBlocks(WRBlocks.Tags.STORAGE_BLOCKS_PLATINUM, WRBlocks.PLATINUM_BLOCK.get());
             tag(BlockTags.DRAGON_IMMUNE).add(WRBlocks.PURPLE_GEODE_ORE.get());
-            cloneToItem(BlockTags.LEAVES, ItemTags.LEAVES).add(WRBlocks.BLUE_OSERI_LEAVES.get(), WRBlocks.GOLD_OSERI_LEAVES.get(), WRBlocks.PINK_OSERI_LEAVES.get(), WRBlocks.PURPLE_OSERI_LEAVES.get());
-            cloneToItem(BlockTags.SAPLINGS, ItemTags.SAPLINGS).add(WRBlocks.BLUE_OSERI_SAPLING.get(), WRBlocks.GOLD_OSERI_SAPLING.get(), WRBlocks.PINK_OSERI_SAPLING.get(), WRBlocks.PURPLE_OSERI_SAPLING.get());
             cloneToItem(BlockTags.SMALL_FLOWERS, ItemTags.SMALL_FLOWERS).add(WRBlocks.CREVASSE_COTTON.get());
-            tag(BlockTags.CLIMBABLE).add(WRBlocks.MOSS_VINE.get());
-            tag(BlockTags.ENDERMAN_HOLDABLE).add(WRBlocks.FROSTED_GRASS.get());
-            tag(BlockTags.BAMBOO_PLANTABLE_ON).add(WRBlocks.FROSTED_GRASS.get());
-            tag(BlockTags.VALID_SPAWN).add(WRBlocks.FROSTED_GRASS.get());
 
             tagWoodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS, true);
-//            tagWoodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.SAL_LOGS, true);
+            tagWoodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.SAL_LOGS, true);
+        }
+
+        private void ore(ITag.INamedTag<Block> oreTag, Block... ores)
+        {
+            tag(oreTag).add(ores);
+            cloneToItem(Tags.Blocks.ORES, Tags.Items.ORES).addTag(oreTag);
+        }
+
+        private void storageBlocks(ITag.INamedTag<Block> tag, Block... blocks)
+        {
+            tag(tag).add(blocks);
+            cloneToItem(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS).addTag(tag);
+            tag(BlockTags.BEACON_BASE_BLOCKS).addTag(tag);
         }
 
         private void tagWoodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag, boolean flammable)

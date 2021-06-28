@@ -224,6 +224,7 @@ class RecipeData extends RecipeProvider
 
         woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.OSERI_LOGS));
         shaped(WRBlocks.OSERI_WOOD.getLog(), 4).define('#', WRBlocks.OSERI_WOOD.getWood()).pattern("##").pattern("##").unlockedBy("has_wood", has(WRBlocks.OSERI_WOOD.getLog())); // here because normal logs are unobtainable
+        woodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.SAL_LOGS));
     }
 
     private static void exempt(IItemProvider... exempts)

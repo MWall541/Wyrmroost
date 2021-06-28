@@ -89,7 +89,7 @@ public class WRBlocks
     public static final RegistryObject<Block> FROSTED_GRASS = register("frosted_grass", () -> new GrassBlock(properties(Material.DIRT, WRSounds.Types.FROSTED_GRASS).strength(0.55f)));
     public static final RegistryObject<Block> CREVASSE_COTTON = register("crevasse_cotton", CrevasseCottonBlock::new, extend().render(() -> RenderType::cutout).flammability(30, 80));
     public static final RegistryObject<Block> FROST_GOWN = register("frost_gown", () -> new TallFlowerBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission()), extend().render(() -> RenderType::cutout).flammability(30, 80));
-//    public static final WoodGroup SAL_WOOD = new WoodGroup("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
+    public static final WoodGroup SAL_WOOD = new WoodGroup("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {

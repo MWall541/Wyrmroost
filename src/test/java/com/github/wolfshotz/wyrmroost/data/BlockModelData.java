@@ -36,7 +36,7 @@ class BlockModelData extends BlockStateProvider
         snowy(WRBlocks.MULCH.get());
         snowy(WRBlocks.FROSTED_GRASS.get());
         woodGroup(WRBlocks.OSERI_WOOD);
-//        woodGroup(WRBlocks.SAL_WOOD);
+        woodGroup(WRBlocks.SAL_WOOD);
     }
 
     @Override

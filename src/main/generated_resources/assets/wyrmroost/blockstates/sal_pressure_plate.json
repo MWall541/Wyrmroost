@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "wyrmroost:block/sal_pressure_plate"
+    },
+    "powered=true": {
+      "model": "wyrmroost:block/sal_pressure_plate_down"
+    }
+  }
+}
