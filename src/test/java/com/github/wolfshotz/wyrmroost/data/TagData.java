@@ -199,22 +199,32 @@ public class TagData
         @Override
         protected void addTags()
         {
-            tag(EntityTypeTags.ARROWS).add(GEODE_TIPPED_ARROW.get());
+            bindSoulBearers();
 
+            tag(EntityTypeTags.ARROWS).add(GEODE_TIPPED_ARROW.get());
+        }
+
+        private void bindSoulBearers()
+        {
             Builder<EntityType<?>> builder = tag(WREntities.Tags.SOUL_BEARERS);
-            String namespace = "dragonmounts";
 
             // wyrmroost
-            builder.add(OVERWORLD_DRAKE.get(), SILVER_GLIDER.get(), ROOSTSTALKER.get(), BUTTERFLY_LEVIATHAN.get(), DRAGON_FRUIT_DRAKE.get(), CANARI_WYVERN.get(), ROYAL_RED.get(), ALPINE.get());
+            builder.add(OVERWORLD_DRAKE.get(),
+                    SILVER_GLIDER.get(),
+                    ROOSTSTALKER.get(),
+                    BUTTERFLY_LEVIATHAN.get(),
+                    DRAGON_FRUIT_DRAKE.get(),
+                    CANARI_WYVERN.get(),
+                    ROYAL_RED.get(),
+                    ALPINE.get());
 
             // dragonmounts
             for (String s : new String[]{"aether", "ender", "fire", "forest", "ghost", "ice", "nether", "water"})
-                builder.addOptional(new ResourceLocation(namespace, s + "_dragon"));
+                builder.addOptional(new ResourceLocation("dragonmounts", s + "_dragon"));
 
             // ice and fire
-            namespace = "iceandfire";
             for (String s : new String[]{"fire", "ice", "lightning"})
-                builder.addOptional(new ResourceLocation(namespace, s + "_dragon"));
+                builder.addOptional(new ResourceLocation("iceandfire", s + "_dragon"));
         }
     }
 }
