@@ -32,6 +32,8 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.api.distmarker.Dist;
@@ -235,6 +237,16 @@ public class WREntities<E extends Entity> extends EntityType<E>
         private static RegistryObject<Attribute> register(String name, Supplier<Attribute> attribute)
         {
             return REGISTRY.register(name, attribute);
+        }
+    }
+
+    public static class Tags
+    {
+        public static final ITag.INamedTag<EntityType<?>> SOUL_BEARERS = bind("soul_bearers");
+
+        private static ITag.INamedTag<EntityType<?>> bind(String name)
+        {
+            return EntityTypeTags.bind(Wyrmroost.MOD_ID + ":" + name);
         }
     }
 

@@ -1,0 +1,57 @@
+{
+  "replace": false,
+  "values": [
+    "wyrmroost:overworld_drake",
+    "wyrmroost:silver_glider",
+    "wyrmroost:roost_stalker",
+    "wyrmroost:butterfly_leviathan",
+    "wyrmroost:dragon_fruit_drake",
+    "wyrmroost:canari_wyvern",
+    "wyrmroost:royal_red",
+    "wyrmroost:alpine",
+    {
+      "id": "dragonmounts:aether_dragon",
+      "required": false
+    },
+    {
+      "id": "dragonmounts:ender_dragon",
+      "required": false
+    },
+    {
+      "id": "dragonmounts:fire_dragon",
+      "required": false
+    },
+    {
+      "id": "dragonmounts:forest_dragon",
+      "required": false
+    },
+    {
+      "id": "dragonmounts:ghost_dragon",
+      "required": false
+    },
+    {
+      "id": "dragonmounts:ice_dragon",
+      "required": false
+    },
+    {
+      "id": "dragonmounts:nether_dragon",
+      "required": false
+    },
+    {
+      "id": "dragonmounts:water_dragon",
+      "required": false
+    },
+    {
+      "id": "iceandfire:fire_dragon",
+      "required": false
+    },
+    {
+      "id": "iceandfire:ice_dragon",
+      "required": false
+    },
+    {
+      "id": "iceandfire:lightning_dragon",
+      "required": false
+    }
+  ]
+}

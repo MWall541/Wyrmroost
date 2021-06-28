@@ -24,7 +24,10 @@ import net.minecraft.network.IPacket;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -110,23 +113,7 @@ public class SoulCrystalEntity extends ProjectileItemEntity
 
     public static boolean isSuitableEntity(Entity entity)
     {
-        if (entity instanceof TameableEntity)
-        {
-            ResourceLocation rl = entity.getType().getRegistryName();
-            switch (rl.getNamespace())
-            {
-                case "wyrmroost":
-                case "dragonmounts":
-                case "wings":
-                    return true;
-                case "iceandfire":
-                    String path = rl.getPath();
-                    return path.contains("dragon");
-                default:
-                    break;
-            }
-        }
-        return false;
+        return entity instanceof TameableEntity && entity.getType().is(WREntities.Tags.SOUL_BEARERS);
     }
 
     public static ActionResultType captureDragon(@Nullable PlayerEntity player, World level, ItemStack stack, Entity target)
@@ -136,7 +123,7 @@ public class SoulCrystalEntity extends ProjectileItemEntity
         TameableEntity dragon = (TameableEntity) target;
         if (dragon.getOwner() != player) return fail(player, "not_owner");
         if (level.isClientSide) return ActionResultType.CONSUME;
-        if (dragon.hasEffect(WREffects.SOUL_WEAKNESS.get())) return fail(player, "sick");
+        if (dragon.hasEffect(WREffects.SOUL_WEAKNESS.get())) return fail(player, "weak");
 
         if (!dragon.getPassengers().isEmpty()) dragon.ejectPassengers();
         if (dragon instanceof TameableDragonEntity) ((TameableDragonEntity) dragon).dropStorage();
@@ -149,23 +136,6 @@ public class SoulCrystalEntity extends ProjectileItemEntity
         dragon.restrictTo(BlockPos.ZERO, -1);
         dragon.remove();
         level.playSound(null, dragon.blockPosition(), SoundEvents.END_PORTAL_FRAME_FILL, SoundCategory.AMBIENT, 1, 1);
-//        else // Client side Aesthetics
-//        {
-//            double width = dragon.getBbWidth();
-//            for (int i = 0; i <= Math.floor(width) * 25; ++i)
-//            {
-//                double calcX = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (width * 1.5);
-//                double calcZ = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (width * 1.5);
-//                double x = dragon.getX() + calcX;
-//                double y = dragon.getY() + (dragon.getBbHeight() * 1.8);
-//                double z = dragon.getZ() + calcZ;
-//                double xMot = -calcX / 5f;
-//                double yMot = -(dragon.getBbHeight() / 8);
-//                double zMot = -calcZ / 5f;
-//
-//                level.addParticle(ParticleTypes.END_ROD, x, y, z, xMot, yMot, zMot);
-//            }
-//        }
         return ActionResultType.SUCCESS;
     }
 
@@ -215,23 +185,6 @@ public class SoulCrystalEntity extends ProjectileItemEntity
             dragon.addEffect(new EffectInstance(WREffects.SOUL_WEAKNESS.get(), (int) thiccness * 200));
             if (!player.abilities.instabuild && thiccness > 5) stack.hurt((int) (thiccness * 0.675f), level.random, (ServerPlayerEntity) player);
         }
-//        else // Client Side Aesthetics
-//        {
-//            double posX = pos.getX() + 0.5d;
-//            double posY = pos.getY() + (size.height / 2);
-//            double posZ = pos.getZ() + 0.5d;
-//            for (int i = 0; i < dragon.getBbWidth() * 25; ++i)
-//            {
-//                double x = MathHelper.cos(i + 360 / Mafs.PI * 360f) * (dragon.getBbWidth() * 1.5d);
-//                double z = MathHelper.sin(i + 360 / Mafs.PI * 360f) * (dragon.getBbWidth() * 1.5d);
-//                double xMot = x / 10f;
-//                double yMot = dragon.getBbHeight() / 18f;
-//                double zMot = z / 10f;
-//
-//                level.addParticle(ParticleTypes.END_ROD, posX, posY, posZ, xMot, yMot, zMot);
-//                level.addParticle(ParticleTypes.CLOUD, posX, posY + (i * 0.25), posZ, 0, 0, 0);
-//            }
-//        }
 
         return ActionResultType.sidedSuccess(level.isClientSide);
     }

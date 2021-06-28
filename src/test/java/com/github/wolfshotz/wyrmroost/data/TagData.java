@@ -10,17 +10,21 @@ import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.EntityTypeTagsProvider;
 import net.minecraft.data.ItemTagsProvider;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.github.wolfshotz.wyrmroost.registry.WREntities.*;
 
 public class TagData
 {
@@ -195,7 +199,22 @@ public class TagData
         @Override
         protected void addTags()
         {
-            tag(EntityTypeTags.ARROWS).add(WREntities.GEODE_TIPPED_ARROW.get());
+            tag(EntityTypeTags.ARROWS).add(GEODE_TIPPED_ARROW.get());
+
+            Builder<EntityType<?>> builder = tag(WREntities.Tags.SOUL_BEARERS);
+            String namespace = "dragonmounts";
+
+            // wyrmroost
+            builder.add(OVERWORLD_DRAKE.get(), SILVER_GLIDER.get(), ROOSTSTALKER.get(), BUTTERFLY_LEVIATHAN.get(), DRAGON_FRUIT_DRAKE.get(), CANARI_WYVERN.get(), ROYAL_RED.get(), ALPINE.get());
+
+            // dragonmounts
+            for (String s : new String[]{"aether", "ender", "fire", "forest", "ghost", "ice", "nether", "water"})
+                builder.addOptional(new ResourceLocation(namespace, s + "_dragon"));
+
+            // ice and fire
+            namespace = "iceandfire";
+            for (String s : new String[]{"fire", "ice", "lightning"})
+                builder.addOptional(new ResourceLocation(namespace, s + "_dragon"));
         }
     }
 }

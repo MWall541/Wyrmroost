@@ -118,7 +118,7 @@
   "item.wyrmroost.soul_crystal": "Dragon Soul Crystal",
   "item.wyrmroost.soul_crystal.fail": "It isn't safe here...",
   "item.wyrmroost.soul_crystal.not_suitable": "The crystal refuses...",
-  "item.wyrmroost.soul_crystal.sick": "The dragon's soul is too weak...",
+  "item.wyrmroost.soul_crystal.weak": "The dragon's soul is too weak...",
   "item.wyrmroost.soul_crystal.not_owner": "The dragon distrusts you...",
 
   "item.wyrmroost.dragon_staff": "Dragon Staff",
