@@ -202,7 +202,7 @@ class BlockModelData extends BlockStateProvider
     {
         getVariantBuilder(block)
                 .partialState()
-                .setModels(new ConfiguredModel(models().cross(block.getRegistryName().getPath(), blockTexture(block))));
+                .setModels(new ConfiguredModel(models().singleTexture(block.getRegistryName().getPath(), mcLoc("block/tinted_cross"), "cross", blockTexture(block))));
     }
 
     void snowy(Block block)
