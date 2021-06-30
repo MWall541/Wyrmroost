@@ -175,7 +175,9 @@ public class TagData
                                 group.getPressurePlate(),
                                 group.getTrapDoor(),
                                 group.getSign(),
-                                group.getWallSign());
+                                group.getWallSign(),
+                                group.getBookshelf(),
+                                group.getLadder());
             }
         }
 

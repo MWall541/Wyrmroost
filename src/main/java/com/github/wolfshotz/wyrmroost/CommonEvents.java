@@ -76,6 +76,7 @@ public class CommonEvents
                 if (entry instanceof WREntities) ((WREntities<?>) entry).callBack();
 
             for (WRBlocks.BlockExtension extension : WRBlocks.EXTENSIONS) extension.callBack();
+            WRBlocks.EXTENSIONS.clear();
         });
     }
 

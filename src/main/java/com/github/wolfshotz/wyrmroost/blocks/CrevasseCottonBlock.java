@@ -5,39 +5,45 @@ import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BushBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IForgeShearable;
 
-import java.util.Random;
-
-public class CrevasseCottonBlock extends BushBlock
+public class CrevasseCottonBlock extends BushBlock implements IForgeShearable
 {
     static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
 
     public CrevasseCottonBlock()
     {
-        super(WRBlocks.plant());
+        super(WRBlocks.replaceablePlant());
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_)
+    public VoxelShape getShape(BlockState state, IBlockReader level, BlockPos pos, ISelectionContext ctx)
     {
         return SHAPE;
     }
 
     @Override
-    public void animateTick(BlockState state, World level, BlockPos pos, Random random)
+    public void entityInside(BlockState state, World level, BlockPos pos, Entity entity)
     {
-        if (random.nextDouble() < 0.25)
+        if (level.isClientSide)
         {
-            double x = pos.getX() + random.nextDouble();
-            double y = pos.getY() + (random.nextDouble() * 0.25) + 0.25;
-            double z = pos.getZ() + random.nextDouble();
-            level.addParticle(ParticleTypes.CLOUD, false, x, y, z, Mafs.nextDouble(random) * 0.1, 0.1, Mafs.nextDouble(random) * 0.1);
+            double x = entity.getX() - entity.xOld;
+            double y = entity.getY() - entity.yOld;
+            double z = entity.getZ() - entity.zOld;
+            double sq = x * x + y * y + z * z;
+            if (RANDOM.nextDouble() < sq * 5)
+            {
+                x += Mafs.nextDouble(level.random) * 0.15;
+                z += Mafs.nextDouble(level.random) * 0.15;
+                level.addParticle(ParticleTypes.END_ROD, entity.getRandomX(0.3), entity.getY() + 0.5, entity.getRandomZ(0.3), x * 0.35, y * 0.05, z * 0.35);
+            }
         }
     }
 }

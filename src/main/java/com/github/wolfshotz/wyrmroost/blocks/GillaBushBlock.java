@@ -14,14 +14,15 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IForgeShearable;
 
-public class GillaBushBlock extends BushBlock
+public class GillaBushBlock extends BushBlock implements IForgeShearable
 {
     static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
 
     public GillaBushBlock()
     {
-        super(WRBlocks.plant());
+        super(WRBlocks.replaceablePlant());
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.*;
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
 import com.github.wolfshotz.wyrmroost.world.features.TreeGen;
 import net.minecraft.block.*;
@@ -14,13 +16,16 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Direction;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GrassColors;
+import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.world.biome.BiomeColors;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +56,9 @@ public class WRBlocks
     public static final RegistryObject<Block> RED_GEODE_BLOCK = register("red_geode_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 3, 5f, SoundType.METAL)));
     public static final RegistryObject<Block> PURPLE_GEODE_ORE = register("purple_geode_ore", () -> new EXPBlock(8, 11, mineable(Material.METAL, ToolType.PICKAXE, 4, 5f, SoundType.GILDED_BLACKSTONE)));
     public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 4, 7f, SoundType.METAL)));
+
+    // biomes
+    public static final RegistryObject<Block> KARPO_BUSH = register("karpo_bush", () -> new BushBlock(replaceablePlant()), extend().render(() -> RenderType::cutout).flammability(60, 100).tint(WRBlocks::grassTint));
 
     // tincture weald
     public static final RegistryObject<Block> MULCH = register("mulch", MulchBlock::new);
@@ -117,7 +125,12 @@ public class WRBlocks
 
     public static AbstractBlock.Properties plant()
     {
-        return properties(Material.LEAVES, SoundType.GRASS).noCollission();
+        return properties(Material.PLANT, SoundType.GRASS).noCollission();
+    }
+
+    public static AbstractBlock.Properties replaceablePlant()
+    {
+        return properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission();
     }
 
     public static AbstractBlock.Properties leaves()
@@ -344,11 +357,17 @@ public class WRBlocks
         return new BlockExtension();
     }
 
+    public static int grassTint(BlockState state, @Nullable IBlockDisplayReader level, @Nullable BlockPos pos, int tint)
+    {
+        return level == null || pos == null? GrassColors.get(0.5, 1) : BiomeColors.getAverageGrassColor(level, pos);
+    }
+
     public static class BlockExtension
     {
         RegistryObject<Block> block;
         Function<Block, BlockItem> itemFactory = b -> new BlockItem(b, new Item.Properties().tab(BLOCKS_ITEM_GROUP));
         Supplier<Supplier<RenderType>> renderType;
+        IBlockTint tintFunc;
         int[] flammability;
 
         public BlockExtension item(Function<Block, BlockItem> factory)
@@ -368,6 +387,12 @@ public class WRBlocks
             return this;
         }
 
+        public BlockExtension tint(IBlockTint tint)
+        {
+            this.tintFunc = tint;
+            return this;
+        }
+
         public BlockExtension flammability(int spread, int destroyRate)
         {
             this.flammability = new int[]{spread, destroyRate};
@@ -376,15 +401,37 @@ public class WRBlocks
 
         private boolean requiresSetup()
         {
-            return renderType != null || flammability != null;
+            return renderType != null || flammability != null || tintFunc != null;
         }
 
         public void callBack()
         {
-            if (renderType != null)
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderTypeLookup.setRenderLayer(block.get(), renderType.get().get()));
+            if (ModUtils.isClient())
+            {
+                if (renderType != null) RenderTypeLookup.setRenderLayer(block.get(), renderType.get().get());
+                if (tintFunc != null)
+                {
+                    Block b = block.get();
+                    ClientEvents.getClient().getBlockColors().register(tintFunc::getTint, b);
+                    ClientEvents.getClient().getItemColors().register((s, i) -> tintFunc.getTint(b.defaultBlockState(), null, null, i), b.asItem());
+                }
+            }
             if (flammability != null)
                 ((FireBlock) Blocks.FIRE).setFlammable(block.get(), flammability[0], flammability[1]);
         }
+    }
+
+    /**
+     * Small helper interface to avoid having to double-wrap suppliers
+     */
+    public interface IBlockTint
+    {
+        /**
+         * @param state The BlockState of the block we're tinting for
+         * @param level Nullable: possible to get the world from the client but not recommended; could be in ITEM context.
+         * @param pos Nullable: could be in ITEM context.
+         * @param tintIndex the index of the tint.
+         */
+        int getTint(BlockState state, @Nullable IBlockDisplayReader level, @Nullable BlockPos pos, int tintIndex);
     }
 }
