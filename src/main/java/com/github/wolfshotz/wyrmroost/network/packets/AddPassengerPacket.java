@@ -4,10 +4,6 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -37,20 +33,14 @@ public class AddPassengerPacket
 
     public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::handleClient);
-        return true;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void handleClient()
-    {
-        World level = ClientEvents.getLevel();
-        Entity passenger = level.getEntity(passengerID);
-        Entity vehicle = level.getEntity(vehicleID);
+        Entity passenger = ClientEvents.getLevel().getEntity(passengerID);
+        Entity vehicle = ClientEvents.getLevel().getEntity(vehicleID);
         if (passenger == null || vehicle == null || !passenger.startRiding(vehicle, true))
         {
             Wyrmroost.LOG.warn("Could not add passenger on client...");
+            return false;
         }
+        return true;
     }
 
     public static void send(Entity passenger, Entity vehicle)

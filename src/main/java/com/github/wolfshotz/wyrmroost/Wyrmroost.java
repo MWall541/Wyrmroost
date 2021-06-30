@@ -3,14 +3,13 @@ package com.github.wolfshotz.wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.network.packets.*;
 import com.github.wolfshotz.wyrmroost.registry.*;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -29,7 +28,7 @@ public class Wyrmroost
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 
         CommonEvents.init();
-        if (FMLEnvironment.dist == Dist.CLIENT) ClientEvents.init();
+        if (ModUtils.isClient()) ClientEvents.init();
 
         WREntities.REGISTRY.register(bus);
         WREntities.Attributes.REGISTRY.register(bus);

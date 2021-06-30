@@ -6,10 +6,6 @@ import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -38,20 +34,20 @@ public class AnimationPacket
         buf.writeInt(animationIndex);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context)
+    public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
-        return DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> handle(entityID, animationIndex));
-    }
+        Entity entity = ClientEvents.getLevel().getEntity(entityID);
+        if (entity instanceof IAnimatable)
+        {
+            IAnimatable animatable = (IAnimatable) entity;
+            if (animationIndex < 0) animatable.setAnimation(IAnimatable.NO_ANIMATION);
+            else animatable.setAnimation(animatable.getAnimations()[animationIndex]);
 
-    @OnlyIn(Dist.CLIENT)
-    private static boolean handle(int entityID, int animationIndex)
-    {
-        World world = ClientEvents.getLevel();
-        IAnimatable entity = (IAnimatable) world.getEntity(entityID);
+            return true;
+        }
 
-        if (animationIndex < 0) entity.setAnimation(IAnimatable.NO_ANIMATION);
-        else entity.setAnimation(entity.getAnimations()[animationIndex]);
-        return true;
+        Wyrmroost.LOG.warn("Recieved invalid entity while handling animation packet: {}", entity);
+        return false;
     }
 
     public static <T extends Entity & IAnimatable> void send(T entity, Animation animation)

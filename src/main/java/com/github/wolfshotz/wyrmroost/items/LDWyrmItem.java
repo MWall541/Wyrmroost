@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.entities.dragon.LesserDesertwyrmEntity;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
@@ -12,8 +13,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 
 public class LDWyrmItem extends Item
 {
@@ -23,11 +22,12 @@ public class LDWyrmItem extends Item
     {
         super(WRItems.builder());
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ItemModelsProperties.register(this, Wyrmroost.id("is_alive"), (stack, world, player) ->
-        {
-            if (stack.hasTag() && stack.getTag().contains(DATA_CONTENTS)) return 1f;
-            return 0f;
-        }));
+        if (ModUtils.isClient())
+            ItemModelsProperties.register(this, Wyrmroost.id("is_alive"), (stack, world, player) ->
+            {
+                if (stack.hasTag() && stack.getTag().contains(DATA_CONTENTS)) return 1f;
+                return 0f;
+            });
     }
 
     @Override

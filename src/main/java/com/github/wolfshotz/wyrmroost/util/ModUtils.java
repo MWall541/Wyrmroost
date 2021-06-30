@@ -16,7 +16,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import net.minecraftforge.registries.DeferredRegister;
@@ -43,6 +45,18 @@ public final class ModUtils
     {
         Calendar calendar = Calendar.getInstance();
         DECK_THE_HALLS = calendar.get(Calendar.MONTH) == Calendar.DECEMBER && calendar.get(Calendar.DAY_OF_MONTH) >= 19;
+    }
+
+    /**
+     * Just checks if the game is running on the client and not the server.
+     * Generally, this should be used in favor of {@link net.minecraftforge.fml.DistExecutor} spam
+     * as there's no lambdas to abuse and can have both performance and readability improvements.
+     * Could <i>potentially</i> be more dangerous but I haven't ran into any issues yet...
+     * @return whether the environment is on the client or not
+     */
+    public static boolean isClient()
+    {
+        return FMLEnvironment.dist == Dist.CLIENT;
     }
 
     /**
