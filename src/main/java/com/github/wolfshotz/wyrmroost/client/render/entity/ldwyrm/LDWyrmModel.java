@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.ldwyrm;
 
-import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.LesserDesertwyrmEntity;
@@ -30,10 +29,6 @@ public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
     public WRModelRenderer head;
 
     private final WRModelRenderer[] body;
-
-    private final ModelAnimator animator;
-    private final float globalSpeed = 0.5f;
-    private final float f = 0.5f;
 
     public LDWyrmModel()
     {
@@ -109,8 +104,6 @@ public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
         setDefaultPose();
 
         body = new WRModelRenderer[] {body1, body2, body3, body4, body5, tail1, tail2, tail3};
-
-        animator = ModelAnimator.create();
     }
 
     @Override
@@ -120,22 +113,12 @@ public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
     }
 
     @Override
-    public void setupAnim(LesserDesertwyrmEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(LesserDesertwyrmEntity entity, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
-
-        faceTarget(netHeadYaw, headPitch, 1, head);
-    }
-
-    @Override
-    public void prepareMobModel(LesserDesertwyrmEntity minutus, float limbSwing, float limbSwingAmount, float partialTick)
-    {
-        float frame = minutus.tickCount;
-
-        animator.update(minutus, partialTick);
+        animator().tick(entity, this, partialTicks);
         resetToDefaultPose();
 
-        if (minutus.isBurrowed())
+        if (entity.isBurrowed())
         {
             body1.xRot = -0.8f;
             body1.y = 26.5f;
@@ -144,32 +127,31 @@ public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
             jaw.xRot = 1f;
             head.xRot = -1f;
 
-            bob(neck, 0.45f - globalSpeed, 0.15f, false, frame, f);
+            bob(neck, 0.45f - globalSpeed, 0.15f, false, bob, 0.5f);
         }
 
-        if (minutus.getAnimation() != LesserDesertwyrmEntity.BITE_ANIMATION)
+        if (entity.getAnimation() != LesserDesertwyrmEntity.BITE_ANIMATION)
         {
-            walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, frame, f);
-            walk(head, 0.45f - globalSpeed, 0.1f, true, 0, (minutus.isBurrowed()? 0f : 0.5f), frame, f);
+            walk(jaw, 0.45f - globalSpeed, 0.1f, false, 0, 0, bob, 0.5f);
+            walk(head, 0.45f - globalSpeed, 0.1f, true, 0, (entity.isBurrowed()? 0f : 0.5f), bob, 0.5f);
         }
-        flap(wingL, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
-        flap(wingR, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
-        flap(leg1, 0.45f - globalSpeed, 0.15f, true, 0, 0, frame, f);
-        flap(leg1_1, 0.45f - globalSpeed, 0.15f, false, 0, 0, frame, f);
+        flap(wingL, 0.45f - globalSpeed, 0.15f, false, 0, 0, bob, 0.5f);
+        flap(wingR, 0.45f - globalSpeed, 0.15f, true, 0, 0, bob, 0.5f);
+        flap(leg1, 0.45f - globalSpeed, 0.15f, true, 0, 0, bob, 0.5f);
+        flap(leg1_1, 0.45f - globalSpeed, 0.15f, false, 0, 0, bob, 0.5f);
 
-        if (minutus.getAnimation() == LesserDesertwyrmEntity.BITE_ANIMATION) bite();
+        chainSwing(body, globalSpeed, 0.3f, 5, -limbSwing, limbSwingAmount);
+        faceTarget(netHeadYaw, headPitch, 1, head);
     }
-    
-    private void bite()
+
+    public void biteAnimation()
     {
-        animator.setAnimation(LesserDesertwyrmEntity.BITE_ANIMATION);
+        animator().startKeyframe(4);
+        animator().rotate(head, 1f, 0, 0);
+        animator().rotate(jaw, -1f, 0, 0);
+        animator().move(body1, 0, -1f, 0);
+        animator().endKeyframe();
         
-        animator.startKeyframe(4);
-        animator.rotate(head, 1f, 0, 0);
-        animator.rotate(jaw, -1f, 0, 0);
-        animator.move(body1, 0, -1f, 0);
-        animator.endKeyframe();
-        
-        animator.resetKeyframe(7);
+        animator().resetKeyframe(7);
     }
 }

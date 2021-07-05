@@ -15,13 +15,19 @@ import java.util.function.Function;
 public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
 {
     public T entity;
+    public float bob, partialTicks;
     public float globalSpeed = 0.5f;
     public final List<ModelRenderer> boxList = new ArrayList<>();
     public float time;
 
-    public WREntityModel() {}
+    public WREntityModel()
+    {
+    }
 
-    public WREntityModel(Function<ResourceLocation, RenderType> type) { super(type); }
+    public WREntityModel(Function<ResourceLocation, RenderType> type)
+    {
+        super(type);
+    }
 
     public void setDefaultPose()
     {
@@ -129,7 +135,10 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         return (float) rootOffset * Mafs.PI / (2f * boxes.length);
     }
 
-    public void setTime(float x) { this.time = x; }
+    public void setTime(float x)
+    {
+        this.time = x;
+    }
 
     public void toDefaultPose()
     {
@@ -162,12 +171,17 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         box.zRot += time * z;
     }
 
-    public void idle(float frame) {}
-
-    public float getAnimationSwingDelta(float speed, float tick, float partialTick)
+    public ModelAnimator animator()
     {
-        float end = MathHelper.clamp(-(tick / speed) + 1, 0, 1);
-        float start = MathHelper.clamp(-((tick - 1f) / speed) + 1, 0, 1);
-        return MathHelper.lerp(partialTick, start, end);
+        return ModelAnimator.INSTANCE;
+    }
+
+    // first
+    @Override
+    @Deprecated // do not override
+    public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTicks)
+    {
+        this.entity = entity;
+        this.partialTicks = partialTicks;
     }
 }

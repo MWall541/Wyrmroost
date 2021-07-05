@@ -384,52 +384,20 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     }
 
     @Override
-    public void setupAnim(SilverGliderEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(SilverGliderEntity entityIn, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        if (netHeadYaw < -180) netHeadYaw += 360;
-        else if (netHeadYaw > 180) netHeadYaw -= 360;
-        if (entity.flightTimer.get() == 1)
-        {
-            mainBody.zRot = -(netHeadYaw * Mafs.PI / 180f) * 0.5f;
-            mainBody.xRot = headPitch * Mafs.PI / 180f;
-
-            float foldAmount = Math.max(headPitch * Mafs.PI / 180f, 0) * 0.75f;
-            wing1R.yRot += foldAmount;
-            wing2R.yRot += -foldAmount * 1.8;
-            phalangeR1.yRot += foldAmount * 2;
-            phalangeR2.yRot += foldAmount;
-            phalangeR3.yRot += foldAmount;
-            wingMembraneR2.x += foldAmount * 4;
-            wingMembraneR2.yRot += foldAmount;
-
-            wing1L.yRot -= foldAmount;
-            wing2L.yRot -= -foldAmount * 1.8;
-            phalangeL1.yRot -= foldAmount * 2;
-            phalangeL2.yRot -= foldAmount;
-            phalangeL3.yRot -= foldAmount;
-            wingMembraneL2.x += foldAmount * 4;
-            wingMembraneL2.yRot -= foldAmount;
-        }
-        else faceTarget(netHeadYaw, entity.isFlying()? 0 : headPitch, 1, headArray);
-    }
-
-    @Override
-    public void prepareMobModel(SilverGliderEntity entity, float limbSwing, float limbSwingAmount, float partialTick)
-    {
-        this.entity = entity;
-        float frame = entity.tickCount + partialTick;
         resetToDefaultPose();
 
-        flight(entity.flightTimer.get(partialTick));
-        sleep(entity.sleepTimer.get(partialTick));
-        sit(entity.sitTimer.get(partialTick));
+        flight(entity.flightTimer.get(partialTicks));
+        sleep(entity.sleepTimer.get(partialTicks));
+        sit(entity.sitTimer.get(partialTicks));
 
         if (entity.isFlying() || entity.isGliding())
         {
-            flap(wing1L, globalSpeed - 0.2f, 0.05f, false, 0, 0, frame, 0.5f);
-            walk(wing1L, globalSpeed + 0.5f, 0.09f, false, 0, 0, frame, 0.5f);
-            flap(wing1R, globalSpeed - 0.2f, 0.05f, true, 0, 0, frame, 0.5f);
-            walk(wing1R, globalSpeed + 0.5f, 0.09f, true, 0, 0, frame, 0.5f);
+            flap(wing1L, globalSpeed - 0.2f, 0.05f, false, 0, 0, bob, 0.5f);
+            walk(wing1L, globalSpeed + 0.5f, 0.09f, false, 0, 0, bob, 0.5f);
+            flap(wing1R, globalSpeed - 0.2f, 0.05f, true, 0, 0, bob, 0.5f);
+            walk(wing1R, globalSpeed + 0.5f, 0.09f, true, 0, 0, bob, 0.5f);
         }
         else if (!entity.isInSittingPose() && !entity.isSleeping())
         {
@@ -458,10 +426,35 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
             swing(wing2R, globalSpeed - 0.15f, 0.25f, false, 1f, -0.25f, limbSwing, limbSwingAmount);
         }
 
-        idle(frame);
+        idle(bob);
+
+        if (netHeadYaw < -180) netHeadYaw += 360;
+        else if (netHeadYaw > 180) netHeadYaw -= 360;
+        if (entity.flightTimer.get() == 1)
+        {
+            mainBody.zRot = -(netHeadYaw * Mafs.PI / 180f) * 0.5f;
+            mainBody.xRot = headPitch * Mafs.PI / 180f;
+
+            float foldAmount = Math.max(headPitch * Mafs.PI / 180f, 0) * 0.75f;
+            wing1R.yRot += foldAmount;
+            wing2R.yRot += -foldAmount * 1.8;
+            phalangeR1.yRot += foldAmount * 2;
+            phalangeR2.yRot += foldAmount;
+            phalangeR3.yRot += foldAmount;
+            wingMembraneR2.x += foldAmount * 4;
+            wingMembraneR2.yRot += foldAmount;
+
+            wing1L.yRot -= foldAmount;
+            wing2L.yRot -= -foldAmount * 1.8;
+            phalangeL1.yRot -= foldAmount * 2;
+            phalangeL2.yRot -= foldAmount;
+            phalangeL3.yRot -= foldAmount;
+            wingMembraneL2.x += foldAmount * 4;
+            wingMembraneL2.yRot -= foldAmount;
+        }
+        else faceTarget(netHeadYaw, entity.isFlying()? 0 : headPitch, 1, headArray);
     }
 
-    @Override
     public void idle(float frame)
     {
         if (entity.isSleeping()) globalSpeed -= 0.2f;

@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.client.render.entity.alpine.AlpineModel;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
@@ -40,9 +41,10 @@ public class AlpineEntity extends TameableDragonEntity
             .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping)
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
-    public static final Animation ROAR_ANIMATION = new Animation(84);
-    public static final Animation WIND_GUST_ANIMATION = new Animation(25);
-    public static final Animation BITE_ANIMATION = new Animation(10);
+    public static final Animation<AlpineEntity, AlpineModel> ROAR_ANIMATION = Animation.create(84, AlpineEntity::roarAnimation, AlpineModel::roarAnimation);
+    public static final Animation<AlpineEntity, AlpineModel> WIND_GUST_ANIMATION = Animation.create(25, AlpineEntity::windGustAnimation, AlpineModel::windGustAnimation);
+    public static final Animation<AlpineEntity, AlpineModel> BITE_ANIMATION = Animation.create(10, null, AlpineModel::biteAnimation);
+    public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();
     public final LerpedFloat flightTimer = LerpedFloat.unit();
@@ -93,34 +95,32 @@ public class AlpineEntity extends TameableDragonEntity
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
 
-        if (!level.isClientSide && noActiveAnimation() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
+        if (!level.isClientSide && noAnimations() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
             AnimationPacket.send(this, ROAR_ANIMATION);
+    }
 
-        Animation animation = getAnimation();
-        int tick = getAnimationTick();
-
-        if (animation == ROAR_ANIMATION)
+    public void roarAnimation(int time)
+    {
+        if (time == 0) playSound(WRSounds.ENTITY_ALPINE_ROAR.get(), 3f, 1f);
+        else if (time == 25)
         {
-            if (tick == 0) playSound(WRSounds.ENTITY_ALPINE_ROAR.get(), 3f, 1f);
-            else if (tick == 25)
+            for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get()))
             {
-                for (LivingEntity entity : getEntitiesNearby(20, e -> e.getType() == WREntities.ALPINE.get()))
-                {
-                    AlpineEntity alpine = ((AlpineEntity) entity);
-                    if (alpine.noActiveAnimation() && alpine.isIdling() && !alpine.isSleeping())
-                        alpine.setAnimation(ROAR_ANIMATION);
-                }
+                AlpineEntity alpine = ((AlpineEntity) entity);
+                if (alpine.noAnimations() && alpine.isIdling() && !alpine.isSleeping())
+                    alpine.setAnimation(ROAR_ANIMATION);
             }
         }
-        else if (animation == WIND_GUST_ANIMATION)
+    }
+
+    public void windGustAnimation(int time)
+    {
+        if (time == 0) setDeltaMovement(getDeltaMovement().add(0, -0.35, 0));
+        if (time == 4)
         {
-            if (tick == 0) setDeltaMovement(getDeltaMovement().add(0, -0.35, 0));
-            if (tick == 4)
-            {
-                if (!level.isClientSide) level.addFreshEntity(new WindGustEntity(this));
-                setDeltaMovement(getDeltaMovement().add(getLookAngle().reverse().multiply(1.5, 0, 1.5).add(0, 1, 0)));
-                playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
-            }
+            if (!level.isClientSide) level.addFreshEntity(new WindGustEntity(this));
+            setDeltaMovement(getDeltaMovement().add(getLookAngle().reverse().multiply(1.5, 0, 1.5).add(0, 1, 0)));
+            playSound(WRSounds.WING_FLAP.get(), 3, 1f, true);
         }
     }
 
@@ -163,7 +163,7 @@ public class AlpineEntity extends TameableDragonEntity
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (key == KeybindPacket.MOUNT_KEY2 && pressed && noActiveAnimation() && isFlying())
+        if (key == KeybindPacket.MOUNT_KEY2 && pressed && noAnimations() && isFlying())
             setAnimation(WIND_GUST_ANIMATION);
     }
 
@@ -243,9 +243,9 @@ public class AlpineEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation[] getAnimations()
+    public Animation<?, ?>[] getAnimations()
     {
-        return new Animation[] {ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION};
+        return ANIMATIONS;
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)

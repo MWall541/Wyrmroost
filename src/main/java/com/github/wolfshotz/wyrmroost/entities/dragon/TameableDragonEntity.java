@@ -622,7 +622,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void attackInBox(AxisAlignedBB box, int disabledShieldTime)
     {
         List<LivingEntity> attackables = level.getEntitiesOfClass(LivingEntity.class, box, entity -> entity != this && !hasPassenger(entity) && wantsToAttack(entity, getOwner()));
-        if (WRConfig.DEBUG_MODE.get() && level.isClientSide) DebugRendering.box(box, 0xffff0000, 100);
+        if (WRConfig.DEBUG_MODE.get() && level.isClientSide) DebugRendering.box(box, 0x99ff0000, Integer.MAX_VALUE);
         for (LivingEntity attacking : attackables)
         {
             doHurtTarget(attacking);

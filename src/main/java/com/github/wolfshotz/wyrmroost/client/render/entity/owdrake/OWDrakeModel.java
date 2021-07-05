@@ -74,8 +74,6 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
     private final WRModelRenderer[] tailArray;
     private final WRModelRenderer[] toeArray;
 
-    private final ModelAnimator animator;
-
     public OWDrakeModel()
     {
         texWidth = 200;
@@ -364,11 +362,7 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
         headArray = new WRModelRenderer[] {neck1, neck2, head};
         tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5};
         toeArray = new WRModelRenderer[] {toe1L, toe1L_1, toe1R, toe1R_1, toe2L, toe2R};
-
-        animator = ModelAnimator.create();
     }
-    
-    private final float f = 0.5f;
 
     @Override
     public void renderToBuffer(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
@@ -380,21 +374,10 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
     }
 
     @Override
-    public void setupAnim(OverworldDrakeEntity drake, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(OverworldDrakeEntity drake, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (drake.getAnimation() != OverworldDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
-            faceTarget(netHeadYaw, headPitch, 1, neck1, head);
-    }
-
-    @Override
-    public void prepareMobModel(OverworldDrakeEntity drake, float limbSwing, float limbSwingAmount, float partialTick)
-    {
-        this.entity = drake;
-        float frame = drake.tickCount + partialTick;
-
         resetToDefaultPose();
-        animator.update(drake, partialTick);
+        animator().tick(drake, this, partialTicks);
 
         if (!drake.isInSittingPose() && !drake.isSleeping())
         {
@@ -402,38 +385,24 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
             bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, limbSwingAmount);
 
             // Left Arm
-            arm1L.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
-            palmL.walk(globalSpeed, f, true, 2.5f, 0, limbSwing, limbSwingAmount);
+            arm1L.walk(globalSpeed, 0.5f, true, 0, 0, limbSwing, limbSwingAmount);
+            palmL.walk(globalSpeed, 0.5f, true, 2.5f, 0, limbSwing, limbSwingAmount);
 
             // Right Arm
-            arm1R.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
-            palmR.walk(globalSpeed, f, false, 2.5f, 0, limbSwing, limbSwingAmount);
+            arm1R.walk(globalSpeed, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
+            palmR.walk(globalSpeed, 0.5f, false, 2.5f, 0, limbSwing, limbSwingAmount);
 
             // Left Leg
-            leg1L.walk(globalSpeed, f, false, 0, 0, limbSwing, limbSwingAmount);
+            leg1L.walk(globalSpeed, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
             footL.walk(globalSpeed, 0.2f, false, 2f, 0, limbSwing, limbSwingAmount);
 
             // Right Leg
-            leg1R.walk(globalSpeed, f, true, 0, 0, limbSwing, limbSwingAmount);
+            leg1R.walk(globalSpeed, 0.5f, true, 0, 0, limbSwing, limbSwingAmount);
             footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
         }
 
-        sit(entity.sitTimer.get(partialTick));
-        sleep(entity.sleepTimer.get(partialTick));
-
-        if (animator.setAnimation(OverworldDrakeEntity.GRAZE_ANIMATION)) grazeAnim(drake.getAnimationTick(), frame);
-
-        if (animator.setAnimation(OverworldDrakeEntity.HORN_ATTACK_ANIMATION))
-        {
-            hornAttackAnim();
-            return;
-        }
-
-        if (animator.setAnimation(OverworldDrakeEntity.ROAR_ANIMATION))
-        {
-            roarAnim(drake, frame);
-            return;
-        }
+        sit(entity.sitTimer.get(partialTicks));
+        sleep(entity.sleepTimer.get(partialTicks));
 
         if (drake.isSleeping())
         {
@@ -441,18 +410,21 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
             eyeR.yRot = -90;
         }
 
-        idle(frame);
+        idle(bob);
+
+        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
+        if (drake.getAnimation() != OverworldDrakeEntity.ROAR_ANIMATION && !drake.isSleeping())
+            faceTarget(netHeadYaw, headPitch, 1, neck1, head);
     }
 
-    @Override
     public void idle(float frame)
     {
-        chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, f);
-        walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, f);
+        chainWave(headArray, 0.45f - globalSpeed, 0.05f, 0d, frame, 0.5f);
+        walk(head, 0.45f - globalSpeed, 0.08f, false, 2.5f, 0f, frame, 0.5f);
 
-        walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, f);
-        chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, f);
-        chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, f);
+        walk(jaw, 0.45f - globalSpeed, 0.15f, false, 0f, 0.15f, frame, 0.5f);
+        chainWave(tailArray, 0.45f - globalSpeed, 0.043f, 0d, frame, 0.5f);
+        chainSwing(tailArray, globalSpeed - 0.45f, 0.043f, 2d, frame, 0.5f);
     }
 
     public void sit(float amount)
@@ -496,120 +468,104 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
         rotate(head, -0.4f, 0.52f, -0.4f);
     }
 
-    /**
-     * Horn Attack Anim
-     */
-    private void hornAttackAnim()
+    public void hornAttackAnimation()
     {
-        animator.setAnimation(OverworldDrakeEntity.HORN_ATTACK_ANIMATION);
-        
-        animator.startKeyframe(5);
-        animator.move(body1, 0, 2f, 1);
-        animator.rotate(body1, 0.3f, 0, 0);
-        animator.rotate(body2, -0.3f, 0, 0);
-        animator.rotate(neck1, -0.4f, 0, 0);
-        animator.rotate(head, 0.8f, 0, 0);
-        animator.rotate(arm1L, 0.25f, 0, 0);
-        animator.rotate(arm2L, -0.75f, 0, 0);
-        animator.rotate(palmL, 0.25f, 0, 0);
-        animator.rotate(arm1R, 0.25f, 0, 0);
-        animator.rotate(arm2R, -0.75f, 0, 0);
-        animator.rotate(palmR, 0.25f, 0, 0);
-        animator.rotate(leg2L, 0.25f, 0, 0);
-        animator.rotate(leg3L, -0.25f, 0, 0);
-        animator.rotate(leg2R, 0.25f, 0, 0);
-        animator.rotate(leg3R, -0.25f, 0, 0);
-        for (WRModelRenderer segment : tailArray) animator.rotate(segment, -0.05f, 0, 0);
-        animator.endKeyframe();
+        animator().startKeyframe(5);
+        animator().move(body1, 0, 2f, 1);
+        animator().rotate(body1, 0.3f, 0, 0);
+        animator().rotate(body2, -0.3f, 0, 0);
+        animator().rotate(neck1, -0.4f, 0, 0);
+        animator().rotate(head, 0.8f, 0, 0);
+        animator().rotate(arm1L, 0.25f, 0, 0);
+        animator().rotate(arm2L, -0.75f, 0, 0);
+        animator().rotate(palmL, 0.25f, 0, 0);
+        animator().rotate(arm1R, 0.25f, 0, 0);
+        animator().rotate(arm2R, -0.75f, 0, 0);
+        animator().rotate(palmR, 0.25f, 0, 0);
+        animator().rotate(leg2L, 0.25f, 0, 0);
+        animator().rotate(leg3L, -0.25f, 0, 0);
+        animator().rotate(leg2R, 0.25f, 0, 0);
+        animator().rotate(leg3R, -0.25f, 0, 0);
+        for (WRModelRenderer segment : tailArray) animator().rotate(segment, -0.05f, 0, 0);
+        animator().endKeyframe();
 
-//        animator.setStaticKeyframe(1);
+        animator().startKeyframe(3);
+        animator().move(body1, 0, 2f, 1);
+        animator().rotate(body1, 0.3f, 0, 0);
+        animator().rotate(body2, -0.3f, 0, 0);
+        animator().rotate(arm1L, 0.25f, 0, 0);
+        animator().rotate(arm2L, -0.75f, 0, 0);
+        animator().rotate(palmL, 0.25f, 0, 0);
+        animator().rotate(arm1R, 0.25f, 0, 0);
+        animator().rotate(arm2R, -0.75f, 0, 0);
+        animator().rotate(palmR, 0.25f, 0, 0);
+        animator().rotate(leg2L, 0.25f, 0, 0);
+        animator().rotate(leg3L, -0.25f, 0, 0);
+        animator().rotate(leg2R, 0.25f, 0, 0);
+        animator().rotate(leg3R, -0.25f, 0, 0);
+        for (WRModelRenderer segment : tailArray) animator().rotate(segment, -0.05f, 0, 0);
+        animator().rotate(neck1, 0.3f, 0, 0);
+        animator().endKeyframe();
         
-        animator.startKeyframe(3);
-        animator.move(body1, 0, 2f, 1);
-        animator.rotate(body1, 0.3f, 0, 0);
-        animator.rotate(body2, -0.3f, 0, 0);
-        animator.rotate(arm1L, 0.25f, 0, 0);
-        animator.rotate(arm2L, -0.75f, 0, 0);
-        animator.rotate(palmL, 0.25f, 0, 0);
-        animator.rotate(arm1R, 0.25f, 0, 0);
-        animator.rotate(arm2R, -0.75f, 0, 0);
-        animator.rotate(palmR, 0.25f, 0, 0);
-        animator.rotate(leg2L, 0.25f, 0, 0);
-        animator.rotate(leg3L, -0.25f, 0, 0);
-        animator.rotate(leg2R, 0.25f, 0, 0);
-        animator.rotate(leg3R, -0.25f, 0, 0);
-        for (WRModelRenderer segment : tailArray) animator.rotate(segment, -0.05f, 0, 0);
-        animator.rotate(neck1, 0.3f, 0, 0);
-        animator.endKeyframe();
+        animator().startKeyframe(2);
+        animator().rotate(neck1, -0.2f, 0, 0);
+        for (WRModelRenderer segment : tailArray) animator().rotate(segment, 0.025f, 0, 0);
+        animator().endKeyframe();
         
-        animator.startKeyframe(2);
-        animator.rotate(neck1, -0.2f, 0, 0);
-        for (WRModelRenderer segment : tailArray) animator.rotate(segment, 0.025f, 0, 0);
-        animator.endKeyframe();
-        
-        animator.resetKeyframe(5);
+        animator().resetKeyframe(5);
     }
     
-    /**
-     * Grass Eating Animation
-     * Rotate neck down and then rotate the mouth "eat"
-     */
-    private void grazeAnim(int animationTick, float frame)
+    public void grazeAnimation()
     {
-        animator.setAnimation(OverworldDrakeEntity.GRAZE_ANIMATION);
+        int tick = entity.getAnimationTick();
+
+        animator().startKeyframe(12)
+                .rotate(neck1, 1, 0, 0)
+                .endKeyframe();
+        animator().setStaticKeyframe(15)
+                .resetKeyframe(8);
         
-        animator.startKeyframe(12);
-        animator.rotate(neck1, 1, 0, 0);
-        animator.endKeyframe();
-        animator.setStaticKeyframe(15);
-        animator.resetKeyframe(8);
-        
-        if (animationTick >= 8 && animationTick <= 27)
+        if (tick >= 8 && tick <= 27)
         {
-            jaw.xRot -= (6 + Math.sin(frame / 2) * 0.25);
+            jaw.xRot -= (6 + Math.sin(bob / 2) * 0.25);
         }
     }
     
-    /**
-     * Roar Animation
-     * played before dashing at the player to attack
-     */
-    private void roarAnim(OverworldDrakeEntity entity, float frame)
+    public void roarAnimation()
     {
-        animator.setAnimation(OverworldDrakeEntity.ROAR_ANIMATION);
+        ModelAnimator animator = animator(); // reduce method calls
+
+        animator.startKeyframe(14)
+                .move(body1, 0, 0.8f, 0)
+                .rotate(leg2L, 0.2f, 0, 0)
+                .rotate(leg3L, -0.2f, 0, 0)
+                .rotate(leg2R, 0.2f, 0, 0)
+                .rotate(leg3R, -0.2f, 0, 0)
+                .rotate(neck1, -0.6f, -0.2f, 0)
+                .rotate(neck2, 0.5f, 0, 0)
+                .rotate(head, 0.6f, -0.2f, 0)
+                .rotate(arm1R, 0.4f, 0, 0)
+                .rotate(arm2R, -0.4f, 0, 0)
+                .rotate(arm1L, 0.4f, 0, 0)
+                .rotate(arm2L, -0.4f, 0, 0)
+                .endKeyframe();
         
-        animator.startKeyframe(14);
-        animator.move(body1, 0, 0.8f, 0);
-        animator.rotate(leg2L, 0.2f, 0, 0);
-        animator.rotate(leg3L, -0.2f, 0, 0);
-        animator.rotate(leg2R, 0.2f, 0, 0);
-        animator.rotate(leg3R, -0.2f, 0, 0);
-        animator.rotate(neck1, -0.6f, -0.2f, 0);
-        animator.rotate(neck2, 0.5f, 0, 0);
-        animator.rotate(head, 0.6f, -0.2f, 0);
-        animator.rotate(arm1R, 0.4f, 0, 0);
-        animator.rotate(arm2R, -0.4f, 0, 0);
-        animator.rotate(arm1L, 0.4f, 0, 0);
-        animator.rotate(arm2L, -0.4f, 0, 0);
-        animator.endKeyframe();
-        
-        animator.startKeyframe(8);
-        animator.rotate(neck1, 0.4f, 0, 0);
-        animator.rotate(neck2, -0.4f, 0, 0);
-        animator.rotate(jaw, 0.9f, 0, 0);
+        animator.startKeyframe(8)
+                .rotate(neck1, 0.4f, 0, 0)
+                .rotate(neck2, -0.4f, 0, 0)
+                .rotate(jaw, 0.9f, 0, 0);
         for (WRModelRenderer tailSegment : tailArray) animator.rotate(tailSegment, 0.1f, 0, 0);
         animator.endKeyframe();
-        
-        animator.setStaticKeyframe(60);
-        
-        animator.resetKeyframe(4);
+
+        animator.setStaticKeyframe(60)
+                .resetKeyframe(4);
         
         if (entity.getAnimationTick() > 10)
         {
-            walk(jaw, globalSpeed + 1.5f, 0.02f, false, 0, 0, frame, f);
-            swing(head, globalSpeed + 1.5f, 0.02f, false, 0, 0, frame, f);
+            walk(jaw, globalSpeed + 1.5f, 0.02f, false, 0, 0, bob, 0.5f);
+            swing(head, globalSpeed + 1.5f, 0.02f, false, 0, 0, bob, 0.5f);
             
-            chainWave(tailArray, globalSpeed + 1.5f, 0.007f, 0, frame, f);
+            chainWave(tailArray, globalSpeed + 1.5f, 0.007f, 0, bob, 0.5f);
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.rooststalker;
 
-import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.RoostStalkerEntity;
@@ -38,8 +37,6 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
     public WRModelRenderer hornl_1;
 
     public WRModelRenderer[] tailSegments;
-
-    public ModelAnimator animator;
 
     private final float globalSpeed = 0.5f;
 
@@ -170,22 +167,8 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
     }
 
     @Override
-    public void setupAnim(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (!stalker.isSleeping())
-        {
-            head.xRot += headPitch * ((float) Math.PI / 180F);
-            head.yRot += netHeadYaw * ((float) Math.PI / 180F);
-        }
-    }
-    
-    @Override
-    public void prepareMobModel(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float partialTick)
-    {
-        this.entity = stalker;
-        float frame = stalker.tickCount + partialTick;
-
         resetToDefaultPose();
 
         if (!stalker.isInSittingPose())
@@ -200,14 +183,14 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         }
 
         if (stalker.isScavenging())
-            walk(neck, globalSpeed + 0.5f, 0.4f, false, 0, 1.5f, frame, 0.5f);
+            walk(neck, globalSpeed + 0.5f, 0.4f, false, 0, 1.5f, bob, 0.5f);
 
 
         if (stalker.isInSittingPose() && !stalker.isSleeping()) sit();
-        sleep(stalker.sleepTimer.get(partialTick));
+        sleep(stalker.sleepTimer.get(partialTicks));
 
         boolean flag = stalker.getItem().isEmpty() || stalker.isSleeping();
-        idle(frame, flag);
+        idle(bob, flag);
 
         if (!flag)
         {
@@ -218,8 +201,15 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
             }
             else jaw.xRot = 0.15f;
         }
-    }
 
+        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
+        if (!stalker.isSleeping())
+        {
+            head.xRot += headPitch * ((float) Math.PI / 180F);
+            head.yRot += netHeadYaw * ((float) Math.PI / 180F);
+        }
+    }
+    
     public void idle(float frame, boolean head)
     {
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, 0.5f);

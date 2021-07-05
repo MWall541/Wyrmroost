@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.butterfly;
 
-import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.ButterflyLeviathanEntity;
@@ -70,9 +69,8 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     public WRModelRenderer[] tailArray;
     public final WRModelRenderer[] headArray;
 
-    public ModelAnimator animator;
-
-    public ButterflyLeviathanModel() {
+    public ButterflyLeviathanModel()
+    {
         this.texWidth = 150;
         this.texHeight = 250;
         this.topWingFinPhalangeL2_1 = new WRModelRenderer(this, 21, 173);
@@ -298,9 +296,8 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
         this.topWingFinPhalangeL1.addChild(this.topWingFinMembraneL1);
         this.mouthBottom.addChild(this.teethBottom);
 
-        animator = ModelAnimator.create();
-        tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6};
-        headArray = new WRModelRenderer[] {neck1, neck2, neck3, head};
+        tailArray = new WRModelRenderer[]{tail1, tail2, tail3, tail4, tail5, tail6};
+        headArray = new WRModelRenderer[]{neck1, neck2, neck3, head};
         setDefaultPose();
     }
 
@@ -311,24 +308,10 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
     }
 
     @Override
-    public void setupAnim(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (!entity.beached)
-        {
-            body1.xRot = headPitch * Mafs.PI / 180f;
-            headPitch = 0;
-        }
-
-        faceTarget(netHeadYaw, headPitch, 1, headArray);
-    }
-
-    @Override
-    public void prepareMobModel(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float partialTick)
-    {
-        this.entity = entity;
         resetToDefaultPose();
-        animator.update(entity, partialTick);
+        animator().tick(entity, this, partialTicks);
 
         if (entity.beached)
         {
@@ -386,102 +369,106 @@ public class ButterflyLeviathanModel extends WREntityModel<ButterflyLeviathanEnt
             walk(bottomWingFinPhalangeR2, globalSpeed, -0.5f, true, -1f, 0, limbSwing, limbSwingAmount);
         }
 
-        if (animator.setAnimation(ButterflyLeviathanEntity.LIGHTNING_ANIMATION)) roarAnim(partialTick);
-        else if (animator.setAnimation(ButterflyLeviathanEntity.CONDUIT_ANIMATION)) conduitAnim(partialTick);
-        else if (animator.setAnimation(ButterflyLeviathanEntity.BITE_ANIMATION)) biteAnim();
+        swim(entity.swimTimer.get(partialTicks));
+        beach(entity.beachedTimer.get(partialTicks));
+        sit(entity.sitTimer.get(partialTicks));
 
-        swim(entity.swimTimer.get(partialTick));
-        beach(entity.beachedTimer.get(partialTick));
-        sit(entity.sitTimer.get(partialTick));
+        idle(bob);
 
-        idle(entity.tickCount + partialTick);
+        yaw = MathHelper.wrapDegrees(yaw);
+        if (!entity.beached)
+        {
+            body1.xRot = pitch * Mafs.PI / 180f;
+            pitch = 0;
+        }
+
+        faceTarget(yaw, pitch, 1, headArray);
     }
 
-    @Override
-    public void idle(float frame)
+
+    public void idle(float bob)
     {
         if (entity.isInWater())
         {
-            chainWave(headArray, globalSpeed - 0.45f, 0.05f, 2, frame, 0.5f);
-            chainSwing(tailArray, globalSpeed - 0.44f, 0.1f, -2, frame, 0.5f);
-            flap(topWingFinPhalangeL1, globalSpeed - 0.45f, 0.15f, false, 0, 0, frame, 0.5f);
-            flap(topWingFinPhalangeL2, globalSpeed - 0.45f, 0.15f, false, 0.75f, 0, frame, 0.5f);
-            flap(topWingFinPhalangeR1, globalSpeed - 0.45f, 0.15f, true, 0, 0, frame, 0.5f);
-            flap(topWingFinPhalangeR2, globalSpeed - 0.45f, 0.15f, false, 0.75f, 0, frame, 0.5f);
-            flap(bottomWingFinPhalangeL1, globalSpeed - 0.45f, 0.15f, false, 0, 0, frame, 0.5f);
-            flap(bottomWingFinPhalangeL2, globalSpeed - 0.45f, 0.15f, true, 0.75f, 0, frame, 0.5f);
-            flap(bottomWingFinPhalangeR1, globalSpeed - 0.45f, 0.15f, true, 0, 0, frame, 0.5f);
-            flap(bottomWingFinPhalangeR2, globalSpeed - 0.45f, 0.15f, false, 0.75f, 0, frame, 0.5f);
+            chainWave(headArray, globalSpeed - 0.45f, 0.05f, 2, bob, 0.5f);
+            chainSwing(tailArray, globalSpeed - 0.44f, 0.1f, -2, bob, 0.5f);
+            flap(topWingFinPhalangeL1, globalSpeed - 0.45f, 0.15f, false, 0, 0, bob, 0.5f);
+            flap(topWingFinPhalangeL2, globalSpeed - 0.45f, 0.15f, false, 0.75f, 0, bob, 0.5f);
+            flap(topWingFinPhalangeR1, globalSpeed - 0.45f, 0.15f, true, 0, 0, bob, 0.5f);
+            flap(topWingFinPhalangeR2, globalSpeed - 0.45f, 0.15f, false, 0.75f, 0, bob, 0.5f);
+            flap(bottomWingFinPhalangeL1, globalSpeed - 0.45f, 0.15f, false, 0, 0, bob, 0.5f);
+            flap(bottomWingFinPhalangeL2, globalSpeed - 0.45f, 0.15f, true, 0.75f, 0, bob, 0.5f);
+            flap(bottomWingFinPhalangeR1, globalSpeed - 0.45f, 0.15f, true, 0, 0, bob, 0.5f);
+            flap(bottomWingFinPhalangeR2, globalSpeed - 0.45f, 0.15f, false, 0.75f, 0, bob, 0.5f);
         }
         else if (!entity.isJumpingOutOfWater())
         {
-            chainWave(headArray, globalSpeed - 0.45f, 0.07f, -2, frame, 0.5f);
-            chainSwing(tailArray, globalSpeed - 0.46f, 0.4f, -3, frame, 0.5f);
-            flap(topWingFinPhalangeL1, globalSpeed - 0.43f, 0.15f, false, 0, 0, frame, 0.5f);
-            swing(topWingFinPhalangeL1, globalSpeed - 0.45f, 0.1f, false, 0.5f, 0, frame, 0.5f);
-            swing(topWingFinPhalangeL2, globalSpeed - 0.45f, 0.1f, false, 0.5f, 0, frame, 0.5f);
-            flap(topWingFinPhalangeL2, globalSpeed - 0.44f, 0.1f, false, 0.5f, 0, frame, 0.5f);
-            flap(topWingFinPhalangeR1, globalSpeed - 0.43f, 0.15f, true, 0, 0, frame, 0.5f);
-            swing(topWingFinPhalangeR1, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, frame, 0.5f);
-            swing(topWingFinPhalangeR2, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, frame, 0.5f);
-            flap(topWingFinPhalangeR2, globalSpeed - 0.44f, 0.1f, true, 0.5f, 0, frame, 0.5f);
+            chainWave(headArray, globalSpeed - 0.45f, 0.07f, -2, bob, 0.5f);
+            chainSwing(tailArray, globalSpeed - 0.46f, 0.4f, -3, bob, 0.5f);
+            flap(topWingFinPhalangeL1, globalSpeed - 0.43f, 0.15f, false, 0, 0, bob, 0.5f);
+            swing(topWingFinPhalangeL1, globalSpeed - 0.45f, 0.1f, false, 0.5f, 0, bob, 0.5f);
+            swing(topWingFinPhalangeL2, globalSpeed - 0.45f, 0.1f, false, 0.5f, 0, bob, 0.5f);
+            flap(topWingFinPhalangeL2, globalSpeed - 0.44f, 0.1f, false, 0.5f, 0, bob, 0.5f);
+            flap(topWingFinPhalangeR1, globalSpeed - 0.43f, 0.15f, true, 0, 0, bob, 0.5f);
+            swing(topWingFinPhalangeR1, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, bob, 0.5f);
+            swing(topWingFinPhalangeR2, globalSpeed - 0.45f, 0.1f, true, 0.5f, 0, bob, 0.5f);
+            flap(topWingFinPhalangeR2, globalSpeed - 0.44f, 0.1f, true, 0.5f, 0, bob, 0.5f);
 
             if (entity.isInSittingPose())
             {
-                flap(bottomWingFinPhalangeL1, globalSpeed - 0.43f, -0.1f, false, 0.25f, 0, frame, 0.5f);
-                swing(bottomWingFinPhalangeL1, globalSpeed - 0.45f, 0.075f, false, 0.75f, 0, frame, 0.5f);
-                flap(bottomWingFinPhalangeR1, globalSpeed - 0.43f, -0.1f, true, 0.25f, 0, frame, 0.5f);
-                swing(bottomWingFinPhalangeR1, globalSpeed - 0.45f, 0.075f, true, 0.75f, 0, frame, 0.5f);
+                flap(bottomWingFinPhalangeL1, globalSpeed - 0.43f, -0.1f, false, 0.25f, 0, bob, 0.5f);
+                swing(bottomWingFinPhalangeL1, globalSpeed - 0.45f, 0.075f, false, 0.75f, 0, bob, 0.5f);
+                flap(bottomWingFinPhalangeR1, globalSpeed - 0.43f, -0.1f, true, 0.25f, 0, bob, 0.5f);
+                swing(bottomWingFinPhalangeR1, globalSpeed - 0.45f, 0.075f, true, 0.75f, 0, bob, 0.5f);
             }
         }
     }
 
-    private void roarAnim(float partialTick)
+    public void roarAnimation()
     {
-        animator.startKeyframe(10);
-        animator.rotate(neck1, -0.3f, 0, 0);
-        animator.rotate(neck2, 0.1f, 0, 0);
-        animator.rotate(neck3, 0.2f, 0, 0);
-        animator.rotate(head, 0.1f, 0, 0);
-        animator.endKeyframe();
-        animator.startKeyframe(5);
-        animator.rotate(neck1, -0.3f, 0, 0);
-        animator.rotate(mouthTop, -0.3f, 0, 0);
-        animator.rotate(mouthBottom, 0.3f, 0, 0);
-        animator.endKeyframe();
-        animator.setStaticKeyframe(43);
+        animator().startKeyframe(10)
+                .rotate(neck1, -0.3f, 0, 0)
+                .rotate(neck2, 0.1f, 0, 0)
+                .rotate(neck3, 0.2f, 0, 0)
+                .rotate(head, 0.1f, 0, 0)
+                .endKeyframe();
+        animator().startKeyframe(5)
+                .rotate(neck1, -0.3f, 0, 0)
+                .rotate(mouthTop, -0.3f, 0, 0)
+                .rotate(mouthBottom, 0.3f, 0, 0)
+                .endKeyframe();
+        animator().setStaticKeyframe(43);
         if (entity.getAnimationTick() > 11)
-            chainSwing(headArray, globalSpeed - 0.4f, 0.2f, -2, entity.getAnimationTick() - 12 + partialTick, 0.5f);
-        animator.resetKeyframe(6);
+            chainSwing(headArray, globalSpeed - 0.4f, 0.2f, -2, entity.getAnimationTick() - 12 + partialTicks, 0.5f);
+        animator().resetKeyframe(6);
     }
 
-    private void conduitAnim(float partialTick)
+    public void conduitAnimation()
     {
-        animator.startKeyframe(8);
-        animator.rotate(neck1, -0.3f, 0, 0);
-        animator.rotate(mouthTop, -0.3f, 0, 0);
-        animator.rotate(mouthBottom, 0.3f, 0, 0);
-        animator.endKeyframe();
-        animator.setStaticKeyframe(43);
-        chainSwing(headArray, globalSpeed - 0.4f, 0.2f, -2, entity.getAnimationTick() - 1 + partialTick, 0.5f);
-        animator.resetKeyframe(8);
+        animator().startKeyframe(8)
+                .rotate(neck1, -0.3f, 0, 0)
+                .rotate(mouthTop, -0.3f, 0, 0)
+                .rotate(mouthBottom, 0.3f, 0, 0)
+                .endKeyframe();
+        animator().setStaticKeyframe(43);
+        chainSwing(headArray, globalSpeed - 0.4f, 0.2f, -2, entity.getAnimationTick() - 1 + partialTicks, 0.5f);
+        animator().resetKeyframe(8);
     }
 
-
-    private void biteAnim()
+    public void biteAnimation()
     {
-        animator.startKeyframe(6);
-        animator.rotate(neck1, -0.6f, 0, 0);
-        animator.rotate(neck2, 0.3f, 0, 0);
-        animator.rotate(neck3, 0.4f, 0, 0);
-        animator.rotate(head, 0.4f, 0, 0);
-        animator.rotate(mouthTop, -0.5f, 0, 0);
-        animator.rotate(mouthBottom, 0.5f, 0, 0);
-        animator.endKeyframe();
-        animator.startKeyframe(3);
-        animator.rotate(neck1, 0.45f, 0, 0);
-        animator.endKeyframe();
-        animator.resetKeyframe(8);
+        animator().startKeyframe(6);
+        animator().rotate(neck1, -0.6f, 0, 0);
+        animator().rotate(neck2, 0.3f, 0, 0);
+        animator().rotate(neck3, 0.4f, 0, 0);
+        animator().rotate(head, 0.4f, 0, 0);
+        animator().rotate(mouthTop, -0.5f, 0, 0);
+        animator().rotate(mouthBottom, 0.5f, 0, 0);
+        animator().endKeyframe();
+        animator().startKeyframe(3);
+        animator().rotate(neck1, 0.45f, 0, 0);
+        animator().endKeyframe();
+        animator().resetKeyframe(8);
     }
 
     private void beach(float v)

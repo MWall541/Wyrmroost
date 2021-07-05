@@ -32,7 +32,7 @@ public class DebugRendering
 
     public static void box(AxisAlignedBB aabb, int argb, int ticks)
     {
-        shape(VoxelShapes.create(aabb), aabb.getCenter(), argb, ticks);
+        shape(VoxelShapes.create(aabb), Vector3d.ZERO, argb, ticks);
     }
 
     public static void conjoined(int color, int ticks, BlockPos... cubes)

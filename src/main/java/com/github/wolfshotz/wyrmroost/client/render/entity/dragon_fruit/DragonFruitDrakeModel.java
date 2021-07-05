@@ -72,8 +72,6 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
     public WRModelRenderer LegfrontL3;
     public WRModelRenderer frontfootL;
 
-    private final ModelAnimator animator;
-
     public DragonFruitDrakeModel()
     {
         texWidth = 100;
@@ -366,8 +364,6 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
         tailArray = new WRModelRenderer[] {Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7, TailLeafEND};
 
         setDefaultPose();
-
-        animator = ModelAnimator.create();
     }
 
     @Override
@@ -381,26 +377,14 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
     }
 
     @Override
-    public void setupAnim(DragonFruitDrakeEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(DragonFruitDrakeEntity entity, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        if (!entityIn.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
-    }
-
-    private float globalDegree = 0.5f;
-
-    @Override
-    public void prepareMobModel(DragonFruitDrakeEntity fruitDrake, float limbSwing, float limbSwingAmount, float partialTick)
-    {
-        float frame = partialTick + fruitDrake.tickCount;
-        this.entity = fruitDrake;
-
-        this.riding = fruitDrake.isInSittingPose();
-        globalDegree = 0.5f;
+        this.riding = entity.isInSittingPose();
         globalSpeed = 0.5f;
         resetToDefaultPose();
-        animator.update(fruitDrake, partialTick);
+        animator().tick(entity, this, partialTicks);
 
-        if (!fruitDrake.isSleeping())
+        if (!entity.isSleeping())
         {
             bob(Body1, 0.6f, 0.2f, false, limbSwing, limbSwingAmount);
 
@@ -421,18 +405,18 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
             walk(backfootL, 0.3f, 0.6f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
         }
 
-        sit(fruitDrake.sitTimer.get(partialTick));
-        sleep(fruitDrake.sleepTimer.get(partialTick));
+        sit(entity.sitTimer.get(partialTicks));
+        sleep(entity.sleepTimer.get(partialTicks));
 
-        if (animator.setAnimation(DragonFruitDrakeEntity.BITE_ANIMATION)) biteAnim();
-
-        if (fruitDrake.isSleeping())
+        if (entity.isSleeping())
         {
             EyeL.yRot = 87;
             EyeR.yRot = -87f;
         }
 
-        idleAnim(frame, false);
+        idle(bob, false);
+
+        if (!entity.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
     }
 
     private void sit(float v)
@@ -484,29 +468,27 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
         rotate(TailLeafEND, -0.4f, 0, 0);
     }
 
-    public void idleAnim(float frame, boolean mouth)
+    public void idle(float frame, boolean mouth)
     {
         if (mouth) walk(mouthbottom, globalSpeed - 0.425f, 0.1f, false, 0.5f, 0.1f, frame, 0.5f);
-        chainWave(headArray, globalSpeed - 0.425f, globalDegree - 0.47f, 2, frame, 0.5f);
-        chainWave(tailArray, globalSpeed - 0.45f, globalDegree - 0.45f, 2, frame, 0.5f);
-        chainSwing(tailArray, globalSpeed - 0.465f, globalDegree - 0.45f, 3d, frame, 0.5f);
+        chainWave(headArray, globalSpeed - 0.425f, 0.03f, 2, frame, 0.5f);
+        chainWave(tailArray, globalSpeed - 0.45f, 0.05f, 2, frame, 0.5f);
+        chainSwing(tailArray, globalSpeed - 0.465f, 0.05f, 3d, frame, 0.5f);
     }
 
-    public void biteAnim()
+    public void biteAnimation()
     {
-        animator.startKeyframe(5);
-        animator.rotate(mouthbottom, 0.5f, 0, 0);
-        for (WRModelRenderer box : headArray)
-        {
-            animator.rotate(box, -0.15f, 0, 0);
-        }
-        animator.rotate(Head, 1, 0, 0);
-//        animator.rotate(neck2, -1, 0, 0);
-        animator.endKeyframe();
+        ModelAnimator animator = animator(); // reduce method calls
 
-        animator.startKeyframe(4);
-        animator.rotate(neck2, 1, 0, 0);
-        animator.endKeyframe();
+        animator.startKeyframe(5)
+                .rotate(mouthbottom, 0.5f, 0, 0);
+        for (WRModelRenderer box : headArray) animator.rotate(box, -0.15f, 0, 0);
+        animator.rotate(Head, 1, 0, 0)
+                .endKeyframe();
+
+        animator.startKeyframe(4)
+                .rotate(neck2, 1, 0, 0)
+                .endKeyframe();
 
         animator.resetKeyframe(6);
     }

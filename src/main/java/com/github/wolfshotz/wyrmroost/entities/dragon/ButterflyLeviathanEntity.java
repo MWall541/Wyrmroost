@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.client.render.entity.butterfly.ButterflyLeviathanModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
@@ -60,10 +61,12 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     public static final EntitySerializer<ButterflyLeviathanEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
+    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> LIGHTNING_ANIMATION = Animation.create(64, ButterflyLeviathanEntity::lightningAnimation, ButterflyLeviathanModel::roarAnimation);
+    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> CONDUIT_ANIMATION = Animation.create(59, ButterflyLeviathanEntity::conduitAnimation, ButterflyLeviathanModel::conduitAnimation);
+    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> BITE_ANIMATION = Animation.create(17, ButterflyLeviathanEntity::biteAnimation, ButterflyLeviathanModel::biteAnimation);
+    public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{LIGHTNING_ANIMATION, CONDUIT_ANIMATION, BITE_ANIMATION};
+
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.defineId(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
-    public static final Animation LIGHTNING_ANIMATION = new Animation(64);
-    public static final Animation CONDUIT_ANIMATION = new Animation(59);
-    public static final Animation BITE_ANIMATION = new Animation(17);
     public static final int CONDUIT_SLOT = 0;
 
     public final LerpedFloat beachedTimer = LerpedFloat.unit();
@@ -184,58 +187,56 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
                 if (getRandom().nextBoolean()) playSound(SoundEvents.CONDUIT_AMBIENT, 1f, 1f, true);
                 else playSound(SoundEvents.CONDUIT_AMBIENT_SHORT, 1f, 1f, true);
         }
+    }
 
-        // handle animation logic
-        Animation animation = getAnimation();
-        int animTick = getAnimationTick();
-
-        // zap the fuckers
-        if (animation == LIGHTNING_ANIMATION)
+    public void lightningAnimation(int time)
+    {
+        lightningCooldown += 6;
+        if (time == 10) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f, true);
+        if (!level.isClientSide && isInWaterRainOrBubble() && time >= 10)
         {
-            lightningCooldown += 6;
-            if (animTick == 10) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 3f, 1f, true);
-            if (!level.isClientSide && isInWaterRainOrBubble() && animTick >= 10)
+            LivingEntity target = getTarget();
+            if (target != null)
             {
-                LivingEntity target = getTarget();
-                if (target != null)
+                if (hasConduit())
                 {
-                    if (hasConduit())
+                    if (time % 10 == 0)
                     {
-                        if (animTick % 10 == 0)
-                        {
-                            Vector3d vec3d = target.position().add(Mafs.nextDouble(getRandom()) * 2.333, 0, Mafs.nextDouble(getRandom()) * 2.333);
-                            createLightning(level, vec3d, false);
-                        }
+                        Vector3d vec3d = target.position().add(Mafs.nextDouble(getRandom()) * 2.333, 0, Mafs.nextDouble(getRandom()) * 2.333);
+                        createLightning(level, vec3d, false);
                     }
-                    else if (animTick == 10) createLightning(level, target.position(), false);
+                }
+                else if (time == 10) createLightning(level, target.position(), false);
+            }
+        }
+    }
+
+    public void conduitAnimation(int time)
+    {
+        ((LessShitLookController) getLookControl()).restore();
+        if (time == 0) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 5f, 1, true);
+        else if (time == 15)
+        {
+            playSound(SoundEvents.BEACON_ACTIVATE, 1, 1);
+            if (!level.isClientSide) createLightning(level, getConduitPos().add(0, 1, 0), true);
+            else
+            {
+                Vector3d conduitPos = getConduitPos();
+                for (int i = 0; i < 26; ++i)
+                {
+                    double velX = Math.cos(i);
+                    double velZ = Math.sin(i);
+                    level.addParticle(ParticleTypes.CLOUD, conduitPos.x, conduitPos.y + 0.8, conduitPos.z, velX, 0, velZ);
                 }
             }
         }
-        else if (animation == CONDUIT_ANIMATION) // oooo very scary
-        {
-            ((LessShitLookController) getLookControl()).restore();
-            if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 5f, 1, true);
-            else if (animTick == 15)
-            {
-                playSound(SoundEvents.BEACON_ACTIVATE, 1, 1);
-                if (!level.isClientSide) createLightning(level, getConduitPos().add(0, 1, 0), true);
-                else
-                {
-                    for (int i = 0; i < 26; ++i)
-                    {
-                        double velX = Math.cos(i);
-                        double velZ = Math.sin(i);
-                        level.addParticle(ParticleTypes.CLOUD, conduitPos.x, conduitPos.y + 0.8, conduitPos.z, velX, 0, velZ);
-                    }
-                }
-            }
-        }
-        else if (animation == BITE_ANIMATION)
-        {
-            if (animTick == 0) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1, true);
-            else if (animTick == 6)
-                attackInBox(getBoundingBox().move(Vector3d.directionFromRotation(isUnderWater()? xRot : 0, yHeadRot).scale(5.5f)).inflate(0.85), 40);
-        }
+    }
+
+    public void biteAnimation(int time)
+    {
+        if (time == 0) playSound(WRSounds.ENTITY_BFLY_HURT.get(), 1, 1, true);
+        else if (time == 6)
+            attackInBox(getBoundingBox().move(Vector3d.directionFromRotation(isUnderWater()? xRot : 0, yHeadRot).scale(5.5f)).inflate(0.85), 40);
     }
 
     @Override
@@ -341,7 +342,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (pressed && noActiveAnimation())
+        if (pressed && noAnimations())
         {
             if (key == KeybindPacket.MOUNT_KEY1) setAnimation(BITE_ANIMATION);
             else if (key == KeybindPacket.MOUNT_KEY2 && !level.isClientSide && canZap())
@@ -524,9 +525,9 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation[] getAnimations()
+    public Animation<?, ?>[] getAnimations()
     {
-        return new Animation[] {LIGHTNING_ANIMATION, CONDUIT_ANIMATION, BITE_ANIMATION};
+        return ANIMATIONS;
     }
 
     @Override
@@ -679,7 +680,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
 
             if (isClose) yRot = (float) Mafs.getAngle(ButterflyLeviathanEntity.this, target) + 90f;
 
-            if (noActiveAnimation())
+            if (noAnimations())
             {
                 if (distFromTarget > 225 && (isTame() || target.getType() == EntityType.PLAYER) && canZap())
                     AnimationPacket.send(ButterflyLeviathanEntity.this, LIGHTNING_ANIMATION);

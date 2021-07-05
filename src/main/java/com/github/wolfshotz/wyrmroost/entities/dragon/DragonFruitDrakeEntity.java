@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeModel;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
@@ -58,7 +59,9 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
 
     private static final int CROP_GROWTH_RADIUS = 5;
     private static final int CROP_GROWTH_TIME = 1200; // 1 minute
-    public static final Animation BITE_ANIMATION = new Animation(15);
+
+    public static final Animation<DragonFruitDrakeEntity, DragonFruitDrakeModel> BITE_ANIMATION = Animation.create(15, DragonFruitDrakeEntity::biteAnimation, DragonFruitDrakeModel::biteAnimation);
+    public static final Animation<?, ?>[] ANIMATIONS = new Animation[] {BITE_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();
     private int shearCooldownTime, napTime, growCropsTime;
@@ -199,8 +202,11 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
                 setSleeping(true);
             }
         }
+    }
 
-        if (getAnimation() == BITE_ANIMATION && getAnimationTick() == 7 && canBeControlledByRider())
+    public void biteAnimation(int time)
+    {
+        if (time == 7)
         {
             attackInBox(getOffsetBox(getBbWidth()));
             AxisAlignedBB aabb = getBoundingBox().inflate(2).move(Mafs.getYawVec(yHeadRot, 0, 2));
@@ -325,9 +331,9 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     }
 
     @Override
-    public Animation[] getAnimations()
+    public Animation<?, ?>[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, BITE_ANIMATION};
+        return ANIMATIONS;
     }
 
     @Override

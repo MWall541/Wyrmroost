@@ -10,30 +10,31 @@ import javax.annotation.Nullable;
 
 public interface IAnimatable
 {
-    Animation NO_ANIMATION = new Animation(0);
+    Animation<?, ?> NO_ANIMATION = Animation.create(0, null, null);
 
     int getAnimationTick();
 
     void setAnimationTick(int tick);
 
-    Animation getAnimation();
+    Animation<?, ?> getAnimation();
 
-    void setAnimation(Animation animation);
+    void setAnimation(Animation<?, ?> animation);
 
-    Animation[] getAnimations();
+    Animation<?, ?>[] getAnimations();
 
-    default boolean noActiveAnimation()
+    default boolean noAnimations()
     {
         return getAnimation() == NO_ANIMATION;
     }
 
     default void updateAnimations()
     {
-        Animation current = getAnimation();
+        Animation<?, ?> current = getAnimation();
         if (current != NO_ANIMATION)
         {
-            int tick = getAnimationTick() + 1;
-            if (tick >= current.getDuration())
+            int tick = getAnimationTick();
+            current.tick(this, tick);
+            if (++tick >= current.getDuration())
             {
                 setAnimation(NO_ANIMATION);
                 tick = 0;
@@ -67,7 +68,7 @@ public interface IAnimatable
         public static final Capability<IAnimatable> CAPABILITY = null;
 
         private int animationTick = 0;
-        private Animation animation;
+        private Animation<?, ?> animation;
 
         @Override
         public int getAnimationTick()
@@ -82,19 +83,19 @@ public interface IAnimatable
         }
 
         @Override
-        public Animation getAnimation()
+        public Animation<?, ?> getAnimation()
         {
             return animation;
         }
 
         @Override
-        public void setAnimation(Animation animation)
+        public void setAnimation(Animation<?, ?> animation)
         {
             this.animation = animation;
         }
 
         @Override
-        public Animation[] getAnimations()
+        public Animation<?, ?>[] getAnimations()
         {
             return new Animation[0];
         }

@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.client.render.entity.canari.CanariWyvernModel;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
@@ -38,10 +39,10 @@ public class CanariWyvernEntity extends TameableDragonEntity
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant)
             .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping));
 
-    public static final Animation FLAP_WINGS_ANIMATION = new Animation(22);
-    public static final Animation PREEN_ANIMATION = new Animation(36);
-    public static final Animation THREAT_ANIMATION = new Animation(40);
-    public static final Animation ATTACK_ANIMATION = new Animation(15);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> FLAP_WINGS_ANIMATION = Animation.create(22, CanariWyvernEntity::flapWingsAnimation, CanariWyvernModel::flapWingsAnimation);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> PREEN_ANIMATION = Animation.create(36, null, CanariWyvernModel::preenAnimation);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> THREAT_ANIMATION = Animation.create(40, CanariWyvernEntity::threatAnimation, CanariWyvernModel::threatAnimation);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> ATTACK_ANIMATION = Animation.create(15, null, CanariWyvernModel::attackAnimation);
 
     public PlayerEntity pissedOffTarget;
 
@@ -97,24 +98,25 @@ public class CanariWyvernEntity extends TameableDragonEntity
     {
         super.aiStep();
 
-        if (!level.isClientSide && !isPissed() && !isSleeping() && !isFlying() && !isRiding() && noActiveAnimation())
+        if (!level.isClientSide && !isPissed() && !isSleeping() && !isFlying() && !isRiding() && noAnimations())
         {
             double rand = getRandom().nextDouble();
             if (rand < 0.001) AnimationPacket.send(this, FLAP_WINGS_ANIMATION);
             else if (rand < 0.002) AnimationPacket.send(this, PREEN_ANIMATION);
         }
+    }
 
-        if (getAnimation() == FLAP_WINGS_ANIMATION)
-        {
-            int tick = getAnimationTick();
-            if (tick == 5 || tick == 12) playSound(SoundEvents.PHANTOM_FLAP, 0.7f, 2, true);
-            if (!level.isClientSide && tick == 9 && getRandom().nextDouble() <= 0.25)
-                spawnAtLocation(new ItemStack(Items.FEATHER), 0.5f);
-        }
-        else if (getAnimation() == THREAT_ANIMATION && isPissed())
-        {
+    public void flapWingsAnimation(int time)
+    {
+        if (time == 5 || time == 12) playSound(SoundEvents.PHANTOM_FLAP, 0.7f, 2, true);
+        if (!level.isClientSide && time == 9 && getRandom().nextDouble() <= 0.25)
+            spawnAtLocation(new ItemStack(Items.FEATHER), 0.5f);
+    }
+
+    public void threatAnimation(int time)
+    {
+        if (isPissed())
             yRot = yBodyRot = yHeadRot = (float) Mafs.getAngle(CanariWyvernEntity.this, pissedOffTarget) - 270f;
-        }
     }
 
     @Override
@@ -151,9 +153,11 @@ public class CanariWyvernEntity extends TameableDragonEntity
             switch (level.getDifficulty())
             {
                 case HARD:
-                    i = 15; break;
+                    i = 15;
+                    break;
                 case NORMAL:
-                    i = 8; break;
+                    i = 8;
+                    break;
                 default:
                     break;
             }
@@ -212,7 +216,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION, ATTACK_ANIMATION};
+        return new Animation[]{NO_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION, ATTACK_ANIMATION};
     }
 
     @Override

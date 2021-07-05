@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.client.render.entity.owdrake.OWDrakeModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
@@ -70,9 +71,10 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.defineId(OverworldDrakeEntity.class, DataSerializers.BOOLEAN);
 
     // Dragon Entity Animations
-    public static final Animation GRAZE_ANIMATION = new Animation(35);
-    public static final Animation HORN_ATTACK_ANIMATION = new Animation(15);
-    public static final Animation ROAR_ANIMATION = new Animation(86);
+    public static final Animation<OverworldDrakeEntity, OWDrakeModel> GRAZE_ANIMATION = Animation.create(35, OverworldDrakeEntity::grazeAnimation, OWDrakeModel::grazeAnimation);
+    public static final Animation<OverworldDrakeEntity, OWDrakeModel> HORN_ATTACK_ANIMATION = Animation.create(15, OverworldDrakeEntity::hornAttackAnimation, OWDrakeModel::hornAttackAnimation);
+    public static final Animation<OverworldDrakeEntity, OWDrakeModel> ROAR_ANIMATION = Animation.create(86, OverworldDrakeEntity::hornAttackAnimation, OWDrakeModel::roarAnimation);
+    public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();
     public LivingEntity thrownPassenger;
@@ -142,45 +144,45 @@ public class OverworldDrakeEntity extends TameableDragonEntity
 
         if (!level.isClientSide && getTarget() == null && !isInSittingPose() && !isSleeping() && level.getBlockState(blockPosition().below()).getBlock() == Blocks.GRASS_BLOCK && getRandom().nextDouble() < (isBaby() || getHealth() < getMaxHealth()? 0.005 : 0.001))
             AnimationPacket.send(this, GRAZE_ANIMATION);
+    }
 
-        Animation animation = getAnimation();
-        int tick = getAnimationTick();
-        LivingEntity target = getTarget();
-
-        if (animation == ROAR_ANIMATION)
+    public void roarAnimation(int time)
+    {
+        if (time == 0) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f, true);
+        else if (time == 15)
         {
-            if (tick == 0) playSound(WRSounds.ENTITY_OWDRAKE_ROAR.get(), 3f, 1f, true);
-            else if (tick == 15)
+            for (LivingEntity entity : getEntitiesNearby(15, e -> !isAlliedTo(e))) // Dont get too close now ;)
             {
-                for (LivingEntity entity : getEntitiesNearby(15, e -> !isAlliedTo(e))) // Dont get too close now ;)
+                entity.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 200));
+                if (distanceToSqr(entity) <= 10)
                 {
-                    entity.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 200));
-                    if (distanceToSqr(entity) <= 10)
-                    {
-                        double angle = Mafs.getAngle(getX(), getZ(), entity.getX(), entity.getZ()) * Math.PI / 180;
-                        entity.push(1.2 * -Math.cos(angle), 0.4d, 1.2 * -Math.sin(angle));
-                    }
+                    double angle = Mafs.getAngle(getX(), getZ(), entity.getX(), entity.getZ()) * Math.PI / 180;
+                    entity.push(1.2 * -Math.cos(angle), 0.4d, 1.2 * -Math.sin(angle));
                 }
             }
         }
+    }
 
-        if (animation == HORN_ATTACK_ANIMATION)
+    public void hornAttackAnimation(int time)
+    {
+        if (time == 8)
         {
-            if (tick == 8)
+            LivingEntity target = getTarget();
+            if (target != null) yRot = yBodyRot = (float) Mafs.getAngle(this, target) + 90f;
+            playSound(SoundEvents.IRON_GOLEM_ATTACK, 1, 0.5f, true);
+            AxisAlignedBB box = getOffsetBox(getBbWidth()).inflate(-0.075);
+            attackInBox(box);
+            for (BlockPos pos : ModUtils.eachPositionIn(box))
             {
-                if (target != null) yRot = yBodyRot = (float) Mafs.getAngle(this, target) + 90f;
-                playSound(SoundEvents.IRON_GOLEM_ATTACK, 1, 0.5f, true);
-                AxisAlignedBB box = getOffsetBox(getBbWidth()).inflate(-0.075);
-                attackInBox(box);
-                for (BlockPos pos : ModUtils.eachPositionIn(box))
-                {
-                    if (level.getBlockState(pos).is(BlockTags.LEAVES))
-                        level.destroyBlock(pos, false, this);
-                }
+                if (level.getBlockState(pos).is(BlockTags.LEAVES))
+                    level.destroyBlock(pos, false, this);
             }
         }
+    }
 
-        if (!level.isClientSide && animation == GRAZE_ANIMATION && tick == 13)
+    public void grazeAnimation(int time)
+    {
+        if (level.isClientSide && time == 13)
         {
             BlockPos pos = new BlockPos(Mafs.getYawVec(yBodyRot, 0, getBbWidth() / 2 + 1).add(position()));
             if (level.getBlockState(pos).is(Blocks.GRASS) && WRConfig.canGrief(level))
@@ -268,7 +270,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (key == KeybindPacket.MOUNT_KEY1 && pressed && noActiveAnimation())
+        if (key == KeybindPacket.MOUNT_KEY1 && pressed && noAnimations())
         {
             if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
             else setAnimation(HORN_ATTACK_ANIMATION);
@@ -310,7 +312,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
         boolean flag = getTarget() != null;
         setSprinting(flag);
 
-        if (flag && prev != target && target.getType() == EntityType.PLAYER && !isTame() && noActiveAnimation())
+        if (flag && prev != target && target.getType() == EntityType.PLAYER && !isTame() && noAnimations())
             AnimationPacket.send(this, OverworldDrakeEntity.ROAR_ANIMATION);
     }
 
@@ -423,7 +425,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
+        return ANIMATIONS;
     }
 
     public static void setSpawnBiomes(BiomeLoadingEvent event)

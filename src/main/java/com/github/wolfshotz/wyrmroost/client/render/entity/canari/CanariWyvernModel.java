@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.client.render.entity.canari;
 
-import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.CanariWyvernEntity;
@@ -83,8 +82,6 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
 
     public WRModelRenderer[] headArray;
     public WRModelRenderer[] tailArray;
-
-    public ModelAnimator animator;
 
     // false == left, true == right
     public boolean preenSide = false;
@@ -382,8 +379,6 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
 
         headArray = new WRModelRenderer[] {head_1, neck1, neck2};
         tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4};
-
-        animator = ModelAnimator.create();
     }
 
     @Override
@@ -397,24 +392,15 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     }
 
     @Override
-    public void setupAnim(CanariWyvernEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public void setupAnim(CanariWyvernEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-        if (entity.isFlying() && entityIn.getAnimation() != CanariWyvernEntity.ATTACK_ANIMATION)
-            body1.xRot = headPitch * (Mafs.PI / 180f);
-        faceTarget(netHeadYaw, headPitch, 1, neck1, neck2, head);
-    }
-
-    @Override
-    public void prepareMobModel(CanariWyvernEntity canari, float limbSwing, float limbSwingAmount, float partialTick)
-    {
-        this.entity = canari;
-        float frame = canari.tickCount + partialTick;
-
         resetToDefaultPose();
-        animator.update(canari, partialTick);
+        animator().tick(entity, this, partialTicks);
         setInitialPositions();
 
-        if (canari.isFlying())
+        this.bob = bob;
+
+        if (entity.isFlying())
         {
             flap(wing1L, globalSpeed, 1f, false, 0, 0, limbSwing, limbSwingAmount);
             flap(wing2L, globalSpeed, 0.75f, false, -1.5f, 0, limbSwing, limbSwingAmount);
@@ -445,15 +431,14 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
             walk(footL_1, globalSpeed + 0.5f, -2f, true, 0.75f, -1, limbSwing, limbSwingAmount);
         }
 
-        if (canari.isInSittingPose() && !canari.isFlying()) sitPose();
-        if (canari.isSleeping()) sleepPose();
+        if (entity.isInSittingPose() && !entity.isFlying()) sitPose();
+        if (entity.isSleeping()) sleepPose();
 
-        if (animator.setAnimation(CanariWyvernEntity.FLAP_WINGS_ANIMATION)) flapWingsAnim();
-        else if (animator.setAnimation(CanariWyvernEntity.PREEN_ANIMATION)) preenAnim(frame);
-        else if (animator.setAnimation(CanariWyvernEntity.THREAT_ANIMATION)) threatAnim(frame);
-        else if (animator.setAnimation(CanariWyvernEntity.ATTACK_ANIMATION)) attackAnim();
+        idle(bob);
 
-        idle(frame);
+        if (this.entity.isFlying() && entity.getAnimation() != CanariWyvernEntity.ATTACK_ANIMATION)
+            body1.xRot = pitch * (Mafs.PI / 180f);
+        faceTarget(yaw, pitch, 1, neck1, neck2, head);
     }
 
     // Standing pose without the t-pose wings shit
@@ -565,7 +550,6 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         head.xRot = 1.8f;
     }
 
-    @Override
     public void idle(float frame)
     {
         if (entity.isFlying())
@@ -591,292 +575,292 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
         }
     }
 
-    public void flapWingsAnim()
+    public void flapWingsAnimation()
     {
         // extend wings
-        animator.startKeyframe(5);
+        animator().startKeyframe(5);
 
-        animator.rotate(body1, -0.5f, 0, 0);
-        animator.rotate(neck1, 0.5f, 0, 0);
-        animator.rotate(tail1, 1f, 0, 0);
-        animator.rotate(leg2L, 0.5f, 0, 0);
-        animator.rotate(leg2R, 0.5f, 0, 0);
+        animator().rotate(body1, -0.5f, 0, 0);
+        animator().rotate(neck1, 0.5f, 0, 0);
+        animator().rotate(tail1, 1f, 0, 0);
+        animator().rotate(leg2L, 0.5f, 0, 0);
+        animator().rotate(leg2R, 0.5f, 0, 0);
 
-        animator.rotate(wing1L, -1, 0.8f, 0);
-        animator.rotate(wing2L, 0, -1.7f, 0);
-        animator.rotate(palmL, 0, 0.4f, 0);
-        animator.rotate(phalang1L, 0, 1f, 0);
-        animator.rotate(phalang2L, 0, 1.25f, 0);
-        animator.rotate(phalang3L, 0, 1.15f, 0);
-        animator.rotate(feathers1L, -0.05f, -0.3f, 0);
-        animator.rotate(feathers2L, 0, 1.2f, 0);
-        animator.rotate(feathers3L, -0.001f, 0, 0);
-        animator.rotate(membrane3L, 0, -3f, 0);
-        animator.rotate(membrane3L_1, 0, -0.8f, 0);
+        animator().rotate(wing1L, -1, 0.8f, 0);
+        animator().rotate(wing2L, 0, -1.7f, 0);
+        animator().rotate(palmL, 0, 0.4f, 0);
+        animator().rotate(phalang1L, 0, 1f, 0);
+        animator().rotate(phalang2L, 0, 1.25f, 0);
+        animator().rotate(phalang3L, 0, 1.15f, 0);
+        animator().rotate(feathers1L, -0.05f, -0.3f, 0);
+        animator().rotate(feathers2L, 0, 1.2f, 0);
+        animator().rotate(feathers3L, -0.001f, 0, 0);
+        animator().rotate(membrane3L, 0, -3f, 0);
+        animator().rotate(membrane3L_1, 0, -0.8f, 0);
 
-        animator.rotate(wing1R, -1, -0.8f, 0);
-        animator.rotate(wing2R, 0, 1.7f, 0);
-        animator.rotate(palmR, 0, -0.4f, 0);
-        animator.rotate(phalang1R, 0, -1f, 0);
-        animator.rotate(phalang2R, 0, -1.25f, 0);
-        animator.rotate(phalang3R, 0, -1.15f, 0);
-        animator.rotate(feathers1R, -0.05f, 0.3f, 0);
-        animator.rotate(feathers2R, 0, -1.2f, 0);
-        animator.rotate(feathers3R, -0.001f, 0, 0);
-        animator.rotate(membrane3R, 0, 3f, 0);
-        animator.rotate(membrane3R_1, 0, 0.8f, 0);
+        animator().rotate(wing1R, -1, -0.8f, 0);
+        animator().rotate(wing2R, 0, 1.7f, 0);
+        animator().rotate(palmR, 0, -0.4f, 0);
+        animator().rotate(phalang1R, 0, -1f, 0);
+        animator().rotate(phalang2R, 0, -1.25f, 0);
+        animator().rotate(phalang3R, 0, -1.15f, 0);
+        animator().rotate(feathers1R, -0.05f, 0.3f, 0);
+        animator().rotate(feathers2R, 0, -1.2f, 0);
+        animator().rotate(feathers3R, -0.001f, 0, 0);
+        animator().rotate(membrane3R, 0, 3f, 0);
+        animator().rotate(membrane3R_1, 0, 0.8f, 0);
 
-        animator.endKeyframe();
-
-        // flap forward
-        animator.startKeyframe(3);
-
-        animator.rotate(body1, -0.5f, 0, 0);
-        animator.rotate(neck1, 0.5f, 0, 0);
-        animator.rotate(tail1, 1f, 0, 0);
-        animator.rotate(leg2L, 0.5f, 0, 0);
-        animator.rotate(leg2R, 0.5f, 0, 0);
-
-        animator.rotate(wing1L, -1, 0.8f, 0);
-        animator.rotate(wing2L, 0, -1.7f, 0);
-        animator.rotate(palmL, 0, 0.4f, 0);
-        animator.rotate(phalang1L, 0, 1f, 0);
-        animator.rotate(phalang2L, 0, 1.25f, 0);
-        animator.rotate(phalang3L, 0, 1.15f, 0);
-        animator.rotate(feathers1L, -0.05f, -0.3f, 0);
-        animator.rotate(feathers2L, 0, 1.2f, 0);
-        animator.rotate(feathers3L, -0.001f, 0, 0);
-        animator.rotate(membrane3L, 0, -3f, 0);
-        animator.rotate(membrane3L_1, 0, -0.8f, 0);
-
-        animator.rotate(wing1R, -1, -0.8f, 0);
-        animator.rotate(wing2R, 0, 1.7f, 0);
-        animator.rotate(palmR, 0, -0.4f, 0);
-        animator.rotate(phalang1R, 0, -1f, 0);
-        animator.rotate(phalang2R, 0, -1.25f, 0);
-        animator.rotate(phalang3R, 0, -1.15f, 0);
-        animator.rotate(feathers1R, -0.05f, 0.3f, 0);
-        animator.rotate(feathers2R, 0, -1.2f, 0);
-        animator.rotate(feathers3R, -0.001f, 0, 0);
-        animator.rotate(membrane3R, 0, 3f, 0);
-        animator.rotate(membrane3R_1, 0, 0.8f, 0);
-
-        animator.rotate(wing1L, 0, 1, 1); // *
-        animator.rotate(wing1R, 0, -1, -1); // *
-        animator.endKeyframe();
-
-        // flap back
-        animator.startKeyframe(3);
-        animator.rotate(body1, -0.5f, 0, 0);
-        animator.rotate(neck1, 0.5f, 0, 0);
-        animator.rotate(tail1, 1f, 0, 0);
-        animator.rotate(leg2L, 0.5f, 0, 0);
-        animator.rotate(leg2R, 0.5f, 0, 0);
-
-        animator.rotate(wing1L, -1, 0.8f, 0);
-        animator.rotate(wing2L, 0, -1.7f, 0);
-        animator.rotate(palmL, 0, 0.4f, 0);
-        animator.rotate(phalang1L, 0, 1f, 0);
-        animator.rotate(phalang2L, 0, 1.25f, 0);
-        animator.rotate(phalang3L, 0, 1.15f, 0);
-        animator.rotate(feathers1L, -0.05f, -0.3f, 0);
-        animator.rotate(feathers2L, 0, 1.2f, 0);
-        animator.rotate(feathers3L, -0.001f, 0, 0);
-        animator.rotate(membrane3L, 0, -3f, 0);
-        animator.rotate(membrane3L_1, 0, -0.8f, 0);
-
-        animator.rotate(wing1R, -1, -0.8f, 0);
-        animator.rotate(wing2R, 0, 1.7f, 0);
-        animator.rotate(palmR, 0, -0.4f, 0);
-        animator.rotate(phalang1R, 0, -1f, 0);
-        animator.rotate(phalang2R, 0, -1.25f, 0);
-        animator.rotate(phalang3R, 0, -1.15f, 0);
-        animator.rotate(feathers1R, -0.05f, 0.3f, 0);
-        animator.rotate(feathers2R, 0, -1.2f, 0);
-        animator.rotate(feathers3R, -0.001f, 0, 0);
-        animator.rotate(membrane3R, 0, 3f, 0);
-        animator.rotate(membrane3R_1, 0, 0.8f, 0);
-
-        animator.endKeyframe();
+        animator().endKeyframe();
 
         // flap forward
-        animator.startKeyframe(3);
+        animator().startKeyframe(3);
 
-        animator.rotate(body1, -0.5f, 0, 0);
-        animator.rotate(neck1, 0.5f, 0, 0);
-        animator.rotate(tail1, 1f, 0, 0);
-        animator.rotate(leg2L, 0.5f, 0, 0);
-        animator.rotate(leg2R, 0.5f, 0, 0);
+        animator().rotate(body1, -0.5f, 0, 0);
+        animator().rotate(neck1, 0.5f, 0, 0);
+        animator().rotate(tail1, 1f, 0, 0);
+        animator().rotate(leg2L, 0.5f, 0, 0);
+        animator().rotate(leg2R, 0.5f, 0, 0);
 
-        animator.rotate(wing1L, -1, 0.8f, 0);
-        animator.rotate(wing2L, 0, -1.7f, 0);
-        animator.rotate(palmL, 0, 0.4f, 0);
-        animator.rotate(phalang1L, 0, 1f, 0);
-        animator.rotate(phalang2L, 0, 1.25f, 0);
-        animator.rotate(phalang3L, 0, 1.15f, 0);
-        animator.rotate(feathers1L, -0.05f, -0.3f, 0);
-        animator.rotate(feathers2L, 0, 1.2f, 0);
-        animator.rotate(feathers3L, -0.001f, 0, 0);
-        animator.rotate(membrane3L, 0, -3f, 0);
-        animator.rotate(membrane3L_1, 0, -0.8f, 0);
+        animator().rotate(wing1L, -1, 0.8f, 0);
+        animator().rotate(wing2L, 0, -1.7f, 0);
+        animator().rotate(palmL, 0, 0.4f, 0);
+        animator().rotate(phalang1L, 0, 1f, 0);
+        animator().rotate(phalang2L, 0, 1.25f, 0);
+        animator().rotate(phalang3L, 0, 1.15f, 0);
+        animator().rotate(feathers1L, -0.05f, -0.3f, 0);
+        animator().rotate(feathers2L, 0, 1.2f, 0);
+        animator().rotate(feathers3L, -0.001f, 0, 0);
+        animator().rotate(membrane3L, 0, -3f, 0);
+        animator().rotate(membrane3L_1, 0, -0.8f, 0);
 
-        animator.rotate(wing1R, -1, -0.8f, 0);
-        animator.rotate(wing2R, 0, 1.7f, 0);
-        animator.rotate(palmR, 0, -0.4f, 0);
-        animator.rotate(phalang1R, 0, -1f, 0);
-        animator.rotate(phalang2R, 0, -1.25f, 0);
-        animator.rotate(phalang3R, 0, -1.15f, 0);
-        animator.rotate(feathers1R, -0.05f, 0.3f, 0);
-        animator.rotate(feathers2R, 0, -1.2f, 0);
-        animator.rotate(feathers3R, -0.001f, 0, 0);
-        animator.rotate(membrane3R, 0, 3f, 0);
-        animator.rotate(membrane3R_1, 0, 0.8f, 0);
+        animator().rotate(wing1R, -1, -0.8f, 0);
+        animator().rotate(wing2R, 0, 1.7f, 0);
+        animator().rotate(palmR, 0, -0.4f, 0);
+        animator().rotate(phalang1R, 0, -1f, 0);
+        animator().rotate(phalang2R, 0, -1.25f, 0);
+        animator().rotate(phalang3R, 0, -1.15f, 0);
+        animator().rotate(feathers1R, -0.05f, 0.3f, 0);
+        animator().rotate(feathers2R, 0, -1.2f, 0);
+        animator().rotate(feathers3R, -0.001f, 0, 0);
+        animator().rotate(membrane3R, 0, 3f, 0);
+        animator().rotate(membrane3R_1, 0, 0.8f, 0);
 
-        animator.rotate(wing1L, 0, 1, 1); // *
-        animator.rotate(wing1R, 0, -1, -1); // *
-        animator.endKeyframe();
+        animator().rotate(wing1L, 0, 1, 1); // *
+        animator().rotate(wing1R, 0, -1, -1); // *
+        animator().endKeyframe();
 
         // flap back
-        animator.startKeyframe(3);
-        animator.rotate(body1, -0.5f, 0, 0);
-        animator.rotate(neck1, 0.5f, 0, 0);
-        animator.rotate(tail1, 1f, 0, 0);
-        animator.rotate(leg2L, 0.5f, 0, 0);
-        animator.rotate(leg2R, 0.5f, 0, 0);
+        animator().startKeyframe(3);
+        animator().rotate(body1, -0.5f, 0, 0);
+        animator().rotate(neck1, 0.5f, 0, 0);
+        animator().rotate(tail1, 1f, 0, 0);
+        animator().rotate(leg2L, 0.5f, 0, 0);
+        animator().rotate(leg2R, 0.5f, 0, 0);
 
-        animator.rotate(wing1L, -1, 0.8f, 0);
-        animator.rotate(wing2L, 0, -1.7f, 0);
-        animator.rotate(palmL, 0, 0.4f, 0);
-        animator.rotate(phalang1L, 0, 1f, 0);
-        animator.rotate(phalang2L, 0, 1.25f, 0);
-        animator.rotate(phalang3L, 0, 1.15f, 0);
-        animator.rotate(feathers1L, -0.05f, -0.3f, 0);
-        animator.rotate(feathers2L, 0, 1.2f, 0);
-        animator.rotate(feathers3L, -0.001f, 0, 0);
-        animator.rotate(membrane3L, 0, -3f, 0);
-        animator.rotate(membrane3L_1, 0, -0.8f, 0);
+        animator().rotate(wing1L, -1, 0.8f, 0);
+        animator().rotate(wing2L, 0, -1.7f, 0);
+        animator().rotate(palmL, 0, 0.4f, 0);
+        animator().rotate(phalang1L, 0, 1f, 0);
+        animator().rotate(phalang2L, 0, 1.25f, 0);
+        animator().rotate(phalang3L, 0, 1.15f, 0);
+        animator().rotate(feathers1L, -0.05f, -0.3f, 0);
+        animator().rotate(feathers2L, 0, 1.2f, 0);
+        animator().rotate(feathers3L, -0.001f, 0, 0);
+        animator().rotate(membrane3L, 0, -3f, 0);
+        animator().rotate(membrane3L_1, 0, -0.8f, 0);
 
-        animator.rotate(wing1R, -1, -0.8f, 0);
-        animator.rotate(wing2R, 0, 1.7f, 0);
-        animator.rotate(palmR, 0, -0.4f, 0);
-        animator.rotate(phalang1R, 0, -1f, 0);
-        animator.rotate(phalang2R, 0, -1.25f, 0);
-        animator.rotate(phalang3R, 0, -1.15f, 0);
-        animator.rotate(feathers1R, -0.05f, 0.3f, 0);
-        animator.rotate(feathers2R, 0, -1.2f, 0);
-        animator.rotate(feathers3R, -0.001f, 0, 0);
-        animator.rotate(membrane3R, 0, 3f, 0);
-        animator.rotate(membrane3R_1, 0, 0.8f, 0);
+        animator().rotate(wing1R, -1, -0.8f, 0);
+        animator().rotate(wing2R, 0, 1.7f, 0);
+        animator().rotate(palmR, 0, -0.4f, 0);
+        animator().rotate(phalang1R, 0, -1f, 0);
+        animator().rotate(phalang2R, 0, -1.25f, 0);
+        animator().rotate(phalang3R, 0, -1.15f, 0);
+        animator().rotate(feathers1R, -0.05f, 0.3f, 0);
+        animator().rotate(feathers2R, 0, -1.2f, 0);
+        animator().rotate(feathers3R, -0.001f, 0, 0);
+        animator().rotate(membrane3R, 0, 3f, 0);
+        animator().rotate(membrane3R_1, 0, 0.8f, 0);
 
-        animator.endKeyframe();
+        animator().endKeyframe();
 
-        animator.resetKeyframe(5);
+        // flap forward
+        animator().startKeyframe(3);
+
+        animator().rotate(body1, -0.5f, 0, 0);
+        animator().rotate(neck1, 0.5f, 0, 0);
+        animator().rotate(tail1, 1f, 0, 0);
+        animator().rotate(leg2L, 0.5f, 0, 0);
+        animator().rotate(leg2R, 0.5f, 0, 0);
+
+        animator().rotate(wing1L, -1, 0.8f, 0);
+        animator().rotate(wing2L, 0, -1.7f, 0);
+        animator().rotate(palmL, 0, 0.4f, 0);
+        animator().rotate(phalang1L, 0, 1f, 0);
+        animator().rotate(phalang2L, 0, 1.25f, 0);
+        animator().rotate(phalang3L, 0, 1.15f, 0);
+        animator().rotate(feathers1L, -0.05f, -0.3f, 0);
+        animator().rotate(feathers2L, 0, 1.2f, 0);
+        animator().rotate(feathers3L, -0.001f, 0, 0);
+        animator().rotate(membrane3L, 0, -3f, 0);
+        animator().rotate(membrane3L_1, 0, -0.8f, 0);
+
+        animator().rotate(wing1R, -1, -0.8f, 0);
+        animator().rotate(wing2R, 0, 1.7f, 0);
+        animator().rotate(palmR, 0, -0.4f, 0);
+        animator().rotate(phalang1R, 0, -1f, 0);
+        animator().rotate(phalang2R, 0, -1.25f, 0);
+        animator().rotate(phalang3R, 0, -1.15f, 0);
+        animator().rotate(feathers1R, -0.05f, 0.3f, 0);
+        animator().rotate(feathers2R, 0, -1.2f, 0);
+        animator().rotate(feathers3R, -0.001f, 0, 0);
+        animator().rotate(membrane3R, 0, 3f, 0);
+        animator().rotate(membrane3R_1, 0, 0.8f, 0);
+
+        animator().rotate(wing1L, 0, 1, 1); // *
+        animator().rotate(wing1R, 0, -1, -1); // *
+        animator().endKeyframe();
+
+        // flap back
+        animator().startKeyframe(3);
+        animator().rotate(body1, -0.5f, 0, 0);
+        animator().rotate(neck1, 0.5f, 0, 0);
+        animator().rotate(tail1, 1f, 0, 0);
+        animator().rotate(leg2L, 0.5f, 0, 0);
+        animator().rotate(leg2R, 0.5f, 0, 0);
+
+        animator().rotate(wing1L, -1, 0.8f, 0);
+        animator().rotate(wing2L, 0, -1.7f, 0);
+        animator().rotate(palmL, 0, 0.4f, 0);
+        animator().rotate(phalang1L, 0, 1f, 0);
+        animator().rotate(phalang2L, 0, 1.25f, 0);
+        animator().rotate(phalang3L, 0, 1.15f, 0);
+        animator().rotate(feathers1L, -0.05f, -0.3f, 0);
+        animator().rotate(feathers2L, 0, 1.2f, 0);
+        animator().rotate(feathers3L, -0.001f, 0, 0);
+        animator().rotate(membrane3L, 0, -3f, 0);
+        animator().rotate(membrane3L_1, 0, -0.8f, 0);
+
+        animator().rotate(wing1R, -1, -0.8f, 0);
+        animator().rotate(wing2R, 0, 1.7f, 0);
+        animator().rotate(palmR, 0, -0.4f, 0);
+        animator().rotate(phalang1R, 0, -1f, 0);
+        animator().rotate(phalang2R, 0, -1.25f, 0);
+        animator().rotate(phalang3R, 0, -1.15f, 0);
+        animator().rotate(feathers1R, -0.05f, 0.3f, 0);
+        animator().rotate(feathers2R, 0, -1.2f, 0);
+        animator().rotate(feathers3R, -0.001f, 0, 0);
+        animator().rotate(membrane3R, 0, 3f, 0);
+        animator().rotate(membrane3R_1, 0, 0.8f, 0);
+
+        animator().endKeyframe();
+
+        animator().resetKeyframe(5);
     }
 
-    public void preenAnim(float frame)
+    public void preenAnimation()
     {
-        int tick = animator.getEntity().getAnimationTick();
+        int tick = animator().getEntity().getAnimationTick();
         if (tick == 0) preenSide = new Random().nextBoolean();
 
-        animator.startKeyframe(8);
+        animator().startKeyframe(8);
 
         if (preenSide) // right side
         {
             for (WRModelRenderer box : headArray)
-                animator.rotate(box, 0.5f, 0.7f, 0);
-            animator.rotate(head, -1f, 2, 0);
-            animator.rotate(wing1R, -0.5f, 0.2f, 0);
+                animator().rotate(box, 0.5f, 0.7f, 0);
+            animator().rotate(head, -1f, 2, 0);
+            animator().rotate(wing1R, -0.5f, 0.2f, 0);
         }
         else // left side
         {
             for (WRModelRenderer box : headArray)
-                animator.rotate(box, 0.5f, -0.7f, 0);
-            animator.rotate(head, -1f, -2, 0);
-            animator.rotate(wing1L, -0.5f, 0.2f, 0);
+                animator().rotate(box, 0.5f, -0.7f, 0);
+            animator().rotate(head, -1f, -2, 0);
+            animator().rotate(wing1L, -0.5f, 0.2f, 0);
         }
 
-        animator.endKeyframe();
-        animator.setStaticKeyframe(20);
-        animator.resetKeyframe(8);
+        animator().endKeyframe();
+        animator().setStaticKeyframe(20);
+        animator().resetKeyframe(8);
 
-        if (tick > 8 && tick < 28) flap(head, globalSpeed + 0.5f, 0.25f, false, 0, 0, frame, 0.5f);
+        if (tick > 8 && tick < 28) flap(head, globalSpeed + 0.5f, 0.25f, false, 0, 0, bob, 0.5f);
     }
 
-    public void threatAnim(float frame)
+    public void threatAnimation()
     {
-        int tick = animator.getEntity().getAnimationTick();
-        animator.startKeyframe(8);
+        int tick = animator().getEntity().getAnimationTick();
+        animator().startKeyframe(8);
         for (WRModelRenderer box : tailArray)
         {
-            animator.rotate(box, 0.6f, 0, 0);
-            if (tick < 20) walk(box, globalSpeed + 3f, 0.025f, false, 0, 0, frame, 0.5f);
+            animator().rotate(box, 0.6f, 0, 0);
+            if (tick < 20) walk(box, globalSpeed + 3f, 0.025f, false, 0, 0, bob, 0.5f);
         }
-        animator.rotate(body1, 0.5f, 0, 0);
-        animator.move(body1, 0, 1f, 0);
-        animator.rotate(neck1, 1.5f, 0, 0);
-        animator.rotate(neck2, -1.5f, 0, 0);
-        animator.rotate(head, -1.5f, 0, 0);
-        animator.rotate(head_1, 1f, 0, 0);
-        animator.rotate(jaw, 0.75f, 0, 0);
-        animator.rotate(wing1L, 0, 1, -1);
-        animator.rotate(wing1R, 0, -1, 1);
-        animator.rotate(leg1L, -0.5f, 0, 0);
-        animator.rotate(leg1R, -0.5f, 0, 0);
-        animator.endKeyframe();
-        animator.setStaticKeyframe(13);
-        animator.resetKeyframe(8);
+        animator().rotate(body1, 0.5f, 0, 0);
+        animator().move(body1, 0, 1f, 0);
+        animator().rotate(neck1, 1.5f, 0, 0);
+        animator().rotate(neck2, -1.5f, 0, 0);
+        animator().rotate(head, -1.5f, 0, 0);
+        animator().rotate(head_1, 1f, 0, 0);
+        animator().rotate(jaw, 0.75f, 0, 0);
+        animator().rotate(wing1L, 0, 1, -1);
+        animator().rotate(wing1R, 0, -1, 1);
+        animator().rotate(leg1L, -0.5f, 0, 0);
+        animator().rotate(leg1R, -0.5f, 0, 0);
+        animator().endKeyframe();
+        animator().setStaticKeyframe(13);
+        animator().resetKeyframe(8);
     }
 
-    public void attackAnim()
+    public void attackAnimation()
     {
         if (entity.isFlying())
         {
-            animator.startKeyframe(5);
-            animator.rotate(body1, -0.35f, 0, 0);
-            animator.rotate(neck1, 0.5f, 0, 0);
-            animator.rotate(neck2, 0.5f, 0, 0);
-            animator.rotate(head, 0.65f, 0, 0);
-            animator.rotate(leg1L, 0.5f, 0, 0);
-            animator.rotate(leg2L, -1, 0, 0);
-            animator.rotate(leg3L, 0.5f, 0, 0);
-            animator.rotate(footL, -1f, 0, 0);
-            animator.rotate(leg1R, 0.5f, 0, 0);
-            animator.rotate(leg2R, -1, 0, 0);
-            animator.rotate(leg3R, 0.5f, 0, 0);
-            animator.rotate(footL_1, -1f, 0, 0);
-            for (WRModelRenderer box : tailArray) animator.rotate(box, -0.7f, 0, 0);
+            animator().startKeyframe(5);
+            animator().rotate(body1, -0.35f, 0, 0);
+            animator().rotate(neck1, 0.5f, 0, 0);
+            animator().rotate(neck2, 0.5f, 0, 0);
+            animator().rotate(head, 0.65f, 0, 0);
+            animator().rotate(leg1L, 0.5f, 0, 0);
+            animator().rotate(leg2L, -1, 0, 0);
+            animator().rotate(leg3L, 0.5f, 0, 0);
+            animator().rotate(footL, -1f, 0, 0);
+            animator().rotate(leg1R, 0.5f, 0, 0);
+            animator().rotate(leg2R, -1, 0, 0);
+            animator().rotate(leg3R, 0.5f, 0, 0);
+            animator().rotate(footL_1, -1f, 0, 0);
+            for (WRModelRenderer box : tailArray) animator().rotate(box, -0.7f, 0, 0);
 //            animator.rotate(tail4, -0.8f, 0, 0);
-            animator.endKeyframe();
-            animator.setStaticKeyframe(5);
-            animator.resetKeyframe(5);
+            animator().endKeyframe();
+            animator().setStaticKeyframe(5);
+            animator().resetKeyframe(5);
         }
         else
         {
-            animator.startKeyframe(5);
-            animator.rotate(body1, 0.5f, 0, 0);
-            animator.move(body1, 0, 1.25f, 0);
-            animator.rotate(leg1L, -0.5f, 0, 0);
-            animator.rotate(leg1R, -0.5f, 0, 0);
+            animator().startKeyframe(5);
+            animator().rotate(body1, 0.5f, 0, 0);
+            animator().move(body1, 0, 1.25f, 0);
+            animator().rotate(leg1L, -0.5f, 0, 0);
+            animator().rotate(leg1R, -0.5f, 0, 0);
 
-            animator.rotate(neck1, 1.5f, 0, 0);
-            animator.rotate(neck2, -1.5f, 0, 0);
-            animator.rotate(head, -1.5f, 0, 0);
-            animator.rotate(jaw, 0.2f, 0, 0);
-            animator.endKeyframe();
-            animator.startKeyframe(2);
-            animator.rotate(body1, 0.5f, 0, 0);
-            animator.move(body1, 0, 1.25f, 0);
-            animator.rotate(leg1L, -0.5f, 0, 0);
-            animator.rotate(leg1R, -0.5f, 0, 0);
+            animator().rotate(neck1, 1.5f, 0, 0);
+            animator().rotate(neck2, -1.5f, 0, 0);
+            animator().rotate(head, -1.5f, 0, 0);
+            animator().rotate(jaw, 0.2f, 0, 0);
+            animator().endKeyframe();
+            animator().startKeyframe(2);
+            animator().rotate(body1, 0.5f, 0, 0);
+            animator().move(body1, 0, 1.25f, 0);
+            animator().rotate(leg1L, -0.5f, 0, 0);
+            animator().rotate(leg1R, -0.5f, 0, 0);
 
-            animator.rotate(neck1, 1.5f, 0, 0);
-            animator.rotate(neck2, -1.5f, 0, 0);
-            animator.rotate(head, -1.5f, 0, 0);
-            animator.rotate(jaw, 0.2f, 0, 0);
-            for (WRModelRenderer box : tailArray) animator.rotate(box, 0.8f, 0, 0);
-            animator.rotate(tail4, -0.8f, 0, 0);
-            animator.endKeyframe();
-            animator.resetKeyframe(10);
+            animator().rotate(neck1, 1.5f, 0, 0);
+            animator().rotate(neck2, -1.5f, 0, 0);
+            animator().rotate(head, -1.5f, 0, 0);
+            animator().rotate(jaw, 0.2f, 0, 0);
+            for (WRModelRenderer box : tailArray) animator().rotate(box, 0.8f, 0, 0);
+            animator().rotate(tail4, -0.8f, 0, 0);
+            animator().endKeyframe();
+            animator().resetKeyframe(10);
         }
     }
 }
