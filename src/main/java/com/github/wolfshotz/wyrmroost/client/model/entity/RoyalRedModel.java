@@ -1,12 +1,14 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.royal_red;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.RoyalRedEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 
@@ -14,8 +16,13 @@ import net.minecraft.util.math.vector.Vector3d;
  * WRRoyalRedReparent - Ukan
  * Created using Tabula 7.1.0
  */
-public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
+public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
 {
+    public static final ResourceLocation CHILD = Wyrmroost.id(FOLDER + "royal_red/child.png");
+    public static final ResourceLocation CHRISTMAS_MALE = Wyrmroost.id(FOLDER + "royal_red/male_christmas.png");
+    public static final ResourceLocation CHRISTMAS_FEMALE = Wyrmroost.id(FOLDER + "royal_red/female_christmas.png");
+    public static final ResourceLocation[] TEXTURES = new ResourceLocation[4];
+
     public WRModelRenderer body2;
     public WRModelRenderer tail1;
     public WRModelRenderer leg1R;
@@ -680,13 +687,45 @@ public class RoyalRedModel extends WREntityModel<RoyalRedEntity>
     }
 
     @Override
-    public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public ResourceLocation getTexture(RoyalRedEntity entity)
     {
-        ms.pushPose();
+        boolean shiny = entity.getVariant() == -1;
+
+        if (entity.isBaby()) return CHILD;
+        int index = (entity.isMale()? 0 : 1) + (shiny? 2 : 0);
+        if (TEXTURES[index] == null)
+        {
+            String path = FOLDER + "royal_red/" + ((index & 1) != 0? "female" : "male");
+            if ((index & 2) != 0) path += "_spe";
+            return TEXTURES[index] = Wyrmroost.id(path + ".png");
+        }
+        return TEXTURES[index];
+    }
+
+    @Override
+    public float getShadowRadius(RoyalRedEntity entity)
+    {
+        return 2.5f;
+    }
+
+    @Override
+    public void scale(RoyalRedEntity entity, MatrixStack ms, float partialTicks)
+    {
+        super.scale(entity, ms, partialTicks);
         ms.scale(3.5f, 3.5f, 3.5f);
         ms.translate(0, 0.825f, -0.23f);
+    }
+
+    @Override
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    {
         body2.render(ms, buffer, packedLightIn, packedOverlayIn);
-        ms.popPose();
+    }
+
+    @Override
+    public void postProcess(RoyalRedEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
+    {
+        renderArmorOverlay(ms, buffer, light);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.dragon_egg;
+package com.github.wolfshotz.wyrmroost.client.render.entity;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +27,10 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
 
     private static final Map<EntityType<?>, ResourceLocation> TEXTURE_MAP = new HashMap<>();
 
-    public DragonEggRenderer(EntityRendererManager manager) { super(manager); }
+    public DragonEggRenderer(EntityRendererManager manager)
+    {
+        super(manager);
+    }
 
     @Override
     public void render(DragonEggEntity entity, float entityYaw, float partialTicks, MatrixStack ms, IRenderTypeBuffer buffer, int packedLightIn)
@@ -51,13 +53,10 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
     }
 
     @Override
-    protected void renderNameTag(DragonEggEntity p_225629_1_, ITextComponent p_225629_2_, MatrixStack p_225629_3_, IRenderTypeBuffer p_225629_4_, int p_225629_5_)
+    public ResourceLocation getTextureLocation(DragonEggEntity entity)
     {
-        super.renderNameTag(p_225629_1_, p_225629_2_, p_225629_3_, p_225629_4_, p_225629_5_);
+        return getDragonEggTexture(entity.containedDragon);
     }
-
-    @Override
-    public ResourceLocation getTextureLocation(DragonEggEntity entity) { return getDragonEggTexture(entity.containedDragon); }
 
     public static ResourceLocation getDragonEggTexture(EntityType<?> type)
     {
@@ -115,7 +114,9 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
         }
 
         @Override
-        public void setupAnim(DragonEggEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {}
+        public void setupAnim(DragonEggEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+        {
+        }
 
         public void animate(DragonEggEntity entity, float partialTicks)
         {

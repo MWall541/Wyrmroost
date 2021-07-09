@@ -1,9 +1,14 @@
 package com.github.wolfshotz.wyrmroost.client.model;
 
+import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -27,6 +32,27 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     public WREntityModel(Function<ResourceLocation, RenderType> type)
     {
         super(type);
+    }
+
+    public abstract ResourceLocation getTexture(T entity);
+
+    public abstract float getShadowRadius(T entity);
+
+    // first
+    @Override
+    @Deprecated // do not override
+    public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTicks)
+    {
+        this.entity = entity;
+        this.partialTicks = partialTicks;
+    }
+
+    public void scale(T entity, MatrixStack ms, float partialTicks)
+    {
+    }
+
+    public void postProcess(T entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
+    {
     }
 
     public void setDefaultPose()
@@ -176,12 +202,15 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         return ModelAnimator.INSTANCE;
     }
 
-    // first
-    @Override
-    @Deprecated // do not override
-    public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTicks)
+    public void renderTexturedOverlay(ResourceLocation texture, MatrixStack ms, IRenderTypeBuffer buffer, int light, int overlay, float red, float green, float blue, float alpha)
     {
-        this.entity = entity;
-        this.partialTicks = partialTicks;
+        IVertexBuilder builder = buffer.getBuffer(renderType(texture));
+        renderToBuffer(ms, builder, light, overlay, red, green, blue, alpha);
+    }
+
+    public void renderGlowOverlay(ResourceLocation texture, MatrixStack ms, IRenderTypeBuffer buffer)
+    {
+        IVertexBuilder builder = buffer.getBuffer(RenderHelper.getAdditiveGlow(texture));
+        renderToBuffer(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
     }
 }

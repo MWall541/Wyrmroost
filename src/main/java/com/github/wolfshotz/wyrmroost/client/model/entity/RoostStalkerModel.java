@@ -1,19 +1,33 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.rooststalker;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.RoostStalkerEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.TieredItem;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 
 /**
  * Roost stalker - nova
  * Created using Tabula 7.0.1
  */
-public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
+public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
 {
+    public static final ResourceLocation BODY = texture("body.png");
+    public static final ResourceLocation ALBINO = texture("body_spe.png");
+
+    public static final ResourceLocation EYES = texture("body_glow.png");
+    public static final ResourceLocation ALBINO_EYES = texture("body_spe_glow.png");
+
     public WRModelRenderer torso;
     public WRModelRenderer tail1;
     public WRModelRenderer legl1;
@@ -153,17 +167,82 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         this.legr2.addChild(footl2_1);
         this.torso.addChild(legr3);
         this.torso.addChild(legr1);
-        tailSegments = new WRModelRenderer[] {tail1, tail2, tail3};
+        tailSegments = new WRModelRenderer[]{tail1, tail2, tail3};
         setDefaultPose();
+    }
+
+    @Override
+    public ResourceLocation getTexture(RoostStalkerEntity entity)
+    {
+        return entity.getVariant() == -1? ALBINO : BODY;
+    }
+
+    @Override
+    public float getShadowRadius(RoostStalkerEntity entity)
+    {
+        return 0.5f;
+    }
+
+    @Override
+    public void scale(RoostStalkerEntity entity, MatrixStack ms, float partialTicks)
+    {
+        super.scale(entity, ms, partialTicks);
+        ms.scale(0.625f, 0.625f, 0.625f);
+        ms.translate(0, -0.875f, 0);
     }
 
     @Override
     public void renderToBuffer(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        ms.pushPose();
-        ms.scale(0.625f, 0.625f, 0.625f);
         torso.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        ms.popPose();
+    }
+
+    @Override
+    public void postProcess(RoostStalkerEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
+    {
+        if (!entity.isSleeping()) renderGlowOverlay(entity.getVariant() == -1? ALBINO_EYES : EYES, ms, buffer);
+        renderMouthItem(entity, ms, buffer, light, yaw, pitch);
+    }
+
+    private void renderMouthItem(RoostStalkerEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float yaw, float pitch)
+    {
+        ItemStack stack = entity.getItem();
+
+        if (!stack.isEmpty())
+        {
+            ms.pushPose();
+
+            if (entity.isSleeping())
+            {
+                // just set the item on the ground
+                ms.translate(-0.4, 1.47, 0.1);
+                ms.mulPose(Vector3f.YP.rotationDegrees(135));
+            }
+            else
+            {
+                ms.translate(head.x / 8, -(head.y * 2.4), head.z / 8); // translate to heads rotation point (rough estimate) to allow for the same rotations while rotating; fixes connection issues
+                ms.mulPose(Vector3f.YP.rotationDegrees(yaw)); // rotate to match head rotations
+                ms.mulPose(Vector3f.XP.rotationDegrees(pitch));
+                ms.translate(0, entity.isInSittingPose()? 0.11 : 0.03, -0.4); // offset
+                Item item = stack.getItem();
+                if (item instanceof TieredItem) // offsets for tools, looks way fucking better
+                {
+                    ms.translate(0.1, 0, 0);
+                    ms.mulPose(Vector3f.YP.rotationDegrees(45));
+                }
+                else if (item instanceof BlockItem)
+                {
+                    ms.scale(0.8f, 0.8f, 0.8f);
+                    ms.mulPose(Vector3f.XP.rotationDegrees(90f));
+                    ms.translate(0, 0.075f, -0.175f);
+                }
+            }
+
+            ms.mulPose(Vector3f.XP.rotationDegrees(90)); // flip the item
+
+            Minecraft.getInstance().getItemInHandRenderer().renderItem(entity, stack, ItemCameraTransforms.TransformType.GROUND, false, ms, buffer, light);
+            ms.popPose();
+        }
     }
 
     @Override
@@ -209,7 +288,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
             head.yRot += netHeadYaw * ((float) Math.PI / 180F);
         }
     }
-    
+
     public void idle(float frame, boolean head)
     {
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, 0.5f);
@@ -217,7 +296,7 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         if (head)
         {
             walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, 0.5f);
-            chainWave(new WRModelRenderer[] {this.head, this.neck}, globalSpeed - 0.4f, 0.05f, 2, frame, 0.5f);
+            chainWave(new WRModelRenderer[]{this.head, this.neck}, globalSpeed - 0.4f, 0.05f, 2, frame, 0.5f);
         }
     }
 
@@ -260,5 +339,10 @@ public class RoostStalkerModel extends WREntityModel<RoostStalkerEntity>
         footl1_1.zRot = -legAngle;
         footl2_1.zRot = -legAngle;
         footl3_1.zRot = -legAngle;
+    }
+
+    public static ResourceLocation texture(String png)
+    {
+        return Wyrmroost.id(FOLDER + "roost_stalker/" + png);
     }
 }

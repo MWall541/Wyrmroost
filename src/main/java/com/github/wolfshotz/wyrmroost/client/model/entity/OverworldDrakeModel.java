@@ -1,19 +1,31 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.owdrake;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.OverworldDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 /**
  * WR Overworld Drake - Ukan
  * Created using Tabula 7.0.1
  */
-public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
+public class OverworldDrakeModel extends DragonEntityModel<OverworldDrakeEntity>
 {
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[64]; // some indexes will be left unused
+
+    // Easter Egg
+    public static final ResourceLocation DAISY = texture("daisy.png");
+    public static final ResourceLocation JEB_ = texture("jeb.png");
+    // Saddle
+    public static final ResourceLocation SADDLE_LAYER = texture("accessories/saddle.png");
+
     public WRModelRenderer body1;
     public WRModelRenderer body2;
     public WRModelRenderer neck1;
@@ -74,7 +86,7 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
     private final WRModelRenderer[] tailArray;
     private final WRModelRenderer[] toeArray;
 
-    public OWDrakeModel()
+    public OverworldDrakeModel()
     {
         texWidth = 200;
         texHeight = 200;
@@ -359,9 +371,42 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
 
         setDefaultPose();
 
-        headArray = new WRModelRenderer[] {neck1, neck2, head};
-        tailArray = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5};
-        toeArray = new WRModelRenderer[] {toe1L, toe1L_1, toe1R, toe1R_1, toe2L, toe2R};
+        headArray = new WRModelRenderer[]{neck1, neck2, head};
+        tailArray = new WRModelRenderer[]{tail1, tail2, tail3, tail4, tail5};
+        toeArray = new WRModelRenderer[]{toe1L, toe1L_1, toe1R, toe1R_1, toe2L, toe2R};
+    }
+
+    @Override
+    public ResourceLocation getTexture(OverworldDrakeEntity drake)
+    {
+        if (drake.hasCustomName())
+        {
+            String name = drake.getCustomName().getString();
+            if (name.equals("Daisy")) return DAISY;
+            if (name.equalsIgnoreCase("Jeb_")) return JEB_;
+        }
+
+        int index = 0;
+        if (drake.isBaby()) index |= 1;
+        else if (!drake.isMale()) index |= 2;
+        if (drake.getVariant() == -1) index |= 4;
+        else if (drake.getVariant() == 1) index |= 8;
+
+        if (TEXTURES[index] == null)
+        {
+            String path = (index & 1) != 0? "child" : (index & 2) != 0? "female" : "male";
+            if ((index & 4) != 0) path += "_spe";
+            else if ((index & 8) != 0) path += "_sav";
+            if (WRConfig.deckTheHalls()) path += "_christmas";
+            return TEXTURES[index] = texture(path + ".png");
+        }
+        return TEXTURES[index];
+    }
+
+    @Override
+    public float getShadowRadius(OverworldDrakeEntity entity)
+    {
+        return 1.6f;
     }
 
     @Override
@@ -371,6 +416,14 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
         ms.scale(2f, 2f, 2f);
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         ms.popPose();
+    }
+
+    @Override
+    public void postProcess(OverworldDrakeEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
+    {
+        renderArmorOverlay(ms, buffer, light);
+        if (entity.isSaddled())
+            renderTexturedOverlay(SADDLE_LAYER, ms, buffer, light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
     }
 
     @Override
@@ -506,15 +559,15 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
         for (WRModelRenderer segment : tailArray) animator().rotate(segment, -0.05f, 0, 0);
         animator().rotate(neck1, 0.3f, 0, 0);
         animator().endKeyframe();
-        
+
         animator().startKeyframe(2);
         animator().rotate(neck1, -0.2f, 0, 0);
         for (WRModelRenderer segment : tailArray) animator().rotate(segment, 0.025f, 0, 0);
         animator().endKeyframe();
-        
+
         animator().resetKeyframe(5);
     }
-    
+
     public void grazeAnimation()
     {
         int tick = entity.getAnimationTick();
@@ -524,13 +577,13 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
                 .endKeyframe();
         animator().setStaticKeyframe(15)
                 .resetKeyframe(8);
-        
+
         if (tick >= 8 && tick <= 27)
         {
             jaw.xRot -= (6 + Math.sin(bob / 2) * 0.25);
         }
     }
-    
+
     public void roarAnimation()
     {
         ModelAnimator animator = animator(); // reduce method calls
@@ -549,7 +602,7 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
                 .rotate(arm1L, 0.4f, 0, 0)
                 .rotate(arm2L, -0.4f, 0, 0)
                 .endKeyframe();
-        
+
         animator.startKeyframe(8)
                 .rotate(neck1, 0.4f, 0, 0)
                 .rotate(neck2, -0.4f, 0, 0)
@@ -559,13 +612,18 @@ public class OWDrakeModel extends WREntityModel<OverworldDrakeEntity>
 
         animator.setStaticKeyframe(60)
                 .resetKeyframe(4);
-        
+
         if (entity.getAnimationTick() > 10)
         {
             walk(jaw, globalSpeed + 1.5f, 0.02f, false, 0, 0, bob, 0.5f);
             swing(head, globalSpeed + 1.5f, 0.02f, false, 0, 0, bob, 0.5f);
-            
+
             chainWave(tailArray, globalSpeed + 1.5f, 0.007f, 0, bob, 0.5f);
         }
+    }
+
+    public static ResourceLocation texture(String png)
+    {
+        return Wyrmroost.id(FOLDER + "overworld_drake/" + png);
     }
 }

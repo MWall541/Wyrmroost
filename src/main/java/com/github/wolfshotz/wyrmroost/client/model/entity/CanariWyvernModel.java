@@ -1,6 +1,6 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.canari;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.CanariWyvernEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
@@ -8,6 +8,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Random;
 
@@ -15,8 +16,14 @@ import java.util.Random;
  * WRCanariWyvern - Ukan
  * Created using Tabula 7.0.1
  */
-public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
+public class CanariWyvernModel extends DragonEntityModel<CanariWyvernEntity>
 {
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[10];
+
+    // Easter egg
+    private static final ResourceLocation LADY = texture("lady.png");
+    private static final ResourceLocation RUDY = texture("rudy.png");
+
     public WRModelRenderer body1;
     public WRModelRenderer body2;
     public WRModelRenderer neck1;
@@ -382,13 +389,39 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
     }
 
     @Override
-    public void renderToBuffer(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    public ResourceLocation getTexture(CanariWyvernEntity canari)
     {
-        ms.pushPose();
+        if (canari.hasCustomName())
+        {
+            String name = canari.getCustomName().getString();
+            if (name.equals("Rudy")) return RUDY;
+            else if (name.equals("Lady Everlyn Winklestein") && !canari.isMale()) return LADY;
+        }
+
+        int texture = canari.isMale()? 0 : 5 + canari.getVariant();
+        if (TEXTURES[texture] == null)
+            return TEXTURES[texture] = texture("body_" + canari.getVariant() + (canari.isMale()? "m" : "f") + ".png");
+        return TEXTURES[texture];
+    }
+
+    @Override
+    public float getShadowRadius(CanariWyvernEntity entity)
+    {
+        return 0.5f;
+    }
+
+    @Override
+    public void scale(CanariWyvernEntity entity, MatrixStack ms, float partialTicks)
+    {
+        super.scale(entity, ms, partialTicks);
         ms.scale(0.5f, 0.5f, 0.5f);
         ms.translate(0, 1, 0);
+    }
+
+    @Override
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+    {
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        ms.popPose();
     }
 
     @Override
@@ -862,5 +895,10 @@ public class CanariWyvernModel extends WREntityModel<CanariWyvernEntity>
             animator().endKeyframe();
             animator().resetKeyframe(10);
         }
+    }
+
+    private static ResourceLocation texture(String png)
+    {
+        return Wyrmroost.id(FOLDER + "canari_wyvern/" + png);
     }
 }

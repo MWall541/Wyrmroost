@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.client.render.entity.ldwyrm.LDWyrmModel;
+import com.github.wolfshotz.wyrmroost.client.model.entity.LesserDesertwyrmModel;
 import com.github.wolfshotz.wyrmroost.items.LDWyrmItem;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
@@ -53,7 +53,7 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
 {
     public static final String DATA_BURROWED = "Burrowed";
-    public static final Animation<LesserDesertwyrmEntity, LDWyrmModel> BITE_ANIMATION = Animation.create(10, null, LDWyrmModel::biteAnimation);
+    public static final Animation<LesserDesertwyrmEntity, LesserDesertwyrmModel> BITE_ANIMATION = Animation.create(10, null, LesserDesertwyrmModel::biteAnimation);
     private static final DataParameter<Boolean> BURROWED = EntityDataManager.defineId(LesserDesertwyrmEntity.class, DataSerializers.BOOLEAN);
     private static final Predicate<LivingEntity> AVOIDING = t -> EntityPredicates.ATTACK_ALLOWED.test(t) && !(t instanceof LesserDesertwyrmEntity);
 

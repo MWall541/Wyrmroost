@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.client.render.entity.butterfly.ButterflyLeviathanModel;
+import com.github.wolfshotz.wyrmroost.client.model.entity.ButterflyLeviathanModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;

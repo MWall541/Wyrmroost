@@ -1,21 +1,27 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.silverglider;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.SilverGliderEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * WRSilverGlider - Kingdomall
  * Created using Tabula 7.1.0
  */
-public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
+public class SilverGliderModel extends DragonEntityModel<SilverGliderEntity>
 {
-    private final WRModelRenderer[] headArray;
-    private final WRModelRenderer[] tailArray;
-    private final WRModelRenderer[] toeArray;
+    public static final ResourceLocation[] MALE_TEXTURES = new ResourceLocation[6]; // includes glow
+    // Constant textures
+    public static final ResourceLocation FEMALE = texture("female.png");
+    public static final ResourceLocation FEMALE_GLOW = texture("female_glow.png");
+    public static final ResourceLocation SPECIAL = texture("spe.png");
+    public static final ResourceLocation SPECIAL_GLOW = texture("spe_glow.png");
+
     public WRModelRenderer neck1;
     public WRModelRenderer backFin;
     public WRModelRenderer bottomFin;
@@ -78,6 +84,10 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     public WRModelRenderer wingMembraneL4;
     public WRModelRenderer wingMembraneL4_1;
     public WRModelRenderer phalangeSegmentL2;
+
+    private final WRModelRenderer[] headArray;
+    private final WRModelRenderer[] tailArray;
+    private final WRModelRenderer[] toeArray;
 
     public SilverGliderModel()
     {
@@ -378,9 +388,40 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
     }
 
     @Override
+    public ResourceLocation getTexture(SilverGliderEntity entity)
+    {
+        if (entity.getVariant() == -1) return SPECIAL;
+        if (!entity.isMale()) return FEMALE;
+        int index = entity.getVariant();
+        if (MALE_TEXTURES[index] == null) return MALE_TEXTURES[index] = texture("male_" + index + ".png");
+        return MALE_TEXTURES[index];
+    }
+
+    public ResourceLocation getGlowTexture(SilverGliderEntity entity)
+    {
+        if (entity.getVariant() == -1) return SPECIAL_GLOW;
+        int index = entity.getVariant() + 3;
+        if (MALE_TEXTURES[index] == null)
+            return MALE_TEXTURES[index] = texture("male_" + entity.getVariant() + "_glow.png");
+        return MALE_TEXTURES[index];
+    }
+
+    @Override
+    public float getShadowRadius(SilverGliderEntity entity)
+    {
+        return 1f;
+    }
+
+    @Override
     public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
         mainBody.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+    }
+
+    @Override
+    public void postProcess(SilverGliderEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
+    {
+        if (entity.isMale()) renderGlowOverlay(getGlowTexture(entity), ms, buffer);
     }
 
     @Override
@@ -533,5 +574,10 @@ public class SilverGliderModel extends WREntityModel<SilverGliderEntity>
 
             for (WRModelRenderer toe : toeArray) rotate(toe, 1f, 0, 0);
         }
+    }
+
+    public static ResourceLocation texture(String png)
+    {
+        return Wyrmroost.id(FOLDER + "silver_glider/" + png);
     }
 }

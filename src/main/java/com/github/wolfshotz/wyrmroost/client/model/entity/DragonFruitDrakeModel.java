@@ -1,18 +1,23 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.dragon_fruit;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.DragonFruitDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * dragonfruitdrake - Kingdomall
  * Created using Tabula 7.1.0
  */
-public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
+public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEntity>
 {
+    public static final ResourceLocation CHILD = texture("child.png");
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[4];
+
     private final WRModelRenderer[] headArray;
     private final WRModelRenderer[] tailArray;
     public WRModelRenderer Body1;
@@ -367,13 +372,41 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
     }
 
     @Override
-    public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int light, int overlay, float red, float green, float blue, float alpha)
+    public ResourceLocation getTexture(DragonFruitDrakeEntity entity)
     {
-        ms.pushPose();
+        if (entity.isBaby()) return CHILD;
+
+        int texture = entity.isMale()? 0 : 2;
+        if (entity.getVariant() == -1) texture += 1;
+        if (TEXTURES[texture] == null)
+        {
+            String path = entity.isMale()? "male" : "female";
+            if (entity.getVariant() == -1) path += "_spe";
+            else if (WRConfig.deckTheHalls()) path += "_christmas";
+
+            return TEXTURES[texture] = texture(path + ".png");
+        }
+        return TEXTURES[texture];
+    }
+
+    @Override
+    public float getShadowRadius(DragonFruitDrakeEntity entity)
+    {
+        return 1.15f;
+    }
+
+    @Override
+    public void scale(DragonFruitDrakeEntity entity, MatrixStack ms, float partialTicks)
+    {
+        super.scale(entity, ms, partialTicks);
         ms.scale(1.5f, 1.5f, 1.5f);
         ms.translate(0, -0.5f, 0);
+    }
+
+    @Override
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int light, int overlay, float red, float green, float blue, float alpha)
+    {
         Body1.render(ms, buffer, light, overlay, red, green, blue, alpha);
-        ms.popPose();
     }
 
     @Override
@@ -491,5 +524,10 @@ public class DragonFruitDrakeModel extends WREntityModel<DragonFruitDrakeEntity>
                 .endKeyframe();
 
         animator.resetKeyframe(6);
+    }
+
+    public static ResourceLocation texture(String png)
+    {
+        return Wyrmroost.id(FOLDER + "dragon_fruit_drake/" + png);
     }
 }

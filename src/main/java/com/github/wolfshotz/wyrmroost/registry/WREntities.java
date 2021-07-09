@@ -2,20 +2,13 @@ package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
+import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
+import com.github.wolfshotz.wyrmroost.client.model.entity.*;
+import com.github.wolfshotz.wyrmroost.client.render.ModelWrappedRenderer;
+import com.github.wolfshotz.wyrmroost.client.render.entity.DragonEggRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.EmptyRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.alpine.AlpineRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.butterfly.ButterflyLeviathanRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.canari.CanariWyvernRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.coin_dragon.CoinDragonRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.dragon_egg.DragonEggRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.dragon_fruit.DragonFruitDrakeRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.ldwyrm.LDWyrmRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.owdrake.OWDrakeRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.GeodeTippedArrowRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.rooststalker.RoostStalkerRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.royal_red.RoyalRedRenderer;
-import com.github.wolfshotz.wyrmroost.client.render.entity.silverglider.SilverGliderRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.*;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
@@ -27,6 +20,7 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -64,7 +58,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement(ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LesserDesertwyrmEntity::getSpawnPlacement)
             .spawnBiomes(LesserDesertwyrmEntity::setSpawnBiomes)
             .spawnEgg(0xD6BCBC, 0xDEB6C7)
-            .renderer(() -> LDWyrmRenderer::new)
+            .renderModel(LesserDesertwyrmModel::new)
             .build();
 
     public static final RegistryObject<EntityType<OverworldDrakeEntity>> OVERWORLD_DRAKE = creature("overworld_drake", OverworldDrakeEntity::new)
@@ -74,7 +68,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(OverworldDrakeEntity::setSpawnBiomes)
             .spawnEgg(0x788716, 0x3E623E)
             .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
-            .renderer(() -> OWDrakeRenderer::new)
+            .renderModel(OverworldDrakeModel::new)
             .build();
 
     public static final RegistryObject<EntityType<SilverGliderEntity>> SILVER_GLIDER = creature("silver_glider", SilverGliderEntity::new)
@@ -84,7 +78,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(SilverGliderEntity::setSpawnBiomes)
             .spawnEgg(0xC8C8C8, 0xC4C4C4)
             .dragonEgg(new DragonEggProperties(0.4f, 0.65f, 12000))
-            .renderer(() -> SilverGliderRenderer::new)
+            .renderModel(SilverGliderModel::new)
             .build();
 
     public static final RegistryObject<EntityType<RoostStalkerEntity>> ROOSTSTALKER = creature("roost_stalker", RoostStalkerEntity::new)
@@ -94,7 +88,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(RoostStalkerEntity::setSpawnBiomes)
             .spawnEgg(0x52100D, 0x959595)
             .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000))
-            .renderer(() -> RoostStalkerRenderer::new)
+            .renderModel(RoostStalkerModel::new)
             .build();
 
     public static final RegistryObject<EntityType<ButterflyLeviathanEntity>> BUTTERFLY_LEVIATHAN = ofGroup("butterfly_leviathan", ButterflyLeviathanEntity::new, EntityClassification.WATER_CREATURE)
@@ -104,7 +98,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(ButterflyLeviathanEntity::setSpawnBiomes)
             .spawnEgg(0x17283C, 0x7A6F5A)
             .dragonEgg(new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater))
-            .renderer(() -> ButterflyLeviathanRenderer::new)
+            .renderModel(ButterflyLeviathanModel::new)
             .build();
 
     public static final RegistryObject<EntityType<DragonFruitDrakeEntity>> DRAGON_FRUIT_DRAKE = creature("dragon_fruit_drake", DragonFruitDrakeEntity::new)
@@ -114,7 +108,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(DragonFruitDrakeEntity::setSpawnBiomes)
             .spawnEgg(0xe05c9a, 0x788716)
             .dragonEgg(new DragonEggProperties(0.45f, 0.75f, 9600))
-            .renderer(() -> DragonFruitDrakeRenderer::new)
+            .renderModel(DragonFruitDrakeModel::new)
             .build();
 
     public static final RegistryObject<EntityType<CanariWyvernEntity>> CANARI_WYVERN = creature("canari_wyvern", CanariWyvernEntity::new)
@@ -124,7 +118,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(CanariWyvernEntity::setSpawnBiomes)
             .spawnEgg(0x1D1F28, 0x492E0E)
             .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.level.getBlockState(c.blockPosition().below()).getBlock() == Blocks.JUNGLE_LEAVES))
-            .renderer(() -> CanariWyvernRenderer::new)
+            .renderModel(CanariWyvernModel::new)
             .build();
 
     public static final RegistryObject<EntityType<RoyalRedEntity>> ROYAL_RED = creature("royal_red", RoyalRedEntity::new)
@@ -134,13 +128,13 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(RoyalRedEntity::setSpawnBiomes)
             .spawnEgg(0x8a0900, 0x0)
             .dragonEgg(new DragonEggProperties(0.6f, 1f, 72000))
-            .renderer(() -> RoyalRedRenderer::new)
+            .renderModel(RoyalRedModel::new)
             .fireImmune()
             .build();
 
     public static final RegistryObject<EntityType<CoinDragonEntity>> COIN_DRAGON = creature("coin_dragon", CoinDragonEntity::new)
             .size(0.35f, 0.435f)
-            .renderer(() -> CoinDragonRenderer::new)
+            .renderModel(CoinDragonModel::new)
             .attributes(CoinDragonEntity::getAttributeMap)
             .build();
 
@@ -151,7 +145,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnBiomes(AlpineEntity::setSpawnBiomes)
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
             .dragonEgg(new DragonEggProperties(1, 1, 12000))
-            .renderer(() -> AlpineRenderer::new)
+            .renderModel(AlpineModel::new)
             .build();
 
     public static final RegistryObject<EntityType<DragonEggEntity>> DRAGON_EGG = WREntities.<DragonEggEntity>ofGroup("dragon_egg", DragonEggEntity::new, EntityClassification.MISC)
@@ -350,6 +344,12 @@ public class WREntities<E extends Entity> extends EntityType<E>
         private Builder<T> renderer(Supplier<IRenderFactory<T>> renderFactory)
         {
             this.renderer = renderFactory;
+            return this;
+        }
+
+        private <F extends MobEntity, M extends WREntityModel<F>> Builder<T> renderModel(Supplier<M> model)
+        {
+            this.renderer = () -> m -> (EntityRenderer<? super T>) new ModelWrappedRenderer<>(m, model.get());
             return this;
         }
 

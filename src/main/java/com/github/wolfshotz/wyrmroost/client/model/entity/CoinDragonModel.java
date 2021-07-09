@@ -1,10 +1,12 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.coin_dragon;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.entities.dragon.CoinDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -13,6 +15,8 @@ import net.minecraft.util.math.MathHelper;
  */
 public class CoinDragonModel extends WREntityModel<CoinDragonEntity>
 {
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[5];
+
     public final ModelRenderer body1;
     public final ModelRenderer body2;
     public final ModelRenderer armL;
@@ -133,6 +137,22 @@ public class CoinDragonModel extends WREntityModel<CoinDragonEntity>
         this.tail1.addChild(this.tail2);
 
         this.tails = new ModelRenderer[] {tail1, tail2, tail3};
+    }
+
+    @Override
+    public ResourceLocation getTexture(CoinDragonEntity entity)
+    {
+        int i = entity.getVariant();
+        ResourceLocation texture = TEXTURES[i];
+        if (texture == null)
+            return TEXTURES[i] = Wyrmroost.id(DragonEntityModel.FOLDER + "/coin_dragon/body_" + i + ".png");
+        return texture;
+    }
+
+    @Override
+    public float getShadowRadius(CoinDragonEntity entity)
+    {
+        return 0.25f;
     }
 
     @Override

@@ -1,17 +1,21 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.ldwyrm;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.LesserDesertwyrmEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * WR Lesser Desertwyrm - Ukan
  * Created using Tabula 7.0.1
  */
-public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
+public class LesserDesertwyrmModel extends WREntityModel<LesserDesertwyrmEntity>
 {
+    private final ResourceLocation TEXTURE = Wyrmroost.id(DragonEntityModel.FOLDER + "lesser_desertwyrm/body.png");
+
     public WRModelRenderer body1;
     public WRModelRenderer body2;
     public WRModelRenderer neck;
@@ -30,7 +34,7 @@ public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
 
     private final WRModelRenderer[] body;
 
-    public LDWyrmModel()
+    public LesserDesertwyrmModel()
     {
         this.texWidth = 30;
         this.texHeight = 30;
@@ -104,6 +108,18 @@ public class LDWyrmModel extends WREntityModel<LesserDesertwyrmEntity>
         setDefaultPose();
 
         body = new WRModelRenderer[] {body1, body2, body3, body4, body5, tail1, tail2, tail3};
+    }
+
+    @Override
+    public ResourceLocation getTexture(LesserDesertwyrmEntity entity)
+    {
+        return TEXTURE;
+    }
+
+    @Override
+    public float getShadowRadius(LesserDesertwyrmEntity entity)
+    {
+        return 0;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.client.render.entity.royal_red.RoyalRedModel;
+import com.github.wolfshotz.wyrmroost.client.model.entity.RoyalRedModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;

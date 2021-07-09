@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
-import com.github.wolfshotz.wyrmroost.client.render.entity.owdrake.OWDrakeModel;
+import com.github.wolfshotz.wyrmroost.client.model.entity.OverworldDrakeModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
@@ -71,9 +71,9 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.defineId(OverworldDrakeEntity.class, DataSerializers.BOOLEAN);
 
     // Dragon Entity Animations
-    public static final Animation<OverworldDrakeEntity, OWDrakeModel> GRAZE_ANIMATION = Animation.create(35, OverworldDrakeEntity::grazeAnimation, OWDrakeModel::grazeAnimation);
-    public static final Animation<OverworldDrakeEntity, OWDrakeModel> HORN_ATTACK_ANIMATION = Animation.create(15, OverworldDrakeEntity::hornAttackAnimation, OWDrakeModel::hornAttackAnimation);
-    public static final Animation<OverworldDrakeEntity, OWDrakeModel> ROAR_ANIMATION = Animation.create(86, OverworldDrakeEntity::hornAttackAnimation, OWDrakeModel::roarAnimation);
+    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> GRAZE_ANIMATION = Animation.create(35, OverworldDrakeEntity::grazeAnimation, OverworldDrakeModel::grazeAnimation);
+    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> HORN_ATTACK_ANIMATION = Animation.create(15, OverworldDrakeEntity::hornAttackAnimation, OverworldDrakeModel::hornAttackAnimation);
+    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> ROAR_ANIMATION = Animation.create(86, OverworldDrakeEntity::hornAttackAnimation, OverworldDrakeModel::roarAnimation);
     public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();

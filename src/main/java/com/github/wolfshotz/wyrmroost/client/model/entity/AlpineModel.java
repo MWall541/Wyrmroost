@@ -1,23 +1,27 @@
-package com.github.wolfshotz.wyrmroost.client.render.entity.alpine;
+package com.github.wolfshotz.wyrmroost.client.model.entity;
 
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.AlpineEntity;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 /**
  * WRAlpineDragonNew - Ukan
  * Created using Tabula 8.0.0
  */
-public class AlpineModel extends WREntityModel<AlpineEntity>
+public class AlpineModel extends DragonEntityModel<AlpineEntity>
 {
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
+
     public final WRModelRenderer[] headArray;
     public final WRModelRenderer[] tailArray;
     private final WRModelRenderer[][] fingerArrays;
+
     public WRModelRenderer body1;
     public WRModelRenderer body2;
     public WRModelRenderer neck1;
@@ -647,6 +651,24 @@ public class AlpineModel extends WREntityModel<AlpineEntity>
         };
 
         setDefaultPose();
+    }
+
+    @Override
+    public ResourceLocation getTexture(AlpineEntity entity)
+    {
+        int variant = entity.getVariant();
+        if (TEXTURES[variant] == null)
+        {
+            String path = FOLDER + "alpine/body_" + variant;
+            return TEXTURES[variant] = Wyrmroost.id(path + ".png");
+        }
+        return TEXTURES[variant];
+    }
+
+    @Override
+    public float getShadowRadius(AlpineEntity entity)
+    {
+        return 2f;
     }
 
     @Override
