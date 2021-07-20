@@ -2,7 +2,6 @@ package com.github.wolfshotz.wyrmroost.client.model;
 
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.MathHelper;
 
 public class WRModelRenderer extends ModelRenderer
 {
@@ -46,7 +45,7 @@ public class WRModelRenderer extends ModelRenderer
         defaultPositionZ = z;
     }
     
-    public void resetToDefaultPose()
+    public void reset()
     {
         xRot = defaultRotationX;
         yRot = defaultRotationY;
@@ -54,31 +53,6 @@ public class WRModelRenderer extends ModelRenderer
         x = defaultPositionX;
         y = defaultPositionY;
         z = defaultPositionZ;
-    }
-
-    public void walk(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
-    {
-        float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
-        xRot += invert? -rotation : rotation;
-    }
-
-    public void swing(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
-    {
-        float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
-        yRot += invert? -rotation : rotation;
-    }
-
-    public void flap(float speed, float degree, boolean invert, float offset, float weight, float limbSwing, float limbSwingAmount)
-    {
-        float rotation = MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
-        zRot += invert? -rotation : rotation;
-    }
-
-    public void bob(float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
-    {
-        y += bounce?
-                -Math.abs(MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree) :
-                MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree - limbSwingAmount * degree;
     }
 
     public void copyRotationsTo(ModelRenderer box)

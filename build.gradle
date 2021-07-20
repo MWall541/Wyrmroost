@@ -35,6 +35,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
+            args '--username', 'Dev###'
+
             mods {
                 wyrmroost {
                     sources sourceSets.main

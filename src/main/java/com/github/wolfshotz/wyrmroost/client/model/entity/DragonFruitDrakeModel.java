@@ -1,6 +1,5 @@
 package com.github.wolfshotz.wyrmroost.client.model.entity;
 
-import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
@@ -18,8 +17,6 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     public static final ResourceLocation CHILD = texture("child.png");
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[4];
 
-    private final WRModelRenderer[] headArray;
-    private final WRModelRenderer[] tailArray;
     public WRModelRenderer Body1;
     public WRModelRenderer Body2;
     public WRModelRenderer neck2;
@@ -76,6 +73,9 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     public WRModelRenderer LegfrontL2;
     public WRModelRenderer LegfrontL3;
     public WRModelRenderer frontfootL;
+
+    private final WRModelRenderer[] headArray;
+    private final WRModelRenderer[] tailArray;
 
     public DragonFruitDrakeModel()
     {
@@ -382,7 +382,6 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
         {
             String path = entity.isMale()? "male" : "female";
             if (entity.getVariant() == -1) path += "_spe";
-            else if (WRConfig.deckTheHalls()) path += "_christmas";
 
             return TEXTURES[texture] = texture(path + ".png");
         }
@@ -414,12 +413,12 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     {
         this.riding = entity.isInSittingPose();
         globalSpeed = 0.5f;
-        resetToDefaultPose();
+        reset();
         animator().tick(entity, this, partialTicks);
 
         if (!entity.isSleeping())
         {
-            bob(Body1, 0.6f, 0.2f, false, limbSwing, limbSwingAmount);
+            Body1.y += bob(0.6f, 0.2f, false, limbSwing, limbSwingAmount);
 
             // Front
             walk(LegfrontR1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);

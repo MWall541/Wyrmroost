@@ -3,11 +3,16 @@ package com.github.wolfshotz.wyrmroost.client.render;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+
+import java.util.function.Supplier;
 
 /**
  * Purpose of this class is to remove the need for creating a different "renderers" for each and every different entity model.
@@ -28,6 +33,12 @@ public class ModelWrappedRenderer<T extends MobEntity, M extends WREntityModel<T
                 model.postProcess(entity, ms, buffer, light, limbSwing, limbSwingAmount, age, yaw, pitch, partialTicks);
             }
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Entity> IRenderFactory<T> factory(Supplier<Supplier<WREntityModel<T>>> model)
+    {
+        return m -> (EntityRenderer<? super T>) new ModelWrappedRenderer<>(m, (WREntityModel<MobEntity>) model.get().get());
     }
 
     @Override

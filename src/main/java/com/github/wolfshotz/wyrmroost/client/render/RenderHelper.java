@@ -141,7 +141,7 @@ public class RenderHelper extends RenderType
         ClientWorld level = ClientEvents.getLevel();
         drawShape(ms,
                 impl.getBuffer(getThiccLines(lineThickness)),
-                getShape ? level.getBlockState(pos).getShape(level, pos) : VoxelShapes.block(),
+                getShape? level.getBlockState(pos).getShape(level, pos) : VoxelShapes.block(),
                 pos.getX() - view.x, pos.getY() - view.y, pos.getZ() - view.z,
                 argb);
         impl.endBatch();

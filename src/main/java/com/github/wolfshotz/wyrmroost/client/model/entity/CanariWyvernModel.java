@@ -427,7 +427,7 @@ public class CanariWyvernModel extends DragonEntityModel<CanariWyvernEntity>
     @Override
     public void setupAnim(CanariWyvernEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-        resetToDefaultPose();
+        reset();
         animator().tick(entity, this, partialTicks);
         setInitialPositions();
 
@@ -445,7 +445,7 @@ public class CanariWyvernModel extends DragonEntityModel<CanariWyvernEntity>
             wing1L.zRot -= limbSwingAmount * 0.35;
             wing1R.zRot += limbSwingAmount * 0.35;
 
-            bob(body1, globalSpeed + 0.5f, 0.25f, true, limbSwing, limbSwingAmount);
+            body1.y += bob(1f, 0.25f, true, limbSwing, limbSwingAmount);
 
             swing(wing1L, globalSpeed + 0.5f, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);
             flap(wing1L, globalSpeed + 0.5f, 0.25f, false, 0, 0, limbSwing, limbSwingAmount);

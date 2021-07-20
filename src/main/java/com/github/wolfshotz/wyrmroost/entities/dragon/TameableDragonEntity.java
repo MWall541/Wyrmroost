@@ -45,12 +45,14 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
@@ -105,7 +107,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     private int sleepCooldown;
     public boolean wingsDown;
     public int breedCount;
-    private Animation animation = NO_ANIMATION;
+    private Animation<?, ?> animation = NO_ANIMATION;
     private int animationTick;
 
     public TameableDragonEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
@@ -243,12 +245,15 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     {
         if (isFlying() == fly) return;
         entityData.set(FLYING, fly);
+        Path prev = navigation.getPath();
         if (fly)
         {
             // make sure NOT to switch the navigator if liftoff fails
             if (liftOff()) navigation = new FlyerPathNavigator(this);
+            else return;
         }
         else navigation = new BetterPathNavigator(this);
+        navigation.moveTo(prev, 1);
     }
 
     public boolean hasArmor()
@@ -496,6 +501,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             {
                 if (moveZ != 0) moveY = entity.getLookAngle().y * speed * 18;
                 moveX = vec3d.x;
+                moveZ = Math.max(moveZ, 0);
 
                 if (entity instanceof ServerPlayerEntity)
                     ((ServerPlayerEntity) entity).connection.clientIsFloating = false;
@@ -511,36 +517,41 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
                 vec3d = new Vector3d(moveX, moveY, moveZ);
                 setSpeed(speed);
             }
+            else if (entity instanceof PlayerEntity)
+            {
+                setDeltaMovement(Vector3d.ZERO);
+                return;
+            }
         }
 
         if (isFlying())
         {
-            // Move relative to yaw - handled in the move controller or by the passenger
+            // Move relative to yaw - handled in the move controller
             moveRelative(speed, vec3d);
             move(MoverType.SELF, getDeltaMovement());
             setDeltaMovement(getDeltaMovement().scale(0.88f));
-
-            // hover in place
-            Vector3d motion = getDeltaMovement();
-            if (motion.length() < 0.04f) setDeltaMovement(motion.add(0, Math.cos(tickCount * 0.1f) * 0.02f, 0));
-
-            // limb swinging animations
-            float limbSpeed = 0.4f;
-            float amount = 1f;
-            if (getY() - yOld < -0.1f)
-            {
-                amount = 0f;
-                limbSpeed = 0.2f;
-            }
-
-            animationSpeedOld = animationSpeed;
-            animationSpeed += (amount - animationSpeed) * limbSpeed;
-            animationPosition += animationSpeed;
-
-            return;
+            calculateEntityAnimation(this, true);
         }
+        else super.travel(vec3d);
+    }
 
-        super.travel(vec3d);
+    @Override
+    public void calculateEntityAnimation(LivingEntity what, boolean includeY)
+    {
+        if (isFlying())
+        {
+            animationSpeedOld = animationSpeed;
+            double x = getX() - xo;
+            double y = 0;
+            double z = getZ() - zo;
+            float speed = MathHelper.cos(MathHelper.sqrt(x * x + y * y + z * z) * 4f);
+            if (speed > 1f) speed = 1f;
+            if (getMoveControl().getWantedY() < getY()) speed = 0f;
+
+            animationSpeed += (speed - animationSpeed) * 0.4F;
+            animationPosition += animationSpeed;
+        }
+        else super.calculateEntityAnimation(what, includeY);
     }
 
     public float getTravelSpeed()
@@ -836,7 +847,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public boolean tame(boolean tame, @Nullable PlayerEntity tamer)
     {
-        if (isTame()) return true;
+        if (getOwner() == tamer) return true;
         if (level.isClientSide) return false;
         if (tame && tamer != null && !ForgeEventFactory.onAnimalTame(this, tamer))
         {
@@ -1044,7 +1055,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public void flapWings()
     {
-        playSound(WRSounds.WING_FLAP.get(), 3, 1, true);
+        playSound(WRSounds.WING_FLAP.get(), 3, 1, false);
+        setDeltaMovement(getDeltaMovement().add(0, 1.285, 0));
     }
 
     @Override

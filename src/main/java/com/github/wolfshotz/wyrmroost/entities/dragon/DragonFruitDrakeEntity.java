@@ -60,7 +60,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     private static final int CROP_GROWTH_RADIUS = 5;
     private static final int CROP_GROWTH_TIME = 1200; // 1 minute
 
-    public static final Animation<DragonFruitDrakeEntity, DragonFruitDrakeModel> BITE_ANIMATION = Animation.create(15, DragonFruitDrakeEntity::biteAnimation, DragonFruitDrakeModel::biteAnimation);
+    public static final Animation<DragonFruitDrakeEntity, DragonFruitDrakeModel> BITE_ANIMATION = Animation.create(15, DragonFruitDrakeEntity::biteAnimation, () -> DragonFruitDrakeModel::biteAnimation);
     public static final Animation<?, ?>[] ANIMATIONS = new Animation[] {BITE_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();

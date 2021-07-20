@@ -34,7 +34,9 @@ public class FlyingSound extends TickableSound
             x = (float) entity.getX();
             y = (float) entity.getY();
             z = (float) entity.getZ();
-            double length = entity.getDeltaMovement().lengthSqr();
+            double x = entity.getX() - entity.xOld;
+            double z = entity.getZ() - entity.zOld;
+            double length = x * x + z * z;
             volume = Math.min((float) length * 2f, 0.75f);
             if (volume > 0.4f) pitch = 1f + (volume - 0.6f);
             else pitch = 1f;

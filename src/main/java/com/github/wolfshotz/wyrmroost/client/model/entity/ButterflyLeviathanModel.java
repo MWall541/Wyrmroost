@@ -445,7 +445,7 @@ public class ButterflyLeviathanModel extends DragonEntityModel<ButterflyLeviatha
     @Override
     public void setupAnim(ButterflyLeviathanEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-        resetToDefaultPose();
+        reset();
         animator().tick(entity, this, partialTicks);
 
         if (entity.beached)

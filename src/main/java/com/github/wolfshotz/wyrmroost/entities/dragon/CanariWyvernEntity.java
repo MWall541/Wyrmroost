@@ -39,10 +39,10 @@ public class CanariWyvernEntity extends TameableDragonEntity
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant)
             .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping));
 
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> FLAP_WINGS_ANIMATION = Animation.create(22, CanariWyvernEntity::flapWingsAnimation, CanariWyvernModel::flapWingsAnimation);
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> PREEN_ANIMATION = Animation.create(36, null, CanariWyvernModel::preenAnimation);
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> THREAT_ANIMATION = Animation.create(40, CanariWyvernEntity::threatAnimation, CanariWyvernModel::threatAnimation);
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> ATTACK_ANIMATION = Animation.create(15, null, CanariWyvernModel::attackAnimation);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> FLAP_WINGS_ANIMATION = Animation.create(22, CanariWyvernEntity::flapWingsAnimation, () -> CanariWyvernModel::flapWingsAnimation);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> PREEN_ANIMATION = Animation.create(36, null, () -> CanariWyvernModel::preenAnimation);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> THREAT_ANIMATION = Animation.create(40, CanariWyvernEntity::threatAnimation, () -> CanariWyvernModel::threatAnimation);
+    public static final Animation<CanariWyvernEntity, CanariWyvernModel> ATTACK_ANIMATION = Animation.create(15, null, () -> CanariWyvernModel::attackAnimation);
 
     public PlayerEntity pissedOffTarget;
 

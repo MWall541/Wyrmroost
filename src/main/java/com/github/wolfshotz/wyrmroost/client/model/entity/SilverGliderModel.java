@@ -427,7 +427,7 @@ public class SilverGliderModel extends DragonEntityModel<SilverGliderEntity>
     @Override
     public void setupAnim(SilverGliderEntity entityIn, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        resetToDefaultPose();
+        reset();
 
         flight(entity.flightTimer.get(partialTicks));
         sleep(entity.sleepTimer.get(partialTicks));

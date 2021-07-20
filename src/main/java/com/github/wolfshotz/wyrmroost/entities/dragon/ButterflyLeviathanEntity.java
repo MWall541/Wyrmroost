@@ -61,9 +61,9 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     public static final EntitySerializer<ButterflyLeviathanEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
-    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> LIGHTNING_ANIMATION = Animation.create(64, ButterflyLeviathanEntity::lightningAnimation, ButterflyLeviathanModel::roarAnimation);
-    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> CONDUIT_ANIMATION = Animation.create(59, ButterflyLeviathanEntity::conduitAnimation, ButterflyLeviathanModel::conduitAnimation);
-    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> BITE_ANIMATION = Animation.create(17, ButterflyLeviathanEntity::biteAnimation, ButterflyLeviathanModel::biteAnimation);
+    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> LIGHTNING_ANIMATION = Animation.create(64, ButterflyLeviathanEntity::lightningAnimation, () -> ButterflyLeviathanModel::roarAnimation);
+    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> CONDUIT_ANIMATION = Animation.create(59, ButterflyLeviathanEntity::conduitAnimation, () -> ButterflyLeviathanModel::conduitAnimation);
+    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> BITE_ANIMATION = Animation.create(17, ButterflyLeviathanEntity::biteAnimation, () -> ButterflyLeviathanModel::biteAnimation);
     public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{LIGHTNING_ANIMATION, CONDUIT_ANIMATION, BITE_ANIMATION};
 
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.defineId(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);

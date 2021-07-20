@@ -18,10 +18,6 @@ public class AlpineModel extends DragonEntityModel<AlpineEntity>
 {
     private static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
 
-    public final WRModelRenderer[] headArray;
-    public final WRModelRenderer[] tailArray;
-    private final WRModelRenderer[][] fingerArrays;
-
     public WRModelRenderer body1;
     public WRModelRenderer body2;
     public WRModelRenderer neck1;
@@ -125,6 +121,10 @@ public class AlpineModel extends DragonEntityModel<AlpineEntity>
     public WRModelRenderer leg2L;
     public WRModelRenderer foot1L;
     public WRModelRenderer foot2L;
+
+    public final WRModelRenderer[] headArray;
+    public final WRModelRenderer[] tailArray;
+    private final WRModelRenderer[][] fingerArrays;
 
     public AlpineModel()
     {
@@ -666,6 +666,14 @@ public class AlpineModel extends DragonEntityModel<AlpineEntity>
     }
 
     @Override
+    public void scale(AlpineEntity entity, MatrixStack ms, float partialTicks)
+    {
+        super.scale(entity, ms, partialTicks);
+        ms.scale(2f, 2f, 2f);
+        ms.translate(0, 0, -0.2f);
+    }
+
+    @Override
     public float getShadowRadius(AlpineEntity entity)
     {
         return 2f;
@@ -674,18 +682,14 @@ public class AlpineModel extends DragonEntityModel<AlpineEntity>
     @Override
     public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        ms.pushPose();
-        ms.scale(2f, 2f, 2f);
-        ms.translate(0, -0.75f, -0.2f);
         body1.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        ms.popPose();
     }
 
     @Override
     public void setupAnim(AlpineEntity entity, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
         animator().tick(entity, this, partialTicks);
-        resetToDefaultPose();
+        reset();
 
         this.bob = bob;
 
@@ -728,7 +732,7 @@ public class AlpineModel extends DragonEntityModel<AlpineEntity>
             }
             else // walk cycle
             {
-                bob(body1, 0.8f, 0.2f, false, limbSwing, limbSwingAmount);
+                body1.y += bob(0.8f, 0.2f, false, limbSwing, limbSwingAmount);
 
                 walk(leg1L, globalSpeed, 1.1f, false, 0, 0.2f, limbSwing, limbSwingAmount);
                 walk(leg2L, globalSpeed, -1f, false, -1.6f, -1f, limbSwing, limbSwingAmount);

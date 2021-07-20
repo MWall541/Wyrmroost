@@ -41,9 +41,9 @@ public class AlpineEntity extends TameableDragonEntity
             .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping)
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
-    public static final Animation<AlpineEntity, AlpineModel> ROAR_ANIMATION = Animation.create(84, AlpineEntity::roarAnimation, AlpineModel::roarAnimation);
-    public static final Animation<AlpineEntity, AlpineModel> WIND_GUST_ANIMATION = Animation.create(25, AlpineEntity::windGustAnimation, AlpineModel::windGustAnimation);
-    public static final Animation<AlpineEntity, AlpineModel> BITE_ANIMATION = Animation.create(10, null, AlpineModel::biteAnimation);
+    public static final Animation<AlpineEntity, AlpineModel> ROAR_ANIMATION = Animation.create(84, AlpineEntity::roarAnimation, () -> AlpineModel::roarAnimation);
+    public static final Animation<AlpineEntity, AlpineModel> WIND_GUST_ANIMATION = Animation.create(25, AlpineEntity::windGustAnimation, () -> AlpineModel::windGustAnimation);
+    public static final Animation<AlpineEntity, AlpineModel> BITE_ANIMATION = Animation.create(10, null, () -> AlpineModel::biteAnimation);
     public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();

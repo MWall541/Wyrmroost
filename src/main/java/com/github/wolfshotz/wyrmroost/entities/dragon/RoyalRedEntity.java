@@ -57,9 +57,9 @@ public class RoyalRedEntity extends TameableDragonEntity
 
     public static final int ARMOR_SLOT = 0;
 
-    public static final Animation<RoyalRedEntity, RoyalRedModel> ROAR_ANIMATION = Animation.create(70, RoyalRedEntity::roarAnimation, RoyalRedModel::roarAnimation);
-    public static final Animation<RoyalRedEntity, RoyalRedModel> SLAP_ATTACK_ANIMATION = Animation.create(30, RoyalRedEntity::slapAttackAnimation, RoyalRedModel::slapAttackAnimation);
-    public static final Animation<RoyalRedEntity, RoyalRedModel> BITE_ATTACK_ANIMATION = Animation.create(15, RoyalRedEntity::biteAttackAnimation, RoyalRedModel::biteAttackAnimation);
+    public static final Animation<RoyalRedEntity, RoyalRedModel> ROAR_ANIMATION = Animation.create(70, RoyalRedEntity::roarAnimation, () -> RoyalRedModel::roarAnimation);
+    public static final Animation<RoyalRedEntity, RoyalRedModel> SLAP_ATTACK_ANIMATION = Animation.create(30, RoyalRedEntity::slapAttackAnimation, () -> RoyalRedModel::slapAttackAnimation);
+    public static final Animation<RoyalRedEntity, RoyalRedModel> BITE_ATTACK_ANIMATION = Animation.create(15, RoyalRedEntity::biteAttackAnimation, () -> RoyalRedModel::biteAttackAnimation);
     public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION};
 
     public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.defineId(RoyalRedEntity.class, DataSerializers.BOOLEAN);

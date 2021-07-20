@@ -1,10 +1,12 @@
 package com.github.wolfshotz.wyrmroost.util.animation;
 
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.model.Model;
 
 import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class Animation<T extends IAnimatable, M extends Model>
 {
@@ -21,9 +23,9 @@ public class Animation<T extends IAnimatable, M extends Model>
         //@formatter:on
     }
 
-    public static <T extends IAnimatable, M extends Model> Animation<T, M> create(int duration, @Nullable BiConsumer<T, Integer> logic, Consumer<M> animLogic)
+    public static <T extends IAnimatable, M extends Model> Animation<T, M> create(int duration, @Nullable BiConsumer<T, Integer> logic, Supplier<Consumer<M>> animLogic)
     {
-        return new Animation<>(duration, logic, animLogic);
+        return new Animation<>(duration, logic, ModUtils.isClient() && animLogic != null? animLogic.get() : null);
     }
 
     @SuppressWarnings("unchecked")

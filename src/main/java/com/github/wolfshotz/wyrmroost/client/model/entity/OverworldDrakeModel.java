@@ -404,6 +404,14 @@ public class OverworldDrakeModel extends DragonEntityModel<OverworldDrakeEntity>
     }
 
     @Override
+    public void scale(OverworldDrakeEntity entity, MatrixStack ms, float partialTicks)
+    {
+        super.scale(entity, ms, partialTicks);
+        ms.scale(2f, 2f, 2f);
+        ms.translate(0, 0.75, 0);
+    }
+
+    @Override
     public float getShadowRadius(OverworldDrakeEntity entity)
     {
         return 1.6f;
@@ -412,10 +420,7 @@ public class OverworldDrakeModel extends DragonEntityModel<OverworldDrakeEntity>
     @Override
     public void renderToBuffer(MatrixStack ms, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
     {
-        ms.pushPose();
-        ms.scale(2f, 2f, 2f);
         body1.render(ms, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-        ms.popPose();
     }
 
     @Override
@@ -429,29 +434,29 @@ public class OverworldDrakeModel extends DragonEntityModel<OverworldDrakeEntity>
     @Override
     public void setupAnim(OverworldDrakeEntity drake, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        resetToDefaultPose();
+        reset();
         animator().tick(drake, this, partialTicks);
 
         if (!drake.isInSittingPose() && !drake.isSleeping())
         {
             // Body bob
-            bob(body1, globalSpeed * 2, 0.3f, false, limbSwing, limbSwingAmount);
+            body1.y += bob(1f, 0.3f, false, limbSwing, limbSwingAmount);
 
             // Left Arm
-            arm1L.walk(globalSpeed, 0.5f, true, 0, 0, limbSwing, limbSwingAmount);
-            palmL.walk(globalSpeed, 0.5f, true, 2.5f, 0, limbSwing, limbSwingAmount);
+            arm1L.xRot += -limbSwing(0.5f, 0.5f, 0, 0, limbSwing, limbSwingAmount);
+            palmL.xRot += -limbSwing(0.5f, 0.5f, 2.5f, 0, limbSwing, limbSwingAmount);
 
             // Right Arm
-            arm1R.walk(globalSpeed, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
-            palmR.walk(globalSpeed, 0.5f, false, 2.5f, 0, limbSwing, limbSwingAmount);
+            arm1R.xRot += limbSwing(0.5f, 0.5f, 0, 0, limbSwing, limbSwingAmount);
+            palmR.xRot += limbSwing(0.5f, 0.5f, 2.5f, 0, limbSwing, limbSwingAmount);
 
             // Left Leg
-            leg1L.walk(globalSpeed, 0.5f, false, 0, 0, limbSwing, limbSwingAmount);
-            footL.walk(globalSpeed, 0.2f, false, 2f, 0, limbSwing, limbSwingAmount);
+            leg1L.xRot += limbSwing(0.5f, 0.5f, 0, 0, limbSwing, limbSwingAmount);
+            footL.xRot += limbSwing(0.5f, 0.2f, 2f, 0, limbSwing, limbSwingAmount);
 
             // Right Leg
-            leg1R.walk(globalSpeed, 0.5f, true, 0, 0, limbSwing, limbSwingAmount);
-            footR.walk(globalSpeed, 0.2f, true, 2f, 0, limbSwing, limbSwingAmount);
+            leg1R.xRot += -limbSwing(0.5f, 0.5f, 0, 0, limbSwing, limbSwingAmount);
+            footR.xRot += -limbSwing(0.5f, 0.2f, 2f, 0, limbSwing, limbSwingAmount);
         }
 
         sit(entity.sitTimer.get(partialTicks));

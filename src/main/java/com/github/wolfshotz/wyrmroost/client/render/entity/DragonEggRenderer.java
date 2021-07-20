@@ -129,7 +129,7 @@ public class DragonEggRenderer extends EntityRenderer<DragonEggEntity>
         public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
         {
             base.render(ms, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-            base.resetToDefaultPose();
+            base.reset();
         }
     }
 }

@@ -132,7 +132,7 @@ public class LesserDesertwyrmModel extends WREntityModel<LesserDesertwyrmEntity>
     public void setupAnim(LesserDesertwyrmEntity entity, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
         animator().tick(entity, this, partialTicks);
-        resetToDefaultPose();
+        reset();
 
         if (entity.isBurrowed())
         {
@@ -143,7 +143,7 @@ public class LesserDesertwyrmModel extends WREntityModel<LesserDesertwyrmEntity>
             jaw.xRot = 1f;
             head.xRot = -1f;
 
-            bob(neck, 0.45f - globalSpeed, 0.15f, false, bob, 0.5f);
+            neck.y = bob(0.45f - globalSpeed, 0.15f, false, bob, 0.5f);
         }
 
         if (entity.getAnimation() != LesserDesertwyrmEntity.BITE_ANIMATION)

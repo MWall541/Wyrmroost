@@ -71,9 +71,9 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.defineId(OverworldDrakeEntity.class, DataSerializers.BOOLEAN);
 
     // Dragon Entity Animations
-    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> GRAZE_ANIMATION = Animation.create(35, OverworldDrakeEntity::grazeAnimation, OverworldDrakeModel::grazeAnimation);
-    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> HORN_ATTACK_ANIMATION = Animation.create(15, OverworldDrakeEntity::hornAttackAnimation, OverworldDrakeModel::hornAttackAnimation);
-    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> ROAR_ANIMATION = Animation.create(86, OverworldDrakeEntity::hornAttackAnimation, OverworldDrakeModel::roarAnimation);
+    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> GRAZE_ANIMATION = Animation.create(35, OverworldDrakeEntity::grazeAnimation, () -> OverworldDrakeModel::grazeAnimation);
+    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> HORN_ATTACK_ANIMATION = Animation.create(15, OverworldDrakeEntity::hornAttackAnimation, () -> OverworldDrakeModel::hornAttackAnimation);
+    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> ROAR_ANIMATION = Animation.create(86, OverworldDrakeEntity::hornAttackAnimation, () -> OverworldDrakeModel::roarAnimation);
     public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();
@@ -411,7 +411,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     {
         DragonInventory inv = getInventory();
         for (int i = CHEST_SLOT + 1; i < inv.getSlots(); i++)
-            spawnAtLocation(inv.getStackInSlot(i), getBbHeight() / 2f);
+            spawnAtLocation(inv.extractItem(i, 65, false), getBbHeight() / 2f);
     }
 
     @Override
@@ -423,7 +423,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation[] getAnimations()
+    public Animation<?, ?>[] getAnimations()
     {
         return ANIMATIONS;
     }

@@ -52,8 +52,6 @@ public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
 
     public WRModelRenderer[] tailSegments;
 
-    private final float globalSpeed = 0.5f;
-
     public RoostStalkerModel()
     {
         this.texWidth = 80;
@@ -200,7 +198,7 @@ public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
     @Override
     public void postProcess(RoostStalkerEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
     {
-        if (!entity.isSleeping()) renderGlowOverlay(entity.getVariant() == -1? ALBINO_EYES : EYES, ms, buffer);
+        if (!entity.isSleeping()) renderEyes(entity.getVariant() == -1? ALBINO_EYES : EYES, ms, buffer);
         renderMouthItem(entity, ms, buffer, light, yaw, pitch);
     }
 
@@ -248,7 +246,7 @@ public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
     @Override
     public void setupAnim(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        resetToDefaultPose();
+        reset();
 
         if (!stalker.isInSittingPose())
         {

@@ -34,6 +34,11 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         super(type);
     }
 
+    public static ModelAnimator animator()
+    {
+        return ModelAnimator.INSTANCE;
+    }
+
     public abstract ResourceLocation getTexture(T entity);
 
     public abstract float getShadowRadius(T entity);
@@ -60,11 +65,10 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         for (ModelRenderer box : boxList) if (box instanceof WRModelRenderer) ((WRModelRenderer) box).setDefaultPose();
     }
 
-    public void resetToDefaultPose()
+    public void reset()
     {
         globalSpeed = 0.5f;
-        for (ModelRenderer box : boxList)
-            if (box instanceof WRModelRenderer) ((WRModelRenderer) box).resetToDefaultPose();
+        for (ModelRenderer box : boxList) if (box instanceof WRModelRenderer) ((WRModelRenderer) box).reset();
     }
 
     public void setRotateAngle(ModelRenderer model, float x, float y, float z)
@@ -87,38 +91,45 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         }
     }
 
+    public static float limbSwing(float speed, float degree, float offset, float weight, float limbSwing, float limbSwingAmount)
+    {
+        return MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
+    }
+
+    public static float bob(float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
+    {
+        float sin = MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree;
+        return bounce? -Math.abs(sin) : sin - limbSwingAmount * degree;
+    }
+
     /**
      * Rotate Angle X
      */
-    public void walk(WRModelRenderer box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount)
+    @Deprecated
+    public void walk(ModelRenderer box, float speed, float degree, boolean invert, float offset, float weight, float walk, float walkAmount)
     {
-        box.walk(speed, degree, invert, offset, weight, walk, walkAmount);
+        float i = limbSwing(speed, degree, offset, weight, walk, walkAmount);
+        box.xRot += invert? -i : i;
     }
 
     /**
      * Rotate Angle Z
      */
-    public void flap(WRModelRenderer box, float speed, float degree, boolean invert, float offset, float weight, float flap, float flapAmount)
+    @Deprecated
+    public void flap(ModelRenderer box, float speed, float degree, boolean invert, float offset, float weight, float flap, float flapAmount)
     {
-        box.flap(speed, degree, invert, offset, weight, flap, flapAmount);
+        float i = limbSwing(speed, degree, offset, weight, flap, flapAmount);
+        box.zRot += invert? -i : i;
     }
 
     /**
      * Rotate Angle Y
      */
-    public void swing(WRModelRenderer box, float speed, float degree, boolean invert, float offset, float weight, float swing, float swingAmount)
+    @Deprecated
+    public void swing(ModelRenderer box, float speed, float degree, boolean invert, float offset, float weight, float swing, float swingAmount)
     {
-        box.swing(speed, degree, invert, offset, weight, swing, swingAmount);
-    }
-
-    /**
-     * Bob the box up and down
-     *
-     * @param bounce back and forth
-     */
-    public void bob(WRModelRenderer box, float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
-    {
-        box.bob(speed, degree, bounce, limbSwing, limbSwingAmount);
+        float i = limbSwing(speed, degree, offset, weight, swing, swingAmount);
+        box.yRot += invert? -i : i;
     }
 
     /**
@@ -166,23 +177,6 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         this.time = x;
     }
 
-    public void toDefaultPose()
-    {
-        for (ModelRenderer modelRenderer : boxList)
-        {
-            if (modelRenderer instanceof WRModelRenderer)
-            {
-                WRModelRenderer box = (WRModelRenderer) modelRenderer;
-                box.x = Mafs.linTerp(box.x, box.defaultPositionX, time);
-                box.y = Mafs.linTerp(box.y, box.defaultPositionY, time);
-                box.z = Mafs.linTerp(box.z, box.defaultPositionZ, time);
-                box.xRot = Mafs.linTerp(box.xRot, box.defaultRotationX, time);
-                box.yRot = Mafs.linTerp(box.yRot, box.defaultRotationY, time);
-                box.zRot = Mafs.linTerp(box.zRot, box.defaultRotationZ, time);
-            }
-        }
-    }
-
     public void move(ModelRenderer box, float x, float y, float z)
     {
         box.x += time * x;
@@ -197,9 +191,11 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         box.zRot += time * z;
     }
 
-    public ModelAnimator animator()
+    public void rotateFrom0(WRModelRenderer box, float x, float y, float z)
     {
-        return ModelAnimator.INSTANCE;
+        box.xRot += (-box.defaultRotationX + x) * time;
+        box.yRot += (-box.defaultRotationY + y) * time;
+        box.zRot += (-box.defaultRotationZ + z) * time;
     }
 
     public void renderTexturedOverlay(ResourceLocation texture, MatrixStack ms, IRenderTypeBuffer buffer, int light, int overlay, float red, float green, float blue, float alpha)
