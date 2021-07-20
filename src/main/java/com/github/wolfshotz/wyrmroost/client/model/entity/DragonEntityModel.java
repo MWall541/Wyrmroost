@@ -2,6 +2,7 @@ package com.github.wolfshotz.wyrmroost.client.model.entity;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
+import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -29,6 +30,11 @@ public abstract class DragonEntityModel<T extends TameableDragonEntity> extends 
     {
         float scale = entity.getScale();
         ms.scale(scale, scale, scale);
+    }
+
+    public void renderEyes(ResourceLocation texture, MatrixStack ms, IRenderTypeBuffer buffer)
+    {
+        renderToBuffer(ms, buffer.getBuffer(RenderHelper.getAdditiveGlow(texture)), 15728640, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
     }
 
     public void renderArmorOverlay(MatrixStack ms, IRenderTypeBuffer buffer, int light)
