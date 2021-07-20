@@ -34,11 +34,6 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
         super(type);
     }
 
-    public static ModelAnimator animator()
-    {
-        return ModelAnimator.INSTANCE;
-    }
-
     public abstract ResourceLocation getTexture(T entity);
 
     public abstract float getShadowRadius(T entity);
@@ -89,17 +84,6 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
             box.xRot += pitch;
             box.yRot += yaw;
         }
-    }
-
-    public static float limbSwing(float speed, float degree, float offset, float weight, float limbSwing, float limbSwingAmount)
-    {
-        return MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
-    }
-
-    public static float bob(float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
-    {
-        float sin = MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree;
-        return bounce? -Math.abs(sin) : sin - limbSwingAmount * degree;
     }
 
     /**
@@ -208,5 +192,21 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         IVertexBuilder builder = buffer.getBuffer(RenderHelper.getAdditiveGlow(texture));
         renderToBuffer(ms, builder, 15728640, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+    }
+
+    public static ModelAnimator animator()
+    {
+        return ModelAnimator.INSTANCE;
+    }
+
+    public static float limbSwing(float speed, float degree, float offset, float weight, float limbSwing, float limbSwingAmount)
+    {
+        return MathHelper.cos(limbSwing * speed + offset) * degree * limbSwingAmount + weight * limbSwingAmount;
+    }
+
+    public static float bob(float speed, float degree, boolean bounce, float limbSwing, float limbSwingAmount)
+    {
+        float sin = MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree;
+        return bounce? -Math.abs(sin) : sin - limbSwingAmount * degree;
     }
 }
