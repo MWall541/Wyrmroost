@@ -1,5 +1,5 @@
 # Wyrmroost
-[![Discord](https://img.shields.io/discord/593364629489582118.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/h8zRw9H)
+[![Discord](https://img.shields.io/discord/593364629489582118.svg?color=%237289da&label=Discord&logo=discord&logoColor=%237289da)](https://discord.gg/yAAWWNqbTd)
 
 Github Repository for the Wyrmroost Minecraft Mod.
 
