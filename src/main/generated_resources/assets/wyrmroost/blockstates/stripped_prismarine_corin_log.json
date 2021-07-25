@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "wyrmroost:block/stripped_prismarine_corin_log",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "wyrmroost:block/stripped_prismarine_corin_log"
+    },
+    "axis=z": {
+      "model": "wyrmroost:block/stripped_prismarine_corin_log",
+      "x": 90
+    }
+  }
+}

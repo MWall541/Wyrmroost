@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/fence_side",
+  "textures": {
+    "texture": "wyrmroost:block/teal_corin_planks"
+  }
+}

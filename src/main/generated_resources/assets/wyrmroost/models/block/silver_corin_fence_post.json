@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/fence_post",
+  "textures": {
+    "texture": "wyrmroost:block/silver_corin_planks"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "wyrmroost:block/corin",
+  "textures": {
+    "side": "wyrmroost:block/stripped_silver_corin_log",
+    "top": "wyrmroost:block/stripped_silver_corin_log_top"
+  }
+}

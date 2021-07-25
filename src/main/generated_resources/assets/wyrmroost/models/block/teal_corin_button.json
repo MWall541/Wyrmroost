@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button",
+  "textures": {
+    "texture": "wyrmroost:block/teal_corin_planks"
+  }
+}

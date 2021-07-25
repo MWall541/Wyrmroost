@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top",
+  "textures": {
+    "bottom": "wyrmroost:block/dying_corin_door_bottom",
+    "top": "wyrmroost:block/dying_corin_door_top"
+  }
+}

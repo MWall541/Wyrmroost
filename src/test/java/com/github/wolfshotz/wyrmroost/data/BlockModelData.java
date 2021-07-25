@@ -2,29 +2,26 @@ package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
+import com.github.wolfshotz.wyrmroost.blocks.ThinLogBlock;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourcePackType;
 import net.minecraft.state.properties.AttachFace;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("ConstantConditions")
 class BlockModelData extends BlockStateProvider
 {
-    private final List<Block> ignored = new ArrayList<>();
-
     BlockModelData(DataGenerator generator, ExistingFileHelper fileHelper)
     {
         super(generator, Wyrmroost.MOD_ID, fileHelper);
@@ -37,58 +34,58 @@ class BlockModelData extends BlockStateProvider
         snowy(WRBlocks.FROSTED_GRASS.get());
         woodGroup(WRBlocks.OSERI_WOOD);
         woodGroup(WRBlocks.SAL_WOOD);
+        woodGroup(WRBlocks.PRISMARINE_CORIN_WOOD, true);
+        woodGroup(WRBlocks.SILVER_CORIN_WOOD, true);
+        woodGroup(WRBlocks.TEAL_CORIN_WOOD, true);
+        woodGroup(WRBlocks.RED_CORIN_WOOD, true);
+        woodGroup(WRBlocks.DYING_CORIN_WOOD, true);
     }
 
     @Override
     protected void registerStatesAndModels()
     {
+        models().getBuilder("vine").texture("particle", "#vine")
+                .element()
+                    .from(0, 0, 0.8f)
+                    .to(16, 16, 0.8f)
+                    .shade(false)
+                    .face(Direction.NORTH).uvs(16, 0, 0, 16).texture("#vine").tintindex(0).end()
+                    .face(Direction.SOUTH).uvs(0, 0, 16, 16).texture("#vine").tintindex(0).end()
+                .end();
+
         manualOverrides();
 
-        List<String> MISSING_TEXTURES = new ArrayList<>();
-        ignored.addAll(registeredBlocks.keySet());
-        for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
+        Set<Block> registered = ModUtils.getRegistryEntries(WRBlocks.REGISTRY);
+        registered.removeAll(registeredBlocks.keySet());
+        for (Block block : registered)
         {
-            if (ignored.contains(block)) continue;
-            if (block instanceof FlowingFluidBlock) continue;
-
-            if (block instanceof TallFlowerBlock)
-            {
-                tallFlower(block);
-                continue;
-            }
-
-            if (block instanceof BushBlock || block instanceof AbstractPlantBlock)
-            {
-                cross(block);
-                continue;
-            }
-
-            if (block instanceof PetalsBlock)
-            {
-                petals(block);
-                continue;
-            }
-
-            simpleBlock(block);
-
-            ResourceLocation name = block.getRegistryName();
-            if (!models().existingFileHelper.exists(new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath()), ResourcePackType.CLIENT_RESOURCES, ".png", "textures"))
-                MISSING_TEXTURES.add(name.getPath().replace("block/", ""));
+            if (block instanceof TallFlowerBlock) tallFlower(block);
+            else if (block instanceof BushBlock || block instanceof AbstractPlantBlock) cross(block);
+            else if (block instanceof PetalsBlock) petals(block);
+            else if (!(block instanceof FlowingFluidBlock)) simpleBlock(block);
         }
-
-        if (!MISSING_TEXTURES.isEmpty())
-            Wyrmroost.LOG.error("Blocks are missing Textures! Models will not be registered: {}", MISSING_TEXTURES.toString());
     }
 
-    void woodGroup(WRBlocks.WoodGroup group)
+    void woodGroup(WRBlocks.WoodGroup group, boolean thinLogs)
     {
         ResourceLocation planks = blockTexture(group.getPlanks());
 
+        if (thinLogs)
+        {
+            corin((ThinLogBlock) group.getLog(), false);
+            corin((ThinLogBlock) group.getStrippedLog(), false);
+            corin((ThinLogBlock) group.getWood(), true);
+            corin((ThinLogBlock) group.getStrippedWood(), true);
+        }
+        else
+        {
+            logBlock((RotatedPillarBlock) group.getLog());
+            logBlock((RotatedPillarBlock) group.getStrippedLog());
+            allSidedAxis((RotatedPillarBlock) group.getWood(), blockTexture(group.getLog()));
+            allSidedAxis((RotatedPillarBlock) group.getStrippedWood(), blockTexture(group.getStrippedLog()));
+        }
+
         simpleBlock(group.getPlanks());
-        logBlock((RotatedPillarBlock) group.getLog());
-        logBlock((RotatedPillarBlock) group.getStrippedLog());
-        allSidedAxis((RotatedPillarBlock) group.getWood(), blockTexture(group.getLog()));
-        allSidedAxis((RotatedPillarBlock) group.getStrippedWood(), blockTexture(group.getStrippedLog()));
         slabBlock((SlabBlock) group.getSlab(), planks, planks);
         pressurePlate(group.getPressurePlate(), planks);
         fenceBlock((FenceBlock) group.getFence(), planks);
@@ -103,6 +100,20 @@ class BlockModelData extends BlockStateProvider
         sign((WallSignBlock) group.getWallSign(), planks);
         ladder((LadderBlock) group.getLadder());
         bookshelf(group.getBookshelf(), planks);
+    }
+
+    void woodGroup(WRBlocks.WoodGroup group)
+    {
+        woodGroup(group, false);
+    }
+
+    void corin(ThinLogBlock block, boolean allSided)
+    {
+        String name = block.getRegistryName().getPath();
+        BlockModelBuilder model = models().withExistingParent(name, modLoc("corin"))
+                .texture("side", name = "block/" + name)
+                .texture("top", name + (allSided? "" : "_top"));
+        axisBlock(block, model, model);
     }
 
     void bookshelf(Block block, ResourceLocation topPlanks)
@@ -221,30 +232,13 @@ class BlockModelData extends BlockStateProvider
 
     void vine(Block block)
     {
-        final String fileName = block.getRegistryName().getPath();
-        final ResourceLocation texture = blockTexture(block);
-
-        Wyrmroost.LOG.warn("VINE MODELS REGISTERED FOR: {}, A BLOCKSTATE JSON MUST BE MADE MANUALLY!", fileName);
-
-        ignored.add(block);
-
-        models().singleTexture(fileName + "_" + "u", mcLoc("vine_" + "u"), "vine", texture);
-        for (int i = 1; i <= 4; i++)
-        {
-            for (int j = 1; j <= 2; j++)
-            {
-                boolean flag = j == 2;
-                String name = formatVine(fileName, i, flag);
-                String parent = formatVine("vine", i, flag);
-                models().singleTexture(name, mcLoc(parent), "vine", texture);
-                if (i == 2)
-                    models().singleTexture(name + "_opposite", mcLoc(parent + "_opposite"), "vine", texture);
-            }
-        }
-    }
-
-    static String formatVine(String pre, int i, boolean u)
-    {
-        return pre + "_" + i + (u? "u" : "");
+        String path = block.getRegistryName().getPath();
+        BlockModelBuilder model = models().withExistingParent(path, modLoc("vine")).texture("vine", blockTexture(block));
+        getMultipartBuilder(block)
+                .part().modelFile(model).rotationX(270).uvLock(true).addModel().condition(VineBlock.UP, true).end()
+                .part().modelFile(model).addModel().condition(VineBlock.NORTH, true).end()
+                .part().modelFile(model).rotationY(270).uvLock(true).addModel().condition(VineBlock.WEST, true).end()
+                .part().modelFile(model).rotationY(180).uvLock(true).addModel().condition(VineBlock.SOUTH, true).end()
+                .part().modelFile(model).rotationY(90).addModel().condition(VineBlock.EAST, true).end();
     }
 }

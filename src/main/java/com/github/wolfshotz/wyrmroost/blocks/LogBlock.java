@@ -23,11 +23,17 @@ public class LogBlock extends RotatedPillarBlock
         this.stripped = stripped;
     }
 
+    public LogBlock(Properties props, Supplier<Block> stripped)
+    {
+        super(props);
+        this.stripped = stripped;
+    }
+
     @Nullable
     @Override
     public BlockState getToolModifiedState(BlockState state, World level, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
     {
-        return toolType == ToolType.AXE?
+        return toolType == ToolType.AXE && stripped != null?
                 stripped.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)) :
                 super.getToolModifiedState(state, level, pos, player, stack, toolType);
     }

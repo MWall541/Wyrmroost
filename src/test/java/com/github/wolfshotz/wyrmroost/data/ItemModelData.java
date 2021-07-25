@@ -2,7 +2,6 @@ package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
-import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
@@ -20,6 +19,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("ConstantConditions")
 class ItemModelData extends ItemModelProvider
@@ -41,9 +41,6 @@ class ItemModelData extends ItemModelProvider
         final ModelFile bucket = uncheckedModel("forge:item/bucket");
 
         item(WRItems.DRAGON_STAFF.get()).parent(uncheckedModel("item/handheld"));
-
-        fenceAndButton(WRBlocks.OSERI_WOOD);
-        fenceAndButton(WRBlocks.SAL_WOOD);
 
         getBuilder("desert_wyrm_alive").parent(itemGenerated).texture("layer0", resource("desert_wyrm_alive"));
         item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.id("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
@@ -73,23 +70,13 @@ class ItemModelData extends ItemModelProvider
         }
 
         // All items that do not require custom attention
-        for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY))
+        Set<Item> registered = ModUtils.getRegistryEntries(WRItems.REGISTRY);
+        REGISTERED.forEach(registered::remove);
+        for (Item item : registered)
         {
-            if (REGISTERED.contains(item) || item == net.minecraft.item.Items.AIR) continue;
-
-            if (item instanceof SpawnEggItem)
-            {
-                getBuilderFor(item).parent(spawnEggTemplate);
-                continue;
-            }
-
-            if (item instanceof BucketItem)
-            {
-                getBuilderFor(item).parent(bucket);
-                continue;
-            }
-
-            if (item instanceof BlockItem)
+            if (item instanceof SpawnEggItem) getBuilderFor(item).parent(spawnEggTemplate);
+            else if (item instanceof BucketItem) getBuilderFor(item).parent(bucket);
+            else if (item instanceof BlockItem)
             {
                 Block block = ((BlockItem) item).getBlock();
                 ResourceLocation registry = item.getRegistryName();
@@ -108,11 +95,13 @@ class ItemModelData extends ItemModelProvider
                 }
                 if (block instanceof FenceBlock)
                 {
+                    customInventoryItem(item, fromBlockTexture(block), "fence");
                     continue;
                 }
                 if (block instanceof AbstractButtonBlock)
                 {
                     customInventoryItem(item, fromBlockTexture(block), "button");
+                    continue;
                 }
 
                 getBuilderFor(item).parent(uncheckedModel(registry.getNamespace() + ":block/" + path));
@@ -121,13 +110,6 @@ class ItemModelData extends ItemModelProvider
 
             item(item);
         }
-    }
-
-    private void fenceAndButton(WRBlocks.WoodGroup wg)
-    {
-        ResourceLocation texture = fromBlockTexture(wg.getPlanks());
-        customInventoryItem(wg.getFence(), texture, "fence");
-        customInventoryItem(wg.getButton(), texture, "button");
     }
 
     @Override

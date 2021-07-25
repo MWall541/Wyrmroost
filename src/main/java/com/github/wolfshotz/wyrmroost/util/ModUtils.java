@@ -1,7 +1,6 @@
 package com.github.wolfshotz.wyrmroost.util;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,6 +28,7 @@ import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by WolfShotz 7/9/19 - 00:31
@@ -76,9 +76,7 @@ public final class ModUtils
      */
     public static <T extends IForgeRegistryEntry<T>> Set<T> getRegistryEntries(DeferredRegister<T> registry)
     {
-        ImmutableSet.Builder<T> entries = ImmutableSet.builder();
-        for (RegistryObject<T> entry : registry.getEntries()) entries.add(entry.get());
-        return entries.build();
+        return registry.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet());
     }
 
     /**

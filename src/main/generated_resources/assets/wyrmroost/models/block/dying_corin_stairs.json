@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "side": "wyrmroost:block/dying_corin_planks",
+    "bottom": "wyrmroost:block/dying_corin_planks",
+    "top": "wyrmroost:block/dying_corin_planks"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "wyrmroost:block/red_corin_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "wyrmroost:block/red_corin_wood"
+    },
+    "axis=z": {
+      "model": "wyrmroost:block/red_corin_wood",
+      "x": 90
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=top": {
+      "model": "wyrmroost:block/prismarine_corin_slab_top"
+    },
+    "type=bottom": {
+      "model": "wyrmroost:block/prismarine_corin_slab"
+    },
+    "type=double": {
+      "model": "wyrmroost:block/prismarine_corin_planks"
+    }
+  }
+}

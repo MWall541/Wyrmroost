@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "wyrmroost:block/teal_corin_bookshelf",
+    "end": "wyrmroost:block/teal_corin_planks"
+  }
+}

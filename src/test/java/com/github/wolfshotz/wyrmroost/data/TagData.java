@@ -130,6 +130,11 @@ public class TagData
 
             woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.OSERI_LOGS, true);
             woodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.SAL_LOGS, true);
+            woodGroup(WRBlocks.PRISMARINE_CORIN_WOOD, WRBlocks.Tags.PRISMARINE_CORIN_LOGS, false);
+            woodGroup(WRBlocks.SILVER_CORIN_WOOD, WRBlocks.Tags.SILVER_CORIN_LOGS, false);
+            woodGroup(WRBlocks.TEAL_CORIN_WOOD, WRBlocks.Tags.TEAL_CORIN_LOGS, false);
+            woodGroup(WRBlocks.RED_CORIN_WOOD, WRBlocks.Tags.RED_CORIN_LOGS, false);
+            woodGroup(WRBlocks.DYING_CORIN_WOOD, WRBlocks.Tags.DYING_CORIN_LOGS, false);
         }
 
         private void ore(ITag.INamedTag<Block> oreTag, Block... ores)

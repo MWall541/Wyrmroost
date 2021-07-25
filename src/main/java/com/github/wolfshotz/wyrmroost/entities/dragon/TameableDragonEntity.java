@@ -508,7 +508,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             }
             else
             {
-                speed *= 0.35f;
+                speed *= 0.225f;
                 if (entity.jumping && canFly()) setFlying(true);
             }
 

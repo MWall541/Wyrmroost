@@ -76,7 +76,7 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     public void faceTarget(float yaw, float pitch, float rotationDivisor, ModelRenderer... boxes)
     {
         rotationDivisor *= boxes.length;
-        yaw = (float) Math.toRadians(yaw) / rotationDivisor;
+        yaw = (float) Math.toRadians(MathHelper.wrapDegrees(yaw)) / rotationDivisor;
         pitch = (float) Math.toRadians(pitch) / rotationDivisor;
 
         for (ModelRenderer box : boxes)

@@ -99,12 +99,19 @@ public class WRBlocks
     public static final RegistryObject<Block> FROST_GOWN = register("frost_gown", () -> new TallFlowerBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission()), extend().render(() -> RenderType::cutout).flammability(30, 80));
     public static final WoodGroup SAL_WOOD = new WoodGroup("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
 
+    // stygian sea
+    public static final WoodGroup PRISMARINE_CORIN_WOOD = new ThinLogBlock.Group("prismarine_corin",MaterialColor.COLOR_CYAN, MaterialColor.TERRACOTTA_CYAN);
+    public static final WoodGroup SILVER_CORIN_WOOD = new ThinLogBlock.Group("silver_corin",MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.CLAY);
+    public static final WoodGroup TEAL_CORIN_WOOD = new ThinLogBlock.Group("teal_corin",MaterialColor.TERRACOTTA_CYAN, MaterialColor.TERRACOTTA_GREEN);
+    public static final WoodGroup RED_CORIN_WOOD = new ThinLogBlock.Group("red_corin",MaterialColor.TERRACOTTA_RED, MaterialColor.COLOR_RED);
+    public static final WoodGroup DYING_CORIN_WOOD = new ThinLogBlock.Group("dying_corin",MaterialColor.COLOR_GRAY, MaterialColor.TERRACOTTA_BLACK);
+
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
         return register(name, block, extend());
     }
 
-    static RegistryObject<Block> register(String name, Supplier<Block> block, BlockExtension extension)
+    public static RegistryObject<Block> register(String name, Supplier<Block> block, BlockExtension extension)
     {
         RegistryObject<Block> delegate = REGISTRY.register(name, block);
         if (extension.itemFactory != null) WRItems.register(name, () -> extension.itemFactory.apply(delegate.get()));
@@ -177,6 +184,11 @@ public class WRBlocks
         public static final INamedTag<Block> STORAGE_BLOCKS_PLATINUM = forge("storage_blocks/platinum");
         public static final INamedTag<Block> OSERI_LOGS = tag("oseri_logs");
         public static final INamedTag<Block> SAL_LOGS = tag("sal_logs");
+        public static final INamedTag<Block> PRISMARINE_CORIN_LOGS = tag("corin_logs");
+        public static final INamedTag<Block> SILVER_CORIN_LOGS = tag("silver_corin_logs");
+        public static final INamedTag<Block> TEAL_CORIN_LOGS = tag("teal_corin_logs");
+        public static final INamedTag<Block> RED_CORIN_LOGS = tag("red_corin_logs");
+        public static final INamedTag<Block> DYING_CORIN_LOGS = tag("dying_corin_logs");
 
         static INamedTag<Block> forge(String path)
         {
@@ -203,33 +215,33 @@ public class WRBlocks
 
     public static class WoodGroup extends WoodType
     {
-        final RegistryObject<Block> planks;
-        final RegistryObject<Block> log;
-        final RegistryObject<Block> strippedLog;
-        final RegistryObject<Block> wood;
-        final RegistryObject<Block> strippedWood;
-        final RegistryObject<Block> slab;
-        final RegistryObject<Block> pressurePlate;
-        final RegistryObject<Block> fence;
-        final RegistryObject<Block> fenceGate;
-        final RegistryObject<Block> trapDoor;
-        final RegistryObject<Block> stairs;
-        final RegistryObject<Block> button;
-        final RegistryObject<Block> door;
-        final RegistryObject<Block> sign;
-        final RegistryObject<Block> wallSign;
-        final RegistryObject<Block> ladder;
-        final RegistryObject<Block> bookshelf;
+        public final RegistryObject<Block> planks;
+        public final RegistryObject<Block> log;
+        public final RegistryObject<Block> strippedLog;
+        public final RegistryObject<Block> wood;
+        public final RegistryObject<Block> strippedWood;
+        public final RegistryObject<Block> slab;
+        public final RegistryObject<Block> pressurePlate;
+        public final RegistryObject<Block> fence;
+        public final RegistryObject<Block> fenceGate;
+        public final RegistryObject<Block> trapDoor;
+        public final RegistryObject<Block> stairs;
+        public final RegistryObject<Block> button;
+        public final RegistryObject<Block> door;
+        public final RegistryObject<Block> sign;
+        public final RegistryObject<Block> wallSign;
+        public final RegistryObject<Block> ladder;
+        public final RegistryObject<Block> bookshelf;
 
         public WoodGroup(String name, MaterialColor color, MaterialColor logColor)
         {
             super(name);
 
             this.planks = WRBlocks.register(name + "_planks", () -> new Block(props(color)), extend().flammability(5, 20));
-            this.log = WRBlocks.register(name + "_log", () -> new LogBlock(color, logColor, self().strippedLog), extend().flammability(5, 5));
-            this.strippedLog = WRBlocks.register("stripped_" + name + "_log", () -> new RotatedPillarBlock(LogBlock.properties(color, logColor)), extend().flammability(5, 5));
-            this.wood = WRBlocks.register(name + "_wood", () -> new LogBlock(logColor, logColor, self().strippedWood), extend().flammability(5, 5));
-            this.strippedWood = WRBlocks.register("stripped_" + name + "_wood", () -> new RotatedPillarBlock(LogBlock.properties(color, color)), extend().flammability(5, 5));
+            this.log = applyLog(name + "_log", color, logColor, false, false);
+            this.strippedLog = applyLog("stripped_" + name + "_log", color, logColor, true, false);
+            this.wood = applyLog(name + "_wood", logColor, logColor, false, true);
+            this.strippedWood = applyLog("stripped_" + name + "_wood", color, color, true, true);
             this.slab = WRBlocks.register(name + "_slab", () -> new SlabBlock(props(color)), extend().flammability(5, 20));
             this.pressurePlate = WRBlocks.register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).noCollission().strength(0.5f)));
             this.fence = WRBlocks.register(name + "_fence", () -> new FenceBlock(props(color)), extend().flammability(5, 20));
@@ -244,6 +256,11 @@ public class WRBlocks
             this.bookshelf = WRBlocks.register(name + "_bookshelf", BookshelfBlock::new, extend().flammability(30, 20));
 
             WoodType.register(this);
+        }
+
+        protected RegistryObject<Block> applyLog(String name, MaterialColor color, MaterialColor logColor, boolean stripped, boolean wood)
+        {
+            return WRBlocks.register(name, stripped? () -> new RotatedPillarBlock(LogBlock.properties(logColor, logColor)) : () -> new LogBlock(color, logColor, wood? self().strippedWood : self().strippedLog), extend().flammability(5, 5));
         }
 
         public Block getPlanks()
@@ -331,7 +348,7 @@ public class WRBlocks
             return bookshelf.get();
         }
 
-        private WoodGroup self()
+        protected WoodGroup self()
         {
             return this;
         }
@@ -427,9 +444,9 @@ public class WRBlocks
     public interface IBlockTint
     {
         /**
-         * @param state The BlockState of the block we're tinting for
-         * @param level Nullable: possible to get the world from the client but not recommended; could be in ITEM context.
-         * @param pos Nullable: could be in ITEM context.
+         * @param state     The BlockState of the block we're tinting for
+         * @param level     Nullable: possible to get the world from the client but not recommended; could be in ITEM context.
+         * @param pos       Nullable: could be in ITEM context.
          * @param tintIndex the index of the tint.
          */
         int getTint(BlockState state, @Nullable IBlockDisplayReader level, @Nullable BlockPos pos, int tintIndex);

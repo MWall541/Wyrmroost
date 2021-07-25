@@ -1,0 +1,7 @@
+{
+  "parent": "wyrmroost:block/corin",
+  "textures": {
+    "side": "wyrmroost:block/red_corin_wood",
+    "top": "wyrmroost:block/red_corin_wood"
+  }
+}

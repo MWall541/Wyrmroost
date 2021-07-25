@@ -124,6 +124,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     public WRModelRenderer membraneL5;
     public WRModelRenderer membraneL2;
 
+    public WRModelRenderer[][] toes;
     public WRModelRenderer[][] wings;
     public WRModelRenderer[] tails;
     public WRModelRenderer[] neck;
@@ -683,11 +684,15 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
 
         this.tails = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8};
         this.neck = new WRModelRenderer[] {neck1, neck2, neck3, head};
-
         this.wings = new WRModelRenderer[][] {
                 {wingR1, wingR2, palmR, palmR_1, fingerR1part1, fingerR1part2, fingerR2part1, fingerR2part2, fingerR3part1, fingerR3part2, fingerR4part1, fingerR4part2, membraneR1, membraneR2, membraneR3, membraneR4, membraneR5, membraneR6, membraneR7},
                 {wingL1, wingL2, palmL, palmL_1, fingerL1part1, fingerL1part2, fingerL2part1, fingerL2part2, fingerL3part1, fingerL3part2, fingerL4part1, fingerL4part2, membraneL1, membraneL2, membraneL3, membraneL4, membraneL5, membraneL6, membraneL7}
         };
+        this.toes = new WRModelRenderer[][] {
+                {toe1R, toe2R, toe3R},
+                {toe1L, toe2L, toe3L}
+        };
+
 
         setDefaultPose();
     }
@@ -751,37 +756,53 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     @Override
     public void setupAnim(RoyalRedEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-        float flightDelta = entity.flightTimer.get(partialTicks);
-
         if (entity.isNoAi())
         {
             limbSwing = bob * 0.5f;
-            limbSwingAmount = 0.41782534f;
+            limbSwingAmount = 0.4466025f;
+            entity.yHeadRot = 90;
+            entity.yBodyRot = 0;
         }
+
+        float flightDelta = entity.flightTimer.get(partialTicks);
+        float walkDelta = (1 - flightDelta) * limbSwingAmount;
 
         reset();
 
-        body1.y += bob(0.8f, 0.5f, false, limbSwing, limbSwingAmount);
-        body1.yRot += limbSwing(0.4f, -0.1f, 0, 0, limbSwing, limbSwingAmount);
-
-        leg1R.xRot += limbSwing(0.4f, 1.5f, 0, 0, limbSwing, limbSwingAmount);
-        leg2R.xRot += limbSwing(0.4f, -1.25f, 0.65f, 0.3f, limbSwing, limbSwingAmount);
-        leg3R.xRot += limbSwing(0.4f, 0.5f, 0.5f, -0.85f, limbSwing, limbSwingAmount);
-        footR.xRot += limbSwing(0.4f, -1.5f, 0.25f, 1.4f, limbSwing, limbSwingAmount);
-        leg1L.xRot += -limbSwing(0.4f, 1.5f, 0, 0, limbSwing, limbSwingAmount);
-        leg2L.xRot += -limbSwing(0.4f, -1.25f, 0.65f, -0.3f, limbSwing, limbSwingAmount);
-        leg3L.xRot += -limbSwing(0.4f, 0.5f, 0.5f, 0.85f, limbSwing, limbSwingAmount);
-        footL.xRot += -limbSwing(0.4f, -1.5f, 0.25f, -1.4f, limbSwing, limbSwingAmount);
-
-        wingR1.yRot += limbSwing(0.8f, -0.05f, 0, 0, limbSwing, limbSwingAmount);
-        wingR2.yRot += limbSwing(0.8f, 0.1f, 0, 0, limbSwing, limbSwingAmount);
-
-        arm1L.xRot = arm1R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, limbSwingAmount);
-        arm2L.xRot = arm2R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, limbSwingAmount);
+        faceTarget(yaw, pitch, 0.75f, neck);
 
         if (flightDelta > 0)
         {
             flap(wingR1, 0.1f, 1f, false, 0, 0, limbSwing, limbSwingAmount * flightDelta);
+        }
+
+        if (walkDelta > 0)
+        {
+            body1.y += bob(0.8f, 1f, false, limbSwing, limbSwingAmount);
+            body1.yRot += -limbSwing(0.4f, -0.1f, 0, 0, limbSwing, limbSwingAmount);
+
+            leg1R.xRot += limbSwing(0.4f, 1.5f, 0, 0, limbSwing, limbSwingAmount);
+            leg2R.xRot += limbSwing(0.4f, -1.25f, 0.65f, 0.3f, limbSwing, limbSwingAmount);
+            leg3R.xRot += limbSwing(0.4f, 0.5f, 0.5f, -0.85f, limbSwing, limbSwingAmount);
+            footR.xRot += limbSwing(0.4f, -0.9f, 0.25f, 0.9f, limbSwing, limbSwingAmount);
+            leg1L.xRot += -limbSwing(0.4f, 1.5f, 0, 0, limbSwing, limbSwingAmount);
+            leg2L.xRot += -limbSwing(0.4f, -1.25f, 0.65f, -0.3f, limbSwing, limbSwingAmount);
+            leg3L.xRot += -limbSwing(0.4f, 0.5f, 0.5f, 0.85f, limbSwing, limbSwingAmount);
+            footL.xRot += -limbSwing(0.4f, -0.9f, 0.25f, -0.9f, limbSwing, limbSwingAmount);
+
+            float rightToes = limbSwing(0.4f, -0.6f, 0.25f, 0.6f, limbSwing, limbSwingAmount);
+            float leftToes = -limbSwing(0.4f, -0.6f, 0.25f, -0.6f, limbSwing, limbSwingAmount);
+            for (int i = 0; i < toes[0].length; i++)
+            {
+                toes[0][i].xRot = rightToes;
+                toes[1][i].xRot = leftToes;
+            }
+
+            wingR1.yRot += limbSwing(0.8f, -0.05f, 0, 0, limbSwing, limbSwingAmount);
+            wingR2.yRot += limbSwing(0.8f, 0.1f, 0, 0, limbSwing, limbSwingAmount);
+
+            arm1L.xRot = arm1R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, limbSwingAmount);
+            arm2L.xRot = arm2R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, limbSwingAmount);
         }
 
         setTime(flightDelta);

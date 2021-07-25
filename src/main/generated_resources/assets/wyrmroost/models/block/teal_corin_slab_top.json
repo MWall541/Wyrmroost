@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "side": "wyrmroost:block/teal_corin_planks",
+    "bottom": "wyrmroost:block/teal_corin_planks",
+    "top": "wyrmroost:block/teal_corin_planks"
+  }
+}
