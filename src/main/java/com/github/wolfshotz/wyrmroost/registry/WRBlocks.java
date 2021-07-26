@@ -100,11 +100,11 @@ public class WRBlocks
     public static final WoodGroup SAL_WOOD = new WoodGroup("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
 
     // stygian sea
-    public static final WoodGroup PRISMARINE_CORIN_WOOD = new ThinLogBlock.Group("prismarine_corin",MaterialColor.COLOR_CYAN, MaterialColor.TERRACOTTA_CYAN);
-    public static final WoodGroup SILVER_CORIN_WOOD = new ThinLogBlock.Group("silver_corin",MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.CLAY);
-    public static final WoodGroup TEAL_CORIN_WOOD = new ThinLogBlock.Group("teal_corin",MaterialColor.TERRACOTTA_CYAN, MaterialColor.TERRACOTTA_GREEN);
-    public static final WoodGroup RED_CORIN_WOOD = new ThinLogBlock.Group("red_corin",MaterialColor.TERRACOTTA_RED, MaterialColor.COLOR_RED);
-    public static final WoodGroup DYING_CORIN_WOOD = new ThinLogBlock.Group("dying_corin",MaterialColor.COLOR_GRAY, MaterialColor.TERRACOTTA_BLACK);
+    public static final WoodGroup PRISMARINE_CORIN_WOOD = new ThinLogBlock.Group("prismarine_corin", MaterialColor.COLOR_CYAN, MaterialColor.TERRACOTTA_CYAN);
+    public static final WoodGroup SILVER_CORIN_WOOD = new ThinLogBlock.Group("silver_corin", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.CLAY);
+    public static final WoodGroup TEAL_CORIN_WOOD = new ThinLogBlock.Group("teal_corin", MaterialColor.TERRACOTTA_CYAN, MaterialColor.TERRACOTTA_GREEN);
+    public static final WoodGroup RED_CORIN_WOOD = new ThinLogBlock.Group("red_corin", MaterialColor.TERRACOTTA_RED, MaterialColor.COLOR_RED);
+    public static final WoodGroup DYING_CORIN_WOOD = new ThinLogBlock.Group("dying_corin", MaterialColor.COLOR_GRAY, MaterialColor.TERRACOTTA_BLACK);
 
     static RegistryObject<Block> register(String name, Supplier<Block> block)
     {

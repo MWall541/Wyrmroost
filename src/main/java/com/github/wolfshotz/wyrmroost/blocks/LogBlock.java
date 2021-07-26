@@ -17,16 +17,15 @@ public class LogBlock extends RotatedPillarBlock
 {
     private final Supplier<Block> stripped;
 
-    public LogBlock(MaterialColor top, MaterialColor bark, Supplier<Block> stripped)
-    {
-        super(properties(top, bark));
-        this.stripped = stripped;
-    }
-
     public LogBlock(Properties props, Supplier<Block> stripped)
     {
         super(props);
         this.stripped = stripped;
+    }
+
+    public LogBlock(MaterialColor top, MaterialColor bark, Supplier<Block> stripped)
+    {
+        this(properties(top, bark), stripped);
     }
 
     @Nullable

@@ -230,6 +230,11 @@ class RecipeData extends RecipeProvider
         woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.OSERI_LOGS));
         shaped(WRBlocks.OSERI_WOOD.getLog(), 4).define('#', WRBlocks.OSERI_WOOD.getWood()).pattern("##").pattern("##").unlockedBy("has_wood", has(WRBlocks.OSERI_WOOD.getLog())); // here because normal logs are unobtainable
         woodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.SAL_LOGS));
+        woodGroup(WRBlocks.PRISMARINE_CORIN_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.PRISMARINE_CORIN_LOGS));
+        woodGroup(WRBlocks.SILVER_CORIN_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.SILVER_CORIN_LOGS));
+        woodGroup(WRBlocks.TEAL_CORIN_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.TEAL_CORIN_LOGS));
+        woodGroup(WRBlocks.RED_CORIN_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.RED_CORIN_LOGS));
+        woodGroup(WRBlocks.DYING_CORIN_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.DYING_CORIN_LOGS));
     }
 
     private static void exempt(IItemProvider... exempts)
