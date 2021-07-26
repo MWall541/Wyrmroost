@@ -246,10 +246,10 @@ public class WRBlocks
             this.pressurePlate = WRBlocks.register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).noCollission().strength(0.5f)));
             this.fence = WRBlocks.register(name + "_fence", () -> new FenceBlock(props(color)), extend().flammability(5, 20));
             this.fenceGate = WRBlocks.register(name + "_fence_gate", () -> new FenceGateBlock(props(color)), extend().flammability(5, 20));
-            this.trapDoor = WRBlocks.register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).strength(3f).noOcclusion().isValidSpawn((s, r, p, e) -> false)));
+            this.trapDoor = WRBlocks.register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).strength(3f).noOcclusion().isValidSpawn((s, r, p, e) -> false)), extend().render(() -> RenderType::cutout));
             this.stairs = WRBlocks.register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().defaultBlockState(), props(color)), extend().flammability(5, 20));
             this.button = WRBlocks.register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.of(Material.DECORATION).noCollission().harvestTool(ToolType.AXE).strength(0.5f).sound(SoundType.WOOD)));
-            this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).strength(3f).noOcclusion()));
+            this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).strength(3f).noOcclusion()), extend().render(() -> RenderType::cutout));
             this.wallSign = WRBlocks.register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).noCollission().strength(1f).lootFrom(self().sign), this), extend().noItem());
             this.sign = WRBlocks.register(name + "_sign", () -> new WRSignBlock(props(color).noCollission().strength(1f), this), extend().item(b -> new SignItem(new Item.Properties().stacksTo(16).tab(BLOCKS_ITEM_GROUP), b, getWallSign())));
             this.ladder = WRBlocks.register(name + "_ladder", () -> new LadderBlock(properties(Material.DECORATION, SoundType.LADDER).strength(0.4f).noOcclusion()), extend().render(() -> RenderType::cutout));
