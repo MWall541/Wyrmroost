@@ -6,7 +6,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHom
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
-import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
+import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
@@ -227,7 +227,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (key == KeybindPacket.MOUNT_KEY1 && pressed) setAnimation(BITE_ANIMATION);
+        if (key == KeybindHandler.MOUNT_KEY && pressed) setAnimation(BITE_ANIMATION);
     }
 
     @Override

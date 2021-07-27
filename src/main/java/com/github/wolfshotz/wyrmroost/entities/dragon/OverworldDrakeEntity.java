@@ -12,7 +12,7 @@ import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
-import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
+import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
@@ -270,7 +270,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (key == KeybindPacket.MOUNT_KEY1 && pressed && noAnimations())
+        if (key == KeybindHandler.MOUNT_KEY && pressed && noAnimations())
         {
             if ((mods & GLFW.GLFW_MOD_CONTROL) != 0) setAnimation(ROAR_ANIMATION);
             else setAnimation(HORN_ATTACK_ANIMATION);

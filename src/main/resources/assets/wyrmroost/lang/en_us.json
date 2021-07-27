@@ -10,6 +10,11 @@
   "key.flight_descent": "Flight Descend",
 
 
+  "entity.wyrmroost.dragons.gender.male": "Male",
+  "entity.wyrmroost.dragons.gender.female": "Female",
+  "entity.wyrmroost.dragons.flight.free": "Free flight",
+  "entity.wyrmroost.dragons.flight.manual": "Manual flight",
+
   "entity.wyrmroost.overworld_drake": "Overworld Drake",
   "entity.wyrmroost.silver_glider": "Silver Glider",
   "entity.wyrmroost.roost_stalker": "Rooststalker",
@@ -20,9 +25,6 @@
   "entity.wyrmroost.coin_dragon": "Coin Dragon",
   "entity.wyrmroost.royal_red": "Royal Red Dragon",
   "entity.wyrmroost.alpine": "Alpine Dragon",
-
-  "entity.wyrmroost.dragons.gender.male": "Male",
-  "entity.wyrmroost.dragons.gender.female": "Female",
 
 
   "item.wyrmroost.armors.blue_geode": "Blue Geode",

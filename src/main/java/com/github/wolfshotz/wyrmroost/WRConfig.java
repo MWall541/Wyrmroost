@@ -69,73 +69,88 @@ public class WRConfig
         return list.stream().map(s -> s.split(":")).collect(Collectors.toMap(
                 s -> s[0],
                 s -> Integer.parseInt(s[1]),
-                (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },
+                (u, v) ->
+                {
+                    throw new IllegalStateException(String.format("Duplicate key %s", u));
+                },
                 Object2IntOpenHashMap::new));
     }
 
-    static
+    static // common
     {
-        ForgeConfigSpec.Builder common = new ForgeConfigSpec.Builder();
-        common.comment("If your looking for more options, check `wyrmroost-client.toml` or, in `{World Name}/serverconfig/wyrmroost-server.toml`",
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        builder.comment("If your looking for more options, check `wyrmroost-client.toml` or, in `{World Name}/serverconfig/wyrmroost-server.toml`",
                 "Wyrmroost General Options")
                 .push("general");
-        DEBUG_MODE = common.comment("Do not enable this unless you are told to!")
+        DEBUG_MODE = builder.comment("Do not enable this unless you are told to!")
                 .translation("config.wyrmroost.debug")
                 .define("debug_mode", false);
 
-        common.pop();
-        COMMON = common.build();
+        builder.pop();
+        COMMON = builder.build();
+    }
 
-
-        ForgeConfigSpec.Builder server = new ForgeConfigSpec.Builder();
-        server.comment("Wyrmroost Server Options",
+    static // server
+    {
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        builder.comment("Wyrmroost Server Options",
                 "For Singleplayer, These options are \"per-world.\" Meaning that there will be a different version of this config for each world you create.",
                 "If you want this config to apply globally, place the file in the `defaultconfigs` folder in your game instance.",
                 "Wyrmroost General Options")
                 .push("general");
 
-        server.comment("Wyrmroost Dragon Options").push("dragons");
+        builder.comment("Dragon Options").push("dragons");
 
-        BREATH_FIRE_SPREAD = server.comment("Base Flammability or spread of fire from Dragon Fire Breath",
+        BREATH_FIRE_SPREAD = builder.comment("Base Flammability or spread of fire from Dragon Fire Breath",
                 "A value of 0 completely disables fire block damage completely.")
                 .translation("config.wyrmroost.breath_fire_spread")
                 .defineInRange("breath_fire_spread", 0.8, 0, 1);
-        HOME_RADIUS = server.comment("The radius (not diameter!) of how far dragons can travel from their home points")
+        HOME_RADIUS = builder.comment("The radius (not diameter!) of how far dragons can travel from their home points")
                 .translation("config.wyrmroost.home_radius")
                 .defineInRange("home_radius", 16, 6, 1024);
-        BREED_LIMITS = server.comment("Breed limit for each dragon. This determines how many times a certain dragon can breed.",
+        BREED_LIMITS = builder.comment("Breed limit for each dragon. This determines how many times a certain dragon can breed.",
                 "Leaving this blank ( `[]` ) will disable the functionality.")
                 .translation("config.wyrmroost.breed_limits")
                 .defineList("breed_limits", () -> BREED_LIMIT_DEFAULTS, e -> e instanceof String);
 
-        server.push("griefing");
+        builder.push("griefing");
 
-        RESPECT_MOB_GRIEFING = server.comment("If true, dragons will respect the Minecraft Mob Griefing Gamerule.",
+        RESPECT_MOB_GRIEFING = builder.comment("If true, dragons will respect the Minecraft Mob Griefing Gamerule.",
                 "Otherwise, they will follow the `dragon_griefing` config rule")
                 .translation("config.wyrmroost.respect_mob_griefing")
                 .define("respect_mob_griefing", true);
-        DRAGON_GRIEFING = server.comment("If true and not respecting mob griefing rules (`respect_mob_griefing`),",
+        DRAGON_GRIEFING = builder.comment("If true and not respecting mob griefing rules (`respect_mob_griefing`),",
                 "Allow dragons to destroy blocks.",
                 "Note: not all dragons destroy blocks and not all are as destructive as the next.")
                 .define("dragon_griefing", true);
 
-        server.pop(2);
-        SERVER = server.build();
+        builder.pop(2);
+
+        builder.comment("Item Options").push("items");
 
 
-        ForgeConfigSpec.Builder client = new ForgeConfigSpec.Builder();
-        client.comment("Wyrmroost Client Options").push("general");
-        NO_CULLING = client.comment("Disables culling for rendering bigger dragons (dragons don't go poof in corner of eye)")
+
+        SERVER = builder.build();
+    }
+
+    static // client
+    {
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        builder.comment("Wyrmroost Client Options").push("general");
+
+        NO_CULLING = builder.comment("Disables culling for rendering bigger dragons (dragons don't go poof in corner of eye)")
                 .translation("config.wyrmroost.check_frustum")
                 .define("disable_frustum_check", true);
-        RENDER_OUTLINES = client.comment("Toggles the rendering of the Dragon Staff's entity color shaders.",
+        RENDER_OUTLINES = builder.comment("Toggles the rendering of the Dragon Staff's entity color shaders.",
                 "Disable this if you are having issues with this while using shaders.")
                 .translation("config.wyrmroost.entity_outlines")
                 .define("entity_outlines", true);
-        DECK_THE_HALLS = client.comment("Only when the time comes...")
+        DECK_THE_HALLS = builder.comment("Only when the time comes...")
                 .translation("config.wyrmroost.deck_the_halls")
                 .define("deck_the_halls", true);
-        client.pop();
-        CLIENT = client.build();
+
+        builder.pop();
+
+        CLIENT = builder.build();
     }
 }

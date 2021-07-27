@@ -8,7 +8,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowO
 import com.github.wolfshotz.wyrmroost.entities.projectile.WindGustEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
-import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
+import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
@@ -163,7 +163,7 @@ public class AlpineEntity extends TameableDragonEntity
     @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
-        if (key == KeybindPacket.MOUNT_KEY2 && pressed && noAnimations() && isFlying())
+        if (key == KeybindHandler.ALT_MOUNT_KEY && pressed && noAnimations() && isFlying())
             setAnimation(WIND_GUST_ANIMATION);
     }
 

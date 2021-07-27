@@ -10,7 +10,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
-import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
+import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
@@ -344,8 +344,8 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     {
         if (pressed && noAnimations())
         {
-            if (key == KeybindPacket.MOUNT_KEY1) setAnimation(BITE_ANIMATION);
-            else if (key == KeybindPacket.MOUNT_KEY2 && !level.isClientSide && canZap())
+            if (key == KeybindHandler.MOUNT_KEY) setAnimation(BITE_ANIMATION);
+            else if (key == KeybindHandler.ALT_MOUNT_KEY && !level.isClientSide && canZap())
             {
                 EntityRayTraceResult ertr = Mafs.rayTraceEntities(getControllingPlayer(), 40, e -> e instanceof LivingEntity && e != this);
                 if (ertr != null && wantsToAttack((LivingEntity) ertr.getEntity(), getOwner()))

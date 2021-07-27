@@ -6,29 +6,29 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class KeybindPacket
+public class KeybindHandler
 {
-    public static final byte MOUNT_KEY1 = 1;
-    public static final byte MOUNT_KEY2 = 2;
+    public static final byte MOUNT_KEY = 1;
+    public static final byte ALT_MOUNT_KEY = 2;
     public static final byte SWITCH_FLIGHT = 4;
 
     private final byte key;
     private final int mods;
     private final boolean pressed;
 
-    public KeybindPacket(byte key, int mods, boolean pressed)
+    public KeybindHandler(byte key, int mods, boolean pressed)
     {
         this.key = key;
         this.mods = mods;
         this.pressed = pressed;
     }
 
-    public KeybindPacket(PacketBuffer buf)
+    public KeybindHandler(PacketBuffer buf)
     {
         this.key = buf.readByte();
         this.mods = buf.readInt();
@@ -49,10 +49,11 @@ public class KeybindPacket
 
     public boolean process(PlayerEntity player)
     {
+
         switch (key)
         {
-            case MOUNT_KEY1:
-            case MOUNT_KEY2:
+            case MOUNT_KEY:
+            case ALT_MOUNT_KEY:
                 Entity vehicle = player.getVehicle();
                 if (vehicle instanceof TameableDragonEntity)
                 {
@@ -64,7 +65,9 @@ public class KeybindPacket
             case SWITCH_FLIGHT:
                 if (!pressed)
                 {
-                    ClientEvents.getPlayer().displayClientMessage(new StringTextComponent((ClientEvents.keybindFlight = !ClientEvents.keybindFlight)? "Free flight" : "Manual flight"), true);
+                    boolean b = ClientEvents.keybindFlight = !ClientEvents.keybindFlight;
+                    String translate = "entity.wyrmroost.dragons.flight." + (b? "manual" : "free");
+                    ClientEvents.getPlayer().displayClientMessage(new TranslationTextComponent(translate), true);
                 }
                 break;
             default:

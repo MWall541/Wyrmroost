@@ -397,7 +397,6 @@ public class ButterflyLeviathanModel extends DragonEntityModel<ButterflyLeviatha
         relocateTo(ms, body1, neck1, neck2, neck3, head);
         ms.scale(0.33f, 0.33f, 0.33f);
         ms.translate(0, -2.25f, -0.7f);
-        ms.mulPose(new Quaternion(0, 0, 0, 0));
 
         // Cage
         ms.pushPose();

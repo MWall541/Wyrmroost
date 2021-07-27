@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.network.packets.KeybindPacket;
+import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
@@ -20,20 +20,20 @@ public class WRKeybind extends KeyBinding
 
     public static final KeyBinding FLIGHT_DESCENT = new KeyBinding("key.flight_descent", GLFW.GLFW_KEY_LEFT_CONTROL, CATEGORY);
 
-    private final byte id;
+    private final byte behaviorId;
     private final boolean sendsPacket;
     private boolean prevIsPressed;
 
-    public WRKeybind(String name, boolean sendsPacket, int keyCode, byte packetKeyID)
+    public WRKeybind(String name, int keyCode, byte behaviorId, boolean sendsPacket)
     {
         super(name, KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM.getOrCreate(keyCode), CATEGORY);
+        this.behaviorId = behaviorId;
         this.sendsPacket = sendsPacket;
-        this.id = packetKeyID;
     }
 
-    public WRKeybind(String name, int keyCode, byte packetKeyID)
+    public WRKeybind(String name, int keyCode, byte behaviorId)
     {
-        this(name, true, keyCode, packetKeyID);
+        this(name, keyCode, behaviorId, true);
     }
 
     @Override
@@ -47,18 +47,18 @@ public class WRKeybind extends KeyBinding
             if (Screen.hasAltDown()) mods |= GLFW.GLFW_MOD_ALT;
             if (Screen.hasControlDown()) mods |= GLFW.GLFW_MOD_CONTROL;
             if (Screen.hasShiftDown()) mods |= GLFW.GLFW_MOD_SHIFT;
-            KeybindPacket packet = new KeybindPacket(id, mods, pressed);
-            packet.process(ClientEvents.getPlayer());
-            if (sendsPacket) Wyrmroost.NETWORK.sendToServer(packet);
+            KeybindHandler handler = new KeybindHandler(behaviorId, mods, pressed);
+            handler.process(ClientEvents.getPlayer());
+            if (sendsPacket) Wyrmroost.NETWORK.sendToServer(handler);
         }
         prevIsPressed = pressed;
     }
 
     public static void registerKeys()
     {
-        ClientRegistry.registerKeyBinding(new WRKeybind("key.mountKey1", GLFW.GLFW_KEY_V, KeybindPacket.MOUNT_KEY1));
-        ClientRegistry.registerKeyBinding(new WRKeybind("key.mountKey2", GLFW.GLFW_KEY_G, KeybindPacket.MOUNT_KEY2));
+        ClientRegistry.registerKeyBinding(new WRKeybind("key.mountKey1", GLFW.GLFW_KEY_V, KeybindHandler.MOUNT_KEY));
+        ClientRegistry.registerKeyBinding(new WRKeybind("key.mountKey2", GLFW.GLFW_KEY_G, KeybindHandler.MOUNT_KEY));
+        ClientRegistry.registerKeyBinding(new WRKeybind("key.switch_flight", GLFW.GLFW_KEY_PERIOD, KeybindHandler.SWITCH_FLIGHT, false));
         ClientRegistry.registerKeyBinding(FLIGHT_DESCENT);
-        ClientRegistry.registerKeyBinding(new WRKeybind("key.switch_flight", false, GLFW.GLFW_KEY_PERIOD, KeybindPacket.SWITCH_FLIGHT));
     }
 }
