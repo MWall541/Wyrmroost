@@ -392,14 +392,12 @@ public class ButterflyLeviathanModel extends DragonEntityModel<ButterflyLeviatha
         float rotation = (age * -0.0375f) * (180f / Mafs.PI);
         float translation = MathHelper.sin(age * 0.1F) / 2.0F + 0.5F;
         translation = translation * translation + translation;
-        if (!entity.isUnderWater()) pitch /= 2;
 
         ms.pushPose();
+        relocateTo(ms, body1, neck1, neck2, neck3, head);
         ms.scale(0.33f, 0.33f, 0.33f);
-        ms.translate(head.xRot / 16, head.yRot / 16, head.zRot / 16);
-        ms.mulPose(Vector3f.YP.rotationDegrees(yaw * 0.75f)); // rotate to match head rotations
-        ms.mulPose(Vector3f.XP.rotationDegrees(pitch));
-        ms.translate(0,  0.5f - (entity.beachedTimer.get(partialTicks) * 1.1f), -3.65);
+        ms.translate(0, -2.25f, -0.7f);
+        ms.mulPose(new Quaternion(0, 0, 0, 0));
 
         // Cage
         ms.pushPose();
@@ -432,7 +430,6 @@ public class ButterflyLeviathanModel extends DragonEntityModel<ButterflyLeviatha
         ActiveRenderInfo camera = ClientEvents.getClient().getEntityRenderDispatcher().camera;
         ms.pushPose();
         ms.translate(0, (0.3F + translation * 0.2F), 0);
-        ms.mulPose(Vector3f.YN.rotationDegrees(entity.yRot)); // negate stack rotation from entity for full rotation control
         ms.mulPose(Vector3f.YP.rotationDegrees(camera.getYRot()));
         ms.mulPose(Vector3f.XP.rotationDegrees(camera.getXRot()));
         ms.scale(0.8f, 0.8f, 0.8f);
@@ -510,7 +507,6 @@ public class ButterflyLeviathanModel extends DragonEntityModel<ButterflyLeviatha
 
         idle(bob);
 
-        yaw = MathHelper.wrapDegrees(yaw);
         if (!entity.beached)
         {
             body1.xRot = pitch * Mafs.PI / 180f;

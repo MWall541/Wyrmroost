@@ -189,7 +189,7 @@ public class RoyalRedEntity extends TameableDragonEntity
 
     public void roarAnimation(int time)
     {
-        if (time == 0) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 6, 1, true);
+        if (time == 0) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 4, 1, true);
         ((LessShitLookController) getLookControl()).restore();
         for (LivingEntity entity : getEntitiesNearby(10, this::isAlliedTo))
             entity.addEffect(new EffectInstance(Effects.DAMAGE_BOOST, 60));
@@ -209,7 +209,7 @@ public class RoyalRedEntity extends TameableDragonEntity
         if (time == 4)
         {
             attackInBox(getOffsetBox(getBbWidth()).inflate(-0.3), 100);
-            playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 1, 1, true);
+            playSound(WRSounds.ENTITY_ROYALRED_HURT.get(), 2, 1, true);
         }
     }
 
@@ -444,6 +444,12 @@ public class RoyalRedEntity extends TameableDragonEntity
     protected SoundEvent getDeathSound()
     {
         return WRSounds.ENTITY_ROYALRED_DEATH.get();
+    }
+
+    @Override
+    protected float getSoundVolume()
+    {
+        return 2.35f;
     }
 
     @Override

@@ -4,8 +4,10 @@
 
 
   "keyCategory.wyrmroost": "Wyrmroost Controls",
-  "key.genericAttack": "Mount Attack",
-  "key.specialAttack": "Alt Mount Attack",
+  "key.mountKey1": "Mount Action",
+  "key.mountKey2": "Alt Mount Action",
+  "key.switch_flight": "Switch Flight Method",
+  "key.flight_descent": "Flight Descend",
 
 
   "entity.wyrmroost.overworld_drake": "Overworld Drake",

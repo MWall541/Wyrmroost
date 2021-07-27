@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.client.render;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
@@ -12,6 +13,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.OutlineLayerBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -29,6 +31,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
@@ -81,6 +84,8 @@ public class RenderHelper extends RenderType
 
     // == [Rendering] ==
 
+    private static final ResourceLocation GUI_ICONS = Wyrmroost.id("textures/gui/overlay/icons.png");
+
     public static void renderWorld(RenderWorldLastEvent evt)
     {
         MatrixStack ms = evt.getMatrixStack();
@@ -92,6 +97,21 @@ public class RenderHelper extends RenderType
         renderDragonStaff(ms, partialTicks);
 
         ms.popPose();
+    }
+
+    public static void renderOverlay(RenderGameOverlayEvent evt)
+    {
+        if (evt.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
+        {
+            Entity vehicle = ClientEvents.getPlayer().getVehicle();
+            if (vehicle instanceof TameableDragonEntity && ((TameableDragonEntity) vehicle).isFlying())
+            {
+                ClientEvents.getClient().textureManager.bind(GUI_ICONS);
+                int y = ClientEvents.getClient().getWindow().getScreenHeight() / 2 - 24;
+                int yOff = ClientEvents.keybindFlight? 24 : 0;
+                AbstractGui.blit(evt.getMatrixStack(), 0, y, 0, yOff, 24, 24, 64, 64);
+            }
+        }
     }
 
     public static void drawShape(MatrixStack ms, IVertexBuilder buffer, VoxelShape shape, double x, double y, double z, int argb)

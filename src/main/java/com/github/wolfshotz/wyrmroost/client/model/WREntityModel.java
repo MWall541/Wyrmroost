@@ -12,7 +12,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -208,5 +211,29 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         float sin = MathHelper.sin(limbSwing * speed) * limbSwingAmount * degree;
         return bounce? -Math.abs(sin) : sin - limbSwingAmount * degree;
+    }
+
+    // note: maybe add a way to add callbacks to WRModelRenderer's instead of this... (performance concerns...)
+    public static void relocateTo(MatrixStack stack, ModelRenderer... boxes)
+    {
+        for (ModelRenderer box : boxes)
+        {
+            stack.translate(box.x / 16, box.y / 16, box.z / 16);
+            Quaternion rotation = null;
+            if (box.zRot != 0) rotation = Vector3f.ZP.rotation(box.zRot);
+            if (box.yRot != 0) rotation = mul(rotation, Vector3f.YP.rotation(box.yRot));
+            if (box.xRot != 0) rotation = mul(rotation, Vector3f.XP.rotation(box.xRot));
+            if (rotation != null) stack.mulPose(rotation);
+        }
+    }
+
+    private static Quaternion mul(@Nullable Quaternion first, Quaternion multiple)
+    {
+        if (first != null)
+        {
+            first.mul(multiple);
+            return first;
+        }
+        else return multiple;
     }
 }

@@ -47,19 +47,19 @@ public class FlyerMoveController extends MovementController
 
             if (dragon.isFlying())
             {
+                speed = (float) (dragon.getAttributeValue(Attributes.FLYING_SPEED) * speedModifier);
+
                 if (!dragon.getLookControl().isHasWanted())
                     dragon.getLookControl().setLookAt(wantedX, wantedY, wantedZ, dragon.getHeadRotSpeed(), 75);
-
-                speed = (float) (dragon.getAttributeValue(Attributes.FLYING_SPEED) * speedModifier) / 0.225f;
                 if (y != 0) dragon.setYya(y > 0? speed : -speed);
             }
             else
             {
-                speed = (float) (speedModifier * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED));
+                speed = (float) (dragon.getAttributeValue(Attributes.MOVEMENT_SPEED) * speedModifier);
                 BlockPos blockpos = dragon.blockPosition();
-                BlockState blockoperation = dragon.level.getBlockState(blockpos);
-                Block block = blockoperation.getBlock();
-                VoxelShape voxelshape = blockoperation.getCollisionShape(dragon.level, blockpos);
+                BlockState state = dragon.level.getBlockState(blockpos);
+                Block block = state.getBlock();
+                VoxelShape voxelshape = state.getCollisionShape(dragon.level, blockpos);
                 if (y > (double) dragon.maxUpStep && x * x + z * z < (double) Math.max(1.0F, dragon.getBbWidth()) || !voxelshape.isEmpty() && dragon.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !block.is(BlockTags.DOORS) && !block.is(BlockTags.FENCES))
                 {
                     dragon.getJumpControl().jump();

@@ -235,7 +235,7 @@ public class WRBlocks
 
         public WoodGroup(String name, MaterialColor color, MaterialColor logColor)
         {
-            super(name);
+            super(Wyrmroost.MOD_ID + ":" + name);
 
             this.planks = WRBlocks.register(name + "_planks", () -> new Block(props(color)), extend().flammability(5, 20));
             this.log = applyLog(name + "_log", color, logColor, false, false);
@@ -351,12 +351,6 @@ public class WRBlocks
         protected WoodGroup self()
         {
             return this;
-        }
-
-        @Override
-        public String name()
-        {
-            return Wyrmroost.MOD_ID + ":" + super.name();
         }
 
         private static AbstractBlock.Properties props(MaterialColor color)

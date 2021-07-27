@@ -1,24 +1,21 @@
 package com.github.wolfshotz.wyrmroost.network.packets;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-/**
- * Created by com.github.WolfShotz - 8/9/2019 - 02:03
- * <p>
- * Class Handling the packet sending of keybind inputs.
- * keybinds are assigned an int, and as such follow the following format:
- */
 public class KeybindPacket
 {
     public static final byte MOUNT_KEY1 = 1;
     public static final byte MOUNT_KEY2 = 2;
+    public static final byte SWITCH_FLIGHT = 4;
 
     private final byte key;
     private final int mods;
@@ -45,7 +42,10 @@ public class KeybindPacket
         buf.writeBoolean(pressed);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> context) { return process(context.get().getSender()); }
+    public boolean handle(Supplier<NetworkEvent.Context> context)
+    {
+        return process(context.get().getSender());
+    }
 
     public boolean process(PlayerEntity player)
     {
@@ -59,6 +59,12 @@ public class KeybindPacket
                     TameableDragonEntity dragon = ((TameableDragonEntity) vehicle);
                     if (dragon.isTame() && dragon.getControllingPlayer() == player)
                         dragon.recievePassengerKeybind(key, mods, pressed);
+                }
+                break;
+            case SWITCH_FLIGHT:
+                if (!pressed)
+                {
+                    ClientEvents.getPlayer().displayClientMessage(new StringTextComponent((ClientEvents.keybindFlight = !ClientEvents.keybindFlight)? "Free flight" : "Manual flight"), true);
                 }
                 break;
             default:

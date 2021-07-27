@@ -42,6 +42,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @SuppressWarnings("unused")
 public class ClientEvents
 {
+    public static boolean keybindFlight = true;
+
     public static void init()
     {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -53,6 +55,7 @@ public class ClientEvents
         bus.addListener(ClientEvents::bakeParticles);
 
         forgeBus.addListener(RenderHelper::renderWorld);
+        forgeBus.addListener(RenderHelper::renderOverlay);
         forgeBus.addListener(RenderHelper::renderEntities);
         forgeBus.addListener(ClientEvents::cameraPerspective);
 

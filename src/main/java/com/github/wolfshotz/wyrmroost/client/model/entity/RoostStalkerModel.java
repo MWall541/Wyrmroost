@@ -3,6 +3,7 @@ package com.github.wolfshotz.wyrmroost.client.model.entity;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.RoostStalkerEntity;
+import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -13,7 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TieredItem;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
 
 /**
@@ -199,44 +199,34 @@ public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
     public void postProcess(RoostStalkerEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
     {
         if (!entity.isSleeping()) renderEyes(entity.getVariant() == -1? ALBINO_EYES : EYES, ms, buffer);
-        renderMouthItem(entity, ms, buffer, light, yaw, pitch);
+        renderMouthItem(entity, ms, buffer, light);
     }
 
-    private void renderMouthItem(RoostStalkerEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float yaw, float pitch)
+    private void renderMouthItem(RoostStalkerEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light)
     {
         ItemStack stack = entity.getItem();
 
         if (!stack.isEmpty())
         {
             ms.pushPose();
+            relocateTo(ms, torso, neck, head);
+            ms.translate(0, 0.1f, -0.6f);
 
-            if (entity.isSleeping())
+            Item item = stack.getItem();
+            if (item instanceof TieredItem) // offsets for tools, looks way fucking better
             {
-                // just set the item on the ground
-                ms.translate(-0.4, 1.47, 0.1);
-                ms.mulPose(Vector3f.YP.rotationDegrees(135));
+                ms.translate(0.175f, 0, 0);
+                ms.mulPose(Vector3f.YP.rotationDegrees(45));
             }
-            else
+            else if (item instanceof BlockItem)
             {
-                ms.translate(head.x / 8, -(head.y * 2.4), head.z / 8); // translate to heads rotation point (rough estimate) to allow for the same rotations while rotating; fixes connection issues
-                ms.mulPose(Vector3f.YP.rotationDegrees(yaw)); // rotate to match head rotations
-                ms.mulPose(Vector3f.XP.rotationDegrees(pitch));
-                ms.translate(0, entity.isInSittingPose()? 0.11 : 0.03, -0.4); // offset
-                Item item = stack.getItem();
-                if (item instanceof TieredItem) // offsets for tools, looks way fucking better
-                {
-                    ms.translate(0.1, 0, 0);
-                    ms.mulPose(Vector3f.YP.rotationDegrees(45));
-                }
-                else if (item instanceof BlockItem)
-                {
-                    ms.scale(0.8f, 0.8f, 0.8f);
-                    ms.mulPose(Vector3f.XP.rotationDegrees(90f));
-                    ms.translate(0, 0.075f, -0.175f);
-                }
+                ms.translate(0, 0.325f, 0.2f);
+                ms.scale(0.8f, 0.8f, 0.8f);
+                ms.mulPose(Vector3f.XP.rotation(jaw.xRot + 1.57f));
             }
 
-            ms.mulPose(Vector3f.XP.rotationDegrees(90)); // flip the item
+            ms.mulPose(Vector3f.XP.rotationDegrees(90f)); // flip the item
+            ms.scale(1.5f, 1.5f, 1.5f); // scale larger
 
             Minecraft.getInstance().getItemInHandRenderer().renderItem(entity, stack, ItemCameraTransforms.TransformType.GROUND, false, ms, buffer, light);
             ms.popPose();
@@ -244,7 +234,7 @@ public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
     }
 
     @Override
-    public void setupAnim(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
+    public void setupAnim(RoostStalkerEntity stalker, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
         reset();
 
@@ -266,10 +256,7 @@ public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
         if (stalker.isInSittingPose() && !stalker.isSleeping()) sit();
         sleep(stalker.sleepTimer.get(partialTicks));
 
-        boolean flag = stalker.getItem().isEmpty() || stalker.isSleeping();
-        idle(bob, flag);
-
-        if (!flag)
+        if (!(stalker.getItem().isEmpty() || stalker.isSleeping()))
         {
             if (stalker.getItem().getItem() instanceof BlockItem)
             {
@@ -279,23 +266,18 @@ public class RoostStalkerModel extends DragonEntityModel<RoostStalkerEntity>
             else jaw.xRot = 0.15f;
         }
 
-        netHeadYaw = MathHelper.wrapDegrees(netHeadYaw);
-        if (!stalker.isSleeping())
-        {
-            head.xRot += headPitch * ((float) Math.PI / 180F);
-            head.yRot += netHeadYaw * ((float) Math.PI / 180F);
-        }
+        head.xRot = pitch * (Mafs.PI / 180f);
+        head.yRot = yaw * (Mafs.PI / 180f);
+
+        idle(bob, stalker.isSleeping());
     }
 
     public void idle(float frame, boolean head)
     {
         chainWave(tailSegments, globalSpeed - 0.44f, 0.08f, 2, frame, 0.5f);
         chainSwing(tailSegments, globalSpeed - 0.45f, 0.08f, 0, frame, 0.5f);
-        if (head)
-        {
-            walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, 0.5f);
-            chainWave(new WRModelRenderer[]{this.head, this.neck}, globalSpeed - 0.4f, 0.05f, 2, frame, 0.5f);
-        }
+        if (head) walk(jaw, globalSpeed - 0.4f, 0.1f, false, 0, 0.1f, frame, 0.5f);
+        chainWave(new WRModelRenderer[]{this.head, this.neck}, globalSpeed - 0.4f, 0.05f, 2, frame, 0.5f);
     }
 
     public void sleep(float v)

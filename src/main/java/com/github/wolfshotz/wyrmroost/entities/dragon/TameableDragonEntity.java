@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.sound.FlyingSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
@@ -12,6 +13,7 @@ import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
 import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
+import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
@@ -489,31 +491,30 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         if (canBeControlledByRider()) // Were being controlled; override ai movement
         {
             LivingEntity entity = (LivingEntity) getControllingPassenger();
-            double moveY = vec3d.y;
             double moveX = entity.xxa * 0.5;
+            double moveY = vec3d.y;
             double moveZ = entity.zza;
 
             // rotate head to match driver. yaw is handled relative to this.
             yHeadRot = entity.yHeadRot;
             xRot = entity.xRot * 0.5f;
 
-            if (isFlying())
-            {
-                if (moveZ != 0) moveY = entity.getLookAngle().y * speed * 18;
-                moveX = vec3d.x;
-                moveZ = Math.max(moveZ, 0);
-
-                if (entity instanceof ServerPlayerEntity)
-                    ((ServerPlayerEntity) entity).connection.clientIsFloating = false;
-            }
-            else
-            {
-                speed *= 0.225f;
-                if (entity.jumping && canFly()) setFlying(true);
-            }
-
             if (isControlledByLocalInstance())
             {
+                if (isFlying())
+                {
+                    moveX = vec3d.x;
+                    moveZ = moveZ > 0? moveZ : 0;
+                    if (ClientEvents.keybindFlight)
+                        moveY = ClientEvents.getClient().options.keyJump.isDown()? 1f : WRKeybind.FLIGHT_DESCENT.isDown()? -1f : 0;
+                    else if (moveZ > 0) moveY = -entity.xRot * (Math.PI / 180);
+                }
+                else
+                {
+                    speed *= 0.225f;
+                    if (entity.jumping && canFly()) setFlying(true);
+                }
+
                 vec3d = new Vector3d(moveX, moveY, moveZ);
                 setSpeed(speed);
             }
@@ -526,7 +527,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
         if (isFlying())
         {
-            // Move relative to yaw - handled in the move controller
+            // Move relative to yaw - handled in the move controller or by passenger
             moveRelative(speed, vec3d);
             move(MoverType.SELF, getDeltaMovement());
             setDeltaMovement(getDeltaMovement().scale(0.88f));
