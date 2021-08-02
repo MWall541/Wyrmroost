@@ -55,7 +55,7 @@ public class SoundData implements IDataProvider
 
         add(WRSounds.ENTITY_LDWYRM_IDLE.get(), array("wyrmroost:entity/lesser_desertwyrm/%s", "idle1", "idle2"));
 
-        add(WRSounds.ENTITY_SILVERGLIDER_IDLE.get(), array("wyrmroost:entity/silver_glider/%s", "idle1", "idle2", "idle3", "idle4"));
+        add(WRSounds.ENTITY_SILVERGLIDER_IDLE.get(), array("wyrmroost:entity/silver_glider/%s", "idle1", "idle2", "idle3"));
         add(WRSounds.ENTITY_SILVERGLIDER_HURT.get());
         add(WRSounds.ENTITY_SILVERGLIDER_DEATH.get());
 

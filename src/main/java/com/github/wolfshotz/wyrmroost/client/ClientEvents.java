@@ -12,6 +12,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRParticles;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.WoodType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
@@ -25,7 +26,10 @@ import net.minecraft.entity.IRendersAsItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -146,5 +150,31 @@ public class ClientEvents
     public static <T extends Entity & IRendersAsItem> SpriteRenderer<T> spriteRenderer(EntityRendererManager m)
     {
         return new SpriteRenderer<>(m, getClient().getItemRenderer());
+    }
+
+    public static double getViewCollision(double wanted, Entity entity)
+    {
+        ActiveRenderInfo info = getClient().gameRenderer.getMainCamera();
+        Vector3d position = info.getPosition();
+        Vector3f forwards = info.getLookVector();
+        for (int i = 0; i < 8; ++i)
+        {
+            float f = (float) ((i & 1) * 2 - 1);
+            float f1 = (float) ((i >> 1 & 1) * 2 - 1);
+            float f2 = (float) ((i >> 2 & 1) * 2 - 1);
+            f = f * 0.1F;
+            f1 = f1 * 0.1F;
+            f2 = f2 * 0.1F;
+            Vector3d vector3d = position.add(f, f1, f2);
+            Vector3d vector3d1 = new Vector3d(position.x - forwards.x() * wanted + f + f2, position.y - forwards.y() * wanted + f1, position.z - forwards.z() * wanted + f2);
+            RayTraceResult rtr = entity.level.clip(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.VISUAL, RayTraceContext.FluidMode.NONE, entity));
+            if (rtr.getType() != RayTraceResult.Type.MISS)
+            {
+                double distance = rtr.getLocation().distanceTo(position);
+                if (distance < wanted) wanted = distance;
+            }
+        }
+
+        return wanted;
     }
 }

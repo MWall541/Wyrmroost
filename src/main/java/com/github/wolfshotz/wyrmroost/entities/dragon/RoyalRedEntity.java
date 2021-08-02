@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.RoyalRedModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
@@ -262,10 +263,10 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     public Vector3d getApproximateMouthPos()
     {
-        Vector3d rotVector = calculateViewVector(xRot, yBodyRot);
-        Vector3d position = getEyePosition(1).subtract(0, 1.3d, 0);
-        position = position.add(rotVector).scale(getBbWidth() / 2); // base of neck
-        return position.add(rotVector.scale(2.75));
+        Vector3d rotVector = calculateViewVector(xRot * 0.65f, yHeadRot);
+        Vector3d position = getEyePosition(1).subtract(0, 0.9, 0);
+        position = position.add(rotVector.scale(getBbWidth() + 1.3));
+        return position;
     }
 
     @Override
@@ -288,8 +289,10 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) event.getInfo().move(-8.5d, 3d, 0);
-        else event.getInfo().move(-5, -0.75, 0);
+        if (backView)
+            event.getInfo().move(ClientEvents.getViewCollision(-8.5, this), 0, 0);
+        else
+            event.getInfo().move(ClientEvents.getViewCollision(-5, this), -0.75, 0);
     }
 
     @Override
@@ -313,7 +316,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn)
     {
-        return getBbHeight() * (isFlying()? 0.95f : 1.13f);
+        return getBbHeight() + 0.5f;
     }
 
     @Override

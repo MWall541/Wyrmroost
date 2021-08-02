@@ -756,13 +756,13 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     @Override
     public void setupAnim(RoyalRedEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-        if (entity.isNoAi())
-        {
-            limbSwing = bob * 0.5f;
-            limbSwingAmount = 0.4466025f;
-            entity.yHeadRot = 90;
-            entity.yBodyRot = 0;
-        }
+//        if (entity.isNoAi())
+//        {
+//            limbSwing = bob * 0.5f;
+//            limbSwingAmount = 0.4466025f;
+//            entity.yHeadRot = 90;
+//            entity.yBodyRot = 0;
+//        }
 
         float flightDelta = entity.flightTimer.get(partialTicks);
         float walkDelta = (1 - flightDelta) * limbSwingAmount;

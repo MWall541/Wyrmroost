@@ -57,7 +57,7 @@ public class WRKeybind extends KeyBinding
     public static void registerKeys()
     {
         ClientRegistry.registerKeyBinding(new WRKeybind("key.mountKey1", GLFW.GLFW_KEY_V, KeybindHandler.MOUNT_KEY));
-        ClientRegistry.registerKeyBinding(new WRKeybind("key.mountKey2", GLFW.GLFW_KEY_G, KeybindHandler.MOUNT_KEY));
+        ClientRegistry.registerKeyBinding(new WRKeybind("key.mountKey2", GLFW.GLFW_KEY_G, KeybindHandler.ALT_MOUNT_KEY));
         ClientRegistry.registerKeyBinding(new WRKeybind("key.switch_flight", GLFW.GLFW_KEY_PERIOD, KeybindHandler.SWITCH_FLIGHT, false));
         ClientRegistry.registerKeyBinding(FLIGHT_DESCENT);
     }

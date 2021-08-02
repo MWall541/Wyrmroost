@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.WRConfig;
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.ButterflyLeviathanModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
@@ -382,8 +383,10 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) event.getInfo().move(-10d, 1, 0);
-        else event.getInfo().move(-5, -0.75, 0);
+        if (backView)
+            event.getInfo().move(ClientEvents.getViewCollision(-10, this), 1, 0);
+        else
+            event.getInfo().move(ClientEvents.getViewCollision(-5, this), -0.75, 0);
     }
 
     @Override

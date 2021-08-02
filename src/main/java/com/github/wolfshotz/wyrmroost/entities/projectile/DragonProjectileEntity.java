@@ -2,7 +2,6 @@ package com.github.wolfshotz.wyrmroost.entities.projectile;
 
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
-import com.github.wolfshotz.wyrmroost.util.Mafs;
 import net.minecraft.entity.*;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.nbt.CompoundNBT;
@@ -35,27 +34,19 @@ public class DragonProjectileEntity extends Entity implements IEntityAdditionalS
         super(type, level);
     }
 
-    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, TameableDragonEntity shooter, Vector3d position, Vector3d velocity)
+    public DragonProjectileEntity(EntityType<? extends DragonProjectileEntity> type, TameableDragonEntity shooter, Vector3d position, Vector3d direction)
     {
         super(type, shooter.level);
 
-        velocity = velocity.add(random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset());
-        double length = velocity.length();
-        this.acceleration = new Vector3d(velocity.x / length * getMotionFactor(), velocity.y / length * getMotionFactor(), velocity.z / length * getMotionFactor());
+        direction = direction.add(random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset(), random.nextGaussian() * getAccelerationOffset());
+        double length = direction.length();
+        this.acceleration = new Vector3d(direction.x / length * getMotionFactor(), direction.y / length * getMotionFactor(), direction.z / length * getMotionFactor());
 
         this.shooter = shooter;
         this.life = 50;
 
-        setDeltaMovement(getDeltaMovement().add(acceleration));
-        position = position.add(getDeltaMovement());
-
-        Vector3d motion = getDeltaMovement();
-        float x = (float) (motion.x - position.x);
-        float y = (float) (motion.y - position.y);
-        float z = (float) (motion.z - position.z);
-        float planeSqrt = MathHelper.sqrt(x * x + z * z);
-        float yaw = (float) MathHelper.atan2(z, x) * 180f / Mafs.PI - 90f;
-        float pitch = (float) -(MathHelper.atan2(y, planeSqrt) * 180f / Mafs.PI);
+        setDeltaMovement(acceleration);
+        position = position.add(getDeltaMovement()).subtract(0, getBbHeight() / 2, 0);
 
         moveTo(position.x, position.y, position.z, yRot, xRot);
     }

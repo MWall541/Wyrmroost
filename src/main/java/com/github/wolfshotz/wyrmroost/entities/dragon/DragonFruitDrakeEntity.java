@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.DragonFruitDrakeModel;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
@@ -268,8 +269,10 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) event.getInfo().move(-0.25d, 0.5d, 0);
-        else event.getInfo().move(-1.5, 0.15, 0);
+        if (backView)
+            event.getInfo().move(ClientEvents.getViewCollision(-0.25, this), 0.5, 0);
+        else
+            event.getInfo().move(ClientEvents.getViewCollision(-1.5, this), 0.15, 0);
     }
 
     @Override

@@ -18,7 +18,6 @@ import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookRandomlyGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.particles.RedstoneParticleData;
@@ -122,7 +121,6 @@ public class SilverGliderEntity extends TameableDragonEntity
         {
             Vector3d vec3d = player.getLookAngle().scale(0.3);
             player.setDeltaMovement(player.getDeltaMovement().scale(0.6).add(vec3d.x, Math.min(vec3d.y * 2, 0), vec3d.z));
-            if (!level.isClientSide) ((ServerPlayerEntity) player).connection.clientIsFloating = false;
             player.fallDistance = 0;
         }
     }

@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
+import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.AlpineModel;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.FlyerWanderGoal;
@@ -170,8 +171,10 @@ public class AlpineEntity extends TameableDragonEntity
     @Override
     public void setMountCameraAngles(boolean backView, EntityViewRenderEvent.CameraSetup event)
     {
-        if (backView) event.getInfo().move(-5d, 0.75d, 0);
-        else event.getInfo().move(-3, 0.3, 0);
+        if (backView)
+            event.getInfo().move(ClientEvents.getViewCollision(-5d, this), 0.75d, 0);
+        else
+            event.getInfo().move(ClientEvents.getViewCollision(-3, this), 0.3, 0);
     }
 
     @Override

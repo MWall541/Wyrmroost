@@ -191,7 +191,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
      */
     public boolean isMale()
     {
-        return hasDataParameter(GENDER)? entityData.get(GENDER) : true;
+        return !hasDataParameter(GENDER) || entityData.get(GENDER);
     }
 
     public void setGender(boolean sex)
@@ -201,7 +201,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public boolean isSleeping()
     {
-        return hasDataParameter(SLEEPING)? entityData.get(SLEEPING) : false;
+        return hasDataParameter(SLEEPING) && entityData.get(SLEEPING);
     }
 
     public void setSleeping(boolean sleep)
@@ -497,7 +497,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
             // rotate head to match driver. yaw is handled relative to this.
             yHeadRot = entity.yHeadRot;
-            xRot = entity.xRot * 0.5f;
+            xRot = entity.xRot * 0.65f;
 
             if (isControlledByLocalInstance())
             {
@@ -520,7 +520,10 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             }
             else if (entity instanceof PlayerEntity)
             {
+                calculateEntityAnimation(this, true);
                 setDeltaMovement(Vector3d.ZERO);
+                if (!level.isClientSide && isFlying())
+                    ((ServerPlayerEntity) entity).connection.aboveGroundVehicleTickCount = 0;
                 return;
             }
         }
@@ -530,7 +533,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             // Move relative to yaw - handled in the move controller or by passenger
             moveRelative(speed, vec3d);
             move(MoverType.SELF, getDeltaMovement());
-            setDeltaMovement(getDeltaMovement().scale(0.88f));
+            setDeltaMovement(getDeltaMovement().scale(0.9f));
             calculateEntityAnimation(this, true);
         }
         else super.travel(vec3d);
@@ -671,7 +674,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canAttack(LivingEntity target)
     {
-        return !isBaby() && super.canAttack(target);
+        return !isBaby() && !canBeControlledByRider() && super.canAttack(target);
     }
 
     @Override
