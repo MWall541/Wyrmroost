@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:item/oseri_fence_inventory"
+  "parent": "minecraft:block/fence_inventory",
+  "textures": {
+    "texture": "wyrmroost:block/oseri_planks"
+  }
 }

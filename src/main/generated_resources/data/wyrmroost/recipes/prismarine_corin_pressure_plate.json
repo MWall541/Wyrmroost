@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:prismarine_corin_planks"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:prismarine_corin_pressure_plate"
+  }
+}

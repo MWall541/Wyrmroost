@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:block/silver_corin_button"
+  "parent": "minecraft:block/button_inventory",
+  "textures": {
+    "texture": "wyrmroost:block/silver_corin_planks"
+  }
 }

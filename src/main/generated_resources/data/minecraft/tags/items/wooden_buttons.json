@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "wyrmroost:oseri_button",
-    "wyrmroost:sal_button"
+    "wyrmroost:sal_button",
+    "wyrmroost:prismarine_corin_button",
+    "wyrmroost:silver_corin_button",
+    "wyrmroost:teal_corin_button",
+    "wyrmroost:red_corin_button",
+    "wyrmroost:dying_corin_button"
   ]
 }

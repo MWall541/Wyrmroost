@@ -24,8 +24,7 @@
     "sounds": [
       "wyrmroost:entity/silver_glider/idle1",
       "wyrmroost:entity/silver_glider/idle2",
-      "wyrmroost:entity/silver_glider/idle3",
-      "wyrmroost:entity/silver_glider/idle4"
+      "wyrmroost:entity/silver_glider/idle3"
     ],
     "subtitle": "subtitles.entity.silver_glider.idle"
   },

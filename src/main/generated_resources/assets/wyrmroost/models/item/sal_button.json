@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:item/sal_button_inventory"
+  "parent": "minecraft:block/button_inventory",
+  "textures": {
+    "texture": "wyrmroost:block/sal_planks"
+  }
 }

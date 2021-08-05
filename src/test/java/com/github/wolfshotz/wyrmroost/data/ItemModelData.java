@@ -2,6 +2,7 @@ package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
+import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
@@ -39,6 +40,7 @@ class ItemModelData extends ItemModelProvider
         final ModelFile itemGenerated = uncheckedModel(mcLoc("item/generated"));
         final ModelFile spawnEggTemplate = uncheckedModel(mcLoc("item/template_spawn_egg"));
         final ModelFile bucket = uncheckedModel("forge:item/bucket");
+        final ModelFile ister = new ModelFile.ExistingModelFile(new ResourceLocation("builtin/entity"), existingFileHelper);
 
         item(WRItems.DRAGON_STAFF.get()).parent(uncheckedModel("item/handheld"));
 
@@ -46,7 +48,7 @@ class ItemModelData extends ItemModelProvider
         item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.id("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
 
         getBuilderFor(WRItems.DRAGON_EGG.get())
-                .parent(uncheckedModel("builtin/entity"))
+                .parent(ister)
                 .guiLight(BlockModel.GuiLight.FRONT)
                 .transforms()
                 .transform(ModelBuilder.Perspective.GUI).rotation(160, 8, 30).translation(21, 6, 0).scale(1.5f).end()
@@ -55,6 +57,9 @@ class ItemModelData extends ItemModelProvider
                 .transform(ModelBuilder.Perspective.THIRDPERSON_RIGHT).rotation(253, 65, 0).translation(8, 2, 10).scale(0.75f).end()
                 .transform(ModelBuilder.Perspective.THIRDPERSON_LEFT).rotation(253, 65, 0).translation(3, 13, 7).scale(0.75f).end()
                 .transform(ModelBuilder.Perspective.GROUND).rotation(180, 0, 0).translation(4, 8, -5).scale(0.55f).end();
+
+        getBuilderFor(WRItems.TARRAGON_TOME.get()).parent(ister).guiLight(BlockModel.GuiLight.FRONT);
+        getBuilder("book_sprite").parent(itemGenerated).texture("layer0", resource(WRItems.TARRAGON_TOME.getId().getPath()));
 
         final ItemModelBuilder cdBuilder = item(WRItems.COIN_DRAGON.get());
         for (int i = 1; i < 5; i++)
@@ -68,6 +73,11 @@ class ItemModelData extends ItemModelProvider
                     .predicate(CoinDragonItem.VARIANT_OVERRIDE, i)
                     .model(uncheckedModel(rl));
         }
+
+        WoodType.values()
+                .filter(w -> w.name().contains(Wyrmroost.MOD_ID))
+                .map(WRBlocks.WoodGroup.class::cast)
+                .forEach(w -> fenceAndButton(w.getFence(), w.getButton(), w.getPlanks()));
 
         // All items that do not require custom attention
         Set<Item> registered = ModUtils.getRegistryEntries(WRItems.REGISTRY);
@@ -105,10 +115,8 @@ class ItemModelData extends ItemModelProvider
                 }
 
                 getBuilderFor(item).parent(uncheckedModel(registry.getNamespace() + ":block/" + path));
-                continue;
             }
-
-            item(item);
+            else item(item);
         }
     }
 
@@ -141,12 +149,18 @@ class ItemModelData extends ItemModelProvider
         return builder;
     }
 
+    private void fenceAndButton(Block fence, Block button, Block fromTexture)
+    {
+        ResourceLocation texture = fromBlockTexture(fromTexture);
+        customInventoryItem(fence, texture, "fence");
+        customInventoryItem(button, texture, "button");
+    }
+
     private ItemModelBuilder customInventoryItem(IItemProvider item, ResourceLocation texture, String parent)
     {
-        ResourceLocation registry = item.asItem().getRegistryName();
-        String path = registry.getPath();
-        ModelBuilder<?> inv = getBuilder(path + "_inventory").parent(uncheckedModel("block/" + parent + "_inventory")).texture("texture", texture);
-        return getBuilderFor(item).parent(inv);
+        return getBuilderFor(item)
+                .parent(uncheckedModel("block/" + parent + "_inventory"))
+                .texture("texture", texture);
     }
 
     private ItemModelBuilder getBuilderFor(IItemProvider item)

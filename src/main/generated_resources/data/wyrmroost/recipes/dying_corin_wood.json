@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:dying_corin_log"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:dying_corin_wood",
+    "count": 3
+  }
+}

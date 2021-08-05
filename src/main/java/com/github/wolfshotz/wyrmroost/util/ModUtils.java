@@ -16,6 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.items.IItemHandler;
@@ -63,9 +65,9 @@ public final class ModUtils
      * Majorly self-explanatory
      */
     @SafeVarargs
-    public static <T> boolean equalsAny(T comparator, T... comparing)
+    public static <T> boolean contains(T comparator, T... contents)
     {
-        for (T t : comparing) if (comparator.equals(t)) return true;
+        for (T t : contents) if (comparator.equals(t)) return true;
         return false;
     }
 
@@ -181,5 +183,10 @@ public final class ModUtils
     public interface ISlotFactory<T extends Slot>
     {
         T create(IItemHandler inv, int index, int posX, int posY);
+    }
+
+    public static <F, T> T getCapabilityInstance(Capability<F> cap, CapabilityProvider<?> item)
+    {
+        return item.getCapability(cap).<T>cast().orElseThrow(NullPointerException::new);
     }
 }

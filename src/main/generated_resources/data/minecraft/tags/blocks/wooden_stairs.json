@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "wyrmroost:oseri_stairs",
-    "wyrmroost:sal_stairs"
+    "wyrmroost:sal_stairs",
+    "wyrmroost:prismarine_corin_stairs",
+    "wyrmroost:silver_corin_stairs",
+    "wyrmroost:teal_corin_stairs",
+    "wyrmroost:red_corin_stairs",
+    "wyrmroost:dying_corin_stairs"
   ]
 }

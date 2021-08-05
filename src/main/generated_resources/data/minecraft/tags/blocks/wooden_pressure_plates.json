@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "wyrmroost:oseri_pressure_plate",
-    "wyrmroost:sal_pressure_plate"
+    "wyrmroost:sal_pressure_plate",
+    "wyrmroost:prismarine_corin_pressure_plate",
+    "wyrmroost:silver_corin_pressure_plate",
+    "wyrmroost:teal_corin_pressure_plate",
+    "wyrmroost:red_corin_pressure_plate",
+    "wyrmroost:dying_corin_pressure_plate"
   ]
 }

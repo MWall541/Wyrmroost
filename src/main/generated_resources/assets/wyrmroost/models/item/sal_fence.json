@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:item/sal_fence_inventory"
+  "parent": "minecraft:block/fence_inventory",
+  "textures": {
+    "texture": "wyrmroost:block/sal_planks"
+  }
 }

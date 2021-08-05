@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:dying_corin_planks"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:dying_corin_slab",
+    "count": 6
+  }
+}

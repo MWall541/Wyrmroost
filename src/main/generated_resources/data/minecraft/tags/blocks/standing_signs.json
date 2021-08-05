@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "wyrmroost:oseri_sign",
-    "wyrmroost:sal_sign"
+    "wyrmroost:sal_sign",
+    "wyrmroost:prismarine_corin_sign",
+    "wyrmroost:silver_corin_sign",
+    "wyrmroost:teal_corin_sign",
+    "wyrmroost:red_corin_sign",
+    "wyrmroost:dying_corin_sign"
   ]
 }

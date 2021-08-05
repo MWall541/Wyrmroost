@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "wyrmroost:dying_corin_logs"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:dying_corin_planks",
+    "count": 4
+  }
+}

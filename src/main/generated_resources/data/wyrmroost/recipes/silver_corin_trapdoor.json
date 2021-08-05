@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "wyrmroost:silver_corin_planks"
+    }
+  },
+  "result": {
+    "item": "wyrmroost:silver_corin_trapdoor",
+    "count": 2
+  }
+}

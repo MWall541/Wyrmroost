@@ -2,9 +2,9 @@
   "replace": false,
   "values": [
     "wyrmroost:blue_oseri_sapling",
-    "wyrmroost:pink_oseri_sapling",
+    "wyrmroost:purple_oseri_sapling",
     "wyrmroost:gold_oseri_sapling",
-    "wyrmroost:white_oseri_sapling",
-    "wyrmroost:purple_oseri_sapling"
+    "wyrmroost:pink_oseri_sapling",
+    "wyrmroost:white_oseri_sapling"
   ]
 }

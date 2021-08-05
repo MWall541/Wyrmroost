@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wyrmroost:teal_corin_planks"
+    }
+  ],
+  "result": {
+    "item": "wyrmroost:teal_corin_button"
+  }
+}

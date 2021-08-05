@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:block/dying_corin_button"
+  "parent": "minecraft:block/button_inventory",
+  "textures": {
+    "texture": "wyrmroost:block/dying_corin_planks"
+  }
 }

@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "wyrmroost:oseri_fence_gate",
-    "wyrmroost:sal_fence_gate"
+    "wyrmroost:sal_fence_gate",
+    "wyrmroost:prismarine_corin_fence_gate",
+    "wyrmroost:silver_corin_fence_gate",
+    "wyrmroost:teal_corin_fence_gate",
+    "wyrmroost:red_corin_fence_gate",
+    "wyrmroost:dying_corin_fence_gate"
   ]
 }

@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "wyrmroost:oseri_planks",
-    "wyrmroost:sal_planks"
+    "wyrmroost:sal_planks",
+    "wyrmroost:prismarine_corin_planks",
+    "wyrmroost:silver_corin_planks",
+    "wyrmroost:teal_corin_planks",
+    "wyrmroost:red_corin_planks",
+    "wyrmroost:dying_corin_planks"
   ]
 }

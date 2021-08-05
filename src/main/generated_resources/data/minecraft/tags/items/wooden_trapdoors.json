@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "wyrmroost:oseri_trapdoor",
-    "wyrmroost:sal_trapdoor"
+    "wyrmroost:sal_trapdoor",
+    "wyrmroost:prismarine_corin_trapdoor",
+    "wyrmroost:silver_corin_trapdoor",
+    "wyrmroost:teal_corin_trapdoor",
+    "wyrmroost:red_corin_trapdoor",
+    "wyrmroost:dying_corin_trapdoor"
   ]
 }
