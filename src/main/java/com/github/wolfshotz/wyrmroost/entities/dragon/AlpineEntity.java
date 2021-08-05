@@ -213,9 +213,9 @@ public class AlpineEntity extends TameableDragonEntity
     }
 
     @Override
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
-        return ModUtils.equalsAny(stack.getItem(), Items.HONEYCOMB, Items.HONEY_BOTTLE);
+        return ModUtils.contains(stack.getItem(), Items.HONEYCOMB, Items.HONEY_BOTTLE);
     }
 
     @Override

@@ -125,7 +125,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
         ActionResultType result = super.playerInteraction(player, hand, stack);
         if (result.consumesAction()) return result;
 
-        if (!isTame() && isFoodItem(stack) && (isPissed() || player.isCreative() || isBaby()))
+        if (!isTame() && isFood(stack) && (isPissed() || player.isCreative() || isBaby()))
         {
             eat(stack);
             if (!level.isClientSide) tame(getRandom().nextDouble() < 0.2, player);
@@ -214,7 +214,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation[] getAnimations()
+    public Animation<?, ?>[] getAnimations()
     {
         return new Animation[]{NO_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION, ATTACK_ANIMATION};
     }
@@ -232,7 +232,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
     }
 
     @Override
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
         return stack.getItem() == Items.SWEET_BERRIES;
     }

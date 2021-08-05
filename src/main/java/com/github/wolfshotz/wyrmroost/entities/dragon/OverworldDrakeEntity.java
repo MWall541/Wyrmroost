@@ -213,7 +213,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
             return ActionResultType.sidedSuccess(level.isClientSide);
         }
 
-        if (!isTame() && isBaby() && isFoodItem(stack))
+        if (!isTame() && isBaby() && isFood(stack))
         {
             tame(getRandom().nextInt(10) == 0, player);
             stack.shrink(1);
@@ -394,7 +394,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
         return stack.getItem().is(Tags.Items.CROPS_WHEAT);
     }

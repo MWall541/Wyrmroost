@@ -436,7 +436,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
         if (isTame())
         {
-            if (isFoodItem(stack))
+            if (isFood(stack))
             {
                 boolean flag = getHealth() < getMaxHealth();
                 if (isBaby())
@@ -452,7 +452,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
                 }
             }
 
-            if (isFood(stack) && getAge() == 0)
+            if (isBreedingItem(stack) && getAge() == 0)
             {
                 if (!level.isClientSide && !isInLove())
                 {
@@ -487,6 +487,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void travel(Vector3d vec3d)
     {
         float speed = getTravelSpeed();
+        boolean isFlying = isFlying();
 
         if (canBeControlledByRider()) // Were being controlled; override ai movement
         {
@@ -501,7 +502,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
             if (isControlledByLocalInstance())
             {
-                if (isFlying())
+                if (isFlying)
                 {
                     moveX = vec3d.x;
                     moveZ = moveZ > 0? moveZ : 0;
@@ -522,13 +523,13 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             {
                 calculateEntityAnimation(this, true);
                 setDeltaMovement(Vector3d.ZERO);
-                if (!level.isClientSide && isFlying())
+                if (!level.isClientSide && isFlying)
                     ((ServerPlayerEntity) entity).connection.aboveGroundVehicleTickCount = 0;
                 return;
             }
         }
 
-        if (isFlying())
+        if (isFlying)
         {
             // Move relative to yaw - handled in the move controller or by passenger
             moveRelative(speed, vec3d);
@@ -801,7 +802,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         BlockPos.Mutable pos = blockPosition().mutable();
 
         // cap to the level void (y = 0)
-        while (pos.getY() > 0 && !level.getBlockState(pos.below()).getMaterial().isSolid()) pos.move(0, -1, 0);
+        while (pos.getY() > 0 && !level.getBlockState(pos.move(Direction.DOWN)).getMaterial().isSolid());
         return getY() - pos.getY();
     }
 
@@ -1173,8 +1174,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     protected float getJumpPower()
     {
-        if (canFly()) return (getBbHeight() * getBlockJumpFactor()) * 0.6f;
-        else return super.getJumpPower();
+        return canFly()? (getBbHeight() * getBlockJumpFactor()) * 0.6f : super.getJumpPower();
     }
 
     public boolean liftOff()
@@ -1195,8 +1195,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override // Disable fall calculations if we can fly (fall damage etc.)
     public boolean causeFallDamage(float distance, float damageMultiplier)
     {
-        if (canFly()) return false;
-        return super.causeFallDamage(distance - (int) (getBbHeight() * 0.8), damageMultiplier);
+        return !canFly() && super.causeFallDamage(distance - (int) (getBbHeight() * 0.8), damageMultiplier);
     }
 
     public int getFlightThreshold()
@@ -1276,12 +1275,12 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public boolean isFood(ItemStack stack)
-    {
-        return isFoodItem(stack);
-    }
+    public abstract boolean isFood(ItemStack stack);
 
-    public abstract boolean isFoodItem(ItemStack stack);
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return isFood(stack);
+    }
 
     // ================================
     //        Entity Animation
@@ -1300,13 +1299,13 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public Animation getAnimation()
+    public Animation<?, ?> getAnimation()
     {
         return animation;
     }
 
     @Override
-    public void setAnimation(Animation animation)
+    public void setAnimation(Animation<?, ?> animation)
     {
         if (animation == null)
             animation = NO_ANIMATION;
@@ -1315,7 +1314,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public Animation[] getAnimations()
+    public Animation<?, ?>[] getAnimations()
     {
         return new Animation[0];
     }

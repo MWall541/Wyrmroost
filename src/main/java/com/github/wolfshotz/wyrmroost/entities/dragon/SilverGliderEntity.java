@@ -252,7 +252,7 @@ public class SilverGliderEntity extends TameableDragonEntity
     }
 
     @Override
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
         return stack.getItem().is(ItemTags.FISHES);
     }

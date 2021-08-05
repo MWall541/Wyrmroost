@@ -59,7 +59,7 @@ public class PetalsBlock extends Block
     public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos)
     {
         BlockState floor = worldIn.getBlockState(pos.below());
-        if (!ModUtils.equalsAny(floor.getBlock(), Blocks.ICE, Blocks.PACKED_ICE, Blocks.BARRIER, Blocks.HONEY_BLOCK, Blocks.SOUL_SAND))
+        if (!ModUtils.contains(floor.getBlock(), Blocks.ICE, Blocks.PACKED_ICE, Blocks.BARRIER, Blocks.HONEY_BLOCK, Blocks.SOUL_SAND))
                 return Block.isFaceFull(floor.getCollisionShape(worldIn, pos.below()), Direction.UP);
         return false;
     }

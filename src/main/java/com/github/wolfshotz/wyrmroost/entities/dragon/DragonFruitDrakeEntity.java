@@ -138,7 +138,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
         if (stack.getItem() == Items.SHEARS && isShearable(stack, level, blockPosition()))
             return ActionResultType.sidedSuccess(level.isClientSide);
 
-        if (!isTame() && isBaby() && isFoodItem(stack))
+        if (!isTame() && isBaby() && isFood(stack))
         {
             if (!level.isClientSide && temptGoal.isRunning())
             {
@@ -220,9 +220,15 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     }
 
     @Override
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
-        return stack.getItem().is(Tags.Items.CROPS) || ModUtils.equalsAny(stack.getItem(), Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE);
+        return stack.getItem().is(Tags.Items.CROPS) || ModUtils.contains(stack.getItem(), Items.APPLE, Items.SWEET_BERRIES, Items.MELON, Items.GLISTERING_MELON_SLICE);
+    }
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack)
+    {
+        return stack.getItem() == Items.APPLE;
     }
 
     @Override
@@ -325,12 +331,6 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     protected SoundEvent getDeathSound()
     {
         return WRSounds.ENTITY_DFD_DEATH.get();
-    }
-
-    @Override
-    public boolean isFood(ItemStack stack)
-    {
-        return stack.getItem() == Items.APPLE;
     }
 
     @Override

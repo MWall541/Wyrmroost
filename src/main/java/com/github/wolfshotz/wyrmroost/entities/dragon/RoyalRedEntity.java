@@ -156,7 +156,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (!isTame() && isFoodItem(stack))
+        if (!isTame() && isFood(stack))
         {
             if (isBaby() || player.isCreative())
             {
@@ -405,7 +405,7 @@ public class RoyalRedEntity extends TameableDragonEntity
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
         return stack.getItem().isEdible() && stack.getItem().getFoodProperties().isMeat();
     }

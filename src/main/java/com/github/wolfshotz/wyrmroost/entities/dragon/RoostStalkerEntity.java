@@ -45,7 +45,6 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 import static net.minecraft.entity.ai.attributes.Attributes.*;
 
@@ -121,7 +120,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
         if (!level.isClientSide)
         {
             ItemStack item = getStackInSlot(ITEM_SLOT);
-            if (isFoodItem(item) && getHealth() < getMaxHealth() && getRandom().nextDouble() <= 0.0075)
+            if (isFood(item) && getHealth() < getMaxHealth() && getRandom().nextDouble() <= 0.0075)
                 eat(item);
         }
     }
@@ -129,7 +128,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        final ActionResultType COMMON_SUCCESS = ActionResultType.sidedSuccess(level.isClientSide);
+        final ActionResultType success = ActionResultType.sidedSuccess(level.isClientSide);
 
         ItemStack heldItem = getItem();
         Item item = stack.getItem();
@@ -139,10 +138,10 @@ public class RoostStalkerEntity extends TameableDragonEntity
             eat(stack);
             if (tame(getRandom().nextDouble() < 0.25, player)) getAttribute(MAX_HEALTH).setBaseValue(20d);
 
-            return COMMON_SUCCESS;
+            return success;
         }
 
-        if (isTame() && isFood(stack))
+        if (isTame() && isBreedingItem(stack))
         {
             if (!level.isClientSide && canFallInLove() && getAge() == 0)
             {
@@ -159,7 +158,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
             if (player.isShiftKeyDown())
             {
                 setOrderedToSit(!isInSittingPose());
-                return COMMON_SUCCESS;
+                return success;
             }
 
             if (stack.isEmpty() && heldItem.isEmpty() && !isLeashed() && player.getPassengers().size() < 3)
@@ -170,7 +169,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
                     AddPassengerPacket.send(this, player);
                 }
 
-                return COMMON_SUCCESS;
+                return success;
             }
 
             if ((!stack.isEmpty() && !isFood(stack)) || !heldItem.isEmpty())
@@ -178,7 +177,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
                 setStackInSlot(ITEM_SLOT, stack);
                 player.setItemInHand(hand, heldItem);
 
-                return COMMON_SUCCESS;
+                return success;
             }
         }
 
@@ -206,8 +205,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     @Override
     public ItemStack getItemBySlot(EquipmentSlotType slot)
     {
-        if (slot == EquipmentSlotType.MAINHAND) return getItem();
-        return super.getItemBySlot(slot);
+        return slot == EquipmentSlotType.MAINHAND? getItem() : super.getItemBySlot(slot);
     }
 
     @Override
@@ -217,8 +215,6 @@ public class RoostStalkerEntity extends TameableDragonEntity
 
         container.slot(DragonStaffContainer.accessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15, DragonStaffScreen.SADDLE_UV))
                 .addStaffActions(StaffActions.TARGET);
-
-        //todo held item tooltips?
     }
 
     @Override
@@ -228,7 +224,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     }
 
     @Override
-    public boolean isFood(ItemStack stack)
+    public boolean isBreedingItem(ItemStack stack)
     {
         return stack.getItem() == Items.GOLD_NUGGET;
     }
@@ -319,7 +315,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
         return stack.getItem().isEdible() && stack.getItem().getFoodProperties().isMeat();
     }
@@ -348,7 +344,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     class ScavengeGoal extends MoveToBlockGoal
     {
         private IInventory chest;
-        private int searchDelay = 20 + new Random().nextInt(40) + 5;
+        private int searchDelay = 20 + getRandom().nextInt(40) + 5;
 
         public ScavengeGoal(double speed)
         {
@@ -402,7 +398,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
         {
             super.stop();
             interactChest(chest, false);
-            searchDelay = 20 + new Random().nextInt(40) + 5;
+            searchDelay = 20 + getRandom().nextInt(40) + 5;
             setScavenging(false);
         }
 

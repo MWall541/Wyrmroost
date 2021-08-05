@@ -81,7 +81,7 @@ public class PetalParticle extends SpriteTexturedParticle
                 xd *= 0.7f;
                 zd *= 0.7f;
                 if (alpha <= 0) remove();
-                else alpha = Math.max(0, MathHelper.lerp(ClientEvents.getFrameDelta(), alpha, alpha - 0.25f));
+                else alpha = Math.max(0, MathHelper.lerp(ClientEvents.getPartialTicks(), alpha, alpha - 0.25f));
             }
         }
     }

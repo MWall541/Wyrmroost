@@ -23,7 +23,7 @@ public class DragonEggStackRenderer extends ItemStackTileEntityRenderer
         DragonEggRenderer.MODEL.renderToBuffer(ms, builder, combinedLight, combinedOverlay, 1, 1, 1, 1);
     }
 
-    private ResourceLocation getEggTexture(ItemStack stack)
+    private static ResourceLocation getEggTexture(ItemStack stack)
     {
         CompoundNBT tag = stack.getTag();
         if (tag != null && tag.contains(DragonEggEntity.DATA_DRAGON_TYPE))

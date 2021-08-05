@@ -243,7 +243,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (((beached && lightningCooldown > 60 && level.isRainingAt(blockPosition())) || player.isCreative() || isBaby()) && isFoodItem(stack))
+        if (((beached && lightningCooldown > 60 && level.isRainingAt(blockPosition())) || player.isCreative() || isBaby()) && isFood(stack))
         {
             eat(stack);
             if (!level.isClientSide) tame(getRandom().nextDouble() < 0.2, player);
@@ -402,7 +402,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     }
 
     @Override
-    public boolean isFoodItem(ItemStack stack)
+    public boolean isFood(ItemStack stack)
     {
         return stack.getItem().isEdible() && stack.getItem().getFoodProperties().isMeat();
     }
@@ -476,7 +476,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override
     public boolean isInvulnerableTo(DamageSource source)
     {
-        return ModUtils.equalsAny(source, DamageSource.LIGHTNING_BOLT, DamageSource.IN_FIRE, DamageSource.IN_WALL) || super.isInvulnerableTo(source);
+        return ModUtils.contains(source, DamageSource.LIGHTNING_BOLT, DamageSource.IN_FIRE, DamageSource.IN_WALL) || super.isInvulnerableTo(source);
     }
 
     @Override

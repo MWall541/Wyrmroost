@@ -2,6 +2,7 @@ package com.github.wolfshotz.wyrmroost.client;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
+import com.github.wolfshotz.wyrmroost.client.render.TarragonTomeRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
@@ -30,10 +31,8 @@ import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -57,6 +56,7 @@ public class ClientEvents
         bus.addListener(ClientEvents::stitchTextures);
         bus.addListener(ClientEvents::itemColors);
         bus.addListener(ClientEvents::bakeParticles);
+        bus.addListener(ClientEvents::bakeModels);
 
         forgeBus.addListener(RenderHelper::renderWorld);
         forgeBus.addListener(RenderHelper::renderOverlay);
@@ -70,7 +70,7 @@ public class ClientEvents
     //       Mod Bus
     // ====================
 
-    public static void clientSetup(final FMLClientSetupEvent event)
+    private static void clientSetup(final FMLClientSetupEvent event)
     {
         WRKeybind.registerKeys();
 
@@ -85,30 +85,35 @@ public class ClientEvents
         });
     }
 
-    public static void bakeParticles(ParticleFactoryRegisterEvent event)
+    private static void bakeParticles(ParticleFactoryRegisterEvent event)
     {
         for (ParticleType<?> entry : ModUtils.getRegistryEntries(WRParticles.REGISTRY))
             if (entry instanceof WRParticles<?>) ((WRParticles<?>) entry).bake();
     }
 
-    public static void stitchTextures(TextureStitchEvent.Pre evt)
+    private static void stitchTextures(TextureStitchEvent.Pre evt)
     {
         if (evt.getMap().location() == AtlasTexture.LOCATION_BLOCKS)
             evt.addSprite(BreathWeaponRenderer.BLUE_FIRE);
     }
 
-    public static void itemColors(ColorHandlerEvent.Item evt)
+    private static void itemColors(ColorHandlerEvent.Item evt)
     {
         ItemColors handler = evt.getItemColors();
         IItemColor func = (stack, tintIndex) -> ((LazySpawnEggItem<?>) stack.getItem()).getColor(tintIndex);
         for (LazySpawnEggItem<?> e : LazySpawnEggItem.SPAWN_EGGS) handler.register(func, e);
     }
 
+    private static void bakeModels(ModelRegistryEvent event)
+    {
+        ModelLoader.addSpecialModel(TarragonTomeRenderer.SPRITE_MODEL_LOCATION);
+    }
+
     // =====================
     //      Forge Bus
     // =====================
 
-    public static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
+    private static void cameraPerspective(EntityViewRenderEvent.CameraSetup event)
     {
         Minecraft mc = getClient();
         Entity entity = mc.player.getVehicle();
@@ -142,9 +147,9 @@ public class ClientEvents
         return getClient().gameRenderer.getMainCamera().getPosition();
     }
 
-    public static float getFrameDelta()
+    public static float getPartialTicks()
     {
-        return getClient().getDeltaFrameTime();
+        return getClient().getFrameTime();
     }
 
     public static <T extends Entity & IRendersAsItem> SpriteRenderer<T> spriteRenderer(EntityRendererManager m)
