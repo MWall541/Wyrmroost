@@ -42,8 +42,6 @@ class ItemModelData extends ItemModelProvider
         final ModelFile bucket = uncheckedModel("forge:item/bucket");
         final ModelFile ister = new ModelFile.ExistingModelFile(new ResourceLocation("builtin/entity"), existingFileHelper);
 
-        item(WRItems.DRAGON_STAFF.get()).parent(uncheckedModel("item/handheld"));
-
         getBuilder("desert_wyrm_alive").parent(itemGenerated).texture("layer0", resource("desert_wyrm_alive"));
         item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.id("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
 

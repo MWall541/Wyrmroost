@@ -176,7 +176,6 @@ class RecipeData extends RecipeProvider
 
         // Misc stuff
         shaped(WRItems.SOUL_CRYSTAL.get()).define('X', WRItems.BLUE_GEODE.get()).define('#', Items.ENDER_EYE).pattern(" X ").pattern("X#X").pattern(" X ").unlockedBy("has_eye", has(Items.ENDER_EYE)).save(consumer);
-        shaped(WRItems.DRAGON_STAFF.get()).define('X', WRItems.RED_GEODE.get()).define('|', Items.BLAZE_ROD).pattern("X").pattern("|").unlockedBy("has_geode", has(WRItems.RED_GEODE.get())).save(consumer);
 
         shaped(WRItems.BLUE_GEODE_ARROW.get(), 8).define('G', WRItems.BLUE_GEODE.get()).define('|', Tags.Items.RODS_WOODEN).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
         shaped(WRItems.RED_GEODE_ARROW.get(), 8).define('G', WRItems.RED_GEODE.get()).define('|', Tags.Items.RODS_WOODEN).define('F', Items.FEATHER).pattern("G").pattern("|").pattern("F").unlockedBy("has_geode", has(WRItems.RED_GEODE.get())).save(consumer);
