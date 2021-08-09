@@ -1,13 +1,13 @@
 package com.github.wolfshotz.wyrmroost.client.screen;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.client.screen.widgets.BookActionButton;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.PinButton;
-import com.github.wolfshotz.wyrmroost.client.screen.widgets.StaffActionButton;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.Slot3D;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookAction;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
+public class DragonControlScreen extends ContainerScreen<DragonStaffContainer> implements BookScreen
 {
     public static final ResourceLocation SPRITES = Wyrmroost.id("textures/gui/container/dragon_inventory.png");
     public static final Vec2d SADDLE_UV = new Vec2d(194, 18);
@@ -54,7 +54,7 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
     public float dragY;
     public float scale;
 
-    public DragonStaffScreen(DragonStaffContainer container, PlayerInventory inventory, ITextComponent title)
+    public DragonControlScreen(DragonStaffContainer container, PlayerInventory inventory, ITextComponent title)
     {
         super(container, inventory, title);
         this.imageWidth = 193;
@@ -89,12 +89,12 @@ public class DragonStaffScreen extends ContainerScreen<DragonStaffContainer>
         int yRadius = height / 3;
         for (int i = 0; i < size; i++)
         {
-            StaffAction action = menu.actions.get(i);
+            BookAction action = menu.actions.get(i);
             ITextComponent name = action.getTranslation(menu.dragon);
             double deg = 2 * Math.PI * i / size - Math.toRadians(90);
             int x = ((int) (xRadius * Math.cos(deg))) + centerX - 50;
             int y = ((int) (yRadius * Math.sin(deg))) + centerY - 10;
-            addButton(new StaffActionButton(this, action, x, y, name));
+            addButton(new BookActionButton(this, action, x, y, name));
         }
     }
 

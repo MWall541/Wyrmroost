@@ -132,6 +132,7 @@
   "item.wyrmroost.dragon_staff.action.default": "Open GUI",
   "item.wyrmroost.dragon_staff.action.inventory": "Access Inventory",
   "item.wyrmroost.dragon_staff.action.home.set": "Set Home Position",
+  "item.wyrmroost.dragon_staff.action.home.set.info": "Assign a solid block to where the dragon will reside.",
   "item.wyrmroost.dragon_staff.action.home.remove": "Remove Home Position",
   "item.wyrmroost.dragon_staff.action.target": "Target Commanding",
   "item.wyrmroost.dragon_staff.action.sit.come": "Follow",

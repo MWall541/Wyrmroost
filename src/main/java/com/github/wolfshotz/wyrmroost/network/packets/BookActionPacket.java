@@ -1,8 +1,8 @@
 package com.github.wolfshotz.wyrmroost.network.packets;
 
-import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
+import com.github.wolfshotz.wyrmroost.items.book.TarragonTomeItem;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookAction;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -12,32 +12,32 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class StaffActionPacket
+public class BookActionPacket
 {
-    public final StaffAction action;
+    public final BookAction action;
 
-    public StaffActionPacket(StaffAction action)
+    public BookActionPacket(BookAction action)
     {
         this.action = action;
     }
 
-    public StaffActionPacket(PacketBuffer buf)
+    public BookActionPacket(PacketBuffer buf)
     {
-        action = StaffActions.ACTIONS.get(buf.readInt());
+        action = BookActions.ACTIONS.get(buf.readInt());
     }
 
     public void encode(PacketBuffer buf)
     {
-        buf.writeInt(StaffActions.ACTIONS.indexOf(action));
+        buf.writeInt(BookActions.ACTIONS.indexOf(action));
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> context)
     {
         ServerPlayerEntity player = context.get().getSender();
-        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
+        ItemStack stack = ModUtils.getHeldStack(player, WRItems.TARRAGON_TOME.get());
         if (stack != null)
         {
-            DragonStaffItem.setAction(action, player, stack);
+            TarragonTomeItem.setAction(action, player, stack);
             return true;
         }
         return false;

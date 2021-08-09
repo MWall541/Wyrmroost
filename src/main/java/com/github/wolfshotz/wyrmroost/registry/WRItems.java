@@ -6,8 +6,7 @@ import com.github.wolfshotz.wyrmroost.items.*;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorMaterials;
 import com.github.wolfshotz.wyrmroost.items.base.ToolMaterials;
-import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
-import com.github.wolfshotz.wyrmroost.items.staff.TarragonTomeItem;
+import com.github.wolfshotz.wyrmroost.items.book.TarragonTomeItem;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.potion.EffectInstance;
@@ -46,10 +45,10 @@ public class WRItems
     public static final RegistryObject<Item> LDWYRM = register("desert_wyrm", LDWyrmItem::new);
     public static final RegistryObject<Item> DRAGON_EGG = register("dragon_egg", DragonEggItem::new);
     public static final RegistryObject<Item> SOUL_CRYSTAL = register("soul_crystal", SoulCrystalItem::new);
-    public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", DragonStaffItem::new);
+//    public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", DragonStaffItem::new);
+    public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
     public static final RegistryObject<Item> COIN_DRAGON = register("coin_dragon", CoinDragonItem::new);
     public static final RegistryObject<Item> TRUMPET = register("trumpet", TrumpetItem::new);
-    public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
 
     public static final RegistryObject<Item> BLUE_GEODE = register("blue_geode");
     public static final RegistryObject<Item> RED_GEODE = register("red_geode");

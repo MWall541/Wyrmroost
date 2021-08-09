@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.client.screen.widgets;
 
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.widget.button.AbstractButton;
@@ -19,7 +19,7 @@ public class PinButton extends AbstractButton
     @Override
     public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
     {
-        ClientEvents.getClient().getTextureManager().bind(DragonStaffScreen.SPRITES);
+        ClientEvents.getClient().getTextureManager().bind(DragonControlScreen.SPRITES);
         RenderSystem.color4f(1f, 1f, 1f, 1f);
         blit(ms, x, y, isHovered()? 230 : 212, pinned? 18 : 0, width, height);
     }

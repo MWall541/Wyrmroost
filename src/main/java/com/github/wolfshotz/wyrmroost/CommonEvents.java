@@ -8,6 +8,7 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.items.base.ArmorBase;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
+import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
@@ -15,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
@@ -25,6 +27,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -51,6 +54,7 @@ public class CommonEvents
         bus.addListener(CommonEvents::commonSetup);
         bus.addListener(CommonEvents::bindEntityAttributes);
         bus.addListener(WRConfig::loadConfig);
+        bus.addGenericListener(Item.class, CommonEvents::remap);
 
         forgeBus.addListener(CommonEvents::debugStick);
         forgeBus.addListener(CommonEvents::onChangeEquipment);
@@ -92,6 +96,15 @@ public class CommonEvents
             }
         }
 
+    }
+
+    @Deprecated // todo: remove in 1.17
+    public static void remap(RegistryEvent.MissingMappings<Item> event)
+    {
+        for (RegistryEvent.MissingMappings.Mapping<Item> mapping : event.getMappings(Wyrmroost.MOD_ID))
+        {
+            if (mapping.key.equals(Wyrmroost.id("dragon_staff"))) mapping.remap(WRItems.TARRAGON_TOME.get());
+        }
     }
 
     // =====================

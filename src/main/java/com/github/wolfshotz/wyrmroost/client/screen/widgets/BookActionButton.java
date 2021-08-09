@@ -1,16 +1,17 @@
 package com.github.wolfshotz.wyrmroost.client.screen.widgets;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
-import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
-import com.github.wolfshotz.wyrmroost.network.packets.StaffActionPacket;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
+import com.github.wolfshotz.wyrmroost.items.book.TarragonTomeItem;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookAction;
+import com.github.wolfshotz.wyrmroost.network.packets.BookActionPacket;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -18,14 +19,14 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 
-public class StaffActionButton extends AbstractButton
+public class BookActionButton extends AbstractButton
 {
-    public final DragonStaffScreen screen;
-    public final StaffAction action;
+    public final DragonControlScreen screen;
+    public final BookAction action;
     public final LerpedFloat focusTime = new LerpedFloat().clamp(0, 1);
     public boolean wasHovered = false;
 
-    public StaffActionButton(DragonStaffScreen screen,  StaffAction action, int xIn, int yIn, ITextComponent msg)
+    public BookActionButton(DragonControlScreen screen, BookAction action, int xIn, int yIn, ITextComponent msg)
     {
         super(xIn, yIn, 100, 20, msg);
         this.screen = screen;
@@ -36,11 +37,11 @@ public class StaffActionButton extends AbstractButton
     public void onPress()
     {
         PlayerEntity player = Minecraft.getInstance().player;
-        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
-        if (stack.getItem() == WRItems.DRAGON_STAFF.get())
+        ItemStack stack = ModUtils.getHeldStack(player, WRItems.TARRAGON_TOME.get());
+        if (stack != null)
         {
-            DragonStaffItem.setAction(action, player, stack);
-            Wyrmroost.NETWORK.sendToServer(new StaffActionPacket(action));
+            TarragonTomeItem.setAction(action, player, stack);
+            Wyrmroost.NETWORK.sendToServer(new BookActionPacket(action));
         }
         Minecraft.getInstance().setScreen(null);
     }
@@ -73,5 +74,11 @@ public class StaffActionButton extends AbstractButton
     {
         if (focusing)
             Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.NOTE_BLOCK_BASS, -1f));
+    }
+
+    @Override
+    public void playDownSound(SoundHandler sounds)
+    {
+        sounds.play(SimpleSound.forUI(SoundEvents.BOOK_PAGE_TURN, 1f, 1f));
     }
 }

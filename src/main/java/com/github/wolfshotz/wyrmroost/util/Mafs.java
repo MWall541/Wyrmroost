@@ -79,7 +79,13 @@ public final class Mafs
     }
 
     @Nullable
-    public static EntityRayTraceResult rayTraceEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter)
+    public static EntityRayTraceResult clipEntities(Entity shooter, double range, @Nullable Predicate<Entity> filter)
+    {
+        return clipEntities(shooter, range, 0, filter);
+    }
+
+    @Nullable
+    public static EntityRayTraceResult clipEntities(Entity shooter, double range, double hitRadius, @Nullable Predicate<Entity> filter)
     {
         Vector3d eyes = shooter.getEyePosition(1f);
         Vector3d end = eyes.add(shooter.getLookAngle().multiply(range, range, range));
@@ -88,7 +94,7 @@ public final class Mafs
         double distance = range * range;
         for (Entity entity : shooter.level.getEntities(shooter, shooter.getBoundingBox().inflate(range), filter))
         {
-            Optional<Vector3d> opt = entity.getBoundingBox().inflate(0.3).clip(eyes, end);
+            Optional<Vector3d> opt = entity.getBoundingBox().inflate(hitRadius).clip(eyes, end);
             if (opt.isPresent())
             {
                 double dist = eyes.distanceToSqr(opt.get());

@@ -1,13 +1,13 @@
 package com.github.wolfshotz.wyrmroost.containers;
 
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
 import com.github.wolfshotz.wyrmroost.containers.util.DynamicSlot;
 import com.github.wolfshotz.wyrmroost.containers.util.Slot3D;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffAction;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookAction;
 import com.github.wolfshotz.wyrmroost.registry.WRIO;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.sun.javafx.geom.Vec2d;
@@ -34,7 +34,7 @@ public class DragonStaffContainer extends Container
 {
     public final TameableDragonEntity dragon;
     public final PlayerInventory playerInv;
-    public final List<StaffAction> actions = new ArrayList<>();
+    public final List<BookAction> actions = new ArrayList<>();
     public final List<ITextComponent> toolTips = new ArrayList<>();
     public final List<CollapsibleWidget> collapsibles = new ArrayList<>();
 
@@ -70,7 +70,7 @@ public class DragonStaffContainer extends Container
         return this;
     }
 
-    public DragonStaffContainer addStaffActions(StaffAction... actions)
+    public DragonStaffContainer addStaffActions(BookAction... actions)
     {
         if (dragon.level.isClientSide) Collections.addAll(this.actions, actions);
         return this;
@@ -92,16 +92,15 @@ public class DragonStaffContainer extends Container
     public static Slot3D accessorySlot(DragonInventory i, int index, int x, int y, int z, @Nonnull Vec2d iconUV)
     {
         return (Slot3D) new Slot3D(i, index, x, y, z)
-                .condition(() -> getClient().screen instanceof DragonStaffScreen && ((DragonStaffScreen) getClient().screen).showAccessories())
+                .condition(() -> getClient().screen instanceof DragonControlScreen && ((DragonControlScreen) getClient().screen).showAccessories())
                 .iconUV(iconUV);
     }
 
     public static CollapsibleWidget collapsibleWidget(int u0, int v0, int width, int height, byte direction)
     {
-        return new CollapsibleWidget(u0, v0, width, height, direction, DragonStaffScreen.SPRITES);
+        return new CollapsibleWidget(u0, v0, width, height, direction, DragonControlScreen.SPRITES);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static DragonStaffContainer factory(int id, PlayerInventory playerInv, PacketBuffer buf)
     {
         return new DragonStaffContainer(id, playerInv, fromBytes(buf));
@@ -134,6 +133,7 @@ public class DragonStaffContainer extends Container
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private static TameableDragonEntity fromBytes(PacketBuffer buf)
     {
         TameableDragonEntity dragon = (TameableDragonEntity) ClientEvents.getLevel().getEntity(buf.readVarInt());

@@ -1,33 +1,34 @@
-package com.github.wolfshotz.wyrmroost.items.staff.action;
+package com.github.wolfshotz.wyrmroost.items.book.action;
 
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
 
-public interface StaffAction
+public interface BookAction
 {
     String TRANSLATE_PATH = "item.wyrmroost.dragon_staff.action.";
 
-    default boolean clickBlock(TameableDragonEntity dragon, ItemUseContext context)
+    default ActionResultType clickBlock(@Nullable TameableDragonEntity dragon, ItemUseContext context)
     {
-        return false;
+        return ActionResultType.PASS;
     }
 
-    default boolean rightClick(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
+    default ActionResultType rightClick(@Nullable TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
     {
-        return false;
+        return ActionResultType.PASS;
     }
 
-    default void onSelected(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
+    default void onSelected(@Nullable TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
     {
     }
 
-    default void render(TameableDragonEntity dragon, MatrixStack ms, float partialTicks)
+    default void render(@Nullable TameableDragonEntity dragon, MatrixStack ms, float partialTicks)
     {
     }
 

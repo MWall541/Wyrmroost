@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.Container;
@@ -25,6 +25,6 @@ public class WRIO
 
     public static void screenSetup()
     {
-        ScreenManager.register(DRAGON_STAFF.get(), DragonStaffScreen::new);
+        ScreenManager.register(DRAGON_STAFF.get(), DragonControlScreen::new);
     }
 }

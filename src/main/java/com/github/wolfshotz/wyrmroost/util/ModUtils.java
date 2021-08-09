@@ -28,6 +28,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Calendar;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -118,7 +119,12 @@ public final class ModUtils
      */
     public static void playLocalSound(World level, BlockPos pos, SoundEvent sound, float volume, float pitch)
     {
-        level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.NEUTRAL, volume, pitch, false);
+        playLocalSound(level, pos, sound, SoundCategory.NEUTRAL, volume, pitch);
+    }
+
+    public static void playLocalSound(World level, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch)
+    {
+        level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), sound, category, volume, pitch, false);
     }
 
     /**
@@ -149,7 +155,7 @@ public final class ModUtils
      * @param rows The amount of slots, in rows
      * @param slotFactory the thing do to the thing.
      */
-    public static <T extends Slot> void createContainerSlots(IItemHandler inventory, int index, int initialX, int initialY, int columns, int rows, ISlotFactory<T> slotFactory, Consumer<T> consumer)
+    public static <T extends Slot> void createContainerSlots(IItemHandler inventory, int index, int initialX, int initialY, int columns, int rows, SlotFunction<T> slotFactory, Consumer<T> consumer)
     {
         for (int y = 0; y < rows; ++y)
         {
@@ -172,7 +178,7 @@ public final class ModUtils
      * @param initialY the y starting position of the inventory
      * @param slotFactory the thing to do the thing.
      */
-    public static <T extends Slot> void createPlayerContainerSlots(PlayerInventory playerInv, int initialX, int initialY, ISlotFactory<T> slotFactory, Consumer<T> consumer)
+    public static <T extends Slot> void createPlayerContainerSlots(PlayerInventory playerInv, int initialX, int initialY, SlotFunction<T> slotFactory, Consumer<T> consumer)
     {
         PlayerInvWrapper inv = new PlayerInvWrapper(playerInv);
         createContainerSlots(inv, 9, initialX, initialY, 9, 3, slotFactory, consumer); // Player inv
@@ -180,13 +186,13 @@ public final class ModUtils
     }
 
     @FunctionalInterface
-    public interface ISlotFactory<T extends Slot>
+    public interface SlotFunction<T extends Slot>
     {
         T create(IItemHandler inv, int index, int posX, int posY);
     }
 
-    public static <F, T> T getCapabilityInstance(Capability<F> cap, CapabilityProvider<?> item)
+    public static <F, T> T getCapability(Capability<F> cap, CapabilityProvider<?> item)
     {
-        return item.getCapability(cap).<T>cast().orElseThrow(NullPointerException::new);
+        return item.getCapability(cap).<T>cast().orElseThrow(NoSuchElementException::new);
     }
 }
