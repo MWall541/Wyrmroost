@@ -10,17 +10,17 @@ import javax.annotation.Nullable;
 
 public interface IAnimatable
 {
-    Animation<?, ?> NO_ANIMATION = Animation.create(0, null, null);
+    Animation NO_ANIMATION = new Animation(0);
 
     int getAnimationTick();
 
     void setAnimationTick(int tick);
 
-    Animation<?, ?> getAnimation();
+    Animation getAnimation();
 
-    void setAnimation(Animation<?, ?> animation);
+    void setAnimation(Animation animation);
 
-    Animation<?, ?>[] getAnimations();
+    Animation[] getAnimations();
 
     default boolean noAnimations()
     {
@@ -29,7 +29,7 @@ public interface IAnimatable
 
     default void updateAnimations()
     {
-        Animation<?, ?> current = getAnimation();
+        Animation current = getAnimation();
         if (current != NO_ANIMATION)
         {
             int tick = getAnimationTick();
@@ -68,7 +68,7 @@ public interface IAnimatable
         public static final Capability<IAnimatable> CAPABILITY = null;
 
         private int animationTick = 0;
-        private Animation<?, ?> animation;
+        private Animation animation;
 
         @Override
         public int getAnimationTick()
@@ -83,19 +83,19 @@ public interface IAnimatable
         }
 
         @Override
-        public Animation<?, ?> getAnimation()
+        public Animation getAnimation()
         {
             return animation;
         }
 
         @Override
-        public void setAnimation(Animation<?, ?> animation)
+        public void setAnimation(Animation animation)
         {
             this.animation = animation;
         }
 
         @Override
-        public Animation<?, ?>[] getAnimations()
+        public Animation[] getAnimations()
         {
             return new Animation[0];
         }

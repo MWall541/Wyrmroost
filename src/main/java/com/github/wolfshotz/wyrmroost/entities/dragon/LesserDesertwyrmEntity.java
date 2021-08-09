@@ -7,6 +7,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
+import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -53,11 +54,11 @@ import static net.minecraft.entity.ai.attributes.Attributes.*;
 public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
 {
     public static final String DATA_BURROWED = "Burrowed";
-    public static final Animation<LesserDesertwyrmEntity, LesserDesertwyrmModel> BITE_ANIMATION = Animation.create(10, null, () -> LesserDesertwyrmModel::biteAnimation);
+    public static final Animation BITE_ANIMATION = LogicalAnimation.create(10, null, () -> LesserDesertwyrmModel::biteAnimation);
     private static final DataParameter<Boolean> BURROWED = EntityDataManager.defineId(LesserDesertwyrmEntity.class, DataSerializers.BOOLEAN);
     private static final Predicate<LivingEntity> AVOIDING = t -> EntityPredicates.ATTACK_ALLOWED.test(t) && !(t instanceof LesserDesertwyrmEntity);
 
-    public Animation<?, ?> animation = NO_ANIMATION;
+    public Animation animation = NO_ANIMATION;
     public int animationTick;
 
     public LesserDesertwyrmEntity(EntityType<? extends LesserDesertwyrmEntity> minutus, World level)

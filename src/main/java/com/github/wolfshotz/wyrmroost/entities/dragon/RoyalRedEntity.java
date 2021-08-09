@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.RoyalRedModel;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
@@ -12,7 +12,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.projectile.breath.FireBreathEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -20,6 +20,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
@@ -57,16 +58,15 @@ public class RoyalRedEntity extends TameableDragonEntity
             .track(EntitySerializer.INT, "KnockOutTime", RoyalRedEntity::getKnockOutTime, RoyalRedEntity::setKnockoutTime));
 
     public static final int ARMOR_SLOT = 0;
+    private static final int MAX_KNOCKOUT_TIME = 3600; // 3 minutes
 
-    public static final Animation<RoyalRedEntity, RoyalRedModel> ROAR_ANIMATION = Animation.create(70, RoyalRedEntity::roarAnimation, () -> RoyalRedModel::roarAnimation);
-    public static final Animation<RoyalRedEntity, RoyalRedModel> SLAP_ATTACK_ANIMATION = Animation.create(30, RoyalRedEntity::slapAttackAnimation, () -> RoyalRedModel::slapAttackAnimation);
-    public static final Animation<RoyalRedEntity, RoyalRedModel> BITE_ATTACK_ANIMATION = Animation.create(15, RoyalRedEntity::biteAttackAnimation, () -> RoyalRedModel::biteAttackAnimation);
-    public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION};
+    public static final Animation ROAR_ANIMATION = LogicalAnimation.create(70, RoyalRedEntity::roarAnimation, () -> RoyalRedModel::roarAnimation);
+    public static final Animation SLAP_ATTACK_ANIMATION = LogicalAnimation.create(30, RoyalRedEntity::slapAttackAnimation, () -> RoyalRedModel::slapAttackAnimation);
+    public static final Animation BITE_ATTACK_ANIMATION = LogicalAnimation.create(15, RoyalRedEntity::biteAttackAnimation, () -> RoyalRedModel::biteAttackAnimation);
+    public static final Animation[] ANIMATIONS = new Animation[]{ROAR_ANIMATION, SLAP_ATTACK_ANIMATION, BITE_ATTACK_ANIMATION};
 
     public static final DataParameter<Boolean> BREATHING_FIRE = EntityDataManager.defineId(RoyalRedEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> KNOCKED_OUT = EntityDataManager.defineId(RoyalRedEntity.class, DataSerializers.BOOLEAN);
-
-    private static final int MAX_KNOCKOUT_TIME = 3600; // 3 minutes
 
     public final LerpedFloat flightTimer = LerpedFloat.unit();
     public final LerpedFloat sitTimer = LerpedFloat.unit();
@@ -282,8 +282,8 @@ public class RoyalRedEntity extends TameableDragonEntity
     {
         super.applyStaffInfo(container);
 
-        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ARMOR_SLOT, 0, -15, -15, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
-                .addStaffActions(StaffActions.TARGET);
+        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ARMOR_SLOT, 0, -15, -15, DragonControlScreen.ARMOR_UV).only(DragonArmorItem.class))
+                .addStaffActions(BookActions.TARGET);
     }
 
     @Override
@@ -456,7 +456,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation<?, ?>[] getAnimations()
+    public Animation[] getAnimations()
     {
         return ANIMATIONS;
     }

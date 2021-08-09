@@ -14,6 +14,7 @@ import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.block.*;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -61,8 +62,8 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     private static final int CROP_GROWTH_RADIUS = 5;
     private static final int CROP_GROWTH_TIME = 1200; // 1 minute
 
-    public static final Animation<DragonFruitDrakeEntity, DragonFruitDrakeModel> BITE_ANIMATION = Animation.create(15, DragonFruitDrakeEntity::biteAnimation, () -> DragonFruitDrakeModel::biteAnimation);
-    public static final Animation<?, ?>[] ANIMATIONS = new Animation[] {BITE_ANIMATION};
+    public static final Animation BITE_ANIMATION = LogicalAnimation.create(15, DragonFruitDrakeEntity::biteAnimation, () -> DragonFruitDrakeModel::biteAnimation);
+    public static final Animation[] ANIMATIONS = new Animation[] {BITE_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();
     private int shearCooldownTime, napTime, growCropsTime;
@@ -334,7 +335,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     }
 
     @Override
-    public Animation<?, ?>[] getAnimations()
+    public Animation[] getAnimations()
     {
         return ANIMATIONS;
     }

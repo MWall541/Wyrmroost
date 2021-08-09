@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
@@ -8,7 +8,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBre
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.MoveToHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AddPassengerPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -213,8 +213,8 @@ public class RoostStalkerEntity extends TameableDragonEntity
     {
         super.applyStaffInfo(container);
 
-        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15, DragonStaffScreen.SADDLE_UV))
-                .addStaffActions(StaffActions.TARGET);
+        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15, DragonControlScreen.SADDLE_UV))
+                .addStaffActions(BookActions.TARGET);
     }
 
     @Override

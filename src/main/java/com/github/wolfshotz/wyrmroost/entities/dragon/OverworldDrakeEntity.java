@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.OverworldDrakeModel;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.DynamicSlot;
@@ -11,7 +11,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -20,6 +20,7 @@ import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -72,10 +73,10 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     private static final DataParameter<Boolean> SADDLED = EntityDataManager.defineId(OverworldDrakeEntity.class, DataSerializers.BOOLEAN);
 
     // Dragon Entity Animations
-    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> GRAZE_ANIMATION = Animation.create(35, OverworldDrakeEntity::grazeAnimation, () -> OverworldDrakeModel::grazeAnimation);
-    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> HORN_ATTACK_ANIMATION = Animation.create(15, OverworldDrakeEntity::hornAttackAnimation, () -> OverworldDrakeModel::hornAttackAnimation);
-    public static final Animation<OverworldDrakeEntity, OverworldDrakeModel> ROAR_ANIMATION = Animation.create(86, OverworldDrakeEntity::hornAttackAnimation, () -> OverworldDrakeModel::roarAnimation);
-    public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
+    public static final Animation GRAZE_ANIMATION = LogicalAnimation.create(35, OverworldDrakeEntity::grazeAnimation, () -> OverworldDrakeModel::grazeAnimation);
+    public static final Animation HORN_ATTACK_ANIMATION = LogicalAnimation.create(15, OverworldDrakeEntity::hornAttackAnimation, () -> OverworldDrakeModel::hornAttackAnimation);
+    public static final Animation ROAR_ANIMATION = LogicalAnimation.create(86, OverworldDrakeEntity::hornAttackAnimation, () -> OverworldDrakeModel::roarAnimation);
+    public static final Animation[] ANIMATIONS = new Animation[]{GRAZE_ANIMATION, HORN_ATTACK_ANIMATION, ROAR_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();
     public LivingEntity thrownPassenger;
@@ -296,10 +297,10 @@ public class OverworldDrakeEntity extends TameableDragonEntity
                 .condition(this::hasChest);
         ModUtils.createContainerSlots(i, 3, 17, 12, 5, 3, DynamicSlot::new, chestWidget::addSlot);
 
-        container.slot(DragonStaffContainer.accessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonStaffScreen.ARMOR_UV).only(DragonArmorItem.class))
-                .slot(DragonStaffContainer.accessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonStaffScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
-                .slot(DragonStaffContainer.accessorySlot(i, SADDLE_SLOT, 0, -15, -7, DragonStaffScreen.SADDLE_UV).only(Items.SADDLE))
-                .addStaffActions(StaffActions.TARGET)
+        container.slot(DragonStaffContainer.accessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonControlScreen.ARMOR_UV).only(DragonArmorItem.class))
+                .slot(DragonStaffContainer.accessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonControlScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
+                .slot(DragonStaffContainer.accessorySlot(i, SADDLE_SLOT, 0, -15, -7, DragonControlScreen.SADDLE_UV).only(Items.SADDLE))
+                .addStaffActions(BookActions.TARGET)
                 .addCollapsible(chestWidget);
     }
 
@@ -426,7 +427,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation<?, ?>[] getAnimations()
+    public Animation[] getAnimations()
     {
         return ANIMATIONS;
     }

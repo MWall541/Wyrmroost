@@ -11,7 +11,7 @@ import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.DragonEggItem;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
@@ -109,7 +109,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     private int sleepCooldown;
     public boolean wingsDown;
     public int breedCount;
-    private Animation<?, ?> animation = NO_ANIMATION;
+    private Animation animation = NO_ANIMATION;
     private int animationTick;
 
     public TameableDragonEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
@@ -1221,7 +1221,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public void applyStaffInfo(DragonStaffContainer container)
     {
-        container.addStaffActions(StaffActions.HOME, StaffActions.SIT)
+        container.addStaffActions(BookActions.HOME, BookActions.SIT)
                 .addTooltip(getName())
                 .addTooltip(new StringTextComponent(Character.toString('\u2764'))
                         .withStyle(TextFormatting.RED)
@@ -1299,13 +1299,13 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public Animation<?, ?> getAnimation()
+    public Animation getAnimation()
     {
         return animation;
     }
 
     @Override
-    public void setAnimation(Animation<?, ?> animation)
+    public void setAnimation(Animation animation)
     {
         if (animation == null)
             animation = NO_ANIMATION;
@@ -1314,7 +1314,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public Animation<?, ?>[] getAnimations()
+    public Animation[] getAnimations()
     {
         return new Animation[0];
     }

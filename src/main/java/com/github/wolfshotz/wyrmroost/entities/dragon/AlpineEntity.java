@@ -15,6 +15,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
@@ -42,10 +43,10 @@ public class AlpineEntity extends TameableDragonEntity
             .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping)
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
-    public static final Animation<AlpineEntity, AlpineModel> ROAR_ANIMATION = Animation.create(84, AlpineEntity::roarAnimation, () -> AlpineModel::roarAnimation);
-    public static final Animation<AlpineEntity, AlpineModel> WIND_GUST_ANIMATION = Animation.create(25, AlpineEntity::windGustAnimation, () -> AlpineModel::windGustAnimation);
-    public static final Animation<AlpineEntity, AlpineModel> BITE_ANIMATION = Animation.create(10, null, () -> AlpineModel::biteAnimation);
-    public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION};
+    public static final Animation ROAR_ANIMATION = LogicalAnimation.create(84, AlpineEntity::roarAnimation, () -> AlpineModel::roarAnimation);
+    public static final Animation WIND_GUST_ANIMATION = LogicalAnimation.create(25, AlpineEntity::windGustAnimation, () -> AlpineModel::windGustAnimation);
+    public static final Animation BITE_ANIMATION = LogicalAnimation.create(10, null, () -> AlpineModel::biteAnimation);
+    public static final Animation[] ANIMATIONS = new Animation[]{ROAR_ANIMATION, WIND_GUST_ANIMATION, BITE_ANIMATION};
 
     public final LerpedFloat sitTimer = LerpedFloat.unit();
     public final LerpedFloat flightTimer = LerpedFloat.unit();
@@ -246,7 +247,7 @@ public class AlpineEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation<?, ?>[] getAnimations()
+    public Animation[] getAnimations()
     {
         return ANIMATIONS;
     }

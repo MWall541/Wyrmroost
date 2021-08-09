@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
-import com.github.wolfshotz.wyrmroost.items.staff.DragonStaffItem;
+import com.github.wolfshotz.wyrmroost.items.book.TarragonTomeItem;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
@@ -29,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -94,7 +95,7 @@ public class RenderHelper extends RenderType
         ms.pushPose();
 
         if (WRConfig.DEBUG_MODE.get()) DebugRendering.render(ms, partialTicks);
-        renderDragonStaff(ms, partialTicks);
+        renderBook(ms, partialTicks);
 
         ms.popPose();
     }
@@ -207,6 +208,15 @@ public class RenderHelper extends RenderType
         return Minecraft.getInstance().renderBuffers().bufferSource();
     }
 
+    private static final Matrix4f flipX = Matrix4f.createScaleMatrix(-1,1,1);
+    private static final Matrix3f flipXNormal = new Matrix3f(flipX);
+
+    public static void mirrorX(MatrixStack matrixStack)
+    {
+        matrixStack.last().pose().multiply(flipX);
+//        matrixStack.last().normal().multiplyBackward(flipXNormal);
+//        matrixStack.last().normal().mul(flipXNormal);
+    }
 
     // todo: find a better, shaders friendly way to do this
     public static void renderEntities(RenderLivingEvent.Pre<? super LivingEntity, ?> event)
@@ -231,16 +241,16 @@ public class RenderHelper extends RenderType
         }
     }
 
-    private static void renderDragonStaff(MatrixStack ms, float partialTicks)
+    private static void renderBook(MatrixStack ms, float partialTicks)
     {
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity player = mc.player;
-        ItemStack stack = ModUtils.getHeldStack(player, WRItems.DRAGON_STAFF.get());
+        ItemStack stack = ModUtils.getHeldStack(player, WRItems.TARRAGON_TOME.get());
         if (stack == null) return;
-        TameableDragonEntity dragon = DragonStaffItem.getBoundDragon(mc.level, stack);
+        TameableDragonEntity dragon = TarragonTomeItem.getBoundDragon(mc.level, stack);
+        TarragonTomeItem.getAction(stack).render(dragon, ms, partialTicks);
         if (dragon == null) return;
 
-        DragonStaffItem.getAction(stack).render(dragon, ms, partialTicks);
         if (WRConfig.RENDER_OUTLINES.get())
         {
             renderEntityOutline(dragon, 0, 255, 255, (int) (MathHelper.cos((dragon.tickCount + partialTicks) * 0.2f) * 35 + 45));

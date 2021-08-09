@@ -1,44 +1,19 @@
 package com.github.wolfshotz.wyrmroost.util.animation;
 
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.client.renderer.model.Model;
 
-import javax.annotation.Nullable;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-public class Animation<T extends IAnimatable, M extends Model>
+public class Animation
 {
     private final int duration;
-    private final BiConsumer<T, Integer> logic;
-    private final Consumer<M> animLogic;
 
-    private Animation(int duration, @Nullable BiConsumer<T, Integer> logic, Consumer<M> animLogic)
+    public Animation(int duration)
     {
-        //@formatter:off
         this.duration = duration;
-        this.logic = logic == null? (t, i) -> {} : logic;
-        this.animLogic = animLogic;
-        //@formatter:on
     }
 
-    public static <T extends IAnimatable, M extends Model> Animation<T, M> create(int duration, @Nullable BiConsumer<T, Integer> logic, Supplier<Consumer<M>> animLogic)
-    {
-        return new Animation<>(duration, logic, ModUtils.isClient() && animLogic != null? animLogic.get() : null);
-    }
+    public void tick(IAnimatable animatable, int time) {}
 
-    @SuppressWarnings("unchecked")
-    public void tick(IAnimatable animatable, int time)
-    {
-        logic.accept((T) animatable, time);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void animate(Model model)
-    {
-        animLogic.accept((M) model);
-    }
+    public void animate(Model model) {}
 
     public int getDuration()
     {

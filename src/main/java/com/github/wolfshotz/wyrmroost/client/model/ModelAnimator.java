@@ -38,7 +38,7 @@ public class ModelAnimator
         boxPosCache.clear();
         prevPosCache.clear();
 
-        Animation<?, ?> current = entity.getAnimation();
+        Animation current = entity.getAnimation();
         if (current != IAnimatable.NO_ANIMATION) current.animate(model);
     }
 
@@ -76,7 +76,7 @@ public class ModelAnimator
 
     private BoxPosCache getPosCache(WRModelRenderer box)
     {
-        return boxPosCache.computeIfAbsent(box, (b) -> new BoxPosCache());
+        return boxPosCache.computeIfAbsent(box, b -> new BoxPosCache());
     }
 
     public void endKeyframe()

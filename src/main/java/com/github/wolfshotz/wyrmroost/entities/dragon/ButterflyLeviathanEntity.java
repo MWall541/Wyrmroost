@@ -3,13 +3,13 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.ButterflyLeviathanModel;
-import com.github.wolfshotz.wyrmroost.client.screen.DragonStaffScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -18,6 +18,7 @@ import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.controller.MovementController;
@@ -62,10 +63,10 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     public static final EntitySerializer<ButterflyLeviathanEntity> SERIALIZER = TameableDragonEntity.SERIALIZER.concat(b -> b
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant));
 
-    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> LIGHTNING_ANIMATION = Animation.create(64, ButterflyLeviathanEntity::lightningAnimation, () -> ButterflyLeviathanModel::roarAnimation);
-    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> CONDUIT_ANIMATION = Animation.create(59, ButterflyLeviathanEntity::conduitAnimation, () -> ButterflyLeviathanModel::conduitAnimation);
-    public static final Animation<ButterflyLeviathanEntity, ButterflyLeviathanModel> BITE_ANIMATION = Animation.create(17, ButterflyLeviathanEntity::biteAnimation, () -> ButterflyLeviathanModel::biteAnimation);
-    public static final Animation<?, ?>[] ANIMATIONS = new Animation[]{LIGHTNING_ANIMATION, CONDUIT_ANIMATION, BITE_ANIMATION};
+    public static final Animation LIGHTNING_ANIMATION = LogicalAnimation.create(64, ButterflyLeviathanEntity::lightningAnimation, () -> ButterflyLeviathanModel::roarAnimation);
+    public static final Animation CONDUIT_ANIMATION = LogicalAnimation.create(59, ButterflyLeviathanEntity::conduitAnimation, () -> ButterflyLeviathanModel::conduitAnimation);
+    public static final Animation BITE_ANIMATION = LogicalAnimation.create(17, ButterflyLeviathanEntity::biteAnimation, () -> ButterflyLeviathanModel::biteAnimation);
+    public static final Animation[] ANIMATIONS = new Animation[]{LIGHTNING_ANIMATION, CONDUIT_ANIMATION, BITE_ANIMATION};
 
     public static final DataParameter<Boolean> HAS_CONDUIT = EntityDataManager.defineId(ButterflyLeviathanEntity.class, DataSerializers.BOOLEAN);
     public static final int CONDUIT_SLOT = 0;
@@ -348,7 +349,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
             if (key == KeybindHandler.MOUNT_KEY) setAnimation(BITE_ANIMATION);
             else if (key == KeybindHandler.ALT_MOUNT_KEY && !level.isClientSide && canZap())
             {
-                EntityRayTraceResult ertr = Mafs.rayTraceEntities(getControllingPlayer(), 40, e -> e instanceof LivingEntity && e != this);
+                EntityRayTraceResult ertr = Mafs.clipEntities(getControllingPlayer(), 40, e -> e instanceof LivingEntity && e != this);
                 if (ertr != null && wantsToAttack((LivingEntity) ertr.getEntity(), getOwner()))
                 {
                     setTarget((LivingEntity) ertr.getEntity());
@@ -376,8 +377,8 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     {
         super.applyStaffInfo(container);
 
-        container.slot(DragonStaffContainer.accessorySlot(getInventory(), CONDUIT_SLOT, 0, -65, -75, DragonStaffScreen.CONDUIT_UV).only(Items.CONDUIT).limit(1))
-                .addStaffActions(StaffActions.TARGET);
+        container.slot(DragonStaffContainer.accessorySlot(getInventory(), CONDUIT_SLOT, 0, -65, -75, DragonControlScreen.CONDUIT_UV).only(Items.CONDUIT).limit(1))
+                .addStaffActions(BookActions.TARGET);
     }
 
     @Override
@@ -528,7 +529,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation<?, ?>[] getAnimations()
+    public Animation[] getAnimations()
     {
         return ANIMATIONS;
     }

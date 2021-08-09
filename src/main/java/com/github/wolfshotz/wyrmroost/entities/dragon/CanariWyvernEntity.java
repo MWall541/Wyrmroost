@@ -4,12 +4,13 @@ import com.github.wolfshotz.wyrmroost.client.model.entity.CanariWyvernModel;
 import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
-import com.github.wolfshotz.wyrmroost.items.staff.action.StaffActions;
+import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
+import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -39,10 +40,10 @@ public class CanariWyvernEntity extends TameableDragonEntity
             .track(EntitySerializer.INT, "Variant", TameableDragonEntity::getVariant, TameableDragonEntity::setVariant)
             .track(EntitySerializer.BOOL, "Sleeping", TameableDragonEntity::isSleeping, TameableDragonEntity::setSleeping));
 
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> FLAP_WINGS_ANIMATION = Animation.create(22, CanariWyvernEntity::flapWingsAnimation, () -> CanariWyvernModel::flapWingsAnimation);
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> PREEN_ANIMATION = Animation.create(36, null, () -> CanariWyvernModel::preenAnimation);
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> THREAT_ANIMATION = Animation.create(40, CanariWyvernEntity::threatAnimation, () -> CanariWyvernModel::threatAnimation);
-    public static final Animation<CanariWyvernEntity, CanariWyvernModel> ATTACK_ANIMATION = Animation.create(15, null, () -> CanariWyvernModel::attackAnimation);
+    public static final Animation FLAP_WINGS_ANIMATION = LogicalAnimation.create(22, CanariWyvernEntity::flapWingsAnimation, () -> CanariWyvernModel::flapWingsAnimation);
+    public static final Animation PREEN_ANIMATION = LogicalAnimation.create(36, null, () -> CanariWyvernModel::preenAnimation);
+    public static final Animation THREAT_ANIMATION = LogicalAnimation.create(40, CanariWyvernEntity::threatAnimation, () -> CanariWyvernModel::threatAnimation);
+    public static final Animation ATTACK_ANIMATION = LogicalAnimation.create(15, null, () -> CanariWyvernModel::attackAnimation);
 
     public PlayerEntity pissedOffTarget;
 
@@ -177,7 +178,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
     public void applyStaffInfo(DragonStaffContainer container)
     {
         super.applyStaffInfo(container);
-        container.addStaffActions(StaffActions.TARGET);
+        container.addStaffActions(BookActions.TARGET);
     }
 
     @Override
@@ -214,7 +215,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
     }
 
     @Override
-    public Animation<?, ?>[] getAnimations()
+    public Animation[] getAnimations()
     {
         return new Animation[]{NO_ANIMATION, FLAP_WINGS_ANIMATION, PREEN_ANIMATION, THREAT_ANIMATION, ATTACK_ANIMATION};
     }
