@@ -25,7 +25,7 @@ public class HomeBookAction implements BookAction
     @Override
     public void onSelected(TameableDragonEntity dragon, PlayerEntity player, ItemStack stack)
     {
-        if (dragon.getHomePos().isPresent())
+        if (dragon.hasRestriction())
         {
             dragon.clearHome();
             TarragonTomeItem.setAction(BookActions.DEFAULT, player, stack);
@@ -72,7 +72,7 @@ public class HomeBookAction implements BookAction
     @Override
     public String getTranslateKey(@Nullable TameableDragonEntity dragon)
     {
-        if (dragon != null && dragon.getHomePos().isPresent())
+        if (dragon != null && dragon.hasRestriction())
             return TRANSLATE_PATH + "home.remove";
         return TRANSLATE_PATH + "home.set";
     }

@@ -18,6 +18,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
+import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.mojang.datafixers.util.Pair;
@@ -73,14 +74,10 @@ import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Predicate;
 
-import static net.minecraft.entity.ai.attributes.Attributes.FLYING_SPEED;
-import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
+import static net.minecraft.entity.ai.attributes.Attributes.*;
 
 
 /**
@@ -90,10 +87,12 @@ import static net.minecraft.entity.ai.attributes.Attributes.MOVEMENT_SPEED;
 public abstract class TameableDragonEntity extends TameableEntity implements IAnimatable, INamedContainerProvider
 {
     public static final EntitySerializer<TameableDragonEntity> SERIALIZER = EntitySerializer.builder(b -> b
-            .track(EntitySerializer.POS.optional(), "HomePos", TameableDragonEntity::getHomePos, (d, v) -> d.setHomePos(v.orElse(null)))
+            .track(EntitySerializer.POS.optional(), "HomePos", t -> Optional.ofNullable(t.getHomePos()), (d, v) -> d.setHomePos(v.orElse(null)))
             .track(EntitySerializer.INT, "BreedCount", TameableDragonEntity::getBreedCount, TameableDragonEntity::setBreedCount));
 
     public static final byte HEAL_PARTICLES_EVENT_ID = 8;
+    private static final int AGE_UPDATE_INTERVAL = 200;
+    private static final UUID SCALE_MOD_UUID = UUID.fromString("81a0addd-edad-47f1-9aa7-4d76774e055a");
 
     // Common Data Parameters
     public static final DataParameter<Boolean> GENDER = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
@@ -101,7 +100,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> SLEEPING = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.INT);
     public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.ITEM_STACK);
-    public static final DataParameter<Optional<BlockPos>> HOME_POS = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.OPTIONAL_BLOCK_POS); // todo for 1.17: remove optional and make this nullable
+    public static final DataParameter<BlockPos> HOME_POS = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BLOCK_POS); // todo for 1.17: remove optional and make this nullable
+    public static final DataParameter<Integer> AGE = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.INT);
 
     @Deprecated // https://github.com/MinecraftForge/MinecraftForge/issues/7622
     public final LazyOptional<DragonInventory> inventory;
@@ -111,6 +111,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public int breedCount;
     private Animation animation = NO_ANIMATION;
     private int animationTick;
+    private float ageProgress = 1;
 
     public TameableDragonEntity(EntityType<? extends TameableDragonEntity> dragon, World level)
     {
@@ -168,7 +169,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     protected void defineSynchedData()
     {
         super.defineSynchedData();
-        entityData.define(HOME_POS, Optional.empty());
+        entityData.define(HOME_POS, BlockPos.ZERO);
+        entityData.define(AGE, 0);
     }
 
     public boolean hasDataParameter(DataParameter<?> param)
@@ -295,15 +297,17 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public void tick()
     {
         super.tick();
-        updateAnimations();
-    }
 
-    @Override
-    public void aiStep()
-    {
-        super.aiStep();
+        if (level.isClientSide)
+        {
+            doSpecialEffects();
 
-        if (isEffectiveAi())
+            // because age isn't incremented on client, do it ourselves...
+            int age = getAge();
+            if (age < 0) setAge(++age);
+            else if (age > 0) setAge(--age);
+        }
+        else
         {
             // uhh so were falling, we should probably start flying
             boolean flying = shouldFly();
@@ -330,10 +334,10 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             if (target != null && (!target.isAlive() || !canAttack(target) || !wantsToAttack(target, getOwner())))
                 setTarget(null);
         }
-        else
-        {
-            doSpecialEffects();
-        }
+
+        updateAgeProgress();
+        if (age < 0 && tickCount % AGE_UPDATE_INTERVAL == 0) entityData.set(AGE, age);
+        updateAnimations();
     }
 
     @Override
@@ -441,7 +445,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
                 boolean flag = getHealth() < getMaxHealth();
                 if (isBaby())
                 {
-                    if (!level.isClientSide) ageUp((int) ((-getAge() / 20) * 0.1F), true);
+                    ageUp((int) ((-getAge() / 20) * 0.015F), true);
                     flag = true;
                 }
 
@@ -595,6 +599,21 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
                 }
             }
         }
+        else if (key == AGE)
+        {
+            setAge(entityData.get(AGE));
+            updateAgeProgress();
+            refreshDimensions();
+
+            AttributeModifier mod = new AttributeModifier(SCALE_MOD_UUID, "Scale modifier", getScale(), AttributeModifier.Operation.MULTIPLY_BASE);
+            ModifiableAttributeInstance health = getAttribute(MAX_HEALTH);
+            ModifiableAttributeInstance damage = getAttribute(ATTACK_DAMAGE);
+
+            health.removeModifier(mod);
+            health.addTransientModifier(mod);
+            damage.removeModifier(mod);
+            damage.addTransientModifier(mod);
+        }
         else super.onSyncedDataUpdated(key);
 
     }
@@ -675,7 +694,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean canAttack(LivingEntity target)
     {
-        return !isBaby() && !canBeControlledByRider() && super.canAttack(target);
+        return !isHatchling() && !canBeControlledByRider() && super.canAttack(target);
     }
 
     @Override
@@ -727,17 +746,20 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public BlockPos getRestrictCenter()
     {
-        return getHomePos().orElse(BlockPos.ZERO);
+        BlockPos pos = getHomePos();
+        return pos == null? BlockPos.ZERO : pos;
     }
 
-    public Optional<BlockPos> getHomePos()
+    @Nullable
+    public BlockPos getHomePos()
     {
-        return entityData.get(HOME_POS);
+        BlockPos pos = entityData.get(HOME_POS);
+        return pos == BlockPos.ZERO? null : pos;
     }
 
     public void setHomePos(@Nullable BlockPos pos)
     {
-        entityData.set(HOME_POS, Optional.ofNullable(pos));
+        entityData.set(HOME_POS, pos == null? BlockPos.ZERO : pos);
     }
 
     public void clearHome()
@@ -748,7 +770,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean hasRestriction()
     {
-        return getHomePos().filter(i -> i != BlockPos.ZERO).isPresent();
+        return getHomePos() != null;
     }
 
     @Override
@@ -772,8 +794,8 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public boolean isWithinRestriction(BlockPos pos)
     {
-        Optional<BlockPos> home = getHomePos();
-        return home.map(h -> h.distSqr(pos) <= getRestrictRadius()).orElse(true);
+        BlockPos home = getHomePos();
+        return home == null || home.distSqr(pos) <= getRestrictRadius();
     }
 
     public boolean isAtHome()
@@ -828,7 +850,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
                 vec3d1 = vec3d1.yRot(-yRot * (Mafs.PI / 180f));
                 level.addParticle(new ItemParticleData(ParticleTypes.ITEM, stack), mouth.x + Mafs.nextDouble(getRandom()) * (width * 0.2), mouth.y, mouth.z + Mafs.nextDouble(getRandom()) * (width * 0.2), vec3d1.x, vec3d1.y, vec3d1.z);
             }
-            level.playSound(null, getX(), getY(), getZ(), getEatingSound(stack), SoundCategory.NEUTRAL, 1f, 1f + (getRandom().nextFloat() - getRandom().nextFloat()) * 0.4f);
+            ModUtils.playLocalSound(level, new BlockPos(mouth), getEatingSound(stack), 1f, 1f);
         }
         else
         {
@@ -885,6 +907,77 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
+    public int getAge()
+    {
+        return age;
+    }
+
+    @Override
+    public void ageUp(int age, boolean forced)
+    {
+        super.ageUp(age, forced);
+        entityData.set(AGE, this.age);
+    }
+
+    @Override
+    public void setAge(int age)
+    {
+        super.setAge(age);
+    }
+
+    @Override
+    public float getScale()
+    {
+        return 0.5f + (0.5f * ageProgress());
+    }
+
+    public float getAgeScale(float baby)
+    {
+        return baby + ((1 - baby) * ageProgress());
+    }
+
+    private void updateAgeProgress()
+    {
+        // no reason to recalculate this value several times per tick/frame...
+        float growth = DragonEggProperties.get(getType()).getGrowthTime();
+        float min = Math.min(getAge(), 0);
+        ageProgress = 1 - (min / growth);
+    }
+
+    public float ageProgress()
+    {
+        return ageProgress;
+    }
+
+    public boolean isJuvenile()
+    {
+        return ageProgress() > 0.5f;
+    }
+
+    public boolean isAdult()
+    {
+        return ageProgress() >= 1f;
+    }
+
+    public boolean isHatchling()
+    {
+        return ageProgress() < 0.5f;
+    }
+
+    @Override
+    public boolean isBaby()
+    {
+        return !isAdult();
+    }
+
+    @Override
+    public void setBaby(boolean baby)
+    {
+        setAge(baby? DragonEggProperties.get(getType()).getGrowthTime() : 0);
+        entityData.set(AGE, this.age);
+    }
+
+    @Override
     public boolean canMate(AnimalEntity mate)
     {
         if (!(mate instanceof TameableDragonEntity)) return false;
@@ -892,12 +985,6 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         if (isInSittingPose() || dragon.isInSittingPose()) return false;
         if (hasDataParameter(GENDER) && isMale() == dragon.isMale()) return false;
         return super.canMate(mate);
-    }
-
-    @Override
-    public void setBaby(boolean baby)
-    {
-        setAge(baby? DragonEggProperties.get(getType()).getGrowthTime() : 0);
     }
 
     @Nullable
@@ -1053,6 +1140,18 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
+    protected float getSoundVolume()
+    {
+        return getScale();
+    }
+
+    @Override
+    protected float getVoicePitch()
+    {
+        return ((random.nextFloat() - random.nextFloat()) * 0.2f + 1) * (2 - ageProgress());
+    }
+
+    @Override
     public void playAmbientSound()
     {
         if (!isSleeping()) super.playAmbientSound();
@@ -1165,7 +1264,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
 
     public boolean canFly()
     {
-        return !isBaby() && !isUnderWater() && !isLeashed();
+        return isJuvenile() && !isUnderWater() && !isLeashed();
     }
 
     /**
@@ -1253,7 +1352,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         EntitySize size = getType().getDimensions().scale(getScale());
         if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.5f);

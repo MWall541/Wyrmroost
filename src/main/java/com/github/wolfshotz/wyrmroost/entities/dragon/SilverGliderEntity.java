@@ -187,7 +187,7 @@ public class SilverGliderEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         EntitySize size = getType().getDimensions().scale(getScale());
         if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.87f);

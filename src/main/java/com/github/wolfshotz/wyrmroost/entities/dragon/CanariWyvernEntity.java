@@ -126,7 +126,7 @@ public class CanariWyvernEntity extends TameableDragonEntity
         ActionResultType result = super.playerInteraction(player, hand, stack);
         if (result.consumesAction()) return result;
 
-        if (!isTame() && isFood(stack) && (isPissed() || player.isCreative() || isBaby()))
+        if (!isTame() && isFood(stack) && (isPissed() || player.isCreative() || isHatchling()))
         {
             eat(stack);
             if (!level.isClientSide) tame(getRandom().nextDouble() < 0.2, player);

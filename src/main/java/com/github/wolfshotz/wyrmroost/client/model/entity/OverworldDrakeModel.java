@@ -387,7 +387,7 @@ public class OverworldDrakeModel extends DragonEntityModel<OverworldDrakeEntity>
         }
 
         int index = 0;
-        if (drake.isBaby()) index |= 1;
+        if (drake.isHatchling()) index |= 1;
         else if (!drake.isMale()) index |= 2;
         if (drake.getVariant() == -1) index |= 4;
         else if (drake.getVariant() == 1) index |= 8;

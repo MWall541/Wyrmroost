@@ -118,7 +118,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
             @Override
             public boolean canUse()
             {
-                return !isTame() && isBaby() && super.canUse();
+                return !isTame() && isHatchling() && super.canUse();
             }
         });
 
@@ -128,7 +128,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
             @Override
             public boolean canUse()
             {
-                return !isBaby() && super.canUse();
+                return isJuvenile() && super.canUse();
             }
         });
     }
@@ -139,7 +139,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
         if (stack.getItem() == Items.SHEARS && isShearable(stack, level, blockPosition()))
             return ActionResultType.sidedSuccess(level.isClientSide);
 
-        if (!isTame() && isBaby() && isFood(stack))
+        if (!isTame() && isHatchling() && isFood(stack))
         {
             if (!level.isClientSide && temptGoal.isRunning())
             {
@@ -198,7 +198,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
                 }
             }
 
-            if (!isBaby() && level.isDay() && !isSleeping() && isIdling() && getRandom().nextDouble() < 0.002)
+            if (isAdult() && level.isDay() && !isSleeping() && isIdling() && getRandom().nextDouble() < 0.002)
             {
                 napTime = 1200;
                 setSleeping(true);
@@ -245,7 +245,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         EntitySize size = getType().getDimensions().scale(getScale());
         if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.7f);
@@ -310,7 +310,7 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     @Override
     protected boolean canAddPassenger(Entity entityIn)
     {
-        return isTame() && !isBaby();
+        return isTame() && isAdult();
     }
 
     @Nullable

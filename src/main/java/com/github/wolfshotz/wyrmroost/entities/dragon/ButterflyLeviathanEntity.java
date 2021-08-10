@@ -244,7 +244,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (((beached && lightningCooldown > 60 && level.isRainingAt(blockPosition())) || player.isCreative() || isBaby()) && isFood(stack))
+        if (((beached && lightningCooldown > 60 && level.isRainingAt(blockPosition())) || player.isCreative() || isHatchling()) && isFood(stack))
         {
             eat(stack);
             if (!level.isClientSide) tame(getRandom().nextDouble() < 0.2, player);
@@ -481,13 +481,19 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     }
 
     @Override
+    public float getScale()
+    {
+        return getAgeScale(0.225f);
+    }
+
+    @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize size)
     {
         return size.height * (beached? 1f : 0.6f);
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         return getType().getDimensions().scale(getScale());
     }
@@ -495,7 +501,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     @Override // 2 passengers
     protected boolean canAddPassenger(Entity passenger)
     {
-        return isTame() && !isBaby() && getPassengers().size() < 2;
+        return isTame() && isJuvenile() && getPassengers().size() < 2;
     }
 
     @Override

@@ -208,7 +208,7 @@ public class RenderHelper extends RenderType
         return Minecraft.getInstance().renderBuffers().bufferSource();
     }
 
-    private static final Matrix4f flipX = Matrix4f.createScaleMatrix(-1,1,1);
+    private static final Matrix4f flipX = Matrix4f.createScaleMatrix(-1, 1, 1);
     private static final Matrix3f flipXNormal = new Matrix3f(flipX);
 
     public static void mirrorX(MatrixStack matrixStack)
@@ -257,6 +257,9 @@ public class RenderHelper extends RenderType
             LivingEntity target = dragon.getTarget();
             if (target != null) renderEntityOutline(target, 255, 0, 0, 100);
         }
-        dragon.getHomePos().ifPresent(pos -> RenderHelper.drawBlockPos(ms, pos, 4, 0xff0000ff, false));
+        BlockPos pos = dragon.getHomePos();
+        if (pos != null)
+            RenderHelper.drawBlockPos(ms, pos, 4, 0xff0000ff, false);
     }
 }
+

@@ -204,7 +204,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     @Override
     public ActionResultType playerInteraction(PlayerEntity player, Hand hand, ItemStack stack)
     {
-        if (stack.getItem() == Items.SADDLE && !isSaddled() && !isBaby())
+        if (stack.getItem() == Items.SADDLE && !isSaddled() && isJuvenile())
         {
             if (!level.isClientSide)
             {
@@ -214,7 +214,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
             return ActionResultType.sidedSuccess(level.isClientSide);
         }
 
-        if (!isTame() && isBaby() && isFood(stack))
+        if (!isTame() && isHatchling() && isFood(stack))
         {
             tame(getRandom().nextInt(10) == 0, player);
             stack.shrink(1);
@@ -280,7 +280,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         EntitySize size = getType().getDimensions().scale(getScale());
         if (isInSittingPose() || isSleeping()) size = size.scale(1, 0.75f);
@@ -343,7 +343,7 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     @Override
     protected boolean canAddPassenger(Entity entity)
     {
-        return isSaddled() && !isBaby() && (isOwnedBy((LivingEntity) entity) || (!isTame() && boardingCooldown <= 0));
+        return isSaddled() && isJuvenile() && (isOwnedBy((LivingEntity) entity) || (!isTame() && boardingCooldown <= 0));
     }
 
     @Override

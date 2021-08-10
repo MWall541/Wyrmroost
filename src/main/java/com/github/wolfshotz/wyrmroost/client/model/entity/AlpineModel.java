@@ -688,8 +688,8 @@ public class AlpineModel extends DragonEntityModel<AlpineEntity>
     @Override
     public void setupAnim(AlpineEntity entity, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
     {
-        animator().tick(entity, this, partialTicks);
         reset();
+        animator().tick(entity, this, partialTicks);
 
         this.bob = bob;
 

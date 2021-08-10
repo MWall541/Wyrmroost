@@ -230,7 +230,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         return getType().getDimensions().scale(getScale());
     }

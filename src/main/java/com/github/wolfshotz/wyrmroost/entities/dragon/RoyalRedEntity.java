@@ -146,7 +146,7 @@ public class RoyalRedEntity extends TameableDragonEntity
 
             if (breathTimer.get() == 1) level.addFreshEntity(new FireBreathEntity(this));
 
-            if (noAnimations() && !isKnockedOut() && !isSleeping() && !isBreathingFire() && !isBaby() && getRandom().nextDouble() < 0.0004)
+            if (noAnimations() && !isKnockedOut() && !isSleeping() && !isBreathingFire() && isJuvenile() && getRandom().nextDouble() < 0.0004)
                 AnimationPacket.send(this, ROAR_ANIMATION);
 
             if (isKnockedOut() && --knockOutTime <= 0) setKnockedOut(false);
@@ -158,7 +158,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     {
         if (!isTame() && isFood(stack))
         {
-            if (isBaby() || player.isCreative())
+            if (isHatchling() || player.isCreative())
             {
                 eat(stack);
                 tame(getRandom().nextDouble() < 0.1, player);
@@ -190,7 +190,7 @@ public class RoyalRedEntity extends TameableDragonEntity
 
     public void roarAnimation(int time)
     {
-        if (time == 0) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 4, 1, true);
+        if (time == 0) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 3, 1, true);
         ((LessShitLookController) getLookControl()).restore();
         for (LivingEntity entity : getEntitiesNearby(10, this::isAlliedTo))
             entity.addEffect(new EffectInstance(Effects.DAMAGE_BOOST, 60));
@@ -251,7 +251,12 @@ public class RoyalRedEntity extends TameableDragonEntity
             else meleeAttack();
         }
 
-        if (key == KeybindHandler.ALT_MOUNT_KEY) setBreathingFire(pressed);
+        if (key == KeybindHandler.ALT_MOUNT_KEY && canBreatheFire()) setBreathingFire(pressed);
+    }
+
+    public boolean canBreatheFire()
+    {
+        return ageProgress() > 0.75f;
     }
 
     public void meleeAttack()
@@ -270,7 +275,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         EntitySize size = getType().getDimensions().scale(getScale());
         float heightFactor = isSleeping()? 0.5f : isInSittingPose()? 0.9f : 1;
@@ -322,7 +327,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     protected boolean canAddPassenger(Entity passenger)
     {
-        return isTame() && !isBaby() && !isKnockedOut() && getPassengers().size() < 3;
+        return isTame() && isJuvenile() && !isKnockedOut() && getPassengers().size() < 3;
     }
 
     @Override
@@ -334,7 +339,9 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     public float getScale()
     {
-        return isBaby()? 0.3f : isMale()? 0.8f : 1f;
+        float i = getAgeScale(0.3f);
+        if (isMale()) i *= 0.8f;
+        return i;
     }
 
     @Override
@@ -452,7 +459,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     protected float getSoundVolume()
     {
-        return 2.35f;
+        return 1.5f * getScale();
     }
 
     @Override
@@ -526,7 +533,7 @@ public class RoyalRedEntity extends TameableDragonEntity
             getLookControl().setLookAt(target, 90, 90);
 
             double headAngle = Math.abs(MathHelper.wrapDegrees(degrees - yHeadRot));
-            boolean shouldBreatheFire = !isAtHome() && (distFromTarget > 100 || target.getY() - getY() > 3 || isFlying()) && headAngle < 30;
+            boolean shouldBreatheFire = !isAtHome() && (distFromTarget > 100 || target.getY() - getY() > 3 || isFlying()) && headAngle < 30 && canBreatheFire();
             if (isBreathingFire != shouldBreatheFire) setBreathingFire(isBreathingFire = shouldBreatheFire);
 
             if (getRandom().nextDouble() < 0.001 || distFromTarget > 900) setFlying(true);

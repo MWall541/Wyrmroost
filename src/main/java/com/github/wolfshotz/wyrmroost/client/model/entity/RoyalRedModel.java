@@ -700,7 +700,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     @Override
     public ResourceLocation getTexture(RoyalRedEntity entity)
     {
-        int index = entity.isBaby()? 2 : entity.isMale()? 0 : 1;
+        int index = entity.isHatchling()? 2 : entity.isMale()? 0 : 1;
         if (entity.getVariant() == -1) index |= 4;
         if (TEXTURES[index] == null)
         {
@@ -715,7 +715,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     public ResourceLocation getEyesTexture(RoyalRedEntity entity)
     {
         int index = 8;
-        if (entity.isBaby()) index |= 2;
+        if (entity.isHatchling()) index |= 2;
         if (entity.getVariant() == -1) index |= 4;
         if (TEXTURES[index] == null)
         {
@@ -768,6 +768,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
         float walkDelta = (1 - flightDelta) * limbSwingAmount;
 
         reset();
+        animator().tick(entity, this, partialTicks);
 
         faceTarget(yaw, pitch, 0.75f, neck);
 
@@ -816,8 +817,6 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
             rotateFrom0(right, left.defaultRotationX, -left.defaultRotationY, -left.defaultRotationZ);
             right.copyRotationsTo(left);
         }
-
-        animator().tick(entity, this, partialTicks);
     }
 
     public void roarAnimation()

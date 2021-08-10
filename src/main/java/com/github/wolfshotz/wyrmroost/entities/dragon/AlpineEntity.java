@@ -97,7 +97,7 @@ public class AlpineEntity extends TameableDragonEntity
         sleepTimer.add(isSleeping()? 0.1f : -0.1f);
         flightTimer.add(isFlying()? 0.1f : -0.05f);
 
-        if (!level.isClientSide && noAnimations() && !isSleeping() && !isBaby() && getRandom().nextDouble() < 0.0005)
+        if (!level.isClientSide && noAnimations() && !isSleeping() && isJuvenile() && getRandom().nextDouble() < 0.0005)
             AnimationPacket.send(this, ROAR_ANIMATION);
     }
 
@@ -156,7 +156,7 @@ public class AlpineEntity extends TameableDragonEntity
     }
 
     @Override
-    public EntitySize getDimensions(Pose poseIn)
+    public EntitySize getDimensions(Pose pose)
     {
         EntitySize size = getType().getDimensions().scale(getScale());
         return size.scale(1, isInSittingPose() || isSleeping()? 0.7f : 1);
@@ -210,7 +210,7 @@ public class AlpineEntity extends TameableDragonEntity
     @Override
     protected boolean canAddPassenger(Entity entity)
     {
-        return !isBaby() && entity instanceof LivingEntity && isOwnedBy((LivingEntity) entity);
+        return isJuvenile() && entity instanceof LivingEntity && isOwnedBy((LivingEntity) entity);
     }
 
     @Override

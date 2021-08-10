@@ -374,7 +374,7 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     @Override
     public ResourceLocation getTexture(DragonFruitDrakeEntity entity)
     {
-        if (entity.isBaby()) return CHILD;
+        if (entity.isHatchling()) return CHILD;
 
         int texture = entity.isMale()? 0 : 2;
         if (entity.getVariant() == -1) texture += 1;
