@@ -6,10 +6,7 @@ import com.github.wolfshotz.wyrmroost.client.render.TarragonTomeRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
-import com.github.wolfshotz.wyrmroost.registry.WRBlockEntities;
-import com.github.wolfshotz.wyrmroost.registry.WRIO;
-import com.github.wolfshotz.wyrmroost.registry.WRKeybind;
-import com.github.wolfshotz.wyrmroost.registry.WRParticles;
+import com.github.wolfshotz.wyrmroost.registry.*;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.WoodType;
 import net.minecraft.client.Minecraft;
@@ -25,6 +22,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IRendersAsItem;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeableArmorItem;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.RayTraceContext;
@@ -100,8 +98,10 @@ public class ClientEvents
     private static void itemColors(ColorHandlerEvent.Item evt)
     {
         ItemColors handler = evt.getItemColors();
-        IItemColor func = (stack, tintIndex) -> ((LazySpawnEggItem<?>) stack.getItem()).getColor(tintIndex);
-        for (LazySpawnEggItem<?> e : LazySpawnEggItem.SPAWN_EGGS) handler.register(func, e);
+        IItemColor eggFunc = (stack, tintIndex) -> ((LazySpawnEggItem<?>) stack.getItem()).getColor(tintIndex);
+        for (LazySpawnEggItem<?> e : LazySpawnEggItem.SPAWN_EGGS) handler.register(eggFunc, e);
+
+        handler.register((stack, index) -> ((DyeableArmorItem) stack.getItem()).getColor(stack), WRItems.LEATHER_DRAGON_ARMOR.get());
     }
 
     private static void bakeModels(ModelRegistryEvent event)

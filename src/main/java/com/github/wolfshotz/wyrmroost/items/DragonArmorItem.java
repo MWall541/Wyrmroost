@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -49,8 +50,16 @@ public class DragonArmorItem extends Item
     {
         Item item = stack.getItem();
         if (!(item instanceof DragonArmorItem))
-            throw new AssertionError("uhh this isn't a an armor: " + item.getRegistryName().toString());
+            throw new AssertionError("uhh this isn't an armor: " + item.getRegistryName());
 
         return ((DragonArmorItem) item).getDmgReduction() + EnchantmentHelper.getEnchantments(stack).getOrDefault(Enchantments.ALL_DAMAGE_PROTECTION, 0);
+    }
+
+    public static class Dyeable extends DragonArmorItem implements IDyeableArmorItem
+    {
+        public Dyeable(int dmgReduction, int enchantability)
+        {
+            super(dmgReduction, enchantability);
+        }
     }
 }

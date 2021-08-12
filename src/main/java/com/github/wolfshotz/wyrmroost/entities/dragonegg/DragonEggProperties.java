@@ -51,9 +51,9 @@ public class DragonEggProperties
     /**
      * Get the conditions the egg has to be under to continue hatching
      */
-    public Predicate<DragonEggEntity> getConditions()
+    public boolean testConditions(DragonEggEntity egg)
     {
-        return conditions;
+        return conditions.test(egg);
     }
 
     /**
@@ -72,8 +72,6 @@ public class DragonEggProperties
      */
     public static DragonEggProperties get(EntityType<?> type)
     {
-        if (!(type instanceof WREntities))
-            throw new IllegalArgumentException(String.format("This thing (%s) couldn't possibly shit out eggs. How did this happen?", type.getRegistryName()));
         DragonEggProperties props = ((WREntities<?>) type).eggProperties;
         if (props == null)
             throw new NullPointerException(String.format("Missing Egg Properties for entity: %s, Wolf did a hickup go scream at him", type.getRegistryName()));

@@ -253,6 +253,12 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     }
 
     @Override
+    public float getScale()
+    {
+        return getAgeScale(0.35f);
+    }
+
+    @Override
     public double getPassengersRidingOffset()
     {
         return super.getPassengersRidingOffset() + 0.1d;

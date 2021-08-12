@@ -399,7 +399,6 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     {
         super.scale(entity, ms, partialTicks);
         ms.scale(1.5f, 1.5f, 1.5f);
-        ms.translate(0, -0.5f, 0);
     }
 
     @Override

@@ -106,7 +106,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
 
         if (tickCount % UPDATE_CONDITIONS_INTERVAL == 0)
         {
-            boolean flag = getProperties().getConditions().test(this);
+            boolean flag = getProperties().testConditions(this);
             if (flag != correctConditions) this.correctConditions = flag;
         }
 
@@ -278,7 +278,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     @Override
     public EntitySize getDimensions(Pose poseIn)
     {
-        return getProperties().getDimensions();
+        return getDimensions();
     }
 
     public EntitySize getDimensions()

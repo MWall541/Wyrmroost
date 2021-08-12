@@ -217,15 +217,6 @@ class RecipeData extends RecipeProvider
         smelt(WRItems.RAW_BEHEMOTH_MEAT.get(), WRItems.COOKED_BEHEMOTH_MEAT.get(), 0.5f, 250, true);
         shaped(WRItems.JEWELLED_APPLE.get()).define('A', Items.APPLE).define('G', WRItems.Tags.GEMS_GEODE).pattern(" G ").pattern("GAG").pattern(" G ").unlockedBy("has_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
 
-        // Dragon armor
-        shaped(WRItems.DRAGON_ARMOR_IRON.get()).define('X', Items.IRON_INGOT).define('#', Items.IRON_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_iron", has(Items.IRON_INGOT)).save(consumer);
-        shaped(WRItems.DRAGON_ARMOR_GOLD.get()).define('X', Items.GOLD_INGOT).define('#', Items.GOLD_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_gold", has(Items.GOLD_INGOT)).save(consumer);
-        shaped(WRItems.DRAGON_ARMOR_DIAMOND.get()).define('X', Items.DIAMOND).define('#', Items.DIAMOND_BLOCK).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_diamond", has(Items.DIAMOND)).save(consumer);
-        shaped(WRItems.DRAGON_ARMOR_PLATINUM.get()).define('X', WRItems.PLATINUM_INGOT.get()).define('#', WRBlocks.PLATINUM_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_platinum", has(WRItems.PLATINUM_INGOT.get())).save(consumer);
-        shaped(WRItems.DRAGON_ARMOR_BLUE_GEODE.get()).define('X', WRItems.BLUE_GEODE.get()).define('#', WRBlocks.BLUE_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_blue_geode", has(WRItems.BLUE_GEODE.get())).save(consumer);
-        shaped(WRItems.DRAGON_ARMOR_RED_GEODE.get()).define('X', WRItems.RED_GEODE.get()).define('#', WRBlocks.RED_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_red_geode", has(WRItems.RED_GEODE.get())).save(consumer);
-        shaped(WRItems.DRAGON_ARMOR_PURPLE_GEODE.get()).define('X', WRItems.PURPLE_GEODE.get()).define('#', WRBlocks.PURPLE_GEODE_BLOCK.get()).pattern("X# ").pattern("X #").pattern(" X ").unlockedBy("has_purple_geode", has(WRItems.PURPLE_GEODE.get())).save(consumer);
-
         woodGroup(WRBlocks.OSERI_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.OSERI_LOGS));
         shaped(WRBlocks.OSERI_WOOD.getLog(), 4).define('#', WRBlocks.OSERI_WOOD.getWood()).pattern("##").pattern("##").unlockedBy("has_wood", has(WRBlocks.OSERI_WOOD.getLog())); // here because normal logs are unobtainable
         woodGroup(WRBlocks.SAL_WOOD, WRBlocks.Tags.getItemTagFor(WRBlocks.Tags.SAL_LOGS));

@@ -163,6 +163,12 @@ public class AlpineEntity extends TameableDragonEntity
     }
 
     @Override
+    public float getScale()
+    {
+        return getAgeScale(0.2f);
+    }
+
+    @Override
     public void recievePassengerKeybind(int key, int mods, boolean pressed)
     {
         if (key == KeybindHandler.ALT_MOUNT_KEY && pressed && noAnimations() && isFlying())

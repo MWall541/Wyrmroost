@@ -45,7 +45,6 @@ public class WRItems
     public static final RegistryObject<Item> LDWYRM = register("desert_wyrm", LDWyrmItem::new);
     public static final RegistryObject<Item> DRAGON_EGG = register("dragon_egg", DragonEggItem::new);
     public static final RegistryObject<Item> SOUL_CRYSTAL = register("soul_crystal", SoulCrystalItem::new);
-//    public static final RegistryObject<Item> DRAGON_STAFF = register("dragon_staff", DragonStaffItem::new);
     public static final RegistryObject<Item> TARRAGON_TOME = register("tarragon_tome", TarragonTomeItem::new);
     public static final RegistryObject<Item> COIN_DRAGON = register("coin_dragon", CoinDragonItem::new);
     public static final RegistryObject<Item> TRUMPET = register("trumpet", TrumpetItem::new);
@@ -115,13 +114,12 @@ public class WRItems
     public static final RegistryObject<Item> COOKED_MINUTUS = register("cooked_desertwyrm", food(10, 1f).meat());
     public static final RegistryObject<Item> JEWELLED_APPLE = register("jewelled_apple", food(8, 0.9f).alwaysEat().effect(() -> new EffectInstance(Effects.GLOWING, 800), 1f).effect(() -> new EffectInstance(Effects.REGENERATION, 100, 2), 1f).effect(() -> new EffectInstance(Effects.DAMAGE_RESISTANCE, 800), 1f).effect(() -> new EffectInstance(Effects.ABSORPTION, 6000, 2), 1f).effect(() -> new EffectInstance(Effects.NIGHT_VISION, 800), 1f));
 
-    public static final RegistryObject<Item> DRAGON_ARMOR_IRON = register("iron_dragon_armor", () -> new DragonArmorItem(4, ArmorMaterial.IRON.getEnchantmentValue()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_GOLD = register("gold_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterial.GOLD.getEnchantmentValue()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_DIAMOND = register("diamond_dragon_armor", () -> new DragonArmorItem(8, ArmorMaterial.DIAMOND.getEnchantmentValue()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PLATINUM = register("platinum_dragon_armor", () -> new DragonArmorItem(7, ArmorMaterials.PLATINUM.getEnchantmentValue()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_BLUE_GEODE = register("blue_geode_dragon_armor", () -> new DragonArmorItem(10, ArmorMaterials.BLUE_GEODE.getEnchantmentValue()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_RED_GEODE = register("red_geode_dragon_armor", () -> new DragonArmorItem(13, ArmorMaterials.RED_GEODE.getEnchantmentValue()));
-    public static final RegistryObject<Item> DRAGON_ARMOR_PURPLE_GEODE = register("purple_geode_dragon_armor", () -> new DragonArmorItem(18, ArmorMaterials.PURPLE_GEODE.getEnchantmentValue()));
+    public static final RegistryObject<Item> LEATHER_DRAGON_ARMOR = register("leather_dragon_armor", () -> new DragonArmorItem.Dyeable(2, ArmorMaterial.LEATHER.getEnchantmentValue()));
+    public static final RegistryObject<Item> IRON_DRAGON_ARMOR = register("iron_dragon_armor", () -> new DragonArmorItem(4, ArmorMaterial.IRON.getEnchantmentValue()));
+    public static final RegistryObject<Item> PALTINUM_DRAGON_ARMOR = register("platinum_dragon_armor", () -> new DragonArmorItem(5, ArmorMaterials.PLATINUM.getEnchantmentValue()));
+    public static final RegistryObject<Item> GOLD_DRAGON_ARMOR = register("gold_dragon_armor", () -> new DragonArmorItem(6, ArmorMaterial.GOLD.getEnchantmentValue()));
+    public static final RegistryObject<Item> DIAMOND_DRAGON_ARMOR = register("diamond_dragon_armor", () -> new DragonArmorItem(8, ArmorMaterial.DIAMOND.getEnchantmentValue()));
+    public static final RegistryObject<Item> NETHERITE_DRAGON_ARMOR = register("netherite_dragon_armor", () -> new DragonArmorItem(10, ArmorMaterial.DIAMOND.getEnchantmentValue()));
 
     static RegistryObject<Item> register(String name, Supplier<Item> item)
     {
@@ -137,7 +135,6 @@ public class WRItems
     {
         return REGISTRY.register(name, () -> new Item(builder()));
     }
-
 
     public static Item.Properties builder()
     {

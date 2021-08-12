@@ -288,6 +288,12 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
+    public float getScale()
+    {
+        return getAgeScale(0.275f);
+    }
+
+    @Override
     public void applyStaffInfo(DragonStaffContainer container)
     {
         super.applyStaffInfo(container);

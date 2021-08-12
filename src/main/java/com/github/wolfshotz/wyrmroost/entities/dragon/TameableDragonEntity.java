@@ -606,16 +606,13 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             refreshDimensions();
 
             AttributeModifier mod = new AttributeModifier(SCALE_MOD_UUID, "Scale modifier", getScale(), AttributeModifier.Operation.MULTIPLY_BASE);
-            ModifiableAttributeInstance health = getAttribute(MAX_HEALTH);
-            ModifiableAttributeInstance damage = getAttribute(ATTACK_DAMAGE);
-
-            health.removeModifier(mod);
-            health.addTransientModifier(mod);
-            damage.removeModifier(mod);
-            damage.addTransientModifier(mod);
+            for (ModifiableAttributeInstance att : new ModifiableAttributeInstance[]{getAttribute(MAX_HEALTH), getAttribute(ATTACK_DAMAGE)})
+            {
+                att.removeModifier(mod);
+                att.addTransientModifier(mod);
+            }
         }
         else super.onSyncedDataUpdated(key);
-
     }
 
     @Override
@@ -855,7 +852,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         else
         {
             final float max = getMaxHealth();
-            if (getHealth() < max) heal(Math.max((int) max / 5, 4)); // Base healing on max health, minumum 2 hearts.
+            if (getHealth() < max) heal(Math.max((int) max / 5, 4)); // Base healing on max health, minimum 2 hearts.
 
             Item item = stack.getItem();
             if (item.isEdible())

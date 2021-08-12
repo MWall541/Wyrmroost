@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "wyrmroost:item/red_geode_dragon_armor"
+    "layer0": "wyrmroost:item/leather_dragon_armor"
   }
 }

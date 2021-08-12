@@ -66,7 +66,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement()
             .spawnBiomes(OverworldDrakeEntity::setSpawnBiomes)
             .spawnEgg(0x788716, 0x3E623E)
-            .dragonEgg(new DragonEggProperties(0.65f, 1f, 18000))
+            .dragonEgg(new DragonEggProperties(0.35f, 0.6f, 18000))
             .renderModel(() -> OverworldDrakeModel::new)
             .build();
 
@@ -76,7 +76,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, SilverGliderEntity::getSpawnPlacement)
             .spawnBiomes(SilverGliderEntity::setSpawnBiomes)
             .spawnEgg(0xC8C8C8, 0xC4C4C4)
-            .dragonEgg(new DragonEggProperties(0.4f, 0.65f, 12000))
+            .dragonEgg(new DragonEggProperties(0.2f, 0.35f, 12000))
             .renderModel(() -> SilverGliderModel::new)
             .build();
 
@@ -86,7 +86,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement()
             .spawnBiomes(RoostStalkerEntity::setSpawnBiomes)
             .spawnEgg(0x52100D, 0x959595)
-            .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000))
+            .dragonEgg(new DragonEggProperties(0.175f, 0.3f, 6000))
             .renderModel(() -> RoostStalkerModel::new)
             .build();
 
@@ -96,7 +96,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.OCEAN_FLOOR_WG, ButterflyLeviathanEntity::getSpawnPlacement)
             .spawnBiomes(ButterflyLeviathanEntity::setSpawnBiomes)
             .spawnEgg(0x17283C, 0x7A6F5A)
-            .dragonEgg(new DragonEggProperties(0.75f, 1.25f, 40000).setConditions(Entity::isInWater))
+            .dragonEgg(new DragonEggProperties(0.5f, 0.8f, 40000).setConditions(Entity::isInWater))
             .renderModel(() -> ButterflyLeviathanModel::new)
             .build();
 
@@ -106,7 +106,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, DragonFruitDrakeEntity::getSpawnPlacement)
             .spawnBiomes(DragonFruitDrakeEntity::setSpawnBiomes)
             .spawnEgg(0xe05c9a, 0x788716)
-            .dragonEgg(new DragonEggProperties(0.45f, 0.75f, 9600))
+            .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 9600))
             .renderModel(() -> DragonFruitDrakeModel::new)
             .build();
 
@@ -116,7 +116,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, TameableDragonEntity::canFlyerSpawn)
             .spawnBiomes(CanariWyvernEntity::setSpawnBiomes)
             .spawnEgg(0x1D1F28, 0x492E0E)
-            .dragonEgg(new DragonEggProperties(0.25f, 0.35f, 6000).setConditions(c -> c.level.getBlockState(c.blockPosition().below()).getBlock() == Blocks.JUNGLE_LEAVES))
+            .dragonEgg(new DragonEggProperties(0.175f, 0.275f, 6000).setConditions(c -> c.level.getBlockState(c.blockPosition().below()).getBlock() == Blocks.JUNGLE_LEAVES))
             .renderModel(() -> CanariWyvernModel::new)
             .build();
 
@@ -126,7 +126,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, TameableDragonEntity::canFlyerSpawn)
             .spawnBiomes(RoyalRedEntity::setSpawnBiomes)
             .spawnEgg(0x8a0900, 0x0)
-            .dragonEgg(new DragonEggProperties(0.6f, 1f, 72000))
+            .dragonEgg(new DragonEggProperties(0.45f, 0.7f, 72000))
             .renderModel(() -> RoyalRedModel::new)
             .fireImmune()
             .build();
@@ -143,7 +143,7 @@ public class WREntities<E extends Entity> extends EntityType<E>
             .spawnPlacement(NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING, TameableDragonEntity::canFlyerSpawn)
             .spawnBiomes(AlpineEntity::setSpawnBiomes)
             .spawnEgg(0xe3f8ff, 0xa8e9ff)
-            .dragonEgg(new DragonEggProperties(1, 1, 12000))
+            .dragonEgg(new DragonEggProperties(0.35f, 0.55f, 12000))
             .renderModel(() -> AlpineModel::new)
             .build();
 

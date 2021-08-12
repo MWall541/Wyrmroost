@@ -55,7 +55,7 @@ public class TagData
 
             tag(Tags.Items.EGGS).add(WRItems.DRAGON_EGG.get());
 
-            tag(ItemTags.PIGLIN_LOVED).add(WRItems.DRAGON_ARMOR_GOLD.get());
+            tag(ItemTags.PIGLIN_LOVED).add(WRItems.GOLD_DRAGON_ARMOR.get());
 
             tag(Tags.Items.GEMS).addTag(WRItems.Tags.GEMS_GEODE);
             tag(WRItems.Tags.GEMS_GEODE).add(WRItems.BLUE_GEODE.get(), WRItems.RED_GEODE.get(), WRItems.PURPLE_GEODE.get());
