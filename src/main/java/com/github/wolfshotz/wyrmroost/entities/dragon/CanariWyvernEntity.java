@@ -6,12 +6,14 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
-import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.controller.BodyController;
@@ -24,9 +26,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -241,12 +240,6 @@ public class CanariWyvernEntity extends TameableDragonEntity
     public boolean isPissed()
     {
         return pissedOffTarget != null;
-    }
-
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
-    {
-        if (event.getCategory() == Biome.Category.SWAMP)
-            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.CANARI_WYVERN.get(), 9, 2, 5));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()

@@ -8,7 +8,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowO
 import com.github.wolfshotz.wyrmroost.entities.dragonegg.DragonEggProperties;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
-import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
@@ -33,14 +32,11 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -373,12 +369,6 @@ public class DragonFruitDrakeEntity extends TameableDragonEntity implements IFor
     {
         BlockState state = level.getBlockState(pos.below());
         return state.is(Blocks.GRASS_BLOCK) || (state.is(BlockTags.LEAVES) && pos.getY() < level.getSeaLevel() + 13) && level.getRawBrightness(pos, 0) > 8;
-    }
-
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
-    {
-        if (event.getCategory() == Biome.Category.JUNGLE)
-            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.DRAGON_FRUIT_DRAKE.get(), 23, 4, 5));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()

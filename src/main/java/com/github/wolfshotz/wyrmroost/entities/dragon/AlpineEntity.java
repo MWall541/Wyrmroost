@@ -28,10 +28,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 
@@ -256,12 +253,6 @@ public class AlpineEntity extends TameableDragonEntity
     public Animation[] getAnimations()
     {
         return ANIMATIONS;
-    }
-
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
-    {
-        if (event.getCategory() == Biome.Category.EXTREME_HILLS)
-            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ALPINE.get(), 2, 1, 4));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()

@@ -44,6 +44,11 @@ minecraft {
             }
         }
 
+        client2 {
+            parent(null, "client")
+            args '--username', 'Dev2'
+        }
+
         server {
             workingDirectory project.file('run')
 
@@ -61,7 +66,7 @@ minecraft {
 
             mods {
                 wyrmroost {
-                    sources sourceSets.main, sourceSets.test
+                    sources sourceSets.main
                 }
             }
         }

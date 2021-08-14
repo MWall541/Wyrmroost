@@ -24,6 +24,7 @@ import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -162,7 +163,6 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         super.readAdditionalSaveData(nbt);
         if (inventory.isPresent()) inventory.orElse(null).deserializeNBT(nbt.getCompound("Inv"));
         ((EntitySerializer<TameableDragonEntity>) getSerializer()).deserialize(this, nbt);
-        applyAttributes();
     }
 
     @Override
@@ -606,13 +606,19 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             refreshDimensions();
 
             AttributeModifier mod = new AttributeModifier(SCALE_MOD_UUID, "Scale modifier", getScale(), AttributeModifier.Operation.MULTIPLY_BASE);
-            for (ModifiableAttributeInstance att : new ModifiableAttributeInstance[]{getAttribute(MAX_HEALTH), getAttribute(ATTACK_DAMAGE)})
+            for (Attribute att : getScaledAttributes())
             {
-                att.removeModifier(mod);
-                att.addTransientModifier(mod);
+                ModifiableAttributeInstance instance = getAttribute(att);
+                instance.removeModifier(mod);
+                instance.addTransientModifier(mod);
             }
         }
         else super.onSyncedDataUpdated(key);
+    }
+
+    public Attribute[] getScaledAttributes()
+    {
+        return new Attribute[]{MAX_HEALTH, ATTACK_DAMAGE};
     }
 
     @Override
@@ -917,12 +923,6 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    public void setAge(int age)
-    {
-        super.setAge(age);
-    }
-
-    @Override
     public float getScale()
     {
         return 0.5f + (0.5f * ageProgress());
@@ -1174,18 +1174,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         if (hasDataParameter(GENDER)) setGender(getRandom().nextBoolean());
         if (hasDataParameter(VARIANT)) setVariant(determineVariant());
 
-        applyAttributes();
-        setHealth(getMaxHealth());
-
         return super.finalizeSpawn(level, difficulty, reason, data, dataTag);
-    }
-
-    /**
-     * This method is called after the entity is read, and after the entity initally spawns.
-     * It is intended to modify the base attributes based on the entity after it has been fully constructed (and guaranteed to spawn)
-     */
-    public void applyAttributes()
-    {
     }
 
     public int determineVariant()
@@ -1310,6 +1299,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         clearHome();
     }
 
+    @Deprecated
     public boolean isImmuneToArrows()
     {
         return false;

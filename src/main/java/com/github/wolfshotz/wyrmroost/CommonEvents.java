@@ -26,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -62,6 +63,7 @@ public class CommonEvents
         forgeBus.addListener(VillagerHelper::addWandererTrades);
         forgeBus.addListener(CommonEvents::beforeCropGrowth);
         forgeBus.addListener(EventPriority.HIGH, WRWorld::onBiomeLoad);
+        forgeBus.addListener(CommonEvents::addResourceManagers);
     }
 
     // ====================
@@ -105,6 +107,11 @@ public class CommonEvents
         {
             if (mapping.key.equals(Wyrmroost.id("dragon_staff"))) mapping.remap(WRItems.TARRAGON_TOME.get());
         }
+    }
+
+    public static void addResourceManagers(AddReloadListenerEvent event)
+    {
+//        event.addListener(MobSpawnManager.INSTANCE);
     }
 
     // =====================

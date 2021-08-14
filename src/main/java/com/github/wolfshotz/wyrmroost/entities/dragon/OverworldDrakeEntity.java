@@ -14,7 +14,6 @@ import com.github.wolfshotz.wyrmroost.items.DragonArmorItem;
 import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
-import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
@@ -43,11 +42,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.server.ServerChunkProvider;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -436,13 +433,6 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     public Animation[] getAnimations()
     {
         return ANIMATIONS;
-    }
-
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
-    {
-        Biome.Category category = event.getCategory();
-        if (category == Biome.Category.SAVANNA || category == Biome.Category.PLAINS)
-            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.OVERWORLD_DRAKE.get(), 8, 1, 3));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()

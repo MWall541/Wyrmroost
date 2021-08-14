@@ -12,7 +12,6 @@ import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
 import com.github.wolfshotz.wyrmroost.network.packets.AnimationPacket;
 import com.github.wolfshotz.wyrmroost.network.packets.KeybindHandler;
-import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
@@ -45,12 +44,9 @@ import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -559,12 +555,6 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
         entity.moveTo(position);
         entity.setVisualOnly(effectOnly);
         level.addFreshEntity(entity);
-    }
-
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
-    {
-        if (event.getCategory() == Biome.Category.OCEAN)
-            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.BUTTERFLY_LEVIATHAN.get(), 1, 1, 1));
     }
 
     public static <F extends MobEntity> boolean getSpawnPlacement(EntityType<F> fEntityType, IServerWorld level, SpawnReason reason, BlockPos pos, Random random)

@@ -22,6 +22,7 @@ import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.animation.Animation;
 import com.github.wolfshotz.wyrmroost.util.animation.LogicalAnimation;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -37,10 +38,8 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -217,7 +216,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     @Override
     public void die(DamageSource cause)
     {
-        if (isTame() || isKnockedOut() || cause.getMsgId().equals(DamageSource.OUT_OF_WORLD.getMsgId()))
+        if (isTame() || isKnockedOut() || cause.getEntity() == null)
             super.die(cause);
         else // knockout RR's instead of killing them
         {
@@ -418,12 +417,6 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    public boolean shouldRender(double x, double y, double z)
-    {
-        return true;
-    }
-
-    @Override
     public boolean shouldSleep()
     {
         return !isKnockedOut() && super.shouldSleep();
@@ -468,37 +461,23 @@ public class RoyalRedEntity extends TameableDragonEntity
         return ANIMATIONS;
     }
 
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
-    {
-        if (event.getCategory() == Biome.Category.EXTREME_HILLS)
-            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.ROYAL_RED.get(), 1, 1, 1));
-    }
-
     @Override
-    @SuppressWarnings("ConstantConditions")
-    public void applyAttributes()
+    public Attribute[] getScaledAttributes()
     {
-        if (!isMale())
-        {
-            // base female attributes
-            getAttribute(MAX_HEALTH).setBaseValue(130);
-            getAttribute(MOVEMENT_SPEED).setBaseValue(0.22);
-            getAttribute(ATTACK_KNOCKBACK).setBaseValue(4);
-            getAttribute(FLYING_SPEED).setBaseValue(0.121);
-        }
+        return ArrayUtils.addAll(super.getScaledAttributes(), ATTACK_KNOCKBACK);
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()
     {
         // base male attributes
         return MobEntity.createMobAttributes()
-                .add(MAX_HEALTH, 120)
-                .add(MOVEMENT_SPEED, 0.2275)
+                .add(MAX_HEALTH, 130)
+                .add(MOVEMENT_SPEED, 0.22)
                 .add(KNOCKBACK_RESISTANCE, 1)
                 .add(FOLLOW_RANGE, 60)
-                .add(ATTACK_KNOCKBACK, 3)
+                .add(ATTACK_KNOCKBACK, 4)
                 .add(ATTACK_DAMAGE, 12)
-                .add(FLYING_SPEED, 0.125)
+                .add(FLYING_SPEED, 0.121)
                 .add(WREntities.Attributes.PROJECTILE_DAMAGE.get(), 4);
     }
 

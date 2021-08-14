@@ -1,0 +1,14 @@
+[
+  {
+    "weight": 30,
+    "min_count": 2,
+    "max_count": 6,
+    "biome_category": "ocean"
+  },
+  {
+    "weight": 11,
+    "min_count": 1,
+    "max_count": 4,
+    "biome_category": "beach"
+  }
+]

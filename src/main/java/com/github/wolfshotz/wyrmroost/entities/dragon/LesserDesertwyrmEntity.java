@@ -27,6 +27,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -37,7 +38,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
@@ -70,8 +70,8 @@ public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
     protected void registerGoals()
     {
         goalSelector.addGoal(1, new SwimGoal(this));
-        goalSelector.addGoal(2, new AvoidEntityGoal<>(this, LivingEntity.class, 6f, 0.8d, 1.2d, AVOIDING));
-        goalSelector.addGoal(3, new BurrowGoal());
+        goalSelector.addGoal(2, new BurrowGoal());
+        goalSelector.addGoal(3, new AvoidEntityGoal<>(this, LivingEntity.class, 6f, 0.8d, 1.2d, AVOIDING));
         goalSelector.addGoal(4, new WaterAvoidingRandomWalkingGoal(this, 1));
     }
 
@@ -197,33 +197,7 @@ public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer)
     {
-        return true;
-    }
-
-    @Override
-    public void checkDespawn()
-    {
-        if (isPersistenceRequired())
-        {
-            noActionTime = 0;
-            return;
-        }
-
-        switch (ForgeEventFactory.canEntityDespawn(this))
-        {
-            case DENY:
-                noActionTime = 0;
-                return;
-            case ALLOW:
-                remove();
-                return;
-            default:
-                break;
-        }
-
-        Entity player = level.getNearestPlayer(this, 32);
-        if (player == null && (getRandom().nextDouble() < 0.0075 || !level.isDay())) remove();
-        else noActionTime = 0;
+        return !level.isDay();
     }
 
     @Nullable
@@ -245,13 +219,6 @@ public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
     {
         return WRSounds.ENTITY_LDWYRM_IDLE.get();
     }
-
-//    @Nullable
-//    @Override
-//    protected SoundEvent getHurtSound(DamageSource damageSourceIn)
-//    {
-////        return WRSounds.MINUTUS_SCREECH.get();
-//    }
 
     @Override
     protected float getSoundVolume()
@@ -304,7 +271,7 @@ public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
     @Override
     public Animation[] getAnimations()
     {
-        return new Animation[] {NO_ANIMATION, BITE_ANIMATION};
+        return new Animation[] {BITE_ANIMATION};
     }
 
     @Override
@@ -341,7 +308,7 @@ public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
 
         public BurrowGoal()
         {
-            setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP));
+            setFlags(EnumSet.of(Flag.MOVE, Flag.JUMP, Flag.LOOK));
         }
 
         /**
@@ -354,24 +321,27 @@ public class LesserDesertwyrmEntity extends AnimalEntity implements IAnimatable
         }
 
         @Override
+        public boolean canContinueToUse()
+        {
+            return belowIsSand() && (isBurrowed() || burrowTicks > 0);
+        }
+
+        @Override
         public void stop()
         {
             burrowTicks = 30;
+            setBurrowed(false);
         }
 
         @Override
         public void tick()
         {
-            if (--burrowTicks <= 0)
-            {
-                setBurrowed(true);
-                burrowTicks = 30;
-            }
+            if (burrowTicks > 0 && --burrowTicks == 0) setBurrowed(true);
         }
 
         private boolean belowIsSand()
         {
-            return level.getBlockState(blockPosition().below(1)).getMaterial() == Material.SAND;
+            return level.getBlockState(blockPosition().below(1)).is(BlockTags.SAND);
         }
     }
 }

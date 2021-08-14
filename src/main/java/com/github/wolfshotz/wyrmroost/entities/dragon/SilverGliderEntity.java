@@ -6,7 +6,6 @@ import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRAvoidEn
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRFollowOwnerGoal;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.network.packets.SGGlidePacket;
-import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRSounds;
 import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import net.minecraft.block.Block;
@@ -30,10 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
@@ -262,13 +258,6 @@ public class SilverGliderEntity extends TameableDragonEntity
         if (spawnReason == SpawnReason.SPAWNER) return true;
         Block block = level.getBlockState(blockPos.below()).getBlock();
         return block == Blocks.AIR || block == Blocks.SAND && level.getRawBrightness(blockPos, 0) > 8;
-    }
-
-    @Nullable
-    public static void setSpawnBiomes(BiomeLoadingEvent event)
-    {
-        if (event.getCategory() == Biome.Category.OCEAN || event.getCategory() == Biome.Category.BEACH)
-            event.getSpawns().addSpawn(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(WREntities.SILVER_GLIDER.get(), 10, 1, 4));
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()

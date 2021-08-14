@@ -1,15 +1,17 @@
 package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.util.ModUtils;
+import com.github.wolfshotz.wyrmroost.world.MobSpawnManager;
 import com.github.wolfshotz.wyrmroost.world.features.*;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.Dimension;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.*;
 import net.minecraftforge.common.util.Lazy;
@@ -30,18 +32,14 @@ public class WRWorld
 
     public static void onBiomeLoad(BiomeLoadingEvent event)
     {
-        for (EntityType<?> entry : ModUtils.getRegistryEntries(WREntities.REGISTRY))
-        {
-            if (entry instanceof WREntities)
-            {
-                WREntities<?> type = (WREntities<?>) entry;
-                if (type.spawnBiomes != null) type.spawnBiomes.accept(event);
-            }
-        }
+        Biome.Category category = event.getCategory();
+
+        for (Pair<EntityClassification, MobSpawnInfo.Spawners> spawner : MobSpawnManager.INSTANCE.getSpawnList(category, event.getName()))
+            event.getSpawns().addSpawn(spawner.getFirst(), spawner.getSecond());
 
         BiomeGenerationSettingsBuilder settings = event.getGeneration();
 
-        switch (event.getCategory())
+        switch (category)
         {
             case NETHER:
                 settings.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, Features.CONFIGURED_RED_GEODE.get());

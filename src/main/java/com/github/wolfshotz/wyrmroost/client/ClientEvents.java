@@ -22,7 +22,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IRendersAsItem;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeableArmorItem;
+import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.RayTraceContext;
@@ -101,7 +101,7 @@ public class ClientEvents
         IItemColor eggFunc = (stack, tintIndex) -> ((LazySpawnEggItem<?>) stack.getItem()).getColor(tintIndex);
         for (LazySpawnEggItem<?> e : LazySpawnEggItem.SPAWN_EGGS) handler.register(eggFunc, e);
 
-        handler.register((stack, index) -> ((DyeableArmorItem) stack.getItem()).getColor(stack), WRItems.LEATHER_DRAGON_ARMOR.get());
+        handler.register((stack, index) -> ((IDyeableArmorItem) stack.getItem()).getColor(stack), WRItems.LEATHER_DRAGON_ARMOR.get());
     }
 
     private static void bakeModels(ModelRegistryEvent event)

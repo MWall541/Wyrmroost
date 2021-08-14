@@ -1,0 +1,8 @@
+[
+  {
+    "weight": 25,
+    "min_count": 3,
+    "max_count": 6,
+    "biome_category": "jungle"
+  }
+]
