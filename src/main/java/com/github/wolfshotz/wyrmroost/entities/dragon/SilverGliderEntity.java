@@ -11,6 +11,7 @@ import com.github.wolfshotz.wyrmroost.util.LerpedFloat;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -258,6 +259,12 @@ public class SilverGliderEntity extends TameableDragonEntity
         if (spawnReason == SpawnReason.SPAWNER) return true;
         Block block = level.getBlockState(blockPos.below()).getBlock();
         return block == Blocks.AIR || block == Blocks.SAND && level.getRawBrightness(blockPos, 0) > 8;
+    }
+
+    @Override
+    public Attribute[] getScaledAttributes()
+    {
+        return new Attribute[] {MAX_HEALTH};
     }
 
     public static AttributeModifierMap.MutableAttribute getAttributeMap()

@@ -3,9 +3,7 @@ package com.github.wolfshotz.wyrmroost.registry;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.world.MobSpawnManager;
 import com.github.wolfshotz.wyrmroost.world.features.*;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityClassification;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
@@ -32,10 +30,16 @@ public class WRWorld
 
     public static void onBiomeLoad(BiomeLoadingEvent event)
     {
+        MobSpawnManager.load();
+
         Biome.Category category = event.getCategory();
 
-        for (Pair<EntityClassification, MobSpawnInfo.Spawners> spawner : MobSpawnManager.INSTANCE.getSpawnList(category, event.getName()))
-            event.getSpawns().addSpawn(spawner.getFirst(), spawner.getSecond());
+        for (MobSpawnManager.Record record : MobSpawnManager.getSpawnList(category, event.getName()))
+            event.getSpawns().addSpawn(record.classification, new MobSpawnInfo.Spawners(
+                    record.entity,
+                    record.weight,
+                    record.minCount,
+                    record.maxCount));
 
         BiomeGenerationSettingsBuilder settings = event.getGeneration();
 

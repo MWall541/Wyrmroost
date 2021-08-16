@@ -12,6 +12,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
+import com.github.wolfshotz.wyrmroost.world.MobSpawnManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -26,7 +27,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -37,6 +37,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
@@ -63,7 +64,7 @@ public class CommonEvents
         forgeBus.addListener(VillagerHelper::addWandererTrades);
         forgeBus.addListener(CommonEvents::beforeCropGrowth);
         forgeBus.addListener(EventPriority.HIGH, WRWorld::onBiomeLoad);
-        forgeBus.addListener(CommonEvents::addResourceManagers);
+        forgeBus.addListener(((FMLServerAboutToStartEvent e) -> MobSpawnManager.close()));
     }
 
     // ====================
@@ -107,11 +108,6 @@ public class CommonEvents
         {
             if (mapping.key.equals(Wyrmroost.id("dragon_staff"))) mapping.remap(WRItems.TARRAGON_TOME.get());
         }
-    }
-
-    public static void addResourceManagers(AddReloadListenerEvent event)
-    {
-//        event.addListener(MobSpawnManager.INSTANCE);
     }
 
     // =====================

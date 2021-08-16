@@ -1,140 +1,181 @@
 package com.github.wolfshotz.wyrmroost.world;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.registry.WREntities;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonWriter;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.profiler.EmptyProfiler;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.FallbackResourceManager;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.ResourcePackType;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.packs.ModFileResourcePack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.loading.FMLPaths;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class MobSpawnManager extends JsonReloadListener
+import static net.minecraft.world.biome.Biome.Category.*;
+
+public class MobSpawnManager
 {
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final MobSpawnManager INSTANCE = new MobSpawnManager();
+    public static final Path CONFIG_FILE_PATH = FMLPaths.GAMEDIR.get().resolve("config/" + Wyrmroost.MOD_ID + "-mob-spawns.json");
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Multimap<Biome.Category, Record> BY_CATEGORY = ArrayListMultimap.create();
+    private static final Multimap<ResourceLocation, Record> BY_BIOME = ArrayListMultimap.create();
+    private static boolean initalized;
 
-    private final Map<Biome.Category, List<Pair<EntityClassification, MobSpawnInfo.Spawners>>> categoryLookup = new HashMap<>();
-    private final Map<ResourceLocation, List<Pair<EntityClassification, MobSpawnInfo.Spawners>>> biomeLookup = new HashMap<>();
-    private boolean initialized = false;
-
-    public MobSpawnManager()
+    public static Collection<Record> getSpawnList(Biome.Category category, ResourceLocation biome)
     {
-        super(GSON, "mob_spawns");
+        Collection<Record> record;
+        if ((record = BY_CATEGORY.get(category)) != null)
+            return record.stream()
+                    .filter(d -> d.biomeBlacklist.map(b -> b.contains(biome)).orElse(true))
+                    .collect(Collectors.toList());
+        if ((record = BY_BIOME.get(biome)) != null)
+            return record;
+        return Collections.emptyList();
     }
 
-    private void runStupidAndDumbHackySolutionToBypassMojangsBullShit()
+    public static void load()
     {
-        FallbackResourceManager resources = new FallbackResourceManager(ResourcePackType.SERVER_DATA, Wyrmroost.MOD_ID);
-        resources.add(new ModFileResourcePack(ModList.get().getModFileById(Wyrmroost.MOD_ID).getFile())); // todo: figure out a way to expose this to all datapacks
-        Map<ResourceLocation, JsonElement> entries = prepare(resources, EmptyProfiler.INSTANCE);
-        apply(entries, resources, EmptyProfiler.INSTANCE);
-    }
+        if (initalized) return;
 
-    @Override
-    protected void apply(Map<ResourceLocation, JsonElement> entries, IResourceManager manager, IProfiler profiler)
-    {
-        for (Map.Entry<ResourceLocation, JsonElement> entry : entries.entrySet())
+        initalized = true;
+        Wyrmroost.LOG.info("Loading Biome mob spawn entries...");
+        try
         {
-            EntityType<?> entity = ForgeRegistries.ENTITIES.getValue(entry.getKey());
-            if (entity == null)
+            Path p = CONFIG_FILE_PATH;
+            JsonElement json;
+            if (!Files.exists(p))
             {
-                Wyrmroost.LOG.warn("Unknown entity type: {} for MobSpawnInfo, ignoring.", entry.getKey());
-                continue;
+                Files.createFile(p);
+                json = Record.LIST_CODEC
+                        .encodeStart(JsonOps.INSTANCE, defaultList())
+                        .getOrThrow(false, Wyrmroost.LOG::error);
+                JsonWriter writer = new JsonWriter(Files.newBufferedWriter(p));
+                writer.jsonValue(GSON.toJson(json));
+                writer.close();
+            }
+            else
+            {
+                BufferedReader reader = Files.newBufferedReader(p);
+                json = JSONUtils.fromJson(GSON, reader, JsonElement.class);
+                reader.close();
             }
 
-            Optional<List<Data>> result = Data.LIST_CODEC
-                    .decode(JsonOps.INSTANCE, entry.getValue())
-                    .map(Pair::getFirst)
-                    .resultOrPartial(Wyrmroost.LOG::error);
-            if (!result.isPresent()) continue;
-
-            for (Data data : result.get())
+            if (json == null)
             {
-                boolean flag = false;
-                Pair<EntityClassification, MobSpawnInfo.Spawners> spawner = Pair.of(data.classification, new MobSpawnInfo.Spawners(entity, data.weight, data.minCount, data.maxCount));
-                if (data.category.isPresent())
-                {
-                    categoryLookup.computeIfAbsent(data.category.get(), $ -> new ArrayList<>()).add(spawner);
-                    flag = true;
-                }
-
-                if (data.biomes.isPresent())
-                {
-                    for (ResourceLocation id : data.biomes.get())
-                    {
-                        biomeLookup.computeIfAbsent(id, $ -> new ArrayList<>()).add(spawner);
-                        flag = true;
-                    }
-                }
-
-                if (!flag)
-                    Wyrmroost.LOG.warn("Mob Spawn data defined for {} with no specified category or biomes!", entity);
+                Wyrmroost.LOG.error("Could not load Wyrmroost mob spawn data as it is null or empty.");
+                return;
             }
 
+            parse(json);
+            Wyrmroost.LOG.info("Biome mob spawn entries successfully deserialized.");
+        }
+        catch (Exception e)
+        {
+            Wyrmroost.LOG.error("Could not load Wyrmroost mob spawn data. Something went horrifically wrong...", e);
         }
     }
 
-    public List<Pair<EntityClassification, MobSpawnInfo.Spawners>> getSpawnList(Biome.Category category, ResourceLocation biome)
+    public static void close()
     {
-        if (!initialized)
-        {
-            runStupidAndDumbHackySolutionToBypassMojangsBullShit();
-            initialized = true;
-        }
-
-        List<Pair<EntityClassification, MobSpawnInfo.Spawners>> spawners = categoryLookup.get(category);
-        if (spawners == null)
-        {
-            if ((spawners = biomeLookup.get(biome)) == null) return Collections.emptyList();
-        }
-        else biomeLookup.remove(biome);
-        return spawners;
+        initalized = false;
+        BY_CATEGORY.clear();
+        BY_BIOME.clear();
     }
 
-    public static class Data
+    private static void parse(JsonElement json)
     {
-        private static final Codec<Data> CODEC = RecordCodecBuilder.create(o -> o.group(
+        List<Record> result = Record.LIST_CODEC
+                .decode(JsonOps.INSTANCE, json)
+                .map(Pair::getFirst)
+                .getOrThrow(false, Wyrmroost.LOG::error);
+
+        for (Record record : result)
+        {
+            record.category.ifPresent(category -> BY_CATEGORY.put(category, record));
+            record.biomes.ifPresent(l -> l.forEach(id -> BY_BIOME.put(id, record)));
+        }
+    }
+
+    private static List<Record> defaultList()
+    {
+        ImmutableList.Builder<Record> l = ImmutableList.builder();
+        l.add(
+                rec(WREntities.LESSER_DESERTWYRM.get(), 3, 1, 3, DESERT, EntityClassification.AMBIENT),
+                rec(WREntities.ROOSTSTALKER.get(), 6, 2, 5, PLAINS),
+                rec(WREntities.ROOSTSTALKER.get(), 7, 1, 4, FOREST),
+                rec(WREntities.OVERWORLD_DRAKE.get(), 5, 1, 3, PLAINS),
+                rec(WREntities.OVERWORLD_DRAKE.get(), 4, 1, 5, SAVANNA),
+                rec(WREntities.SILVER_GLIDER.get(), 20, 2, 6, OCEAN),
+                rec(WREntities.SILVER_GLIDER.get(), 10, 1, 4, BEACH),
+                rec(WREntities.DRAGON_FRUIT_DRAKE.get(), 25, 3, 6, JUNGLE));
+        return l.build();
+    }
+
+    private static Record rec(EntityType<?> entity, int weight, int minCount, int maxCount, Biome.Category category)
+    {
+        return rec(entity, weight, minCount, maxCount, category, EntityClassification.CREATURE);
+    }
+
+    private static Record rec(EntityType<?> entity, int weight, int minCount, int maxCount, Biome.Category category, EntityClassification classification)
+    {
+        return new Record(entity, Optional.of(category), Optional.empty(), Optional.empty(), classification, weight, minCount, maxCount);
+    }
+
+    public static class Record
+    {
+        private static final Codec<Record> CODEC = RecordCodecBuilder.create(o -> o.group(
+                Registry.ENTITY_TYPE.fieldOf("entity_type").forGetter(e -> e.entity),
                 Biome.Category.CODEC.optionalFieldOf("biome_category").forGetter(e -> e.category),
                 ResourceLocation.CODEC.listOf().optionalFieldOf("biomes").forGetter(e -> e.biomes),
+                ResourceLocation.CODEC.listOf().optionalFieldOf("biome_blacklist").forGetter(e -> e.biomeBlacklist),
                 EntityClassification.CODEC.optionalFieldOf("classification").xmap(p -> p.orElse(EntityClassification.CREATURE), Optional::ofNullable).forGetter(e -> e.classification),
                 Codec.INT.fieldOf("weight").forGetter(e -> e.weight),
                 Codec.INT.fieldOf("min_count").forGetter(e -> e.minCount),
                 Codec.INT.fieldOf("max_count").forGetter(e -> e.maxCount)
-        ).apply(o, Data::new));
-        public static final Codec<List<Data>> LIST_CODEC = CODEC.listOf();
+        ).apply(o, Record::new));
+        public static final Codec<List<Record>> LIST_CODEC = CODEC.listOf();
 
+        public final EntityType<?> entity;
         public final Optional<Biome.Category> category;
-        private final Optional<List<ResourceLocation>> biomes;
+        public final Optional<List<ResourceLocation>> biomes;
+        public final Optional<List<ResourceLocation>> biomeBlacklist;
         public final EntityClassification classification;
         public final int weight;
         public final int minCount;
         public final int maxCount;
 
-        public Data(Optional<Biome.Category> category, Optional<List<ResourceLocation>> biomes, EntityClassification classification, int weight, int minCount, int maxCount)
+        public Record(EntityType<?> entity, Optional<Biome.Category> category, Optional<List<ResourceLocation>> biomes, Optional<List<ResourceLocation>> biomeBlacklist, EntityClassification classification, int weight, int minCount, int maxCount)
         {
+            this.entity = entity;
             this.category = category;
             this.biomes = biomes;
+            this.biomeBlacklist = biomeBlacklist;
             this.classification = classification;
             this.weight = weight;
             this.minCount = minCount;
             this.maxCount = maxCount;
+
+            if (!category.isPresent() && !biomes.isPresent())
+                throw new IllegalArgumentException("Must have defined a biome category OR a list of biomes. Both is empty...");
         }
     }
 }

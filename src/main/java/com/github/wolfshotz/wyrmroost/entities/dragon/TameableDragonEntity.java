@@ -605,12 +605,16 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             updateAgeProgress();
             refreshDimensions();
 
-            AttributeModifier mod = new AttributeModifier(SCALE_MOD_UUID, "Scale modifier", getScale(), AttributeModifier.Operation.MULTIPLY_BASE);
-            for (Attribute att : getScaledAttributes())
+            float scale = getScale();
+            if (scale >= 1)
             {
-                ModifiableAttributeInstance instance = getAttribute(att);
-                instance.removeModifier(mod);
-                instance.addTransientModifier(mod);
+                AttributeModifier mod = new AttributeModifier(SCALE_MOD_UUID, "Scale modifier", scale, AttributeModifier.Operation.MULTIPLY_BASE);
+                for (Attribute att : getScaledAttributes())
+                {
+                    ModifiableAttributeInstance instance = getAttribute(att);
+                    instance.removeModifier(mod);
+                    instance.addTransientModifier(mod);
+                }
             }
         }
         else super.onSyncedDataUpdated(key);
