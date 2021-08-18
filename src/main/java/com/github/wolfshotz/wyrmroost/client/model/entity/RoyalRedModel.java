@@ -477,7 +477,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
         this.crownHornR1.addBox(-3.0F, -0.5F, -0.5F, 3.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(crownHornR1, 0.0F, 0.18203784630933073F, -0.18203784630933073F);
         this.body1 = new WRModelRenderer(this, 0, 0);
-        this.body1.setPos(0.0F, 11.0F, -4.0F);
+        this.body1.setPos(0, 1.7f, -2.5f);
         this.body1.addBox(-3.0F, -3.0F, -3.5F, 6.0F, 6.0F, 7.0F, 0.0F, 0.0F, 0.0F);
         this.setRotateAngle(body1, -0.0781907508222411F, 0.0F, 0.0F);
         this.wingR1 = new WRModelRenderer(this, 0, 46);
@@ -567,7 +567,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
         this.leg2L.addBox(-1.5F, 0.0F, 0.0F, 3.0F, 5.0F, 3.0F, -0.1F, 0.0F, 0.0F);
         this.setRotateAngle(leg2L, 0.500734971718237F, 0.0F, 0.0F);
         this.body2 = new WRModelRenderer(this, 27, 0);
-        this.body2.setPos(0.0F, -1.7F, 2.5F);
+        this.body2.setPos(0, 9.3f, -1.5f);
         this.body2.addBox(-3.0F, -1.0F, 0.0F, 6.0F, 6.0F, 7.0F, 0.1F, 0.1F, 0.0F);
         this.setRotateAngle(body2, 0.0781907508222411F, 0.0F, 0.0F);
         this.tailspikeL1 = new WRModelRenderer(this, 0, 15);
@@ -679,7 +679,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
         this.palmR.addChild(this.claw2R);
         this.palmL_1.addChild(this.fingerL1part1);
         this.leg1L.addChild(this.leg2L);
-        this.body1.addChild(this.body2);
+        this.body2.addChild(this.body1);
         this.tail8.addChild(this.tailspikeL1);
 
         this.tails = new WRModelRenderer[] {tail1, tail2, tail3, tail4, tail5, tail6, tail7, tail8};
@@ -743,7 +743,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     @Override
     public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int light, int overlay, float red, float green, float blue, float alpha)
     {
-        body1.render(ms, buffer, light, overlay, red, green, blue, alpha);
+        body2.render(ms, buffer, light, overlay, red, green, blue, alpha);
     }
 
     @Override
@@ -756,57 +756,68 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     @Override
     public void setupAnim(RoyalRedEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-//        if (entity.isNoAi())
-//        {
-//            limbSwing = bob * 0.5f;
-//            limbSwingAmount = 0.4466025f;
-//            entity.yHeadRot = 90;
-//            entity.yBodyRot = 0;
-//        }
+        if (entity.isInSittingPose()) limbSwingAmount = 0;
 
-        float flightDelta = entity.flightTimer.get(partialTicks);
-        float walkDelta = (1 - flightDelta) * limbSwingAmount;
+        float flightTimer = entity.flightTimer.get(partialTicks);
+        float walkDelta = (1 - flightTimer) * limbSwingAmount;
+        float flightDelta = flightTimer * limbSwingAmount;
 
         reset();
         animator().tick(entity, this, partialTicks);
 
-        faceTarget(yaw, pitch, 0.75f, neck);
-
         if (flightDelta > 0)
         {
-            flap(wingR1, 0.1f, 1f, false, 0, 0, limbSwing, limbSwingAmount * flightDelta);
+            flap(wingR1, 0.1f, 1f, false, 0, 0, limbSwing, flightDelta);
         }
 
         if (walkDelta > 0)
         {
-            body1.y += bob(0.8f, 1f, false, limbSwing, limbSwingAmount);
-            body1.yRot += -limbSwing(0.4f, -0.1f, 0, 0, limbSwing, limbSwingAmount);
+            body1.y += bob(0.8f, 1f, false, limbSwing, walkDelta);
+            body1.yRot += -limbSwing(0.4f, -0.1f, 0, 0, limbSwing, walkDelta);
 
-            leg1R.xRot += limbSwing(0.4f, 1.5f, 0, 0, limbSwing, limbSwingAmount);
-            leg2R.xRot += limbSwing(0.4f, -1.25f, 0.65f, 0.3f, limbSwing, limbSwingAmount);
-            leg3R.xRot += limbSwing(0.4f, 0.5f, 0.5f, -0.85f, limbSwing, limbSwingAmount);
-            footR.xRot += limbSwing(0.4f, -0.9f, 0.25f, 0.9f, limbSwing, limbSwingAmount);
-            leg1L.xRot += -limbSwing(0.4f, 1.5f, 0, 0, limbSwing, limbSwingAmount);
-            leg2L.xRot += -limbSwing(0.4f, -1.25f, 0.65f, -0.3f, limbSwing, limbSwingAmount);
-            leg3L.xRot += -limbSwing(0.4f, 0.5f, 0.5f, 0.85f, limbSwing, limbSwingAmount);
-            footL.xRot += -limbSwing(0.4f, -0.9f, 0.25f, -0.9f, limbSwing, limbSwingAmount);
+            leg1R.xRot += limbSwing(0.4f, 1.5f, 0, 0, limbSwing, walkDelta);
+            leg2R.xRot += limbSwing(0.4f, -1.25f, 0.65f, 0.3f, limbSwing, walkDelta);
+            leg3R.xRot += limbSwing(0.4f, 0.5f, 0.5f, -0.85f, limbSwing, walkDelta);
+            footR.xRot += limbSwing(0.4f, -0.9f, 0.25f, 0.9f, limbSwing, walkDelta);
+            leg1L.xRot += -limbSwing(0.4f, 1.5f, 0, 0, limbSwing, walkDelta);
+            leg2L.xRot += -limbSwing(0.4f, -1.25f, 0.65f, -0.3f, limbSwing, walkDelta);
+            leg3L.xRot += -limbSwing(0.4f, 0.5f, 0.5f, 0.85f, limbSwing, walkDelta);
+            footL.xRot += -limbSwing(0.4f, -0.9f, 0.25f, -0.9f, limbSwing, walkDelta);
 
-            float rightToes = limbSwing(0.4f, -0.6f, 0.25f, 0.6f, limbSwing, limbSwingAmount);
-            float leftToes = -limbSwing(0.4f, -0.6f, 0.25f, -0.6f, limbSwing, limbSwingAmount);
+            float rightToes = limbSwing(0.4f, -0.6f, 0.25f, 0.6f, limbSwing, walkDelta);
+            float leftToes = -limbSwing(0.4f, -0.6f, 0.25f, -0.6f, limbSwing, walkDelta);
             for (int i = 0; i < toes[0].length; i++)
             {
                 toes[0][i].xRot = rightToes;
                 toes[1][i].xRot = leftToes;
             }
 
-            wingR1.yRot += limbSwing(0.8f, -0.05f, 0, 0, limbSwing, limbSwingAmount);
-            wingR2.yRot += limbSwing(0.8f, 0.1f, 0, 0, limbSwing, limbSwingAmount);
+            wingR1.yRot += limbSwing(0.8f, -0.05f, 0, 0, limbSwing, walkDelta);
+            wingR2.yRot += limbSwing(0.8f, 0.1f, 0, 0, limbSwing, walkDelta);
 
-            arm1L.xRot = arm1R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, limbSwingAmount);
-            arm2L.xRot = arm2R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, limbSwingAmount);
+            arm1R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, walkDelta);
+            arm2R.xRot += limbSwing(0.8f, -0.1f, 0, 0.1f, limbSwing, walkDelta);
         }
 
-        setTime(flightDelta);
+        float breath = entity.breathTimer.get(partialTicks);
+        if (breath > 0)
+        {
+            jaw.xRot -= 1 * breath;
+            snout.xRot += 1 * breath;
+        }
+
+        sitPositions(entity.sitTimer.get(partialTicks));
+        flightPositions(flightTimer);
+
+        arm1R.copyRotationsTo(arm1L);
+        arm2R.copyRotationsTo(arm2L);
+
+        faceTarget(yaw, pitch, 1f, neck);
+    }
+
+    private void flightPositions(float time)
+    {
+        setTime(time);
         for (int i = 0; i < wings[0].length; i++)
         {
             // from back-front perspective
@@ -817,6 +828,67 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
             rotateFrom0(right, left.defaultRotationX, -left.defaultRotationY, -left.defaultRotationZ);
             right.copyRotationsTo(left);
         }
+
+        if (time == 0) return;
+
+        for (WRModelRenderer part : neck)
+        {
+            part.xRot *= 1 - time;
+        }
+
+        rotate(arm1R, 0, 0, 0.25f);
+        rotate(arm2R, 0.5f, 0, 0);
+
+        rotate(leg1L, 0.65f, 0, 0);
+        rotate(leg2L, 0.35f, 0, 0);
+        rotate(footL, 1f, 0, 0);
+        rotate(leg1R, 0.65f, 0, 0);
+        rotate(leg2R, 0.35f, 0, 0);
+        rotate(footR, 1f, 0, 0);
+    }
+
+    private void sitPositions(float time)
+    {
+        if (time == 0) return;
+
+        setTime(time);
+
+        rotate(body2, -1.05f, 0, 0);
+        move(body2, 0, 6f, 0);
+
+        rotate(neck3, 0.15f, 0, 0);
+        rotate(head, 0.32f, 0, 0);
+
+        rotate(arm1R, 0.1f, -0.3f, 0.25f);
+        rotate(arm2R, 1f, -0.75f, -0.5f);
+
+        rotate(wingR1, 0, -0.6f, 0);
+        rotate(membraneR1, 0, 0.6f, 0);
+        rotate(membraneR2, 0.2f, 0, 0.2f);
+
+        rotate(tail1, 0.85f, 0.2f, 0.5f);
+        rotate(tail2, 0.175f, 0.1f, 0.2f);
+        rotate(tail4, -0.1f, 0.2f, 0.025f);
+        rotate(tail7, -0.1f, 0, 0);
+
+        for (WRModelRenderer tail : tails) rotate(tail, 0, 0.35f, 0);
+
+        rotate(leg1L, -0.5f, -0.15f, -0.3f);
+        rotate(leg2L, 0.75f, 0, 0);
+        rotate(leg3L, -0.55f, 0, 0);
+
+        rotate(leg1R, -0.5f, 0.15f, 0.3f);
+        rotate(leg2R, 0.75f, 0, 0);
+        rotate(leg3R, -0.55f, 0, 0);
+
+        for (int i = 0; i < 3; i++)
+        {
+            rotate(toes[0][i], 0.5f, 0, 0);
+            rotate(toes[1][i], 0.5f, 0, 0);
+        }
+
+        rotate(neck1, 0.1f, 0, 0);
+        rotate(neck2, 0.3f, 0, 0);
     }
 
     public void roarAnimation()
