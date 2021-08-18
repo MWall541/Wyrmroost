@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.items.book.action;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.screen.TarragonTomeScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.book.TarragonTomeItem;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
@@ -28,7 +28,7 @@ public class DefaultBookAction implements BookAction
         boolean client = player.level.isClientSide;
         if (dragon != null)
         {
-            if (!client) DragonStaffContainer.open((ServerPlayerEntity) player, dragon);
+            if (!client) BookContainer.open((ServerPlayerEntity) player, dragon);
         }
         else if ((dragon = clip(player)) != null)
         {

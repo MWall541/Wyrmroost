@@ -5,6 +5,7 @@ import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
+import com.google.common.collect.Sets;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.*;
 import net.minecraft.item.Item;
@@ -39,7 +40,7 @@ class RecipeData extends RecipeProvider
     {
         super.run(cache);
 
-        Set<Item> registered = REGISTERED.stream().map(IItemProvider::asItem).collect(Collectors.toSet());
+        Set<Item> registered = REGISTERED.stream().map(IItemProvider::asItem).collect(Collectors.toCollection(Sets::newIdentityHashSet));
         for (Item item : ModUtils.getRegistryEntries(WRItems.REGISTRY))
         {
             if (!registered.contains(item))

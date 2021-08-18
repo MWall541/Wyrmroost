@@ -5,7 +5,7 @@ import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.OverworldDrakeModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.DynamicSlot;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
@@ -291,19 +291,19 @@ public class OverworldDrakeEntity extends TameableDragonEntity
     }
 
     @Override
-    public void applyStaffInfo(DragonStaffContainer container)
+    public void applyStaffInfo(BookContainer container)
     {
         super.applyStaffInfo(container);
 
         DragonInventory i = getInventory();
-        CollapsibleWidget chestWidget = DragonStaffContainer.collapsibleWidget( 0, 174, 121, 75, CollapsibleWidget.TOP)
+        CollapsibleWidget chestWidget = BookContainer.collapsibleWidget( 0, 174, 121, 75, CollapsibleWidget.TOP)
                 .condition(this::hasChest);
         ModUtils.createContainerSlots(i, 3, 17, 12, 5, 3, DynamicSlot::new, chestWidget::addSlot);
 
-        container.slot(DragonStaffContainer.accessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonControlScreen.ARMOR_UV).only(DragonArmorItem.class))
-                .slot(DragonStaffContainer.accessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonControlScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
-                .slot(DragonStaffContainer.accessorySlot(i, SADDLE_SLOT, 0, -15, -7, DragonControlScreen.SADDLE_UV).only(Items.SADDLE))
-                .addStaffActions(BookActions.TARGET)
+        container.slot(BookContainer.accessorySlot(i, ARMOR_SLOT, 15, -11, 22, DragonControlScreen.ARMOR_UV).only(DragonArmorItem.class))
+                .slot(BookContainer.accessorySlot(i, CHEST_SLOT, -15, -11, 22, DragonControlScreen.CHEST_UV).only(ChestBlock.class).limit(1).canTake(p -> i.isEmptyAfter(CHEST_SLOT)))
+                .slot(BookContainer.accessorySlot(i, SADDLE_SLOT, 0, -15, -7, DragonControlScreen.SADDLE_UV).only(Items.SADDLE))
+                .addAction(BookActions.TARGET)
                 .addCollapsible(chestWidget);
     }
 

@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,7 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static net.minecraft.world.biome.Biome.Category.*;
 
@@ -42,13 +42,14 @@ public class MobSpawnManager
 
     public static Collection<Record> getSpawnList(Biome.Category category, ResourceLocation biome)
     {
-        Collection<Record> record;
-        if ((record = BY_CATEGORY.get(category)) != null)
-            return record.stream()
-                    .filter(d -> d.biomeBlacklist.map(b -> b.contains(biome)).orElse(true))
-                    .collect(Collectors.toList());
-        if ((record = BY_BIOME.get(biome)) != null)
-            return record;
+        Collection<Record> records;
+        if ((records = BY_CATEGORY.get(category)) != null)
+        {
+            records.removeIf(r -> r.biomeBlacklist.isPresent() && r.biomeBlacklist.get().contains(biome));
+            return records;
+        }
+        if ((records = BY_BIOME.get(biome)) != null)
+            return records;
         return Collections.emptyList();
     }
 
@@ -65,7 +66,7 @@ public class MobSpawnManager
             if (!Files.exists(p))
             {
                 Files.createFile(p);
-                json = Record.LIST_CODEC
+                json = Record.CODEC
                         .encodeStart(JsonOps.INSTANCE, defaultList())
                         .getOrThrow(false, Wyrmroost.LOG::error);
                 JsonWriter writer = new JsonWriter(Files.newBufferedWriter(p));
@@ -103,7 +104,7 @@ public class MobSpawnManager
 
     private static void parse(JsonElement json)
     {
-        List<Record> result = Record.LIST_CODEC
+        List<Record> result = Record.CODEC
                 .decode(JsonOps.INSTANCE, json)
                 .map(Pair::getFirst)
                 .getOrThrow(false, Wyrmroost.LOG::error);
@@ -117,8 +118,7 @@ public class MobSpawnManager
 
     private static List<Record> defaultList()
     {
-        ImmutableList.Builder<Record> l = ImmutableList.builder();
-        l.add(
+        return ImmutableList.of(
                 rec(WREntities.LESSER_DESERTWYRM.get(), 3, 1, 3, DESERT, EntityClassification.AMBIENT),
                 rec(WREntities.ROOSTSTALKER.get(), 6, 2, 5, PLAINS),
                 rec(WREntities.ROOSTSTALKER.get(), 7, 1, 4, FOREST),
@@ -126,8 +126,8 @@ public class MobSpawnManager
                 rec(WREntities.OVERWORLD_DRAKE.get(), 4, 1, 5, SAVANNA),
                 rec(WREntities.SILVER_GLIDER.get(), 20, 2, 6, OCEAN),
                 rec(WREntities.SILVER_GLIDER.get(), 10, 1, 4, BEACH),
-                rec(WREntities.DRAGON_FRUIT_DRAKE.get(), 25, 3, 6, JUNGLE));
-        return l.build();
+                rec(WREntities.DRAGON_FRUIT_DRAKE.get(), 25, 3, 6, JUNGLE)
+        );
     }
 
     private static Record rec(EntityType<?> entity, int weight, int minCount, int maxCount, Biome.Category category)
@@ -142,28 +142,27 @@ public class MobSpawnManager
 
     public static class Record
     {
-        private static final Codec<Record> CODEC = RecordCodecBuilder.create(o -> o.group(
+        public static final Codec<List<Record>> CODEC = Codec.list(RecordCodecBuilder.create(o -> o.group(
                 Registry.ENTITY_TYPE.fieldOf("entity_type").forGetter(e -> e.entity),
                 Biome.Category.CODEC.optionalFieldOf("biome_category").forGetter(e -> e.category),
                 ResourceLocation.CODEC.listOf().optionalFieldOf("biomes").forGetter(e -> e.biomes),
-                ResourceLocation.CODEC.listOf().optionalFieldOf("biome_blacklist").forGetter(e -> e.biomeBlacklist),
+                ResourceLocation.CODEC.listOf().optionalFieldOf("biome_blacklist").xmap(e -> e.map(ImmutableSet::copyOf), e -> e.map(ImmutableList::copyOf)).forGetter(e -> e.biomeBlacklist),
                 EntityClassification.CODEC.optionalFieldOf("classification").xmap(p -> p.orElse(EntityClassification.CREATURE), Optional::ofNullable).forGetter(e -> e.classification),
                 Codec.INT.fieldOf("weight").forGetter(e -> e.weight),
                 Codec.INT.fieldOf("min_count").forGetter(e -> e.minCount),
                 Codec.INT.fieldOf("max_count").forGetter(e -> e.maxCount)
-        ).apply(o, Record::new));
-        public static final Codec<List<Record>> LIST_CODEC = CODEC.listOf();
+        ).apply(o, Record::new)));
 
         public final EntityType<?> entity;
         public final Optional<Biome.Category> category;
         public final Optional<List<ResourceLocation>> biomes;
-        public final Optional<List<ResourceLocation>> biomeBlacklist;
+        public final Optional<ImmutableSet<ResourceLocation>> biomeBlacklist; // for boosted performance during "contains" spam
         public final EntityClassification classification;
         public final int weight;
         public final int minCount;
         public final int maxCount;
 
-        public Record(EntityType<?> entity, Optional<Biome.Category> category, Optional<List<ResourceLocation>> biomes, Optional<List<ResourceLocation>> biomeBlacklist, EntityClassification classification, int weight, int minCount, int maxCount)
+        public Record(EntityType<?> entity, Optional<Biome.Category> category, Optional<List<ResourceLocation>> biomes, Optional<ImmutableSet<ResourceLocation>> biomeBlacklist, EntityClassification classification, int weight, int minCount, int maxCount)
         {
             this.entity = entity;
             this.category = category;

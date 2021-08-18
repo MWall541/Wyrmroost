@@ -29,7 +29,7 @@ public class BreathSound extends TickableSound
             stop();
             return;
         }
-        volume = tick;
+        volume = tick * dragon.getSoundVolume();
         Vector3d mouth = dragon.getApproximateMouthPos();
         x = (float) mouth.x;
         y = (float) mouth.y;

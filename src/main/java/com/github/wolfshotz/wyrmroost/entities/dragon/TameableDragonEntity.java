@@ -3,7 +3,7 @@ package com.github.wolfshotz.wyrmroost.entities.dragon;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.sound.FlyingSound;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.*;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.WRSitGoal;
@@ -316,7 +316,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             if (sleepCooldown > 0) --sleepCooldown;
             if (isSleeping())
             {
-                ((LessShitLookController) getLookControl()).restore();
+                ((LessShitLookController) getLookControl()).stopLooking();
                 if (getHealth() < getMaxHealth() && getRandom().nextDouble() < 0.005) heal(1);
 
                 if (shouldWakeUp())
@@ -503,6 +503,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
             // rotate head to match driver. yaw is handled relative to this.
             yHeadRot = entity.yHeadRot;
             xRot = entity.xRot * 0.65f;
+            yRot = MathHelper.rotateIfNecessary(yHeadRot, yRot, getYawRotationSpeed());
 
             if (isControlledByLocalInstance())
             {
@@ -551,11 +552,10 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         {
             animationSpeedOld = animationSpeed;
             double x = getX() - xo;
-            double y = 0;
+            double y = includeY ? getY() - yo : 0.0D;
             double z = getZ() - zo;
-            float speed = MathHelper.cos(MathHelper.sqrt(x * x + y * y + z * z) * 4f);
+            float speed = MathHelper.sqrt(x * x + y * y + z * z) * 4f;
             if (speed > 1f) speed = 1f;
-            if (getMoveControl().getWantedY() < getY()) speed = 0f;
 
             animationSpeed += (speed - animationSpeed) * 0.4F;
             animationPosition += animationSpeed;
@@ -1141,7 +1141,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     }
 
     @Override
-    protected float getSoundVolume()
+    public float getSoundVolume()
     {
         return getScale();
     }
@@ -1309,9 +1309,9 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         return false;
     }
 
-    public void applyStaffInfo(DragonStaffContainer container)
+    public void applyStaffInfo(BookContainer container)
     {
-        container.addStaffActions(BookActions.HOME, BookActions.SIT)
+        container.addAction(BookActions.HOME, BookActions.SIT)
                 .addTooltip(getName())
                 .addTooltip(new StringTextComponent(Character.toString('\u2764'))
                         .withStyle(TextFormatting.RED)
@@ -1335,7 +1335,7 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     @Override
     public Container createMenu(int id, PlayerInventory playersInv, PlayerEntity player)
     {
-        return new DragonStaffContainer(id, playersInv, this);
+        return new BookContainer(id, playersInv, this);
     }
 
     public void onInvContentsChanged(int slot, ItemStack stack, boolean onLoad)

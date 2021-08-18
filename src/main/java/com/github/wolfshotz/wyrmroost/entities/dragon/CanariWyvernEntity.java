@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.client.model.entity.CanariWyvernModel;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
 import com.github.wolfshotz.wyrmroost.entities.util.EntitySerializer;
 import com.github.wolfshotz.wyrmroost.items.book.action.BookActions;
@@ -174,10 +174,10 @@ public class CanariWyvernEntity extends TameableDragonEntity
     }
 
     @Override
-    public void applyStaffInfo(DragonStaffContainer container)
+    public void applyStaffInfo(BookContainer container)
     {
         super.applyStaffInfo(container);
-        container.addStaffActions(BookActions.TARGET);
+        container.addAction(BookActions.TARGET);
     }
 
     @Override

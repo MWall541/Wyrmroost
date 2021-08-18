@@ -66,7 +66,7 @@ public class KeybindHandler
                 if (!pressed)
                 {
                     boolean b = ClientEvents.keybindFlight = !ClientEvents.keybindFlight;
-                    String translate = "entity.wyrmroost.dragons.flight." + (b? "manual" : "free");
+                    String translate = "entity.wyrmroost.dragons.flight." + (b? "controlled" : "free");
                     ClientEvents.getPlayer().displayClientMessage(new TranslationTextComponent(translate), true);
                 }
                 break;

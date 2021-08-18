@@ -33,7 +33,6 @@ public class DataGatherer
             gen.addProvider(new RecipeData(gen));
             gen.addProvider(new LootTableData(gen));
             WorldData.provide(gen);
-            gen.addProvider(new MobSpawnData(gen));
         }
         if (event.includeClient())
         {

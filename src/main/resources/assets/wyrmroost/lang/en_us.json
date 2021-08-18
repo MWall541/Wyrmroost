@@ -13,7 +13,7 @@
   "entity.wyrmroost.dragons.gender.male": "Male",
   "entity.wyrmroost.dragons.gender.female": "Female",
   "entity.wyrmroost.dragons.flight.free": "Free flight",
-  "entity.wyrmroost.dragons.flight.manual": "Manual flight",
+  "entity.wyrmroost.dragons.flight.controlled": "Controlled flight",
 
   "entity.wyrmroost.overworld_drake": "Overworld Drake",
   "entity.wyrmroost.silver_glider": "Silver Glider",

@@ -30,7 +30,7 @@ import java.util.List;
 
 import static com.github.wolfshotz.wyrmroost.client.ClientEvents.getClient;
 
-public class DragonStaffContainer extends Container
+public class BookContainer extends Container
 {
     public final TameableDragonEntity dragon;
     public final PlayerInventory playerInv;
@@ -38,7 +38,7 @@ public class DragonStaffContainer extends Container
     public final List<ITextComponent> toolTips = new ArrayList<>();
     public final List<CollapsibleWidget> collapsibles = new ArrayList<>();
 
-    public DragonStaffContainer(int id, PlayerInventory playerInv, TameableDragonEntity dragon)
+    public BookContainer(int id, PlayerInventory playerInv, TameableDragonEntity dragon)
     {
         super(WRIO.DRAGON_STAFF.get(), id);
         this.dragon = dragon;
@@ -64,25 +64,25 @@ public class DragonStaffContainer extends Container
         return super.addSlot(slot);
     }
 
-    public DragonStaffContainer slot(Slot slot)
+    public BookContainer slot(Slot slot)
     {
         addSlot(slot);
         return this;
     }
 
-    public DragonStaffContainer addStaffActions(BookAction... actions)
+    public BookContainer addAction(BookAction... actions)
     {
         if (dragon.level.isClientSide) Collections.addAll(this.actions, actions);
         return this;
     }
 
-    public DragonStaffContainer addTooltip(ITextComponent text)
+    public BookContainer addTooltip(ITextComponent text)
     {
         if (dragon.level.isClientSide) toolTips.add(text);
         return this;
     }
 
-    public DragonStaffContainer addCollapsible(CollapsibleWidget widget)
+    public BookContainer addCollapsible(CollapsibleWidget widget)
     {
         widget.slots.forEach(this::addSlot);
         collapsibles.add(widget);
@@ -101,9 +101,9 @@ public class DragonStaffContainer extends Container
         return new CollapsibleWidget(u0, v0, width, height, direction, DragonControlScreen.SPRITES);
     }
 
-    public static DragonStaffContainer factory(int id, PlayerInventory playerInv, PacketBuffer buf)
+    public static BookContainer factory(int id, PlayerInventory playerInv, PacketBuffer buf)
     {
-        return new DragonStaffContainer(id, playerInv, fromBytes(buf));
+        return new BookContainer(id, playerInv, fromBytes(buf));
     }
 
     public static void open(ServerPlayerEntity player, TameableDragonEntity dragon)

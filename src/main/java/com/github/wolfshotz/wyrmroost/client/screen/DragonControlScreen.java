@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.BookActionButton;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.CollapsibleWidget;
 import com.github.wolfshotz.wyrmroost.client.screen.widgets.PinButton;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.containers.util.Slot3D;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.book.action.BookAction;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DragonControlScreen extends ContainerScreen<DragonStaffContainer> implements BookScreen
+public class DragonControlScreen extends ContainerScreen<BookContainer> implements BookScreen
 {
     public static final ResourceLocation SPRITES = Wyrmroost.id("textures/gui/container/dragon_inventory.png");
     public static final Vec2d SADDLE_UV = new Vec2d(194, 18);
@@ -54,7 +54,7 @@ public class DragonControlScreen extends ContainerScreen<DragonStaffContainer> i
     public float dragY;
     public float scale;
 
-    public DragonControlScreen(DragonStaffContainer container, PlayerInventory inventory, ITextComponent title)
+    public DragonControlScreen(BookContainer container, PlayerInventory inventory, ITextComponent title)
     {
         super(container, inventory, title);
         this.imageWidth = 193;

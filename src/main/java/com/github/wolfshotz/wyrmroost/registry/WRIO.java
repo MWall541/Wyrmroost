@@ -2,7 +2,7 @@ package com.github.wolfshotz.wyrmroost.registry;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
@@ -16,7 +16,7 @@ public class WRIO
 {
     public static final DeferredRegister<ContainerType<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.CONTAINERS, Wyrmroost.MOD_ID);
 
-    public static final RegistryObject<ContainerType<DragonStaffContainer>> DRAGON_STAFF = register("dragon_staff", DragonStaffContainer::factory);
+    public static final RegistryObject<ContainerType<BookContainer>> DRAGON_STAFF = register("dragon_staff", BookContainer::factory);
 
     public static <T extends Container> RegistryObject<ContainerType<T>> register(String name, IContainerFactory<T> factory)
     {

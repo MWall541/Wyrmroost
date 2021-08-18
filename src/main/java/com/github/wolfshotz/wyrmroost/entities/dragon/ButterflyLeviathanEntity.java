@@ -4,7 +4,7 @@ import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.ButterflyLeviathanModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
@@ -211,7 +211,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
 
     public void conduitAnimation(int time)
     {
-        ((LessShitLookController) getLookControl()).restore();
+        ((LessShitLookController) getLookControl()).stopLooking();
         if (time == 0) playSound(WRSounds.ENTITY_BFLY_ROAR.get(), 5f, 1, true);
         else if (time == 15)
         {
@@ -369,12 +369,12 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
     }
 
     @Override
-    public void applyStaffInfo(DragonStaffContainer container)
+    public void applyStaffInfo(BookContainer container)
     {
         super.applyStaffInfo(container);
 
-        container.slot(DragonStaffContainer.accessorySlot(getInventory(), CONDUIT_SLOT, 0, -65, -75, DragonControlScreen.CONDUIT_UV).only(Items.CONDUIT).limit(1))
-                .addStaffActions(BookActions.TARGET);
+        container.slot(BookContainer.accessorySlot(getInventory(), CONDUIT_SLOT, 0, -65, -75, DragonControlScreen.CONDUIT_UV).only(Items.CONDUIT).limit(1))
+                .addAction(BookActions.TARGET);
     }
 
     @Override
@@ -632,7 +632,7 @@ public class ButterflyLeviathanEntity extends TameableDragonEntity
                     yHeadRot = newYaw;
                     yBodyRot = yRot = rotlerp(yRot, yHeadRot, getYawRotationSpeed());
                     pitch = rotlerp(pitch, pitch, 75);
-                    ((LessShitLookController) getLookControl()).freeze();
+                    ((LessShitLookController) getLookControl()).stopLooking();
                     float speed = isInWater()? (float) getAttributeValue(ForgeMod.SWIM_SPEED.get()) : (float) getAttributeValue(MOVEMENT_SPEED);
                     setSpeed(speed);
                     if (isInWater())

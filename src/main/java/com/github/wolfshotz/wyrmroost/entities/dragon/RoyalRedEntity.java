@@ -5,7 +5,7 @@ import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.client.model.entity.RoyalRedModel;
 import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
 import com.github.wolfshotz.wyrmroost.client.sound.BreathSound;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.LessShitLookController;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.*;
@@ -132,7 +132,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     public void aiStep()
     {
         super.aiStep();
-        flightTimer.add(isFlying()? 0.1f : -0.05f);
+        flightTimer.add(isFlying()? 0.1f : -0.085f);
         sitTimer.add(isInSittingPose()? 0.1f : -0.1f);
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
         breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
@@ -190,7 +190,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     public void roarAnimation(int time)
     {
         if (time == 0) playSound(WRSounds.ENTITY_ROYALRED_ROAR.get(), 3, 1, true);
-        ((LessShitLookController) getLookControl()).restore();
+        ((LessShitLookController) getLookControl()).stopLooking();
         for (LivingEntity entity : getEntitiesNearby(10, this::isAlliedTo))
             entity.addEffect(new EffectInstance(Effects.DAMAGE_BOOST, 60));
     }
@@ -282,12 +282,12 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    public void applyStaffInfo(DragonStaffContainer container)
+    public void applyStaffInfo(BookContainer container)
     {
         super.applyStaffInfo(container);
 
-        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ARMOR_SLOT, 0, -15, -15, DragonControlScreen.ARMOR_UV).only(DragonArmorItem.class))
-                .addStaffActions(BookActions.TARGET);
+        container.slot(BookContainer.accessorySlot(getInventory(), ARMOR_SLOT, 0, -15, -15, DragonControlScreen.ARMOR_UV).only(DragonArmorItem.class))
+                .addAction(BookActions.TARGET);
     }
 
     @Override
@@ -450,7 +450,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     }
 
     @Override
-    protected float getSoundVolume()
+    public float getSoundVolume()
     {
         return 1.5f * getScale();
     }

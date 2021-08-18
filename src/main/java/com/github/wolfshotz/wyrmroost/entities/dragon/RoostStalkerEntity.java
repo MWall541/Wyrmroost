@@ -1,7 +1,7 @@
 package com.github.wolfshotz.wyrmroost.entities.dragon;
 
 import com.github.wolfshotz.wyrmroost.client.screen.DragonControlScreen;
-import com.github.wolfshotz.wyrmroost.containers.DragonStaffContainer;
+import com.github.wolfshotz.wyrmroost.containers.BookContainer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.DragonInventory;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DefendHomeGoal;
 import com.github.wolfshotz.wyrmroost.entities.dragon.helpers.ai.goals.DragonBreedGoal;
@@ -209,12 +209,12 @@ public class RoostStalkerEntity extends TameableDragonEntity
     }
 
     @Override
-    public void applyStaffInfo(DragonStaffContainer container)
+    public void applyStaffInfo(BookContainer container)
     {
         super.applyStaffInfo(container);
 
-        container.slot(DragonStaffContainer.accessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15, DragonControlScreen.SADDLE_UV))
-                .addStaffActions(BookActions.TARGET);
+        container.slot(BookContainer.accessorySlot(getInventory(), ITEM_SLOT, 0, 0, -15, DragonControlScreen.SADDLE_UV))
+                .addAction(BookActions.TARGET);
     }
 
     @Override
@@ -308,7 +308,7 @@ public class RoostStalkerEntity extends TameableDragonEntity
     }
 
     @Override
-    protected float getSoundVolume()
+    public float getSoundVolume()
     {
         return 0.8f;
     }
