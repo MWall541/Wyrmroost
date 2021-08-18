@@ -22,29 +22,14 @@ public class DragonBodyController extends BodyController
     @Override
     public void clientTick()
     {
-        // No body rotations while sitting or sleeping
-        if (dragon.isSleeping()) return;
+        // animate limbs when rotating
+        float deg = Math.min(Math.abs(dragon.yRot - dragon.yBodyRot) * 0.05f, 1f);
+        dragon.animationSpeed += deg * (1 - dragon.animationSpeed * 2);
 
-        // Clamp the head rotation to 70 degrees while sitting
-        if (dragon.isInSittingPose())
-        {
-            clampHeadRotation(70f);
-            return;
-        }
+        // sync the body to the yRot; no reason to have any other random rotations.
+        dragon.yBodyRot = dragon.yRot;
 
-        // clamp head to 120 degrees, rotate body according to head
-        if (dragon.canBeControlledByRider() || dragon.isFlying())
-        {
-            clampHeadRotation(120f);
-            dragon.yBodyRot = dragon.yRot = MathHelper.wrapDegrees(MathHelper.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getYawRotationSpeed()));
-            return;
-        }
-
-        super.clientTick();
-    }
-
-    public void clampHeadRotation(float clampDeg)
-    {
-        dragon.yHeadRot = MathHelper.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, clampDeg);
+        // clamp head rotations so necks don't fucking turn inside out
+        dragon.yHeadRot = MathHelper.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getMaxHeadYRot());
     }
 }
