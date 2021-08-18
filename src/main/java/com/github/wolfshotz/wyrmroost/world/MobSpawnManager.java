@@ -45,7 +45,7 @@ public class MobSpawnManager
         Collection<Record> records;
         if ((records = BY_CATEGORY.get(category)) != null)
         {
-            records.removeIf(r -> r.biomeBlacklist.isPresent() && r.biomeBlacklist.get().contains(biome));
+            records.removeIf(r -> r.biomeBlacklist.contains(biome));
             return records;
         }
         if ((records = BY_BIOME.get(biome)) != null)
@@ -112,7 +112,7 @@ public class MobSpawnManager
         for (Record record : result)
         {
             record.category.ifPresent(category -> BY_CATEGORY.put(category, record));
-            record.biomes.ifPresent(l -> l.forEach(id -> BY_BIOME.put(id, record)));
+            record.biomes.forEach(b -> BY_BIOME.put(b, record));
         }
     }
 
@@ -137,7 +137,7 @@ public class MobSpawnManager
 
     private static Record rec(EntityType<?> entity, int weight, int minCount, int maxCount, Biome.Category category, EntityClassification classification)
     {
-        return new Record(entity, Optional.of(category), Optional.empty(), Optional.empty(), classification, weight, minCount, maxCount);
+        return new Record(entity, Optional.of(category), ImmutableList.of(), ImmutableSet.of(), classification, weight, minCount, maxCount);
     }
 
     public static class Record
@@ -145,8 +145,8 @@ public class MobSpawnManager
         public static final Codec<List<Record>> CODEC = Codec.list(RecordCodecBuilder.create(o -> o.group(
                 Registry.ENTITY_TYPE.fieldOf("entity_type").forGetter(e -> e.entity),
                 Biome.Category.CODEC.optionalFieldOf("biome_category").forGetter(e -> e.category),
-                ResourceLocation.CODEC.listOf().optionalFieldOf("biomes").forGetter(e -> e.biomes),
-                ResourceLocation.CODEC.listOf().optionalFieldOf("biome_blacklist").xmap(e -> e.map(ImmutableSet::copyOf), e -> e.map(ImmutableList::copyOf)).forGetter(e -> e.biomeBlacklist),
+                ResourceLocation.CODEC.listOf().optionalFieldOf("biomes").xmap(e -> e.orElse(ImmutableList.of()), Optional::of).forGetter(e -> e.biomes),
+                ResourceLocation.CODEC.listOf().optionalFieldOf("biome_blacklist").xmap(e -> e.map(ImmutableSet::copyOf).orElse(ImmutableSet.of()), s -> Optional.of(ImmutableList.copyOf(s))).forGetter(e -> e.biomeBlacklist),
                 EntityClassification.CODEC.optionalFieldOf("classification").xmap(p -> p.orElse(EntityClassification.CREATURE), Optional::ofNullable).forGetter(e -> e.classification),
                 Codec.INT.fieldOf("weight").forGetter(e -> e.weight),
                 Codec.INT.fieldOf("min_count").forGetter(e -> e.minCount),
@@ -155,14 +155,14 @@ public class MobSpawnManager
 
         public final EntityType<?> entity;
         public final Optional<Biome.Category> category;
-        public final Optional<List<ResourceLocation>> biomes;
-        public final Optional<ImmutableSet<ResourceLocation>> biomeBlacklist; // for boosted performance during "contains" spam
+        public final List<ResourceLocation> biomes;
+        public final ImmutableSet<ResourceLocation> biomeBlacklist; // for boosted performance during "contains" spam
         public final EntityClassification classification;
         public final int weight;
         public final int minCount;
         public final int maxCount;
 
-        public Record(EntityType<?> entity, Optional<Biome.Category> category, Optional<List<ResourceLocation>> biomes, Optional<ImmutableSet<ResourceLocation>> biomeBlacklist, EntityClassification classification, int weight, int minCount, int maxCount)
+        public Record(EntityType<?> entity, Optional<Biome.Category> category, List<ResourceLocation> biomes, ImmutableSet<ResourceLocation> biomeBlacklist, EntityClassification classification, int weight, int minCount, int maxCount)
         {
             this.entity = entity;
             this.category = category;
@@ -173,7 +173,7 @@ public class MobSpawnManager
             this.minCount = minCount;
             this.maxCount = maxCount;
 
-            if (!category.isPresent() && !biomes.isPresent())
+            if (!category.isPresent() && !biomes.isEmpty())
                 throw new IllegalArgumentException("Must have defined a biome category OR a list of biomes. Both is empty...");
         }
     }
