@@ -32,12 +32,12 @@ public class PinButton extends AbstractButton
 
     public boolean pin()
     {
-        return (this.pinned = !pinned);
+        return this.pinned = !pinned;
     }
 
     public boolean pin(boolean bool)
     {
-        return (this.pinned = bool);
+        return this.pinned = bool;
     }
 
     public boolean pinned()

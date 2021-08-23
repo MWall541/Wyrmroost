@@ -853,42 +853,49 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
 
         setTime(time);
 
-        rotate(body2, -1.05f, 0, 0);
-        move(body2, 0, 6f, 0);
-
-        rotate(neck3, 0.15f, 0, 0);
-        rotate(head, 0.32f, 0, 0);
-
-        rotate(arm1R, 0.1f, -0.3f, 0.25f);
-        rotate(arm2R, 1f, -0.75f, -0.5f);
-
-        rotate(wingR1, 0, -0.6f, 0);
-        rotate(membraneR1, 0, 0.6f, 0);
-        rotate(membraneR2, 0.2f, 0, 0.2f);
-
-        rotate(tail1, 0.85f, 0.2f, 0.5f);
-        rotate(tail2, 0.175f, 0.1f, 0.2f);
-        rotate(tail4, -0.1f, 0.2f, 0.025f);
-        rotate(tail7, -0.1f, 0, 0);
-
-        for (WRModelRenderer tail : tails) rotate(tail, 0, 0.35f, 0);
-
-        rotate(leg1L, -0.5f, -0.15f, -0.3f);
-        rotate(leg2L, 0.75f, 0, 0);
-        rotate(leg3L, -0.55f, 0, 0);
-
-        rotate(leg1R, -0.5f, 0.15f, 0.3f);
-        rotate(leg2R, 0.75f, 0, 0);
-        rotate(leg3R, -0.55f, 0, 0);
-
-        for (int i = 0; i < 3; i++)
+        if (entity.isJuvenile())
         {
-            rotate(toes[0][i], 0.5f, 0, 0);
-            rotate(toes[1][i], 0.5f, 0, 0);
-        }
 
-        rotate(neck1, 0.1f, 0, 0);
-        rotate(neck2, 0.3f, 0, 0);
+        }
+        else
+        {
+            rotate(body2, -1.05f, 0, 0);
+            move(body2, 0, 6f, 0);
+
+            rotate(neck3, 0.15f, 0, 0);
+            rotate(head, 0.32f, 0, 0);
+
+            rotate(arm1R, 0.1f, -0.3f, 0.25f);
+            rotate(arm2R, 1f, -0.75f, -0.5f);
+
+            rotate(wingR1, 0, -0.6f, 0);
+            rotate(membraneR1, 0, 0.6f, 0);
+            rotate(membraneR2, 0.2f, 0, 0.2f);
+
+            rotate(tail1, 0.85f, 0.2f, 0.5f);
+            rotate(tail2, 0.175f, 0.1f, 0.2f);
+            rotate(tail4, -0.1f, 0.2f, 0.025f);
+            rotate(tail7, -0.1f, 0, 0);
+
+            for (WRModelRenderer tail : tails) rotate(tail, 0, 0.35f, 0);
+
+            rotate(leg1L, -0.5f, -0.15f, -0.3f);
+            rotate(leg2L, 0.75f, 0, 0);
+            rotate(leg3L, -0.55f, 0, 0);
+
+            rotate(leg1R, -0.5f, 0.15f, 0.3f);
+            rotate(leg2R, 0.75f, 0, 0);
+            rotate(leg3R, -0.55f, 0, 0);
+
+            for (int i = 0; i < 3; i++)
+            {
+                rotate(toes[0][i], 0.5f, 0, 0);
+                rotate(toes[1][i], 0.5f, 0, 0);
+            }
+
+            rotate(neck1, 0.1f, 0, 0);
+            rotate(neck2, 0.3f, 0, 0);
+        }
     }
 
     public void roarAnimation()
