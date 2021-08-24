@@ -1,6 +1,8 @@
 package com.github.wolfshotz.wyrmroost.client.model;
 
+import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
+import com.github.wolfshotz.wyrmroost.client.screen.AnimateScreen;
 import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -67,6 +69,13 @@ public abstract class WREntityModel<T extends Entity> extends EntityModel<T>
     {
         globalSpeed = 0.5f;
         for (ModelRenderer box : boxList) if (box instanceof WRModelRenderer) ((WRModelRenderer) box).reset();
+
+        if (WRConfig.DEBUG_MODE.get())
+        {
+            AnimateScreen screen = AnimateScreen.last;
+            if (screen != null && screen.dragon == entity)
+                screen.positionModel();
+        }
     }
 
     public void setRotateAngle(ModelRenderer model, float x, float y, float z)

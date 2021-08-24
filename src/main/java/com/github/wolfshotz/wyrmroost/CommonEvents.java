@@ -1,6 +1,6 @@
 package com.github.wolfshotz.wyrmroost;
 
-import com.github.wolfshotz.wyrmroost.client.screen.DebugScreen;
+import com.github.wolfshotz.wyrmroost.client.screen.AnimateScreen;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.entities.util.VillagerHelper;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
@@ -10,6 +10,7 @@ import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.registry.WRWorld;
+import com.github.wolfshotz.wyrmroost.util.Mafs;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.util.animation.IAnimatable;
 import com.github.wolfshotz.wyrmroost.world.MobSpawnManager;
@@ -24,6 +25,7 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTables;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraftforge.common.MinecraftForge;
@@ -114,7 +116,7 @@ public class CommonEvents
     //      Forge Bus
     // =====================
 
-    public static void debugStick(PlayerInteractEvent.EntityInteract event)
+    public static void debugStick(PlayerInteractEvent.RightClickItem event)
     {
         if (!WRConfig.DEBUG_MODE.get()) return;
         PlayerEntity player = event.getPlayer();
@@ -122,21 +124,23 @@ public class CommonEvents
         if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick"))
             return;
 
-        event.setCanceled(true);
-        event.setCancellationResult(ActionResultType.SUCCESS);
-
-        Entity entity = event.getTarget();
-        entity.refreshDimensions();
-
-        if (!(entity instanceof TameableDragonEntity)) return;
-        TameableDragonEntity dragon = (TameableDragonEntity) entity;
-
-        if (player.isShiftKeyDown()) dragon.tame(true, player);
-        else
+        EntityRayTraceResult ertr = Mafs.clipEntities(event.getPlayer(), 50, null);
+        if (ertr != null)
         {
-            if (dragon.level.isClientSide) DebugScreen.open(dragon);
+            event.setCanceled(true);
+            event.setCancellationResult(ActionResultType.SUCCESS);
+
+            Entity entity = ertr.getEntity();
+            entity.refreshDimensions();
+
+            if (!(entity instanceof TameableDragonEntity)) return;
+            TameableDragonEntity dragon = (TameableDragonEntity) entity;
+
+            if (player.isShiftKeyDown()) dragon.tame(true, player);
             else
-                Wyrmroost.LOG.info(dragon.getNavigation().getPath() == null? "null" : dragon.getNavigation().getPath().getTarget().toString());
+            {
+                if (dragon.level.isClientSide) /*DebugScreen.open(dragon);*/ AnimateScreen.open(dragon);
+            }
         }
     }
 

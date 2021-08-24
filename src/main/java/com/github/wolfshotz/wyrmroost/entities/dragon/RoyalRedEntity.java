@@ -133,7 +133,7 @@ public class RoyalRedEntity extends TameableDragonEntity
     {
         super.aiStep();
         flightTimer.add(isFlying()? 0.1f : -0.085f);
-        sitTimer.add(isInSittingPose()? 0.1f : -0.1f);
+        sitTimer.add(isInSittingPose()? 0.075f : -0.1f);
         sleepTimer.add(isSleeping()? 0.035f : -0.1f);
         breathTimer.add(isBreathingFire()? 0.15f : -0.2f);
         knockOutTimer.add(isKnockedOut()? 0.05f : -0.1f);

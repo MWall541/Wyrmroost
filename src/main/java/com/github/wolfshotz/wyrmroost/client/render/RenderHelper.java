@@ -3,8 +3,6 @@ package com.github.wolfshotz.wyrmroost.client.render;
 import com.github.wolfshotz.wyrmroost.WRConfig;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
-import com.github.wolfshotz.wyrmroost.client.model.WREntityModel;
-import com.github.wolfshotz.wyrmroost.client.screen.DebugScreen;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.book.TarragonTomeItem;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
@@ -16,12 +14,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.OutlineLayerBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -223,6 +219,7 @@ public class RenderHelper extends RenderType
     }
 
     // todo: find a better, shaders friendly way to do this
+    @SuppressWarnings("unchecked")
     public static void renderEntities(RenderLivingEvent.Pre<? super LivingEntity, ?> event)
     {
         LivingEntity entity = event.getEntity();
@@ -242,17 +239,6 @@ public class RenderHelper extends RenderType
             buffer.setColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, (color >> 24) & 0xFF);
             renderer.render(entity, yaw, partialTicks, ms, buffer, 15728640);
             buffer.endOutlineBatch();
-        }
-
-        Screen screen = ClientEvents.getClient().screen;
-        if (screen instanceof DebugScreen && ((DebugScreen) screen).dragon == event.getEntity() && renderer.getModel() instanceof WREntityModel<?>)
-        {
-            event.setCanceled(true);
-            WREntityModel<? super LivingEntity> model = ((WREntityModel<? super LivingEntity>) renderer.getModel());
-            model.reset();
-            model.prepareMobModel(entity, 0, 0, partialTicks);
-            ((DebugScreen) screen).positionModel();
-            model.renderToBuffer(ms, event.getBuffers().getBuffer(model.renderType(model.getTexture(entity))), event.getLight(), OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
         }
     }
 
