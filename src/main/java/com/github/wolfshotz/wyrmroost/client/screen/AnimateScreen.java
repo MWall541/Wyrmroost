@@ -42,8 +42,8 @@ public class AnimateScreen extends Screen
     {
         super.init();
 
-        addButton(new Button(34, 0, 20, 20, new StringTextComponent("+"), b -> addTransformer(true)));
-        addButton(new Button(55, 0, 20, 20, new StringTextComponent("<+>"), b -> addTransformer(false)));
+        addButton(new Button(34, 0, 20, 20, new StringTextComponent("+"), b -> addTransformer(true), (b, m, x, y) -> renderTooltip(m, new StringTextComponent("Add Rotation Box"), x, y)));
+        addButton(new Button(55, 0, 20, 20, new StringTextComponent("<+>"), b -> addTransformer(false), (b, m, x, y) -> renderTooltip(m, new StringTextComponent("Add Position Box"), x, y)));
         addButton(new Button(77, 0, 80, 20, new StringTextComponent("Print Positions"), b -> printPositions()));
         addButton(new Button(0, 0, 33, 20, new StringTextComponent("Clear"), b ->
         {
@@ -58,9 +58,12 @@ public class AnimateScreen extends Screen
 
     private void printPositions()
     {
-        StringBuilder builder = new StringBuilder("Printing Positions \n");
-        transformations.stream().map(TransformationWidget::getOutput).forEach(s -> builder.append(s).append("\n"));
-        System.out.println(builder);
+        if (!transformations.isEmpty())
+        {
+            StringBuilder builder = new StringBuilder("Printing Positions");
+            for (TransformationWidget w : transformations) builder.append("\n").append(w.getOutput());
+            System.out.println(builder);
+        }
     }
 
     private Map<String, ModelRenderer> referBoxList()
@@ -155,14 +158,15 @@ public class AnimateScreen extends Screen
 
         public void init()
         {
-            reposition();
             addButton(closeButton = new Button(x + 103, y, 13, 13, new StringTextComponent("X"), b ->
             {
                 close();
                 int i = transformations.indexOf(this);
                 transformations.remove(this);
-                transformations.subList(i + 1, transformations.size()).forEach(TransformationWidget::reposition);
+                transformations.subList(i, transformations.size()).forEach(TransformationWidget::reposition);
             }));
+
+            reposition();
 
             addWidget(this);
         }
@@ -172,6 +176,7 @@ public class AnimateScreen extends Screen
             int i = transformations.indexOf(this);
             if (i == -1) i = transformations.size();
             y = i * 14 + 35;
+            closeButton.y = y;
         }
 
         public void close()
