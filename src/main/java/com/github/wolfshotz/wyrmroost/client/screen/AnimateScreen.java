@@ -1,5 +1,6 @@
 package com.github.wolfshotz.wyrmroost.client.screen;
 
+import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,9 @@ import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +27,10 @@ public class AnimateScreen extends Screen
 {
     public static AnimateScreen last;
 
-    private final Map<String, ModelRenderer> boxes;
     public final TameableDragonEntity dragon;
-    public final List<TransformationWidget> transformations = new ArrayList<>();
+    private final Map<String, ModelRenderer> boxes;
+    private final List<TransformationWidget> transformations = new ArrayList<>();
+    private ReloadWidget reloader;
     private TextFieldWidget boxAdder;
     private String error;
 
@@ -41,19 +46,24 @@ public class AnimateScreen extends Screen
     protected void init()
     {
         super.init();
+        transformations.forEach(TransformationWidget::init);
+        if (reloader != null) reloader = new ReloadWidget();
+        error = null;
 
-        addButton(new Button(34, 0, 20, 20, new StringTextComponent("+"), b -> addTransformer(true), (b, m, x, y) -> renderTooltip(m, new StringTextComponent("Add Rotation Box"), x, y)));
-        addButton(new Button(55, 0, 20, 20, new StringTextComponent("<+>"), b -> addTransformer(false), (b, m, x, y) -> renderTooltip(m, new StringTextComponent("Add Position Box"), x, y)));
-        addButton(new Button(77, 0, 80, 20, new StringTextComponent("Print Positions"), b -> printPositions()));
         addButton(new Button(0, 0, 33, 20, new StringTextComponent("Clear"), b ->
         {
             onClose();
             last = null;
         }));
+        addButton(new Button(34, 0, 20, 20, new StringTextComponent("+"), b -> addTransformer(true), (b, m, x, y) -> renderTooltip(m, new StringTextComponent("Add Rotation Box"), x, y)));
+        addButton(new Button(55, 0, 20, 20, new StringTextComponent("<+>"), b -> addTransformer(false), (b, m, x, y) -> renderTooltip(m, new StringTextComponent("Add Position Box"), x, y)));
+        addButton(new Button(77, 0, 80, 20, new StringTextComponent("Print Positions"), b -> printPositions()));
+        addButton(new Button(160, 0, 90, 20, new StringTextComponent("Reload Positions"), b ->
+        {
+            if (reloader == null) addWidget(reloader = new ReloadWidget());
+        }));
 
-        transformations.forEach(TransformationWidget::init);
-        boxAdder = addWidget(new TextFieldWidget(font, 1, 22, 100, 9, new StringTextComponent("Box Name...")));
-        error = null;
+        addWidget(boxAdder = new TextFieldWidget(font, 1, 22, 100, 9, new StringTextComponent("Box Name...")));
     }
 
     private void printPositions()
@@ -95,7 +105,19 @@ public class AnimateScreen extends Screen
         super.render(ms, mouseX, mouseY, partialTicks);
         transformations.forEach(b -> b.render(ms, mouseX, mouseY, partialTicks));
         boxAdder.render(ms, mouseX, mouseY, partialTicks);
-        font.drawShadow(ms, error, 160, 6, 0xFF0000);
+        if (reloader != null) reloader.render(ms, mouseX, mouseY, partialTicks);
+        font.drawShadow(ms, error, 105, 22, 0xFF0000);
+    }
+
+    @Override
+    public boolean mouseScrolled(double width, double height, double amount)
+    {
+        for (TransformationWidget w : transformations)
+        {
+            w.y += amount * 3;
+            w.closeButton.visible = w.visible = w.y > 35 || w.y > AnimateScreen.this.height;
+        }
+        return super.mouseScrolled(width, height, amount);
     }
 
     @Override
@@ -133,6 +155,7 @@ public class AnimateScreen extends Screen
     public static void open(TameableDragonEntity dragon)
     {
         if (last == null || last.dragon != dragon) last = new AnimateScreen(dragon);
+        else last.init();
         Minecraft.getInstance().setScreen(last);
     }
 
@@ -142,18 +165,26 @@ public class AnimateScreen extends Screen
         private final ModelRenderer box;
         private Button closeButton;
         private final boolean rotate;
-        float xT, yT, zT;
+        private float xT, yT, zT;
 
         public TransformationWidget(String name, ModelRenderer box, int x, boolean rotateOrMove)
         {
-            super(font, x, 0, 100, 13, new StringTextComponent("ye"));
+            super(font, x, 0, 100, 13, new StringTextComponent(""));
             this.box = box;
             this.name = name;
             this.rotate = rotateOrMove;
 
             setValue("0, 0, 0");
             setResponder(this::updateCords);
+            setTextColor(rotateOrMove? 0xFFFFFF : 0x00FFFF);
             init();
+        }
+
+        public TransformationWidget(String name, String input, int x, boolean rotateOrMove)
+        {
+            this(name, boxes.get(name), x, rotateOrMove);
+            updateCords(input);
+            setValue(String.format("%s, %s, %s", xT, yT, zT));
         }
 
         public void init()
@@ -176,7 +207,6 @@ public class AnimateScreen extends Screen
             int i = transformations.indexOf(this);
             if (i == -1) i = transformations.size();
             y = i * 14 + 35;
-            closeButton.y = y;
         }
 
         public void close()
@@ -189,6 +219,8 @@ public class AnimateScreen extends Screen
         @Override
         public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
         {
+            closeButton.visible = visible;
+            closeButton.y = y;
             super.renderButton(ms, mouseX, mouseY, partialTicks);
             font.drawShadow(ms, name, x - 45, y + 3f, 0xFFFFFF);
         }
@@ -228,6 +260,75 @@ public class AnimateScreen extends Screen
         public String getOutput()
         {
             return String.format("%s(%s, %sf, %sf, %sf);", rotate? "rotate" : "move", name, xT, yT, zT);
+        }
+    }
+
+    public class ReloadWidget extends TextFieldWidget
+    {
+        private Button closeButton;
+        private Button parseButton;
+
+        public ReloadWidget()
+        {
+            super(font, AnimateScreen.this.width / 2 - 100, AnimateScreen.this.height / 2 - 22, 200, 45, new StringTextComponent(""));
+            setValue("Insert Path to file...");
+            setMaxLength(Integer.MAX_VALUE);
+            init();
+        }
+
+        public void init()
+        {
+            addButton(closeButton = new Button(x + width + 5, y + 1, 20, 20, new StringTextComponent("X"), b -> close()));
+            addButton(parseButton = new Button(x + width / 2 - 40, y + height + 10, 80, 20, new StringTextComponent("Parse"), b -> parseAndReload()));
+        }
+
+        private void parseAndReload()
+        {
+            try
+            {
+                for (String line : Files.readAllLines(Paths.get(getValue())))
+                {
+                    line = line.trim();
+                    try
+                    {
+                        int para = line.indexOf("(");
+                        String rotateOrMove = line.substring(0, para);
+                        String substring = line.substring(para + 1, line.indexOf(")") - 1);
+                        String[] split = substring.split(",", 2);
+                        transformations.add(new TransformationWidget(split[0], split[1], 50, !rotateOrMove.equals("move")));
+                    }
+                    catch (StringIndexOutOfBoundsException e)
+                    {
+                        Wyrmroost.LOG.error("Invalid line: " + line);
+                    }
+                    catch (IndexOutOfBoundsException e)
+                    {
+                        Wyrmroost.LOG.error("Invalid line has too few arguments: " + line);
+                    }
+                }
+                error = null;
+                close();
+            }
+            catch (NoSuchFileException e)
+            {
+                e.printStackTrace();
+                error = "ayo try actually supplying a real file.";
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                error = "Something went horrible wrong trying to parse this object; check logs.";
+            }
+        }
+
+        public void close()
+        {
+            children.remove(this);
+            children.remove(parseButton);
+            buttons.remove(parseButton);
+            children.remove(closeButton);
+            buttons.remove(closeButton);
+            reloader = null;
         }
     }
 }
