@@ -693,7 +693,6 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
                 {toe1L, toe2L, toe3L}
         };
 
-
         setDefaultPose();
     }
 
@@ -756,12 +755,13 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
     @Override
     public void setupAnim(RoyalRedEntity entity, float limbSwing, float limbSwingAmount, float bob, float yaw, float pitch)
     {
-        if (entity.isInSittingPose()) limbSwingAmount = 0;
-
         float flightTime = entity.flightTimer.get(partialTicks);
         float sitTime = entity.sitTimer.get(partialTicks);
         float sleepTime = entity.sleepTimer.get(partialTicks);
+        float knockoutTime = entity.knockOutTimer.get(partialTicks);
 
+        limbSwingAmount *= 1 - sitTime;
+        limbSwingAmount *= 1 - knockoutTime;
         float walkDelta = (1 - flightTime) * limbSwingAmount;
         float flightDelta = flightTime * limbSwingAmount;
 
@@ -805,12 +805,13 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
         float breath = entity.breathTimer.get(partialTicks);
         if (breath > 0)
         {
-            jaw.xRot += 1 * breath;
-            snout.xRot -= 1 * breath;
+            jaw.xRot += 0.45 * breath;
+            snout.xRot -= 0.55 * breath;
         }
 
         if (sitTime != 0) sitPositions(sitTime - sleepTime);
         if (sleepTime != 0) sleepPositions(sleepTime);
+        if (knockoutTime != 0) knockoutPositions(knockoutTime);
         flightPositions(flightTime);
 
         faceTarget(yaw, pitch, 1f, neck);
@@ -827,7 +828,7 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
 
             // when flying, copy left set of wings default rotations for flight positions
             rotateFrom0(right, left.defaultRotationX, -left.defaultRotationY, -left.defaultRotationZ);
-            right.copyRotationsTo(left);
+            right.mirrorRotationsTo(left);
         }
 
         if (time == 0) return;
@@ -925,24 +926,24 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
         setTime(time);
 
         move(body2, 0.0f, 10.0f, 0.0f);
-        rotate(leg1L, -2.35f, -0.5f, 0.0f);
-        rotate(leg2L, 2.2f, 0.0f, 0.0f);
-        move(leg2L, 0.0f, 0.0f, 4.0f);
-        rotate(leg3L, -1.3f, 0.0f, 0.0f);
-        move(leg3L, 0.0f, 0.0f, -3.0f);
+        move(leg1L, 0.0f, 0.5f, 0.0f);
+        rotate(leg1L, -1.25f, -0.5f, 0.0f);
+        rotate(leg2L, -0.8f, 0.0f, 0.0f);
+        move(leg2L, 0.0f, -6.0f, 2.0f);
+        rotate(leg3L, 0.6f, 0.0f, 0.0f);
         rotate(footL, 1.4f, 0.0f, 0.0f);
         move(footL, 0.0f, 0.0f, -0.8f);
-        rotate(leg1R, -2.35f, 0.5f, 0.0f);
-        rotate(leg2R, 2.2f, 0.0f, 0.0f);
-        move(leg2R, 0.0f, 0.0f, 4.0f);
-        rotate(leg3R, -1.3f, 0.0f, 0.0f);
-        move(leg3R, 0.0f, 0.0f, -3.0f);
+        move(leg1R, 0.0f, 0.5f, 0.0f);
+        rotate(leg1R, -1.25f, 0.5f, 0.0f);
+        rotate(leg2R, -0.8f, 0.0f, 0.0f);
+        move(leg2R, 0.0f, -6.0f, 2.0f);
+        rotate(leg3R, 0.6f, 0.0f, 0.0f);
         rotate(footR, 1.4f, 0.0f, 0.0f);
         move(footR, 0.0f, 0.0f, -0.8f);
-        rotate(arm1L, 0.5f, 0.0f, 0.0f);
-        rotate(arm2L, -1.5f, -0.15f, 0.15f);
         rotate(arm1R, 0.5f, 0.0f, 0.0f);
         rotate(arm2R, -1.5f, 0.15f, -0.15f);
+        rotate(arm1L, 0.5f, 0.0f, 0.0f);
+        rotate(arm2L, -1.5f, -0.15f, 0.15f);
         rotate(tail1, -0.1f, 0.0f, 0.0f);
         rotate(tail2, -0.1f, 0.0f, 0.0f);
         rotate(tail3, -0.05f, 0.0f, 0.0f);
@@ -952,11 +953,57 @@ public class RoyalRedModel extends DragonEntityModel<RoyalRedEntity>
         rotate(neck2, 0.7f, 0.0f, 0.0f);
         rotate(neck3, -0.6f, 0.0f, 0.0f);
         rotate(head, -0.6f, 0.0f, 0.0f);
-        rotate(wingR1, 0.0f, 0.0f, -1.4f);
-        rotate(wingR2, 0.75f, 0.0f, 0.0f);
-        rotate(palmR_1, 0.0f, 0.0f, 0.1f);
-        rotate(membraneR3, -0.05f, 0.0f, 0.1f);
+        rotate(wingR1, 0.0f, 0.0f, -1.25f);
+        rotate(wingR2, 0.4f, 0.0f, 0.25f);
+        rotate(palmR_1, 0.0f, 0.0f, 0.175f);
+        rotate(membraneR3, -0.2f, 0.0f, 0.1f);
         rotate(membraneR1, 0.01f, 0.4f, 0.0f);
+        rotate(membraneR2, 0.1f, -0.4f, 0.2f);
+    }
+
+
+    private void knockoutPositions(float time)
+    {
+        setTime(time);
+
+        move(body2, 0.0f, 10.0f, 0.0f);
+        rotate(tail1, -0.1f, 0.0f, 0.0f);
+        rotate(tail2, -0.1f, 0.0f, 0.0f);
+        rotate(tail3, -0.05f, 0.0f, 0.0f);
+        rotate(tail4, 0.1f, 0.0f, 0.0f);
+        rotate(tail5, 0.05f, 0.0f, 0.0f);
+        rotate(neck1, 0.2f, 0.0f, 0.0f);
+        rotate(neck2, 0.7f, 0.0f, 0.0f);
+        rotate(neck3, -0.6f, 0.0f, 0.0f);
+        rotate(head, -0.6f, 0.0f, 0.0f);
+
+        rotate(leg1R, 1.2f, -0.6f, 0.0f);
+        rotate(leg2R, -0.2f, 0.1f, -0.2f);
+        rotate(leg3R, 0.55f, 0.1f, -0.1f);
+        rotate(footR, 1.45f, -0.1f, 0.0f);
+        move(footR, 0.0f, 0.0f, -0.96f);
+        rotate(arm1R, -1.0f, 0.0f, 0.85f);
+        rotate(arm2R, 0.3f, -0.4f, 0.75f);
+        rotate(palmR, 0.0f, 0.2f, 0.5f);
+        rotate(wingR1, 0.1f, 0.0f, -1.0f);
+        rotate(wingR2, -0.1f, 0.0f, 0.6f);
+        rotate(palmR_1, 0.0f, -0.3f, 0.3f);
+
+        rotate(leg1L, 1.2f, 0.6f, 0.0f);
+        rotate(leg2L, -0.2f, -0.1f, 0.2f);
+        rotate(leg3L, 0.55f, -0.1f, 0.1f);
+        rotate(footL, 1.45f, 0.1f, 0.0f);
+        move(footL, 0.0f, 0.0f, -0.96f);
+        rotate(arm1L, -1.0f, 0.0f, -0.85f);
+        rotate(arm2L, 0.3f, 0.4f, -0.75f);
+        rotate(palmL, 0.0f, -0.2f, -0.5f);
+        rotate(wingL1, 0.1f, 0.0f, 1.0f);
+        rotate(wingL2, -0.1f, 0.0f, -0.6f);
+        rotate(palmL_1, 0.0f, 0.3f, -0.3f);
+
+        rotate(membraneR3, -0.35f, 0.0f, 0.0f);
+        rotate(membraneR1, 0.01f, 0.4f, 0.0f);
+        rotate(membraneR2, 0.25f, -0.4f, 0.0f);
     }
 
     public void roarAnimation()

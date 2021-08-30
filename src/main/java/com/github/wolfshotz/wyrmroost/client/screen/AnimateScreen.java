@@ -63,7 +63,7 @@ public class AnimateScreen extends Screen
             if (reloader == null) addWidget(reloader = new ReloadWidget());
         }));
 
-        addWidget(boxAdder = new TextFieldWidget(font, 1, 22, 100, 9, new StringTextComponent("Box Name...")));
+        addWidget(boxAdder = new TextFieldWidget(font, 1, 22, 100, 9, new StringTextComponent("")));
     }
 
     private void printPositions()
@@ -71,7 +71,11 @@ public class AnimateScreen extends Screen
         if (!transformations.isEmpty())
         {
             StringBuilder builder = new StringBuilder("Printing Positions");
-            for (TransformationWidget w : transformations) builder.append("\n").append(w.getOutput());
+            for (TransformationWidget w : transformations)
+            {
+                if (w.xT == 0 && w.yT == 0 && w.zT == 0) continue;
+                builder.append("\n").append(w.getOutput());
+            }
             System.out.println(builder);
         }
     }
@@ -112,11 +116,7 @@ public class AnimateScreen extends Screen
     @Override
     public boolean mouseScrolled(double width, double height, double amount)
     {
-        for (TransformationWidget w : transformations)
-        {
-            w.y += amount * 3;
-            w.closeButton.visible = w.visible = w.y > 35 || w.y > AnimateScreen.this.height;
-        }
+        for (TransformationWidget w : transformations) w.setWidgetY(w.y + ((int) amount * 3));
         return super.mouseScrolled(width, height, amount);
     }
 
@@ -149,7 +149,7 @@ public class AnimateScreen extends Screen
         }
         else error = null;
 
-        transformations.add(new TransformationWidget(name, box, 50, rotate));
+        transformations.add(new TransformationWidget(name, box, rotate));
     }
 
     public static void open(TameableDragonEntity dragon)
@@ -167,9 +167,9 @@ public class AnimateScreen extends Screen
         private final boolean rotate;
         private float xT, yT, zT;
 
-        public TransformationWidget(String name, ModelRenderer box, int x, boolean rotateOrMove)
+        public TransformationWidget(String name, ModelRenderer box, boolean rotateOrMove)
         {
-            super(font, x, 0, 100, 13, new StringTextComponent(""));
+            super(font, 60, 0, 90, 13, new StringTextComponent(""));
             this.box = box;
             this.name = name;
             this.rotate = rotateOrMove;
@@ -180,16 +180,16 @@ public class AnimateScreen extends Screen
             init();
         }
 
-        public TransformationWidget(String name, String input, int x, boolean rotateOrMove)
+        public TransformationWidget(String name, String input, boolean rotateOrMove)
         {
-            this(name, boxes.get(name), x, rotateOrMove);
+            this(name, boxes.get(name), rotateOrMove);
             updateCords(input);
             setValue(String.format("%s, %s, %s", xT, yT, zT));
         }
 
         public void init()
         {
-            addButton(closeButton = new Button(x + 103, y, 13, 13, new StringTextComponent("X"), b ->
+            addButton(closeButton = new Button(x + 92, y, 13, 13, new StringTextComponent("X"), b ->
             {
                 close();
                 int i = transformations.indexOf(this);
@@ -205,8 +205,12 @@ public class AnimateScreen extends Screen
         public void reposition()
         {
             int i = transformations.indexOf(this);
-            if (i == -1) i = transformations.size();
-            y = i * 14 + 35;
+            if (transformations.isEmpty() || i == 0) setWidgetY(35);
+            else
+            {
+                if (i == -1) i = transformations.size();
+                setWidgetY(transformations.get(i - 1).y + 14);
+            }
         }
 
         public void close()
@@ -217,12 +221,25 @@ public class AnimateScreen extends Screen
         }
 
         @Override
-        public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
+        public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
         {
             closeButton.visible = visible;
-            closeButton.y = y;
+            super.render(ms, mouseX, mouseY, partialTicks);
+        }
+
+        @Override
+        public void renderButton(MatrixStack ms, int mouseX, int mouseY, float partialTicks)
+        {
             super.renderButton(ms, mouseX, mouseY, partialTicks);
-            font.drawShadow(ms, name, x - 45, y + 3f, 0xFFFFFF);
+            font.drawShadow(ms, name, 1, y + 3f, 0xFFFFFF);
+        }
+
+        public void setWidgetY(int y)
+        {
+            this.y = y;
+            closeButton.y = y;
+
+            visible = y > 31 || y > AnimateScreen.this.height;
         }
 
         public void updateCords(String text)
@@ -267,6 +284,7 @@ public class AnimateScreen extends Screen
     {
         private Button closeButton;
         private Button parseButton;
+        private Button pathButton;
 
         public ReloadWidget()
         {
@@ -280,6 +298,7 @@ public class AnimateScreen extends Screen
         {
             addButton(closeButton = new Button(x + width + 5, y + 1, 20, 20, new StringTextComponent("X"), b -> close()));
             addButton(parseButton = new Button(x + width / 2 - 40, y + height + 10, 80, 20, new StringTextComponent("Parse"), b -> parseAndReload()));
+            addButton(pathButton = new Button(x + width + 5, y + 23, 60, 20, new StringTextComponent("Get Path"), b -> setValue(System.getProperty("user.home") + "/Desktop/")));
         }
 
         private void parseAndReload()
@@ -295,7 +314,7 @@ public class AnimateScreen extends Screen
                         String rotateOrMove = line.substring(0, para);
                         String substring = line.substring(para + 1, line.indexOf(")") - 1);
                         String[] split = substring.split(",", 2);
-                        transformations.add(new TransformationWidget(split[0], split[1], 50, !rotateOrMove.equals("move")));
+                        transformations.add(new TransformationWidget(split[0], split[1], !rotateOrMove.equals("move")));
                     }
                     catch (StringIndexOutOfBoundsException e)
                     {
@@ -323,11 +342,13 @@ public class AnimateScreen extends Screen
 
         public void close()
         {
-            children.remove(this);
             children.remove(parseButton);
-            buttons.remove(parseButton);
             children.remove(closeButton);
+            children.remove(pathButton);
+            buttons.remove(parseButton);
             buttons.remove(closeButton);
+            buttons.remove(pathButton);
+            children.remove(this);
             reloader = null;
         }
     }

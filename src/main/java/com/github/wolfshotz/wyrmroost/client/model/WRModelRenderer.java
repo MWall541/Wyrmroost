@@ -55,7 +55,7 @@ public class WRModelRenderer extends ModelRenderer
         z = defaultPositionZ;
     }
 
-    public void copyRotationsTo(ModelRenderer box)
+    public void mirrorRotationsTo(ModelRenderer box)
     {
         box.xRot = xRot;
         box.yRot = -yRot;

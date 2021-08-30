@@ -219,7 +219,6 @@ public class RenderHelper extends RenderType
     }
 
     // todo: find a better, shaders friendly way to do this
-    @SuppressWarnings("unchecked")
     public static void renderEntities(RenderLivingEvent.Pre<? super LivingEntity, ?> event)
     {
         LivingEntity entity = event.getEntity();

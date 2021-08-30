@@ -1,44 +1,39 @@
 package com.github.wolfshotz.wyrmroost.client.model.entity;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.client.model.ModelAnimator;
 import com.github.wolfshotz.wyrmroost.client.model.WRModelRenderer;
 import com.github.wolfshotz.wyrmroost.entities.dragon.DragonFruitDrakeEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.util.ResourceLocation;
 
-/**
- * dragonfruitdrake - Kingdomall
- * Created using Tabula 7.1.0
- */
 public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEntity>
 {
-    public static final ResourceLocation CHILD = texture("child.png");
-    private static final ResourceLocation[] TEXTURES = new ResourceLocation[4];
+    public static final ResourceLocation GRAY_SCALE = Wyrmroost.id(FOLDER + "dragon_fruit_drake/body.png");
+    public static final ResourceLocation GRAY_SCALE_CHILD = Wyrmroost.id(FOLDER + "dragon_fruit_drake/body_child.png");
+    private static final ResourceLocation[] TEXTURES = new ResourceLocation[20];
 
     public WRModelRenderer Body1;
     public WRModelRenderer Body2;
     public WRModelRenderer neck2;
     public WRModelRenderer LegfrontR1;
-    public WRModelRenderer BackLeafMiddle;
     public WRModelRenderer BackLeafL;
     public WRModelRenderer BackLeafR;
     public WRModelRenderer SideLeaf1R;
     public WRModelRenderer SideLeaf2R;
     public WRModelRenderer SideLeaf1L;
     public WRModelRenderer SideLeaf2L;
-    public WRModelRenderer LegfrontL1;
+    public WRModelRenderer LegfrontR1_1;
     public WRModelRenderer Tail1;
     public WRModelRenderer LegThighR;
-    public WRModelRenderer BackLeaf2Middle;
     public WRModelRenderer BackLeafL_1;
     public WRModelRenderer BackLeafR_1;
     public WRModelRenderer LegThighR_1;
     public WRModelRenderer Tail2;
-    public WRModelRenderer TailLeaf1;
     public WRModelRenderer Tail3;
-    public WRModelRenderer TailLeaf2;
     public WRModelRenderer Tail4;
     public WRModelRenderer TailLeaf3;
     public WRModelRenderer Tail5;
@@ -51,10 +46,10 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     public WRModelRenderer LegSegmentR2;
     public WRModelRenderer LegSegmentR3;
     public WRModelRenderer backfootR;
-    public WRModelRenderer LegSegmentL1;
-    public WRModelRenderer LegSegmentL2;
-    public WRModelRenderer LegSegmentL3;
-    public WRModelRenderer backfootL;
+    public WRModelRenderer LegSegmentR1_1;
+    public WRModelRenderer LegSegmentR2_1;
+    public WRModelRenderer LegSegmentR3_1;
+    public WRModelRenderer backfootR_1;
     public WRModelRenderer neck3;
     public WRModelRenderer Neck1Leaf;
     public WRModelRenderer neck4;
@@ -66,332 +61,291 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     public WRModelRenderer EyeR;
     public WRModelRenderer shape71;
     public WRModelRenderer shape71_1;
-    public WRModelRenderer EyeL;
+    public WRModelRenderer EyeR_1;
     public WRModelRenderer LegfrontR2;
     public WRModelRenderer LegfrontR3;
     public WRModelRenderer frontfootR;
-    public WRModelRenderer LegfrontL2;
-    public WRModelRenderer LegfrontL3;
-    public WRModelRenderer frontfootL;
-
-    private final WRModelRenderer[] headArray;
-    private final WRModelRenderer[] tailArray;
+    public WRModelRenderer LegfrontR2_1;
+    public WRModelRenderer LegfrontR3_1;
+    public WRModelRenderer frontfootR_1;
 
     public DragonFruitDrakeModel()
     {
-        texWidth = 100;
-        texHeight = 70;
-        BackLeaf2Middle = new WRModelRenderer(this, 0, 23);
-        BackLeaf2Middle.setPos(0.0F, -2.5F, 0.1F);
-        BackLeaf2Middle.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(BackLeaf2Middle, -1.252448271231131F, 0.0F, 0.0F);
-        BackLeafL_1 = new WRModelRenderer(this, 0, 23);
-        BackLeafL_1.setPos(-2.1F, -2.5F, 2.6F);
-        BackLeafL_1.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(BackLeafL_1, -1.3800318395519162F, 0.0F, 0.0F);
-        shape71 = new WRModelRenderer(this, 6, 26);
-        shape71.mirror = true;
-        shape71.setPos(-2.5F, -1.1F, -0.1F);
-        shape71.addBox(-0.5F, -0.6F, -0.6F, 1, 2, 4, 0.0F);
-        setRotateAngle(shape71, 0.39426987802551905F, -0.28989918875625814F, 0.0F);
-        LegfrontL1 = new WRModelRenderer(this, 34, 18);
-        LegfrontL1.setPos(-3.3F, 1.2F, -1.8F);
-        LegfrontL1.addBox(-1.3F, -2.0F, -0.6F, 3, 4, 7, 0.0F);
-        setRotateAngle(LegfrontL1, -0.9873327578531922F, 0.0F, 0.0F);
-        Tail5 = new WRModelRenderer(this, 86, 34);
-        Tail5.setPos(0.0F, 0.4F, 3.3F);
-        Tail5.addBox(-1.5F, -1.3F, 0.4F, 3, 3, 4, 0.0F);
-        setRotateAngle(Tail5, 0.3803072440095644F, 0.0F, 0.0F);
-        BackLeafMiddle = new WRModelRenderer(this, 0, 23);
-        BackLeafMiddle.setPos(0.0F, -3.0F, -1.6F);
-        BackLeafMiddle.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(BackLeafMiddle, -1.252448271231131F, 0.0F, 0.0F);
-        EyeL = new WRModelRenderer(this, 16, 0);
-        EyeL.mirror = true;
-        EyeL.setPos(-2.5F, -0.1F, -4.5F);
-        EyeL.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
-        setRotateAngle(EyeL, 0.0F, -4.0821505874895365F, 0.0F);
-        neck2 = new WRModelRenderer(this, 23, 0);
-        neck2.setPos(0.0F, -0.2F, -2.2F);
-        neck2.addBox(-2.5F, -1.9F, -3.7F, 5, 5, 4, 0.0F);
-        setRotateAngle(neck2, -0.5326744877086693F, 0.0F, 0.0F);
-        LegfrontL3 = new WRModelRenderer(this, 40, 39);
-        LegfrontL3.mirror = true;
-        LegfrontL3.setPos(0.01F, 0.1F, 5.0F);
-        LegfrontL3.addBox(-1.5F, -1.5F, -0.7F, 3, 3, 4, 0.0F);
-        setRotateAngle(LegfrontL3, -0.4988151002199793F, 0.0F, 0.0F);
-        Neck2Leaf = new WRModelRenderer(this, 5, 15);
-        Neck2Leaf.setPos(0.0F, -1.1F, -2.5F);
-        Neck2Leaf.addBox(0.0F, -5.0F, -1.0F, 0, 5, 2, 0.0F);
-        setRotateAngle(Neck2Leaf, -0.1392772743091475F, 0.0F, 0.0F);
-        frontfootR = new WRModelRenderer(this, 40, 46);
-        frontfootR.setPos(-0.01F, -0.5F, 2.8F);
-        frontfootR.addBox(-1.5F, -1.0F, -0.4F, 3, 2, 4, 0.0F);
-        setRotateAngle(frontfootR, -0.9948376736367678F, 0.0F, 0.0F);
-        LegfrontR3 = new WRModelRenderer(this, 40, 39);
-        LegfrontR3.setPos(-0.01F, 0.1F, 5.0F);
-        LegfrontR3.addBox(-1.5F, -1.5F, -0.7F, 3, 3, 4, 0.0F);
-        setRotateAngle(LegfrontR3, -0.3490658503988659F, 0.0F, 0.0F);
-        LegThighR_1 = new WRModelRenderer(this, 59, 18);
-        LegThighR_1.mirror = true;
-        LegThighR_1.setPos(-3.3F, 0.6F, 2.3F);
-        LegThighR_1.addBox(-1.8F, -1.4F, -1.9F, 3, 8, 5, 0.0F);
-        Body2 = new WRModelRenderer(this, 68, 0);
-        Body2.setPos(0.0F, -0.3F, 5.4F);
-        Body2.addBox(-3.6F, -2.5F, -1.3F, 7, 6, 6, 0.0F);
-        LegSegmentR2 = new WRModelRenderer(this, 55, 41);
-        LegSegmentR2.mirror = true;
-        LegSegmentR2.setPos(-0.1F, 1.0F, 3.5F);
-        LegSegmentR2.addBox(-1.5F, -1.9F, -0.3F, 3, 3, 6, 0.0F);
-        setRotateAngle(LegSegmentR2, -1.4456562194269031F, 0.0F, 0.0F);
-        LegSegmentL2 = new WRModelRenderer(this, 55, 41);
-        LegSegmentL2.setPos(0.1F, 1.0F, 3.5F);
-        LegSegmentL2.addBox(-1.5F, -1.9F, -0.3F, 3, 3, 6, 0.0F);
-        setRotateAngle(LegSegmentL2, -1.4456562194269031F, 0.0F, 0.0F);
-        mouthtop = new WRModelRenderer(this, 15, 15);
-        mouthtop.setPos(0.0F, 2.0F, -4.0F);
-        mouthtop.addBox(-2.0F, -2.6F, -5.0F, 4, 3, 5, 0.0F);
-        backfootL = new WRModelRenderer(this, 61, 55);
-        backfootL.setPos(-0.01F, 0.0F, 1.6F);
-        backfootL.addBox(-1.5F, -1.2F, -0.3F, 3, 2, 3, 0.0F);
-        setRotateAngle(backfootL, -0.701447826376521F, 0.0F, 0.0F);
-        NeckLeaf3 = new WRModelRenderer(this, 0, 14);
-        NeckLeaf3.setPos(0.0F, -1.2F, -2.3F);
-        NeckLeaf3.addBox(0.0F, -6.0F, -1.0F, 0, 6, 2, 0.0F);
-        setRotateAngle(NeckLeaf3, -0.255167136641571F, 0.0F, 0.0F);
-        LegSegmentL3 = new WRModelRenderer(this, 61, 50);
-        LegSegmentL3.mirror = true;
-        LegSegmentL3.setPos(0.01F, -0.4F, 5.7F);
-        LegSegmentL3.addBox(-1.5F, -1.1F, -0.9F, 3, 2, 3, 0.0F);
-        setRotateAngle(LegSegmentL3, -0.6944665093685437F, 0.0F, 0.0F);
-        Body1 = new WRModelRenderer(this, 33, 1);
-        Body1.setPos(0.0F, 9.5F, -2.5F);
-        Body1.addBox(-4.0F, -3.1F, -4.0F, 8, 8, 9, 0.0F);
-        SideLeaf2R = new WRModelRenderer(this, 0, 29);
-        SideLeaf2R.setPos(3.9F, 0.4F, 1.7F);
-        SideLeaf2R.addBox(0.0F, -1.0F, 0.0F, 0, 2, 5, 0.0F);
-        setRotateAngle(SideLeaf2R, 0.0F, 0.3014183618194207F, -0.0F);
-        BackLeafR = new WRModelRenderer(this, 0, 23);
-        BackLeafR.setPos(2.5F, -3.0F, 0.4F);
-        BackLeafR.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(BackLeafR, -1.252448271231131F, 0.0F, 0.0F);
-        Tail2 = new WRModelRenderer(this, 80, 13);
-        Tail2.setPos(0.01F, 0.1F, 3.7F);
-        Tail2.addBox(-2.5F, -1.9F, -0.4F, 5, 5, 5, 0.0F);
-        setRotateAngle(Tail2, -0.20367992370773824F, 0.0F, 0.0F);
-        neck3 = new WRModelRenderer(this, 23, 0);
-        neck3.setPos(0.0F, 0.1F, -3.1F);
-        neck3.addBox(-2.5F, -1.9F, -3.8F, 5, 5, 4, 0.0F);
-        setRotateAngle(neck3, -0.251152879361984F, 0.0F, 0.0F);
-        EyeR = new WRModelRenderer(this, 16, 0);
-        EyeR.setPos(2.5F, -0.1F, -4.5F);
-        EyeR.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
-        setRotateAngle(EyeR, 0.0F, 4.0821505874895365F, 0.0F);
-        Neck1Leaf = new WRModelRenderer(this, 10, 16);
-        Neck1Leaf.setPos(0.0F, -1.1F, -2.8F);
-        Neck1Leaf.addBox(0.0F, -4.0F, -1.0F, 0, 4, 2, 0.0F);
-        setRotateAngle(Neck1Leaf, -0.2436479635784084F, 0.0F, 0.0F);
-        BackLeafR_1 = new WRModelRenderer(this, 0, 23);
-        BackLeafR_1.setPos(1.9F, -2.5F, 2.6F);
-        BackLeafR_1.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(BackLeafR_1, -1.3683381335635545F, 0.0F, 0.0F);
-        Tail3 = new WRModelRenderer(this, 82, 24);
-        Tail3.setPos(0.0F, 0.3F, 4.4F);
-        Tail3.addBox(-2.0F, -1.8F, -1.3F, 4, 4, 5, 0.0F);
-        setRotateAngle(Tail3, -0.12224096245892761F, 0.0F, 0.0F);
-        SideLeaf1R = new WRModelRenderer(this, 0, 29);
-        SideLeaf1R.setPos(3.9F, -1.1F, -3.0F);
-        SideLeaf1R.addBox(0.0F, -1.0F, 0.0F, 0, 2, 5, 0.0F);
-        setRotateAngle(SideLeaf1R, 0.0F, 0.18552849948699726F, -0.0F);
-        SideLeaf1L = new WRModelRenderer(this, 0, 29);
-        SideLeaf1L.setPos(-4.0F, -1.1F, -3.0F);
-        SideLeaf1L.addBox(0.0F, -1.0F, 0.0F, 0, 2, 5, 0.0F);
-        setRotateAngle(SideLeaf1L, 0.0F, -0.16231562043547265F, -0.0F);
-        mouthbottom = new WRModelRenderer(this, 15, 23);
-        mouthbottom.setPos(0.0F, 2.8F, -3.9F);
-        mouthbottom.addBox(-2.0F, -0.4F, -5.0F, 4, 1, 5, 0.0F);
-        BackLeafL = new WRModelRenderer(this, 0, 23);
-        BackLeafL.setPos(-2.5F, -3.0F, 0.4F);
-        BackLeafL.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(BackLeafL, -1.252448271231131F, 0.0F, 0.0F);
-        Tail4 = new WRModelRenderer(this, 82, 24);
-        Tail4.setPos(0.01F, -0.7F, 2.9F);
-        Tail4.addBox(-2.0F, -1.2F, -0.5F, 4, 4, 5, 0.0F);
-        setRotateAngle(Tail4, 0.2851867997758734F, 0.0F, 0.0F);
-        TailLeaf3 = new WRModelRenderer(this, 0, 23);
-        TailLeaf3.setPos(-0.1F, -1.7F, 1.8F);
-        TailLeaf3.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(TailLeaf3, -1.3800318395519162F, 0.0F, 0.0F);
-        LegThighR = new WRModelRenderer(this, 59, 18);
-        LegThighR.setPos(3.3F, 0.6F, 2.3F);
-        LegThighR.addBox(-1.1F, -1.3F, -1.9F, 3, 8, 5, 0.0F);
-        TailLeaf1 = new WRModelRenderer(this, 0, 23);
-        TailLeaf1.setPos(0.0F, -1.8F, 1.8F);
-        TailLeaf1.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(TailLeaf1, -1.3800318395519162F, 0.0F, 0.0F);
-        Tail1 = new WRModelRenderer(this, 80, 13);
-        Tail1.setPos(0.1F, -0.5F, 4.8F);
-        Tail1.addBox(-2.5F, -1.9F, -0.8F, 5, 5, 5, 0.0F);
-        setRotateAngle(Tail1, -0.2930407814098479F, 0.0F, 0.0F);
-        frontfootL = new WRModelRenderer(this, 40, 46);
-        frontfootL.mirror = true;
-        frontfootL.setPos(0.01F, -0.5F, 2.8F);
-        frontfootL.addBox(-1.5F, -1.0F, -0.4F, 3, 2, 4, 0.0F);
-        setRotateAngle(frontfootL, -0.8737118235483614F, 0.0F, 0.0F);
-        LegfrontL2 = new WRModelRenderer(this, 34, 29);
-        LegfrontL2.setPos(0.3F, 0.0F, 5.9F);
-        LegfrontL2.addBox(-1.5F, -1.5F, -0.9F, 3, 3, 7, 0.0F);
-        setRotateAngle(LegfrontL2, -0.8052949168701837F, 0.0F, 0.0F);
-        Tail7 = new WRModelRenderer(this, 88, 42);
-        Tail7.setPos(0.0F, 0.0F, 3.4F);
-        Tail7.addBox(-1.0F, -1.1F, -0.5F, 2, 2, 4, 0.0F);
-        setRotateAngle(Tail7, 0.23090706003884978F, 0.0F, 0.0F);
-        Tail6 = new WRModelRenderer(this, 86, 34);
-        Tail6.setPos(-0.01F, -0.1F, 4.0F);
-        Tail6.addBox(-1.5F, -1.4F, -0.8F, 3, 3, 4, 0.0F);
-        setRotateAngle(Tail6, 0.2988003679414292F, 0.0F, 0.0F);
-        Head = new WRModelRenderer(this, 0, 4);
-        Head.setPos(0.0F, 0.0F, -4.2F);
-        Head.addBox(-3.0F, -1.5F, -4.7F, 6, 5, 6, 0.0F);
-        setRotateAngle(Head, 0.4871213942316174F, 0.0F, 0.0F);
-        shape71_1 = new WRModelRenderer(this, 6, 26);
-        shape71_1.setPos(2.5F, -1.1F, -0.1F);
-        shape71_1.addBox(-0.5F, -0.6F, -0.6F, 1, 2, 4, 0.0F);
-        setRotateAngle(shape71_1, 0.39426987802551905F, 0.38275070496235647F, -0.0F);
-        TailLeaf2 = new WRModelRenderer(this, 0, 23);
-        TailLeaf2.setPos(0.0F, -1.8F, 1.8F);
-        TailLeaf2.addBox(-1.0F, -4.9F, 0.0F, 2, 5, 0, 0.0F);
-        setRotateAngle(TailLeaf2, -1.3800318395519162F, 0.0F, 0.0F);
-        TailLeafEND = new WRModelRenderer(this, 82, 40);
-        TailLeafEND.setPos(0.1F, 0.0F, 3.1F);
-        TailLeafEND.addBox(-0.1F, -3.1F, -0.3F, 0, 6, 9, 0.0F);
-        LegSegmentR3 = new WRModelRenderer(this, 61, 50);
-        LegSegmentR3.setPos(-0.01F, -0.4F, 5.7F);
-        LegSegmentR3.addBox(-1.5F, -1.1F, -0.9F, 3, 2, 3, 0.0F);
-        setRotateAngle(LegSegmentR3, -0.6944665093685437F, 0.0F, 0.0F);
-        LegfrontR1 = new WRModelRenderer(this, 34, 18);
-        LegfrontR1.mirror = true;
-        LegfrontR1.setPos(3.3F, 1.2F, -1.8F);
-        LegfrontR1.addBox(-1.5F, -2.0F, -0.6F, 3, 4, 7, 0.0F);
-        setRotateAngle(LegfrontR1, -0.9873327578531922F, 0.0F, 0.0F);
-        BackLeaf1 = new WRModelRenderer(this, 0, 29);
-        BackLeaf1.setPos(-0.3F, -1.1F, 1.8F);
-        BackLeaf1.addBox(-1.0F, -3.9F, 0.0F, 2, 4, 0, 0.0F);
-        setRotateAngle(BackLeaf1, -1.3800318395519162F, 0.0F, 0.0F);
-        LegfrontR2 = new WRModelRenderer(this, 34, 29);
-        LegfrontR2.mirror = true;
-        LegfrontR2.setPos(-0.1F, 0.0F, 5.9F);
-        LegfrontR2.addBox(-1.5F, -1.5F, -0.9F, 3, 3, 7, 0.0F);
-        setRotateAngle(LegfrontR2, -0.8052949168701837F, 0.0F, 0.0F);
-        LegSegmentR1 = new WRModelRenderer(this, 57, 31);
-        LegSegmentR1.setPos(0.3F, 4.3F, 0.0F);
-        LegSegmentR1.addBox(-1.5F, -1.3F, -0.6F, 3, 4, 6, 0.0F);
-        setRotateAngle(LegSegmentR1, -0.30543261909900765F, 0.0F, 0.007504915783575617F);
-        backfootR = new WRModelRenderer(this, 61, 55);
-        backfootR.mirror = true;
-        backfootR.setPos(0.01F, 0.0F, 1.6F);
-        backfootR.addBox(-1.5F, -1.2F, -0.3F, 3, 2, 3, 0.0F);
-        setRotateAngle(backfootR, -0.701447826376521F, 0.0F, 0.0F);
-        neck4 = new WRModelRenderer(this, 23, 0);
-        neck4.setPos(0.0F, -0.05F, -3.2F);
-        neck4.addBox(-2.5F, -1.9F, -3.8F, 5, 5, 4, 0.0F);
-        setRotateAngle(neck4, 0.4300491276914028F, 0.0F, 0.0F);
-        LegSegmentL1 = new WRModelRenderer(this, 57, 31);
-        LegSegmentL1.mirror = true;
-        LegSegmentL1.setPos(-0.2F, 4.3F, 0.0F);
-        LegSegmentL1.addBox(-1.5F, -1.3F, -0.6F, 3, 4, 6, 0.0F);
-        setRotateAngle(LegSegmentL1, -0.30543261909900765F, 0.0F, 0.0F);
-        SideLeaf2L = new WRModelRenderer(this, 0, 29);
-        SideLeaf2L.setPos(-4.0F, 0.4F, 1.6F);
-        SideLeaf2L.addBox(0.0F, -1.0F, 0.0F, 0, 2, 5, 0.0F);
-        setRotateAngle(SideLeaf2L, 0.0F, -0.26668630970473356F, -0.0F);
-        TailLeaf4 = new WRModelRenderer(this, 0, 29);
-        TailLeaf4.setPos(-0.2F, -1.1F, 1.8F);
-        TailLeaf4.addBox(-1.0F, -3.9F, 0.0F, 2, 4, 0, 0.0F);
-        setRotateAngle(TailLeaf4, -1.3800318395519162F, 0.0F, 0.0F);
-        Body2.addChild(BackLeaf2Middle);
-        Body2.addChild(BackLeafL_1);
-        Head.addChild(shape71);
-        Body1.addChild(LegfrontL1);
-        Tail4.addChild(Tail5);
-        Body1.addChild(BackLeafMiddle);
-        Head.addChild(EyeL);
-        Body1.addChild(neck2);
-        LegfrontL2.addChild(LegfrontL3);
-        neck3.addChild(Neck2Leaf);
-        LegfrontR3.addChild(frontfootR);
-        LegfrontR2.addChild(LegfrontR3);
-        Body2.addChild(LegThighR_1);
-        Body1.addChild(Body2);
-        LegSegmentR1.addChild(LegSegmentR2);
-        LegSegmentL1.addChild(LegSegmentL2);
-        Head.addChild(mouthtop);
-        LegSegmentL3.addChild(backfootL);
-        neck4.addChild(NeckLeaf3);
-        LegSegmentL2.addChild(LegSegmentL3);
-        Body1.addChild(SideLeaf2R);
-        Body1.addChild(BackLeafR);
-        Tail1.addChild(Tail2);
-        neck2.addChild(neck3);
-        Head.addChild(EyeR);
-        neck2.addChild(Neck1Leaf);
-        Body2.addChild(BackLeafR_1);
-        Tail2.addChild(Tail3);
-        Body1.addChild(SideLeaf1R);
-        Body1.addChild(SideLeaf1L);
-        Head.addChild(mouthbottom);
-        Body1.addChild(BackLeafL);
-        Tail3.addChild(Tail4);
-        Tail3.addChild(TailLeaf3);
-        Body2.addChild(LegThighR);
-        Tail1.addChild(TailLeaf1);
-        Body2.addChild(Tail1);
-        LegfrontL3.addChild(frontfootL);
-        LegfrontL1.addChild(LegfrontL2);
-        Tail6.addChild(Tail7);
-        Tail5.addChild(Tail6);
-        neck4.addChild(Head);
-        Head.addChild(shape71_1);
-        Tail2.addChild(TailLeaf2);
-        Tail7.addChild(TailLeafEND);
-        LegSegmentR2.addChild(LegSegmentR3);
-        Body1.addChild(LegfrontR1);
-        Tail5.addChild(BackLeaf1);
-        LegfrontR1.addChild(LegfrontR2);
-        LegThighR.addChild(LegSegmentR1);
-        LegSegmentR3.addChild(backfootR);
-        neck3.addChild(neck4);
-        LegThighR_1.addChild(LegSegmentL1);
-        Body1.addChild(SideLeaf2L);
-        Tail4.addChild(TailLeaf4);
-
-        headArray = new WRModelRenderer[] {neck2, neck3, neck4, Head};
-        tailArray = new WRModelRenderer[] {Tail1, Tail2, Tail3, Tail4, Tail5, Tail6, Tail7, TailLeafEND};
+        this.texWidth = 100;
+        this.texHeight = 70;
+        this.LegSegmentR1 = new WRModelRenderer(this, 57, 31);
+        this.LegSegmentR1.setPos(0.3F, 4.3F, 0.0F);
+        this.LegSegmentR1.addBox(-1.5F, -1.3F, -0.6F, 3.0F, 4.0F, 6.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegSegmentR1, -0.30543261909900765F, 0.0F, 0.007504915908411292F);
+        this.LegSegmentR2_1 = new WRModelRenderer(this, 55, 41);
+        this.LegSegmentR2_1.setPos(0.1F, 1.0F, 3.5F);
+        this.LegSegmentR2_1.addBox(-1.5F, -1.9F, -0.3F, 3.0F, 3.0F, 6.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegSegmentR2_1, -1.4456562513848363F, 0.0F, 0.0F);
+        this.LegSegmentR1_1 = new WRModelRenderer(this, 57, 31);
+        this.LegSegmentR1_1.mirror = true;
+        this.LegSegmentR1_1.setPos(-0.2F, 4.3F, 0.0F);
+        this.LegSegmentR1_1.addBox(-1.5F, -1.3F, -0.6F, 3.0F, 4.0F, 6.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegSegmentR1_1, -0.30543261909900765F, 0.0F, 0.0F);
+        this.LegfrontR3_1 = new WRModelRenderer(this, 40, 39);
+        this.LegfrontR3_1.mirror = true;
+        this.LegfrontR3_1.setPos(0.01F, 0.1F, 5.0F);
+        this.LegfrontR3_1.addBox(-1.5F, -1.5F, -0.7F, 3.0F, 3.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegfrontR3_1, -0.3490658503988659F, 0.0F, 0.0F);
+        this.LegfrontR1 = new WRModelRenderer(this, 34, 18);
+        this.LegfrontR1.mirror = true;
+        this.LegfrontR1.setPos(3.3F, 1.2F, -1.8F);
+        this.LegfrontR1.addBox(-1.5F, -2.0F, -0.6F, 3.0F, 4.0F, 7.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegfrontR1, -0.9873327525268701F, 0.0F, 0.0F);
+        this.SideLeaf1R = new WRModelRenderer(this, 0, 29);
+        this.SideLeaf1R.setPos(4.1F, -1.1F, -3.0F);
+        this.SideLeaf1R.addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(SideLeaf1R, 0.0F, 0.18552850148436806F, -0.0F);
+        this.Body1 = new WRModelRenderer(this, 33, 1);
+        this.Body1.setPos(0.0F, 9.5F, -2.5F);
+        this.Body1.addBox(-4.0F, -3.1F, -4.0F, 8.0F, 8.0F, 9.0F, 0.0F, 0.0F, 0.0F);
+        this.neck2 = new WRModelRenderer(this, 23, 0);
+        this.neck2.setPos(0.0F, -0.2F, -2.2F);
+        this.neck2.addBox(-2.5F, -1.9F, -3.7F, 5.0F, 5.0F, 4.0F, 0.0F, 0.2F, 0.0F);
+        this.setRotateAngle(neck2, -0.5326744956981526F, 0.0F, 0.0F);
+        this.SideLeaf2L = new WRModelRenderer(this, 0, 29);
+        this.SideLeaf2L.setPos(-4.0F, 0.4F, 1.4F);
+        this.SideLeaf2L.addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(SideLeaf2L, 0.0F, -0.26668630504420165F, -0.0F);
+        this.mouthtop = new WRModelRenderer(this, 15, 15);
+        this.mouthtop.setPos(0.0F, 2.05F, -3.95F);
+        this.mouthtop.addBox(-2.0F, -2.6F, -5.0F, 4.0F, 2.5F, 5.0F, 0.01F, 0.0F, 0.0F);
+        this.LegThighR = new WRModelRenderer(this, 59, 18);
+        this.LegThighR.setPos(3.3F, 0.4F, 2.3F);
+        this.LegThighR.addBox(-1.1F, -1.3F, -1.9F, 3.0F, 8.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.LegSegmentR2 = new WRModelRenderer(this, 55, 41);
+        this.LegSegmentR2.mirror = true;
+        this.LegSegmentR2.setPos(-0.1F, 1.0F, 3.5F);
+        this.LegSegmentR2.addBox(-1.5F, -1.9F, -0.3F, 3.0F, 3.0F, 6.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegSegmentR2, -1.4456562513848363F, 0.0F, 0.0F);
+        this.LegfrontR3 = new WRModelRenderer(this, 40, 39);
+        this.LegfrontR3.setPos(-0.01F, 0.1F, 5.0F);
+        this.LegfrontR3.addBox(-1.5F, -1.5F, -0.7F, 3.0F, 3.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegfrontR3, -0.3490658503988659F, 0.0F, 0.0F);
+        this.Tail3 = new WRModelRenderer(this, 82, 24);
+        this.Tail3.setPos(0.0F, 0.3F, 4.4F);
+        this.Tail3.addBox(-2.0F, -1.8F, -1.3F, 4.0F, 4.0F, 5.0F, 0.1F, 0.1F, 0.0F);
+        this.setRotateAngle(Tail3, -0.1222409665697785F, 0.0F, 0.0F);
+        this.frontfootR = new WRModelRenderer(this, 40, 46);
+        this.frontfootR.setPos(-0.01F, -0.5F, 2.8F);
+        this.frontfootR.addBox(-1.5F, -1.0F, -0.4F, 3.0F, 2.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(frontfootR, -0.9948376736367678F, 0.0F, 0.0F);
+        this.Tail2 = new WRModelRenderer(this, 80, 13);
+        this.Tail2.setPos(0.0F, 0.1F, 3.7F);
+        this.Tail2.addBox(-2.5F, -1.9F, -0.4F, 5.0F, 5.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(Tail2, -0.20367992503931878F, 0.0F, 0.0F);
+        this.EyeR_1 = new WRModelRenderer(this, 16, 0);
+        this.EyeR_1.mirror = true;
+        this.EyeR_1.setPos(-2.5F, -0.1F, -4.5F);
+        this.EyeR_1.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(EyeR_1, 0.0F, -4.082150576836893F, 0.0F);
+        this.BackLeafR_1 = new WRModelRenderer(this, 0, 23);
+        this.BackLeafR_1.mirror = true;
+        this.BackLeafR_1.setPos(2.0F, -2.9F, 3.7F);
+        this.BackLeafR_1.addBox(-1.0F, -4.9F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(BackLeafR_1, -1.3683381601951652F, 0.0F, 0.0F);
+        this.Body2 = new WRModelRenderer(this, 68, 0);
+        this.Body2.setPos(0.0F, 0.0F, 5.4F);
+        this.Body2.addBox(-3.5F, -3.0F, -1.3F, 7.0F, 6.0F, 6.0F, 0.0F, 0.0F, 0.0F);
+        this.BackLeafR = new WRModelRenderer(this, 0, 23);
+        this.BackLeafR.mirror = true;
+        this.BackLeafR.setPos(2.5F, -3.0F, 0.4F);
+        this.BackLeafR.addBox(-1.0F, -4.9F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(BackLeafR, -1.2524483085153861F, 0.0F, 0.0F);
+        this.frontfootR_1 = new WRModelRenderer(this, 40, 46);
+        this.frontfootR_1.mirror = true;
+        this.frontfootR_1.setPos(0.01F, -0.5F, 2.8F);
+        this.frontfootR_1.addBox(-1.5F, -1.0F, -0.4F, 3.0F, 2.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(frontfootR_1, -0.9948376736367678F, 0.0F, 0.0F);
+        this.Tail1 = new WRModelRenderer(this, 80, 13);
+        this.Tail1.setPos(0.0F, -0.3F, 4.8F);
+        this.Tail1.addBox(-2.5F, -1.9F, -0.8F, 5.0F, 5.0F, 5.0F, 0.1F, 0.2F, 0.0F);
+        this.setRotateAngle(Tail1, -0.29304079738881444F, 0.0F, 0.0F);
+        this.Tail5 = new WRModelRenderer(this, 86, 34);
+        this.Tail5.setPos(0.0F, 0.4F, 3.3F);
+        this.Tail5.addBox(-1.5F, -1.3F, 0.4F, 3.0F, 3.0F, 4.0F, 0.1F, 0.1F, 0.0F);
+        this.setRotateAngle(Tail5, 0.38030725998853093F, 0.0F, 0.0F);
+        this.shape71_1 = new WRModelRenderer(this, 6, 26);
+        this.shape71_1.setPos(2.5F, -1.1F, 0.0F);
+        this.shape71_1.addBox(-0.5F, -0.6F, -0.6F, 1.0F, 2.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(shape71_1, 0.39426988068868013F, 0.2724458902442024F, -0.0F);
+        this.LegfrontR2 = new WRModelRenderer(this, 34, 29);
+        this.LegfrontR2.mirror = true;
+        this.LegfrontR2.setPos(-0.1F, 0.0F, 5.9F);
+        this.LegfrontR2.addBox(-1.5F, -1.5F, -0.9F, 3.0F, 3.0F, 7.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegfrontR2, -0.8052949062175392F, 0.0F, 0.0F);
+        this.mouthbottom = new WRModelRenderer(this, 15, 23);
+        this.mouthbottom.setPos(0.0F, 2.8F, -3.9F);
+        this.mouthbottom.addBox(-2.0F, -0.85F, -5.0F, 4.0F, 1.5F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.LegfrontR2_1 = new WRModelRenderer(this, 34, 29);
+        this.LegfrontR2_1.setPos(0.3F, 0.0F, 5.9F);
+        this.LegfrontR2_1.addBox(-1.5F, -1.5F, -0.9F, 3.0F, 3.0F, 7.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegfrontR2_1, -0.8052949062175392F, 0.0F, 0.0F);
+        this.LegSegmentR3 = new WRModelRenderer(this, 61, 50);
+        this.LegSegmentR3.setPos(-0.01F, -0.4F, 5.7F);
+        this.LegSegmentR3.addBox(-1.5F, -1.1F, -0.9F, 3.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegSegmentR3, -0.6944665253475103F, 0.0F, 0.0F);
+        this.LegfrontR1_1 = new WRModelRenderer(this, 34, 18);
+        this.LegfrontR1_1.setPos(-3.3F, 1.2F, -1.8F);
+        this.LegfrontR1_1.addBox(-1.3F, -2.0F, -0.6F, 3.0F, 4.0F, 7.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegfrontR1_1, -0.9873327525268701F, 0.0F, 0.0F);
+        this.BackLeaf1 = new WRModelRenderer(this, 0, 29);
+        this.BackLeaf1.setPos(-0.3F, -1.1F, 1.8F);
+        this.BackLeaf1.addBox(-1.0F, -3.9F, 0.0F, 2.0F, 4.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(BackLeaf1, -1.3800318342255942F, 0.0F, 0.0F);
+        this.LegThighR_1 = new WRModelRenderer(this, 59, 18);
+        this.LegThighR_1.mirror = true;
+        this.LegThighR_1.setPos(-3.3F, 0.4F, 2.3F);
+        this.LegThighR_1.addBox(-1.8F, -1.4F, -1.9F, 3.0F, 8.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.BackLeafL_1 = new WRModelRenderer(this, 0, 23);
+        this.BackLeafL_1.setPos(-2.0F, -2.9F, 3.7F);
+        this.BackLeafL_1.addBox(-1.0F, -4.9F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(BackLeafL_1, -1.3800318342255942F, 0.0F, 0.0F);
+        this.Neck2Leaf = new WRModelRenderer(this, 5, 15);
+        this.Neck2Leaf.setPos(0.0F, -1.4F, -2.5F);
+        this.Neck2Leaf.addBox(0.0F, -5.0F, -1.0F, 0.0F, 5.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(Neck2Leaf, 0.05619960241356012F, 0.0F, 0.0F);
+        this.SideLeaf2R = new WRModelRenderer(this, 0, 29);
+        this.SideLeaf2R.setPos(4.0F, 0.4F, 1.4F);
+        this.SideLeaf2R.addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(SideLeaf2R, 0.0F, 0.26668630504420165F, -0.0F);
+        this.LegSegmentR3_1 = new WRModelRenderer(this, 61, 50);
+        this.LegSegmentR3_1.mirror = true;
+        this.LegSegmentR3_1.setPos(0.01F, -0.4F, 5.7F);
+        this.LegSegmentR3_1.addBox(-1.5F, -1.1F, -0.9F, 3.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(LegSegmentR3_1, -0.6944665253475103F, 0.0F, 0.0F);
+        this.Head = new WRModelRenderer(this, 0, 4);
+        this.Head.setPos(0.0F, 0.0F, -4.2F);
+        this.Head.addBox(-3.0F, -1.5F, -4.7F, 6.0F, 5.0F, 6.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(Head, 0.48712139156845624F, 0.0F, 0.0F);
+        this.backfootR_1 = new WRModelRenderer(this, 61, 55);
+        this.backfootR_1.setPos(-0.01F, 0.0F, 1.6F);
+        this.backfootR_1.addBox(-1.5F, -1.2F, -0.3F, 3.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(backfootR_1, -0.7014478024080711F, 0.0F, 0.0F);
+        this.Tail6 = new WRModelRenderer(this, 86, 34);
+        this.Tail6.setPos(0.0F, -0.1F, 4.0F);
+        this.Tail6.addBox(-1.5F, -1.4F, -0.8F, 3.0F, 3.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(Tail6, 0.2988003825888152F, 0.0F, 0.0F);
+        this.Tail4 = new WRModelRenderer(this, 82, 24);
+        this.Tail4.setPos(0.0F, -0.7F, 2.9F);
+        this.Tail4.addBox(-2.0F, -1.2F, -0.5F, 4.0F, 4.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(Tail4, 0.2851868024390345F, 0.0F, 0.0F);
+        this.Tail7 = new WRModelRenderer(this, 88, 42);
+        this.Tail7.setPos(0.0F, 0.0F, 3.4F);
+        this.Tail7.addBox(-1.0F, -1.1F, -0.5F, 2.0F, 2.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(Tail7, 0.2309070520493665F, 0.0F, 0.0F);
+        this.shape71 = new WRModelRenderer(this, 6, 26);
+        this.shape71.mirror = true;
+        this.shape71.setPos(-2.5F, -1.1F, 0.0F);
+        this.shape71.addBox(-0.5F, -0.6F, -0.6F, 1.0F, 2.0F, 4.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(shape71, 0.39426988068868013F, -0.2724458902442024F, 0.0F);
+        this.neck4 = new WRModelRenderer(this, 23, 0);
+        this.neck4.setPos(0.0F, -0.05F, -3.2F);
+        this.neck4.addBox(-2.5F, -1.9F, -3.8F, 5.0F, 5.0F, 4.0F, -0.2F, 0.0F, 0.0F);
+        this.setRotateAngle(neck4, 0.4300491170387584F, 0.0F, 0.0F);
+        this.EyeR = new WRModelRenderer(this, 16, 0);
+        this.EyeR.setPos(2.5F, -0.1F, -4.5F);
+        this.EyeR.addBox(-0.5F, -0.5F, -0.5F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(EyeR, 0.0F, 4.082150576836893F, 0.0F);
+        this.TailLeaf4 = new WRModelRenderer(this, 0, 29);
+        this.TailLeaf4.setPos(-0.2F, -1.1F, 1.8F);
+        this.TailLeaf4.addBox(-1.0F, -3.9F, 0.0F, 2.0F, 4.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(TailLeaf4, -1.3800318342255942F, 0.0F, 0.0F);
+        this.backfootR = new WRModelRenderer(this, 61, 55);
+        this.backfootR.mirror = true;
+        this.backfootR.setPos(0.01F, 0.0F, 1.6F);
+        this.backfootR.addBox(-1.5F, -1.2F, -0.3F, 3.0F, 2.0F, 3.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(backfootR, -0.7014478024080711F, 0.0F, 0.0F);
+        this.NeckLeaf3 = new WRModelRenderer(this, 0, 14);
+        this.NeckLeaf3.setPos(0.0F, -1.2F, -2.3F);
+        this.NeckLeaf3.addBox(0.0F, -6.0F, -1.0F, 0.0F, 6.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(NeckLeaf3, -0.25516713464420016F, 0.0F, 0.0F);
+        this.SideLeaf1L = new WRModelRenderer(this, 0, 29);
+        this.SideLeaf1L.setPos(-4.0F, -1.1F, -3.0F);
+        this.SideLeaf1L.addBox(0.0F, -1.0F, 0.0F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(SideLeaf1L, 0.0F, -0.162315623764424F, -0.0F);
+        this.BackLeafL = new WRModelRenderer(this, 0, 23);
+        this.BackLeafL.setPos(-2.5F, -3.0F, 0.4F);
+        this.BackLeafL.addBox(-1.0F, -4.9F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(BackLeafL, -1.2524483085153861F, 0.0F, 0.0F);
+        this.Neck1Leaf = new WRModelRenderer(this, 10, 16);
+        this.Neck1Leaf.setPos(0.0F, -1.7F, -2.8F);
+        this.Neck1Leaf.addBox(0.0F, -4.0F, -1.0F, 0.0F, 4.0F, 2.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(Neck1Leaf, -0.048171087188595925F, 0.0F, 0.0F);
+        this.neck3 = new WRModelRenderer(this, 23, 0);
+        this.neck3.setPos(0.0F, 0.1F, -3.1F);
+        this.neck3.addBox(-2.5F, -1.9F, -3.8F, 5.0F, 5.0F, 4.0F, -0.1F, 0.1F, 0.0F);
+        this.setRotateAngle(neck3, -0.25115288535409647F, 0.0F, 0.0F);
+        this.TailLeaf3 = new WRModelRenderer(this, 0, 23);
+        this.TailLeaf3.setPos(-0.1F, -1.7F, 1.8F);
+        this.TailLeaf3.addBox(-1.0F, -4.9F, 0.0F, 2.0F, 5.0F, 0.0F, 0.0F, 0.0F, 0.0F);
+        this.setRotateAngle(TailLeaf3, -1.3800318342255942F, 0.0F, 0.0F);
+        this.TailLeafEND = new WRModelRenderer(this, 82, 40);
+        this.TailLeafEND.setPos(0.1F, 0.0F, 3.0F);
+        this.TailLeafEND.addBox(-0.1F, -3.1F, -0.3F, 0.0F, 6.0F, 9.0F, 0.0F, 0.0F, 0.0F);
+        this.LegThighR.addChild(this.LegSegmentR1);
+        this.LegSegmentR1_1.addChild(this.LegSegmentR2_1);
+        this.LegThighR_1.addChild(this.LegSegmentR1_1);
+        this.LegfrontR2_1.addChild(this.LegfrontR3_1);
+        this.Body1.addChild(this.LegfrontR1);
+        this.Body1.addChild(this.SideLeaf1R);
+        this.Body1.addChild(this.neck2);
+        this.Body1.addChild(this.SideLeaf2L);
+        this.Head.addChild(this.mouthtop);
+        this.Body2.addChild(this.LegThighR);
+        this.LegSegmentR1.addChild(this.LegSegmentR2);
+        this.LegfrontR2.addChild(this.LegfrontR3);
+        this.Tail2.addChild(this.Tail3);
+        this.LegfrontR3.addChild(this.frontfootR);
+        this.Tail1.addChild(this.Tail2);
+        this.Head.addChild(this.EyeR_1);
+        this.Body2.addChild(this.BackLeafR_1);
+        this.Body1.addChild(this.Body2);
+        this.Body1.addChild(this.BackLeafR);
+        this.LegfrontR3_1.addChild(this.frontfootR_1);
+        this.Body2.addChild(this.Tail1);
+        this.Tail4.addChild(this.Tail5);
+        this.Head.addChild(this.shape71_1);
+        this.LegfrontR1.addChild(this.LegfrontR2);
+        this.Head.addChild(this.mouthbottom);
+        this.LegfrontR1_1.addChild(this.LegfrontR2_1);
+        this.LegSegmentR2.addChild(this.LegSegmentR3);
+        this.Body1.addChild(this.LegfrontR1_1);
+        this.Tail5.addChild(this.BackLeaf1);
+        this.Body2.addChild(this.LegThighR_1);
+        this.Body2.addChild(this.BackLeafL_1);
+        this.neck3.addChild(this.Neck2Leaf);
+        this.Body1.addChild(this.SideLeaf2R);
+        this.LegSegmentR2_1.addChild(this.LegSegmentR3_1);
+        this.neck4.addChild(this.Head);
+        this.LegSegmentR3_1.addChild(this.backfootR_1);
+        this.Tail5.addChild(this.Tail6);
+        this.Tail3.addChild(this.Tail4);
+        this.Tail6.addChild(this.Tail7);
+        this.Head.addChild(this.shape71);
+        this.neck3.addChild(this.neck4);
+        this.Head.addChild(this.EyeR);
+        this.Tail4.addChild(this.TailLeaf4);
+        this.LegSegmentR3.addChild(this.backfootR);
+        this.neck4.addChild(this.NeckLeaf3);
+        this.Body1.addChild(this.SideLeaf1L);
+        this.Body1.addChild(this.BackLeafL);
+        this.neck2.addChild(this.Neck1Leaf);
+        this.neck2.addChild(this.neck3);
+        this.Tail3.addChild(this.TailLeaf3);
+        this.Tail7.addChild(this.TailLeafEND);
 
         setDefaultPose();
     }
 
     @Override
-    public ResourceLocation getTexture(DragonFruitDrakeEntity entity)
+    public void renderToBuffer(MatrixStack ms, IVertexBuilder vertex, int light, int overlay, float red, float green, float blue, float alpha)
     {
-        if (entity.isHatchling()) return CHILD;
-
-        int texture = entity.isMale()? 0 : 2;
-        if (entity.getVariant() == -1) texture += 1;
-        if (TEXTURES[texture] == null)
-        {
-            String path = entity.isMale()? "male" : "female";
-            if (entity.getVariant() == -1) path += "_spe";
-
-            return TEXTURES[texture] = texture(path + ".png");
-        }
-        return TEXTURES[texture];
-    }
-
-    @Override
-    public float getShadowRadius(DragonFruitDrakeEntity entity)
-    {
-        return 1.15f;
+        Body1.render(ms, vertex, light, overlay, red, green, blue, alpha);
     }
 
     @Override
@@ -402,130 +356,73 @@ public class DragonFruitDrakeModel extends DragonEntityModel<DragonFruitDrakeEnt
     }
 
     @Override
-    public void renderToBuffer(MatrixStack ms, IVertexBuilder buffer, int light, int overlay, float red, float green, float blue, float alpha)
+    public void postProcess(DragonFruitDrakeEntity entity, MatrixStack ms, IRenderTypeBuffer buffer, int light, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, float partialTicks)
     {
-        Body1.render(ms, buffer, light, overlay, red, green, blue, alpha);
+        int color = getColorByAge(entity);
+        float r = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float b = (color & 0xFF) / 255f;
+        renderToBuffer(ms, buffer.getBuffer(RenderType.entityTranslucent(getBodyTexture(entity))), light, LivingRenderer.getOverlayCoords(entity, 0), r, g, b, 1f);
     }
 
     @Override
-    public void setupAnim(DragonFruitDrakeEntity entity, float limbSwing, float limbSwingAmount, float bob, float netHeadYaw, float headPitch)
+    public ResourceLocation getTexture(DragonFruitDrakeEntity entity)
     {
-        this.riding = entity.isInSittingPose();
-        globalSpeed = 0.5f;
+        int index = entity.isHatchling()? 2 : entity.isMale()? 0 : 1;
+        if (entity.getVariant() == -1) index |= 4;
+        if (TEXTURES[index] == null)
+        {
+            String path = FOLDER + "dragon_fruit_drake/";
+            path += ((index & 2) != 0)? "child" : ((index & 1) != 0)? "female" : "male";
+            if ((index & 4) != 0) path += "_spe";
+            return TEXTURES[index] = Wyrmroost.id(path + "_leaves.png");
+        }
+        return TEXTURES[index];
+    }
+
+    public ResourceLocation getBodyTexture(DragonFruitDrakeEntity entity)
+    {
+        return entity.isHatchling()? GRAY_SCALE_CHILD : GRAY_SCALE;
+    }
+
+    public static int getColorByAge(DragonFruitDrakeEntity entity)
+    {
+        int to = entity.getVariant() == -1? 0xD08C21 : 0xFF0054;
+        return lerp(entity.ageProgress(), 0x23731C, to);
+    }
+
+    private static int lerp(float amount, int a, int b)
+    {
+        int ar = a >> 16;
+        int ag = a >> 8 & 0xff;
+        int ab = a & 0xff;
+
+        int br = b >> 16;
+        int bg = b >> 8 & 0xff;
+        int bb = b & 0xff;
+
+        int rr = (int) (ar + amount * (br - ar));
+        int rg = (int) (ag + amount * (bg - ag));
+        int rb = (int) (ab + amount * (bb - ab));
+
+        return (rr << 16) + (rg << 8) + (rb);
+    }
+
+    @Override
+    public float getShadowRadius(DragonFruitDrakeEntity entity)
+    {
+        return 1.15f;
+    }
+
+    @Override
+    public void setupAnim(DragonFruitDrakeEntity entity, float p_225597_2_, float p_225597_3_, float p_225597_4_, float p_225597_5_, float p_225597_6_)
+    {
         reset();
         animator().tick(entity, this, partialTicks);
-
-        if (!entity.isSleeping())
-        {
-            Body1.y += bob(0.6f, 0.2f, false, limbSwing, limbSwingAmount);
-
-            // Front
-            walk(LegfrontR1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
-            walk(LegfrontR2, 0.3f, 0.2f, false, 2.5f, 0, limbSwing, limbSwingAmount);
-            walk(frontfootR, 0.3f, 0.3f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
-
-            walk(LegfrontL1, 0.3f, 0.6f, true, 0, 0, limbSwing, limbSwingAmount);
-            walk(LegfrontL2, 0.3f, 0.2f, true, 2.5f, 0, limbSwing, limbSwingAmount);
-            walk(frontfootL, 0.3f, 0.3f, true, 2.5f, 0.35f, limbSwing, limbSwingAmount);
-
-            // Back
-            walk(LegThighR, 0.3f, 0.6f, true, 0, 0, limbSwing, limbSwingAmount);
-            walk(backfootR, 0.3f, 0.6f, true, 2.5f, 0.35f, limbSwing, limbSwingAmount);
-
-            walk(LegThighR_1, 0.3f, 0.6f, false, 0, 0, limbSwing, limbSwingAmount);
-            walk(backfootL, 0.3f, 0.6f, false, 2.5f, -0.35f, limbSwing, limbSwingAmount);
-        }
-
-        sit(entity.sitTimer.get(partialTicks));
-        sleep(entity.sleepTimer.get(partialTicks));
-
-        if (entity.isSleeping())
-        {
-            EyeL.yRot = 87;
-            EyeR.yRot = -87f;
-        }
-
-        idle(bob, false);
-
-        if (!entity.isSleeping()) faceTarget(netHeadYaw, headPitch, 1, headArray);
-    }
-
-    private void sit(float v)
-    {
-        setTime(v);
-
-        move(Body1, 0, 5.6f, 0);
-
-        rotate(LegfrontL1, -0.66f, 0, 0);
-        rotate(LegfrontL2, -0.7f, 0, 0);
-        rotate(LegfrontL3, 0.55f, 0, 0);
-        rotate(frontfootL, 0.98f, 0, 0);
-
-        rotate(LegfrontR1, -0.66f, 0, 0);
-        rotate(LegfrontR2, -0.7f, 0, 0);
-        rotate(LegfrontR3, 0.4f, 0, 0);
-        rotate(frontfootR, 1.12f, 0, 0);
-
-        rotate(LegThighR, 0.8f, 0, 0);
-        rotate(LegSegmentR1, -2.1f, -0.1f, 0.1f);
-        rotate(LegSegmentR2, -0.1f, 0, 0);
-        rotate(LegSegmentR3, 1.1f, 0, 0);
-        rotate(backfootR, 0.4f, 0, 0);
-        rotate(LegThighR_1, 0.8f, 0, 0);
-        rotate(LegSegmentL1, -2.1f, 0.1f, -0.1f);
-        rotate(LegSegmentL2, -0.1f, 0, 0);
-        rotate(LegSegmentL3, 1.1f, 0, 0);
-        rotate(backfootL, 0.4f, 0, 0);
-
-        rotate(Tail5, -0.29f, 0, 0);
-    }
-
-    private void sleep(float v)
-    {
-        setTime(v);
-
-        rotate(neck2, 0.78f, 0.3f, 0);
-        rotate(neck3, 0.5f, 0.3f, 0);
-        rotate(neck4, -0.2f, 0.3f, 0);
-        rotate(Head, -1f, 0.3f, -0.4f);
-
-        rotate(Tail1, 0.1f, -0.4f, 0);
-        rotate(Tail2, 0f, -0.4f, 0);
-        rotate(Tail3, 0f, -0.4f, 0);
-        rotate(Tail4, -0.5f, -0.4f, 0);
-        rotate(Tail5, -0.5f, -0.4f, 0);
-        rotate(Tail6, -0.5f, -0.6f, 0);
-        rotate(Tail7, 0f, -0.4f, 0.5f);
-        rotate(TailLeafEND, -0.4f, 0, 0);
-    }
-
-    public void idle(float frame, boolean mouth)
-    {
-        if (mouth) walk(mouthbottom, globalSpeed - 0.425f, 0.1f, false, 0.5f, 0.1f, frame, 0.5f);
-        chainWave(headArray, globalSpeed - 0.425f, 0.03f, 2, frame, 0.5f);
-        chainWave(tailArray, globalSpeed - 0.45f, 0.05f, 2, frame, 0.5f);
-        chainSwing(tailArray, globalSpeed - 0.465f, 0.05f, 3d, frame, 0.5f);
     }
 
     public void biteAnimation()
     {
-        ModelAnimator animator = animator(); // reduce method calls
 
-        animator.startKeyframe(5)
-                .rotate(mouthbottom, 0.5f, 0, 0);
-        for (WRModelRenderer box : headArray) animator.rotate(box, -0.15f, 0, 0);
-        animator.rotate(Head, 1, 0, 0)
-                .endKeyframe();
-
-        animator.startKeyframe(4)
-                .rotate(neck2, 1, 0, 0)
-                .endKeyframe();
-
-        animator.resetKeyframe(6);
-    }
-
-    public static ResourceLocation texture(String png)
-    {
-        return Wyrmroost.id(FOLDER + "dragon_fruit_drake/" + png);
     }
 }

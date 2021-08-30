@@ -124,7 +124,7 @@ public class CommonEvents
         if (stack.getItem() != Items.STICK || !stack.getHoverName().getString().equals("Debug Stick"))
             return;
 
-        EntityRayTraceResult ertr = Mafs.clipEntities(event.getPlayer(), 50, null);
+        EntityRayTraceResult ertr = Mafs.clipEntities(event.getPlayer(), 50, 1, null);
         if (ertr != null)
         {
             event.setCanceled(true);

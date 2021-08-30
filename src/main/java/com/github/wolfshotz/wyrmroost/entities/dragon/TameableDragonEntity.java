@@ -99,9 +99,9 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
     public static final DataParameter<Boolean> GENDER = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> FLYING = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> SLEEPING = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.INT);
+    public static final DataParameter<Integer> VARIANT = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.INT); // todo in 1.17: make this use strings for nbt based textures
     public static final DataParameter<ItemStack> ARMOR = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.ITEM_STACK);
-    public static final DataParameter<BlockPos> HOME_POS = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BLOCK_POS); // todo for 1.17: remove optional and make this nullable
+    public static final DataParameter<BlockPos> HOME_POS = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.BLOCK_POS);
     public static final DataParameter<Integer> AGE = EntityDataManager.defineId(TameableDragonEntity.class, DataSerializers.INT);
 
     @Deprecated // https://github.com/MinecraftForge/MinecraftForge/issues/7622
@@ -213,7 +213,11 @@ public abstract class TameableDragonEntity extends TameableEntity implements IAn
         entityData.set(SLEEPING, sleep);
         if (!level.isClientSide)
         {
-            if (sleep) clearAI();
+            if (sleep)
+            {
+                clearAI();
+                xRot = 0;
+            }
             else sleepCooldown = 350;
         }
     }
