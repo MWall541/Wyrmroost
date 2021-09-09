@@ -1,11 +1,9 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
-import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
@@ -16,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
-import net.minecraftforge.fml.RegistryObject;
 
 import java.util.function.Supplier;
 
@@ -24,9 +21,9 @@ public class ThinLogBlock extends LogBlock implements IWaterLoggable
 {
     private static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final VoxelShape[] SHAPES = {
-            Block.box(0, 2, 2, 16, 14, 14), // x
-            Block.box(2, 0, 2, 14, 16, 14), // y
-            Block.box(2, 2, 0, 14, 14, 16)  // z
+            Block.box(0, 4, 4, 16, 12, 12), // x
+            Block.box(4, 0, 4, 12, 16, 12), // y
+            Block.box(4, 4, 0, 12, 12, 16)  // z
     };
 
     public ThinLogBlock(Properties props, Supplier<Block> stripped)
@@ -65,17 +62,12 @@ public class ThinLogBlock extends LogBlock implements IWaterLoggable
         return super.getStateForPlacement(ctx).setValue(WATERLOGGED, ctx.getLevel().getFluidState(ctx.getClickedPos()).getType() == Fluids.WATER);
     }
 
-    public static class Group extends WRBlocks.WoodGroup
+    public static WoodGroup.Builder thinLogGroup(MaterialColor color, MaterialColor logColor)
     {
-        public Group(String name, MaterialColor color, MaterialColor logColor)
-        {
-            super(name, color, logColor);
-        }
-
-        @Override
-        protected RegistryObject<Block> applyLog(String name, MaterialColor color, MaterialColor logColor, boolean stripped, boolean wood)
-        {
-            return WRBlocks.register(name, () -> new ThinLogBlock(color, logColor, stripped? null : wood? self().strippedWood : self().strippedLog), WRBlocks.extend().flammability(5, 5).render(() -> RenderType::cutout));
-        }
+        return WoodGroup.builder(color, logColor)
+                .log(stripped -> new ThinLogBlock(color, logColor, stripped))
+                .strippedLog(() -> new ThinLogBlock(color, color, null))
+                .wood(stripped -> new ThinLogBlock(logColor, logColor, stripped))
+                .strippedWood(() -> new ThinLogBlock(color, color, null));
     }
 }

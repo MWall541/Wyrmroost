@@ -1,8 +1,8 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
-import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
@@ -40,7 +40,7 @@ class ItemModelData extends ItemModelProvider
         final ModelFile itemGenerated = uncheckedModel(mcLoc("item/generated"));
         final ModelFile spawnEggTemplate = uncheckedModel(mcLoc("item/template_spawn_egg"));
         final ModelFile bucket = uncheckedModel("forge:item/bucket");
-        final ModelFile ister = new ModelFile.ExistingModelFile(new ResourceLocation("builtin/entity"), existingFileHelper);
+        final ModelFile ister = uncheckedModel("builtin/entity");
 
         getBuilder("desert_wyrm_alive").parent(itemGenerated).texture("layer0", resource("desert_wyrm_alive"));
         item(WRItems.LDWYRM.get()).override().predicate(Wyrmroost.id("is_alive"), 1f).model(uncheckedModel(resource("desert_wyrm_alive")));
@@ -74,7 +74,7 @@ class ItemModelData extends ItemModelProvider
 
         WoodType.values()
                 .filter(w -> w.name().contains(Wyrmroost.MOD_ID))
-                .map(WRBlocks.WoodGroup.class::cast)
+                .map(WoodGroup.class::cast)
                 .forEach(w -> fenceAndButton(w.getFence(), w.getButton(), w.getPlanks()));
 
         // All items that do not require custom attention

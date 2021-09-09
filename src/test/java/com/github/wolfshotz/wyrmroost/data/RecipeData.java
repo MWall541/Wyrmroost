@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.items.LazySpawnEggItem;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
@@ -115,7 +116,7 @@ class RecipeData extends RecipeProvider
         shaped(hoe).define('X', materials).define('|', Tags.Items.RODS_WOODEN).pattern("XX").pattern(" |").pattern(" |").unlockedBy("has_material", has(materials)).save(consumer);
     }
 
-    private void woodGroup(WRBlocks.WoodGroup group, ITag<Item> logTag)
+    private void woodGroup(WoodGroup group, ITag<Item> logTag)
     {
         InventoryChangeTrigger.Instance hasPlanks = has(group.getPlanks());
 

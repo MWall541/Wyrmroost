@@ -1,7 +1,7 @@
 {
   "parent": "wyrmroost:block/corin",
   "textures": {
-    "side": "wyrmroost:block/prismarine_corin_wood",
-    "top": "wyrmroost:block/prismarine_corin_wood"
+    "side": "wyrmroost:block/prismarine_corin_log",
+    "top": "wyrmroost:block/prismarine_corin_log"
   }
 }

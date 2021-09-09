@@ -9,19 +9,23 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.criterion.EntityFlagsPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.block.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.data.loot.EntityLootTables;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.loot.*;
+import net.minecraft.loot.conditions.BlockStateProperty;
 import net.minecraft.loot.conditions.EntityHasProperty;
 import net.minecraft.loot.conditions.KilledByPlayer;
 import net.minecraft.loot.conditions.RandomChance;
+import net.minecraft.loot.functions.ApplyBonus;
 import net.minecraft.loot.functions.LootingEnchantBonus;
 import net.minecraft.loot.functions.SetCount;
 import net.minecraft.loot.functions.Smelt;
@@ -74,6 +78,8 @@ class LootTableData extends LootTableProvider
             leaves(PINK_OSERI_LEAVES.get(), PINK_OSERI_SAPLING.get());
             leaves(PURPLE_OSERI_LEAVES.get(), PURPLE_OSERI_SAPLING.get());
             leaves(WHITE_OSERI_LEAVES.get(), WHITE_OSERI_SAPLING.get());
+
+            add(CANIS_ROOT.get(), applyExplosionDecay(CANIS_ROOT.get(), LootTable.lootTable().withPool(LootPool.lootPool().add(ItemLootEntry.lootTableItem(CANIS_ROOT.get()))).withPool(LootPool.lootPool().when(BlockStateProperty.hasBlockStateProperties(CANIS_ROOT.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CarrotBlock.AGE, 3))).add(ItemLootEntry.lootTableItem(CANIS_ROOT.get()).apply(ApplyBonus.addBonusBinomialDistributionCount(Enchantments.BLOCK_FORTUNE, 0.5714286F, 3))))));
 
             // All blocks that have not been given special treatment above, drop themselves!
             for (Block block : getKnownBlocks())

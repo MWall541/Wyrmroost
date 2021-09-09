@@ -11,7 +11,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
@@ -35,7 +38,7 @@ import java.util.function.Supplier;
 
 public class WRBlocks
 {
-    static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroost_dimension")
+    public static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroost_dimension")
     {
         @Override
         public ItemStack makeIcon()
@@ -91,22 +94,35 @@ public class WRBlocks
     public static final RegistryObject<Block> WHITE_OSERI_VINES = register("white_oseri_vines", () -> new OseriVinesBlock(WRBlocks.WHITE_OSERI_VINES_BODY, OseriTreeFeature.Type.WHITE.color), extend().render(() -> RenderType::cutout).flammability(30, 80));
     public static final RegistryObject<Block> WHITE_OSERI_VINES_BODY = register("white_oseri_vines_body", () -> new OseriVinesBodyBlock(WRBlocks.WHITE_OSERI_VINES, OseriTreeFeature.Type.WHITE.color), extend().render(() -> RenderType::cutout).noItem().flammability(30, 80));
     public static final RegistryObject<Block> WHITE_OSERI_PETALS = register("white_oseri_petals", () -> new PetalsBlock(plant()), extend().render(() -> RenderType::cutout).flammability(60, 30));
-    public static final WoodGroup OSERI_WOOD = new WoodGroup("oseri", MaterialColor.SAND, MaterialColor.STONE);
+    public static final WoodGroup OSERI_WOOD = WoodGroup.create("oseri", MaterialColor.SAND, MaterialColor.STONE);
 
     // frost crevasse
     public static final RegistryObject<Block> FROSTED_GRASS = register("frosted_grass", () -> new GrassBlock(properties(Material.DIRT, WRSounds.Types.FROSTED_GRASS).strength(0.55f)));
     public static final RegistryObject<Block> CREVASSE_COTTON = register("crevasse_cotton", CrevasseCottonBlock::new, extend().render(() -> RenderType::cutout).flammability(30, 80));
     public static final RegistryObject<Block> FROST_GOWN = register("frost_gown", () -> new TallFlowerBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission()), extend().render(() -> RenderType::cutout).flammability(30, 80));
-    public static final WoodGroup SAL_WOOD = new WoodGroup("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
+    public static final RegistryObject<Block> HAMA_SHRUB = register("hama_shrub", () -> new GrowingPlantBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission(), Direction.UP, 2, 0, WRBlocks.HAMA_SHRUB_BODY), extend().render(() -> RenderType::cutout).flammability(30, 80));
+    public static final RegistryObject<Block> HAMA_SHRUB_BODY = register("hama_shrub_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.HAMA_SHRUB), extend().render(() -> RenderType::cutout).noItem().flammability(30, 60));
+    public static final RegistryObject<Block> FORAH_STONE = register("forah_stone", () -> new Block(properties(Material.STONE, SoundType.GILDED_BLACKSTONE).requiresCorrectToolForDrops().strength(1f, 6f)));
+    public static final WoodGroup SAL_WOOD = WoodGroup.create("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
 
     // stygian sea
-    public static final WoodGroup PRISMARINE_CORIN_WOOD = new ThinLogBlock.Group("prismarine_corin", MaterialColor.COLOR_CYAN, MaterialColor.TERRACOTTA_CYAN);
-    public static final WoodGroup SILVER_CORIN_WOOD = new ThinLogBlock.Group("silver_corin", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.CLAY);
-    public static final WoodGroup TEAL_CORIN_WOOD = new ThinLogBlock.Group("teal_corin", MaterialColor.TERRACOTTA_CYAN, MaterialColor.TERRACOTTA_GREEN);
-    public static final WoodGroup RED_CORIN_WOOD = new ThinLogBlock.Group("red_corin", MaterialColor.TERRACOTTA_RED, MaterialColor.COLOR_RED);
-    public static final WoodGroup DYING_CORIN_WOOD = new ThinLogBlock.Group("dying_corin", MaterialColor.COLOR_GRAY, MaterialColor.TERRACOTTA_BLACK);
+    public static final WoodGroup PRISMARINE_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.COLOR_CYAN, MaterialColor.TERRACOTTA_CYAN).nonFlammable().build("prismarine_corin");
+    public static final WoodGroup SILVER_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.CLAY).nonFlammable().build("silver_corin");
+    public static final WoodGroup TEAL_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.TERRACOTTA_CYAN, MaterialColor.TERRACOTTA_GREEN).nonFlammable().build("teal_corin");
+    public static final WoodGroup RED_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.TERRACOTTA_RED, MaterialColor.COLOR_RED).nonFlammable().build("red_corin");
+    public static final WoodGroup DYING_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.COLOR_GRAY, MaterialColor.TERRACOTTA_BLACK).nonFlammable().build("dying_corin");
 
-    static RegistryObject<Block> register(String name, Supplier<Block> block)
+    // ashen desert
+    public static final RegistryObject<Block> ASH_STONE = register("ashstone", () -> new Block(properties(Material.STONE, SoundType.STONE).requiresCorrectToolForDrops().strength(1.5f, 6f)));
+    public static final RegistryObject<Block> CHISELED_ASH_STONE = register("chiseled_ashstone", () -> new Block(properties(Material.STONE, SoundType.STONE).requiresCorrectToolForDrops().strength(1.5f, 6f)));
+    public static final RegistryObject<Block> CUT_ASH_STONE = register("cut_ashstone", () -> new Block(properties(Material.STONE, SoundType.STONE).requiresCorrectToolForDrops().strength(1.5f, 6f)));
+    public static final RegistryObject<Block> CANIS_ROOT = register("canis_root", CanisRootBlock::new, extend().render(() -> RenderType::cutout).item(b -> new BlockItem(b, new Item.Properties().tab(BLOCKS_ITEM_GROUP).food(WRItems.food(1, 0.6f).build()))));
+    public static final RegistryObject<Block> ASH_BLOCK = register("ash_block", () -> new SandBlock(0x2D2A33, properties(Material.SAND, SoundType.SAND).strength(0.75f)));
+    public static final RegistryObject<Block> FINE_ASH = register("fine_ash", () -> new SandBlock(0x2D2A33, properties(Material.SAND, SoundType.SAND).strength(0.5f)));
+    public static final RegistryObject<Block> DRAGONS_BANE = register("dragons_bane", () -> new BushBlock(replaceablePlant()), extend().render(() -> RenderType::cutout).flammability(60, 100));
+    public static final RegistryObject<Block> EMBER_BLOCK = register("ember_block", EmberBlock::new);
+
+    public static RegistryObject<Block> register(String name, Supplier<Block> block)
     {
         return register(name, block, extend());
     }
@@ -210,156 +226,6 @@ public class WRBlocks
         public static INamedTag<Item> getItemTagFor(INamedTag<Block> blockTag)
         {
             return ITEM_BLOCK_TAGS.get(blockTag);
-        }
-    }
-
-    public static class WoodGroup extends WoodType
-    {
-        public final RegistryObject<Block> planks;
-        public final RegistryObject<Block> log;
-        public final RegistryObject<Block> strippedLog;
-        public final RegistryObject<Block> wood;
-        public final RegistryObject<Block> strippedWood;
-        public final RegistryObject<Block> slab;
-        public final RegistryObject<Block> pressurePlate;
-        public final RegistryObject<Block> fence;
-        public final RegistryObject<Block> fenceGate;
-        public final RegistryObject<Block> trapDoor;
-        public final RegistryObject<Block> stairs;
-        public final RegistryObject<Block> button;
-        public final RegistryObject<Block> door;
-        public final RegistryObject<Block> sign;
-        public final RegistryObject<Block> wallSign;
-        public final RegistryObject<Block> ladder;
-        public final RegistryObject<Block> bookshelf;
-
-        public WoodGroup(String name, MaterialColor color, MaterialColor logColor)
-        {
-            super(Wyrmroost.MOD_ID + ":" + name);
-
-            this.planks = WRBlocks.register(name + "_planks", () -> new Block(props(color)), extend().flammability(5, 20));
-            this.log = applyLog(name + "_log", color, logColor, false, false);
-            this.strippedLog = applyLog("stripped_" + name + "_log", color, logColor, true, false);
-            this.wood = applyLog(name + "_wood", logColor, logColor, false, true);
-            this.strippedWood = applyLog("stripped_" + name + "_wood", color, color, true, true);
-            this.slab = WRBlocks.register(name + "_slab", () -> new SlabBlock(props(color)), extend().flammability(5, 20));
-            this.pressurePlate = WRBlocks.register(name + "_pressure_plate", () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, props(color).noCollission().strength(0.5f)));
-            this.fence = WRBlocks.register(name + "_fence", () -> new FenceBlock(props(color)), extend().flammability(5, 20));
-            this.fenceGate = WRBlocks.register(name + "_fence_gate", () -> new FenceGateBlock(props(color)), extend().flammability(5, 20));
-            this.trapDoor = WRBlocks.register(name + "_trapdoor", () -> new TrapDoorBlock(props(color).strength(3f).noOcclusion().isValidSpawn((s, r, p, e) -> false)), extend().render(() -> RenderType::cutout));
-            this.stairs = WRBlocks.register(name + "_stairs", () -> new StairsBlock(() -> getPlanks().defaultBlockState(), props(color)), extend().flammability(5, 20));
-            this.button = WRBlocks.register(name + "_button", () -> new WoodButtonBlock(AbstractBlock.Properties.of(Material.DECORATION).noCollission().harvestTool(ToolType.AXE).strength(0.5f).sound(SoundType.WOOD)));
-            this.door = WRBlocks.register(name + "_door", () -> new DoorBlock(props(color).strength(3f).noOcclusion()), extend().render(() -> RenderType::cutout));
-            this.wallSign = WRBlocks.register(name + "_wall_sign", () -> new WRSignBlock.Wall(props(color).noCollission().strength(1f).lootFrom(self().sign), this), extend().noItem());
-            this.sign = WRBlocks.register(name + "_sign", () -> new WRSignBlock(props(color).noCollission().strength(1f), this), extend().item(b -> new SignItem(new Item.Properties().stacksTo(16).tab(BLOCKS_ITEM_GROUP), b, getWallSign())));
-            this.ladder = WRBlocks.register(name + "_ladder", () -> new LadderBlock(properties(Material.DECORATION, SoundType.LADDER).strength(0.4f).noOcclusion()), extend().render(() -> RenderType::cutout));
-            this.bookshelf = WRBlocks.register(name + "_bookshelf", BookshelfBlock::new, extend().flammability(30, 20));
-
-            WoodType.register(this);
-        }
-
-        protected RegistryObject<Block> applyLog(String name, MaterialColor color, MaterialColor logColor, boolean stripped, boolean wood)
-        {
-            return WRBlocks.register(name, stripped? () -> new RotatedPillarBlock(LogBlock.properties(logColor, logColor)) : () -> new LogBlock(color, logColor, wood? self().strippedWood : self().strippedLog), extend().flammability(5, 5));
-        }
-
-        public Block getPlanks()
-        {
-            return planks.get();
-        }
-
-        public Block getLog()
-        {
-            return log.get();
-        }
-
-        public Block getStrippedLog()
-        {
-            return strippedLog.get();
-        }
-
-        public Block getWood()
-        {
-            return wood.get();
-        }
-
-        public Block getStrippedWood()
-        {
-            return strippedWood.get();
-        }
-
-        public Block getSlab()
-        {
-            return slab.get();
-        }
-
-        public Block getPressurePlate()
-        {
-            return pressurePlate.get();
-        }
-
-        public Block getFence()
-        {
-            return fence.get();
-        }
-
-        public Block getFenceGate()
-        {
-            return fenceGate.get();
-        }
-
-        public Block getTrapDoor()
-        {
-            return trapDoor.get();
-        }
-
-        public Block getStairs()
-        {
-            return stairs.get();
-        }
-
-        public Block getButton()
-        {
-            return button.get();
-        }
-
-        public Block getDoor()
-        {
-            return door.get();
-        }
-
-        public Block getSign()
-        {
-            return sign.get();
-        }
-
-        public Block getWallSign()
-        {
-            return wallSign.get();
-        }
-
-        public Block getLadder()
-        {
-            return ladder.get();
-        }
-
-        public Block getBookshelf()
-        {
-            return bookshelf.get();
-        }
-
-        protected WoodGroup self()
-        {
-            return this;
-        }
-
-        private static AbstractBlock.Properties props(MaterialColor color)
-        {
-            return AbstractBlock.Properties
-                    .of(Material.WOOD, color)
-                    .strength(2f, 3f)
-                    .harvestTool(ToolType.AXE)
-                    .sound(SoundType.WOOD);
         }
     }
 

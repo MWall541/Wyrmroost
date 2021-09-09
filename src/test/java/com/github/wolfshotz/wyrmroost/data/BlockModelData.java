@@ -3,6 +3,7 @@ package com.github.wolfshotz.wyrmroost.data;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.blocks.ThinLogBlock;
+import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
@@ -60,22 +61,37 @@ class BlockModelData extends BlockStateProvider
         for (Block block : registered)
         {
             if (block instanceof TallFlowerBlock) tallFlower(block);
+            else if (block instanceof CropsBlock) crop((CropsBlock) block);
             else if (block instanceof BushBlock || block instanceof AbstractPlantBlock) cross(block);
             else if (block instanceof PetalsBlock) petals(block);
             else if (!(block instanceof FlowingFluidBlock)) simpleBlock(block);
         }
     }
 
-    void woodGroup(WRBlocks.WoodGroup group, boolean thinLogs)
+    void crop(CropsBlock block)
+    {
+        getVariantBuilder(block).forAllStates(state ->
+        {
+            String path = block.getRegistryName().getPath() + "_stage" + state.getValue(block.getAgeProperty());
+
+            return ConfiguredModel.builder()
+                    .modelFile(models().crop(path, modLoc("block/" + path)))
+                    .build();
+        });
+    }
+
+    void woodGroup(WoodGroup group, boolean thinLogs)
     {
         ResourceLocation planks = blockTexture(group.getPlanks());
 
         if (thinLogs)
         {
-            corin((ThinLogBlock) group.getLog(), false);
-            corin((ThinLogBlock) group.getStrippedLog(), false);
-            corin((ThinLogBlock) group.getWood(), true);
-            corin((ThinLogBlock) group.getStrippedWood(), true);
+            ResourceLocation side = blockTexture(group.getLog());
+            ResourceLocation strippedSide = blockTexture(group.getStrippedLog());
+            corin((ThinLogBlock) group.getLog(), side, modLoc("block/" + group.getLog().getRegistryName().getPath() + "_top"));
+            corin((ThinLogBlock) group.getStrippedLog(), strippedSide, modLoc("block/" + group.getStrippedLog().getRegistryName().getPath() + "_top"));
+            corin((ThinLogBlock) group.getWood(), side, side);
+            corin((ThinLogBlock) group.getStrippedWood(), strippedSide, strippedSide);
         }
         else
         {
@@ -102,17 +118,16 @@ class BlockModelData extends BlockStateProvider
         bookshelf(group.getBookshelf(), planks);
     }
 
-    void woodGroup(WRBlocks.WoodGroup group)
+    void woodGroup(WoodGroup group)
     {
         woodGroup(group, false);
     }
 
-    void corin(ThinLogBlock block, boolean allSided)
+    void corin(ThinLogBlock block, ResourceLocation sideTexture, ResourceLocation topTexture)
     {
-        String name = block.getRegistryName().getPath();
-        BlockModelBuilder model = models().withExistingParent(name, modLoc("corin"))
-                .texture("side", name = "block/" + name)
-                .texture("top", name + (allSided? "" : "_top"));
+        BlockModelBuilder model = models().withExistingParent(block.getRegistryName().getPath(), modLoc("corin"))
+                .texture("side", sideTexture)
+                .texture("top", topTexture);
         axisBlock(block, model, model);
     }
 

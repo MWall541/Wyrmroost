@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
@@ -81,7 +82,6 @@ public class TagData
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         protected void addTags()
         {
             for (Block block : ModUtils.getRegistryEntries(WRBlocks.REGISTRY))
@@ -96,28 +96,21 @@ public class TagData
                         tag(BlockTags.BAMBOO_PLANTABLE_ON).add(block);
                         tag(BlockTags.VALID_SPAWN).add(block);
                     }
-                    continue;
                 }
-                if (block instanceof LeavesBlock)
-                {
-                    cloneToItem(BlockTags.LEAVES, ItemTags.LEAVES).add(block);
-                    continue;
-                }
-                if (block instanceof SaplingBlock)
-                {
-                    cloneToItem(BlockTags.SAPLINGS, ItemTags.SAPLINGS).add(block);
-                    continue;
-                }
-                if (block instanceof VineBlock || block instanceof LadderBlock)
-                {
+                else if (block instanceof LeavesBlock) cloneToItem(BlockTags.LEAVES, ItemTags.LEAVES).add(block);
+                else if (block instanceof SaplingBlock) cloneToItem(BlockTags.SAPLINGS, ItemTags.SAPLINGS).add(block);
+                else if (block instanceof VineBlock || block instanceof LadderBlock)
                     tag(BlockTags.CLIMBABLE).add(block);
-                    continue;
-                }
-                if (block instanceof TallFlowerBlock)
-                {
+                else if (block instanceof TallFlowerBlock)
                     cloneToItem(BlockTags.TALL_FLOWERS, ItemTags.TALL_FLOWERS).add(block);
-                }
+                else if (block instanceof CropsBlock)
+                    tag(BlockTags.CROPS).add(block);
             }
+
+            tag(Tags.Blocks.STONE).add(WRBlocks.ASH_STONE.get(), WRBlocks.CHISELED_ASH_STONE.get(), WRBlocks.CUT_ASH_STONE.get(),
+                    WRBlocks.FORAH_STONE.get());
+
+            cloneToItem(BlockTags.SAND, ItemTags.SAND).add(WRBlocks.ASH_BLOCK.get(), WRBlocks.FINE_ASH.get());
 
             tag(BlockTags.DRAGON_IMMUNE).add(WRBlocks.PURPLE_GEODE_ORE.get());
             cloneToItem(BlockTags.SMALL_FLOWERS, ItemTags.SMALL_FLOWERS).add(WRBlocks.CREVASSE_COTTON.get());
@@ -150,7 +143,7 @@ public class TagData
             tag(BlockTags.BEACON_BASE_BLOCKS).addTag(tag);
         }
 
-        private void woodGroup(WRBlocks.WoodGroup group, ITag.INamedTag<Block> logTag, boolean flammable)
+        private void woodGroup(WoodGroup group, ITag.INamedTag<Block> logTag, boolean flammable)
         {
             tag(logTag).add(group.getLog(), group.getStrippedLog(), group.getWood(), group.getStrippedWood());
 
