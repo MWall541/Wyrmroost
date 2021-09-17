@@ -108,7 +108,7 @@ public class TagData
             }
 
             tag(Tags.Blocks.STONE).add(WRBlocks.ASH_STONE.get(), WRBlocks.CHISELED_ASH_STONE.get(), WRBlocks.CUT_ASH_STONE.get(),
-                    WRBlocks.FORAH_STONE.get());
+                    WRBlocks.FORAH_STONE.getStone());
 
             cloneToItem(BlockTags.SAND, ItemTags.SAND).add(WRBlocks.ASH_BLOCK.get(), WRBlocks.FINE_ASH.get());
 

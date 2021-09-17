@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.*;
 import net.minecraft.resources.ResourcePackType;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
@@ -109,6 +110,11 @@ class ItemModelData extends ItemModelProvider
                 if (block instanceof AbstractButtonBlock)
                 {
                     customInventoryItem(item, fromBlockTexture(block), "button");
+                    continue;
+                }
+                if (block.defaultBlockState().hasProperty(BlockStateProperties.LAYERS))
+                {
+                    getBuilderFor(block).parent(uncheckedModel(fromBlockTexture(block) + "_height2"));
                     continue;
                 }
 

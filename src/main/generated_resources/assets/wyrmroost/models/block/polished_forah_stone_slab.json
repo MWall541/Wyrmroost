@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "side": "wyrmroost:block/polished_forah_stone",
+    "bottom": "wyrmroost:block/polished_forah_stone",
+    "top": "wyrmroost:block/polished_forah_stone"
+  }
+}

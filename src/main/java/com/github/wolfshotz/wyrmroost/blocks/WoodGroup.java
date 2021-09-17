@@ -5,7 +5,6 @@ import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.item.Item;
 import net.minecraft.item.SignItem;
 import net.minecraftforge.common.ToolType;
@@ -48,13 +47,13 @@ public class WoodGroup extends WoodType
         this.pressurePlate = WRBlocks.register(name + "_pressure_plate", builder.pressurePlate);
         this.fence = register(name + "_fence", builder.fence, 5, 20, builder.flammable);
         this.fenceGate = register(name + "_fence_gate", builder.fenceGate, 5, 20, builder.flammable);
-        this.trapDoor = WRBlocks.register(name + "_trapdoor", builder.trapDoor);
+        this.trapDoor = WRBlocks.register(name + "_trapdoor", builder.trapDoor, WRBlocks.extend().cutoutRenderer());
         this.stairs = register(name + "_stairs", () -> builder.stairs.apply(getPlanks()), 5, 20, builder.flammable);
         this.button = WRBlocks.register(name + "_button", builder.button);
-        this.door = WRBlocks.register(name + "_door", builder.door);
+        this.door = WRBlocks.register(name + "_door", builder.door, WRBlocks.extend().cutoutRenderer());
         this.sign = WRBlocks.register(name + "_sign", () -> builder.sign.apply(this), WRBlocks.extend().item(b -> new SignItem(new Item.Properties().stacksTo(16).tab(WRBlocks.BLOCKS_ITEM_GROUP), b, getWallSign())));
         this.wallSign = WRBlocks.register(name + "_wall_sign", () -> builder.wallSign.apply(this, sign), WRBlocks.extend().noItem());
-        this.ladder = WRBlocks.register(name + "_ladder", builder.ladder, WRBlocks.extend().render(() -> RenderType::cutout));
+        this.ladder = WRBlocks.register(name + "_ladder", builder.ladder, WRBlocks.extend().cutoutRenderer());
         this.bookshelf = register(name + "_bookshelf", builder.bookshelf, 30, 20, builder.flammable);
 
         WoodType.register(this);
@@ -169,10 +168,11 @@ public class WoodGroup extends WoodType
                 .sound(SoundType.WOOD);
     }
 
-    private RegistryObject<Block> register(String name, Supplier<Block> sup, int fireSpread, int fireDestruction, boolean flammable)
+    private static RegistryObject<Block> register(String name, Supplier<Block> sup, int fireSpread, int fireDestruction, boolean flammable)
     {
-        if (flammable) return WRBlocks.register(name, sup, WRBlocks.extend().flammability(fireSpread, fireDestruction));
-        else return WRBlocks.register(name, sup);
+        WRBlocks.BlockExtension extension = WRBlocks.extend();
+        if (flammable) extension.flammability(fireSpread, fireDestruction);
+        return WRBlocks.register(name, sup, extension);
     }
 
     public static class Builder

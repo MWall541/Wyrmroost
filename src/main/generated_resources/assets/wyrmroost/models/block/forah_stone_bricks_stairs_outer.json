@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "side": "wyrmroost:block/forah_stone_bricks",
+    "bottom": "wyrmroost:block/forah_stone_bricks",
+    "top": "wyrmroost:block/forah_stone_bricks"
+  }
+}

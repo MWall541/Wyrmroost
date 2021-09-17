@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "layers=1": {
+      "model": "wyrmroost:block/embers_height2"
+    },
+    "layers=2": {
+      "model": "wyrmroost:block/embers_height4"
+    },
+    "layers=3": {
+      "model": "wyrmroost:block/embers_height6"
+    },
+    "layers=4": {
+      "model": "wyrmroost:block/embers_height8"
+    },
+    "layers=5": {
+      "model": "wyrmroost:block/embers_height10"
+    },
+    "layers=6": {
+      "model": "wyrmroost:block/embers_height12"
+    },
+    "layers=7": {
+      "model": "wyrmroost:block/embers_height14"
+    },
+    "layers=8": {
+      "model": "wyrmroost:block/embers"
+    }
+  }
+}

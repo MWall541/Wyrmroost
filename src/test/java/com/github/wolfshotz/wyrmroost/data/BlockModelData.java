@@ -2,6 +2,7 @@ package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
+import com.github.wolfshotz.wyrmroost.blocks.StoneGroup;
 import com.github.wolfshotz.wyrmroost.blocks.ThinLogBlock;
 import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
@@ -33,6 +34,9 @@ class BlockModelData extends BlockStateProvider
         vine(WRBlocks.MOSS_VINE.get());
         snowy(WRBlocks.MULCH.get());
         snowy(WRBlocks.FROSTED_GRASS.get());
+        layered(WRBlocks.EMBERS.get(), blockTexture(WRBlocks.EMBER_BLOCK.get()));
+        layered(WRBlocks.ASH.get(), blockTexture(WRBlocks.ASH_BLOCK.get()));
+
         woodGroup(WRBlocks.OSERI_WOOD);
         woodGroup(WRBlocks.SAL_WOOD);
         woodGroup(WRBlocks.PRISMARINE_CORIN_WOOD, true);
@@ -40,6 +44,11 @@ class BlockModelData extends BlockStateProvider
         woodGroup(WRBlocks.TEAL_CORIN_WOOD, true);
         woodGroup(WRBlocks.RED_CORIN_WOOD, true);
         woodGroup(WRBlocks.DYING_CORIN_WOOD, true);
+
+        stoneGroup(WRBlocks.FORAH_STONE);
+        stoneGroup(WRBlocks.FORAH_COBBLESTONE);
+        stoneGroup(WRBlocks.POLISHED_FORAH_STONE);
+        stoneGroup(WRBlocks.FORAH_STONE_BRICKS);
     }
 
     @Override
@@ -64,6 +73,7 @@ class BlockModelData extends BlockStateProvider
             else if (block instanceof CropsBlock) crop((CropsBlock) block);
             else if (block instanceof BushBlock || block instanceof AbstractPlantBlock) cross(block);
             else if (block instanceof PetalsBlock) petals(block);
+            else if (block instanceof SilverfishBlock) simpleBlock(block, models().cubeAll(block.getRegistryName().getPath(), modLoc(block.getRegistryName().getPath().substring(9))));
             else if (!(block instanceof FlowingFluidBlock)) simpleBlock(block);
         }
     }
@@ -116,6 +126,20 @@ class BlockModelData extends BlockStateProvider
         sign((WallSignBlock) group.getWallSign(), planks);
         ladder((LadderBlock) group.getLadder());
         bookshelf(group.getBookshelf(), planks);
+    }
+
+    void stoneGroup(StoneGroup group)
+    {
+        ResourceLocation texture = blockTexture(group.getStone());
+
+        simpleBlock(group.getStone());
+        if (group.stairs != null) stairsBlock((StairsBlock) group.getStairs(), texture);
+        if (group.wall != null) wallBlock((WallBlock) group.getWall(), texture);
+        if (group.slab != null) slabBlock(((SlabBlock) group.getSlab()), texture, texture);
+        if (group.pressurePlate != null) pressurePlate(group.getPressurePlate(), texture);
+        if (group.button != null) button(((StoneButtonBlock) group.getButton()), texture);
+        if (group.cracked != null) simpleBlock(group.getCracked());
+        if (group.chiseled != null) simpleBlock(group.getChiseled());
     }
 
     void woodGroup(WoodGroup group)
@@ -255,5 +279,26 @@ class BlockModelData extends BlockStateProvider
                 .part().modelFile(model).rotationY(270).uvLock(true).addModel().condition(VineBlock.WEST, true).end()
                 .part().modelFile(model).rotationY(180).uvLock(true).addModel().condition(VineBlock.SOUTH, true).end()
                 .part().modelFile(model).rotationY(90).addModel().condition(VineBlock.EAST, true).end();
+    }
+
+    void layered(Block block, ResourceLocation texture)
+    {
+        getVariantBuilder(block).forAllStates(s ->
+        {
+            int value = s.getValue(SnowBlock.LAYERS);
+            if (value == 8) return ConfiguredModel.builder().modelFile(models().cubeAll(block.getRegistryName().getPath(), texture)).build();
+            else
+            {
+                value *= 2;
+                String snow = "minecraft:block/snow_height" + value;
+                String path = block.getRegistryName().getPath() + "_height" + value;
+                return ConfiguredModel.builder()
+                        .modelFile(models().withExistingParent(path, snow)
+                                .texture("particle", texture)
+                                .texture("texture", texture))
+                        .build();
+            }
+
+        });
     }
 }

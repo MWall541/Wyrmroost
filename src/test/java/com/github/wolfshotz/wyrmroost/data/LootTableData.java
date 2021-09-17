@@ -79,6 +79,8 @@ class LootTableData extends LootTableProvider
             leaves(PURPLE_OSERI_LEAVES.get(), PURPLE_OSERI_SAPLING.get());
             leaves(WHITE_OSERI_LEAVES.get(), WHITE_OSERI_SAPLING.get());
 
+            silkTouch(FORAH_STONE.getStone(), FORAH_COBBLESTONE.getStone());
+
             add(CANIS_ROOT.get(), applyExplosionDecay(CANIS_ROOT.get(), LootTable.lootTable().withPool(LootPool.lootPool().add(ItemLootEntry.lootTableItem(CANIS_ROOT.get()))).withPool(LootPool.lootPool().when(BlockStateProperty.hasBlockStateProperties(CANIS_ROOT.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CarrotBlock.AGE, 3))).add(ItemLootEntry.lootTableItem(CANIS_ROOT.get()).apply(ApplyBonus.addBonusBinomialDistributionCount(Enchantments.BLOCK_FORTUNE, 0.5714286F, 3))))));
 
             // All blocks that have not been given special treatment above, drop themselves!

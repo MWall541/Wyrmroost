@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/snow_height10",
+  "textures": {
+    "particle": "wyrmroost:block/ash_block",
+    "texture": "wyrmroost:block/ash_block"
+  }
+}

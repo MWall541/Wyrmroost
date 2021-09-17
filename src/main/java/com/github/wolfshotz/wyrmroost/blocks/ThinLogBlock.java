@@ -15,6 +15,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ThinLogBlock extends LogBlock implements IWaterLoggable
@@ -69,5 +70,16 @@ public class ThinLogBlock extends LogBlock implements IWaterLoggable
                 .strippedLog(() -> new ThinLogBlock(color, color, null))
                 .wood(stripped -> new ThinLogBlock(logColor, logColor, stripped))
                 .strippedWood(() -> new ThinLogBlock(color, color, null));
+    }
+
+    public static void consumeThinLogs(Consumer<Block> con, WoodGroup... groups)
+    {
+        for (WoodGroup group : groups)
+        {
+            con.accept(group.getLog());
+            con.accept(group.getStrippedLog());
+            con.accept(group.getWood());
+            con.accept(group.getStrippedWood());
+        }
     }
 }

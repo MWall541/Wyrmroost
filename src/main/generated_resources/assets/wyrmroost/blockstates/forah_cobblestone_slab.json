@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=top": {
+      "model": "wyrmroost:block/forah_cobblestone_slab_top"
+    },
+    "type=bottom": {
+      "model": "wyrmroost:block/forah_cobblestone_slab"
+    },
+    "type=double": {
+      "model": "wyrmroost:block/forah_cobblestone"
+    }
+  }
+}

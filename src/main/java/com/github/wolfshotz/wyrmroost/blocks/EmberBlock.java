@@ -1,9 +1,6 @@
 package com.github.wolfshotz.wyrmroost.blocks;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FallingBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -32,9 +29,11 @@ public class EmberBlock extends Block
                 .strength(0.5f)
                 .isValidSpawn((state, level, pos, type) -> type.fireImmune())
                 .hasPostProcess((s, l, p) -> true)
-                .emissiveRendering((s, l, p) -> true));
+                .emissiveRendering((s, l, p) -> true)
+                .sound(SoundType.SAND));
     }
 
+    @Override
     public void stepOn(World level, BlockPos pos, Entity entity)
     {
         if (!entity.fireImmune() && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity) entity))
@@ -43,6 +42,7 @@ public class EmberBlock extends Block
         super.stepOn(level, pos, entity);
     }
 
+    @Override
     public void randomTick(BlockState state, ServerWorld level, BlockPos pos, Random rng)
     {
         BlockPos up = pos.above();

@@ -64,7 +64,7 @@ public class CommonEvents
         forgeBus.addListener(CommonEvents::onChangeEquipment);
         forgeBus.addListener(CommonEvents::loadLoot);
         forgeBus.addListener(VillagerHelper::addWandererTrades);
-        forgeBus.addListener(CommonEvents::beforeCropGrowth);
+        forgeBus.addListener(CommonEvents::preCropGrowth);
         forgeBus.addListener(EventPriority.HIGH, WRWorld::onBiomeLoad);
         forgeBus.addListener(((FMLServerAboutToStartEvent e) -> MobSpawnManager.close()));
     }
@@ -164,7 +164,7 @@ public class CommonEvents
                     .build());
     }
 
-    public static void beforeCropGrowth(BlockEvent.CropGrowEvent.Pre event)
+    public static void preCropGrowth(BlockEvent.CropGrowEvent.Pre event)
     {
         IWorld level = event.getWorld();
         BlockPos pos = event.getPos();

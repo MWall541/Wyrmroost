@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.client;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.ThinLogBlock;
 import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.client.render.TarragonTomeRenderer;
 import com.github.wolfshotz.wyrmroost.client.render.entity.projectile.BreathWeaponRenderer;
@@ -12,6 +13,8 @@ import net.minecraft.block.WoodType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.Atlases;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -71,6 +74,13 @@ public class ClientEvents
     private static void clientSetup(final FMLClientSetupEvent event)
     {
         WRKeybind.registerKeys();
+
+        ThinLogBlock.consumeThinLogs(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()),
+                WRBlocks.DYING_CORIN_WOOD,
+                WRBlocks.RED_CORIN_WOOD,
+                WRBlocks.TEAL_CORIN_WOOD,
+                WRBlocks.SILVER_CORIN_WOOD,
+                WRBlocks.PRISMARINE_CORIN_WOOD);
 
         event.enqueueWork(() ->
         {
