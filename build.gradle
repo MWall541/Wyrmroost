@@ -67,6 +67,7 @@ minecraft {
             mods {
                 wyrmroost {
                     sources sourceSets.main
+                    sources sourceSets.test
                 }
             }
         }
