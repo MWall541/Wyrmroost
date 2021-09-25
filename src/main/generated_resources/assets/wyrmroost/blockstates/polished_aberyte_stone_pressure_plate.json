@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "wyrmroost:block/polished_aberyte_stone_pressure_plate"
+    },
+    "powered=true": {
+      "model": "wyrmroost:block/polished_aberyte_stone_pressure_plate_down"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "wyrmroost:forah_cobblestone_wall",
+    "wyrmroost:polished_forah_stone_wall",
+    "wyrmroost:forah_stone_bricks_wall",
+    "wyrmroost:aberyte_cobblestone_wall",
+    "wyrmroost:polished_aberyte_stone_wall",
+    "wyrmroost:aberyte_stone_bricks_wall"
+  ]
+}

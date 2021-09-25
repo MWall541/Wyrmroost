@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button_inventory",
+  "textures": {
+    "texture": "wyrmroost:block/polished_aberyte_stone"
+  }
+}

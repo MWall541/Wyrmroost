@@ -64,8 +64,7 @@ class LootTableData extends LootTableProvider
     {
         public final Map<Block, LootTable.Builder> lootTables = new HashMap<>();
 
-        @Override
-        protected void addTables()
+        void manualOverrides()
         {
             ore(BLUE_GEODE_ORE.get(), WRItems.BLUE_GEODE.get());
             ore(RED_GEODE_ORE.get(), WRItems.RED_GEODE.get());
@@ -80,8 +79,15 @@ class LootTableData extends LootTableProvider
             leaves(WHITE_OSERI_LEAVES.get(), WHITE_OSERI_SAPLING.get());
 
             silkTouch(FORAH_STONE.getStone(), FORAH_COBBLESTONE.getStone());
+            silkTouch(ABERYTE_STONE.get(), ABERYTE_COBBLESTONE.getStone());
 
             add(CANIS_ROOT.get(), applyExplosionDecay(CANIS_ROOT.get(), LootTable.lootTable().withPool(LootPool.lootPool().add(ItemLootEntry.lootTableItem(CANIS_ROOT.get()))).withPool(LootPool.lootPool().when(BlockStateProperty.hasBlockStateProperties(CANIS_ROOT.get()).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(CarrotBlock.AGE, 3))).add(ItemLootEntry.lootTableItem(CANIS_ROOT.get()).apply(ApplyBonus.addBonusBinomialDistributionCount(Enchantments.BLOCK_FORTUNE, 0.5714286F, 3))))));
+        }
+
+        @Override
+        protected void addTables()
+        {
+            manualOverrides();
 
             // All blocks that have not been given special treatment above, drop themselves!
             for (Block block : getKnownBlocks())

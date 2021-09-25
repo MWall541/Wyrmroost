@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button_pressed",
+  "textures": {
+    "texture": "wyrmroost:block/polished_aberyte_stone"
+  }
+}

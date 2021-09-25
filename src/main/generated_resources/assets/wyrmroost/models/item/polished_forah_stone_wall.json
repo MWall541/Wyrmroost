@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:block/polished_forah_stone_wall"
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "wyrmroost:block/polished_forah_stone"
+  }
 }

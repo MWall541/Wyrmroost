@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "wyrmroost:block/polished_aberyte_stone"
+  }
+}

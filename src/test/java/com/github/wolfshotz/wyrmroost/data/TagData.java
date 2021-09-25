@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.StoneGroup;
 import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
@@ -128,6 +129,8 @@ public class TagData
             woodGroup(WRBlocks.TEAL_CORIN_WOOD, WRBlocks.Tags.TEAL_CORIN_LOGS, false);
             woodGroup(WRBlocks.RED_CORIN_WOOD, WRBlocks.Tags.RED_CORIN_LOGS, false);
             woodGroup(WRBlocks.DYING_CORIN_WOOD, WRBlocks.Tags.DYING_CORIN_LOGS, false);
+
+            for (StoneGroup s : StoneGroup.registry()) if (s.wall != null) tag(BlockTags.WALLS).add(s.getWall());
         }
 
         private void ore(ITag.INamedTag<Block> oreTag, Block... ores)

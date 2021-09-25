@@ -7,11 +7,15 @@ import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class StoneGroup
 {
+    private static final List<StoneGroup> REGISTRY = new ArrayList<>();
+
     public final RegistryObject<Block> stone;
     public final RegistryObject<Block> stairs;
     public final RegistryObject<Block> wall;
@@ -31,6 +35,8 @@ public class StoneGroup
         this.button = register(name + "_button", builder.button);
         this.cracked = registerInfested("cracked_" + name, builder.cracked, builder.infested);
         this.chiseled = registerInfested("chiseled_" + name, builder.chiseled, builder.infested);
+
+        REGISTRY.add(this);
     }
 
     public Block getStone()
@@ -89,6 +95,11 @@ public class StoneGroup
             if (infested) WRBlocks.register("infested_" + name, () -> new SilverfishBlock(callback.get(), AbstractBlock.Properties.copy(callback.get())));
             return callback;
         }
+    }
+
+    public static List<StoneGroup> registry()
+    {
+        return REGISTRY;
     }
 
     public static Builder builder(AbstractBlock.Properties props)

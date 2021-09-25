@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
@@ -15,7 +17,6 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ThinLogBlock extends LogBlock implements IWaterLoggable
@@ -72,14 +73,11 @@ public class ThinLogBlock extends LogBlock implements IWaterLoggable
                 .strippedWood(() -> new ThinLogBlock(color, color, null));
     }
 
-    public static void consumeThinLogs(Consumer<Block> con, WoodGroup... groups)
+    public static void setCutoutRendering(WoodGroup group)
     {
-        for (WoodGroup group : groups)
-        {
-            con.accept(group.getLog());
-            con.accept(group.getStrippedLog());
-            con.accept(group.getWood());
-            con.accept(group.getStrippedWood());
-        }
+        RenderTypeLookup.setRenderLayer(group.getLog(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(group.getStrippedLog(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(group.getWood(), RenderType.cutout());
+        RenderTypeLookup.setRenderLayer(group.getStrippedWood(), RenderType.cutout());
     }
 }

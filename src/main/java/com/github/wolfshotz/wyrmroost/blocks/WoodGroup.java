@@ -10,12 +10,16 @@ import net.minecraft.item.SignItem;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.RegistryObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WoodGroup extends WoodType
 {
+    private static final List<WoodGroup> REGISTRY = new ArrayList<>();
+
     public final RegistryObject<Block> planks;
     public final RegistryObject<Block> log;
     public final RegistryObject<Block> strippedLog;
@@ -57,21 +61,7 @@ public class WoodGroup extends WoodType
         this.bookshelf = register(name + "_bookshelf", builder.bookshelf, 30, 20, builder.flammable);
 
         WoodType.register(this);
-    }
-
-    public static WoodGroup create(String name, MaterialColor color, MaterialColor logColor)
-    {
-        return new Builder(color, logColor).build(name);
-    }
-
-    public static Builder builder(MaterialColor color, MaterialColor logColor)
-    {
-        return new Builder(color, logColor);
-    }
-
-    public static Builder builder()
-    {
-        return new Builder();
+        REGISTRY.add(this);
     }
 
     public Block getPlanks()
@@ -173,6 +163,26 @@ public class WoodGroup extends WoodType
         WRBlocks.BlockExtension extension = WRBlocks.extend();
         if (flammable) extension.flammability(fireSpread, fireDestruction);
         return WRBlocks.register(name, sup, extension);
+    }
+
+    public static List<WoodGroup> registry()
+    {
+        return REGISTRY;
+    }
+
+    public static WoodGroup create(String name, MaterialColor color, MaterialColor logColor)
+    {
+        return new Builder(color, logColor).build(name);
+    }
+
+    public static Builder builder(MaterialColor color, MaterialColor logColor)
+    {
+        return new Builder(color, logColor);
+    }
+
+    public static Builder builder()
+    {
+        return new Builder();
     }
 
     public static class Builder

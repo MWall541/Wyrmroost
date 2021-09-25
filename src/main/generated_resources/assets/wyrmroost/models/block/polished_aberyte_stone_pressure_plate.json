@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/pressure_plate_up",
+  "textures": {
+    "texture": "wyrmroost:block/polished_aberyte_stone"
+  }
+}

@@ -1,3 +1,6 @@
 {
-  "parent": "wyrmroost:block/forah_cobblestone_wall"
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "wyrmroost:block/forah_cobblestone"
+  }
 }

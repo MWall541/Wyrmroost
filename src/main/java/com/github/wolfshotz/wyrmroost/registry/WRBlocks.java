@@ -103,10 +103,10 @@ public class WRBlocks
     public static final RegistryObject<Block> HAMA_SHRUB = register("hama_shrub", () -> new GrowingPlantBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission(), Direction.UP, 2, 0, WRBlocks.HAMA_SHRUB_BODY), extend().cutoutRenderer().flammability(30, 80));
     public static final RegistryObject<Block> HAMA_SHRUB_BODY = register("hama_shrub_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.HAMA_SHRUB), extend().cutoutRenderer().noItem().flammability(30, 60));
     public static final WoodGroup SAL_WOOD = WoodGroup.create("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
-    public static final StoneGroup FORAH_STONE = StoneGroup.builder(properties(Material.STONE, SoundType.GILDED_BLACKSTONE).harvestLevel(0).strength(1.5f, 6f)).stairs().slab().pressurePlateAndButton(PressurePlateBlock.Sensitivity.MOBS).build("forah_stone");
-    public static final StoneGroup FORAH_COBBLESTONE = StoneGroup.base(properties(Material.STONE, SoundType.GILDED_BLACKSTONE).harvestLevel(0).strength(1.5f, 6f)).build("forah_cobblestone");
-    public static final StoneGroup POLISHED_FORAH_STONE = StoneGroup.base(properties(Material.STONE, SoundType.GILDED_BLACKSTONE).harvestLevel(0).strength(1.5f, 6f)).chiseled().build("polished_forah_stone");
-    public static final StoneGroup FORAH_STONE_BRICKS = StoneGroup.base(properties(Material.STONE, SoundType.GILDED_BLACKSTONE).harvestLevel(0).strength(1.5f, 6f)).build("forah_stone_bricks");
+    public static final StoneGroup FORAH_STONE = StoneGroup.builder(mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).stairs().slab().pressurePlateAndButton(PressurePlateBlock.Sensitivity.MOBS).build("forah_stone");
+    public static final StoneGroup FORAH_COBBLESTONE = StoneGroup.base(mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).build("forah_cobblestone");
+    public static final StoneGroup POLISHED_FORAH_STONE = StoneGroup.base(mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).chiseled().build("polished_forah_stone");
+    public static final StoneGroup FORAH_STONE_BRICKS = StoneGroup.base(mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).build("forah_stone_bricks");
 
     // stygian sea
     public static final WoodGroup PRISMARINE_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.COLOR_CYAN, MaterialColor.TERRACOTTA_CYAN).nonFlammable().build("prismarine_corin");
@@ -114,6 +114,10 @@ public class WRBlocks
     public static final WoodGroup TEAL_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.TERRACOTTA_CYAN, MaterialColor.TERRACOTTA_GREEN).nonFlammable().build("teal_corin");
     public static final WoodGroup RED_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.TERRACOTTA_RED, MaterialColor.COLOR_RED).nonFlammable().build("red_corin");
     public static final WoodGroup DYING_CORIN_WOOD = ThinLogBlock.thinLogGroup(MaterialColor.COLOR_GRAY, MaterialColor.TERRACOTTA_BLACK).nonFlammable().build("dying_corin");
+    public static final RegistryObject<Block> ABERYTE_STONE = register("aberyte_stone", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.STONE)));
+    public static final StoneGroup ABERYTE_COBBLESTONE = StoneGroup.base(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.STONE)).build("aberyte_cobblestone");
+    public static final StoneGroup POLISHED_ABERYTE_STONE = StoneGroup.base(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.STONE)).pressurePlateAndButton(PressurePlateBlock.Sensitivity.MOBS).build("polished_aberyte_stone");
+    public static final StoneGroup ABERYTE_STONE_BRICKS = StoneGroup.base(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.NETHER_BRICKS)).cracked().chiseled().build("aberyte_stone_bricks");
 
     // ashen desert
     public static final RegistryObject<Block> ASH_STONE = register("ashstone", () -> new Block(properties(Material.STONE, SoundType.STONE).requiresCorrectToolForDrops().strength(1.5f, 6f)));

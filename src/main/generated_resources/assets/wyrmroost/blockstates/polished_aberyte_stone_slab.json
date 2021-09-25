@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=top": {
+      "model": "wyrmroost:block/polished_aberyte_stone_slab_top"
+    },
+    "type=bottom": {
+      "model": "wyrmroost:block/polished_aberyte_stone_slab"
+    },
+    "type=double": {
+      "model": "wyrmroost:block/polished_aberyte_stone"
+    }
+  }
+}

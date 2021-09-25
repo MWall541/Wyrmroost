@@ -19,11 +19,15 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("ConstantConditions")
 class BlockModelData extends BlockStateProvider
 {
+    private final List<WoodGroup> woodGroups = new ArrayList<>(WoodGroup.registry());
+
     BlockModelData(DataGenerator generator, ExistingFileHelper fileHelper)
     {
         super(generator, Wyrmroost.MOD_ID, fileHelper);
@@ -37,18 +41,11 @@ class BlockModelData extends BlockStateProvider
         layered(WRBlocks.EMBERS.get(), blockTexture(WRBlocks.EMBER_BLOCK.get()));
         layered(WRBlocks.ASH.get(), blockTexture(WRBlocks.ASH_BLOCK.get()));
 
-        woodGroup(WRBlocks.OSERI_WOOD);
-        woodGroup(WRBlocks.SAL_WOOD);
-        woodGroup(WRBlocks.PRISMARINE_CORIN_WOOD, true);
-        woodGroup(WRBlocks.SILVER_CORIN_WOOD, true);
-        woodGroup(WRBlocks.TEAL_CORIN_WOOD, true);
-        woodGroup(WRBlocks.RED_CORIN_WOOD, true);
-        woodGroup(WRBlocks.DYING_CORIN_WOOD, true);
-
-        stoneGroup(WRBlocks.FORAH_STONE);
-        stoneGroup(WRBlocks.FORAH_COBBLESTONE);
-        stoneGroup(WRBlocks.POLISHED_FORAH_STONE);
-        stoneGroup(WRBlocks.FORAH_STONE_BRICKS);
+        corinWood(WRBlocks.PRISMARINE_CORIN_WOOD);
+        corinWood(WRBlocks.SILVER_CORIN_WOOD);
+        corinWood(WRBlocks.TEAL_CORIN_WOOD);
+        corinWood(WRBlocks.RED_CORIN_WOOD);
+        corinWood(WRBlocks.DYING_CORIN_WOOD);
     }
 
     @Override
@@ -64,6 +61,9 @@ class BlockModelData extends BlockStateProvider
                 .end();
 
         manualOverrides();
+
+        woodGroups.forEach(this::woodGroup);
+        StoneGroup.registry().forEach(this::stoneGroup);
 
         Set<Block> registered = ModUtils.getRegistryEntries(WRBlocks.REGISTRY);
         registered.removeAll(registeredBlocks.keySet());
@@ -88,6 +88,17 @@ class BlockModelData extends BlockStateProvider
                     .modelFile(models().crop(path, modLoc("block/" + path)))
                     .build();
         });
+    }
+
+    void corinWood(WoodGroup group)
+    {
+        woodGroup(group, true);
+        woodGroups.remove(group);
+    }
+
+    void woodGroup(WoodGroup group)
+    {
+        woodGroup(group, false);
     }
 
     void woodGroup(WoodGroup group, boolean thinLogs)
@@ -140,11 +151,6 @@ class BlockModelData extends BlockStateProvider
         if (group.button != null) button(((StoneButtonBlock) group.getButton()), texture);
         if (group.cracked != null) simpleBlock(group.getCracked());
         if (group.chiseled != null) simpleBlock(group.getChiseled());
-    }
-
-    void woodGroup(WoodGroup group)
-    {
-        woodGroup(group, false);
     }
 
     void corin(ThinLogBlock block, ResourceLocation sideTexture, ResourceLocation topTexture)

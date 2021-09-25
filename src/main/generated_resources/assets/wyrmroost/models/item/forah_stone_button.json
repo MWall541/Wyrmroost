@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/button_inventory",
   "textures": {
-    "texture": "wyrmroost:block/forah_stone_button"
+    "texture": "wyrmroost:block/forah_stone"
   }
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "wyrmroost:block/cracked_aberyte_stone_bricks"
+  }
+}

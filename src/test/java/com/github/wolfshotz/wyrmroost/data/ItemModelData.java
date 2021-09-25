@@ -1,6 +1,7 @@
 package com.github.wolfshotz.wyrmroost.data;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
+import com.github.wolfshotz.wyrmroost.blocks.StoneGroup;
 import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
@@ -33,14 +34,9 @@ class ItemModelData extends ItemModelProvider
         super(generator, Wyrmroost.MOD_ID, fileHelper);
     }
 
-    @Override
-    @SuppressWarnings("ConstantConditions")
-    protected void registerModels()
+    void manualOverrides()
     {
-        // path constants
         final ModelFile itemGenerated = uncheckedModel(mcLoc("item/generated"));
-        final ModelFile spawnEggTemplate = uncheckedModel(mcLoc("item/template_spawn_egg"));
-        final ModelFile bucket = uncheckedModel("forge:item/bucket");
         final ModelFile ister = uncheckedModel("builtin/entity");
 
         getBuilder("desert_wyrm_alive").parent(itemGenerated).texture("layer0", resource("desert_wyrm_alive"));
@@ -72,14 +68,32 @@ class ItemModelData extends ItemModelProvider
                     .predicate(CoinDragonItem.VARIANT_OVERRIDE, i)
                     .model(uncheckedModel(rl));
         }
+    }
 
-        WoodType.values()
-                .filter(w -> w.name().contains(Wyrmroost.MOD_ID))
-                .map(WoodGroup.class::cast)
-                .forEach(w -> fenceAndButton(w.getFence(), w.getButton(), w.getPlanks()));
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    protected void registerModels()
+    {
+        manualOverrides();
 
-        // All items that do not require custom attention
-        Set<Item> registered = ModUtils.getRegistryEntries(WRItems.REGISTRY);
+        for (WoodGroup w : WoodGroup.registry())
+        {
+            ResourceLocation texture = fromBlockTexture(w.getPlanks());
+            customInventoryItem(w.getFence(), texture, "fence");
+            customInventoryItem(w.getButton(), texture, "button");
+        }
+
+        for (StoneGroup s : StoneGroup.registry())
+        {
+            ResourceLocation texture = fromBlockTexture(s.getStone());
+            if (s.wall != null) customInventoryItem(s.getWall(), "wall", texture, "wall");
+            if (s.button != null) customInventoryItem(s.getButton(), texture, "button");
+        }
+
+        final ModelFile spawnEggTemplate = uncheckedModel(mcLoc("item/template_spawn_egg"));
+        final ModelFile bucket = uncheckedModel("forge:item/bucket");
+        final Set<Item> registered = ModUtils.getRegistryEntries(WRItems.REGISTRY);
+
         REGISTERED.forEach(registered::remove);
         for (Item item : registered)
         {
@@ -100,16 +114,6 @@ class ItemModelData extends ItemModelProvider
                 if (block instanceof DoorBlock || block instanceof StandingSignBlock)
                 {
                     item(block);
-                    continue;
-                }
-                if (block instanceof FenceBlock)
-                {
-                    customInventoryItem(item, fromBlockTexture(block), "fence");
-                    continue;
-                }
-                if (block instanceof AbstractButtonBlock)
-                {
-                    customInventoryItem(item, fromBlockTexture(block), "button");
                     continue;
                 }
                 if (block.defaultBlockState().hasProperty(BlockStateProperties.LAYERS))
@@ -153,18 +157,16 @@ class ItemModelData extends ItemModelProvider
         return builder;
     }
 
-    private void fenceAndButton(Block fence, Block button, Block fromTexture)
+    private ItemModelBuilder customInventoryItem(IItemProvider item, ResourceLocation texture, String parent)
     {
-        ResourceLocation texture = fromBlockTexture(fromTexture);
-        customInventoryItem(fence, texture, "fence");
-        customInventoryItem(button, texture, "button");
+        return customInventoryItem(item, "texture", texture, parent);
     }
 
-    private ItemModelBuilder customInventoryItem(IItemProvider item, ResourceLocation texture, String parent)
+    private ItemModelBuilder customInventoryItem(IItemProvider item, String textureKey, ResourceLocation texture, String parent)
     {
         return getBuilderFor(item)
                 .parent(uncheckedModel("block/" + parent + "_inventory"))
-                .texture("texture", texture);
+                .texture(textureKey, texture);
     }
 
     private ItemModelBuilder getBuilderFor(IItemProvider item)
