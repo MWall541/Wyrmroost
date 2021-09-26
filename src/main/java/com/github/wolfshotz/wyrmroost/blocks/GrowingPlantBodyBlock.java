@@ -18,7 +18,12 @@ public class GrowingPlantBodyBlock extends AbstractBodyPlantBlock
 
     public GrowingPlantBodyBlock(Properties properties, Supplier<Block> tip)
     {
-        super(properties, Direction.DOWN, WeepingVinesBlock.SHAPE, false);
+        this(properties, tip, false);
+    }
+
+    public GrowingPlantBodyBlock(Properties properties, Supplier<Block> tip, boolean scheduleFluidTicks)
+    {
+        super(properties, Direction.DOWN, WeepingVinesBlock.SHAPE, scheduleFluidTicks);
         this.tip = tip;
     }
 

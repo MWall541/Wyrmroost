@@ -46,6 +46,8 @@ class BlockModelData extends BlockStateProvider
         corinWood(WRBlocks.TEAL_CORIN_WOOD);
         corinWood(WRBlocks.RED_CORIN_WOOD);
         corinWood(WRBlocks.DYING_CORIN_WOOD);
+
+
     }
 
     @Override
@@ -306,5 +308,11 @@ class BlockModelData extends BlockStateProvider
             }
 
         });
+    }
+
+    void slab(Block block, Block parent)
+    {
+        ResourceLocation texture = blockTexture(parent);
+        slabBlock(block, texture);
     }
 }

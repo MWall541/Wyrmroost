@@ -149,15 +149,6 @@ public class WoodGroup extends WoodType
         return bookshelf.get();
     }
 
-    private static AbstractBlock.Properties props(MaterialColor color)
-    {
-        return AbstractBlock.Properties
-                .of(Material.WOOD, color)
-                .strength(2f, 3f)
-                .harvestTool(ToolType.AXE)
-                .sound(SoundType.WOOD);
-    }
-
     private static RegistryObject<Block> register(String name, Supplier<Block> sup, int fireSpread, int fireDestruction, boolean flammable)
     {
         WRBlocks.BlockExtension extension = WRBlocks.extend();
@@ -262,6 +253,15 @@ public class WoodGroup extends WoodType
         public WoodGroup build(String name)
         {
             return new WoodGroup(name, this);
+        }
+
+        private static AbstractBlock.Properties props(MaterialColor color)
+        {
+            return AbstractBlock.Properties
+                    .of(Material.WOOD, color)
+                    .strength(2f, 3f)
+                    .harvestTool(ToolType.AXE)
+                    .sound(SoundType.WOOD);
         }
     }
 }

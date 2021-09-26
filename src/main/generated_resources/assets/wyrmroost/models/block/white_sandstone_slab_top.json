@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "side": "wyrmroost:block/white_sandstone",
+    "bottom": "wyrmroost:block/white_sandstone",
+    "top": "wyrmroost:block/white_sandstone"
+  }
+}
