@@ -27,6 +27,7 @@ import java.util.Set;
 class BlockModelData extends BlockStateProvider
 {
     private final List<WoodGroup> woodGroups = new ArrayList<>(WoodGroup.registry());
+    private final List<StoneGroup> stoneGroups = new ArrayList<>(StoneGroup.registry());
 
     BlockModelData(DataGenerator generator, ExistingFileHelper fileHelper)
     {
@@ -40,14 +41,16 @@ class BlockModelData extends BlockStateProvider
         snowy(WRBlocks.FROSTED_GRASS.get());
         layered(WRBlocks.EMBERS.get(), blockTexture(WRBlocks.EMBER_BLOCK.get()));
         layered(WRBlocks.ASH.get(), blockTexture(WRBlocks.ASH_BLOCK.get()));
+        sandstoneType(WRBlocks.WHITE_SANDSTONE.getStone(), WRBlocks.WHITE_SANDSTONE.getStairs(), WRBlocks.WHITE_SANDSTONE.getSlab(), WRBlocks.WHITE_SANDSTONE.getChiseled(), WRBlocks.CUT_WHITE_SANDSTONE.get());
+        stoneGroups.remove(WRBlocks.WHITE_SANDSTONE);
+        slabBlock((SlabBlock) WRBlocks.CUT_WHITE_SANDSTONE_SLAB.get(), blockTexture(WRBlocks.CUT_WHITE_SANDSTONE.get()), blockTexture(WRBlocks.CUT_WHITE_SANDSTONE.get()), modLoc("block/white_sandstone_top"), modLoc("block/white_sandstone_top"));
+        wallBlock((WallBlock) WRBlocks.WHITE_SANDSTONE.getWall(), blockTexture(WRBlocks.WHITE_SANDSTONE.getStone()));
 
         corinWood(WRBlocks.PRISMARINE_CORIN_WOOD);
         corinWood(WRBlocks.SILVER_CORIN_WOOD);
         corinWood(WRBlocks.TEAL_CORIN_WOOD);
         corinWood(WRBlocks.RED_CORIN_WOOD);
         corinWood(WRBlocks.DYING_CORIN_WOOD);
-
-
     }
 
     @Override
@@ -55,17 +58,17 @@ class BlockModelData extends BlockStateProvider
     {
         models().getBuilder("vine").texture("particle", "#vine")
                 .element()
-                    .from(0, 0, 0.8f)
-                    .to(16, 16, 0.8f)
-                    .shade(false)
-                    .face(Direction.NORTH).uvs(16, 0, 0, 16).texture("#vine").tintindex(0).end()
-                    .face(Direction.SOUTH).uvs(0, 0, 16, 16).texture("#vine").tintindex(0).end()
+                .from(0, 0, 0.8f)
+                .to(16, 16, 0.8f)
+                .shade(false)
+                .face(Direction.NORTH).uvs(16, 0, 0, 16).texture("#vine").tintindex(0).end()
+                .face(Direction.SOUTH).uvs(0, 0, 16, 16).texture("#vine").tintindex(0).end()
                 .end();
 
         manualOverrides();
 
-        woodGroups.forEach(this::woodGroup);
-        StoneGroup.registry().forEach(this::stoneGroup);
+        ModUtils.runAndClear(woodGroups, this::woodGroup);
+        ModUtils.runAndClear(stoneGroups, this::stoneGroup);
 
         Set<Block> registered = ModUtils.getRegistryEntries(WRBlocks.REGISTRY);
         registered.removeAll(registeredBlocks.keySet());
@@ -75,7 +78,8 @@ class BlockModelData extends BlockStateProvider
             else if (block instanceof CropsBlock) crop((CropsBlock) block);
             else if (block instanceof BushBlock || block instanceof AbstractPlantBlock) cross(block);
             else if (block instanceof PetalsBlock) petals(block);
-            else if (block instanceof SilverfishBlock) simpleBlock(block, models().cubeAll(block.getRegistryName().getPath(), modLoc(block.getRegistryName().getPath().substring(9))));
+            else if (block instanceof SilverfishBlock)
+                simpleBlock(block, models().cubeAll(block.getRegistryName().getPath(), modLoc(block.getRegistryName().getPath().substring(9))));
             else if (!(block instanceof FlowingFluidBlock)) simpleBlock(block);
         }
     }
@@ -190,13 +194,7 @@ class BlockModelData extends BlockStateProvider
 
     void sign(AbstractSignBlock block, ResourceLocation texture)
     {
-        getVariantBuilder(block)
-                .partialState()
-                .setModels(ConfiguredModel.builder()
-                        .modelFile(models()
-                                .getBuilder(block.getRegistryName().getPath())
-                                .texture("particle", texture))
-                        .build());
+        simpleBlock(block, models().getBuilder(block.getRegistryName().getPath()).texture("particle", texture));
     }
 
     void button(AbstractButtonBlock block, ResourceLocation texture)
@@ -213,9 +211,11 @@ class BlockModelData extends BlockStateProvider
             switch (face)
             {
                 case WALL:
-                    x = 90; break;
+                    x = 90;
+                    break;
                 case CEILING:
-                    x = 180; break;
+                    x = 180;
+                    break;
                 case FLOOR:
                 default:
                     break;
@@ -258,9 +258,7 @@ class BlockModelData extends BlockStateProvider
 
     void cross(Block block)
     {
-        getVariantBuilder(block)
-                .partialState()
-                .setModels(new ConfiguredModel(models().singleTexture(block.getRegistryName().getPath(), mcLoc("block/tinted_cross"), "cross", blockTexture(block))));
+        simpleBlock(block, models().singleTexture(block.getRegistryName().getPath(), mcLoc("block/tinted_cross"), "cross", blockTexture(block)));
     }
 
     void snowy(Block block)
@@ -294,7 +292,8 @@ class BlockModelData extends BlockStateProvider
         getVariantBuilder(block).forAllStates(s ->
         {
             int value = s.getValue(SnowBlock.LAYERS);
-            if (value == 8) return ConfiguredModel.builder().modelFile(models().cubeAll(block.getRegistryName().getPath(), texture)).build();
+            if (value == 8)
+                return ConfiguredModel.builder().modelFile(models().cubeAll(block.getRegistryName().getPath(), texture)).build();
             else
             {
                 value *= 2;
@@ -310,9 +309,31 @@ class BlockModelData extends BlockStateProvider
         });
     }
 
-    void slab(Block block, Block parent)
+    void bottomTopCube(Block block, ResourceLocation top, ResourceLocation side, ResourceLocation bottom)
     {
-        ResourceLocation texture = blockTexture(parent);
-        slabBlock(block, texture);
+        String name = block.getRegistryName().getPath();
+        simpleBlock(block, models().cubeBottomTop(name, side, bottom, top));
+    }
+
+    void bottomTopCube(Block block)
+    {
+        String name = block.getRegistryName().getPath();
+        bottomTopCube(block, modLoc("block/" + name + "_top"), blockTexture(block), modLoc("block/" + name + "_bottom"));
+    }
+
+    void sandstoneType(Block sandstone, Block stairs, Block slab, Block... smoothTypes)
+    {
+        String name = sandstone.getRegistryName().getPath();
+        ResourceLocation side = blockTexture(sandstone);
+        ResourceLocation top = modLoc("block/" + name + "_top");
+        ResourceLocation bottom = modLoc("block/" + name + "_bottom");
+
+       bottomTopCube(sandstone, top, blockTexture(sandstone), bottom);
+       stairsBlock((StairsBlock) stairs, side, bottom, top);
+       slabBlock((SlabBlock) slab, side, side, bottom, top);
+        for (Block b : smoothTypes)
+        {
+            bottomTopCube(b, top, blockTexture(b), top);
+        }
     }
 }

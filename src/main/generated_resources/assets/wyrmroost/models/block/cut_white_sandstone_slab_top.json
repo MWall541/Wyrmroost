@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/cube_bottom_top",
+  "parent": "minecraft:block/slab_top",
   "textures": {
     "side": "wyrmroost:block/cut_white_sandstone",
     "bottom": "wyrmroost:block/white_sandstone_top",

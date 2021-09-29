@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "wyrmroost:block/chiseled_white_sandstone"
+    "side": "wyrmroost:block/chiseled_white_sandstone",
+    "bottom": "wyrmroost:block/white_sandstone_top",
+    "top": "wyrmroost:block/white_sandstone_top"
   }
 }

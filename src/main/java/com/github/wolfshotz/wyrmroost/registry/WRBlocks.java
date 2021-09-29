@@ -121,7 +121,7 @@ public class WRBlocks
     public static final StoneGroup ABERYTE_STONE_BRICKS = StoneGroup.base(() -> mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.NETHER_BRICKS)).cracked().chiseled().build("aberyte_stone_bricks");
     public static final StoneGroup WHITE_SANDSTONE = StoneGroup.base(() -> mineable(Material.STONE, ToolType.PICKAXE, 0, 0.8f, SoundType.STONE)).chiseled().build("white_sandstone");
     public static final RegistryObject<Block> CUT_WHITE_SANDSTONE = register("cut_white_sandstone", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 0, 0.8f, SoundType.STONE)));
-    public static final RegistryObject<Block> CUT_WHITE_SANDSTONE_SLAB = register("cut_white_sandstone_slab", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.STONE)));
+    public static final RegistryObject<Block> CUT_WHITE_SANDSTONE_SLAB = register("cut_white_sandstone_slab", () -> new SlabBlock(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.STONE)));
     public static final RegistryObject<Block> LUMA_KELP = register("luma_kelp", () -> new WaterGrowingPlantBlock(properties(Material.WATER_PLANT, SoundType.WET_GRASS).noCollission().randomTicks().instabreak(), Direction.UP, 25, 0.14, WRBlocks.LUMA_KELP_BODY));
     public static final RegistryObject<Block> LUMA_KELP_BODY = register("luma_kelp_body", () -> new WaterGrowingPlantBodyBlock(properties(Material.WATER_PLANT, SoundType.WET_GRASS).noCollission().randomTicks().instabreak(), LUMA_KELP), extend().noItem().cutoutRenderer());
 

@@ -27,9 +27,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Calendar;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -194,5 +192,15 @@ public final class ModUtils
     public static <F, T> T getCapability(Capability<F> cap, CapabilityProvider<?> item)
     {
         return item.getCapability(cap).<T>cast().orElseThrow(NoSuchElementException::new);
+    }
+
+    public static <T> void runAndClear(Collection<T> c, Consumer<T> run)
+    {
+        Iterator<T> itr = c.iterator();
+        while (itr.hasNext())
+        {
+            run.accept(itr.next());
+            itr.remove();
+        }
     }
 }
