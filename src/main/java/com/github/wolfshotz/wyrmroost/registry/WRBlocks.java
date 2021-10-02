@@ -104,6 +104,7 @@ public class WRBlocks
     public static final RegistryObject<Block> FROST_GOWN = register("frost_gown", () -> new TallFlowerBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission()), extend().cutoutRenderer().flammability(30, 80));
     public static final RegistryObject<Block> HAMA_SHRUB = register("hama_shrub", () -> new GrowingPlantBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission(), Direction.UP, 2, 0, WRBlocks.HAMA_SHRUB_BODY), extend().cutoutRenderer().flammability(30, 80));
     public static final RegistryObject<Block> HAMA_SHRUB_BODY = register("hama_shrub_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.HAMA_SHRUB), extend().cutoutRenderer().noItem().flammability(30, 60));
+    public static final RegistryObject<Block> HOARFROST = register("hoarfrost", HoarfrostBlock::new, extend().cutoutRenderer());
     public static final WoodGroup SAL_WOOD = WoodGroup.create("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
     public static final StoneGroup FORAH_STONE = StoneGroup.builder(() -> mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).stairs().slab().pressurePlateAndButton(PressurePlateBlock.Sensitivity.MOBS).build("forah_stone");
     public static final StoneGroup FORAH_COBBLESTONE = StoneGroup.base(() -> mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).build("forah_cobblestone");

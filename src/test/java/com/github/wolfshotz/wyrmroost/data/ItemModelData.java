@@ -4,6 +4,7 @@ import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.StoneGroup;
 import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.items.CoinDragonItem;
+import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
@@ -55,6 +56,7 @@ class ItemModelData extends ItemModelProvider
 
         getBuilderFor(WRItems.TARRAGON_TOME.get()).parent(ister).guiLight(BlockModel.GuiLight.FRONT);
         getBuilder("book_sprite").parent(itemGenerated).texture("layer0", resource(WRItems.TARRAGON_TOME.getId().getPath()));
+        item(WRBlocks.HOARFROST.get(), modLoc("block/hoarfrost_spines"));
 
         final ItemModelBuilder cdBuilder = item(WRItems.COIN_DRAGON.get());
         for (int i = 1; i < 5; i++)

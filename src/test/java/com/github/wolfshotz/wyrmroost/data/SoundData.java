@@ -44,7 +44,7 @@ public class SoundData implements IDataProvider
     {
         registerSounds();
         if (!registered.isEmpty())
-            throw new IOException("Unregistered Sounds Events: " + registered.stream().map(ForgeRegistryEntry::getRegistryName).collect(Collectors.toList()));
+            throw new IOException("Unregistered SoundEvents: " + registered.stream().map(ForgeRegistryEntry::getRegistryName).collect(Collectors.toList()));
         IDataProvider.save(GSON, cache, file, gen.getOutputFolder().resolve("assets/" + Wyrmroost.MOD_ID + "/sounds.json"));
     }
 

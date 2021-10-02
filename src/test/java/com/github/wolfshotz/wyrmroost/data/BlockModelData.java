@@ -5,7 +5,6 @@ import com.github.wolfshotz.wyrmroost.blocks.PetalsBlock;
 import com.github.wolfshotz.wyrmroost.blocks.StoneGroup;
 import com.github.wolfshotz.wyrmroost.blocks.ThinLogBlock;
 import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
-import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
 import net.minecraft.data.DataGenerator;
@@ -23,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.github.wolfshotz.wyrmroost.registry.WRBlocks.*;
+
 @SuppressWarnings("ConstantConditions")
 class BlockModelData extends BlockStateProvider
 {
@@ -36,19 +37,20 @@ class BlockModelData extends BlockStateProvider
 
     void manualOverrides()
     {
-        vine(WRBlocks.MOSS_VINE.get());
-        layered(WRBlocks.EMBERS.get(), blockTexture(WRBlocks.EMBER_BLOCK.get()));
-        layered(WRBlocks.ASH.get(), blockTexture(WRBlocks.ASH_BLOCK.get()));
-        sandstoneType(WRBlocks.WHITE_SANDSTONE.getStone(), WRBlocks.WHITE_SANDSTONE.getStairs(), WRBlocks.WHITE_SANDSTONE.getSlab(), WRBlocks.WHITE_SANDSTONE.getChiseled(), WRBlocks.CUT_WHITE_SANDSTONE.get());
-        stoneGroups.remove(WRBlocks.WHITE_SANDSTONE);
-        slabBlock((SlabBlock) WRBlocks.CUT_WHITE_SANDSTONE_SLAB.get(), blockTexture(WRBlocks.CUT_WHITE_SANDSTONE.get()), blockTexture(WRBlocks.CUT_WHITE_SANDSTONE.get()), modLoc("block/white_sandstone_top"), modLoc("block/white_sandstone_top"));
-        wallBlock((WallBlock) WRBlocks.WHITE_SANDSTONE.getWall(), blockTexture(WRBlocks.WHITE_SANDSTONE.getStone()));
+        vine(MOSS_VINE.get());
+        layered(EMBERS.get(), blockTexture(EMBER_BLOCK.get()));
+        layered(ASH.get(), blockTexture(ASH_BLOCK.get()));
+        sandstoneType(WHITE_SANDSTONE.getStone(), WHITE_SANDSTONE.getStairs(), WHITE_SANDSTONE.getSlab(), WHITE_SANDSTONE.getChiseled(), CUT_WHITE_SANDSTONE.get());
+        stoneGroups.remove(WHITE_SANDSTONE);
+        slabBlock((SlabBlock) CUT_WHITE_SANDSTONE_SLAB.get(), blockTexture(CUT_WHITE_SANDSTONE.get()), blockTexture(CUT_WHITE_SANDSTONE.get()), modLoc("block/white_sandstone_top"), modLoc("block/white_sandstone_top"));
+        wallBlock((WallBlock) WHITE_SANDSTONE.getWall(), blockTexture(WHITE_SANDSTONE.getStone()));
+        simpleBlock(HOARFROST.get(), models().getExistingFile(modLoc("block/hoarfrost")));
 
-        corinWood(WRBlocks.PRISMARINE_CORIN_WOOD);
-        corinWood(WRBlocks.SILVER_CORIN_WOOD);
-        corinWood(WRBlocks.TEAL_CORIN_WOOD);
-        corinWood(WRBlocks.RED_CORIN_WOOD);
-        corinWood(WRBlocks.DYING_CORIN_WOOD);
+        corinWood(PRISMARINE_CORIN_WOOD);
+        corinWood(SILVER_CORIN_WOOD);
+        corinWood(TEAL_CORIN_WOOD);
+        corinWood(RED_CORIN_WOOD);
+        corinWood(DYING_CORIN_WOOD);
     }
 
     @Override
@@ -68,7 +70,7 @@ class BlockModelData extends BlockStateProvider
         ModUtils.runAndClear(woodGroups, this::woodGroup);
         ModUtils.runAndClear(stoneGroups, this::stoneGroup);
 
-        Set<Block> registered = ModUtils.getRegistryEntries(WRBlocks.REGISTRY);
+        Set<Block> registered = ModUtils.getRegistryEntries(REGISTRY);
         registered.removeAll(registeredBlocks.keySet());
         for (Block block : registered)
         {
