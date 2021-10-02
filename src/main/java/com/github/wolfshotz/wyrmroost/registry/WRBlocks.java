@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static net.minecraft.block.AbstractBlock.Properties;
+
 public class WRBlocks
 {
     public static final ItemGroup BLOCKS_ITEM_GROUP = new ItemGroup("wyrmroost_dimension")
@@ -61,7 +63,7 @@ public class WRBlocks
     public static final RegistryObject<Block> PURPLE_GEODE_BLOCK = register("purple_geode_block", () -> new Block(mineable(Material.METAL, ToolType.PICKAXE, 4, 7f, SoundType.METAL)));
 
     // biomes
-    public static final RegistryObject<Block> KARPO_BUSH = register("karpo_bush", () -> new BushBlock(replaceablePlant()), extend().render(() -> RenderType::cutout).flammability(60, 100).tint(WRBlocks::grassTint));
+    public static final RegistryObject<Block> KARPO_BUSH = register("karpo_bush", () -> new BushBlock(replaceablePlant()), extend().cutoutRenderer().flammability(60, 100).tint(WRBlocks::grassTint));
 
     // tincture weald
     public static final RegistryObject<Block> MULCH = register("mulch", MulchBlock::new);
@@ -124,6 +126,30 @@ public class WRBlocks
     public static final RegistryObject<Block> CUT_WHITE_SANDSTONE_SLAB = register("cut_white_sandstone_slab", () -> new SlabBlock(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.STONE)));
     public static final RegistryObject<Block> LUMA_KELP = register("luma_kelp", () -> new WaterGrowingPlantBlock(properties(Material.WATER_PLANT, SoundType.WET_GRASS).noCollission().randomTicks().instabreak(), Direction.UP, 25, 0.14, WRBlocks.LUMA_KELP_BODY));
     public static final RegistryObject<Block> LUMA_KELP_BODY = register("luma_kelp_body", () -> new WaterGrowingPlantBodyBlock(properties(Material.WATER_PLANT, SoundType.WET_GRASS).noCollission().randomTicks().instabreak(), LUMA_KELP), extend().noItem().cutoutRenderer());
+    public static final RegistryObject<Block> DEAD_LUCENT_CORAL = register("dead_lucent_coral", () -> new DeadCoralPlantBlock(Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).requiresCorrectToolForDrops().harvestTool(ToolType.PICKAXE).noCollission().instabreak()), extend().cutoutRenderer());
+    public static final RegistryObject<Block> BLUE_LUCENT_CORAL = register("blue_lucent_coral", () -> new CoralPlantBlock(DEAD_LUCENT_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_BLUE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> CYAN_LUCENT_CORAL = register("cyan_lucent_coral", () -> new CoralPlantBlock(DEAD_LUCENT_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_CYAN).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> ORANGE_LUCENT_CORAL = register("orange_lucent_coral", () -> new CoralPlantBlock(DEAD_LUCENT_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> PURPLE_LUCENT_CORAL = register("purple_lucent_coral", () -> new CoralPlantBlock(DEAD_LUCENT_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_PURPLE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> RED_LUCENT_CORAL = register("red_lucent_coral", () -> new CoralPlantBlock(DEAD_LUCENT_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> DEAD_RUIN_CORAL = register("dead_ruin_coral", () -> new DeadCoralPlantBlock(Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).requiresCorrectToolForDrops().harvestTool(ToolType.PICKAXE).noCollission().instabreak()), extend().cutoutRenderer());
+    public static final RegistryObject<Block> BLUE_RUIN_CORAL = register("blue_ruin_coral", () -> new CoralPlantBlock(DEAD_RUIN_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_BLUE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> CYAN_RUIN_CORAL = register("cyan_ruin_coral", () -> new CoralPlantBlock(DEAD_RUIN_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_CYAN).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> ORANGE_RUIN_CORAL = register("orange_ruin_coral", () -> new CoralPlantBlock(DEAD_RUIN_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> PURPLE_RUIN_CORAL = register("purple_ruin_coral", () -> new CoralPlantBlock(DEAD_RUIN_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_PURPLE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> RED_RUIN_CORAL = register("red_ruin_coral", () -> new CoralPlantBlock(DEAD_RUIN_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> DEAD_SPIRE_CORAL = register("dead_spire_coral", () -> new DeadCoralPlantBlock(Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).requiresCorrectToolForDrops().harvestTool(ToolType.PICKAXE).noCollission().instabreak()), extend().cutoutRenderer());
+    public static final RegistryObject<Block> BLUE_SPIRE_CORAL = register("blue_spire_coral", () -> new CoralPlantBlock(DEAD_SPIRE_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_BLUE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> CYAN_SPIRE_CORAL = register("cyan_spire_coral", () -> new CoralPlantBlock(DEAD_SPIRE_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_CYAN).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> ORANGE_SPIRE_CORAL = register("orange_spire_coral", () -> new CoralPlantBlock(DEAD_SPIRE_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> PURPLE_SPIRE_CORAL = register("purple_spire_coral", () -> new CoralPlantBlock(DEAD_SPIRE_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_PURPLE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> RED_SPIRE_CORAL = register("red_spire_coral", () -> new CoralPlantBlock(DEAD_SPIRE_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> DEAD_TURED_CORAL = register("dead_tured_coral", () -> new DeadCoralPlantBlock(Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).requiresCorrectToolForDrops().harvestTool(ToolType.PICKAXE).noCollission().instabreak()), extend().cutoutRenderer());
+    public static final RegistryObject<Block> ORANGE_TURED_CORAL = register("orange_tured_coral", () -> new CoralPlantBlock(DEAD_TURED_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> RED_TURED_CORAL = register("red_tured_coral", () -> new CoralPlantBlock(DEAD_TURED_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> DEAD_VELVET_CORAL = register("dead_velvet_coral", () -> new DeadCoralPlantBlock(Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).requiresCorrectToolForDrops().harvestTool(ToolType.PICKAXE).noCollission().instabreak()), extend().cutoutRenderer());
+    public static final RegistryObject<Block> ORANGE_VELVET_CORAL = register("orange_velvet_coral", () -> new CoralPlantBlock(DEAD_VELVET_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
+    public static final RegistryObject<Block> RED_VELVET_CORAL = register("red_velvet_coral", () -> new CoralPlantBlock(DEAD_VELVET_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_RED).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());
 
     // ashen desert
     public static final RegistryObject<Block> ASH_STONE = register("ashstone", () -> new Block(properties(Material.STONE, SoundType.STONE).requiresCorrectToolForDrops().strength(1.5f, 6f)));
@@ -153,31 +179,31 @@ public class WRBlocks
         return delegate;
     }
 
-    public static AbstractBlock.Properties properties(Material material, SoundType sound)
+    public static Properties properties(Material material, SoundType sound)
     {
-        return AbstractBlock.Properties
+        return Properties
                 .of(material)
                 .sound(sound);
     }
 
-    public static AbstractBlock.Properties properties(Material material, MaterialColor color, SoundType sound)
+    public static Properties properties(Material material, MaterialColor color, SoundType sound)
     {
-        return AbstractBlock.Properties
+        return Properties
                 .of(material, color)
                 .sound(sound);
     }
 
-    public static AbstractBlock.Properties plant()
+    public static Properties plant()
     {
         return properties(Material.PLANT, SoundType.GRASS).noCollission();
     }
 
-    public static AbstractBlock.Properties replaceablePlant()
+    public static Properties replaceablePlant()
     {
         return properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission();
     }
 
-    public static AbstractBlock.Properties leaves()
+    public static Properties leaves()
     {
         return properties(Material.LEAVES, SoundType.GRASS)
                 .strength(0.2f)
@@ -188,9 +214,9 @@ public class WRBlocks
                 .isViewBlocking((s, r, p) -> false);
     }
 
-    public static AbstractBlock.Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardnessResistance, SoundType sound)
+    public static Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardnessResistance, SoundType sound)
     {
-        return AbstractBlock.Properties
+        return Properties
                 .of(material)
                 .harvestTool(harvestTool)
                 .harvestLevel(harvestLevel)
@@ -199,9 +225,9 @@ public class WRBlocks
                 .sound(sound);
     }
 
-    public static AbstractBlock.Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardness, float resistance, SoundType sound)
+    public static Properties mineable(Material material, ToolType harvestTool, int harvestLevel, float hardness, float resistance, SoundType sound)
     {
-        return AbstractBlock.Properties
+        return Properties
                 .of(material)
                 .harvestTool(harvestTool)
                 .harvestLevel(harvestLevel)

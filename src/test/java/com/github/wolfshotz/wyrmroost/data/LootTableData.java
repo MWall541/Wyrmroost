@@ -93,20 +93,16 @@ class LootTableData extends LootTableProvider
             for (Block block : getKnownBlocks())
             {
                 if (block instanceof PetalsBlock || block instanceof VineBlock || block instanceof AbstractPlantBlock || (block instanceof BushBlock && !(block instanceof SaplingBlock)))
-                {
                     add(block, BlockLootTables::createShearsOnlyDrop);
-                    continue;
-                }
-                if (block instanceof DoorBlock)
+                else if (block instanceof DoorBlock) add(block, BlockLootTables::createDoorTable);
+                else if (block instanceof AbstractCoralPlantBlock) dropWhenSilkTouch(block);
+                else
                 {
-                    add(block, BlockLootTables::createDoorTable);
-                    continue;
+                    ResourceLocation lootTable = block.getLootTable();
+                    boolean notInheriting = lootTable.getPath().replace("blocks/", "").equals(block.getRegistryName().getPath());
+                    if (!lootTables.containsKey(block) && lootTable != LootTables.EMPTY && notInheriting)
+                        dropSelf(block);
                 }
-
-                ResourceLocation lootTable = block.getLootTable();
-                boolean notInheriting = lootTable.getPath().replace("blocks/", "").equals(block.getRegistryName().getPath());
-                if (!lootTables.containsKey(block) && lootTable != LootTables.EMPTY && notInheriting)
-                    dropSelf(block);
             }
         }
 

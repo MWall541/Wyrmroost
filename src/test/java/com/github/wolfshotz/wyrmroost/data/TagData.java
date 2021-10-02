@@ -106,6 +106,8 @@ public class TagData
                     cloneToItem(BlockTags.TALL_FLOWERS, ItemTags.TALL_FLOWERS).add(block);
                 else if (block instanceof CropsBlock)
                     tag(BlockTags.CROPS).add(block);
+                else if (block instanceof AbstractCoralPlantBlock)
+                    tag(BlockTags.CORAL_PLANTS).add(block);
             }
 
             tag(Tags.Blocks.STONE).add(WRBlocks.ASH_STONE.get(), WRBlocks.CHISELED_ASH_STONE.get(), WRBlocks.CUT_ASH_STONE.get(),

@@ -106,7 +106,7 @@ class ItemModelData extends ItemModelProvider
                 String path = registry.getPath();
 
                 if (block instanceof TrapDoorBlock) path += "_bottom";
-                if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock || block instanceof LadderBlock)
+                if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof VineBlock || block instanceof LadderBlock || block instanceof AbstractCoralPlantBlock)
                 {
                     item(item, Wyrmroost.id("block/" + block.getRegistryName().getPath()));
                     continue;

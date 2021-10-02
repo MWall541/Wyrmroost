@@ -37,8 +37,6 @@ class BlockModelData extends BlockStateProvider
     void manualOverrides()
     {
         vine(WRBlocks.MOSS_VINE.get());
-        snowy(WRBlocks.MULCH.get());
-        snowy(WRBlocks.FROSTED_GRASS.get());
         layered(WRBlocks.EMBERS.get(), blockTexture(WRBlocks.EMBER_BLOCK.get()));
         layered(WRBlocks.ASH.get(), blockTexture(WRBlocks.ASH_BLOCK.get()));
         sandstoneType(WRBlocks.WHITE_SANDSTONE.getStone(), WRBlocks.WHITE_SANDSTONE.getStairs(), WRBlocks.WHITE_SANDSTONE.getSlab(), WRBlocks.WHITE_SANDSTONE.getChiseled(), WRBlocks.CUT_WHITE_SANDSTONE.get());
@@ -76,10 +74,12 @@ class BlockModelData extends BlockStateProvider
         {
             if (block instanceof TallFlowerBlock) tallFlower(block);
             else if (block instanceof CropsBlock) crop((CropsBlock) block);
-            else if (block instanceof BushBlock || block instanceof AbstractPlantBlock) cross(block);
+            else if (block instanceof BushBlock || block instanceof AbstractPlantBlock || block instanceof AbstractCoralPlantBlock)
+                cross(block);
             else if (block instanceof PetalsBlock) petals(block);
             else if (block instanceof SilverfishBlock)
-                simpleBlock(block, models().cubeAll(block.getRegistryName().getPath(), modLoc(block.getRegistryName().getPath().substring(9))));
+                simpleBlock(block, models().withExistingParent(block.getRegistryName().getPath(), ((SilverfishBlock) block).getHostBlock().getRegistryName()));
+            else if (block instanceof SnowyDirtBlock) snowy(block);
             else if (!(block instanceof FlowingFluidBlock)) simpleBlock(block);
         }
     }
