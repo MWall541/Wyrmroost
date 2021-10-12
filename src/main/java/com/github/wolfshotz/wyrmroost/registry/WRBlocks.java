@@ -3,6 +3,7 @@ package com.github.wolfshotz.wyrmroost.registry;
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
 import com.github.wolfshotz.wyrmroost.blocks.*;
 import com.github.wolfshotz.wyrmroost.client.ClientEvents;
+import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.github.wolfshotz.wyrmroost.world.features.OseriTreeFeature;
 import com.github.wolfshotz.wyrmroost.world.features.TreeGen;
@@ -104,7 +105,7 @@ public class WRBlocks
     public static final RegistryObject<Block> FROST_GOWN = register("frost_gown", () -> new TallFlowerBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission()), extend().cutoutRenderer().flammability(30, 80));
     public static final RegistryObject<Block> HAMA_SHRUB = register("hama_shrub", () -> new GrowingPlantBlock(properties(Material.REPLACEABLE_PLANT, SoundType.GRASS).noCollission(), Direction.UP, 2, 0, WRBlocks.HAMA_SHRUB_BODY), extend().cutoutRenderer().flammability(30, 80));
     public static final RegistryObject<Block> HAMA_SHRUB_BODY = register("hama_shrub_body", () -> new GrowingPlantBodyBlock(plant(), WRBlocks.HAMA_SHRUB), extend().cutoutRenderer().noItem().flammability(30, 60));
-    public static final RegistryObject<Block> HOARFROST = register("hoarfrost", HoarfrostBlock::new, extend().cutoutRenderer());
+    public static final RegistryObject<Block> HOARFROST = register("hoarfrost", HoarfrostBlock::new, extend().render(() -> RenderHelper::translucent));
     public static final WoodGroup SAL_WOOD = WoodGroup.create("sal", MaterialColor.COLOR_LIGHT_GRAY, MaterialColor.COLOR_GRAY);
     public static final StoneGroup FORAH_STONE = StoneGroup.builder(() -> mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).stairs().slab().pressurePlateAndButton(PressurePlateBlock.Sensitivity.MOBS).build("forah_stone");
     public static final StoneGroup FORAH_COBBLESTONE = StoneGroup.base(() -> mineable(Material.STONE, ToolType.PICKAXE, 0, 1.5f, 6f, SoundType.GILDED_BLACKSTONE)).build("forah_cobblestone");
@@ -125,7 +126,7 @@ public class WRBlocks
     public static final StoneGroup WHITE_SANDSTONE = StoneGroup.base(() -> mineable(Material.STONE, ToolType.PICKAXE, 0, 0.8f, SoundType.STONE)).chiseled().build("white_sandstone");
     public static final RegistryObject<Block> CUT_WHITE_SANDSTONE = register("cut_white_sandstone", () -> new Block(mineable(Material.STONE, ToolType.PICKAXE, 0, 0.8f, SoundType.STONE)));
     public static final RegistryObject<Block> CUT_WHITE_SANDSTONE_SLAB = register("cut_white_sandstone_slab", () -> new SlabBlock(mineable(Material.STONE, ToolType.PICKAXE, 0, 2f, 6f, SoundType.STONE)));
-    public static final RegistryObject<Block> LUMA_KELP = register("luma_kelp", () -> new WaterGrowingPlantBlock(properties(Material.WATER_PLANT, SoundType.WET_GRASS).noCollission().randomTicks().instabreak(), Direction.UP, 25, 0.14, WRBlocks.LUMA_KELP_BODY));
+    public static final RegistryObject<Block> LUMA_KELP = register("luma_kelp", () -> new WaterGrowingPlantBlock(properties(Material.WATER_PLANT, SoundType.WET_GRASS).noCollission().randomTicks().instabreak(), Direction.UP, 25, 0.14, WRBlocks.LUMA_KELP_BODY), extend().cutoutRenderer());
     public static final RegistryObject<Block> LUMA_KELP_BODY = register("luma_kelp_body", () -> new WaterGrowingPlantBodyBlock(properties(Material.WATER_PLANT, SoundType.WET_GRASS).noCollission().randomTicks().instabreak(), LUMA_KELP), extend().noItem().cutoutRenderer());
     public static final RegistryObject<Block> DEAD_LUCENT_CORAL = register("dead_lucent_coral", () -> new DeadCoralPlantBlock(Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).requiresCorrectToolForDrops().harvestTool(ToolType.PICKAXE).noCollission().instabreak()), extend().cutoutRenderer());
     public static final RegistryObject<Block> BLUE_LUCENT_CORAL = register("blue_lucent_coral", () -> new CoralPlantBlock(DEAD_LUCENT_CORAL.get(), Properties.of(Material.STONE, MaterialColor.COLOR_BLUE).noCollission().instabreak().sound(SoundType.WET_GRASS)), extend().cutoutRenderer());

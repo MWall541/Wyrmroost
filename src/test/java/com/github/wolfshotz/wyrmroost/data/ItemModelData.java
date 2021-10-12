@@ -10,7 +10,10 @@ import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.SpawnEggItem;
+import net.minecraft.item.TieredItem;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.IItemProvider;
@@ -93,14 +96,12 @@ class ItemModelData extends ItemModelProvider
         }
 
         final ModelFile spawnEggTemplate = uncheckedModel(mcLoc("item/template_spawn_egg"));
-        final ModelFile bucket = uncheckedModel("forge:item/bucket");
         final Set<Item> registered = ModUtils.getRegistryEntries(WRItems.REGISTRY);
 
         REGISTERED.forEach(registered::remove);
         for (Item item : registered)
         {
             if (item instanceof SpawnEggItem) getBuilderFor(item).parent(spawnEggTemplate);
-            else if (item instanceof BucketItem) getBuilderFor(item).parent(bucket);
             else if (item instanceof BlockItem)
             {
                 Block block = ((BlockItem) item).getBlock();

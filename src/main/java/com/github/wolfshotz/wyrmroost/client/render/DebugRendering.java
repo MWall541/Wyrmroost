@@ -1,7 +1,6 @@
-package com.github.wolfshotz.wyrmroost.util;
+package com.github.wolfshotz.wyrmroost.client.render;
 
 import com.github.wolfshotz.wyrmroost.Wyrmroost;
-import com.github.wolfshotz.wyrmroost.client.render.RenderHelper;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;

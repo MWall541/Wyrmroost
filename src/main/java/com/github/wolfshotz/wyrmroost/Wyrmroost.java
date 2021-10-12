@@ -21,7 +21,7 @@ public class Wyrmroost
 {
     public static final String MOD_ID = "wyrmroost";
     public static final Logger LOG = LogManager.getLogger(MOD_ID);
-    public static final SimpleChannel NETWORK = buildChannel();
+    public static final SimpleChannel NETWORK;
 
     public Wyrmroost()
     {
@@ -40,13 +40,19 @@ public class Wyrmroost
         WRWorld.Features.REGISTRY.register(bus);
         WRParticles.REGISTRY.register(bus);
         WREffects.REGISTRY.register(bus);
+        WRFluids.REGISTRY.register(bus);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, WRConfig.COMMON);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, WRConfig.CLIENT);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, WRConfig.SERVER);
     }
 
-    private static SimpleChannel buildChannel()
+    public static ResourceLocation id(String path)
+    {
+        return new ResourceLocation(MOD_ID, path);
+    }
+
+    static
     {
         final String PROTOCOL_VERSION = "1.0";
         final SimpleChannel network = NetworkRegistry.ChannelBuilder
@@ -64,11 +70,6 @@ public class Wyrmroost
         network.messageBuilder(SGGlidePacket.class, ++index, NetworkDirection.PLAY_TO_SERVER).encoder(SGGlidePacket::encode).decoder(SGGlidePacket::new).consumer(SGGlidePacket::handle).add();
         network.messageBuilder(AddPassengerPacket.class, ++index, NetworkDirection.PLAY_TO_CLIENT).encoder(AddPassengerPacket::encode).decoder(AddPassengerPacket::new).consumer(AddPassengerPacket::handle).add();
 
-        return network;
-    }
-
-    public static ResourceLocation id(String path)
-    {
-        return new ResourceLocation(MOD_ID, path);
+        NETWORK = network;
     }
 }

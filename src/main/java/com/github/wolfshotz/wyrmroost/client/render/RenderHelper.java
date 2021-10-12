@@ -6,7 +6,6 @@ import com.github.wolfshotz.wyrmroost.client.ClientEvents;
 import com.github.wolfshotz.wyrmroost.entities.dragon.TameableDragonEntity;
 import com.github.wolfshotz.wyrmroost.items.book.TarragonTomeItem;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
-import com.github.wolfshotz.wyrmroost.util.DebugRendering;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -16,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.OutlineLayerBuffer;
+import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -43,11 +43,20 @@ public class RenderHelper extends RenderType
 {
     // == [Render Types] ==
 
-    private static final RenderType TRANSPARENT = create("transparent_color", DefaultVertexFormats.POSITION_COLOR, 7, 256, false, true, RenderType.State
+    private static final RenderType TRANSPARENT = create("transparent_color", DefaultVertexFormats.POSITION_COLOR, GL11.GL_QUADS, 256, false, true, RenderType.State
             .builder()
             .setWriteMaskState(COLOR_DEPTH_WRITE)
             .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
             .createCompositeState(false));
+
+    public static final RenderType CUTOUT_TRANSLUSCENT = create("cutout_transluscent", DefaultVertexFormats.BLOCK, GL11.GL_QUADS, 131072, true, false, RenderType.State
+            .builder()
+            .setShadeModelState(SMOOTH_SHADE)
+            .setLightmapState(LIGHTMAP)
+            .setTextureState(BLOCK_SHEET)
+            .setTransparencyState(RenderState.TRANSLUCENT_TRANSPARENCY)
+            .setOutputState(RenderState.TRANSLUCENT_TARGET)
+            .createCompositeState(true));
 
     @SuppressWarnings("ConstantConditions")
     private RenderHelper()

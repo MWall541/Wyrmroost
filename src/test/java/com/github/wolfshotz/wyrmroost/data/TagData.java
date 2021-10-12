@@ -5,19 +5,16 @@ import com.github.wolfshotz.wyrmroost.blocks.StoneGroup;
 import com.github.wolfshotz.wyrmroost.blocks.WoodGroup;
 import com.github.wolfshotz.wyrmroost.registry.WRBlocks;
 import com.github.wolfshotz.wyrmroost.registry.WREntities;
+import com.github.wolfshotz.wyrmroost.registry.WRFluids;
 import com.github.wolfshotz.wyrmroost.registry.WRItems;
 import com.github.wolfshotz.wyrmroost.util.ModUtils;
 import net.minecraft.block.*;
-import net.minecraft.data.BlockTagsProvider;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.EntityTypeTagsProvider;
-import net.minecraft.data.ItemTagsProvider;
+import net.minecraft.data.*;
 import net.minecraft.entity.EntityType;
+import net.minecraft.fluid.FlowingFluid;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -37,6 +34,7 @@ public class TagData
         gen.addProvider(blockGen);
         gen.addProvider(new ItemData(gen, blockGen, fileHelper));
         gen.addProvider(new EntityData(gen, fileHelper));
+        gen.addProvider(new FluidData(gen, fileHelper));
     }
 
     private static class ItemData extends ItemTagsProvider
@@ -230,6 +228,29 @@ public class TagData
             // ice and fire
             for (String s : new String[]{"fire", "ice", "lightning"})
                 builder.addOptional(new ResourceLocation("iceandfire", s + "_dragon"));
+        }
+    }
+
+    private static class FluidData extends FluidTagsProvider
+    {
+        public FluidData(DataGenerator gen, ExistingFileHelper fileHelper)
+        {
+            super(gen, Wyrmroost.MOD_ID, fileHelper);
+        }
+
+        @Override
+        protected void addTags()
+        {
+            sourced(FluidTags.WATER, WRFluids.BRINE.get());
+        }
+
+        public void sourced(ITag.INamedTag<Fluid> tag, FlowingFluid... fluids)
+        {
+            Builder<Fluid> builder = tag(tag);
+            for (FlowingFluid fluid : fluids)
+            {
+                builder.add(fluid, fluid.getFlowing());
+            }
         }
     }
 }
