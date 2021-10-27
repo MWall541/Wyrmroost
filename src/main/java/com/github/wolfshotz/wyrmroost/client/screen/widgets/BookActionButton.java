@@ -23,7 +23,7 @@ public class BookActionButton extends AbstractButton
 {
     public final DragonControlScreen screen;
     public final BookAction action;
-    public final LerpedFloat focusTime = new LerpedFloat().clamp(0, 1);
+    public final LerpedFloat focusTime = LerpedFloat.unit();
     public boolean wasHovered = false;
 
     public BookActionButton(DragonControlScreen screen, BookAction action, int xIn, int yIn, ITextComponent msg)

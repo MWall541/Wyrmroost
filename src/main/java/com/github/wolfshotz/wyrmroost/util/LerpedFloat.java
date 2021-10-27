@@ -4,11 +4,8 @@ import net.minecraft.util.math.MathHelper;
 
 public class LerpedFloat
 {
-    private float min;
-    private float max;
-    private float current;
-    private float previous;
-    private boolean clamp = false;
+    protected float current;
+    protected float previous;
 
     public LerpedFloat()
     {
@@ -18,15 +15,6 @@ public class LerpedFloat
     public LerpedFloat(float start)
     {
         current = previous = start;
-    }
-
-    public LerpedFloat clamp(float min, float max)
-    {
-        clamp = true;
-        this.min = min;
-        this.max = max;
-        set(current);
-        return this;
     }
 
     public float get(float x)
@@ -42,14 +30,13 @@ public class LerpedFloat
     public void set(float value)
     {
         sync();
-        current = clamp? MathHelper.clamp(value, min, max) : value;
+        current = value;
     }
 
     public void add(float value)
     {
         sync();
         current += value;
-        if (clamp) current = MathHelper.clamp(current, min, max);
     }
 
     public void sync()
@@ -62,28 +49,53 @@ public class LerpedFloat
         return previous;
     }
 
-    public float getMin()
+    public static LerpedFloat.Clamped unit()
     {
-        return min;
+        return new Clamped(0, 1);
     }
 
-    public void setMin(float min)
+    /**
+     * Clamped Implementation.
+     * Basically just ensure that the value stays clamped within the specified {@link Clamped#min}-{@link Clamped#max} bounds.
+     */
+    public static class Clamped extends LerpedFloat
     {
-        this.min = min;
-    }
+        private final float min;
+        private final float max;
 
-    public float getMax()
-    {
-        return max;
-    }
+        public Clamped(float start, float min, float max)
+        {
+            super(MathHelper.clamp(start, min, max));
+            this.min = min;
+            this.max = max;
+        }
 
-    public void setMax(float max)
-    {
-        this.max = max;
-    }
+        public Clamped(float min, float max)
+        {
+            this(0, min, max);
+        }
 
-    public static LerpedFloat unit()
-    {
-        return new LerpedFloat().clamp(0, 1);
+        @Override
+        public void set(float value)
+        {
+            super.set(MathHelper.clamp(value, min, max));
+        }
+
+        @Override
+        public void add(float value)
+        {
+            super.add(value);
+            current = MathHelper.clamp(current, min, max);
+        }
+
+        public float getMin()
+        {
+            return min;
+        }
+
+        public float getMax()
+        {
+            return max;
+        }
     }
 }

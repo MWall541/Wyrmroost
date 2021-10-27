@@ -40,7 +40,7 @@ public class DragonEggEntity extends Entity implements IEntityAdditionalSpawnDat
     public EntityType<TameableDragonEntity> containedDragon;
     public DragonEggProperties properties; // cache for speed
     public Direction wiggleDirection = Direction.NORTH;
-    public LerpedFloat wiggleTime = new LerpedFloat().clamp(0, 1);
+    public LerpedFloat wiggleTime = LerpedFloat.unit();
     public boolean correctConditions = false;
     public boolean wiggling = false;
     public int hatchTime;
