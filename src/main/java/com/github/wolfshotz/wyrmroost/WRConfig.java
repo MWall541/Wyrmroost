@@ -79,7 +79,7 @@ public class WRConfig
     static // common
     {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        builder.comment("If your looking for more options, check `wyrmroost-client.toml` or, in `{World Name}/serverconfig/wyrmroost-server.toml`",
+        builder.comment("If you're looking for more options, check `wyrmroost-client.toml` or, in `{World Name}/serverconfig/wyrmroost-server.toml`",
                 "Wyrmroost General Options")
                 .push("general");
         DEBUG_MODE = builder.comment("Do not enable this unless you are told to!")
