@@ -7,7 +7,7 @@ Github Repository for the Wyrmroost Minecraft Mod.
 Thats great but not really! You can report it [here](https://github.com/WolfShotz/Wyrmroost/issues)
 
 ## Licensing
-You have probably noticed, atleast by now because your clearly reading this far into things, that the project is All Rights Reserved.
+You have probably noticed, atleast by now because you're clearly reading this far into things, that the project is All Rights Reserved.
 That is indeed the case, All Rights Reserved, as for code and assets are concerned. However, there are a few exceptions and conditions (As per "All Rights Reserved").
 
 ### Notice
